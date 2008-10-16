@@ -3,7 +3,6 @@
 # Copyright (C) 2007  Gary S Thompson (see https://gna.org/users/varioustoxins #
 #                                      for contact details)                    #
 #                                                                              #
-#                                                                              #
 # This file is part of the program relax.                                      #
 #                                                                              #
 # relax is free software; you can redistribute it and/or modify                #
@@ -22,79 +21,87 @@
 #                                                                              #
 ################################################################################
 
-'''
-The processor class is the central class in the multi python multiprocessor framework.
+# Module docstring.
+'''The processor class is the central class in the multi python multiprocessor framework.
 
 Overview
 ========
 
-The framework has two main responsibilities
+The framework has two main responsibilities:
 
-     1. process management - if needed the processor can create the slave processes it
-        manages if they haven't been created by the operating system. It is also reponsible for
-        reporting exceptions and shutting down the multiprocessor in the face of errors.
-     2. sheduling commands on the slave processors via an interprocess communication fabric (MPI,
-        PVM, threads etc) and processing returned text and result
-        commands
+     1. Process management - if needed the processor can create the slave processes it manages if
+        they haven't been created by the operating system. It is also responsible for reporting
+        exceptions and shutting down the multiprocessor in the face of errors.
+     2. Scheduling commands on the slave processors via an interprocess communication fabric (MPI,
+        PVM, threads etc) and processing returned text and result commands.
 
 
 Using the processor framework
 =============================
 
-users of the processor framework will typically use the following methodoloy:
+Users of the processor framework will typically use the following methodology:
 
-     1. at application startup determine the name of the required processor implimentation a
-        and  the number of slave processors requested
+     1. At application startup determine the name of the required processor implementation and the
+        number of slave processors requested.
 
-     2. create an Application_callback object
+     2. Create an Application_callback object.
 
-     3. dynamically load a processor implimentation using the name of the processor and the
-        number of required slave processors using::
-        processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
+     3. Dynamically load a processor implementation using the name of the processor and the number
+        of required slave processors using:
+            processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
                     callbacks, processor_size=relax_instance.n_processors)
-     4. call run on the processor instance resturned above and handle all Exceptions
-     5. after calling run the processor will call back to Application_callback.init_master from
-        which you should call you main program (Application_callback defaults to
-        self.master.run())
-     5. once in the main program you should call processor.add_to_queue with a series of
-        multi.Slave_command objects you wish to be run across the slave processor pool and then
-        call processor.run_queue to actually execute the commands remotely while blocking.
+
+     4. Call run on the processor instance returned above and handle all Exceptions.
+
+     5. After calling run, the processor will call back to Application_callback.init_master from
+        which you should call you main program (Application_callback defaults to self.master.run()).
+
+     6. Once in the main program you should call processor.add_to_queue with a series of
+        multi.Slave_command objects you wish to be run across the slave processor pool and then call
+        processor.run_queue to actually execute the commands remotely while blocking.
         >>>
         example here...
-     6. processor.Slave_commands will then run remotely on the slaves and any thrown exceptions
-        and processor.result_commands queued to processor.return_object will be returned to the
-        master processor and handled or executed. The slave processors also provide facilities
-        for capturing the stderr and stdout streams and returning their contents as strings for
-        display on the masters stout and stderr streams (***more**?)
+
+     7. Processor.Slave_commands will then run remotely on the slaves and any thrown exceptions and
+        processor.result_commands queued to processor.return_object will be returned to the master
+        processor and handled or executed. The slave processors also provide facilities for capturing
+        the STDERR and STDOUT streams and returning their contents as strings for display on the
+        master's STDOUT and STDERR streams (***more**?).
+
 
 Extending the processor framework with a new interprocess communication fabric
 ==============================================================================
 
-The processor class acts as a base class that defines all the commands that a processor
-implimenting a new inter processo communication fabric needs. All that is required is to
-impliment a subclass of processor providing the required methods (of course as python provides
-dynamic typing and polymorphism 'duck typing' you can always impliment a class with the same
-set of method and it will also work). Currnently processor classes are loaded from the
-processor module and are modules with names of the form:
+The processor class acts as a base class that defines all the commands that a processor implementing
+a new inter processor communication fabric needs. All that is required is to implement a subclass of
+processor providing the required methods (of course as python provides dynamic typing and
+polymorphism 'duck typing' you can always implement a class with the same set of method and it will
+also work). Currently processor classes are loaded from the processor module and are modules with
+names of the form:
+
 >>> multi.<type>_processor.<Type>_processor
 
 where <Type> is the name of the processor with the correct capitalisation e.g.
 
->>>
-processor_name =  'mpi4py'
-callback = My_application-callback()
-proccesor_size=6
-processor.load_multiprocessor(processor_name, callback, processor_size)
+>>> processor_name =  'mpi4py'
+>>> callback = My_application-callback()
+>>> proccesor_size=6
+>>> processor.load_multiprocessor(processor_name, callback, processor_size)
 
-will load multi.mpi4py_processor.Mpi4py_Processor
+will load multi.mpi4py_processor.Mpi4py_Processor.
 
-todo
+
+TODO
 ====
 
-    1. there is no ability of the processor to request command line arguments
-    2. the processor can't currently be loaded from somewhere other than the multi directory
+The following are yet to be implemented:
+
+    1. There is no ability of the processor to request command line arguments.
+
+    2. The processor can't currently be loaded from somewhere other than the multi directory.
 
 '''
+
 #FIXME: better  requirement of inherited commands
 # TODO: check exceptiosn on master
 import time,datetime,math,sys,os
