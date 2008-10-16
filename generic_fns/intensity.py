@@ -73,7 +73,7 @@ def det_dimensions(file_data, proton, heteronuc):
             break
 
 
-def intensity_sparky(line, int_col=None):
+def intensity_sparky(line, int_col):
     """Function for returning relevant data from the Sparky peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -122,7 +122,7 @@ def intensity_sparky(line, int_col=None):
     return res_num, h_name, x_name, intensity
 
 
-def intensity_xeasy(line, int_col=None, H_dim='w1'):
+def intensity_xeasy(line, int_col, H_dim='w1'):
     """Function for returning relevant data from the XEasy peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -168,7 +168,7 @@ def intensity_xeasy(line, int_col=None, H_dim='w1'):
     return res_num, h_name, x_name, intensity
 
 
-def intensity_nmrview(line, int_col=None):
+def intensity_nmrview(line, int_col):
     """Function for returning relevant data from the NMRView peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -365,7 +365,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, H_name, X_name, intensity = intensity_fn(file_data[i])
+        res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col=int_col)
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
