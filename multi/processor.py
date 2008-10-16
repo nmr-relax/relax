@@ -403,7 +403,7 @@ class Processor(object):
     class. Most users should instantiate instances of this class by calling the static method
     Processor.load_multiprocessor.
 
-    The class is designed top be subclassed and has abstract methods that a subclass needs to
+    The class is designed to be subclassed and has abstract methods that a subclass needs to
     override. Methods which can be overridden are clearly marked with a note annotation stating that
     they can be overridden.
 
