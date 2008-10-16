@@ -128,7 +128,7 @@ class Relax_fit:
             'xeasy'
             'nmrview'
 
-        If the format argument is set to 'sparky', the file should be a Sparky peak list saved after
+        If the 'format' argument is set to 'sparky', the file should be a Sparky peak list saved after
         typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd,
         3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.
         The frequency data w1 and w2 are ignored while the peak intensity data can either be the
@@ -136,13 +136,15 @@ class Relax_fit:
         is not within column 3, set the argument int_col to the appropriate value (column numbering
         starts from 0 rather than 1).
 
-        If the format argument is set to 'xeasy', the file should be the saved XEasy text window
+        If the 'format' argument is set to 'xeasy', the file should be the saved XEasy text window
         output of the list peak entries command, 'tw' followed by 'le'.  As the columns are fixed,
         the peak intensity column is hardwired to number 10 (the 11th column) which contains either
         the peak height or peak volume data.  Because the columns are fixed, the int_col argument
         will be ignored.
 
-        If the format argument is set to 'nmrview', the file should be a NMRView peak list.
+        If the 'format' argument is set to 'nmrview', the file should be a NMRView peak list. The
+        default is to use column 16 (which contains peak intensities) for peak amplitudes. To use
+        use peak volumes (or evolumes), 'int_col = 15' must be used.
 
 
         The heteronuc and proton arguments should be set respectively to the name of the
