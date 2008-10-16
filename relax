@@ -455,11 +455,18 @@ if __name__ == "__main__":
 
     # No profiling.
     if not profile_flag:
+        # Instantiate the main class.
         relax_instance = Relax()
+
+        # Process the command line arguments.
         relax_instance.arguments(sys.argv[1:])
+
+        # Set up the multi-processor elements.
         callbacks = Application_callback(master=relax_instance)
         multi_processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
         relax_instance.processor = multi_processor
+
+        # Execute relax in multi-processor mode (this includes the uni-processor for normal operation).
         multi_processor.run()
 
     # Profiling activated.
