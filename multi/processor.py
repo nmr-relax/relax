@@ -393,18 +393,6 @@ class Memo(object):
         return id(self)
 
 
-class Null_result_command(Result_command):
-    '''An empty result command.
-
-    This command should be returned from slave_command if no other Result_command is returned. This
-    allows the queue processor to register that the slave processor has completed its processing and
-    schedule new Slave-commands to it.
-    '''
-
-    def __init__(self, processor, completed=True):
-        super(Null_result_command, self).__init__(processor=processor, completed=completed)
-
-
 class Processor(object):
     '''The central class of the multi processor framework.
 
@@ -931,6 +919,18 @@ class Result_command(Result):
         '''
 
         pass
+
+
+class Null_result_command(Result_command):
+    '''An empty result command.
+
+    This command should be returned from slave_command if no other Result_command is returned. This
+    allows the queue processor to register that the slave processor has completed its processing and
+    schedule new Slave-commands to it.
+    '''
+
+    def __init__(self, processor, completed=True):
+        super(Null_result_command, self).__init__(processor=processor, completed=completed)
 
 
 class Result_exception(Result_command):
