@@ -1119,17 +1119,17 @@ class Mf_minimise:
                 full_grid_info = Grid_info(min_options)
                 sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())
                 if constraints:
-                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=self.scaling_matrix, full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, A=A, b=b)
+                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix, full_output=True, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, A=A, b=b)
                 else:
-                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=self.scaling_matrix, full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, )
+                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix, full_output=True, print_flag=print_flag, print_prefix="", grid_size=self.grid_size)
 
                 for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
                     command = MF_grid_command()
                     command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
                     if constraints:
-                        command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+                        command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
                     else:
-                        command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+                        command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
 
                     memo = MF_grid_memo(super_grid_memo)
@@ -1144,11 +1144,11 @@ class Mf_minimise:
                     return command.build_mf().calc_ri()
 
                 if constraints:
-                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
                 else:
-                    command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
-                memo = MF_memo(model_free=self, index=index, sim_index=sim_index, run=self.run, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)
+                memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)
 
                 self.relax.processor.add_to_queue(command, memo)
         #print self.relax.processor.command_queue
