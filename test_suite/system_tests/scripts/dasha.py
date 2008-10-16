@@ -7,6 +7,10 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 
 
+# Missing temp directory (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = 'temp_script'
+
 # Set the data pipe names (also the names of preset model-free models).
 pipes = ['m1', 'm2', 'm3']
 
@@ -36,13 +40,13 @@ for name in pipes:
     model_free.select_model(model=name)
 
     # Create the Dasha script.
-    dasha.create(algor='NR', force=True)
+    dasha.create(algor='NR', dir=ds.tmpdir, force=True)
 
     # Execute Dasha.
-    dasha.execute()
+    dasha.execute(dir=ds.tmpdir)
 
     # Read the data.
-    dasha.extract()
+    dasha.extract(dir=ds.tmpdir)
 
     # Write the results.
-    results.write(file=ds.tmpdir + '/' + 'results_dasha', force=True)
+    results.write(file=ds.tmpdir + '/' + 'results_dasha', dir=None, force=True)

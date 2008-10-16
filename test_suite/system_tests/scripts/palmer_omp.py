@@ -11,6 +11,9 @@ from data import Relax_data_store; ds = Relax_data_store()
 if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp_script'
 
+# Path of the relaxation data.
+DATA_PATH = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+
 
 def exec_stage_1(pipes):
     """Stage 1 function.
@@ -20,21 +23,29 @@ def exec_stage_1(pipes):
 
     # Loop over the data pipes.
     for name in pipes:
-        # Create the pipe.
+        # Create the data pipe.
         print "\n\n# " + name + " #"
         pipe.create(name, 'mf')
 
-        # Load the sequence.
-        sequence.read(sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
+        # Copy the sequence.
+        sequence.copy('data')
 
-        # Load the relaxation data.
-        relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R1.dat')
-        relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R2.dat')
-        relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
+        # Read a PDB file.
+        structure.read_pdb(file='1F35_N_H_trunc.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', parser='internal')
+
+        # Select only 3 spins (residues 9, 10, and 11).
+        deselect.all()
+        select.spin(':9')
+        select.spin(':10')
+        select.spin(':11')
+
+        # Copy the relaxation data.
+        relax_data.copy('data')
 
         # Setup other values.
-        diffusion_tensor.init(1e-8)
+        diffusion_tensor.init((1e-8, 0, 0, 0))
         value.set('15N', 'heteronucleus')
+        value.set('1H', 'proton')
         value.set(1.02 * 1e-10, 'bond_length')
         value.set(-172 * 1e-6, 'csa')
 
@@ -108,6 +119,10 @@ def exec_stage_3():
 
 # Main section of the script.
 #############################
+
+# Read the results file to get the relaxation data from.
+pipe.create('data', 'mf')
+results.read(file='final_results_trunc_1.3', dir=DATA_PATH)
 
 # Set the pipe names (also the name of a preset model-free model).
 pipes = ['m1', 'm2', 'm3']

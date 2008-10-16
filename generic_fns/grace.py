@@ -413,6 +413,9 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
     @type y_return_grace_string:    function
     """
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Graph G0.
     file.write("@with g0\n")
 

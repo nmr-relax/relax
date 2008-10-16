@@ -1,6 +1,9 @@
 import sys
 
 
+# Create the data pipe.
+pipe.create('mf', 'mf')
+
 # Read the sequence.
 sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
 
