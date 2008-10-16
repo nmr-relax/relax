@@ -37,18 +37,6 @@ from maths_fns.mf import Mf
 from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
 
 
-#not quite a momento so a memo
-class MF_memo(Memo):
-    def __init__(self,model_free,index,sim_index,run,param_set,scaling,scaling_matrix):
-        super(MF_memo,self).__init__()
-        self.index = index
-        self.sim_index=sim_index
-        self.run=run
-        self.param_set=param_set
-        self.model_free=model_free
-        self.scaling=scaling
-        self.scaling_matrix=scaling_matrix
-
 OFFSET_XK=0      #  The array of minimised parameter values
 OFFSET_FK=1      #  The minimised function value,
 OFFSET_K=2       #  The number of iterations,
@@ -62,7 +50,22 @@ OFFSET_SHORT_FK=1
 OFFSET_SHORT_K=2
 
 
+class MF_memo(Memo):
+    """The model-free memo class.
 
+    Not quite a momento so a memo.
+    """
+
+    def __init__(self, model_free, spin, sim_index, model_type, scaling, scaling_matrix):
+        """Initialise the model-free memo class."""
+
+        super(MF_memo, self).__init__()
+        self.spin = spin
+        self.sim_index = sim_index
+        self.model_type = model_type
+        self.model_free = model_free
+        self.scaling = scaling
+        self.scaling_matrix = scaling_matrix
 
 
 class MF_result_command(Result_command):
