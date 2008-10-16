@@ -1022,7 +1022,9 @@ class Mf_minimise:
         #self.relax.processor.run_queue()
 
 
-    def disassemble_result(self,param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling,scaling_matrix):
+    def disassemble_result(self, param_vector, func, iter, fc, gc, hc, warning, spin, sim_index, param_set, scaling, scaling_matrix):
+        """Disassemble the optimisation results."""
+
             #print '***',param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling
             #self.write_columnar_line(file=sys.stdout)
             #self.param_vector=param_vector
@@ -1048,17 +1050,12 @@ class Mf_minimise:
 #            self.h_count = hc
 #            self.run=run
 
-
-
             self.func=func
             self.warning=warning
             self.iter_count = self.iter_count + iter
             self.f_count = self.f_count + fc
             self.g_count = self.g_count + gc
             self.h_count = self.h_count + hc
-
-
-
 
             # Catch infinite chi-squared values.
             if isInf(func):
@@ -1123,16 +1120,6 @@ class Mf_minimise:
             else:
                 # Sequence specific minimisation statistics.
                 if model_type == 'mf' or model_type == 'local_tm':
-# FIXME: remove me
-#                    import traceback
-#                    if self.relax.data.res[run][index].num ==  4:
-#                        print '***1',run,param_set
-#                        print '***2',index,self.relax.data.res[run][index].num,self.relax.data.res['m1'][index].name
-#                        print '***3',self.relax.data.res[run][index].num,self.relax.data.res['m1'][index].name,param_set,run,index,sim_index,self.param_vector
-#                        print '***4',self.relax.data.res['m1'][index].s2,id(self.relax.data.res['m1'][index])
-#                        print '***5'
-#                        traceback.print_stack(file=sys.stdout)
-
                     # Chi-squared statistic.
                     spin.chi2 = self.func
 
