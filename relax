@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-from numpy.f2py.cfuncs import callbacks
 
 ###############################################################################
 #                                                                             #
@@ -41,16 +40,17 @@ import dep_check
 # Python modules.
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
+from numpy.f2py.cfuncs import callbacks
 import platform
 import profile
 import pstats
 from re import match
 from string import split, strip
 import sys
-from multi.processor import Application_callback,Processor
 
 # relax modules.
 import generic_fns
+from multi.processor import Application_callback, Processor
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
@@ -89,7 +89,7 @@ class Relax:
         # Setup the object containing the generic functions.
         self.generic = generic_fns
 
-        # FIXME removed
+        # FIXME removed.
         # Process the command line arguments and determine the relax mode.
         #mode, log_file, tee_file = self.arguments()
 
@@ -105,9 +105,11 @@ class Relax:
         relax_errors.relax = self
         relax_warnings.relax = self
 
-    def run(self):
 
-        #FIXME use self.mode all over
+    def run(self):
+        """Execute relax."""
+
+        #FIXME use self.mode all over.
         mode = self.mode
         print mode
 
@@ -116,7 +118,6 @@ class Relax:
             print 'relax ' + self.version
             sys.exit()
 
-        # FIXME threading
         # Logging.
         if self.log_file:
             log(self.log_file)
@@ -133,12 +134,6 @@ class Relax:
             # Run the interpreter.
             self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
-
-        # FIXME no more threading
-#        elif mode == 'slave':
-#            self.interpreter = Interpreter(self)
-#            self.dummy_mode=1
-#            self.interpreter.run()
 
         # Execute the relax test suite
         elif mode == 'test suite':
@@ -175,8 +170,8 @@ class Relax:
             self.licence()
 
 
-    def arguments(self,args):
-        """Function for processing the command line arguments."""
+    def arguments(self, args):
+        """Process the command line arguments."""
 
         # Parser object.
         parser = RelaxParser(self, usage="usage: %prog [options] [script_file]")
@@ -195,12 +190,8 @@ class Relax:
         parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
         parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
 
-
-
-
         # Parse the options.
         (options, args) = parser.parse_args(args)
-
 
         # Debugging flag.
         if options.debug:
@@ -246,19 +237,18 @@ class Relax:
                 parser.error("the script file " + `self.script_file` + " does not exist")
 
 
-
-
-
         # Determine the relax mode and test for mutually exclusive modes.
         #################################################################
-# TODO: this should be a task
+
+        # TODO: this should be a task.
+
         # Show the version number.
         if options.version:
             mode = 'version'
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
-#FIXME: multiprocessor options should be  mostly resolved independant of the run mode
+            #FIXME: multiprocessor options should be mostly resolved independent of the run mode.
             self.multiprocessor_type = options.multiprocessor
             self.n_processors = options.n_processors           # Make sure no script is supplied.
             if self.script_file:
@@ -277,7 +267,6 @@ class Relax:
                 mode = 'system tests'
             elif options.unit_tests:
                 mode = 'unit tests'
-
 
         # Test mode.
         elif options.test:
@@ -309,27 +298,21 @@ class Relax:
             # Set the mode.
             mode = 'licence'
 
-
-
         # Script mode.
         elif self.script_file:
-            #FIXME check for uniprocessor and n_processors
+            #FIXME check for uniprocessor and n_processors.
             self.multiprocessor_type = options.multiprocessor
             self.n_processors = options.n_processors
             mode = 'script'
 
-
         # Prompt mode (default).
         else:
-            #FIXME check for uniprocessor and n_processors
+            #FIXME check for uniprocessor and n_processors.
             self.multiprocessor_type = options.multiprocessor
             self.n_processors = options.n_processors
             mode = 'prompt'
 
-        # Return.
-
         # multi processor
-
         if options.multiprocessor == 'uni':
             self.multi_mode = 'uni'
         else:
@@ -343,10 +326,10 @@ class Relax:
             self.n_processors = options.n_processors
 
             #note will be changed to multi_master or multi_slave when multi_processor initialises
-            self.multi_mode='multi'
+            self.multi_mode = 'multi'
 
         #FIXME: use self.mode throughout
-        self.mode=mode
+        self.mode = mode
 
 
     def get_intro_string(self):
@@ -398,6 +381,7 @@ class Relax:
         if not dep_check.C_module_exp_fn:
             intro_string = intro_string + "\n" + dep_check.C_module_exp_fn_mesg + "\n"
 
+        # Multi processor string component.
         self.intro_string  = self.intro_string  + '\nprocessor = ' + self.processor.get_intro_string() + '\n'
 
         # Return the string.
@@ -456,32 +440,33 @@ class RelaxParser(OptionParser):
         # Exit.
         sys.exit()
 
+
 # FIXME: code shared with unit testing framework not changed from unit tests version
 # replace unit test version with this
 
-
 if __name__ == "__main__":
     #import multi.uni_processor
-    for elem in  sys.modules:
+    for elem in sys.modules:
         if elem == 'multi.uni_processor':
-            print 'found',elem
+            print 'found', elem
+
     # Change this flag to 1 for code profiling.
     profile_flag = 0
 
+    # No profiling.
     if not profile_flag:
         relax_instance = Relax()
         relax_instance.arguments(sys.argv[1:])
-        callbacks =  Application_callback(master=relax_instance)
-        multi_processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
-                                              callbacks, processor_size=relax_instance.n_processors)
-        relax_instance.processor =  multi_processor
+        callbacks = Application_callback(master=relax_instance)
+        multi_processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
+        relax_instance.processor = multi_processor
         multi_processor.run()
 
+    # Profiling activated.
     else:
         def print_stats(stats, status=0):
             pstats.Stats(stats).sort_stats('time', 'name').print_stats()
+
         #FIXME: profiling won't work with multi processors.
         profile.Profile.print_stats = print_stats
         profile.run('Relax()')
-
-
