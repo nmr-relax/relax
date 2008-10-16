@@ -472,7 +472,10 @@ if __name__ == "__main__":
     # Profiling activated.
     else:
         def print_stats(stats, status=0):
+            """Profile statistics printing function."""
+
             pstats.Stats(stats).sort_stats('time', 'name').print_stats()
+
 
         #FIXME: profiling won't work with multi processors.
         profile.Profile.print_stats = print_stats
