@@ -89,10 +89,6 @@ class Relax:
         # Setup the object containing the generic functions.
         self.generic = generic_fns
 
-        # FIXME removed.
-        # Process the command line arguments and determine the relax mode.
-        #mode, log_file, tee_file = self.arguments()
-
         # Place the debugging flag in a number of modules which don't have access to the 'self.relax' namespace.
         relax_errors.Debug = self.Debug
         relax_warnings.Debug = self.Debug
