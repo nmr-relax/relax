@@ -978,18 +978,16 @@ class Mf_minimise:
             # Minimisation.
             ###############
             #FIXME??? strange contraints
-            if match('^[Gg]rid', min_algor) and self.param_set == 'diff' :
+            if match('^[Gg]rid', min_algor) and model_type == 'diff' :
                 processors = self.relax.processor.processor_size()
                 full_grid_info = Grid_info(min_options)
                 sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())
                 if constraints:
-                    super_grid_memo = MF_super_grid_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
-                                          scaling=scaling,scaling_matrix=self.scaling_matrix,full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, A=A,b=b)
+                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=self.scaling_matrix, full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, A=A, b=b)
                 else:
-                    super_grid_memo = MF_super_grid_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,
-                                          scaling=scaling,scaling_matrix=self.scaling_matrix,full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, )
+                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=self.scaling_matrix, full_output=1, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, )
 
-                for sub_grid_index,sub_grid_info in enumerate(sub_grid_list):
+                for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
                     command=MF_grid_command()
                     command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
                     if constraints:
@@ -999,7 +997,7 @@ class Mf_minimise:
 
 
                     memo = MF_grid_memo(super_grid_memo)
-                    self.relax.processor.add_to_queue(command,memo)
+                    self.relax.processor.add_to_queue(command, memo)
 
             else:
                 command=MF_minimise_command()
@@ -1014,35 +1012,35 @@ class Mf_minimise:
                 else:
                     command.set_minimise(args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
 
-                memo = MF_memo(model_free=self,index=index,sim_index=sim_index,run=self.run,param_set=self.param_set,scaling=scaling, scaling_matrix=scaling_matrix)
+                memo = MF_memo(model_free=self, index=index, sim_index=sim_index, run=self.run, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)
 
-                self.relax.processor.add_to_queue(command,memo)
+                self.relax.processor.add_to_queue(command, memo)
         #print self.relax.processor.command_queue
         #raise Exception('test')
         #self.relax.processor.run_queue()
 
 
-    def disassemble_result(self, param_vector, func, iter, fc, gc, hc, warning, spin, sim_index, param_set, scaling, scaling_matrix):
+    def disassemble_result(self, param_vector, func, iter, fc, gc, hc, warning, spin, sim_index, model_type, scaling, scaling_matrix):
         """Disassemble the optimisation results."""
 
-            #print '***',param_vector,func,iter,fc,gc,hc,warning,run,index,sim_index, param_set,scaling
+            #print '***', param_vector, func, iter, fc, gc, hc, warning, spin, sim_index, model_type, scaling
             #self.write_columnar_line(file=sys.stdout)
             #self.param_vector=param_vector
 
 #            print 'disassembel result'
-#            print 'param_vector',param_vector
-#            print 'func',func
-#            print 'iter',iter
-#            print 'fc',fc
-#            print 'gc',gc
-#            print 'hc',hc
-#            print 'warning',warning
-#            print 'run',run
-#            print 'index',index
-#            print 'sim_index',sim_index
-#            print ' param_set ',param_set
-#            print 'scaling',scaling
-#            print 'scaling_matrix',scaling_matrix
+#            print 'param_vector', param_vector
+#            print 'func', func
+#            print 'iter', iter
+#            print 'fc', fc
+#            print 'gc', gc
+#            print 'hc', hc
+#            print 'warning', warning
+#            print 'run', run
+#            print 'index', index
+#            print 'sim_index', sim_index
+#            print ' model_type ', model_type
+#            print 'scaling', scaling
+#            print 'scaling_matrix', scaling_matrix
             #FIXME this is a fix for old code
 #            self.iter_count = iter
 #            self.f_count = fc
