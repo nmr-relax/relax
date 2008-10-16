@@ -303,6 +303,103 @@ class Application_callback(object):
         processor.abort()
 
 
+class Capturing_exception(Exception):
+    '''A wrapper exception for an exception captured on a slave processor.
+
+    The wrapper will remember the stack trace on the remote machine and when raised and caught has a
+    string that includes the remote stack trace, which will be displayed along with the stack trace
+    on the master.
+    '''
+    def __init__(self,exc_info=None, rank='unknown', name='unknown'):
+        '''Initialise the wrapping exception.
+
+        @todo:   Would it be easier to pass a processor here.
+
+        @keyword exc_info:  Exception information as produced by sys.exc_info().
+        @type exc_info:     tuple
+        @keyword rank:      The rank of the processor on which the exception was raised.  The value
+                            is always greater than 1.
+        @type rank:         int
+        @keyword name:      The name of the processor on which the exception was raised as returned
+                            by processor.get_name().
+        @type name:         str
+        '''
+
+        Exception.__init__(self)
+        self.rank=rank
+        self.name=name
+        if exc_info == None:
+            (exception_type,exception_instance,exception_traceback)=sys.exc_info()
+        else:
+            (exception_type,exception_instance,exception_traceback)=exc_info
+        #PY3K: this check can be removed once string based exceptions are no longer used
+    	if type(exception_type) ==  str:
+                self.exception_name = exception_type + ' (legacy string exception)'
+                self.exception_string=exception_type
+        else:
+            self.exception_name =  exception_type.__name__
+            self.exception_string = exception_instance.__str__()
+
+        self.traceback = traceback.format_tb(exception_traceback)
+
+    def __str__(self):
+        '''Get the string describing this exception.
+
+        @return:    The string describing this exception.
+        @rtype:     str
+        '''
+        message ='''
+
+                     %s
+
+                     %s
+
+                     Nested Exception from sub processor
+                     Rank: %s  Name: %s
+                     Exception type: %s
+                     Message: %s
+
+                     %s
+
+
+                 '''
+        message = textwrap.dedent(message)
+        result =  message % ('-'*120, ''.join(self.traceback) ,self. rank, self.name, self.exception_name,
+                             self.exception_string, '-'*120)
+        return result
+
+
+class Memo(object):
+    '''A memo of objects and data.
+    
+    This is for a slave_command to provide to its results-commands upon return to the master
+    processor - designed for overriding by users.
+    '''
+
+    def memo_id(self):
+        '''Get the unique id for the memo.
+        
+        Currently this is the objects unique python id (note these ids can be recycled once the memo
+        has been garbage collected it cannot be used as a unique longterm hash).
+
+        @return:    A unique id for this memo.
+        @rtype:     int
+        '''
+        return id(self)
+
+
+
+class Null_result_command(Result_command):
+    '''An empty result command.
+
+    This command should be returned from slave_command if no other Result_command  is returned. This
+    allows the queue processor to register that the slave processor has completed its processing and
+    schedule new Slave-commands to it.
+    '''
+    def __init__(self,processor,completed=True):
+        super(Null_result_command,self).__init__(processor=processor,completed=completed)
+
+
 class Processor(object):
     '''The central class of the multi processor framework.
     
@@ -714,6 +811,7 @@ class Processor(object):
 
         return (stdout_string,stderr_string)
 
+
 # TODO currently uni_processor doesn't have a process_result should this be integrated
 class Result(object):
     '''A basic result object returned from a slave processor via return_object.
@@ -766,29 +864,6 @@ class Result(object):
         self.rank = processor.rank()
         '''The rank of the current processor, used in command scheduling on the master processor.'''
 
-# TODO: make this a result_command
-class Result_string(Result):
-    '''A simple result from a slave containing a result.
-    
-    The processor will print this string via sys.__stdout__.
-
-    @note:  This may become a result_command so as to simplify things in the end.
-    '''
-    #TODO: correct order of parameters should be string,processor,completed
-    def __init__(self,processor,string,completed):
-        '''Initialiser.
-
-        @see:   multi.processor.Processor.std_stdio_capture.
-        @todo:  Check inherited parameters are documented.
-
-        @param string:  A string to return the master processor for output to STDOUT (note the
-                        master may split the string into components for STDOUT and STDERR depending
-                        on the prefix string. This class is not really designed for subclassing.
-        @type string:   str
-        '''
-        super(Result_string,self).__init__(processor=processor,completed=completed)
-        self.string=string
-
 
 class Result_command(Result):
     '''A general result command - designed to be subclassed by users.
@@ -824,17 +899,6 @@ class Result_command(Result):
         '''
         pass
 
-class Null_result_command(Result_command):
-    '''An empty result command.
-
-    This command should be returned from slave_command if no other Result_command  is returned. This
-    allows the queue processor to register that the slave processor has completed its processing and
-    schedule new Slave-commands to it.
-    '''
-    def __init__(self,processor,completed=True):
-        super(Null_result_command,self).__init__(processor=processor,completed=completed)
-
-
 
 class Result_exception(Result_command):
     '''Return and raise an exception from the salve processor.'''
@@ -851,6 +915,30 @@ class Result_exception(Result_command):
     def run(self,processor,memo):
         '''Raise the exception from the Slave_processor.'''
         raise self.exception
+
+
+# TODO: make this a result_command
+class Result_string(Result):
+    '''A simple result from a slave containing a result.
+    
+    The processor will print this string via sys.__stdout__.
+
+    @note:  This may become a result_command so as to simplify things in the end.
+    '''
+    #TODO: correct order of parameters should be string,processor,completed
+    def __init__(self,processor,string,completed):
+        '''Initialiser.
+
+        @see:   multi.processor.Processor.std_stdio_capture.
+        @todo:  Check inherited parameters are documented.
+
+        @param string:  A string to return the master processor for output to STDOUT (note the
+                        master may split the string into components for STDOUT and STDERR depending
+                        on the prefix string. This class is not really designed for subclassing.
+        @type string:   str
+        '''
+        super(Result_string,self).__init__(processor=processor,completed=completed)
+        self.string=string
 
 
 class Slave_command(object):
@@ -903,92 +991,3 @@ class Slave_command(object):
         @type completed:    bool
         '''
         pass
-
-
-
-class Memo(object):
-    '''A memo of objects and data.
-    
-    This is for a slave_command to provide to its results-commands upon return to the master
-    processor - designed for overriding by users.
-    '''
-
-    def memo_id(self):
-        '''Get the unique id for the memo.
-        
-        Currently this is the objects unique python id (note these ids can be recycled once the memo
-        has been garbage collected it cannot be used as a unique longterm hash).
-
-        @return:    A unique id for this memo.
-        @rtype:     int
-        '''
-        return id(self)
-
-
-
-class Capturing_exception(Exception):
-    '''A wrapper exception for an exception captured on a slave processor.
-
-    The wrapper will remember the stack trace on the remote machine and when raised and caught has a
-    string that includes the remote stack trace, which will be displayed along with the stack trace
-    on the master.
-    '''
-    def __init__(self,exc_info=None, rank='unknown', name='unknown'):
-        '''Initialise the wrapping exception.
-
-        @todo:   Would it be easier to pass a processor here.
-
-        @keyword exc_info:  Exception information as produced by sys.exc_info().
-        @type exc_info:     tuple
-        @keyword rank:      The rank of the processor on which the exception was raised.  The value
-                            is always greater than 1.
-        @type rank:         int
-        @keyword name:      The name of the processor on which the exception was raised as returned
-                            by processor.get_name().
-        @type name:         str
-        '''
-
-        Exception.__init__(self)
-        self.rank=rank
-        self.name=name
-        if exc_info == None:
-            (exception_type,exception_instance,exception_traceback)=sys.exc_info()
-        else:
-            (exception_type,exception_instance,exception_traceback)=exc_info
-        #PY3K: this check can be removed once string based exceptions are no longer used
-    	if type(exception_type) ==  str:
-                self.exception_name = exception_type + ' (legacy string exception)'
-                self.exception_string=exception_type
-        else:
-            self.exception_name =  exception_type.__name__
-            self.exception_string = exception_instance.__str__()
-
-        self.traceback = traceback.format_tb(exception_traceback)
-
-    def __str__(self):
-        '''Get the string describing this exception.
-
-        @return:    The string describing this exception.
-        @rtype:     str
-        '''
-        message ='''
-
-                     %s
-
-                     %s
-
-                     Nested Exception from sub processor
-                     Rank: %s  Name: %s
-                     Exception type: %s
-                     Message: %s
-
-                     %s
-
-
-                 '''
-        message = textwrap.dedent(message)
-        result =  message % ('-'*120, ''.join(self.traceback) ,self. rank, self.name, self.exception_name,
-                             self.exception_string, '-'*120)
-        return result
-
-
