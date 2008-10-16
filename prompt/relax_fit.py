@@ -54,23 +54,24 @@ class Relax_fit:
         formula
 
         -----
-                     ____________________________
-            sd =   \/ sum({Ii - Iav}^2) / (n - 1) ,
+
+            sigma =  sum({Ii - Iav}^2) / (n - 1) ,
 
         -----
 
-        where n is the total number of collected spectra for the time point and i is the
-        corresponding index, Ii is the peak intensity for spectrum i, Iav is the mean over all
-        spectra, ie the sum of all peak intensities divided by n.
+        where sigma is the variance or square of the standard deviation, n is the total number of
+        collected spectra for the time point and i is the corresponding index, Ii is the peak
+        intensity for spectrum i, Iav is the mean over all spectra, ie the sum of all peak
+        intensities divided by n.
 
 
         Averaging of the errors
         ~~~~~~~~~~~~~~~~~~~~~~~
 
         As the value of n in the above equation is always very low, normally only a couple of
-        spectra are collected per time point, the standard deviation of all residues is averaged for
-        a single time point.  Although this results in all residues having the same error, the
-        accuracy of the error estimate is significantly improved.
+        spectra are collected per time point, the variance of all spins is averaged for a single
+        time point.  Although this results in all spins having the same error, the accuracy of the
+        error estimate is significantly improved.
 
 
         Errors across multiple time points
@@ -78,9 +79,9 @@ class Relax_fit:
 
         If all spectra are collected in duplicate (triplicate or higher number of spectra are
         supported), the each time point will have its own error estimate.  However, if there are
-        time points in the series which only consist of a single spectrum, then the standard
-        deviations of replicated time points will be averaged.  Hence, for the entire experiment
-        there will be a single error value for all residues and for all time points.
+        time points in the series which only consist of a single spectrum, then the variances of
+        replicated time points will be averaged.  Hence, for the entire experiment there will be a
+        single error value for all spins and for all time points.
 
         A better approach rather than averaging across all time points would be to use a form of
         interpolation as the errors across time points generally decreases for longer time periods.
