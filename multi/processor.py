@@ -83,9 +83,9 @@ names of the form:
 
 where <Type> is the name of the processor with the correct capitalisation e.g.
 
->>> processor_name =  'mpi4py'
+>>> processor_name = 'mpi4py'
 >>> callback = My_application-callback()
->>> proccesor_size=6
+>>> proccesor_size = 6
 >>> processor.load_multiprocessor(processor_name, callback, processor_size)
 
 will load multi.mpi4py_processor.Mpi4py_Processor.
@@ -102,11 +102,12 @@ The following are yet to be implemented:
 
 '''
 
-#FIXME: better  requirement of inherited commands
-# TODO: check exceptiosn on master
-import time,datetime,math,sys,os
-import traceback,textwrap
-from  multi.prependStringIO import PrependStringIO,PrependOut
+#FIXME: better requirement of inherited commands.
+#TODO: check exceptions on master.
+import time, datetime, math, sys, os
+import traceback, textwrap
+from multi.prependStringIO import PrependStringIO, PrependOut
+
 
 def import_module(module_path, verbose=False):
     '''Import the python module named by module_path.
@@ -124,13 +125,13 @@ def import_module(module_path, verbose=False):
     result = None
 
     #try:
-    module = __import__(module_path,globals(),  locals(), [])
+    module = __import__(module_path, globals(), locals(), [])
     if verbose:
         print 'loaded module %s' % module_path
     #except Exception, e:
     #    if verbose:
     #        print 'failed to load module_path %s' % module_path
-    #        print 'exception:',e
+    #        print 'exception:', e
 
     #FIXME: needs more failure checking
     if module != None:
@@ -142,9 +143,9 @@ def import_module(module_path, verbose=False):
     return result
 
 
-#FIXME error checking for if module required not found
-#FIXME module loading code needs to be in a util module
-#FIXME: remove parameters that are not required to load the module (processor_size)
+#FIXME error checking for if module required not found.
+#FIXME module loading code needs to be in a util module.
+#FIXME: remove parameters that are not required to load the module (processor_size).
 def load_multiprocessor(processor_name, callback, processor_size):
     '''Load a multi processor given its name.
 
@@ -163,35 +164,33 @@ def load_multiprocessor(processor_name, callback, processor_size):
     @rtype:                 multi.processor.Processor instance
     '''
 
-    processor_name =  processor_name + '_processor'
-    class_name= processor_name[0].upper() + processor_name[1:]
-    module_path = '.'.join(('multi',processor_name))
+    processor_name = processor_name + '_processor'
+    class_name = processor_name[0].upper() + processor_name[1:]
+    module_path = '.'.join(('multi', processor_name))
 
 
     modules = import_module(module_path)
     #print modules
 
-    if hasattr(modules[-1],class_name):
-        clazz =  getattr(modules[-1], class_name)
+    if hasattr(modules[-1], class_name):
+        clazz = getattr(modules[-1], class_name)
     else:
-        raise Exception("can't load class %s from module %s" % (class_name,module_path))
+        raise Exception("can't load class %s from module %s" % (class_name, module_path))
 
-    object = clazz(callback=callback,processor_size=processor_size)
+    object = clazz(callback=callback, processor_size=processor_size)
     return object
 
 
 #sys.settrace(traceit)
 # FIXME useful debugging code but where to put it
-def print_file_lineno(range=xrange(1,2)):
-
-
+def print_file_lineno(range=xrange(1, 2)):
     for level in range:
         print '<< ', level,
         try:
             file_name = sys._getframe(level).f_code.co_filename
             function_name = sys._getframe(level).f_code.co_name
             line_number = sys._getframe(level).f_lineno
-            msg = ': %s - %s - %d>>'  %(file_name,function_name,line_number)
+            msg = ': %s - %s - %d>>' % (file_name, function_name, line_number)
             print msg
         except Exception, e:
             print e
@@ -199,9 +198,9 @@ def print_file_lineno(range=xrange(1,2)):
 
 
 #FIXME: useful for debugging but where to put it
-def print_message(processor,message):
-    f=open ('error' + `processor.rank()` + '.txt','a')
-    f.write(message+'\n')
+def print_message(processor, message):
+    f = open('error' + `processor.rank()` + '.txt', 'a')
+    f.write(message + '\n')
     f.flush()
     f.close()
 
@@ -211,6 +210,7 @@ def print_message(processor,message):
 #    raise_unimplimented(f)
 
 #    return f
+
 
 def raise_unimplimented(method):
     '''Standard function for raising NotImplementedError for unimplemented abstract methods.
@@ -241,7 +241,7 @@ def traceit(frame, event, arg):
         function_name = frame.f_code.co_name
         line_number = frame.f_lineno
         line = linecache.getline(file_name, line_number)
-        msg = '<< %s - %s - %d>> %s'  %(file_name,function_name,line_number, line[:-1])
+        msg = '<< %s - %s - %d>> %s' % (file_name, function_name, line_number, line[:-1])
         print >> sys.__stdout__, msg
 
     return traceit
@@ -249,7 +249,7 @@ def traceit(frame, event, arg):
 
 class Application_callback(object):
     '''Call backs provided to the host application by the multi processor framework.
-    
+
     This class allows for independence from the host class/application.
 
     @note:  B{The logic behind the design} the callbacks are defined as two attributes
@@ -260,7 +260,7 @@ class Application_callback(object):
             by the default methods default_init_master & default_handle_exception.
     '''
 
-    def __init__(self,master):
+    def __init__(self, master):
         '''Initialise the callback interface.
 
         @param master:  The data for the host application. In the default implementation this is an
@@ -268,23 +268,26 @@ class Application_callback(object):
         @type master:   object
         '''
 
-        self.master=master
+        self.master = master
         '''The host application.'''
 
         self.init_master = self.default_init_master
-        self.handle_exception= self.default_handle_exception
+        self.handle_exception = self.default_handle_exception
 
-    def default_init_master(self,processor):
+
+    def default_init_master(self, processor):
         '''Start the main loop of the host application.
 
         @param processor:   The processor instance.
         @type processor:    multi.processor.Processor instance
         '''
+
         self.master.run()
 
-    def default_handle_exception(self,processor,exception):
+
+    def default_handle_exception(self, processor, exception):
         '''Handle an exception raised in the processor framework.
-        
+
         The function is responsible for aborting the processor by calling processor.abort() as its
         final act.
 
@@ -297,6 +300,7 @@ class Application_callback(object):
                             exception from a slave.
         @type exception:    Exception instance
         '''
+
         #TODO: should use stderr?
         # note we print to __stdout__ as sys.stdout may be a wrapper we applied
         traceback.print_exc(file=sys.__stdout__)
@@ -310,7 +314,8 @@ class Capturing_exception(Exception):
     string that includes the remote stack trace, which will be displayed along with the stack trace
     on the master.
     '''
-    def __init__(self,exc_info=None, rank='unknown', name='unknown'):
+
+    def __init__(self, exc_info=None, rank='unknown', name='unknown'):
         '''Initialise the wrapping exception.
 
         @todo:   Would it be easier to pass a processor here.
@@ -326,21 +331,22 @@ class Capturing_exception(Exception):
         '''
 
         Exception.__init__(self)
-        self.rank=rank
-        self.name=name
+        self.rank = rank
+        self.name = name
         if exc_info == None:
-            (exception_type,exception_instance,exception_traceback)=sys.exc_info()
+            (exception_type, exception_instance, exception_traceback) = sys.exc_info()
         else:
-            (exception_type,exception_instance,exception_traceback)=exc_info
+            (exception_type, exception_instance, exception_traceback) = exc_info
         #PY3K: this check can be removed once string based exceptions are no longer used
-    	if type(exception_type) ==  str:
+    	if type(exception_type) == str:
                 self.exception_name = exception_type + ' (legacy string exception)'
-                self.exception_string=exception_type
+                self.exception_string = exception_type
         else:
-            self.exception_name =  exception_type.__name__
+            self.exception_name = exception_type.__name__
             self.exception_string = exception_instance.__str__()
 
         self.traceback = traceback.format_tb(exception_traceback)
+
 
     def __str__(self):
         '''Get the string describing this exception.
@@ -348,37 +354,36 @@ class Capturing_exception(Exception):
         @return:    The string describing this exception.
         @rtype:     str
         '''
-        message ='''
+        message = '''
 
                      %s
 
                      %s
 
                      Nested Exception from sub processor
-                     Rank: %s  Name: %s
+                     Rank: %s Name: %s
                      Exception type: %s
                      Message: %s
 
                      %s
 
 
-                 '''
+                  '''
         message = textwrap.dedent(message)
-        result =  message % ('-'*120, ''.join(self.traceback) ,self. rank, self.name, self.exception_name,
-                             self.exception_string, '-'*120)
+        result =  message % ('-'*120, ''.join(self.traceback), self.rank, self.name, self.exception_name, self.exception_string, '-'*120)
         return result
 
 
 class Memo(object):
     '''A memo of objects and data.
-    
+
     This is for a slave_command to provide to its results-commands upon return to the master
     processor - designed for overriding by users.
     '''
 
     def memo_id(self):
         '''Get the unique id for the memo.
-        
+
         Currently this is the objects unique python id (note these ids can be recycled once the memo
         has been garbage collected it cannot be used as a unique longterm hash).
 
@@ -388,21 +393,21 @@ class Memo(object):
         return id(self)
 
 
-
 class Null_result_command(Result_command):
     '''An empty result command.
 
-    This command should be returned from slave_command if no other Result_command  is returned. This
+    This command should be returned from slave_command if no other Result_command is returned. This
     allows the queue processor to register that the slave processor has completed its processing and
     schedule new Slave-commands to it.
     '''
-    def __init__(self,processor,completed=True):
-        super(Null_result_command,self).__init__(processor=processor,completed=completed)
+
+    def __init__(self, processor, completed=True):
+        super(Null_result_command, self).__init__(processor=processor, completed=completed)
 
 
 class Processor(object):
     '''The central class of the multi processor framework.
-    
+
     This provides facilities for process management, command queueing, command scheduling, remote
     execution of commands, and handling of results and error from commands. The class is abstract
     and should be overridden to implement new interprocess communication methods, however, even then
@@ -420,7 +425,7 @@ class Processor(object):
             current command line.
     '''
 
-    def __init__(self,processor_size,callback, stdio_capture=None):
+    def __init__(self, processor_size, callback, stdio_capture=None):
         '''Initialise the processor.
 
         @param processor_size:  The requested number of __slave__processors, if the number of
@@ -448,27 +453,27 @@ class Processor(object):
         @type stdio_capture:    list of 2 file-like objects
         '''
 
-        self.callback=callback
+        self.callback = callback
         '''Callback to interface to the host application
-        
+
         @see Application_callback.'''
 
-        self.grainyness=1
+        self.grainyness = 1
         '''The number of sub jobs to queue for each processor if we have more jobs than processors.'''
 
-#        # CHECKME: am  I implemented?, should I be an application callback function
-#        self.pre_queue_command=None
+#        # CHECKME: am I implemented?, should I be an application callback function
+#        self.pre_queue_command = None
 #        ''' command to call before the queue is run'''
-#        # CHECKME: am  I implemented?, should I be an application callback function
-#        self.post_queue_command=None
+#        # CHECKME: am I implemented?, should I be an application callback function
+#        self.post_queue_command = None
 #        ''' command to call after the queue has completed running'''
 #
         #CHECKME: should I be a singleton
-        self.NULL_RESULT=Null_result_command(processor=self)
+        self.NULL_RESULT = Null_result_command(processor=self)
         '''Empty result command used by commands which do not return a result (a singleton?).'''
 
 
-        self._processor_size=processor_size
+        self._processor_size = processor_size
         '''Number of slave processors available in this processor.'''
 
         # CHECKME: integration with with stdo capture on slaves
@@ -482,7 +487,8 @@ class Processor(object):
     # FIXME: cleanup move function into class
     load_multiprocessor = staticmethod(load_multiprocessor)
 
-    def add_to_queue(self,command,memo=None):
+
+    def add_to_queue(self, command, memo=None):
         '''Add a command for remote execution to the queue - an abstract method.
 
         @see: multi.processor.Slave_command
@@ -496,7 +502,9 @@ class Processor(object):
                         generated by the command submitted.
         @type memo:     Memo subclass instance
         '''
+
         raise_unimplimented(self.add_to_queue)
+
 
     def run_queue(self):
         '''Run the processor queue - an abstract method.
@@ -504,7 +512,9 @@ class Processor(object):
         All commands queued with add_to_queue will be executed, this function causes the current
         thread to block until the command has completed.
         '''
+
         raise_unimplimented(self.run_queue)
+
 
     def run(self):
         '''Run the processor - an abstract method.
@@ -515,9 +525,11 @@ class Processor(object):
 
         @see:   multi.processor.Application_callback.
         '''
+
         raise_unimplimented(self.run)
 
-    def return_object(self,result):
+
+    def return_object(self, result):
         '''Return a result to the master processor from a slave - an abstract method.
 
         @param result:  A result to be returned to the master processor.
@@ -526,7 +538,9 @@ class Processor(object):
         @see:   multi.processor.Result_string.
         @see:   multi.processor.Resulf_command.
         '''
+
         raise_unimplimented(self.return_object)
+
 
     def get_name(self):
         '''Get the name of the current processor - an abstract method.
@@ -539,7 +553,9 @@ class Processor(object):
         @return:    The processor identifier.
         @rtype:     str
         '''
+
         raise_unimplimented(self.get_name)
+
 
     def abort(self):
         '''Shutdown the multi processor in exceptional conditions - designed for overriding.
@@ -558,12 +574,13 @@ class Processor(object):
         @see:   multi.mpi4py_processor.Mpi4py_processor.abort().
         @see:   mpi4py.MPI.COMM_WORLD.Abort().
         '''
+
         sys.exit()
+
 
     # FIXME is this used?
 #    def exit(self):
 #        raise_unimplimented(self.exit)
-
 
 
     def rank(self):
@@ -575,7 +592,9 @@ class Processor(object):
         @return:    The rank of the processor.
         @rtype:     int
         '''
+
         raise_unimplimented(self.rank)
+
 
     def processor_size(self):
         '''Get the number of slave processors - designed for overriding.
@@ -583,7 +602,9 @@ class Processor(object):
         @return:    The number of slave processors.
         @rtype:     int
         '''
+
         return self._processor_size
+
 
     def get_intro_string(self):
         '''Get a string describing the multi processor - designed for overriding.
@@ -598,6 +619,7 @@ class Processor(object):
         @return:    A string describing the multi processor.
         @rtype:     str
         '''
+
         raise_unimplimented(self.get_intro_string)
 
 
@@ -605,7 +627,8 @@ class Processor(object):
 #        sys.stderr = self.save_stderr
 #        sys.stdout = self.save_stdout
 
-    def run_command_globally(self,command):
+
+    def run_command_globally(self, command):
         '''Run the same command on all slave processors.
 
         @see:   multi.processor.processor.Slave_command.
@@ -613,6 +636,7 @@ class Processor(object):
         @param command: A slave command.
         @type command:  Slave_command instance
         '''
+
         queue = [command for i in range(self.processor_size())]
         self.run_command_queue(queue)
 
@@ -625,10 +649,10 @@ class Processor(object):
         '''
 
         if self.rank() == 0:
-            self.start_time =  time.time()
+            self.start_time = time.time()
 
 
-    def get_time_delta(self,start_time,end_time):
+    def get_time_delta(self, start_time, end_time):
         '''Utility function called to format the difference between application start and end times.
 
         @todo:  Check my format is correct.
@@ -641,11 +665,12 @@ class Processor(object):
         @rtype:             str
         '''
 
-        time_diff= end_time - start_time
+        time_diff = end_time - start_time
         time_delta = datetime.timedelta(seconds=time_diff)
         time_delta_str = time_delta.__str__()
-        (time_delta_str,millis) = time_delta_str.split('.',1)
+        (time_delta_str, millis) = time_delta_str.split('.', 1)
         return time_delta_str
+
 
     def post_run(self):
         '''Method called after the application main loop has finished - designed for overriding.
@@ -654,11 +679,11 @@ class Processor(object):
         call the base method as their last action via super().  Only called on the master on normal
         exit from the applications run loop.
         '''
+
         if self.rank() == 0:
             end_time = time.time()
-            time_delta_str = self.get_time_delta(self.start_time,end_time)
+            time_delta_str = self.get_time_delta(self.start_time, end_time)
             print 'overall runtime: ' + time_delta_str + '\n'
-
 
 
     def rank_format_string_width(self):
@@ -669,7 +694,9 @@ class Processor(object):
         @return:    The number of digits in the biggest slave processor's rank.
         @rtype:     int
         '''
+
         return int(math.ceil(math.log10(self.processor_size())))
+
 
     def rank_format_string(self):
         '''Get a formatted string with the rank of a slave.
@@ -679,12 +706,14 @@ class Processor(object):
         @return:    The string designating the rank of the slave.
         @rtype:     str
         '''
-        digits  = self.rank_format_string_width()
+
+        digits = self.rank_format_string_width()
         format = '%%%di' % digits
         return format
 
+
     # fixme: is an argument of the form stio_capture needed
-    def setup_stdio_capture(self,stdio_capture=None):
+    def setup_stdio_capture(self, stdio_capture=None):
         '''Default fn to setup capturing and manipulating of stdio on slaves and master processors.
 
         This is designed for overriding.
@@ -700,17 +729,19 @@ class Processor(object):
         @see:   sys.
         @todo:  Remove useless stdio_capture parameter.
         '''
-        rank =self.rank()
-        pre_strings=('','')
 
-        if stdio_capture==None:
+        rank = self.rank()
+        pre_strings = ('', '')
+
+        if stdio_capture == None:
             pre_strings = self.get_stdio_pre_strings()
-            stdio_capture=self.std_stdio_capture(pre_strings=pre_strings)
+            stdio_capture = self.std_stdio_capture(pre_strings=pre_strings)
 
-        self.stdio_capture=stdio_capture
+        self.stdio_capture = stdio_capture
+
 
     #TODO check if pre_strings are used anyhere if not delete
-    def std_stdio_capture(self,pre_strings=('','')):
+    def std_stdio_capture(self, pre_strings=('', '')):
         '''Get the default sys.stdout and sys.stderr replacements.
 
         On the master the replacement prepend output with 'MM S]' or MM E]' for the STDOUT and
@@ -730,23 +761,21 @@ class Processor(object):
         @rtype:                 tuple of two file-like objects
         '''
 
-
-
         stdout_capture = None
         stderr_capture = None
 
-        if self.rank() ==0:
+        if self.rank() == 0:
             stdout_capture = PrependOut(pre_strings[0], sys.stdout)
-            #FIXME: seems to be that writing to stderr results leeds to incorrect serialisation of output
+            #FIXME: seems to be that writing to stderr results leads to incorrect serialisation of output
             stderr_capture = PrependOut(pre_strings[1], sys.__stdout__)
         else:
             stdout_capture = PrependStringIO(pre_strings[0])
-            stderr_capture = PrependStringIO(pre_strings[1],target_stream=stdout_capture)
+            stderr_capture = PrependStringIO(pre_strings[1], target_stream=stdout_capture)
+
+        return (stdout_capture, stderr_capture)
 
 
-        return (stdout_capture,stderr_capture)
-
-    def capture_stdio(self,stdio_capture=None):
+    def capture_stdio(self, stdio_capture=None):
         '''Enable capture of the STDOUT and STDERR by self.stdio_capture or user supplied streams.
 
         @note:  On slave processors the replacement STDOUT and STDERR streams should be file like
@@ -758,11 +787,12 @@ class Processor(object):
         @type stdio_capture:    list of two file-like objects
         '''
 
-        if stdio_capture  == None:
-            stdio_capture=self.stdio_capture
+        if stdio_capture == None:
+            stdio_capture = self.stdio_capture
 
         sys.stdout = self.stdio_capture[0]
         sys.stderr = self.stdio_capture[1]
+
 
     def get_stdio_capture(self):
         '''Get the file like objects currently replacing sys.stdout and sys.stderr.
@@ -773,32 +803,33 @@ class Processor(object):
 
         return self.stdio_capture
 
+
     def restore_stdio(self):
         '''Restore sys.stdout and sys.stderr to the system defaults.
 
         @note:  sys.stdout and sys.stderr are replaced with sys.__stdout__ ans sys.__stderr__.
         '''
 
-        sys.stdout=sys.__stdout__
-        sys.stderr=sys.__stderr__
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+
 
     def get_stdio_pre_strings(self):
         '''Get the strings used prepend STDOUT and STDERR dependant on the current rank.
 
-        For processors with only one slave the result should be ('','') - designed for overriding.
+        For processors with only one slave the result should be ('', '') - designed for overriding.
 
-        @note:  The defaults are ('MM X]',MM E]') and  ('NN S]' , NN E]') for masters and slaves
+        @note:  The defaults are ('MM X]', 'MM E]') and ('NN S]' , 'NN E]') for masters and slaves
                 respectively with NN replaced by the rank of the processor.
 
         @return:    A list of two strings for STDOUT and STDERR respectively.
         @rtype:     list of 2 str
         '''
 
-
-        pre_string =''
+        pre_string = ''
         stdout_string = ''
         stderr_string = ''
-        rank =self.rank()
+        rank = self.rank()
 
         if self.processor_size() > 1 and rank > 0:
             pre_string = self.rank_format_string() % rank
@@ -806,10 +837,10 @@ class Processor(object):
             pre_string = 'M'*self.rank_format_string_width()
 
         if self.processor_size() > 1:
-            stderr_string  =  pre_string + ' E> '
-            stdout_string  =  pre_string + ' S> '
+            stderr_string = pre_string + ' E> '
+            stdout_string = pre_string + ' S> '
 
-        return (stdout_string,stderr_string)
+        return stdout_string, stderr_string
 
 
 # TODO currently uni_processor doesn't have a process_result should this be integrated
@@ -830,7 +861,7 @@ class Result(object):
     @see:   multi.processor.Result_command.
     '''
 
-    def __init__(self,processor,completed):
+    def __init__(self, processor, completed):
         '''Initialise a result.
 
         This object is designed for subclassing and __init__ should be called via the super()
@@ -850,16 +881,17 @@ class Result(object):
                             be False.
         @type completed:    bool
         '''
+
         #TODO: assert on slave if processor_size > 1
         #TODO: check if a completed command will add a noticeable overhead (I doubt it will)
-        self.completed=completed
+        self.completed = completed
         '''A flag used in batching result returns to indicate that the sequence has completed.
-        
+
         This is an optimisation to prevent the sending an extra batched result queue completion
         result being sent, it may be an over early optimisation.'''
-        self.memo_id=None
+        self.memo_id = None
         '''The memo_id of the Slave_command currently being processed on this processor.
-        
+
         This value is set by the return_object method to the current Slave_commands memo_id.'''
         self.rank = processor.rank()
         '''The rank of the current processor, used in command scheduling on the master processor.'''
@@ -874,13 +906,13 @@ class Result_command(Result):
     @see:   multi.processor.Slave_command.
     '''
 
-    def __init__(self,processor,completed,memo_id=None):
+    def __init__(self, processor, completed, memo_id=None):
         #TODO: check this method is documnted by its parent
-        super(Result_command,self).__init__(processor=processor,completed=completed)
-        self.memo_id=memo_id
+        super(Result_command, self).__init__(processor=processor, completed=completed)
+        self.memo_id = memo_id
 
 
-    def run(self,processor,memo):
+    def run(self, processor, memo):
         '''The run method of the result command.
 
         This method will be called when the result command is processed by the master and should
@@ -897,36 +929,42 @@ class Result_command(Result):
                             the queue. This provides local storage on the master.
         @type memo:         Memo instance or None
         '''
+
         pass
 
 
 class Result_exception(Result_command):
     '''Return and raise an exception from the salve processor.'''
-    def __init__(self,processor,exception,completed=True):
+
+    def __init__(self, processor, exception, completed=True):
         '''Initialise the result command with an exception.
 
         @param exception:   An exception that was raised on the slave processor (note the real
                             exception will be wrapped in a Capturing_exception.
         @type exception:    Exception instance
         '''
-        super(Result_exception,self).__init__(processor=processor,completed=completed)
-        self.exception=exception
 
-    def run(self,processor,memo):
+        super(Result_exception, self).__init__(processor=processor, completed=completed)
+        self.exception = exception
+
+
+    def run(self, processor, memo):
         '''Raise the exception from the Slave_processor.'''
+
         raise self.exception
 
 
 # TODO: make this a result_command
 class Result_string(Result):
     '''A simple result from a slave containing a result.
-    
+
     The processor will print this string via sys.__stdout__.
 
     @note:  This may become a result_command so as to simplify things in the end.
     '''
-    #TODO: correct order of parameters should be string,processor,completed
-    def __init__(self,processor,string,completed):
+
+    #TODO: correct order of parameters should be string, processor, completed
+    def __init__(self, processor, string, completed):
         '''Initialiser.
 
         @see:   multi.processor.Processor.std_stdio_capture.
@@ -937,8 +975,9 @@ class Result_string(Result):
                         on the prefix string. This class is not really designed for subclassing.
         @type string:   str
         '''
-        super(Result_string,self).__init__(processor=processor,completed=completed)
-        self.string=string
+
+        super(Result_string, self).__init__(processor=processor, completed=completed)
+        self.string = string
 
 
 class Slave_command(object):
@@ -957,22 +996,25 @@ class Slave_command(object):
     '''
 
     def __init__(self):
-        self.memo_id=None
+        self.memo_id = None
 
-    def set_memo_id(self,memo):
+
+    def set_memo_id(self, memo):
         '''Called by the master processor to remember this Slave_commands memo.
 
         @param memo:    The memo to remember, memos are remembered by getting the memo_id of the
                         memo.
         '''
+
         if memo != None:
             self.memo_id = memo.memo_id()
         else:
-            self.memo_id=None
+            self.memo_id = None
 
-    def run(self,processor,completed):
+
+    def run(self, processor, completed):
         '''Run the slave command on the slave processor.
-        
+
         The run command B{must} return at least one Result_command even if it is a
         processor.NULL_RESULT.  Results are returned from the Slave_command to the master processor
         using the return_object method of the processor passed to the command. Any exceptions raised
@@ -990,4 +1032,5 @@ class Slave_command(object):
                             optimisation.
         @type completed:    bool
         '''
+
         pass
