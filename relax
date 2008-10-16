@@ -162,7 +162,7 @@ class Relax:
             self.licence()
 
 
-    def arguments(self, args):
+    def arguments(self):
         """Process the command line arguments."""
 
         # Parser object.
@@ -183,7 +183,7 @@ class Relax:
         parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
 
         # Parse the options.
-        (options, args) = parser.parse_args(args)
+        (options, args) = parser.parse_args()
 
         # Debugging flag.
         if options.debug:
@@ -436,7 +436,7 @@ if __name__ == "__main__":
         relax_instance = Relax()
 
         # Process the command line arguments.
-        relax_instance.arguments(sys.argv[1:])
+        relax_instance.arguments()
 
         # Set up the multi-processor elements.
         callbacks = Application_callback(master=relax_instance)
