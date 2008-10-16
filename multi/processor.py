@@ -207,12 +207,12 @@ def print_message(processor, message):
 
 #requires 2.4 decorators@abstract
 #def abstract(f):
-#    raise_unimplimented(f)
+#    raise_unimplemented(f)
 
 #    return f
 
 
-def raise_unimplimented(method):
+def raise_unimplemented(method):
     '''Standard function for raising NotImplementedError for unimplemented abstract methods.
 
     @todo:  For python versions >= 2.4 it is possible to use annotations and meta classes to provide
@@ -512,7 +512,7 @@ class Processor(object):
         @type memo:     Memo subclass instance
         '''
 
-        raise_unimplimented(self.add_to_queue)
+        raise_unimplemented(self.add_to_queue)
 
 
     def capture_stdio(self, stdio_capture=None):
@@ -536,7 +536,7 @@ class Processor(object):
 
     # FIXME is this used?
 #    def exit(self):
-#        raise_unimplimented(self.exit)
+#        raise_unimplemented(self.exit)
 
 
     def get_intro_string(self):
@@ -553,7 +553,7 @@ class Processor(object):
         @rtype:     str
         '''
 
-        raise_unimplimented(self.get_intro_string)
+        raise_unimplemented(self.get_intro_string)
 
 
     def get_name(self):
@@ -568,7 +568,7 @@ class Processor(object):
         @rtype:     str
         '''
 
-        raise_unimplimented(self.get_name)
+        raise_unimplemented(self.get_name)
 
 
     def get_stdio_capture(self):
@@ -675,7 +675,7 @@ class Processor(object):
         @rtype:     int
         '''
 
-        raise_unimplimented(self.rank)
+        raise_unimplemented(self.rank)
 
 
     def rank_format_string(self):
@@ -724,7 +724,7 @@ class Processor(object):
         @see:   multi.processor.Resulf_command.
         '''
 
-        raise_unimplimented(self.return_object)
+        raise_unimplemented(self.return_object)
 
 
     def run(self):
@@ -737,7 +737,7 @@ class Processor(object):
         @see:   multi.processor.Application_callback.
         '''
 
-        raise_unimplimented(self.run)
+        raise_unimplemented(self.run)
 
 
     def run_command_globally(self, command):
@@ -760,7 +760,7 @@ class Processor(object):
         thread to block until the command has completed.
         '''
 
-        raise_unimplimented(self.run_queue)
+        raise_unimplemented(self.run_queue)
 
 
     # fixme: is an argument of the form stio_capture needed
