@@ -53,14 +53,18 @@ class Generic(TestCase):
         cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
-        #self.relax.interpreter._Residue.create(72)
-        #self.relax.interpreter._Spin.name(name='N')
+        self.relax.interpreter._Residue.create(20)
+        self.relax.interpreter._Residue.create(23)
+        self.relax.interpreter._Residue.create(34)
+        self.relax.interpreter._Residue.create(35)
+        self.relax.interpreter._Residue.create(36)
+        self.relax.interpreter._Spin.name(name='N')
         
         # Read the peak list.
-        #self.relax.interpreter._Relax_fit.read(file="cNTnC.xpk", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", relax_time=0.0176, format='generic')
+        self.relax.interpreter._Relax_fit.read(file="generic.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", format='generic')
 
         # Test the data.
-        #self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], -0.1694)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], 1.0000)
 
 
 class NMRView(TestCase):
