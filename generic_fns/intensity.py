@@ -73,6 +73,24 @@ def det_dimensions(file_data, proton, heteronuc):
             break
 
 
+def intensity_generic(line, int_col):
+    """Function for returning relevant data from the generic peak intensity line.
+
+    The residue number, heteronucleus and proton names, and peak intensity will be returned.
+
+
+    @param line:        The single line of information from the intensity file.
+    @type line:         list of str
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
+                        file).
+    @type int_col:      int
+    @raises RelaxError: When the expected peak intensity is not a float.
+    """
+
+
+    # Not implemented yet...
+
+
 def intensity_sparky(line, int_col):
     """Function for returning relevant data from the Sparky peak intensity line.
 
@@ -310,6 +328,14 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     format_list = ['sparky', 'xeasy', 'nmrview']
     if format not in format_list:
         raise RelaxArgNotInListError, ('format', format, format_list)
+
+    # Generic.
+    if format == 'generic':
+        # Print out.
+        print "Generic formatted data file.\n"
+
+        # Set the intensity reading function.
+        intensity_fn = intensity_generic
 
     # Sparky.
     if format == 'sparky':
