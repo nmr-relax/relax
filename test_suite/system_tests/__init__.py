@@ -44,7 +44,7 @@ from model_selection import Modsel
 from n_state_model import N_state_model
 from noe import Noe
 from palmer import Palmer
-from peak_lists import NMRView, Sparky, XEasy
+from peak_lists import Generic, NMRView, Sparky, XEasy
 from pipe_create import Pipe_create
 from relax_fit import Relax_fit
 from results import Results
