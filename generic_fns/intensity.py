@@ -91,6 +91,63 @@ def intensity_generic(line, int_col):
     # Not implemented yet...
 
 
+def intensity_nmrview(line, int_col):
+    """Function for returning relevant data from the NMRView peak intensity line.
+
+    The residue number, heteronucleus and proton names, and peak intensity will be returned.
+
+
+    @param line:        The single line of information from the intensity file.
+    @type line:         list of str
+    @keyword int_col:   The column containing the peak intensity data. The default is 16 for
+                        intensities. Setting the int_col argument to 15 will use the volumes (or
+                        evolumes). For a non-standard formatted file, use a different value.
+    @type int_col:      int
+    @raises RelaxError: When the expected peak intensity is not a float.
+    """
+
+    # The residue number
+    res_num = ''
+    try:
+        res_num = string.strip(line[1],'{')
+        res_num = string.strip(res_num,'}')
+        res_num = string.split(res_num,'.')
+        res_num = res_num[0]
+    except ValueError:
+        raise RelaxError, "The peak list is invalid."
+
+    # Nuclei names.
+    x_name = ''
+    if line[8]!='{}':
+        x_name = string.strip(line[8],'{')
+        x_name = string.strip(x_name,'}')
+        x_name = string.split(x_name,'.')
+        x_name = x_name[1]
+    h_name = ''
+    if line[1]!='{}':
+        h_name = string.strip(line[1],'{')
+        h_name = string.strip(h_name,'}')
+        h_name = string.split(h_name,'.')
+        h_name = h_name[1]
+
+    # The peak intensity column.
+    if int_col == None:
+        int_col = 16
+    if int_col == 16:
+        print 'Using peak heights.'
+    if int_col == 15:
+        print 'Using peak volumes (or evolumes).'
+
+    # Intensity.
+    try:
+        intensity = float(line[int_col])
+    except ValueError:
+        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+
+    # Return the data.
+    return res_num, h_name, x_name, intensity
+
+
 def intensity_sparky(line, int_col):
     """Function for returning relevant data from the Sparky peak intensity line.
 
@@ -175,63 +232,6 @@ def intensity_xeasy(line, int_col, H_dim='w1'):
     # The peak intensity column.
     if int_col == None:
         int_col = 10
-
-    # Intensity.
-    try:
-        intensity = float(line[int_col])
-    except ValueError:
-        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
-
-    # Return the data.
-    return res_num, h_name, x_name, intensity
-
-
-def intensity_nmrview(line, int_col):
-    """Function for returning relevant data from the NMRView peak intensity line.
-
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
-    @param line:        The single line of information from the intensity file.
-    @type line:         list of str
-    @keyword int_col:   The column containing the peak intensity data. The default is 16 for
-                        intensities. Setting the int_col argument to 15 will use the volumes (or
-                        evolumes). For a non-standard formatted file, use a different value.
-    @type int_col:      int
-    @raises RelaxError: When the expected peak intensity is not a float.
-    """
-
-    # The residue number
-    res_num = ''
-    try:
-        res_num = string.strip(line[1],'{')
-        res_num = string.strip(res_num,'}')
-        res_num = string.split(res_num,'.')
-        res_num = res_num[0]
-    except ValueError:
-        raise RelaxError, "The peak list is invalid."
-
-    # Nuclei names.
-    x_name = ''
-    if line[8]!='{}':
-        x_name = string.strip(line[8],'{')
-        x_name = string.strip(x_name,'}')
-        x_name = string.split(x_name,'.')
-        x_name = x_name[1]
-    h_name = ''
-    if line[1]!='{}':
-        h_name = string.strip(line[1],'{')
-        h_name = string.strip(h_name,'}')
-        h_name = string.split(h_name,'.')
-        h_name = h_name[1]
-
-    # The peak intensity column.
-    if int_col == None:
-        int_col = 16
-    if int_col == 16:
-        print 'Using peak heights.'
-    if int_col == 15:
-        print 'Using peak volumes (or evolumes).'
 
     # Intensity.
     try:
