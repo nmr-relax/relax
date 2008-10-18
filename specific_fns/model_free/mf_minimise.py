@@ -33,6 +33,7 @@ from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
+from multi.processor import Processor_box
 from multi_processor_commands import MF_grid_command, MF_grid_memo, MF_memo, MF_minimise_command, MF_super_grid_memo
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
@@ -1113,11 +1114,16 @@ class Mf_minimise:
 
             # Minimisation.
             ###############
+
+            # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+            processor_box = Processor_box() 
+            processor = processor_box.processor
+
             #FIXME??? strange contraints
             if match('^[Gg]rid', min_algor) and model_type == 'diff' :
-                processors = self.relax.processor.processor_size()
+                processors = processor.processor_size()
                 full_grid_info = Grid_info(min_options)
-                sub_grid_list = full_grid_info.sub_divide(self.relax.processor.processor_size())
+                sub_grid_list = full_grid_info.sub_divide(processor.processor_size())
                 if constraints:
                     super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix, full_output=True, print_flag=print_flag, print_prefix="", grid_size=self.grid_size, A=A, b=b)
                 else:
@@ -1133,7 +1139,7 @@ class Mf_minimise:
 
 
                     memo = MF_grid_memo(super_grid_memo)
-                    self.relax.processor.add_to_queue(command, memo)
+                    processor.add_to_queue(command, memo)
 
             else:
                 command = MF_minimise_command()
@@ -1150,10 +1156,7 @@ class Mf_minimise:
 
                 memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)
 
-                self.relax.processor.add_to_queue(command, memo)
-        #print self.relax.processor.command_queue
-        #raise Exception('test')
-        #self.relax.processor.run_queue()
+                processor.add_to_queue(command, memo)
 
 
     def minimise_data_setup(self, model_type, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
