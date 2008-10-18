@@ -295,7 +295,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
                 if int_col:
                     intensity(file_data[i], int_col)
                 else:
-                    intensity(file_data[i])
+                    intensity(file_data[i], int_col)
             except RelaxError:
                 header_lines = header_lines + 1
             except IndexError:
