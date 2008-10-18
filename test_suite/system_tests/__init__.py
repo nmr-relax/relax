@@ -44,7 +44,7 @@ from model_selection import Modsel
 from n_state_model import N_state_model
 from noe import Noe
 from palmer import Palmer
-from peak_lists import Generic, NMRView, Sparky, XEasy
+from peak_lists import Peak_lists
 from pipe_create import Pipe_create
 from relax_fit import Relax_fit
 from results import Results
@@ -107,17 +107,15 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
         suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
         suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
-        suite_array.append(TestLoader().loadTestsFromTestCase(NMRView))
         suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
         suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
         suite_array.append(TestLoader().loadTestsFromTestCase(Results))
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Sparky))
         suite_array.append(TestLoader().loadTestsFromTestCase(State))
         suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
         suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
-        suite_array.append(TestLoader().loadTestsFromTestCase(XEasy))
 
         # Add the relax namespace to each TestCase object.
         for i in xrange(len(suite_array)):
