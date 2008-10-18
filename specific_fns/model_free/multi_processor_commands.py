@@ -107,7 +107,7 @@ class MF_minimise_command(Slave_command):
         #!! 'a0':1.0,'mu':0.0001,'eta':0.1,
         self.minimise_map={'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None,
                      'maxiter':1e6, 'A':None, 'b':'None', 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None,
-                     'dc':None, 'd2c':None, 'full_output':0, 'print_flag':0,
+                     'dc':None, 'd2c':None, 'full_output':0, 'verbosity':0,
                      'print_prefix':""}
 
 
@@ -285,7 +285,7 @@ class MF_grid_command(MF_minimise_command):
 
     def pre_command_feed_back(self,processor):
 #        print_prefix  = self.minimise_map['print_prefix']
-#        print_flag  = self.minimise_map['print_flag']
+#        verbosity  = self.minimise_map['verbosity']
 #        grid_step = self.minimise_map['min_options'].start
 #        grid_size = self.minimise_map['min_options'].steps
 #        full_output = self.minimise_map['full_output']
@@ -298,8 +298,8 @@ class MF_grid_command(MF_minimise_command):
 #        if grid_step == 0:
 #            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
 #
-#            if print_flag:
-#                if print_flag >= 2:
+#            if verbosity:
+#                if verbosity >= 2:
 #                    print print_prefix
 #                print print_prefix
 #                print print_prefix + "Grid search"
@@ -307,7 +307,7 @@ class MF_grid_command(MF_minimise_command):
 #
 #            # Linear constraints.
 #            if A != None and b != None:
-#                if print_flag >= 3:
+#                if verbosity >= 3:
 #                    print print_prefix + "Linear constraint matrices."
 #                    print print_prefix + "A: " + `A`
 #                    print print_prefix + "b: " + `b`
@@ -341,11 +341,11 @@ class MF_grid_memo(Memo):
         self.super_grid_memo.add_result(self,results)
 
 class MF_super_grid_memo(MF_memo):
-    def __init__(self,model_free,index,sim_index,run,param_set,scaling,scaling_matrix,print_prefix,print_flag,full_output,A,b,grid_size):
+    def __init__(self,model_free,index,sim_index,run,param_set,scaling,scaling_matrix,print_prefix,verbosity,full_output,A,b,grid_size):
         super(MF_super_grid_memo,self).__init__(model_free,index,sim_index,run,param_set,scaling,scaling_matrix)
         self.full_output=full_output
         self.print_prefix = print_prefix
-        self.print_flag = print_flag
+        self.verbosity = verbosity
         self.sub_memos = []
         self.completed = False
 
@@ -437,7 +437,7 @@ class MF_grid_result_command(Result_command):
         sgm =  memo.super_grid_memo
 
         print_prefix  = sgm.print_prefix
-        print_flag  = sgm.print_flag
+        verbosity  = sgm.verbosity
         full_output = sgm.full_output
         A = sgm.A
         b = sgm.b
@@ -451,8 +451,8 @@ class MF_grid_result_command(Result_command):
             print
             print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
 
-            if print_flag:
-                if print_flag >= 2:
+            if verbosity:
+                if verbosity >= 2:
                     print print_prefix
                 print print_prefix
                 print print_prefix + "Grid search"
@@ -460,7 +460,7 @@ class MF_grid_result_command(Result_command):
 
             # Linear constraints.
             if A != None and b != None:
-                if print_flag >= 3:
+                if verbosity >= 3:
                     print print_prefix + "Linear constraint matrices."
                     print print_prefix + "A: " + `A`
                     print print_prefix + "b: " + `b`
@@ -472,7 +472,7 @@ class MF_grid_result_command(Result_command):
         if sgm.completed:
 
 
-            if print_flag and results != None:
+            if verbosity and results != None:
                 if full_output:
                     print ''
                     print ''
