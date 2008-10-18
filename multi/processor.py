@@ -164,20 +164,30 @@ def load_multiprocessor(processor_name, callback, processor_size):
     @rtype:                 multi.processor.Processor instance
     '''
 
+    # The Processor details.
     processor_name = processor_name + '_processor'
     class_name = processor_name[0].upper() + processor_name[1:]
     module_path = '.'.join(('multi', processor_name))
 
-
+    # Load the module containing the specific processor.
     modules = import_module(module_path)
-    #print modules
 
+    # Access the class from within the module.
     if hasattr(modules[-1], class_name):
         clazz = getattr(modules[-1], class_name)
     else:
         raise Exception("can't load class %s from module %s" % (class_name, module_path))
 
+    # Instantiate the Processor.
     object = clazz(callback=callback, processor_size=processor_size)
+
+    # Load the Processor_box container and store the details and Processor instance.
+    processor_box = Processor_box()
+    processor_box.processor = object
+    processor_box.processor_name = processor_name
+    processor_box.class_name = class_name
+
+    # Return the Processor instance.
     return object
 
 
