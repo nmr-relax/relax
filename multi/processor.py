@@ -827,6 +827,27 @@ class Processor(object):
         return (stdout_capture, stderr_capture)
 
 
+class Processor_box:
+    """A storage class for the Processor instance and its attributes.
+
+    This singleton contains Processor instances and information about these Processors.  Importantly
+    this container gives the calling code access to the Processor.
+    """
+
+    # Class variable for storing the class instance.
+    instance = None
+
+    def __new__(self, *args, **kargs): 
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            self.instance = object.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
+
+
 # TODO currently uni_processor doesn't have a process_result should this be integrated
 class Result(object):
     '''A basic result object returned from a slave processor via return_object.
