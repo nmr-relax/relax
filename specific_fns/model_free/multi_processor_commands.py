@@ -186,24 +186,21 @@ class MF_minimise_command(Slave_command):
 #                               param_set=memo.param_set,scaling=memo.scaling,scaling_matrix=memo.scaling_matrix)
 
     def do_feedback(self):
-        # Print out.
-        #print_flag,param_set,residue_num,residue_name,min_algor,grid_size=None
-        m_m=self.minimise_map
-        m_f=self.mf_map
-        i_m=self.info_map
-#        print 'minimising...' + i_m['res_id'] + ' '+  `i_m['index']` + ' ' + `i_m['sim_index']` + ' ' + m_f['param_set'] + ' '  + `m_m['print_flag']`
-#        sys.stdout.flush())
-        if m_m['print_flag'] >= 1:
+        """Minimisation print out."""
+
+        # Only print out if verbosity is turned on.
+        if self.minimise_map['verbosity'] >= 1:
             # montecarlo stuff
-            if i_m['sim_index'] != None and i_m['index'] == 0:
-                print 'Simulation '+ `i_m['sim_index']`+ '\n'
+            if self.info_map['sim_index'] != None and self.info_map['index'] == 0:
+                print 'Simulation '+ `self.info_map['sim_index']`+ '\n'
             # Individual residue stuff.
-            if m_f['param_set'] == 'mf' or m_f['param_set'] == 'local_tm':
-                if m_m['print_flag'] >= 2:
+            if self.mf_map['param_set'] == 'mf' or self.mf_map['param_set'] == 'local_tm':
+                if self.minimise_map['verbosity'] >= 2:
                     print "\n\n"
-                string = "Fitting to residue: " + i_m['res_id']
+                string = "Fitting to residue: " + self.info_map['res_id']
                 print "\n\n" + string
                 print len(string) * '~'
+
 
     # rename confusing with processor process_results
     def process_results(self,results,processor,completed):
