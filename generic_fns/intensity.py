@@ -249,7 +249,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
     @param file_data:   The processed results file data.
     @type file_data:    list of lists of str
     @param format:      The type of file containing peak intensities.  This can currently be one of
-                        'sparky', 'xeasy' or 'nmrview'.
+                        'generic', 'nmrview', 'sparky' or 'xeasy'.
     @type format:       str
     @param int_col:     The column containing the peak intensity data (for a non-standard
                         formatted file).
@@ -260,11 +260,26 @@ def number_of_header_lines(file_data, format, int_col, intensity):
     @rtype:             int
     """
 
+    # Generic.
+    ##########
+
+    # Assume the generic file has two header lines!
+    if format == 'generic':
+        return 2
+
+    # NMRView.
+    ##########
+
+    # Assume the NMRView file has six header lines!
+    elif format == 'nmrview':
+        return 6
+
+
     # Sparky.
     #########
 
     # Assume the Sparky file has two header lines!
-    if format == 'sparky':
+    elif format == 'sparky':
         return 2
 
 
@@ -272,7 +287,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
     ########
 
     # Loop over the lines of the file until a peak intensity value is reached.
-    if format == 'xeasy':
+    elif format == 'xeasy':
         header_lines = 0
         for i in xrange(len(file_data)):
             # Try to see if the intensity can be extracted.
@@ -292,14 +307,6 @@ def number_of_header_lines(file_data, format, int_col, intensity):
         return header_lines
 
 
-    # NMRView.
-    ##########
-
-    # Assume the NMRView file has six header lines!
-    elif format == 'nmrview':
-        return 6
-
-
 def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None, spectrum_type=None):
     """Read the peak intensity data.
 
@@ -308,7 +315,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     @keyword dir:           The directory where the file is located.
     @type dir:              str
     @keyword format:        The type of file containing peak intensities.  This can currently be
-                            one of 'sparky', 'xeasy' or 'nmrview'.
+                            one of 'generic', 'nmrview', 'sparky' or 'xeasy'.
     @type format:           str
     @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                             file.
@@ -325,7 +332,7 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     """
 
     # Format argument.
-    format_list = ['sparky', 'xeasy', 'nmrview']
+    format_list = ['generic', 'nmrview', 'sparky', 'xeasy']
     if format not in format_list:
         raise RelaxArgNotInListError, ('format', format, format_list)
 
@@ -337,8 +344,16 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
         # Set the intensity reading function.
         intensity_fn = intensity_generic
 
+    # NMRView.
+    elif format == 'nmrview':
+        # Print out.
+        print "NMRView formatted data file.\n"
+
+        # Set the intensity reading function.
+        intensity_fn = intensity_nmrview
+
     # Sparky.
-    if format == 'sparky':
+    elif format == 'sparky':
         # Print out.
         print "Sparky formatted data file.\n"
 
@@ -355,14 +370,6 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
 
         # Set the intensity reading function.
         intensity_fn = intensity_xeasy
-
-    # NMRView.
-    elif format == 'nmrview':
-        # Print out.
-        print "NMRView formatted data file.\n"
-
-        # Set the intensity reading function.
-        intensity_fn = intensity_nmrview
 
     # Test if the current data pipe exists.
     pipes.test()
