@@ -837,7 +837,7 @@ class Processor(object):
         return (stdout_capture, stderr_capture)
 
 
-class Processor_box:
+class Processor_box(object):
     """A storage class for the Processor instance and its attributes.
 
     This singleton contains Processor instances and information about these Processors.  Importantly
