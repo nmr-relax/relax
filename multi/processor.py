@@ -170,7 +170,7 @@ def load_multiprocessor(processor_name, callback, processor_size):
     '''
 
     # Check that the processor type is supported.
-    if processor_name not in ['uni', 'multi']:
+    if processor_name not in ['uni', 'mpi4py']:
         raise RelaxError, "The processor type '%s' is not supported." % processor_name
 
     # The Processor details.
