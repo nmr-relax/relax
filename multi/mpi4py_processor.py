@@ -105,7 +105,7 @@ class Mpi4py_processor(Multi_processor):
     """The mpi4py multi-processor class."""
 
     def __init__(self, processor_size, callback):
-        mpi_processor_size = MPI.size-1
+        mpi_processor_size = MPI.COMM_WORLD.size-1
 
         if processor_size == -1:
             processor_size = mpi_processor_size
@@ -147,7 +147,7 @@ class Mpi4py_processor(Multi_processor):
 
 
     def rank(self):
-        return MPI.rank
+        return MPI.COMM_WORLD.rank
 
 
     def return_result_command(self, result_object):
