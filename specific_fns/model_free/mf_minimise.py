@@ -453,39 +453,39 @@ class Mf_minimise:
                             spin.s2s_sim[sim_index] = spin.s2_sim[sim_index] / spin.s2f_sim[sim_index]
 
 
-    def disassemble_result(self, param_vector, func, iter, fc, gc, hc, warning, spin, sim_index, model_type, scaling, scaling_matrix):
-        """Disassemble the optimisation results."""
+    def disassemble_result(self, param_vector=None, func=None, iter=None, fc=None, gc=None, hc=None, warning=None, spin=None, sim_index=None, model_type=None, scaling=None, scaling_matrix=None):
+        """Disassemble the optimisation results.
 
-        #print '***', param_vector, func, iter, fc, gc, hc, warning, spin, sim_index, model_type, scaling
-        #self.write_columnar_line(file=sys.stdout)
-        #self.param_vector=param_vector
+        @keyword param_vector:      The model-free parameter vector.
+        @type param_vector:         numpy array
+        @keyword func:              The optimised chi-squared value.
+        @type func:                 float
+        @keyword iter:              The number of optimisation steps required to find the minimum.
+        @type iter:                 int
+        @keyword fc:                The function count.
+        @type fc:                   int
+        @keyword gc:                The gradient count.
+        @type gc:                   int
+        @keyword hc:                The Hessian count.
+        @type hc:                   int
+        @keyword warning:           Any optimisation warnings.
+        @type warning:              str or None
+        @keyword spin:              The spin container.
+        @type spin:                 SpinContainer instance or None
+        @keyword sim_index:         The Monte Carlo simulation index.
+        @type sim_index:            int or None
+        @keyword model_type:        The model-free model type, one of 'mf', 'local_tm', 'diff', or
+                                    'all'.
+        @type model_type:           str
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to
+                                    allow the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        """
 
-        #print 'disassembel result'
-        #print 'param_vector', param_vector
-        #print 'func', func
-        #print 'iter', iter
-        #print 'fc', fc
-        #print 'gc', gc
-        #print 'hc', hc
-        #print 'warning', warning
-        #print 'spin', spin
-        #print 'sim_index', sim_index
-        #print ' model_type ', model_type
-        #print 'scaling', scaling
-        #print 'scaling_matrix', scaling_matrix
-        #FIXME this is a fix for old code
-        #self.iter_count = iter
-        #self.f_count = fc
-        #self.g_count = gc
-        #self.h_count = hc
-        #self.run=run
-
-        self.func=func
-        self.warning=warning
-        self.iter_count = self.iter_count + iter
-        self.f_count = self.f_count + fc
-        self.g_count = self.g_count + gc
-        self.h_count = self.h_count + hc
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Catch infinite chi-squared values.
         if isInf(func):
@@ -500,7 +500,6 @@ class Mf_minimise:
             param_vector = dot(scaling_matrix, param_vector)
 
         # Disassemble the parameter vector.
-        # FIXME pass param_vector
         self.disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
@@ -509,22 +508,22 @@ class Mf_minimise:
             if model_type == 'mf' or model_type == 'local_tm':
 
                 # Chi-squared statistic.
-                spin.chi2_sim[sim_index] = self.func
+                spin.chi2_sim[sim_index] = func
 
                 # Iterations.
-                spin.iter_sim[sim_index] = self.iter_count
+                spin.iter_sim[sim_index] = iter
 
                 # Function evaluations.
-                spin.f_count_sim[sim_index] = self.f_count
+                spin.f_count_sim[sim_index] = fc
 
                 # Gradient evaluations.
-                spin.g_count_sim[sim_index] = self.g_count
+                spin.g_count_sim[sim_index] = gc
 
                 # Hessian evaluations.
-                spin.h_count_sim[sim_index] = self.h_count
+                spin.h_count_sim[sim_index] = hc
 
                 # Warning.
-                spin.warning_sim[sim_index] = self.warning
+                spin.warning_sim[sim_index] = warning
 
             # Global minimisation statistics.
             elif model_type == 'diff' or model_type == 'all':
@@ -532,16 +531,16 @@ class Mf_minimise:
                 cdp.chi2_sim[sim_index] = func
 
                 # Iterations.
-                cdp.iter_sim[sim_index] = iter_count
+                cdp.iter_sim[sim_index] = iter
 
                 # Function evaluations.
-                cdp.f_count_sim[sim_index] = f_count
+                cdp.f_count_sim[sim_index] = fc
 
                 # Gradient evaluations.
-                cdp.g_count_sim[sim_index] = g_count
+                cdp.g_count_sim[sim_index] = gc
 
                 # Hessian evaluations.
-                cdp.h_count_sim[sim_index] = h_count
+                cdp.h_count_sim[sim_index] = hc
 
                 # Warning.
                 cdp.warning_sim[sim_index] = warning
@@ -551,22 +550,22 @@ class Mf_minimise:
             # Sequence specific minimisation statistics.
             if model_type == 'mf' or model_type == 'local_tm':
                 # Chi-squared statistic.
-                spin.chi2 = self.func
+                spin.chi2 = func
 
                 # Iterations.
-                spin.iter = self.iter_count
+                spin.iter = iter
 
                 # Function evaluations.
-                spin.f_count = self.f_count
+                spin.f_count = fc
 
                 # Gradient evaluations.
-                spin.g_count = self.g_count
+                spin.g_count = gc
 
                 # Hessian evaluations.
-                spin.h_count = self.h_count
+                spin.h_count = hc
 
                 # Warning.
-                spin.warning = self.warning
+                spin.warning = warning
 
             # Global minimisation statistics.
             elif model_type == 'diff' or model_type == 'all':
@@ -574,16 +573,16 @@ class Mf_minimise:
                 cdp.chi2 = func
 
                 # Iterations.
-                cdp.iter = iter_count
+                cdp.iter = iter
 
                 # Function evaluations.
-                cdp.f_count = f_count
+                cdp.f_count = fc
 
                 # Gradient evaluations.
-                cdp.g_count = g_count
+                cdp.g_count = gc
 
                 # Hessian evaluations.
-                cdp.h_count = h_count
+                cdp.h_count = hc
 
                 # Warning.
                 cdp.warning = warning
