@@ -166,7 +166,7 @@ class MF_minimise_command(Slave_command):
 
         self.mf_map = {'init_params':None, 'param_set':None, 'diff_type':None, 'diff_params':None, 'scaling_matrix':None, 'num_res':None, 'equations':None, 'param_types':None, 'param_values':None, 'relax_data':None, 'errors':None, 'bond_length':None, 'csa':None, 'num_frq':0, 'frq':None, 'num_ri':None, 'remap_table':None, 'noe_r1_table':None, 'ri_labels':None, 'gx':0, 'gh':0, 'g_ratio':0, 'h_bar':0, 'mu0':0, 'num_params':None, 'vectors':None}
 
-        self.info_map = {'spin_id':None, 'grid_size':1}
+        self.info_map = {'spin_id':None, 'sim_index':None, 'grid_size':1}
 
 
     def build_mf(self):
