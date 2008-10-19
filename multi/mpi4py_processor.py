@@ -59,13 +59,13 @@ except ImportError:
 
 
 def broadcast_command(command):
-    for i in range(1, MPI.size):
+    for i in range(1, MPI.COMM_WORLD.size):
         if i != 0:
             MPI.COMM_WORLD.Send(buf=command, dest=i)
 
 
 def ditch_all_results():
-    for i in range(1, MPI.size):
+    for i in range(1, MPI.COMM_WORLD.size):
         if i != 0:
             while 1:
                 result = MPI.COMM_WORLD.Recv(source=i)
@@ -76,7 +76,7 @@ def ditch_all_results():
 # wrapper sys.exit function
 # CHECKME is status ok
 def exit(status=None):
-    if MPI.rank != 0:
+    if MPI.COMM_WORLD.rank != 0:
         if in_main_loop:
             raise Exception('sys.exit unexpectedley called on slave!')
         else:
@@ -96,7 +96,7 @@ def exit(status=None):
 
 
 def exit_mpi():
-    if MPI.Is_initialized() and not MPI.Is_finalized() and MPI.rank == 0:
+    if MPI.Is_initialized() and not MPI.Is_finalized() and MPI.COMM_WORLD.rank == 0:
         broadcast_command(Exit_command())
         ditch_all_results()
 
