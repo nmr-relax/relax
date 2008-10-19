@@ -40,7 +40,6 @@ import dep_check
 # Python modules.
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
-from numpy.f2py.cfuncs import callbacks
 import platform
 import profile
 import pstats
