@@ -35,7 +35,7 @@ import Queue
 
 from multi.processor import Processor
 from multi.processor import Result,Result_command,Result_string,Result_exception
-from multi.processor import raise_unimplimented
+from multi.processor import raise_unimplemented
 from multi.processor import Capturing_exception
 
 
@@ -76,7 +76,7 @@ class Result_queue(object):
             self.processor.process_result(job)
 
     def run_all(self):
-        raise_unimplimented(self.run_all)
+        raise_unimplemented(self.run_all)
 
 #FIXME: move  up a level or more
 class Threaded_result_queue(Result_queue):
@@ -401,15 +401,15 @@ class Multi_processor(Processor):
             sys.exit()
 
     def return_result_command(self,result_object):
-        raise_unimplimented(self.slave_queue_result)
+        raise_unimplemented(self.slave_queue_result)
 
 
     def master_queue_command(self,command,dest):
-        raise_unimplimented(self.master_queue_command)
+        raise_unimplemented(self.master_queue_command)
 
 
     def master_recieve_result(self):
-        raise_unimplimented(self.master_recieve_result)
+        raise_unimplemented(self.master_recieve_result)
 
     def slave_recieve_commands(self):
-        raise_unimplimented(self.slave_recieve_commands)
+        raise_unimplemented(self.slave_recieve_commands)
