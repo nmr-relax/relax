@@ -136,7 +136,7 @@ class MF_grid_result_command(Result_command):
             m_f.g_count = 0
             m_f.h_count = 0
             #raise Exception()
-            m_f.disassemble_result(param_vector=sgm.xk, func=sgm.fk, iter=sgm.k, fc=sgm.f_count, gc=sgm.g_count, hc=sgm.h_count, warning=sgm.warning, run=sgm.run, index=sgm.index, sim_index=sgm.sim_index, param_set=sgm.param_set, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
+            m_f.disassemble_result(param_vector=sgm.xk, func=sgm.fk, iter=sgm.k, fc=sgm.f_count, gc=sgm.g_count, hc=sgm.h_count, warning=sgm.warning, spin=sgm.spin, sim_index=sgm.sim_index, param_set=sgm.param_set, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
 
 
 class MF_memo(Memo):
@@ -204,7 +204,7 @@ class MF_minimise_command(Slave_command):
 #
 #        m_f = memo.model_free
 #        param_vector, func, iter, fc, gc, hc, warning = results
-#        m_f.disassemble_result(param_vector=param_vector, func=func, iter=iter, fc=fc, gc=gc, hc=hc, warning=warning, run=memo.run, index=memo.index, sim_index=memo.sim_index, param_set=memo.param_set, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
+#        m_f.disassemble_result(param_vector=param_vector, func=func, iter=iter, fc=fc, gc=gc, hc=hc, warning=warning, spin=memo.spin, sim_index=memo.sim_index, param_set=memo.param_set, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
 
 
 # FIXME: add to checking class
@@ -401,12 +401,12 @@ class MF_result_command(Result_command):
         m_f.g_count = 0
         m_f.h_count = 0
         #raise Exception()
-        m_f.disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, run=memo.run, index=memo.index, sim_index=memo.sim_index, param_set=memo.param_set, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
+        m_f.disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, param_set=memo.param_set, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
 
 
 class MF_super_grid_memo(MF_memo):
-    def __init__(self, model_free, index, sim_index, run, param_set, scaling, scaling_matrix, print_prefix, verbosity, full_output, A, b, grid_size):
-        super(MF_super_grid_memo, self).__init__(model_free, index, sim_index, run, param_set, scaling, scaling_matrix)
+    def __init__(self, model_free, spin, sim_index, param_set, scaling, scaling_matrix, print_prefix, verbosity, full_output, A, b, grid_size):
+        super(MF_super_grid_memo, self).__init__(model_free, spin, sim_index, param_set, scaling, scaling_matrix)
         self.full_output = full_output
         self.print_prefix = print_prefix
         self.verbosity = verbosity
