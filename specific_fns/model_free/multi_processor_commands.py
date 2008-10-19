@@ -306,12 +306,19 @@ class MF_minimise_command(Slave_command):
 
     #FIXME: bad names
     def set_mf(self, **kwargs):
+        """Place the model-free information into the mf_map."""
+
+        # Fill out the mf_map using the keyword args.
         self.mf_map.update(kwargs)
-# FIXME: add to checking class
-#        self.mf_hash_map = self.get_hash_map(self.mf_map)
+
+        # FIXME: add to checking class
+        #self.mf_hash_map = self.get_hash_map(self.mf_map)
 
 
     def set_minimise(self, **kwargs):
+        """Place the minimisation and other information into the appropriate maps."""
+
+        # Strip out and store special arguments into the info_map.
         if 'spin_id' in kwargs:
            self.info_map['spin_id'] = kwargs['spin_id']
            del kwargs['spin_id']
@@ -325,9 +332,11 @@ class MF_minimise_command(Slave_command):
            self.info_map['sim_index'] = kwargs['sim_index']
            del kwargs['sim_index']
 
+        # Fill out the minimise_map using the remaining keyword args.
         self.minimise_map.update(kwargs)
-# FIXME: add to checking class
-#        self.mf_minimise_map = self.get_hash_map(self.minimise_map)
+
+        # FIXME: add to checking class
+        #self.mf_minimise_map = self.get_hash_map(self.minimise_map)
 
 
 class MF_grid_command(MF_minimise_command):
