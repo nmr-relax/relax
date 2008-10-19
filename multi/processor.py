@@ -630,7 +630,7 @@ class Processor(object):
         # For multi-processors, the STDOUT and STDERR indicators, and the separator.
         if self.processor_size() > 1:
             stderr_string = pre_string + ' E| '
-            stdout_string = pre_string + ' S| '
+            stdout_string = pre_string + '  | '
 
         # Return the strings to prepend to the STDOUT and STDERR streams.
         return stdout_string, stderr_string
