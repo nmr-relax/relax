@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
 #                                                                             #
 ###############################################################################
-# rename me I look like a processor! not a base class (change to multi_processor_base?) so relax --multi multi will try to load me ;-)
 
 # Module docstring.
 """Module containing a Processor base class to be used by any multi-processor methodology.
