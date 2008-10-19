@@ -158,14 +158,21 @@ class MF_memo(Memo):
 
 
 class MF_minimise_command(Slave_command):
+    """Command class for standard model-free minimisation."""
+
     def __init__(self):
+        """Initialise the class with empty maps."""
+
+        # Execute the base class __init__() method.
         super(MF_minimise_command, self).__init__()
 
-        #!! 'a0':1.0, 'mu':0.0001, 'eta':0.1,
+        # The minimisation map containing the minimisation information.
         self.minimise_map = {'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None, 'maxiter':1e6, 'A':None, 'b':None, 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None, 'dc':None, 'd2c':None, 'full_output':0, 'verbosity':0, 'print_prefix':""}
 
+        # The map containing the model-free information.
         self.mf_map = {'init_params':None, 'model_type':None, 'diff_type':None, 'diff_params':None, 'scaling_matrix':None, 'num_spins':None, 'equations':None, 'param_types':None, 'param_values':None, 'relax_data':None, 'errors':None, 'bond_length':None, 'csa':None, 'num_frq':0, 'frq':None, 'num_ri':None, 'remap_table':None, 'noe_r1_table':None, 'ri_labels':None, 'gx':0, 'gh':0, 'h_bar':0, 'mu0':0, 'num_params':None, 'vectors':None}
 
+        # A map containing generic information.
         self.info_map = {'spin_id':None, 'sim_index':None, 'grid_size':1}
 
 
