@@ -104,9 +104,14 @@ The following are yet to be implemented:
 
 #FIXME: better requirement of inherited commands.
 #TODO: check exceptions on master.
+
+# Python module imports.
 import time, datetime, math, sys, os
 import traceback, textwrap
+
+# relax module imports.
 from multi.prependStringIO import PrependStringIO, PrependOut
+from relax_errors import RelaxError
 
 
 def import_module(module_path, verbose=False):
@@ -163,6 +168,10 @@ def load_multiprocessor(processor_name, callback, processor_size):
     @return:                A loaded processor object or None to indicate failure.
     @rtype:                 multi.processor.Processor instance
     '''
+
+    # Check that the processor type is supported.
+    if processor_name not in ['uni', 'multi']:
+        raise RelaxError, "The processor type '%s' is not supported." % processor_name
 
     # The Processor details.
     processor_name = processor_name + '_processor'
