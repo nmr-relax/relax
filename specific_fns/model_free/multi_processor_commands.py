@@ -190,14 +190,15 @@ class MF_minimise_command(Slave_command):
 
         # Only print out if verbosity is turned on.
         if self.minimise_map['verbosity'] >= 1:
-            # montecarlo stuff
+            # Monte Carlo simulation print out.
             if self.info_map['sim_index'] != None and self.info_map['index'] == 0:
                 print 'Simulation '+ `self.info_map['sim_index']`+ '\n'
-            # Individual residue stuff.
+
+            # Individual spin print out.
             if self.mf_map['param_set'] == 'mf' or self.mf_map['param_set'] == 'local_tm':
                 if self.minimise_map['verbosity'] >= 2:
                     print "\n\n"
-                string = "Fitting to residue: " + self.info_map['res_id']
+                string = "Fitting to spin: " + self.info_map['spin_id']
                 print "\n\n" + string
                 print len(string) * '~'
 
