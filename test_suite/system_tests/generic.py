@@ -30,7 +30,7 @@ from generic_fns import pipes
 
 
 class Generic(TestCase):
-    """Class for testing various aspects specific to relaxation curve-fitting."""
+    """Class containing generic tests of relax execution."""
 
     def tearDown(self):
         """Reset the relax data storage object."""
