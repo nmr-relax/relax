@@ -64,27 +64,7 @@ class Exit_queue_result_command(Result_command):
     def __init__(self, completed=True):
         pass
 
-
 RESULT_QUEUE_EXIT_COMMAND = Exit_queue_result_command()
-#FIXME: move up a level or more
-#FIXME: move up a level or more
-class Immediate_result_queue(Result_queue):
-    def __init(self, processor):
-        super(Threaded_result_queue, self).__init__(processor)
-
-
-    def put(self, job):
-        super(Immediate_result_queue, self).put(job)
-        try:
-            self.processor.process_result(job)
-        except:
-            traceback.print_exc(file=sys.stdout)
-            # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
-            self.processor.abort()
-
-
-    def run_all(self):
-        pass
 
 
 class Multi_processor(Processor):
@@ -368,6 +348,26 @@ class Result_queue(object):
 
     def run_all(self):
         raise_unimplemented(self.run_all)
+
+
+#FIXME: move up a level or more
+class Immediate_result_queue(Result_queue):
+    def __init(self, processor):
+        super(Threaded_result_queue, self).__init__(processor)
+
+
+    def put(self, job):
+        super(Immediate_result_queue, self).put(job)
+        try:
+            self.processor.process_result(job)
+        except:
+            traceback.print_exc(file=sys.stdout)
+            # FIXME: this doesn't work because this isn't the main thread so sys.exit fails...
+            self.processor.abort()
+
+
+    def run_all(self):
+        pass
 
 
 class Threaded_result_queue(Result_queue):
