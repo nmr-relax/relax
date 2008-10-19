@@ -50,6 +50,109 @@ OFFSET_SHORT_FK=1
 OFFSET_SHORT_K=2
 
 
+class MF_grid_memo(Memo):
+    def __init__(self,super_grid_memo):
+        super(MF_grid_memo,self).__init__()
+        self.super_grid_memo = super_grid_memo
+        self.super_grid_memo.add_sub_memo(self)
+
+
+    def add_result(self,results):
+        self.super_grid_memo.add_result(self,results)
+
+
+class MF_grid_result_command(Result_command):
+    def __init__(self,processor,result_string,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
+        super(MF_grid_result_command,self).__init__(processor=processor,completed=completed)
+        self.result_string=result_string
+        self.memo_id=memo_id
+        self.param_vector=param_vector
+        self.func=func
+        self.iter=iter
+        self.fc=fc
+        self.gc=gc
+        self.hc=hc
+        self.warning=warning
+
+    def run(self,processor,memo):
+
+        # FIXME: Check against full result
+        # FIXME: names not consistent in memo
+        # FIXME: too much repacking
+        results = (self.param_vector,self.func,self.iter,self.fc,self.gc,self.hc, self.warning)
+        memo.add_result(results)
+
+        sgm =  memo.super_grid_memo
+
+        print_prefix  = sgm.print_prefix
+        verbosity  = sgm.verbosity
+        full_output = sgm.full_output
+        A = sgm.A
+        b = sgm.b
+        grid_size = sgm.grid_size
+
+
+
+        if sgm.first_time:
+
+
+            print
+            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+
+            if verbosity:
+                if verbosity >= 2:
+                    print print_prefix
+                print print_prefix
+                print print_prefix + "Grid search"
+                print print_prefix + "~~~~~~~~~~~"
+
+            # Linear constraints.
+            if A != None and b != None:
+                if verbosity >= 3:
+                    print print_prefix + "Linear constraint matrices."
+                    print print_prefix + "A: " + `A`
+                    print print_prefix + "b: " + `b`
+
+        # we don't want to prepend the masters stdout tag
+        sys.__stdout__.write('\n'+self.result_string),
+
+
+        if sgm.completed:
+
+
+            if verbosity and results != None:
+                if full_output:
+                    print ''
+                    print ''
+                    print print_prefix + "Parameter values: " + `sgm.xk`
+                    print print_prefix + "Function value:   " + `sgm.fk`
+                    print print_prefix + "Iterations:       " + `sgm.k`
+                    print print_prefix + "Function calls:   " + `sgm.f_count`
+                    print print_prefix + "Gradient calls:   " + `sgm.g_count`
+                    print print_prefix + "Hessian calls:    " + `sgm.h_count`
+                    if sgm.warning:
+                        print print_prefix + "Warning:          " + sgm.warning
+                    else:
+                        print print_prefix + "Warning:          None"
+                else:
+                    print print_prefix + "Parameter values: " + `sgm.short_results`
+                print ""
+
+
+
+
+            m_f=sgm.model_free
+            m_f.iter_count = 0
+            m_f.f_count = 0
+            m_f.g_count = 0
+            m_f.h_count = 0
+            #raise Exception()
+            m_f.disassemble_result(param_vector=sgm.xk,func=sgm.fk,iter=sgm.k,fc=sgm.f_count,
+                                   gc=sgm.g_count,hc=sgm.h_count, warning=sgm.warning,
+                                   run=sgm.run, index=sgm.index, sim_index=sgm.sim_index,
+                                   param_set=sgm.param_set, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
+
+
 class MF_memo(Memo):
     """The model-free memo class.
 
@@ -66,37 +169,6 @@ class MF_memo(Memo):
         self.model_free = model_free
         self.scaling = scaling
         self.scaling_matrix = scaling_matrix
-
-
-class MF_result_command(Result_command):
-    def __init__(self,processor,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
-        super(MF_result_command,self).__init__(processor=processor,completed=completed)
-        self.memo_id=memo_id
-        self.param_vector=param_vector
-        self.func=func
-        self.iter=iter
-        self.fc=fc
-        self.gc=gc
-        self.hc=hc
-        self.warning=warning
-
-    def run(self,processor,memo):
-        m_f=memo.model_free
-        m_f.iter_count = 0
-        m_f.f_count = 0
-        m_f.g_count = 0
-        m_f.h_count = 0
-        #raise Exception()
-        m_f.disassemble_result(param_vector=self.param_vector,func=self.func,iter=self.iter,fc=self.fc,
-                               gc=self.gc,hc=self.hc, warning=self.warning,
-                               run=memo.run, index=memo.index, sim_index=memo.sim_index,
-                               param_set=memo.param_set, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
-
-
-
-
-
-
 
 
 class MF_minimise_command(Slave_command):
@@ -277,6 +349,7 @@ class MF_minimise_command(Slave_command):
 #        sys.stdout = save_stdout
 #        sys.stderr = save_stderr
 
+
 class MF_grid_command(MF_minimise_command):
     def __init__(self):
         super(MF_grid_command,self).__init__()
@@ -331,15 +404,31 @@ class MF_grid_command(MF_minimise_command):
 
         processor.return_object(MF_grid_result_command(processor,result_string,self.memo_id,param_vector, func, iter, fc, gc, hc, warning,completed=completed))
 
-class MF_grid_memo(Memo):
-    def __init__(self,super_grid_memo):
-        super(MF_grid_memo,self).__init__()
-        self.super_grid_memo = super_grid_memo
-        self.super_grid_memo.add_sub_memo(self)
 
+class MF_result_command(Result_command):
+    def __init__(self,processor,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
+        super(MF_result_command,self).__init__(processor=processor,completed=completed)
+        self.memo_id=memo_id
+        self.param_vector=param_vector
+        self.func=func
+        self.iter=iter
+        self.fc=fc
+        self.gc=gc
+        self.hc=hc
+        self.warning=warning
 
-    def add_result(self,results):
-        self.super_grid_memo.add_result(self,results)
+    def run(self,processor,memo):
+        m_f=memo.model_free
+        m_f.iter_count = 0
+        m_f.f_count = 0
+        m_f.g_count = 0
+        m_f.h_count = 0
+        #raise Exception()
+        m_f.disassemble_result(param_vector=self.param_vector,func=self.func,iter=self.iter,fc=self.fc,
+                               gc=self.gc,hc=self.hc, warning=self.warning,
+                               run=memo.run, index=memo.index, sim_index=memo.sim_index,
+                               param_set=memo.param_set, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
+
 
 class MF_super_grid_memo(MF_memo):
     def __init__(self,model_free,index,sim_index,run,param_set,scaling,scaling_matrix,print_prefix,verbosity,full_output,A,b,grid_size):
@@ -413,94 +502,3 @@ class MF_super_grid_memo(MF_memo):
         if self.first_time == None:
             self.first_time = True
         #print   '****', self.xk,self.fk,self.k,self.f_count,self.g_count,self.h_count,self.warning
-
-class MF_grid_result_command(Result_command):
-    def __init__(self,processor,result_string,memo_id,param_vector, func, iter, fc, gc, hc, warning,completed):
-        super(MF_grid_result_command,self).__init__(processor=processor,completed=completed)
-        self.result_string=result_string
-        self.memo_id=memo_id
-        self.param_vector=param_vector
-        self.func=func
-        self.iter=iter
-        self.fc=fc
-        self.gc=gc
-        self.hc=hc
-        self.warning=warning
-
-    def run(self,processor,memo):
-
-        # FIXME: Check against full result
-        # FIXME: names not consistent in memo
-        # FIXME: too much repacking
-        results = (self.param_vector,self.func,self.iter,self.fc,self.gc,self.hc, self.warning)
-        memo.add_result(results)
-
-        sgm =  memo.super_grid_memo
-
-        print_prefix  = sgm.print_prefix
-        verbosity  = sgm.verbosity
-        full_output = sgm.full_output
-        A = sgm.A
-        b = sgm.b
-        grid_size = sgm.grid_size
-
-
-
-        if sgm.first_time:
-
-
-            print
-            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
-
-            if verbosity:
-                if verbosity >= 2:
-                    print print_prefix
-                print print_prefix
-                print print_prefix + "Grid search"
-                print print_prefix + "~~~~~~~~~~~"
-
-            # Linear constraints.
-            if A != None and b != None:
-                if verbosity >= 3:
-                    print print_prefix + "Linear constraint matrices."
-                    print print_prefix + "A: " + `A`
-                    print print_prefix + "b: " + `b`
-
-        # we don't want to prepend the masters stdout tag
-        sys.__stdout__.write('\n'+self.result_string),
-
-
-        if sgm.completed:
-
-
-            if verbosity and results != None:
-                if full_output:
-                    print ''
-                    print ''
-                    print print_prefix + "Parameter values: " + `sgm.xk`
-                    print print_prefix + "Function value:   " + `sgm.fk`
-                    print print_prefix + "Iterations:       " + `sgm.k`
-                    print print_prefix + "Function calls:   " + `sgm.f_count`
-                    print print_prefix + "Gradient calls:   " + `sgm.g_count`
-                    print print_prefix + "Hessian calls:    " + `sgm.h_count`
-                    if sgm.warning:
-                        print print_prefix + "Warning:          " + sgm.warning
-                    else:
-                        print print_prefix + "Warning:          None"
-                else:
-                    print print_prefix + "Parameter values: " + `sgm.short_results`
-                print ""
-
-
-
-
-            m_f=sgm.model_free
-            m_f.iter_count = 0
-            m_f.f_count = 0
-            m_f.g_count = 0
-            m_f.h_count = 0
-            #raise Exception()
-            m_f.disassemble_result(param_vector=sgm.xk,func=sgm.fk,iter=sgm.k,fc=sgm.f_count,
-                                   gc=sgm.g_count,hc=sgm.h_count, warning=sgm.warning,
-                                   run=sgm.run, index=sgm.index, sim_index=sgm.sim_index,
-                                   param_set=sgm.param_set, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
