@@ -606,27 +606,33 @@ class Processor(object):
 
         For processors with only one slave the result should be ('', '') - designed for overriding.
 
-        @note:  The defaults are ('MM X]', 'MM E]') and ('NN S]' , 'NN E]') for masters and slaves
+        @note:  The defaults are ('M S|', 'M E|') and ('NN S|' , 'NN E|') for masters and slaves
                 respectively with NN replaced by the rank of the processor.
 
-        @return:    A list of two strings for STDOUT and STDERR respectively.
+        @return:    A list of two strings for prepending to each line of STDOUT and STDERR.
         @rtype:     list of 2 str
         '''
 
+        # Initialise.
         pre_string = ''
         stdout_string = ''
         stderr_string = ''
         rank = self.rank()
 
+        # Start of the slave string.
         if self.processor_size() > 1 and rank > 0:
             pre_string = self.rank_format_string() % rank
+
+        # Start of the master string.
         elif self.processor_size() > 1 and rank == 0:
             pre_string = 'M'*self.rank_format_string_width()
 
+        # For multi-processors, the STDOUT and STDERR indicators, and the separator.
         if self.processor_size() > 1:
-            stderr_string = pre_string + ' E> '
-            stdout_string = pre_string + ' S> '
+            stderr_string = pre_string + ' E| '
+            stdout_string = pre_string + ' S| '
 
+        # Return the strings to prepend to the STDOUT and STDERR streams.
         return stdout_string, stderr_string
 
 
