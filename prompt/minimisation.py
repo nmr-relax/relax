@@ -358,6 +358,7 @@ class Minimisation:
         minimise.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
+
     # Modify the docstring of the minimise method to include the docstring of the generic_minimise function in 'minimise.generic'.
     ##############################################################################################################################
 
