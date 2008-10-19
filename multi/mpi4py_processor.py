@@ -29,7 +29,7 @@ import sys
 import os
 import textwrap
 
-from multi.multi_processor import Multi_processor
+from multi.multi_processor_base import Multi_processor
 from multi.commands import Exit_command
 from multi.multi_processor import Too_few_slaves_exception
 
