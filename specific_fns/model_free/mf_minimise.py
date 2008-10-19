@@ -1055,13 +1055,6 @@ class Mf_minimise:
             if constraints:
                 A, b = self.linear_constraints(num_params, model_type=model_type, spin=spin, scaling_matrix=scaling_matrix)
 
-            # Initialise the iteration counter and function, gradient, and Hessian call counters.
-            #FIXME: move to processor command
-            #self.iter_count = 0
-            #self.f_count = 0
-            #self.g_count = 0
-            #self.h_count = 0
-
             # Get the data for minimisation.
             relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
 
