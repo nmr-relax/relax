@@ -1,25 +1,25 @@
-################################################################################
-#                                                                              #
-# Copyright (C) 2007  Gary S Thompson (see https://gna.org/users/varioustoxins #
-#                                      for contact details)                    #
-#                                                                              #
-# This file is part of the program relax.                                      #
-#                                                                              #
-# relax is free software; you can redistribute it and/or modify                #
-# it under the terms of the GNU General Public License as published by         #
-# the Free Software Foundation; either version 2 of the License, or            #
-# (at your option) any later version.                                          #
-#                                                                              #
-# relax is distributed in the hope that it will be useful,                     #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
-# GNU General Public License for more details.                                 #
-#                                                                              #
-# You should have received a copy of the GNU General Public License            #
-# along with relax; if not, write to the Free Software                         #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA    #
-#                                                                              #
-################################################################################
+###############################################################################
+#                                                                             #
+# Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2008 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax.                                     #
+#                                                                             #
+# relax is free software; you can redistribute it and/or modify               #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation; either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# relax is distributed in the hope that it will be useful,                    #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with relax; if not, write to the Free Software                        #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
+#                                                                             #
+###############################################################################
 
 # Module docstring.
 """Module for the multi-processor command system."""
@@ -31,7 +31,7 @@ from re import match
 
 # relax module imports.
 from maths_fns.mf import Mf
-#from minimise.generic import generic_minimise
+from minfx.generic import generic_minimise
 #from minimise.generic import set_pre_and_post_amble as set_generic_pre_and_post_amble
 #from minimise.grid import set_pre_and_post_amble as set_grid_pre_and_post_amble
 from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
