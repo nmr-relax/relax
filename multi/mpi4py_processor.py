@@ -58,10 +58,24 @@ except ImportError:
     sys.exit()
 
 
+def broadcast_command(command):
+    for i in range(1, MPI.size):
+        if i != 0:
+            MPI.COMM_WORLD.Send(buf=command, dest=i)
+
+
+def ditch_all_results():
+    for i in range(1, MPI.size):
+        if i != 0:
+            while 1:
+                result = MPI.COMM_WORLD.Recv(source=i)
+                if result.completed:
+                    break
+
+
 # wrapper sys.exit function
 # CHECKME is status ok
 def exit(status=None):
-
     if MPI.rank != 0:
         if in_main_loop:
             raise Exception('sys.exit unexpectedley called on slave!')
@@ -79,21 +93,6 @@ def exit(status=None):
         exit_mpi()
         #MPI.COMM_WORLD.Abort(1)
         _sys_exit(status)
-
-
-def broadcast_command(command):
-    for i in range(1, MPI.size):
-        if i != 0:
-            MPI.COMM_WORLD.Send(buf=command, dest=i)
-
-
-def ditch_all_results():
-    for i in range(1, MPI.size):
-        if i != 0:
-            while 1:
-                result = MPI.COMM_WORLD.Recv(source=i)
-                if result.completed:
-                    break
 
 
 def exit_mpi():
@@ -129,10 +128,6 @@ class Mpi4py_processor(Multi_processor):
         MPI.COMM_WORLD.Abort()
 
 
-    def rank(self):
-        return MPI.rank
-
-
     #TODO: MAY NEED support for widths?
     def get_intro_string(self):
         version_info = MPI.Get_version()
@@ -143,10 +138,6 @@ class Mpi4py_processor(Multi_processor):
         return '%s-pid%s' % (MPI.Get_processor_name(), os.getpid())
 
 
-    def return_result_command(self, result_object):
-        MPI.COMM_WORLD.Send(buf=result_object, dest=0)
-
-
     def master_queue_command(self, command, dest):
         MPI.COMM_WORLD.Send(buf=command, dest=dest)
 
@@ -155,8 +146,12 @@ class Mpi4py_processor(Multi_processor):
         return MPI.COMM_WORLD.Recv(source=MPI.ANY_SOURCE)
 
 
-    def slave_recieve_commands(self):
-        return MPI.COMM_WORLD.Recv(source=0)
+    def rank(self):
+        return MPI.rank
+
+
+    def return_result_command(self, result_object):
+        MPI.COMM_WORLD.Send(buf=result_object, dest=0)
 
 
     def run(self):
@@ -165,3 +160,6 @@ class Mpi4py_processor(Multi_processor):
         super(Mpi4py_processor, self).run()
         in_main_loop = False
 
+
+    def slave_recieve_commands(self):
+        return MPI.COMM_WORLD.Recv(source=0)
