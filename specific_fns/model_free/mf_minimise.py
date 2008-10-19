@@ -1158,11 +1158,11 @@ class Mf_minimise:
 
                 # Constrained optimisation.
                 if constraints:
-                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, spin_id=spin_id, sim_index=sim_index, full_output=True, verbosity=verbosity)
+                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, spin_id=spin_id, sim_index=sim_index, full_output=True, print_flag=verbosity)
 
                 # Unconstrained optimisation.
                 else:
-                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, spin_id=spin_id, sim_index=sim_index, full_output=True, verbosity=verbosity)
+                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, spin_id=spin_id, sim_index=sim_index, full_output=True, print_flag=verbosity)
 
                 # Set up the model-free memo and add it to the processor queue.
                 memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)

@@ -167,7 +167,7 @@ class MF_minimise_command(Slave_command):
         super(MF_minimise_command, self).__init__()
 
         # The minimisation map containing the minimisation information.
-        self.minimise_map = {'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None, 'maxiter':1e6, 'A':None, 'b':None, 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None, 'dc':None, 'd2c':None, 'full_output':0, 'verbosity':0, 'print_prefix':""}
+        self.minimise_map = {'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None, 'maxiter':1e6, 'A':None, 'b':None, 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None, 'dc':None, 'd2c':None, 'full_output':0, 'print_flag':0, 'print_prefix':""}
 
         # The map containing the model-free information.
         self.mf_map = {'init_params':None, 'model_type':None, 'diff_type':None, 'diff_params':None, 'scaling_matrix':None, 'num_spins':None, 'equations':None, 'param_types':None, 'param_values':None, 'relax_data':None, 'errors':None, 'bond_length':None, 'csa':None, 'num_frq':0, 'frq':None, 'num_ri':None, 'remap_table':None, 'noe_r1_table':None, 'ri_labels':None, 'gx':0, 'gh':0, 'h_bar':0, 'mu0':0, 'num_params':None, 'vectors':None}
@@ -184,14 +184,14 @@ class MF_minimise_command(Slave_command):
         """Minimisation print out."""
 
         # Only print out if verbosity is turned on.
-        if self.minimise_map['verbosity'] >= 1:
+        if self.minimise_map['print_flag'] >= 1:
             # Monte Carlo simulation print out.
             if self.info_map['sim_index'] != None and self.info_map['index'] == 0:
                 print 'Simulation '+ `self.info_map['sim_index']`+ '\n'
 
             # Individual spin print out.
             if self.mf_map['model_type'] == 'mf' or self.mf_map['model_type'] == 'local_tm':
-                if self.minimise_map['verbosity'] >= 2:
+                if self.minimise_map['print_flag'] >= 2:
                     print "\n\n"
                 string = "Fitting to spin: " + self.info_map['spin_id']
                 print "\n\n" + string
@@ -351,7 +351,7 @@ class MF_grid_command(MF_minimise_command):
 
     def pre_command_feed_back(self, processor):
 #        print_prefix = self.minimise_map['print_prefix']
-#        verbosity = self.minimise_map['verbosity']
+#        verbosity = self.minimise_map['print_flag']
 #        grid_step = self.minimise_map['min_options'].start
 #        grid_size = self.minimise_map['min_options'].steps
 #        full_output = self.minimise_map['full_output']
