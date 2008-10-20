@@ -303,7 +303,7 @@ class Multi_processor(Processor):
                     else:
                         break
 
-                while len(running_set) !=0:
+                while len(running_set) != 0:
                     result = self.master_recieve_result()
                     #if isinstance(result, Result_exception):
                     #    print 'result', result
