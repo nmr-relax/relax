@@ -30,23 +30,44 @@ from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 
 
-class NMRView(TestCase):
-    """TestCase class for the functional tests for the support of NMRView in relax."""
-
+class Peak_lists(TestCase):
+    """TestCase class for the functional tests for the support of different peak intensity files."""
+        
     def setUp(self):
         """Set up for all the functional tests."""
-
+        
         # Create a data pipe.
         self.relax.interpreter._Pipe.create('mf', 'mf')
-
-
+        
+        
     def tearDown(self):
         """Reset the relax data storage object."""
-
+        
         ds.__reset__()
+        
+        
+    def test_read_peak_list_generic(self):
+        """Test the reading of a generic peak intensity list."""
+        
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Create the sequence data, and name the spins.
+        self.relax.interpreter._Residue.create(20)
+        self.relax.interpreter._Residue.create(23)
+        self.relax.interpreter._Residue.create(34)
+        self.relax.interpreter._Residue.create(35)
+        self.relax.interpreter._Residue.create(36)
+        self.relax.interpreter._Spin.name(name='N')
+        
+        # Read the peak list.
+        self.relax.interpreter._Relax_fit.read(file="generic.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", format='generic')
+
+        # Test the data.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], 1.0000)
 
 
-    def test_read_peak_list(self):
+    def test_read_peak_list_nmrview(self):
         """Test the reading of an NMRView peak list."""
 
         # Get the current data pipe.
@@ -65,23 +86,7 @@ class NMRView(TestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], -0.1142)
 
 
-class Sparky(TestCase):
-    """TestCase class for the functional tests for the support of Sparky in relax."""
-
-    def setUp(self):
-        """Set up for all the functional tests."""
-
-        # Create a data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
-    def test_read_peak_list(self):
+    def test_read_peak_list_sparky(self):
         """Test the reading of an Sparky peak list."""
 
         # Get the current data pipe.
@@ -104,23 +109,7 @@ class Sparky(TestCase):
         self.assertEqual(cdp.mol[0].res[3].spin[0].intensities[0][0], 128690)
 
 
-class XEasy(TestCase):
-    """TestCase class for the functional tests for the support of XEasy in relax."""
-
-    def setUp(self):
-        """Set up for all the functional tests."""
-
-        # Create a data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
-    def test_read_peak_list(self):
+    def test_read_peak_list_xeasy(self):
         """Test the reading of an XEasy peak list."""
 
         # Get the current data pipe.
