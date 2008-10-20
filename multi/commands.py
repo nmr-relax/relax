@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007  Gary S Thompson (https://gna.org/users/varioustoxins)   #
+# Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
