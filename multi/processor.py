@@ -293,16 +293,6 @@ class Application_callback(object):
         self.handle_exception = self.default_handle_exception
 
 
-    def default_init_master(self, processor):
-        '''Start the main loop of the host application.
-
-        @param processor:   The processor instance.
-        @type processor:    multi.processor.Processor instance
-        '''
-
-        self.master.run()
-
-
     def default_handle_exception(self, processor, exception):
         '''Handle an exception raised in the processor framework.
 
@@ -323,6 +313,16 @@ class Application_callback(object):
         # note we print to __stdout__ as sys.stdout may be a wrapper we applied
         traceback.print_exc(file=sys.__stdout__)
         processor.abort()
+
+
+    def default_init_master(self, processor):
+        '''Start the main loop of the host application.
+
+        @param processor:   The processor instance.
+        @type processor:    multi.processor.Processor instance
+        '''
+
+        self.master.run()
 
 
 class Capturing_exception(Exception):
