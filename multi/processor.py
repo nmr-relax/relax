@@ -666,7 +666,7 @@ class Processor(object):
         if self.rank() == 0:
             end_time = time.time()
             time_delta_str = self.get_time_delta(self.start_time, end_time)
-            print 'overall runtime: ' + time_delta_str + '\n'
+            print '\nOverall runtime: ' + time_delta_str + '\n'
 
 
     def pre_run(self):
