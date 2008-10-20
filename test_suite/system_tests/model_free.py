@@ -157,6 +157,13 @@ class Mf(TestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
 
 
+    def test_latex_table(self):
+        """Test the creation of a LaTeX table of model-free results, mimicking the latex_mf_table.py sample script."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/latex_mf_table.py')
+
+
     def test_omp_analysis(self):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
