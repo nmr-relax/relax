@@ -305,14 +305,6 @@ class Relax:
         else:
             self.mode = 'prompt'
 
-        # Multi-processor mode (not including the uni-processor).
-        if options.multiprocessor != 'uni':
-            # Exclusive modes.
-            if options.test_suite or options.unit_tests:
-                parser.error("the relax multi processor mode and executing the test suite are mutually exclusive")
-            elif options.licence:
-                parser.error("the relax multi processor multi processor and licence are mutually exclusive")
-
 
     def get_intro_string(self):
         """Create the program introduction.
