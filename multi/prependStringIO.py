@@ -141,14 +141,3 @@ class PrependStringIO(StringIO):
             self.first_time = False
 
         StringIO.write(self.target_stream, string)
-
-
-if __name__ == '__main__':
-    prepend = PrependStringIO('>001 | ')
-
-    prepend.write('test\ntest2\n')
-    tout = sys.stdout
-    sys.stdout = prepend
-    print 'test3'
-    sys.stdout = tout
-    print prepend.getvalue()
