@@ -173,7 +173,7 @@ class Latex:
         # Loop over the spin systems.
         for spin, spin_id in spin_loop(return_id=True):
             # The spin ID string.
-            self.file.write("%-20s & " % (spin.name + `spin.num`))
+            self.file.write("%-20s & " % (spin_id))
 
             # The spin is not selected.
             if not spin.select:
