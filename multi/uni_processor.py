@@ -67,8 +67,14 @@ class Uni_processor(Processor):
 
 
     def get_intro_string(self):
-        return '''uniprocessor'''
+        """Return the string to append to the end of the relax introduction string.
 
+        @return:    The string describing this Processor fabric.
+        @rtype:     str
+        """
+
+        # Return the string.
+        return "Uni-processor"
 
 
     def get_name(self):

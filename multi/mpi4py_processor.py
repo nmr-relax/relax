@@ -130,8 +130,17 @@ class Mpi4py_processor(Multi_processor):
 
     #TODO: MAY NEED support for widths?
     def get_intro_string(self):
+        """Return the string to append to the end of the relax introduction string.
+
+        @return:    The string describing this Processor fabric.
+        @rtype:     str
+        """
+
+        # Get the specific MPI version.
         version_info = MPI.Get_version()
-        return '''MPI running via mpi4py with %d slave processors & 1 master, mpi version = %s.%s''' % (self.processor_size(), version_info[0], version_info[1])
+
+        # Return the string.
+        return "MPI running via mpi4py with %d slave processors & 1 master.  Using MPI version %s.%s." % (self.processor_size(), version_info[0], version_info[1])
 
 
     def get_name(self):
