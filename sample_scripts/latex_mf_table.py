@@ -33,7 +33,7 @@ with the command:
 \input{results}
 """
 
-# The relax data storage object.
+# relax module imports.
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
 
