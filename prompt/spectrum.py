@@ -87,6 +87,60 @@ class Spectrum:
         intensity.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
+    def mean_and_error(self):
+        """Function for calculating the average intensity and standard deviation of all spectra.
+
+
+        Errors of individual spin at a single time point
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The variance for a single spin at a single time point is calculated by the formula:
+
+        -----
+
+            sigma^2 =  sum({Ii - Iav}^2) / (n - 1) ,
+
+        -----
+
+        where sigma^2 is the variance, sigma is the standard deviation, n is the total number of
+        collected spectra for the time point and i is the corresponding index, Ii is the peak
+        intensity for spectrum i, Iav is the mean over all spectra, ie the sum of all peak
+        intensities divided by n.
+
+
+        Averaging of the errors
+        ~~~~~~~~~~~~~~~~~~~~~~~
+
+        As the value of n in the above equation is always very low, normally only a couple of
+        spectra are collected per time point, the variance of all spins is averaged for a single
+        time point.  Although this results in all spins having the same error, the accuracy of the
+        error estimate is significantly improved.
+
+
+        Errors across multiple time points
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        If all spectra are collected in duplicate (triplicate or higher number of spectra are
+        supported), the each time point will have its own error estimate.  However, if there are
+        time points in the series which only consist of a single spectrum, then the variances of
+        replicated time points will be averaged.  Hence, for the entire experiment there will be a
+        single error value for all spins and for all time points.
+
+        A better approach rather than averaging across all time points would be to use a form of
+        interpolation as the errors across time points generally decreases for longer time periods.
+        This is currently not implemented.
+        """
+
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_fit.mean_and_error()"
+            print text
+
+        # Execute the functional code.
+        relax_fit_obj.mean_and_error()
+
+
     def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
