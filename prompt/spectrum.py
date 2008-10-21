@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNumError, RelaxStrError
-from specific_fns.setup import noe_obj
+from generic_fns import intensity
 
 
 class Spectrum:
@@ -84,7 +84,7 @@ class Spectrum:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        noe_obj.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+        intensity.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
     def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None):
@@ -193,4 +193,4 @@ class Spectrum:
             raise RelaxNoneIntError, ('intensity column', int_col)
 
         # Execute the functional code.
-        noe_obj.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col)
+        intensity.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col)
