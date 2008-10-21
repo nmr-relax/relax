@@ -87,7 +87,7 @@ class Spectrum:
         noe_obj.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read(self, file=None, dir=None, spectrum_id=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
