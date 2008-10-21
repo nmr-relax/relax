@@ -42,15 +42,15 @@ class Spectrum:
         self.__relax__ = relax
 
 
-    def error(self, error=0.0, spectrum_type=None, spin_id=None):
-        """Function for setting the errors in the reference or saturated NOE spectra.
+    def error(self, error=0.0, spectrum_id=None, spin_id=None):
+        """Function for setting the intensity error (standard deviation) in the given spectrum.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         error:  The error.
 
-        spectrum_type:  The type of spectrum.
+        spectrum_id:  The spectrum identification string.
 
         spin_id:  The spin identification string.
 
@@ -58,22 +58,16 @@ class Spectrum:
         Description
         ~~~~~~~~~~~
 
-        The spectrum_type argument can have the following values:
-            'ref':  The NOE reference spectrum.
-            'sat':  The NOE spectrum with proton saturation turned on.
-
-        If the 'res_num' and 'res_name' arguments are left as the defaults of None, then the error
-        value for all residues will be set to the supplied value.  Otherwise the residue number can
-        be set to either an integer for selecting a single residue or a python regular expression
-        string for selecting multiple residues.  The residue name argument must be a string and can
-        use regular expression as well.
+        The spectrum_id argument identifies the spectrum associated with the error and must
+        correspond to a previously loaded set of intensities.  If the 'spin_id' argument is left on
+        the default of None, then the error value for all spins will be set to the supplied value.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "noe.error("
             text = text + "error=" + `error`
-            text = text + ", spectrum_type=" + `spectrum_type`
+            text = text + ", spectrum_id=" + `spectrum_id`
             text = text + ", spin_id=" + `spin_id` + ")"
             print text
 
@@ -81,19 +75,19 @@ class Spectrum:
         if type(error) != float and type(error) != int:
             raise RelaxNumError, ('error', error)
 
-        # The spectrum type.
-        if type(spectrum_type) != str:
-            raise RelaxStrError, ('spectrum type', spectrum_type)
+        # The spectrum identification string.
+        if type(spectrum_id) != str:
+            raise RelaxStrError, ('spectrum identification string', spectrum_id)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        noe_obj.set_error(error=error, spectrum_type=spectrum_type, spin_id=spin_id)
+        noe_obj.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read(self, file=None, dir=None, spectrum_type=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
+    def read(self, file=None, dir=None, spectrum_id=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
@@ -103,7 +97,7 @@ class Spectrum:
 
         dir:  The directory where the file is located.
 
-        spectrum_type:  The type of spectrum.
+        spectrum_id:  The type of spectrum.
 
         format:  The type of file containing peak intensities.
 
@@ -120,7 +114,7 @@ class Spectrum:
         The peak intensity can either be from peak heights or peak volumes.
 
 
-        The 'spectrum_type' argument can have the following values:
+        The 'spectrum_id' argument can have the following values:
             'ref':  The NOE reference spectrum.
             'sat':  The NOE spectrum with proton saturation turned on.
 
@@ -160,14 +154,14 @@ class Spectrum:
         To read the reference and saturated spectra peak heights from the Sparky formatted files
         'ref.list' and 'sat.list', type:
 
-        relax> noe.read(file='ref.list', spectrum_type='ref')
-        relax> noe.read(file='sat.list', spectrum_type='sat')
+        relax> noe.read(file='ref.list', spectrum_id='ref')
+        relax> noe.read(file='sat.list', spectrum_id='sat')
 
         To read the reference and saturated spectra peak heights from the XEasy formatted files
         'ref.text' and 'sat.text', type:
 
-        relax> noe.read(file='ref.text', spectrum_type='ref', format='xeasy')
-        relax> noe.read(file='sat.text', spectrum_type='sat', format='xeasy')
+        relax> noe.read(file='ref.text', spectrum_id='ref', format='xeasy')
+        relax> noe.read(file='sat.text', spectrum_id='sat', format='xeasy')
         """
 
         # Function intro text.
@@ -175,7 +169,7 @@ class Spectrum:
             text = sys.ps3 + "noe.read("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", spectrum_type=" + `spectrum_type`
+            text = text + ", spectrum_id=" + `spectrum_id`
             text = text + ", format=" + `format`
             text = text + ", heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
@@ -190,9 +184,9 @@ class Spectrum:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # The spectrum type.
-        if type(spectrum_type) != str:
-            raise RelaxStrError, ('spectrum type', spectrum_type)
+        # The spectrum identification string.
+        if type(spectrum_id) != str:
+            raise RelaxStrError, ('spectrum identification string', spectrum_id)
 
         # The format.
         if type(format) != str:
@@ -211,4 +205,4 @@ class Spectrum:
             raise RelaxNoneIntError, ('intensity column', int_col)
 
         # Execute the functional code.
-        noe_obj.read(file=file, dir=dir, spectrum_type=spectrum_type, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
+        noe_obj.read(file=file, dir=dir, spectrum_id=spectrum_id, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
