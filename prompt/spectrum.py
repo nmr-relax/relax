@@ -26,7 +26,7 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNumError, RelaxStrError
-from generic_fns import intensity
+from generic_fns import spectrum
 
 
 class Spectrum:
@@ -84,7 +84,7 @@ class Spectrum:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        intensity.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+        spectrum.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
     def error_analysis(self):
@@ -178,7 +178,7 @@ class Spectrum:
             print text
 
         # Execute the functional code.
-        intensity.error_analysis()
+        spectrum.error_analysis()
 
 
     def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
@@ -343,4 +343,4 @@ class Spectrum:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        intensity.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
