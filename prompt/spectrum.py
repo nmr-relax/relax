@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,7 +29,7 @@ from relax_errors import RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrEr
 from specific_fns.setup import noe_obj
 
 
-class Noe:
+class Spectrum:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
