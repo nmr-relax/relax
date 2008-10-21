@@ -87,7 +87,7 @@ class Spectrum:
         noe_obj.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read_intensities(self, file=None, dir=None, spectrum_id=None, format='sparky', heteronuc='N', proton='HN', int_col=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
@@ -98,8 +98,6 @@ class Spectrum:
         dir:  The directory where the file is located.
 
         spectrum_id:  The spectrum identification string.
-
-        format:  The type of file containing peak intensities.
 
         heteronuc:  The name of the heteronucleus as specified in the peak intensity file.
 
@@ -118,28 +116,24 @@ class Spectrum:
         This is a unique identifier, so the label must not already exist.
 
 
-        The 'format' argument can currently be set to:
-            'sparky'
-            'xeasy'
-            'nmrview'
+        The peak list or intensity file will be automatically determined.
 
-        If the 'format' argument is set to 'sparky', the file should be a Sparky peak list saved
-        after typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st,
-        2nd, 3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data
-        respectively.  The frequency data w1 and w2 are ignored while the peak intensity data can
-        either be the peak height or volume displayed by changing the window options.  If the peak
-        intensity data is not within column 3, set the argument 'int_col' to the appropriate value
-        (column numbering starts from 0 rather than 1).
+        Sparky peak list:  The file should be a Sparky peak list saved after typing the command
+        'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd, 3rd, and 4th) contain
+        the Sparky assignment, w1, w2, and peak intensity data respectively.  The frequency data w1
+        and w2 are ignored while the peak intensity data can either be the peak height or volume
+        displayed by changing the window options.  If the peak intensity data is not within column
+        3, set the argument 'int_col' to the appropriate value (column numbering starts from 0
+        rather than 1).
 
-        If the 'format' argument is set to 'xeasy', the file should be the saved XEasy text window
-        output of the list peak entries command, 'tw' followed by 'le'.  As the columns are fixed,
-        the peak intensity column is hardwired to number 10 (the 11th column) which contains either
-        the peak height or peak volume data.  Because the columns are fixed, the 'int_col' argument
-        will be ignored.
+        XEasy peak list:  The file should be the saved XEasy text window output of the list peak
+        entries command, 'tw' followed by 'le'.  As the columns are fixed, the peak intensity column
+        is hardwired to number 10 (the 11th column) which contains either the peak height or peak
+        volume data.  Because the columns are fixed, the 'int_col' argument will be ignored.
 
-        If the 'format' argument is set to 'nmrview', the file should be a NMRView peak list. The
-        default is to use column 16 (which contains peak heights) for peak intensities. To use
-        use peak volumes (or evolumes), int_col must be set to 15.
+        NMRView:  The file should be a NMRView peak list. The default is to use column 16 (which
+        contains peak heights) for peak intensities. To use use peak volumes (or evolumes), int_col
+        must be set to 15.
 
 
         The 'heteronuc' and 'proton' arguments should be set respectively to the name of the
@@ -159,8 +153,8 @@ class Spectrum:
         To read the reference and saturated spectra peak heights from the XEasy formatted files
         'ref.text' and 'sat.text', type:
 
-        relax> noe.read(file='ref.text', spectrum_id='ref', format='xeasy')
-        relax> noe.read(file='sat.text', spectrum_id='sat', format='xeasy')
+        relax> noe.read(file='ref.text', spectrum_id='ref')
+        relax> noe.read(file='sat.text', spectrum_id='sat')
         """
 
         # Function intro text.
@@ -169,7 +163,6 @@ class Spectrum:
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", spectrum_id=" + `spectrum_id`
-            text = text + ", format=" + `format`
             text = text + ", heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
             text = text + ", int_col=" + `int_col` + ")"
@@ -187,10 +180,6 @@ class Spectrum:
         if type(spectrum_id) != str:
             raise RelaxStrError, ('spectrum identification string', spectrum_id)
 
-        # The format.
-        if type(format) != str:
-            raise RelaxStrError, ('format', format)
-
         # The heteronucleus name.
         if type(heteronuc) != str:
             raise RelaxStrError, ('heteronucleus name', heteronuc)
@@ -204,4 +193,4 @@ class Spectrum:
             raise RelaxNoneIntError, ('intensity column', int_col)
 
         # Execute the functional code.
-        noe_obj.read(file=file, dir=dir, spectrum_id=spectrum_id, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col)
+        noe_obj.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col)
