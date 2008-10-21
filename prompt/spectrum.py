@@ -138,7 +138,7 @@ class Spectrum:
             print text
 
         # Execute the functional code.
-        relax_fit_obj.mean_and_error()
+        intensity.error_analysis()
 
 
     def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
