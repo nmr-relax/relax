@@ -93,11 +93,11 @@ class Spectrum:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        file:  The name of the file containing the sequence data.
+        file:  The name of the file containing the intensity data.
 
         dir:  The directory where the file is located.
 
-        spectrum_id:  The type of spectrum.
+        spectrum_id:  The spectrum identification string.
 
         format:  The type of file containing peak intensities.
 
@@ -105,7 +105,7 @@ class Spectrum:
 
         proton:  The name of the proton as specified in the peak intensity file.
 
-        int_col:  The column containing the peak intensity data (for a non-standard formatted file).
+        int_col:  The column(s) containing the peak intensity data (for a non-standard formatted file).
 
 
         Description
@@ -114,9 +114,8 @@ class Spectrum:
         The peak intensity can either be from peak heights or peak volumes.
 
 
-        The 'spectrum_id' argument can have the following values:
-            'ref':  The NOE reference spectrum.
-            'sat':  The NOE spectrum with proton saturation turned on.
+        The 'spectrum_id' argument is a label which is subsequently used by other user functions.
+        This is a unique identifier, so the label must not already exist.
 
 
         The 'format' argument can currently be set to:
