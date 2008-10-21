@@ -88,13 +88,54 @@ class Spectrum:
 
 
     def error_analysis(self):
-        """Function for calculating the average intensity and standard deviation of all spectra.
+        """Function for performing an error analysis for peak intensities.
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function must only be called after all peak intensities have been loaded and all
+        other necessary spectral information set.  This includes the baseplane RMSD and the number
+        of points used in volume integration, both of which are only used if spectra have not been
+        replicated.
+
+        Six different types of error analysis are supported depending on whether peak heights or
+        volumes are supplied, whether noise is determined from replicated spectra or the RMSD of the
+        baseplane noise, and whether all spectra or only a subset have been duplicated.  These are:
+
+        ____________________________________________________________________________________________
+        |          |                                        |                                      |
+        | Int type | Noise source                           | Error scope                          |
+        |__________|________________________________________|______________________________________|
+        |          |                                        |                                      |
+        | Heights  | RMSD baseplane                         | One sigma per peak per spectrum      |
+        |          |                                        |                                      |
+        | Heights  | Partial duplicate + variance averaging | One sigma for all peaks, all spectra |
+        |          |                                        |                                      |
+        | Heights  | All replicated + variance averaging    | One sigma per replicated spectra set |
+        |          |                                        |                                      |
+        | Volumes  | RMSD baseplane                         | One sigma per peak per spectrum      |
+        |          |                                        |                                      |
+        | Volumes  | Partial duplicate + variance averaging | One sigma for all peaks, all spectra |
+        |          |                                        |                                      |
+        | Volumes  | All replicated + variance averaging    | One sigma per replicated spectra set |
+        |__________|________________________________________|______________________________________|
 
 
-        Errors of individual spin at a single time point
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Peak heights with baseplane noise RMSD
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        The variance for a single spin at a single time point is calculated by the formula:
+        When none of the spectra have been replicated, then the peak height errors are calculated
+        using the RMSD of the baseplane noise, the value of which is set by the
+        spectrum.baseplane_rmsd() user function.  This results in a different error per peak per
+        spectrum.  The standard deviation error measure for the peak height, sigma_I, is set to the
+        RMSD value.
+
+
+        Peak heights with partially replicated spectra
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        When spectra are replicated, the variance for a single spin at a single replicated spectra
+        set is calculated by the formula
 
         -----
 
@@ -102,33 +143,32 @@ class Spectrum:
 
         -----
 
-        where sigma^2 is the variance, sigma is the standard deviation, n is the total number of
-        collected spectra for the time point and i is the corresponding index, Ii is the peak
-        intensity for spectrum i, Iav is the mean over all spectra, ie the sum of all peak
-        intensities divided by n.
+        where sigma^2 is the variance, sigma is the standard deviation, n is the size of the
+        replicated spectra set with i being the corresponding index, Ii is the peak intensity for
+        spectrum i, and Iav is the mean over all spectra i.e. the sum of all peak intensities
+        divided by n.
+
+        As the value of n in the above equation is always very low since normally only a couple of
+        spectra are collected per replicated spectra set, the variance of all spins is averaged for
+        a single replicated spectra set.  Although this results in all spins having the same error,
+        the accuracy of the error estimate is significantly improved.
+
+        If there are in addition to the replicated spectra loaded peak intensities which only
+        consist of a single spectrum, i.e. not all spectra are replicated, then the variances of
+        replicated replicated spectra sets will be averaged.  This will be used for the entire
+        experiment so that there will be only a single error value for all spins and for all 
+        spectra.
 
 
-        Averaging of the errors
-        ~~~~~~~~~~~~~~~~~~~~~~~
-
-        As the value of n in the above equation is always very low, normally only a couple of
-        spectra are collected per time point, the variance of all spins is averaged for a single
-        time point.  Although this results in all spins having the same error, the accuracy of the
-        error estimate is significantly improved.
-
-
-        Errors across multiple time points
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        Peak heights with all spectra replicated
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         If all spectra are collected in duplicate (triplicate or higher number of spectra are
-        supported), the each time point will have its own error estimate.  However, if there are
-        time points in the series which only consist of a single spectrum, then the variances of
-        replicated time points will be averaged.  Hence, for the entire experiment there will be a
-        single error value for all spins and for all time points.
-
-        A better approach rather than averaging across all time points would be to use a form of
-        interpolation as the errors across time points generally decreases for longer time periods.
-        This is currently not implemented.
+        supported), the each replicated spectra set will have its own error estimate.  The error
+        for a single peak is calculated as when partially replicated spectra are collected, and
+        these are again averaged to give a single error per replicated spectra set.  However as all
+        replicated spectra sets will have their own error estimate, variance averaging across all
+        spectra sets will not be performed.
         """
 
 
