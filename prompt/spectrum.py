@@ -87,7 +87,7 @@ class Spectrum:
         intensity.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
@@ -103,7 +103,19 @@ class Spectrum:
 
         proton:  The name of the proton as specified in the peak intensity file.
 
-        int_col:  The column(s) containing the peak intensity data (for a non-standard formatted file).
+        int_col:  The column(s) containing the peak intensity data (for a non-standard format).
+
+        mol_name_col:  The molecule name column used by the generic intensity file format.
+
+        res_num_col:  The residue number column used by the generic intensity file format.
+
+        res_name_col:  The residue name column used by the generic intensity file format.
+
+        spin_num_col:  The spin number column used by the generic intensity file format.
+
+        spin_name_col:  The spin name column used by the generic intensity file format.
+
+        sep:  The column separator used by the generic intensity format (defaults to white space).
 
 
         Description
@@ -112,9 +124,17 @@ class Spectrum:
         The peak intensity can either be from peak heights or peak volumes.
 
 
-        The 'spectrum_id' argument is a label which is subsequently used by other user functions.
-        This is a unique identifier, so the label must not already exist.
+        The 'spectrum_id' argument is a label which is subsequently utilised by other user
+        functions.  If this identifier matches that of a previously loaded set of intensities, then
+        this indicates a replicated spectrum.
 
+        The 'heteronuc' and 'proton' arguments should be set respectively to the name of the
+        heteronucleus and proton in the file.  Only those lines which match these labels will be
+        used.
+
+
+        File formats
+        ~~~~~~~~~~~~
 
         The peak list or intensity file will be automatically determined.
 
@@ -135,10 +155,16 @@ class Spectrum:
         contains peak heights) for peak intensities. To use use peak volumes (or evolumes), int_col
         must be set to 15.
 
-
-        The 'heteronuc' and 'proton' arguments should be set respectively to the name of the
-        heteronucleus and proton in the file.  Only those lines which match these labels will be
-        used.
+        Generic intensity file:  This is a generic format which can be created by scripting to
+        support non-supported peak lists.  It should contain in the first few columns enough
+        information to identify the spin.  This can include columns for the molecule name, residue
+        number, residue name, spin number, and spin name, with each optional type positioned with
+        the *name_col and *num_col arguments.  The peak intensities can be placed in another column
+        specified by the int_col argument.  Intensities from multiple spectra can be placed into
+        different columns, and these can then be specified simultaneously by setting the int_col
+        argument to a list of columns.  This list must be matched by setting the spectrum_id
+        argument to list of the same length.  If columns are delimited by a character other than
+        whitespace, this can be specified with the sep argument.
 
 
         Examples
@@ -165,7 +191,13 @@ class Spectrum:
             text = text + ", spectrum_id=" + `spectrum_id`
             text = text + ", heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
-            text = text + ", int_col=" + `int_col` + ")"
+            text = text + ", int_col=" + `int_col`
+            text = text + ", mol_name_col=" + `mol_name_col`
+            text = text + ", res_num_col=" + `res_num_col`
+            text = text + ", res_name_col=" + `res_name_col`
+            text = text + ", spin_num_col=" + `spin_num_col`
+            text = text + ", spin_name_col=" + `spin_name_col`
+            text = text + ", sep=" + `sep` + ")"
             print text
 
         # The file name.
@@ -192,5 +224,29 @@ class Spectrum:
         if int_col and type(int_col) != int:
             raise RelaxNoneIntError, ('intensity column', int_col)
 
+        # Molecule name column.
+        if mol_name_col != None and type(mol_name_col) != int:
+            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
+
+        # Residue number column.
+        if res_num_col != None and type(res_num_col) != int:
+            raise RelaxNoneIntError, ('residue number column', res_num_col)
+
+        # Residue name column.
+        if res_name_col != None and type(res_name_col) != int:
+            raise RelaxNoneIntError, ('residue name column', res_name_col)
+
+        # Spin number column.
+        if spin_num_col != None and type(spin_num_col) != int:
+            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+
+        # Spin name column.
+        if spin_name_col != None and type(spin_name_col) != int:
+            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+
+        # Column separator.
+        if sep != None and type(sep) != str:
+            raise RelaxNoneStrError, ('column separator', sep)
+
         # Execute the functional code.
-        intensity.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col)
+        intensity.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
