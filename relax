@@ -63,6 +63,12 @@ putenv('PDBVIEWER', 'vmd')
 
 
 class Relax:
+    """The main relax class.
+
+    This contains information about the running state, for example the mode of operation of relax,
+    whether debugging is turned on, etc.
+    """
+
     def __init__(self):
         """The top level class for initialising the program."""
 

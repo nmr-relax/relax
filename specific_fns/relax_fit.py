@@ -192,7 +192,7 @@ class Relax_fit(Common_functions):
         scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
 
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.ave_intensities, sd=cdp.sd, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.ave_intensities, sd=cdp.sigma_I, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         func(param_vector)
@@ -633,14 +633,15 @@ class Relax_fit(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the standard deviation has already been calculated.
-        if hasattr(cdp, 'sigma'):
+        if hasattr(cdp, 'sigma_I'):
             raise RelaxError, "The average intensity and standard deviation of all spectra has already been calculated."
 
         # Print out.
         print "\nCalculating the average intensity and standard deviation of all spectra."
 
         # Initialise.
-        cdp.sigma = []
+        cdp.sigma_I = []
+        cdp.var_I = []
 
         # Loop over the time points.
         for time_index in xrange(len(cdp.relax_times)):
@@ -651,7 +652,7 @@ class Relax_fit(Common_functions):
                 print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
             # Append zero to the global variance structure.
-            cdp.sigma.append(0.0)
+            cdp.var_I.append(0.0)
 
             # Test for multiple spectra.
             if cdp.num_spectra[time_index] == 1:
@@ -673,8 +674,8 @@ class Relax_fit(Common_functions):
                 # Initialise the average intensity and standard deviation data structures.
                 if not hasattr(spin, 'ave_intensities'):
                     spin.ave_intensities = []
-                if not hasattr(spin, 'sigma'):
-                    spin.sigma = []
+                if not hasattr(spin, 'var_I'):
+                    spin.var_I = []
 
                 # Average intensity.
                 spin.ave_intensities.append(average(spin.intensities[time_index]))
@@ -686,60 +687,60 @@ class Relax_fit(Common_functions):
 
                 # Variance.
                 #
-                #                 1
-                #       sigma = ----- * sum({Xi - Xav}^2)]
-                #               n - 1
+                #                   1
+                #       sigma^2 = ----- * sum({Xi - Xav}^2)]
+                #                 n - 1
                 #
                 if cdp.num_spectra[time_index] == 1:
-                    sigma = 0.0
+                    var_I = 0.0
                 else:
-                    sigma = 1.0 / (cdp.num_spectra[time_index] - 1.0) * SSE
-                spin.sigma.append(sigma)
+                    var_I = 1.0 / (cdp.num_spectra[time_index] - 1.0) * SSE
+                spin.var_I.append(var_I)
 
                 # Print out.
                 if verbosity:
-                    print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, `spin.ave_intensities[time_index]`, `spin.sigma[time_index]`)
+                    print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, `spin.ave_intensities[time_index]`, `spin.var_I[time_index]`)
 
                 # Sum of variances (for average).
-                cdp.sigma[time_index] = cdp.sigma[time_index] + spin.sigma[time_index]
+                cdp.var_I[time_index] = cdp.var_I[time_index] + spin.var_I[time_index]
 
             # Average variance.
-            cdp.sigma[time_index] = cdp.sigma[time_index] / float(count_spins())
+            cdp.var_I[time_index] = cdp.var_I[time_index] / float(count_spins())
 
             # Print out.
-            print "Standard deviation for time point %s:  %s" % (`time_index`, `cdp.sigma[time_index]`)
+            print "Standard deviation for time point %s:  %s" % (`time_index`, `sqrt(cdp.var_I[time_index])`)
 
 
         # Average across all spectra if there are time points with a single spectrum.
-        if 0.0 in cdp.sigma:
+        if 0.0 in cdp.var_I:
             # Initialise.
-            sigma = 0.0
+            var_I = 0.0
             num_dups = 0
 
             # Loop over all time points.
             for i in xrange(len(cdp.relax_times)):
                 # Single spectrum (or extraordinarily accurate NMR spectra!).
-                if cdp.sigma[i] == 0.0:
+                if cdp.var_I[i] == 0.0:
                     continue
 
                 # Sum and count.
-                sigma = sigma + cdp.sigma[i]
+                var_I = var_I + cdp.var_I[i]
                 num_dups = num_dups + 1
 
             # Average value.
-            sigma = sigma / float(num_dups)
+            var_I = var_I / float(num_dups)
 
             # Assign the average value to all time points.
             for i in xrange(len(cdp.relax_times)):
-                cdp.sigma[i] = sigma
+                cdp.var_I[i] = var_I
 
             # Print out.
-            print "\nStandard deviation (averaged over all spectra):  " + `sigma`
+            print "\nStandard deviation (averaged over all spectra):  " + `var_I`
 
         # Create the standard deviation data structure.
-        cdp.sd = []
-        for sigma in cdp.sigma:
-            cdp.sd.append(sqrt(sigma))
+        cdp.sigma_I = []
+        for var_I in cdp.var_I:
+            cdp.sigma_I.append(sqrt(var_I))
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -842,7 +843,7 @@ class Relax_fit(Common_functions):
             else:
                 values = spin.sim_intensities[sim_index]
 
-            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=cdp.sd, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=cdp.sigma_I, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -1064,7 +1065,7 @@ class Relax_fit(Common_functions):
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
-        return cdp.sd
+        return cdp.sigma_I
 
 
     def return_data_name(self, name):

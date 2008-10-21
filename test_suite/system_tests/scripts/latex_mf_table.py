@@ -42,10 +42,10 @@ import sys
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
+from relax_io import open_write_file
 
-
-# Name of the results file.
-RESULTS_FILE = 'final'
+# Path to the files.
+DATA_PATH = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
 
 
 class Latex:
@@ -53,13 +53,13 @@ class Latex:
         """Convert the final results into a LaTeX table."""
 
         # Create the data pipe.
-        pipe.create(RESULTS_FILE, 'mf')
+        pipe.create('latex', 'mf')
 
         # Load the model-free results.
-        results.read(RESULTS_FILE, dir=None)
+        results.read(file='final_results_trunc_1.3', dir=DATA_PATH)
 
         # Open the file.
-        self.file = open('results.tex', 'w')
+        self.file = open_write_file('devnull')
 
         # LaTeX header.
         self.latex_header()
@@ -140,12 +140,25 @@ class Latex:
         # End the font size.
         self.file.write("\\end{small}\n")
 
+        # Terminate the document.
+        self.file.write("\\end{document}\n")
+
 
     def latex_header(self):
         """Create the LaTeX header.
 
         This function will need to be heavily modified to suit your needs.
         """
+
+        # Document class - to allow for compilation tests.
+        self.file.write("\documentclass[a4paper, 12pt, twoside]{book}\n\n")
+
+        # Package inclusion.
+        self.file.write("\usepackage{longtable}\n")
+        self.file.write("\usepackage{booktabs}\n\n")
+
+        # Start the document.
+        self.file.write("\\begin{document}\n\n")
 
         # Font size.
         self.file.write("% Small font.\n")
