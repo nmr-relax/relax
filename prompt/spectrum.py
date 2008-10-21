@@ -87,7 +87,7 @@ class Spectrum:
         intensity.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def mean_and_error(self):
+    def error_analysis(self):
         """Function for calculating the average intensity and standard deviation of all spectra.
 
 
@@ -134,7 +134,7 @@ class Spectrum:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.mean_and_error()"
+            text = sys.ps3 + "spectrum.error_analysis()"
             print text
 
         # Execute the functional code.
