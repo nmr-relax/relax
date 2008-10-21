@@ -65,7 +65,7 @@ class Spectrum:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.error("
+            text = sys.ps3 + "spectrum.error("
             text = text + "error=" + `error`
             text = text + ", spectrum_id=" + `spectrum_id`
             text = text + ", spin_id=" + `spin_id` + ")"
@@ -147,19 +147,19 @@ class Spectrum:
         To read the reference and saturated spectra peak heights from the Sparky formatted files
         'ref.list' and 'sat.list', type:
 
-        relax> noe.read(file='ref.list', spectrum_id='ref')
-        relax> noe.read(file='sat.list', spectrum_id='sat')
+        relax> spectrum.read_intensities(file='ref.list', spectrum_id='ref')
+        relax> spectrum.read_intensities(file='sat.list', spectrum_id='sat')
 
         To read the reference and saturated spectra peak heights from the XEasy formatted files
         'ref.text' and 'sat.text', type:
 
-        relax> noe.read(file='ref.text', spectrum_id='ref')
-        relax> noe.read(file='sat.text', spectrum_id='sat')
+        relax> spectrum.read_intensities(file='ref.text', spectrum_id='ref')
+        relax> spectrum.read_intensities(file='sat.text', spectrum_id='sat')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.read("
+            text = sys.ps3 + "spectrum.read_intensities("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", spectrum_id=" + `spectrum_id`
