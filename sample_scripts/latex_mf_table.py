@@ -22,16 +22,22 @@
 
 """Script for converting the model-free results into a LaTeX table.
 
-The longtable LaTeX package is necessary to allow the table to span multiple pages.  The package
-can be included using the LaTeX command:
+The longtable LaTeX package is necessary to allow the table to span multiple pages.  This table also
+uses the more elegant booktable format.  The packages can be included using the LaTeX preamble
+commands:
 
 \usepackage{longtable}
+\usepackage{booktabs}
 
 Assuming the file name 'results.tex', the resultant table can be placed into a LaTeX manuscript
 with the command:
 
 \input{results}
 """
+
+# Python module imports.
+from string import replace
+import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
@@ -98,7 +104,7 @@ class Latex:
 
         # Headings.
         self.file.write("% Headings.\n")
-        self.file.write("Residue &%\n")
+        self.file.write("Spin &%\n")
         self.file.write("Model &%\n")
         self.file.write("\multicolumn{2}{c}{$S^2$} &%\n")
         self.file.write("\multicolumn{2}{c}{$S^2_f$} &%\n")
@@ -170,6 +176,7 @@ class Latex:
         # Loop over the spin systems.
         for spin, spin_id in spin_loop(return_id=True):
             # The spin ID string.
+            spin_id = replace(spin_id, '&', '\&')
             self.file.write("%-20s & " % (spin_id))
 
             # The spin is not selected.
@@ -181,37 +188,55 @@ class Latex:
 
             # S2.
             if spin.s2 == None:
-                self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
+                self.file.write("%25s & " % "\\multicolumn{2}{c}{}")
+            elif not hasattr(spin, 's2_err'):
+                self.file.write("%24s & " % "\\multicolumn{2}{c}{%.3f}" % spin.s2)
             else:
-                self.file.write("%9.3f & %9.3f & " % (spin.s2, spin.s2_err))
+                self.file.write("%11.3f & %11.3f & " % (spin.s2, spin.s2_err))
 
             # S2f.
             if spin.s2f == None:
-                self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
+                self.file.write("%25s & " % "\\multicolumn{2}{c}{}")
+            elif not hasattr(spin, 's2f_err'):
+                self.file.write("%24s & " % "\\multicolumn{2}{c}{%.3f}" % spin.s2f)
             else:
-                self.file.write("%9.3f & %9.3f & " % (spin.s2f, spin.s2f_err))
+                self.file.write("%11.3f & %11.3f & " % (spin.s2f, spin.s2f_err))
 
             # Fast motion (te < 100 ps or tf).
             if spin.te != None and spin.te <= 100 * 1e-12:
-                self.file.write("%9.2f & %9.2f & " % (spin.te * 1e12, spin.te_err * 1e12))
+                if not hasattr(spin, 'te_err'):
+                    self.file.write("%27s & " % ("\\multicolumn{2}{c}{%.2f}" % (spin.te * 1e12)))
+                else:
+                    self.file.write("%12.2f & %12.2f & " % (spin.te * 1e12, spin.te_err * 1e12))
             elif spin.tf != None:
-                self.file.write("%9.2f & %9.2f & " % (spin.tf * 1e12, spin.tf_err * 1e12))
+                if not hasattr(spin, 'tf_err'):
+                    self.file.write("%27s & " % ("\\multicolumn{2}{c}{%.2f}" % (spin.tf * 1e12)))
+                else:
+                    self.file.write("%12.2f & %12.2f & " % (spin.tf * 1e12, spin.tf_err * 1e12))
             else:
-                self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
+                self.file.write("%27s & " % "\\multicolumn{2}{c}{}")
 
             # Slow motion (te > 100 ps or ts).
             if spin.te != None and spin.te > 100 * 1e-12:
-                self.file.write("%9.2f & %9.2f & " % (spin.te * 1e12, spin.te_err * 1e12))
+                if not hasattr(spin, 'te_err'):
+                    self.file.write("%27s & " % ("\\multicolumn{2}{c}{%.2f}" % (spin.te * 1e12)))
+                else:
+                    self.file.write("%12.2f & %12.2f & " % (spin.te * 1e12, spin.te_err * 1e12))
             elif spin.ts != None:
-                self.file.write("%9.2f & %9.2f & " % (spin.ts * 1e12, spin.ts_err * 1e12))
+                if not hasattr(spin, 'ts_err'):
+                    self.file.write("%27s & " % ("\\multicolumn{2}{c}{%.2f}" % (spin.ts * 1e12)))
+                else:
+                    self.file.write("%12.2f & %12.2f & " % (spin.ts * 1e12, spin.ts_err * 1e12))
             else:
-                self.file.write("%21s & " % "\\multicolumn{2}{c}{}")
+                self.file.write("%27s & " % "\\multicolumn{2}{c}{}")
 
             # Rex.
             if spin.rex == None:
-                self.file.write("%21s \\\\\n" % "\\multicolumn{2}{c}{}")
+                self.file.write("%27s \\\\\n" % "\\multicolumn{2}{c}{}")
+            elif not hasattr(spin, 'rex_err'):
+                self.file.write("%27s \\\\\n" % ("\\multicolumn{2}{c}{%.3f}" % (spin.rex * (2.0 * pi * spin.frq[0])**2)))
             else:
-                self.file.write("%9.3f & %9.3f \\\\\n" % (spin.rex * (2.0 * pi * spin.frq[0])**2, spin.rex_err * (2.0 * pi * spin.frq[0])**2))
+                self.file.write("%12.3f & %12.3f \\\\\n" % (spin.rex * (2.0 * pi * spin.frq[0])**2, spin.rex_err * (2.0 * pi * spin.frq[0])**2))
 
         # Start a new line.
         self.file.write("\n")
