@@ -21,6 +21,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'consistency_tests' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

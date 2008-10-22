@@ -21,7 +21,8 @@
 ###############################################################################
 
 # Module docstring.
-"""User functions for manipulating spectrometer frequencies."""
+"""Module containing the 'frq' user function class for manipulating spectrometer frequencies."""
+__docformat__ = 'plaintext'
 
 # Python module imports.
 import sys

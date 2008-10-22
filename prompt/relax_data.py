@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'relax_data' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 
