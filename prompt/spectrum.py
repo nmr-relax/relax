@@ -286,7 +286,7 @@ class Spectrum:
         spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
@@ -303,6 +303,8 @@ class Spectrum:
         proton:  The name of the proton as specified in the peak intensity file.
 
         int_col:  The column(s) containing the peak intensity data (for a non-standard format).
+
+        int_method:  The integration method.
 
         mol_name_col:  The molecule name column used by the generic intensity file format.
 
@@ -330,6 +332,13 @@ class Spectrum:
         The 'heteronuc' and 'proton' arguments should be set respectively to the name of the
         heteronucleus and proton in the file.  Only those lines which match these labels will be
         used.
+
+        The 'int_method' argument is required for the subsequent error analysis.  When peak heights
+        are measured, this argument should be set to 'height'.  Volume integration methods are a bit
+        varied and hence two values are accepted.  If the volume integration involves pure point
+        summation, with no deconvolution algorithms or other methods affecting peak heights, then
+        the argument should be set to 'point sum'.  All other volume integration methods, e.g. line
+        shape fitting, the argument should be set to 'other'.
 
 
         File formats
@@ -432,6 +441,9 @@ class Spectrum:
                 if type(int_col[i]) != int:
                     raise RelaxListIntError, ('intensity column', int_col)
 
+        # The integration method name.
+        if type(int_method) != str:
+            raise RelaxStrError, ('integration method', int_method)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
@@ -458,4 +470,4 @@ class Spectrum:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
