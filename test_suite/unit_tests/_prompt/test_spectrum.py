@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.spectrum import Spectrum
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
@@ -38,3 +38,202 @@ class Test_spectrum(TestCase):
     # Instantiate the user function class.
     spectrum_fns = Spectrum(fake_relax.fake_instance())
 
+
+    def test_error_argfail_error(self):
+        """The error arg test of the spectrum.error() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float, bin, and int arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'bin' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNumError, self.spectrum_fns.error, error=data[1])
+
+
+    def test_error_argfail_spectrum_id(self):
+        """The spectrum_id arg test of the spectrum.error() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spectrum_fns.error, spectrum_id=data[1])
+
+
+    def test_error_argfail_spin_id(self):
+        """The spin_id arg test of the spectrum.error() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.error, spectrum_id='x', spin_id=data[1])
+
+
+    def test_read_intensities_argfail_file(self):
+        """The file arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, file=data[1])
+
+
+    def test_read_intensities_argfail_dir(self):
+        """The dir arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.read_intensities, file='a', dir=data[1])
+
+
+    def test_read_intensities_argfail_spectrum_id(self):
+        """The spectrum_id arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, spectrum_id=data[1])
+
+
+    def test_read_intensities_argfail_heteronuc(self):
+        """The heteronuc arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, heteronuc=data[1])
+
+
+    def test_read_intensities_argfail_proton(self):
+        """The proton arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, proton=data[1])
+
+
+    def test_read_intensities_argfail_int_col(self):
+        """The int_col arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, bin, or integer list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'int list':
+                continue
+
+            # Catch all list arguments.
+            if type(data[1]) == list:
+                self.assertRaises(RelaxListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
+
+            # All other arguments.
+            else:
+                self.assertRaises(RelaxNoneIntListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
+
+
+    def test_read_intensities_argfail_mol_name_col(self):
+        """The mol_name_col arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', mol_name_col=data[1])
+
+
+    def test_read_intensities_argfail_res_num_col(self):
+        """The res_num_col arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', res_num_col=data[1])
+
+
+    def test_read_intensities_argfail_res_name_col(self):
+        """The res_name_col arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', res_name_col=data[1])
+
+
+    def test_read_intensities_argfail_spin_num_col(self):
+        """The spin_num_col arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', spin_num_col=data[1])
+
+
+    def test_read_intensities_argfail_spin_name_col(self):
+        """The spin_name_col arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', spin_name_col=data[1])
+
+
+    def test_read_intensities_argfail_sep(self):
+        """The sep arg test of the spectrum.read_intensities() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', sep=data[1])
