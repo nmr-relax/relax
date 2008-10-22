@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.spectrum import Spectrum
-from relax_errors import RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
@@ -76,6 +76,45 @@ class Test_spectrum(TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneStrError, self.spectrum_fns.error, spectrum_id='x', spin_id=data[1])
+
+
+    def test_integration_points_argfail_N(self):
+        """The N arg test of the spectrum.integration_points() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the bin and int arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxIntError, self.spectrum_fns.integration_points, N=data[1])
+
+
+    def test_integration_points_argfail_spectrum_id(self):
+        """The spectrum_id arg test of the spectrum.integration_points() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.spectrum_fns.integration_points, spectrum_id=data[1])
+
+
+    def test_integration_points_argfail_spin_id(self):
+        """The spin_id arg test of the spectrum.integration_points() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.integration_points, spectrum_id='x', spin_id=data[1])
 
 
     def test_read_intensities_argfail_file(self):
