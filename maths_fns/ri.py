@@ -108,21 +108,23 @@ def calc_r1(data, i, frq_num, params):
 def calc_dr1(data, i, frq_num, params, j):
     """Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
-    dR1()
-    -----  =  dip_const_func . dip_Jw_R1_grad  +  csa_const_func . csa_Jw_R1_grad
-     dJw
+    The equations are::
 
-    dR1()
-    -----  =  0
-    dRex
+        dR1()
+        -----  =  dip_const_func . dip_Jw_R1_grad  +  csa_const_func . csa_Jw_R1_grad
+         dJw
 
-    dR1()
-    -----  =  dip_const_grad . dip_Jw_R1_func
-     dr
+        dR1()
+        -----  =  0
+        dRex
 
-    dR1()
-    -----  =  csa_const_grad . csa_Jw_R1_func
-    dcsa
+        dR1()
+        -----  =  dip_const_grad . dip_Jw_R1_func
+         dr
+
+        dR1()
+        -----  =  csa_const_grad . csa_Jw_R1_func
+        dcsa
     """
 
     # Place data in the R1 data class.

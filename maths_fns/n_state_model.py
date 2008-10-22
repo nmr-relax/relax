@@ -635,9 +635,9 @@ class N_state_opt:
 
         The population parameter partial derivative is::
 
-         dDij(theta)               T
-         -----------  =  dj . mu_jc . Ai . mu_jc,
-             dpc
+             dDij(theta)               T
+             -----------  =  dj . mu_jc . Ai . mu_jc,
+                 dpc
 
         where:
             - dj is the dipolar constant for spin j,
@@ -673,9 +673,9 @@ class N_state_opt:
 
         The population parameter partial derivative is::
 
-         ddeltaij(theta)                 T
-         ---------------  =  dijc . mu_jc . Ai . mu_jc,
-              dpc
+             ddeltaij(theta)                 T
+             ---------------  =  dijc . mu_jc . Ai . mu_jc,
+                  dpc
 
         where:
             - djc is the pseudocontact shift constant for spin j and state c,
@@ -687,11 +687,11 @@ class N_state_opt:
 
         The alignment tensor element partial derivative is::
 
-                            _N_
-        ddelta_ij(theta)    \                   T   dAi
-        ----------------  =  >  pc . djc . mu_jc . ---- . mu_jc,
-              dAmn          /__                    dAmn
-                            c=1
+                                _N_
+            ddelta_ij(theta)    \                   T   dAi
+            ----------------  =  >  pc . djc . mu_jc . ---- . mu_jc,
+                  dAmn          /__                    dAmn
+                                c=1
 
         where:
             - djc is the pseudocontact shift constant for spin j and state c,
@@ -707,25 +707,25 @@ class N_state_opt:
         The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} give five different partial
         derivatives.  These are::
 
-          dAi   | 1  0  0 |
-         ---- = | 0  0  0 |,
-         dAxx   | 0  0 -1 |
+             dAi   | 1  0  0 |
+            ---- = | 0  0  0 |,
+            dAxx   | 0  0 -1 |
 
-          dAi   | 0  0  0 |
-         ---- = | 0  1  0 |,
-         dAyy   | 0  0 -1 |
+             dAi   | 0  0  0 |
+            ---- = | 0  1  0 |,
+            dAyy   | 0  0 -1 |
 
-          dAi   | 0  1  0 |
-         ---- = | 1  0  0 |,
-         dAxy   | 0  0  0 |
+             dAi   | 0  1  0 |
+            ---- = | 1  0  0 |,
+            dAxy   | 0  0  0 |
 
-          dAi   | 0  0  1 |
-         ---- = | 0  0  0 |,
-         dAxz   | 1  0  0 |
+             dAi   | 0  0  1 |
+            ---- = | 0  0  0 |,
+            dAxz   | 1  0  0 |
 
-          dAi   | 0  0  0 |
-         ---- = | 0  0  1 |.
-         dAyz   | 0  1  0 |
+             dAi   | 0  0  0 |
+            ---- = | 0  0  1 |.
+            dAyz   | 0  1  0 |
 
         As these are invariant, they can be pre-calculated.
 
@@ -743,7 +743,7 @@ class N_state_opt:
         The back calculated RDC gradient.  This is a rank-3 tensor with indices {k, i, j}.
 
         ddeltaij(theta)/dthetak
-        -------------------
+        -----------------------
 
         The back calculated PCS gradient.  This is a rank-3 tensor with indices {k, i, j}.
 

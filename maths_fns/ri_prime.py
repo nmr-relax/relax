@@ -354,21 +354,23 @@ def func_dri_dcsa_prime(data):
 def func_d2ri_djwidjwj_prime(data):
     """Spectral density parameter / spectral density parameter Hessian.
 
-      d2R1()
-    ---------  =  dip_const_func . dip_Jw_R1_hess  +  csa_const_func . csa_Jw_R1_hess
-    dJwi.dJwj
+    The equations are::
 
-      d2R2()      dip_const_func                      csa_const_func
-    ---------  =  -------------- . dip_Jw_R2_hess  +  -------------- . csa_Jw_R2_hess
-    dJwi.dJwj           2                                   6
+          d2R1()
+        ---------  =  dip_const_func . dip_Jw_R1_hess  +  csa_const_func . csa_Jw_R1_hess
+        dJwi.dJwj
 
-    d2sigma_noe()
-    -------------  =  dip_const_func . dip_Jw_sigma_noe_hess
-      dJwi.dJwj
+          d2R2()      dip_const_func                      csa_const_func
+        ---------  =  -------------- . dip_Jw_R2_hess  +  -------------- . csa_Jw_R2_hess
+        dJwi.dJwj           2                                   6
 
-      d2Ri()
-    ---------  =  dip_comps_func . dip_jw_comps_hess  +  csa_comps_func . csa_jw_comps_hess
-    dJwi.dJwj
+        d2sigma_noe()
+        -------------  =  dip_const_func . dip_Jw_sigma_noe_hess
+          dJwi.dJwj
+
+          d2Ri()
+        ---------  =  dip_comps_func . dip_jw_comps_hess  +  csa_comps_func . csa_jw_comps_hess
+        dJwi.dJwj
     """
 
     return data.dip_comps_func * data.dip_jw_comps_hess + data.csa_comps_func * data.csa_jw_comps_hess
@@ -378,21 +380,23 @@ def func_d2ri_djwidjwj_prime(data):
 def func_d2ri_djwdcsa_prime(data):
     """Spectral density parameter / CSA Hessian.
 
-     d2R1()
-    --------  =  csa_const_grad . csa_Jw_R1_grad
-    dJw.dcsa
+    The equations are::
 
-     d2R2()      csa_const_grad
-    --------  =  -------------- . csa_Jw_R2_grad
-    dJw.dcsa           6
+         d2R1()
+        --------  =  csa_const_grad . csa_Jw_R1_grad
+        dJw.dcsa
 
-    d2sigma_noe()
-    -------------  =  0
-      dJw.dcsa
+         d2R2()      csa_const_grad
+        --------  =  -------------- . csa_Jw_R2_grad
+        dJw.dcsa           6
 
-     d2Ri()
-    --------  =  csa_comps_grad . csa_jw_comps_grad
-    dJw.dcsa
+        d2sigma_noe()
+        -------------  =  0
+          dJw.dcsa
+
+         d2Ri()
+        --------  =  csa_comps_grad . csa_jw_comps_grad
+        dJw.dcsa
     """
 
     return data.csa_comps_grad * data.csa_jw_comps_grad
@@ -402,21 +406,23 @@ def func_d2ri_djwdcsa_prime(data):
 def func_d2ri_djwdr_prime(data):
     """Spectral density parameter / bond length Hessian.
 
-    d2R1()
-    ------  =  dip_const_grad . dip_Jw_R1_grad
-    dJw.dr
+    The equations are::
 
-    d2R2()     dip_const_grad
-    ------  =  -------------- . dip_Jw_R2_grad
-    dJw.dr           2
+        d2R1()
+        ------  =  dip_const_grad . dip_Jw_R1_grad
+        dJw.dr
 
-    d2sigma_noe()
-    -------------  =  dip_const_grad . dip_Jw_sigma_noe_grad
-       dJw.dr
+        d2R2()     dip_const_grad
+        ------  =  -------------- . dip_Jw_R2_grad
+        dJw.dr           2
 
-    d2Ri()
-    ------  =  dip_comps_grad . dip_jw_comps_grad
-    dJw.dr
+        d2sigma_noe()
+        -------------  =  dip_const_grad . dip_Jw_sigma_noe_grad
+           dJw.dr
+
+        d2Ri()
+        ------  =  dip_comps_grad . dip_jw_comps_grad
+        dJw.dr
     """
 
     return data.dip_comps_grad * data.dip_jw_comps_grad
@@ -426,21 +432,23 @@ def func_d2ri_djwdr_prime(data):
 def func_d2ri_dcsa2_prime(data):
     """CSA / CSA Hessian.
 
-     d2R1()
-    -------  =  csa_const_hess  . csa_Jw_R1_func
-    dcsa**2
+    The equations are::
 
-     d2R2()     csa_const_hess
-    -------  =  -------------- . csa_Jw_R2_func
-    dcsa**2           6
+         d2R1()
+        -------  =  csa_const_hess  . csa_Jw_R1_func
+        dcsa**2
 
-    d2sigma_noe()
-    -------------  =  0
-       dcsa**2
+         d2R2()     csa_const_hess
+        -------  =  -------------- . csa_Jw_R2_func
+        dcsa**2           6
 
-     d2Ri()
-    -------  =  csa_comps_hess  . csa_jw_comps_func
-    dcsa**2
+        d2sigma_noe()
+        -------------  =  0
+           dcsa**2
+
+         d2Ri()
+        -------  =  csa_comps_hess  . csa_jw_comps_func
+        dcsa**2
     """
 
     return data.csa_comps_hess * data.csa_jw_comps_func
@@ -450,21 +458,23 @@ def func_d2ri_dcsa2_prime(data):
 def func_d2ri_dr2_prime(data):
     """Bond length / bond length Hessian.
 
-    d2R1()
-    ------  =  dip_const_hess . dip_Jw_R1_func
-    dr**2
+    The equations are::
 
-    d2R2()     dip_const_hess
-    ------  =  -------------- . dip_Jw_R2_func
-    dr**2            2
-
-    d2sigma_noe()
-    -------------  =  dip_const_hess . dip_Jw_sigma_noe_func
+        d2R1()
+        ------  =  dip_const_hess . dip_Jw_R1_func
         dr**2
 
-    d2Ri()
-    ------  =  dip_comps_hess . dip_jw_comps_func
-    dr**2
+        d2R2()     dip_const_hess
+        ------  =  -------------- . dip_Jw_R2_func
+        dr**2            2
+
+        d2sigma_noe()
+        -------------  =  dip_const_hess . dip_Jw_sigma_noe_func
+            dr**2
+
+        d2Ri()
+        ------  =  dip_comps_hess . dip_jw_comps_func
+        dr**2
     """
 
     return data.dip_comps_hess * data.dip_jw_comps_func

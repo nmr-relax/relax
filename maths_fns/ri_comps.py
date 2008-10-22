@@ -262,12 +262,12 @@ def ri_comps(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA J(w) components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        Dipolar constant components.
-        CSA constant components.
+        - Rex constant components.
+        - Dipolar constant components.
+        - CSA constant components.
     """
 
     # Loop over the relaxation values.
@@ -285,12 +285,12 @@ def ri_comps_rex(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        Dipolar constant components.
-        CSA constant components.
+        - Dipolar constant components.
+        - CSA constant components.
     """
 
     # Loop over the relaxation values.
@@ -312,12 +312,12 @@ def ri_comps_r(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA J(w) components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        CSA constant components.
+        - Rex constant components.
+        - CSA constant components.
     """
 
     # Dipolar constant function value.
@@ -343,12 +343,12 @@ def ri_comps_csa(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        Dipolar constant components.
+        - Rex constant components.
+        - Dipolar constant components.
     """
 
     # CSA constant function value.
@@ -373,12 +373,12 @@ def ri_comps_r_csa(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
+        - Rex constant components.
     """
 
     # Dipolar constant function value.
@@ -411,12 +411,12 @@ def ri_comps_r_rex(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        CSA constant components.
+        - CSA constant components.
     """
 
     # Dipolar constant function value.
@@ -446,12 +446,12 @@ def ri_comps_csa_rex(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        Dipolar constant components.
+        - Dipolar constant components.
     """
 
     # CSA constant function value.
@@ -480,13 +480,13 @@ def ri_comps_r_csa_rex(data, params):
     """Calculate the ri function components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        None.
+        - None.
     """
 
     # Dipolar constant function value.
@@ -556,12 +556,12 @@ def dri_comps(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA J(w) components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        Dipolar constant components.
-        CSA constant components.
+        - Rex constant components.
+        - Dipolar constant components.
+        - CSA constant components.
     """
 
     # Loop over the relaxation values.
@@ -579,12 +579,12 @@ def dri_comps_rex(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        Dipolar constant components.
-        CSA constant components.
+        - Dipolar constant components.
+        - CSA constant components.
     """
 
     # Loop over the relaxation values.
@@ -606,12 +606,12 @@ def dri_comps_r(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA J(w) components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        CSA constant components.
+        - Rex constant components.
+        - CSA constant components.
     """
 
     # Dipolar constant gradient value.
@@ -637,12 +637,12 @@ def dri_comps_csa(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        Dipolar constant components.
+        - Rex constant components.
+        - Dipolar constant components.
     """
 
     # CSA constant gradient value.
@@ -667,12 +667,12 @@ def dri_comps_r_csa(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
+        - Rex constant components.
     """
 
     # Dipolar constant gradient value.
@@ -705,12 +705,12 @@ def dri_comps_r_rex(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        CSA constant components.
+        - CSA constant components.
     """
 
     # Dipolar constant gradient value.
@@ -740,12 +740,12 @@ def dri_comps_csa_rex(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        Dipolar constant components.
+        - Dipolar constant components.
     """
 
     # CSA constant gradient value.
@@ -774,13 +774,13 @@ def dri_comps_r_csa_rex(data, params):
     """Calculate the dri gradient components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
-        Rex constant components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
+        - Rex constant components.
     Pre-calculated:
-        None.
+        - None.
     """
 
     # Dipolar constant gradient value.
@@ -849,12 +849,12 @@ def d2ri_comps(data, params):
     """Calculate the d2ri Hessian components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA J(w) components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        Dipolar constant components.
-        CSA constant components.
+        - Rex constant components.
+        - Dipolar constant components.
+        - CSA constant components.
     """
 
     # Loop over the relaxation values.
@@ -872,12 +872,12 @@ def d2ri_comps_r(data, params):
     """Calculate the d2ri Hessian components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA J(w) components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        CSA constant components.
+        - Rex constant components.
+        - CSA constant components.
     """
 
     # Dipolar constant Hessian value.
@@ -903,12 +903,12 @@ def d2ri_comps_csa(data, params):
     """Calculate the d2ri Hessian components.
 
     Calculated:
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
-        Dipolar constant components.
+        - Rex constant components.
+        - Dipolar constant components.
     """
 
     # CSA constant Hessian value.
@@ -933,12 +933,12 @@ def d2ri_comps_r_csa(data, params):
     """Calculate the d2ri Hessian components.
 
     Calculated:
-        Dipolar constant components.
-        Dipolar J(w) components.
-        CSA constant components.
-        CSA J(w) components.
+        - Dipolar constant components.
+        - Dipolar J(w) components.
+        - CSA constant components.
+        - CSA J(w) components.
     Pre-calculated:
-        Rex constant components.
+        - Rex constant components.
     """
 
     # Dipolar constant Hessian value.
@@ -1000,9 +1000,11 @@ def d2r1_comps(data, i, params):
 def calc_fixed_dip(data):
     """Calculate the fixed component of the dipolar constant.
 
-                        / mu0  \ 2
-    dip_const_fixed  =  | ---- |  . (gH.gN.h_bar)**2
-                        \ 4.pi /
+    The equation is::
+
+                            / mu0  \ 2
+        dip_const_fixed  =  | ---- |  . (gH.gN.h_bar)**2
+                            \ 4.pi /
     """
 
     data.dip_const_fixed = ((data.mu0 / (4.0*pi)) * data.h_bar * data.gh * data.gx) ** 2
@@ -1012,9 +1014,11 @@ def calc_fixed_dip(data):
 def calc_fixed_csa(data):
     """Calculate the fixed component of the CSA constants.
 
-                        wN**2
-    csa_const_fixed  =  -----
-                          3
+    The equation is::
+
+                            wN**2
+        csa_const_fixed  =  -----
+                              3
     """
 
     for j in xrange(data.num_frq):
@@ -1032,6 +1036,8 @@ def comp_dip_const_func(data, bond_length):
 
     Dipolar constant
     ================
+
+    The equation is::
 
                            1   / mu0  \ 2  (gH.gN.h_bar)**2
         dip_const_func  =  - . | ---- |  . ----------------
@@ -1051,6 +1057,8 @@ def comp_dip_const_grad(data, bond_length):
     Dipolar constant gradient
     =========================
 
+    The equation is::
+
                              3   / mu0  \ 2  (gH.gN.h_bar)**2
         dip_const_grad  =  - - . | ---- |  . ----------------
                              2   \ 4.pi /         <r**7>
@@ -1068,6 +1076,8 @@ def comp_dip_const_hess(data, bond_length):
 
     Dipolar constant Hessian
     ========================
+
+    The equation is::
 
                            21   / mu0  \ 2  (gH.gN.h_bar)**2
         dip_const_hess  =  -- . | ---- |  . ----------------
@@ -1092,6 +1102,8 @@ def comp_csa_const_func(data, csa):
     CSA constant
     ============
 
+    The equation is::
+
                            (wN.csa)**2
         csa_const_func  =  -----------
                                 3
@@ -1108,6 +1120,8 @@ def comp_csa_const_grad(data, csa):
     CSA constant gradient
     =====================
 
+    The equation is::
+
                            2.wN**2.csa
         csa_const_grad  =  -----------
                                 3
@@ -1123,6 +1137,8 @@ def comp_csa_const_hess(data, params):
 
     CSA constant Hessian
     ====================
+
+    The equation is::
 
                            2.wN**2
         csa_const_hess  =  -------
@@ -1145,6 +1161,8 @@ def comp_rex_const_func(rhoex, frq):
     Rex constant
     ============
 
+    The equation is::
+
         rex_const_func  =  rhoex * wH**2
     """
 
@@ -1157,6 +1175,8 @@ def comp_rex_const_grad(frq):
 
     Rex gradient
     ============
+
+    The equation is::
 
         rex_const_grad  =  wH**2
     """
@@ -1172,11 +1192,13 @@ def comp_rex_const_grad(frq):
 def comp_r2_dip_const(dip_const_data):
     """Calculate the R1 dipolar constant components.
 
-    dip_const_func / 2
+    The equations are::
 
-    dip_const_grad / 2
+        dip_const_func / 2
 
-    dip_const_hess / 2
+        dip_const_grad / 2
+
+        dip_const_hess / 2
     """
 
     return dip_const_data / 2.0
@@ -1191,11 +1213,13 @@ def comp_r2_dip_const(dip_const_data):
 def comp_r1_csa_const(csa_const_data):
     """Calculate the R1 CSA constant components.
 
-    csa_const_func
+    The equations are::
 
-    csa_const_grad
+        csa_const_func
 
-    csa_const_hess
+        csa_const_grad
+
+        csa_const_hess
     """
 
     return csa_const_data
@@ -1204,11 +1228,13 @@ def comp_r1_csa_const(csa_const_data):
 def comp_r2_csa_const(csa_const_data):
     """Calculate the R2 CSA constant. components
 
-    csa_const_func / 6
+    The equations are::
 
-    csa_const_grad / 6
+        csa_const_func / 6
 
-    csa_const_hess / 6
+        csa_const_grad / 6
+
+        csa_const_hess / 6
     """
 
     return csa_const_data / 6.0
@@ -1223,15 +1249,17 @@ def comp_r2_csa_const(csa_const_data):
 def comp_r1_dip_jw(jw_data, frq_num):
     """Calculate the R1 dipolar J(w) components.
 
-    dip_Jw_R1_func  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
+    The equations are::
 
-                       dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
-    dip_Jw_R1_grad  =  ---------  +  3 . ------  +  6 . ---------
-                          dJw             dJw              dJw
+        dip_Jw_R1_func  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
 
-                       d2J(wH-wN)          d2J(wN)          d2J(wH+wN)
-    dip_Jw_R1_hess  =  ----------  +  3 . ---------  +  6 . ----------
-                       dJwi.dJwj          dJwi.dJwj         dJwi.dJwj
+                           dJ(wH-wN)         dJ(wN)         dJ(wH+wN)
+        dip_Jw_R1_grad  =  ---------  +  3 . ------  +  6 . ---------
+                              dJw             dJw              dJw
+
+                           d2J(wH-wN)          d2J(wN)          d2J(wH+wN)
+        dip_Jw_R1_hess  =  ----------  +  3 . ---------  +  6 . ----------
+                           dJwi.dJwj          dJwi.dJwj         dJwi.dJwj
     """
 
     return jw_data[frq_num, 2] + 3.0*jw_data[frq_num, 1] + 6.0*jw_data[frq_num, 4]
@@ -1241,15 +1269,17 @@ def comp_r1_dip_jw(jw_data, frq_num):
 def comp_r2_dip_jw(jw_data, frq_num):
     """Calculate the R2 dipolar J(w) components.
 
-    dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
+    The equations are::
 
-                           dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
-    dip_Jw_R2_grad  =  4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . ---------
-                            dJw         dJw             dJw            dJw              dJw
+        dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
 
-                             d2J(0)      d2J(wH-wN)          d2J(wN)           d2J(wH)          d2J(wH+wN)
-    dip_Jw_R2_hess  =  4 . ---------  +  ----------  +  3 . ---------  +  6 . ---------  +  6 . ----------
-                           dJwi.dJwj     dJwi.dJwj          dJwi.dJwj         dJwi.dJwj         dJwi.dJwj
+                               dJ(0)     dJ(wH-wN)         dJ(wN)         dJ(wH)         dJ(wH+wN)
+        dip_Jw_R2_grad  =  4 . -----  +  ---------  +  3 . ------  +  6 . ------  +  6 . ---------
+                                dJw         dJw             dJw            dJw              dJw
+
+                                 d2J(0)      d2J(wH-wN)          d2J(wN)           d2J(wH)          d2J(wH+wN)
+        dip_Jw_R2_hess  =  4 . ---------  +  ----------  +  3 . ---------  +  6 . ---------  +  6 . ----------
+                               dJwi.dJwj     dJwi.dJwj          dJwi.dJwj         dJwi.dJwj         dJwi.dJwj
     """
 
     return 4.0*jw_data[frq_num, 0] + jw_data[frq_num, 2] + 3.0*jw_data[frq_num, 1] + 6.0*jw_data[frq_num, 3] + 6.0*jw_data[frq_num, 4]
@@ -1259,15 +1289,17 @@ def comp_r2_dip_jw(jw_data, frq_num):
 def comp_sigma_noe_dip_jw(jw_data, frq_num):
     """Calculate the sigma_noe dipolar J(w) components.
 
-    dip_Jw_sigma_noe_func  =  6J(wH+wN) - J(wH-wN)
+    The equations are::
 
-                                  dJ(wH+wN)     dJ(wH-wN)
-    dip_Jw_sigma_noe_grad  =  6 . ---------  -  ---------
-                                     dJw           dJw
+        dip_Jw_sigma_noe_func  =  6J(wH+wN) - J(wH-wN)
 
-                                  d2J(wH+wN)     d2J(wH-wN)
-    dip_Jw_sigma_noe_hess  =  6 . ----------  -  ----------
-                                  dJwi.dJwj      dJwi.dJwj
+                                      dJ(wH+wN)     dJ(wH-wN)
+        dip_Jw_sigma_noe_grad  =  6 . ---------  -  ---------
+                                         dJw           dJw
+
+                                      d2J(wH+wN)     d2J(wH-wN)
+        dip_Jw_sigma_noe_hess  =  6 . ----------  -  ----------
+                                      dJwi.dJwj      dJwi.dJwj
     """
 
     return 6.0*jw_data[frq_num, 4] - jw_data[frq_num, 2]
@@ -1283,15 +1315,17 @@ def comp_sigma_noe_dip_jw(jw_data, frq_num):
 def comp_r1_csa_jw(jw_data, frq_num):
     """Calculate the R1 CSA J(w) components.
 
-    csa_Jw_R1_func  =  J(wN)
+    The equations are::
 
-                       dJ(wN)
-    csa_Jw_R1_grad  =  ------
-                        dJw
+        csa_Jw_R1_func  =  J(wN)
 
-                        d2J(wN)
-    csa_Jw_R1_hess  =  ---------
-                       dJwi.dJwj
+                           dJ(wN)
+        csa_Jw_R1_grad  =  ------
+                            dJw
+
+                            d2J(wN)
+        csa_Jw_R1_hess  =  ---------
+                           dJwi.dJwj
     """
 
     return jw_data[frq_num, 1]
@@ -1301,15 +1335,17 @@ def comp_r1_csa_jw(jw_data, frq_num):
 def comp_r2_csa_jw(jw_data, frq_num):
     """Calculate the R1 CSA J(w) components.
 
-    csa_Jw_R2_func  =  4J(0) + 3J(wN)
+    The equations are::
 
-                           dJ(0)         dJ(wN)
-    csa_Jw_R2_grad  =  4 . -----  +  3 . ------
-                            dJw           dJw
+        csa_Jw_R2_func  =  4J(0) + 3J(wN)
 
-                             d2J(0)           d2J(wN)
-    csa_Jw_R2_hess  =  4 . ---------  +  3 . ---------
-                           dJwi.dJwj         dJwi.dJwj
+                               dJ(0)         dJ(wN)
+        csa_Jw_R2_grad  =  4 . -----  +  3 . ------
+                                dJw           dJw
+
+                                 d2J(0)           d2J(wN)
+        csa_Jw_R2_hess  =  4 . ---------  +  3 . ---------
+                               dJwi.dJwj         dJwi.dJwj
     """
 
     return 4.0*jw_data[frq_num, 0] + 3.0*jw_data[frq_num, 1]
