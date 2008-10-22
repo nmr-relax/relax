@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from generic_fns import spectrum
 
 
@@ -271,8 +271,8 @@ class Spectrum:
             print text
 
         # The number of summed points.
-        if type(N) != float and type(N) != int:
-            raise RelaxNumError, ('number of summed points', N)
+        if type(N) != int:
+            raise RelaxIntError, ('number of summed points', N)
 
         # The spectrum identification string.
         if type(spectrum_id) != str:
