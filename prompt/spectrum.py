@@ -42,13 +42,13 @@ class Spectrum:
         self.__relax__ = relax
 
 
-    def error(self, error=0.0, spectrum_id=None, spin_id=None):
-        """Function for setting the intensity error (standard deviation) in the given spectrum.
+    def baseplane_rmsd(self, error=0.0, spectrum_id=None, spin_id=None):
+        """Set the baseplane RMSD of a given spin in a spectrum for error analysis.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        error:  The error.
+        error:  The baseplane RMSD error value.
 
         spectrum_id:  The spectrum identification string.
 
@@ -65,7 +65,7 @@ class Spectrum:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "spectrum.error("
+            text = sys.ps3 + "spectrum.baseplane_rmsd("
             text = text + "error=" + `error`
             text = text + ", spectrum_id=" + `spectrum_id`
             text = text + ", spin_id=" + `spin_id` + ")"
@@ -84,7 +84,7 @@ class Spectrum:
             raise RelaxNoneStrError, ('spin identification string', spin_id)
 
         # Execute the functional code.
-        spectrum.set_error(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
+        spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
     def error_analysis(self):
