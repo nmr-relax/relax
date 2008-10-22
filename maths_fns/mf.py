@@ -47,7 +47,7 @@ class Mf:
 
 
         Arguments
-        ~~~~~~~~~
+        =========
 
         equation:  The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
 
@@ -71,14 +71,14 @@ class Mf:
 
 
         Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ============================================================================================
 
         The R1 and R2 equations are left alone, while the NOE is calculated from the R1 and
         sigma_noe values.
 
 
         The relaxation equations
-        ~~~~~~~~~~~~~~~~~~~~~~~~
+        ========================
 
         Data structure:  data.ri
         Dimension:  1D, (relaxation data)
@@ -99,7 +99,7 @@ class Mf:
 
 
         The relaxation gradients
-        ~~~~~~~~~~~~~~~~~~~~~~~~
+        ========================
 
         Data structure:  data.dri
         Dimension:  2D, (parameters, relaxation data)
@@ -125,7 +125,7 @@ class Mf:
 
 
         The relaxation Hessians
-        ~~~~~~~~~~~~~~~~~~~~~~~
+        =======================
 
         Data structure:  data.d2ri
         Dimension:  3D, (parameters, parameters, relaxation data)
@@ -155,7 +155,7 @@ class Mf:
 
 
         The chi-sqared equation
-        ~~~~~~~~~~~~~~~~~~~~~~~
+        =======================
                 _n_
                 \    (Ri - Ri()) ** 2
         Chi2  =  >   ----------------
@@ -169,7 +169,7 @@ class Mf:
 
 
         The chi-sqared gradient
-        ~~~~~~~~~~~~~~~~~~~~~~~
+        =======================
                        _n_
          dChi2         \   /  Ri - Ri()      dRi()  \ 
         -------  =  -2  >  | ----------  .  ------- |
@@ -183,7 +183,7 @@ class Mf:
 
 
         The chi-sqared Hessian
-        ~~~~~~~~~~~~~~~~~~~~~~
+        ======================
                              _n_
              d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
         ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |

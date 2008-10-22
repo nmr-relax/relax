@@ -30,7 +30,7 @@ from numpy import sum
 
 """
     The spectral density equation
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =============================
 
     Data structure:  data.jw
     Dimension:  2D, (number of NMR frequencies, 5 spectral density frequencies)
@@ -40,7 +40,7 @@ from numpy import sum
 
 
     Formulae
-    ~~~~~~~~
+    ========
                       _k_
                  2    \                1
         J(w)  =  - S2  >  ci . ti ------------,
@@ -70,7 +70,7 @@ from numpy import sum
 
 
     Extended 2
-    ~~~~~~~~~~
+    ==========
 
                        _k_
                  2     \           /      S2s           (1 - S2s)(ts + ti)ts    \ 
@@ -249,7 +249,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 """
     The spectral density gradients
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ==============================
 
     Data structure:  data.djw
     Dimension:  3D, (number of NMR frequencies, 5 spectral density frequencies,
@@ -260,10 +260,10 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
     Formulae
-    ~~~~~~~~
+    ========
 
     Original
-    ~~~~~~~~
+    ========
 
                      _k_
         dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
@@ -313,7 +313,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
     Extended
-    ~~~~~~~~
+    ========
 
                      _k_
         dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -377,7 +377,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
     Extended 2
-    ~~~~~~~~~~
+    ==========
 
                      _k_
         dJ(w)     2  \   /      dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -1203,7 +1203,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 """
     The spectral density Hessians
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =============================
 
     Data structure:  data.d2jw
     Dimension:  4D, (number of NMR frequencies, 5 spectral density frequencies, model-free
@@ -1214,10 +1214,10 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
     Formulae
-    ~~~~~~~~
+    ========
 
     Original:  Model-free parameter - Model-free parameter
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ======================================================
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                    (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
@@ -1305,7 +1305,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
     Original:  Other parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ===========================
 
          d2J(w)               d2J(w)              d2J(w)
         --------  =  0,      --------  =  0,      ------  =  0,
@@ -1333,7 +1333,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
     Extended:  Model-free parameter - Model-free parameter
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ======================================================
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -1494,7 +1494,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
     Extended:  Other parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ===========================
 
           d2J(w)                d2J(w)               d2J(w)
         ---------  =  0,      ---------  =  0,      -------  =  0,
@@ -1532,7 +1532,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
     Extended 2:  Model-free parameter - Model-free parameter
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ========================================================
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -1701,7 +1701,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
     Extended 2:  Other parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =============================
 
           d2J(w)                d2J(w)               d2J(w)
         ---------  =  0,      ---------  =  0,      -------  =  0,

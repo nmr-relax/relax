@@ -22,10 +22,10 @@
 
 
 # Constant formulae
-# ~~~~~~~~~~~~~~~~~
+# =================
 #
 #    Dipolar constants
-#    ~~~~~~~~~~~~~~~~~
+#    =================
 #                           1   / mu0  \ 2  (gH.gN.h_bar)**2
 #        dip_const_func  =  - . | ---- |  . ----------------
 #                           4   \ 4.pi /         <r**6>
@@ -42,7 +42,7 @@
 #
 #
 #    CSA constants
-#    ~~~~~~~~~~~~~
+#    =============
 #                           (wN.csa)**2
 #        csa_const_func  =  -----------
 #                                3
@@ -56,7 +56,7 @@
 #                              3
 #
 #    Rex constants
-#    ~~~~~~~~~~~~~
+#    =============
 #        rex_const_func  =  rhoex * (2.pi.wH)**2
 #
 #        rex_const_grad  =  (2.pi.wH)**2
@@ -65,13 +65,13 @@
 #
 #
 # Component formulae
-# ~~~~~~~~~~~~~~~~~~
+# ==================
 #
 #    R1 components
-#    ~~~~~~~~~~~~~
+#    =============
 #
 #        Dipolar components
-#        ~~~~~~~~~~~~~~~~~~
+#        ==================
 #
 #            dip_R1_func     =  dip_const_func
 #
@@ -81,7 +81,7 @@
 #
 #
 #        Dipolar spectral density components
-#        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#        ===================================
 #
 #            dip_Jw_R1_func  =  J(wH-wN) + 3J(wN) + 6J(wH+wN)
 #
@@ -95,7 +95,7 @@
 #
 #
 #        CSA components
-#        ~~~~~~~~~~~~~~
+#        ==============
 #
 #            csa_R1_func     =  csa_const_func
 #
@@ -105,7 +105,7 @@
 #
 #
 #        CSA spectral density components
-#        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#        ===============================
 #
 #            csa_Jw_R1_func  =  J(wN)
 #
@@ -119,7 +119,7 @@
 #
 #
 #        Rex components
-#        ~~~~~~~~~~~~~~
+#        ==============
 #
 #            rex_R1_func     =  0
 #
@@ -129,10 +129,10 @@
 #
 #
 #    R2 components
-#    ~~~~~~~~~~~~~
+#    =============
 #
 #        Dipolar components
-#        ~~~~~~~~~~~~~~~~~~
+#        ==================
 #
 #            dip_R2_func     =  dip_const_func / 2
 #
@@ -142,7 +142,7 @@
 #
 #
 #        Dipolar spectral density components
-#        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#        ===================================
 #
 #            dip_Jw_R2_func  =  4J(0) + J(wH-wN) + 3J(wN) + 6J(wH) + 6J(wH+wN)
 #
@@ -156,7 +156,7 @@
 #
 #
 #        CSA components
-#        ~~~~~~~~~~~~~~
+#        ==============
 #
 #            csa_R2_func     =  csa_const_func / 6
 #
@@ -166,7 +166,7 @@
 #
 #
 #        CSA spectral density components
-#        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#        ===============================
 #
 #            csa_Jw_R2_func  =  4J(0) + 3J(wN)
 #
@@ -180,7 +180,7 @@
 #
 #
 #        Rex components
-#        ~~~~~~~~~~~~~~
+#        ==============
 #
 #            rex_R2_func     =  rex_const_func
 #
@@ -190,10 +190,10 @@
 #
 #
 #    sigma_noe components
-#    ~~~~~~~~~~~~~~~~~~~~
+#    ====================
 #
 #        Dipolar components
-#        ~~~~~~~~~~~~~~~~~~
+#        ==================
 #
 #            dip_sigma_noe_func      =  dip_const_func
 #
@@ -203,7 +203,7 @@
 #
 #
 #        Dipolar spectral density components
-#        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#        ===================================
 #
 #            dip_Jw_sigma_noe_func  =  6J(wH+wN) - J(wH-wN)
 #
@@ -217,7 +217,7 @@
 #
 #
 #        CSA components
-#        ~~~~~~~~~~~~~~
+#        ==============
 #
 #            csa_sigma_noe_func      =  0
 #
@@ -227,7 +227,7 @@
 #
 #
 #        CSA spectral density components
-#        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#        ===============================
 #
 #            csa_Jw_sigma_noe_func   =  0
 #
@@ -237,7 +237,7 @@
 #
 #
 #        Rex components
-#        ~~~~~~~~~~~~~~
+#        ==============
 #
 #            rex_sigma_noe_func      =  0
 #
@@ -1031,7 +1031,7 @@ def comp_dip_const_func(data, bond_length):
     """Calculate the dipolar constant.
 
     Dipolar constant
-    ~~~~~~~~~~~~~~~~
+    ================
 
                            1   / mu0  \ 2  (gH.gN.h_bar)**2
         dip_const_func  =  - . | ---- |  . ----------------
@@ -1049,7 +1049,7 @@ def comp_dip_const_grad(data, bond_length):
     """Calculate the derivative of the dipolar constant.
 
     Dipolar constant gradient
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
                              3   / mu0  \ 2  (gH.gN.h_bar)**2
         dip_const_grad  =  - - . | ---- |  . ----------------
@@ -1067,7 +1067,7 @@ def comp_dip_const_hess(data, bond_length):
     """Calculate the second derivative of the dipolar constant.
 
     Dipolar constant Hessian
-    ~~~~~~~~~~~~~~~~~~~~~~~~
+    ========================
 
                            21   / mu0  \ 2  (gH.gN.h_bar)**2
         dip_const_hess  =  -- . | ---- |  . ----------------
@@ -1090,7 +1090,7 @@ def comp_csa_const_func(data, csa):
     """Calculate the CSA constant.
 
     CSA constant
-    ~~~~~~~~~~~~
+    ============
 
                            (wN.csa)**2
         csa_const_func  =  -----------
@@ -1106,7 +1106,7 @@ def comp_csa_const_grad(data, csa):
     """Calculate the derivative of the CSA constant.
 
     CSA constant gradient
-    ~~~~~~~~~~~~~~~~~~~~~
+    =====================
 
                            2.wN**2.csa
         csa_const_grad  =  -----------
@@ -1122,7 +1122,7 @@ def comp_csa_const_hess(data, params):
     """Calculate the second derivative of the CSA constant.
 
     CSA constant Hessian
-    ~~~~~~~~~~~~~~~~~~~~
+    ====================
 
                            2.wN**2
         csa_const_hess  =  -------
@@ -1143,7 +1143,7 @@ def comp_rex_const_func(rhoex, frq):
     """Calculate the Rex value.
 
     Rex constant
-    ~~~~~~~~~~~~
+    ============
 
         rex_const_func  =  rhoex * wH**2
     """
@@ -1156,7 +1156,7 @@ def comp_rex_const_grad(frq):
     """Calculate the Rex gradient.
 
     Rex gradient
-    ~~~~~~~~~~~~
+    ============
 
         rex_const_grad  =  wH**2
     """

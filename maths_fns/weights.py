@@ -236,7 +236,7 @@ def calc_ellipsoid_dci(data, diff_data):
     """Weight gradient for ellipsoidal diffusion.
 
     Oi partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
 
         dc-2       /       ddx           ddy           ddz \     de
         ----  =  3 | dx**3 ---  +  dy**3 ---  +  dz**3 --- |  -  --- ,
@@ -284,7 +284,7 @@ def calc_ellipsoid_dci(data, diff_data):
 
 
     tm partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
 
         dc-2
         ----  =  0,
@@ -308,7 +308,7 @@ def calc_ellipsoid_dci(data, diff_data):
 
 
     Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
 
         dc-2
         ----  =  0,
@@ -333,7 +333,7 @@ def calc_ellipsoid_dci(data, diff_data):
 
 
     Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~
+    ======================
 
         dc-2       3 de
         ----  =  - - ---,
@@ -429,7 +429,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
     """Weight Hessian for ellipsoidal diffusion.
 
     Oi-Oj partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
          d2c-2        /       /     d2dx       ddx   ddx \           /     d2dy       ddy   ddy \           /     d2dz       ddz   ddz \ \       d2e
         -------  =  3 | dx**2 | dx ------- + 3 --- . --- |  +  dy**2 | dy ------- + 3 --- . --- |  +  dz**2 | dz ------- + 3 --- . --- | |  -  ------- ,
@@ -483,7 +483,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     Oi-tm partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
          d2c-2
         -------  =  0,
@@ -511,7 +511,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     Oi-Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
          d2c-2
         -------  =  0,
@@ -539,7 +539,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     Oi-Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
          d2c-2            d2e
         -------  =  - 3 -------,
@@ -581,7 +581,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     tm-tm partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
         d2c-2
         -----  =  0,
@@ -609,7 +609,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     tm-Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
          d2c-2
         -------  =  0,
@@ -637,7 +637,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     tm-Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
          d2c-2
         -------  =  0,
@@ -665,7 +665,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     Da-Da partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
         d2c-2
         ------  =  0,
@@ -693,7 +693,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     Da-Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
          d2c-2
         -------  =  0,
@@ -721,7 +721,7 @@ def calc_ellipsoid_d2ci(data, diff_data):
 
 
     Dr-Dr partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
         d2c-2        3  d2e
         ------  =  - - ------,
