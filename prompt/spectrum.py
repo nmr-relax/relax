@@ -169,6 +169,62 @@ class Spectrum:
         these are again averaged to give a single error per replicated spectra set.  However as all
         replicated spectra sets will have their own error estimate, variance averaging across all
         spectra sets will not be performed.
+
+
+        Peak volumes with baseplane noise RMSD
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The method of error analysis when no spectra have been replicated and peak volumes are used
+        is highly dependent on the integration method.  Many methods simply sum the number of points
+        within a fixed region, either a box or oval object.  The number of points used, N, must be
+        specified by another user function in this class.  Then the error is simply given by the sum
+        of variances:
+
+        -----
+
+            sigma_vol^2 = sigma_i^2 * N,
+
+        -----
+
+        where sigma_vol is the standard deviation of the volume, sigma_i is the standard deviation
+        of a single point assumed to be equal to the RMSD of the baseplane noise, and N is the total
+        number of points used in the summation integration method.  For a box integration method,
+        this converts to the Nicholson, Kay, Baldisseri, Arango, Young, Bax, and Torchia (1992)
+        Biochemistry, 31: 5253-5263 equation:
+
+        -----
+
+            sigma_vol = sigma_i * sqrt(n*m),
+
+        -----
+
+        where n and m are the dimensions of the box.  Note that a number of programs, for example
+        peakint (http://hugin.ethz.ch/wuthrich/software/xeasy/xeasy_m15.html) does not use all
+        points within the box.  And if the number N can not be determined, this category of error
+        analysis is not possible.
+
+        Also note that non-point summation methods, for example when line shape fitting is used to
+        determine peak volumes, the equations above cannot be used.  Hence again this category of
+        error analysis cannot be used.  This is the case for one of the three integration methods
+        used by Sparky (http://www.cgl.ucsf.edu/home/sparky/manual/peaks.html#Integration).  And
+        if fancy techniques are used, for example as Cara does to deconvolute overlapping peaks
+        (http://www.cara.ethz.ch/Wiki/Integration), this again makes this error analysis impossible.
+
+
+        Peak volumes with partially replicated spectra
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        When peak volumes are measured by any integration method and a few of the spectra are
+        replicated, then the intensity errors are calculated identically as described in the 'Peak
+        heights with partially replicated spectra' section above.
+
+
+        Peak volumes with all spectra replicated
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        With all spectra replicated and again using any integration methodology, the intensity
+        errors can be calculated as described in the 'Peak heights with all spectra replicated'
+        section above.
         """
 
 
