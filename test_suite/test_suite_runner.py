@@ -39,8 +39,8 @@ class Test_suite_runner:
     """Class for running all components of the relax test suite.
 
     This currently includes the following categories of tests:
-        System/functional tests.
-        Unit tests.
+        - System/functional tests.
+        - Unit tests.
     """
 
     def __init__(self, relax):
