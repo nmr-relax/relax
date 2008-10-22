@@ -237,6 +237,55 @@ class Spectrum:
         spectrum.error_analysis()
 
 
+    def integration_points(self, N=None, spectrum_id=None, spin_id=None):
+        """Set the number of summed points used in volume integration of a given spin in a spectrum.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        N:  The number of points used by the summation volume integration method.
+
+        spectrum_id:  The spectrum identification string.
+
+        spin_id:  The spin identification string.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        For a complete description of which integration methods and how many points N are used for
+        different integration techniques, please read the spectrum.error_analysis() documentation.
+
+        The spectrum_id argument identifies the spectrum associated with the value of N and must
+        correspond to a previously loaded set of intensities.  If the 'spin_id' argument is left on
+        the default of None, then the number of summed points for all spins will be set to the
+        supplied value.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "spectrum.integration_points("
+            text = text + "N=" + `N`
+            text = text + ", spectrum_id=" + `spectrum_id`
+            text = text + ", spin_id=" + `spin_id` + ")"
+            print text
+
+        # The number of summed points.
+        if type(N) != float and type(N) != int:
+            raise RelaxNumError, ('number of summed points', N)
+
+        # The spectrum identification string.
+        if type(spectrum_id) != str:
+            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+
+        # Spin identification string.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
+
+        # Execute the functional code.
+        spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
+
+
     def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
