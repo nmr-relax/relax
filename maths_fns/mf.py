@@ -47,7 +47,7 @@ class Mf:
 
 
         Arguments
-        ~~~~~~~~~
+        =========
 
         equation:  The model-free equation string which should be either 'mf_orig' or 'mf_ext'.
 
@@ -71,14 +71,14 @@ class Mf:
 
 
         Additional layer of equations to simplify the relaxation equations, gradients, and Hessians.
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ============================================================================================
 
         The R1 and R2 equations are left alone, while the NOE is calculated from the R1 and
         sigma_noe values.
 
 
         The relaxation equations
-        ~~~~~~~~~~~~~~~~~~~~~~~~
+        ========================
 
         Data structure:  data.ri
         Dimension:  1D, (relaxation data)
@@ -86,20 +86,21 @@ class Mf:
         Dependencies:  data.ri_prime
         Required by:  data.chi2, data.dchi2, data.d2chi2
 
+        The equations are::
 
-        R1()  =  R1'()
+            R1()  =  R1'()
 
 
-        R2()  =  R2'()
+            R2()  =  R2'()
 
-                       gH   sigma_noe()
-        NOE()  =  1 +  -- . -----------
-                       gN      R1()
+                           gH   sigma_noe()
+            NOE()  =  1 +  -- . -----------
+                           gN      R1()
 
 
 
         The relaxation gradients
-        ~~~~~~~~~~~~~~~~~~~~~~~~
+        ========================
 
         Data structure:  data.dri
         Dimension:  2D, (parameters, relaxation data)
@@ -107,25 +108,26 @@ class Mf:
         Dependencies:  data.ri_prime, data.dri_prime
         Required by:  data.dchi2, data.d2chi2
 
+        The equations are::
 
-         dR1()       dR1'()
-        -------  =  -------
-        dthetaj     dthetaj
-
-
-         dR2()       dR2'()
-        -------  =  -------
-        dthetaj     dthetaj
+             dR1()       dR1'()
+            -------  =  -------
+            dthetaj     dthetaj
 
 
-         dNOE()     gH      1      /        dsigma_noe()                    dR1()  \ 
-        -------  =  -- . ------- . | R1() . ------------  -  sigma_noe() . ------- |
-        dthetaj     gN   R1()**2   \          dthetaj                      dthetaj /
+             dR2()       dR2'()
+            -------  =  -------
+            dthetaj     dthetaj
+
+
+             dNOE()     gH      1      /        dsigma_noe()                    dR1()  \ 
+            -------  =  -- . ------- . | R1() . ------------  -  sigma_noe() . ------- |
+            dthetaj     gN   R1()**2   \          dthetaj                      dthetaj /
 
 
 
         The relaxation Hessians
-        ~~~~~~~~~~~~~~~~~~~~~~~
+        =======================
 
         Data structure:  data.d2ri
         Dimension:  3D, (parameters, parameters, relaxation data)
@@ -133,67 +135,74 @@ class Mf:
         Dependencies:  data.ri_prime, data.dri_prime, data.d2ri_prime
         Required by:  data.d2chi2
 
+        The equations are::
 
-             d2R1()             d2R1'()
-        ---------------  =  ---------------
-        dthetai.dthetaj     dthetai.dthetaj
-
-
-             d2R2()             d2R2'()
-        ---------------  =  ---------------
-        dthetai.dthetaj     dthetai.dthetaj
+                 d2R1()             d2R1'()
+            ---------------  =  ---------------
+            dthetai.dthetaj     dthetai.dthetaj
 
 
-            d2NOE()         gH      1      /               /      dR1()     dR1()                  d2R1()     \ 
-        ---------------  =  -- . ------- . | sigma_noe() . | 2 . ------- . -------  -  R1() . --------------- |
-        dthetai.dthetaj     gN   R1()**3   \               \     dthetai   dthetaj            dthetai.dthetaj /
+                 d2R2()             d2R2'()
+            ---------------  =  ---------------
+            dthetai.dthetaj     dthetai.dthetaj
 
-                     / dsigma_noe()    dR1()       dR1()    dsigma_noe()             d2sigma_noe()  \ \ 
-            - R1() . | ------------ . -------  +  ------- . ------------  -  R1() . --------------- | |
-                     \   dthetai      dthetaj     dthetai     dthetaj               dthetai.dthetaj / /
+
+                d2NOE()         gH      1      /               /      dR1()     dR1()                  d2R1()     \ 
+            ---------------  =  -- . ------- . | sigma_noe() . | 2 . ------- . -------  -  R1() . --------------- |
+            dthetai.dthetaj     gN   R1()**3   \               \     dthetai   dthetaj            dthetai.dthetaj /
+
+                         / dsigma_noe()    dR1()       dR1()    dsigma_noe()             d2sigma_noe()  \ \ 
+                - R1() . | ------------ . -------  +  ------- . ------------  -  R1() . --------------- | |
+                         \   dthetai      dthetaj     dthetai     dthetaj               dthetai.dthetaj / /
 
 
 
         The chi-sqared equation
-        ~~~~~~~~~~~~~~~~~~~~~~~
-                _n_
-                \    (Ri - Ri()) ** 2
-        Chi2  =  >   ----------------
-                /__    sigma_i ** 2
-                i=1
+        =======================
+
+        The equation is::
+                    _n_
+                    \    (Ri - Ri()) ** 2
+            chi2  =  >   ----------------
+                    /__    sigma_i ** 2
+                    i=1
 
         where:
-            Ri are the values of the measured relaxation data set.
-            Ri() are the values of the back calculated relaxation data set.
-            sigma_i are the values of the error set.
+            - Ri are the values of the measured relaxation data set.
+            - Ri() are the values of the back calculated relaxation data set.
+            - sigma_i are the values of the error set.
 
 
         The chi-sqared gradient
-        ~~~~~~~~~~~~~~~~~~~~~~~
-                       _n_
-         dChi2         \   /  Ri - Ri()      dRi()  \ 
-        -------  =  -2  >  | ----------  .  ------- |
-        dthetaj        /__ \ sigma_i**2     dthetaj /
-                       i=1
+        =======================
+
+        The equation is::
+                           _n_
+             dchi2         \   /  Ri - Ri()      dRi()  \ 
+            -------  =  -2  >  | ----------  .  ------- |
+            dthetaj        /__ \ sigma_i**2     dthetaj /
+                           i=1
 
         where:
-            Ri are the values of the measured relaxation data set.
-            Ri() are the values of the back calculated relaxation data set.
-            sigma_i are the values of the error set.
+            - Ri are the values of the measured relaxation data set.
+            - Ri() are the values of the back calculated relaxation data set.
+            - sigma_i are the values of the error set.
 
 
         The chi-sqared Hessian
-        ~~~~~~~~~~~~~~~~~~~~~~
-                             _n_
-             d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
-        ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
-        dthetaj.dthetak      /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
-                             i=1
+        ======================
+
+        The equation is::
+                                 _n_
+                 d2chi2          \       1      /  dRi()     dRi()                         d2Ri()     \ 
+            ---------------  = 2  >  ---------- | ------- . -------  -  (Ri - Ri()) . --------------- |
+            dthetaj.dthetak      /__ sigma_i**2 \ dthetaj   dthetak                   dthetaj.dthetak /
+                                 i=1
 
         where:
-            Ri are the values of the measured relaxation data set.
-            Ri() are the values of the back calculated relaxation data set.
-            sigma_i are the values of the error set.
+            - Ri are the values of the measured relaxation data set.
+            - Ri() are the values of the back calculated relaxation data set.
+            - sigma_i are the values of the error set.
         """
 
         # Arguments.

@@ -30,7 +30,7 @@ from numpy import sum
 
 """
     The spectral density equation
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =============================
 
     Data structure:  data.jw
     Dimension:  2D, (number of NMR frequencies, 5 spectral density frequencies)
@@ -40,7 +40,10 @@ from numpy import sum
 
 
     Formulae
-    ~~~~~~~~
+    ========
+
+    Original::
+
                       _k_
                  2    \                1
         J(w)  =  - S2  >  ci . ti ------------,
@@ -54,6 +57,8 @@ from numpy import sum
                  5  /__         \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
                     i=-k
 
+
+    Extended::
 
                     _k_
                  2  \           /      S2            (S2f - S2)(ts + ti)ts   \ 
@@ -69,8 +74,7 @@ from numpy import sum
                     i=-k
 
 
-    Extended 2
-    ~~~~~~~~~~
+    Extended 2::
 
                        _k_
                  2     \           /      S2s           (1 - S2s)(ts + ti)ts    \ 
@@ -97,7 +101,7 @@ def calc_jw(data, params):
     Calculate the spectral density values for the original model-free formula with no parameters {}
     with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                     _k_
                  2  \                1
@@ -119,7 +123,7 @@ def calc_S2_jw(data, params):
     Calculate the spectral density values for the original model-free formula with the single
     parameter {S2} with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                       _k_
                  2    \                1
@@ -141,7 +145,7 @@ def calc_S2_te_jw(data, params):
     Calculate the spectral density values for the original model-free formula with the parameters
     {S2, te} with or without diffusion tensor parameters.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _k_
                  2  \           /      S2             (1 - S2)(te + ti)te    \ 
@@ -163,7 +167,7 @@ def calc_S2f_S2_ts_jw(data, params):
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, S2, ts} with or without diffusion tensor parameters.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _k_
                  2  \           /      S2            (S2f - S2)(ts + ti)ts   \ 
@@ -185,7 +189,7 @@ def calc_S2f_tf_S2_ts_jw(data, params):
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, tf, S2, ts} with or without diffusion tensor parameters.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _k_
                  2  \           /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
@@ -207,7 +211,7 @@ def calc_S2f_S2s_ts_jw(data, params):
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, S2s, ts} with or without diffusion tensor parameters.
 
-    The model-free formula is
+    The model-free formula is::
 
                        _k_
                  2     \           /      S2s           (1 - S2s)(ts + ti)ts    \ 
@@ -229,7 +233,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
     Calculate the spectral density values for the extended model-free formula with the parameters
     {S2f, tf, S2s, ts} with or without diffusion tensor parameters.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _k_
                  2  \           /   S2f . S2s        (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
@@ -249,7 +253,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 """
     The spectral density gradients
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ==============================
 
     Data structure:  data.djw
     Dimension:  3D, (number of NMR frequencies, 5 spectral density frequencies,
@@ -260,10 +264,9 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
 
 
     Formulae
-    ~~~~~~~~
+    ========
 
-    Original
-    ~~~~~~~~
+    Original::
 
                      _k_
         dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
@@ -312,8 +315,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
          dr
 
 
-    Extended
-    ~~~~~~~~
+    Extended::
 
                      _k_
         dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -376,8 +378,7 @@ def calc_S2f_tf_S2s_ts_jw(data, params):
          dr
 
 
-    Extended 2
-    ~~~~~~~~~~
+    Extended 2::
 
                      _k_
         dJ(w)     2  \   /      dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -453,7 +454,7 @@ def calc_diff_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                      _k_
         dJ(w)     2  \        dti    1 - (w.ti)^2
@@ -471,7 +472,7 @@ def calc_ellipsoid_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                      _k_
         dJ(w)     2  \   /      dti    1 - (w.ti)^2       dci           1       \ 
@@ -491,7 +492,7 @@ def calc_diff_S2_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                        _k_
         dJ(w)     2    \        dti    1 - (w.ti)^2
@@ -509,7 +510,7 @@ def calc_ellipsoid_S2_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                        _k_
         dJ(w)     2    \   /      dti    1 - (w.ti)^2       dci           1       \ 
@@ -529,7 +530,7 @@ def calc_diff_S2_te_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                      _k_
         dJ(w)     2  \        dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
@@ -547,7 +548,7 @@ def calc_ellipsoid_S2_te_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the original model-free
     formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                      _k_
         dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
@@ -575,7 +576,7 @@ def calc_diff_djw_dOj(data, params, j):
     Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                     _k_
         dJ(w)     2 \   dci           1
@@ -595,7 +596,7 @@ def calc_diff_S2_djw_dOj(data, params, j):
     Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                        _k_
         dJ(w)     2    \   dci           1
@@ -615,7 +616,7 @@ def calc_diff_S2_te_djw_dOj(data, params, j):
     Calculate the spectral desity values for the O partial derivative of the original model-free
     formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                      _k_
         dJ(w)     2  \   dci      /      S2             (1 - S2)(te + ti)te    \ 
@@ -639,7 +640,7 @@ def calc_S2_djw_dS2(data, params, j):
     Calculate the spectral desity values for the S2 partial derivative of the original model-free
     formula with the single parameter {S2} with or without diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                      _k_
         dJ(w)     2  \                1
@@ -659,7 +660,7 @@ def calc_S2_te_djw_dS2(data, params, j):
     Calculate the spectral desity values for the S2 partial derivative of the original model-free
     formula with the parameters {S2, te} with or without diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                      _k_
         dJ(w)     2  \           /      1                 (te + ti)te         \ 
@@ -683,7 +684,7 @@ def calc_S2_te_djw_dte(data, params, j):
     Calculate the spectral desity values for the te partial derivative of the original model-free
     formula with the parameters {S2, te} with or without diffusion tensor parameters.
 
-    The model-free gradient is
+    The model-free gradient is::
 
                              _k_
         dJ(w)     2          \               (te + ti)^2 - (w.te.ti)^2
@@ -707,7 +708,7 @@ def calc_diff_S2f_S2_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \        dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -725,7 +726,7 @@ def calc_ellipsoid_S2f_S2_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -749,7 +750,7 @@ def calc_diff_S2f_tf_S2_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \        dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -767,7 +768,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \   /      dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -795,7 +796,7 @@ def calc_diff_S2f_S2_ts_djw_dOj(data, params, j):
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \   dci      /      S2            (S2f - S2)(ts + ti)ts   \ 
@@ -815,7 +816,7 @@ def calc_diff_S2f_tf_S2_ts_djw_dOj(data, params, j):
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \   dci      /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
@@ -840,7 +841,7 @@ def calc_S2f_S2_ts_djw_dS2(data, params, j):
     formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without diffusion tensor
     parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \           /      1                 (ts + ti).ts        \ 
@@ -864,7 +865,7 @@ def calc_S2f_S2_ts_djw_dS2f(data, params, j):
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, S2, ts} with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \                 (ts + ti).ts
@@ -884,7 +885,7 @@ def calc_S2f_tf_S2_ts_djw_dS2f(data, params, j):
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                        _k_
         dJ(w)       2  \           /       (tf + ti).tf                  (ts + ti).ts        \ 
@@ -908,7 +909,7 @@ def calc_S2f_tf_S2_ts_djw_dtf(data, params, j):
     Calculate the spectral desity values for the tf partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                               _k_
         dJ(w)     2           \               (tf + ti)^2 - (w.tf.ti)^2
@@ -933,7 +934,7 @@ def calc_S2f_S2_ts_djw_dts(data, params, j):
     formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without diffusion tensor
     parameters.
 
-    The formula is
+    The formula is::
 
                                _k_
         dJ(w)     2            \               (ts + ti)^2 - (w.ts.ti)^2
@@ -957,7 +958,7 @@ def calc_diff_S2f_S2s_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                         _k_
         dJ(w)     2     \        dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -975,7 +976,7 @@ def calc_ellipsoid_S2f_S2s_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                         _k_
         dJ(w)     2     \   /      dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -999,7 +1000,7 @@ def calc_diff_S2f_tf_S2s_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \        dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -1017,7 +1018,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_djw_dGj(data, params, j):
     Calculate the spectral desity values for the Gj partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \   /      dti  /           1 - (w.ti)^2                        (tf + ti)^2 - (w.tf.ti)^2                           (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -1045,7 +1046,7 @@ def calc_diff_S2f_S2s_ts_djw_dOj(data, params, j):
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                         _k_
         dJ(w)     2     \   dci      /     S2s             (1 - S2s)(ts + ti)ts   \ 
@@ -1065,7 +1066,7 @@ def calc_diff_S2f_tf_S2s_ts_djw_dOj(data, params, j):
     Calculate the spectral desity values for the O partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \   dci      /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
@@ -1089,7 +1090,7 @@ def calc_S2f_S2s_ts_djw_dS2f(data, params, j):
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, S2s, ts} with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \           /     S2s            (1 - S2s)(ts + ti).ts   \ 
@@ -1109,7 +1110,7 @@ def calc_S2f_tf_S2s_ts_djw_dS2f(data, params, j):
     Calculate the spectral desity values for the S2f partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                      _k_
         dJ(w)     2  \           /     S2s                (tf + ti).tf              (1 - S2s)(ts + ti).ts   \ 
@@ -1134,7 +1135,7 @@ def calc_S2f_tf_S2s_ts_djw_dS2s(data, params, j):
     formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion
     tensor parameters.
 
-    The formula is
+    The formula is::
 
                         _k_
         dJ(w)     2     \           /      1                 (ts + ti).ts        \ 
@@ -1158,7 +1159,7 @@ def calc_S2f_tf_S2s_ts_djw_dtf(data, params, j):
     Calculate the spectral desity values for the tf partial derivative of the extended model-free
     formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor parameters.
 
-    The formula is
+    The formula is::
 
                               _k_
         dJ(w)     2           \               (tf + ti)^2 - (w.tf.ti)^2
@@ -1183,7 +1184,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
     formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without diffusion
     tensor parameters.
 
-    The formula is
+    The formula is::
 
                                  _k_
         dJ(w)     2              \               (ts + ti)^2 - (w.ts.ti)^2
@@ -1203,7 +1204,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 """
     The spectral density Hessians
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    =============================
 
     Data structure:  data.d2jw
     Dimension:  4D, (number of NMR frequencies, 5 spectral density frequencies, model-free
@@ -1214,10 +1215,9 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
     Formulae
-    ~~~~~~~~
+    ========
 
-    Original:  Model-free parameter - Model-free parameter
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Original:  Model-free parameter - Model-free parameter::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                    (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
@@ -1304,8 +1304,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
                                 i=-k
 
 
-    Original:  Other parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Original:  Other parameters::
 
          d2J(w)               d2J(w)              d2J(w)
         --------  =  0,      --------  =  0,      ------  =  0,
@@ -1332,8 +1331,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
         dr**2
 
 
-    Extended:  Model-free parameter - Model-free parameter
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Extended:  Model-free parameter - Model-free parameter::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -1493,8 +1491,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
                                   i=-k
 
 
-    Extended:  Other parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Extended:  Other parameters::
 
           d2J(w)                d2J(w)               d2J(w)
         ---------  =  0,      ---------  =  0,      -------  =  0,
@@ -1531,8 +1528,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
         dr**2
 
 
-    Extended 2:  Model-free parameter - Model-free parameter
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Extended 2:  Model-free parameter - Model-free parameter::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -1700,8 +1696,7 @@ def calc_S2f_S2s_ts_djw_dts(data, params, j):
 
 
 
-    Extended 2:  Other parameters
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Extended 2:  Other parameters::
 
           d2J(w)                d2J(w)               d2J(w)
         ---------  =  0,      ---------  =  0,      -------  =  0,
@@ -1750,7 +1745,7 @@ def calc_diff_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \      /    dti   dti           3 - (w.ti)^2        d2ti     1 - (w.ti)^2   \ 
@@ -1768,7 +1763,7 @@ def calc_ellipsoid_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti   dti           3 - (w.ti)^2       / dti   dci     dti   dci         d2ti   \   1 - (w.ti)^2        d2ci           1       \ 
@@ -1788,7 +1783,7 @@ def calc_diff_S2_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                          _k_
          d2J(w)     2    \      /    dti   dti           3 - (w.ti)^2        d2ti     1 - (w.ti)^2   \ 
@@ -1806,7 +1801,7 @@ def calc_ellipsoid_S2_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                          _k_
          d2J(w)     2    \   /      dti   dti           3 - (w.ti)^2       / dti   dci     dti   dci         d2ti   \   1 - (w.ti)^2        d2ci           1       \ 
@@ -1826,7 +1821,7 @@ def calc_diff_S2_te_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                    (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
@@ -1854,7 +1849,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                    (te + ti)^3 + 3.w^2.te^3.ti(te + ti) - (w.te)^4.ti^3 \ 
@@ -1897,7 +1892,7 @@ def calc_diff_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci   dti     1 - (w.ti)^2
@@ -1915,7 +1910,7 @@ def calc_ellipsoid_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   / dci   dti     1 - (w.ti)^2        d2ci           1       \ 
@@ -1935,7 +1930,7 @@ def calc_diff_S2_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                          _k_
          d2J(w)     2    \   dci   dti     1 - (w.ti)^2
@@ -1953,7 +1948,7 @@ def calc_ellipsoid_S2_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                          _k_
          d2J(w)     2    \   / dci   dti     1 - (w.ti)^2        d2ci           1       \ 
@@ -1973,7 +1968,7 @@ def calc_diff_S2_te_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci   dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
@@ -1991,7 +1986,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                      (te + ti)^2 - (w.te.ti)^2   \ 
@@ -2019,7 +2014,7 @@ def calc_diff_S2_d2jw_dGjdS2(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \        dti    1 - (w.ti)^2
@@ -2037,7 +2032,7 @@ def calc_ellipsoid_S2_d2jw_dGjdS2(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti    1 - (w.ti)^2       dci           1       \ 
@@ -2057,7 +2052,7 @@ def calc_diff_S2_te_d2jw_dGjdS2(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \        dti  /   1 - (w.ti)^2              (te + ti)^2 - (w.te.ti)^2   \ 
@@ -2075,7 +2070,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdS2(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2 double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti  /   1 - (w.ti)^2              (te + ti)^2 - (w.te.ti)^2   \ 
@@ -2103,7 +2098,7 @@ def calc_diff_S2_te_d2jw_dGjdte(data, params, j, k):
     Calculate the spectral desity values for the Gj - te double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                     _k_
          d2J(w)     4               \        dti                   (te + ti)^2 - 3(w.te.ti)^2
@@ -2121,7 +2116,7 @@ def calc_ellipsoid_S2_te_d2jw_dGjdte(data, params, j, k):
     Calculate the spectral desity values for the Gj - te double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                               _k_
          d2J(w)     2         \   /       dti                        (te + ti)^2 - 3(w.te.ti)^2       dci          (te + ti)^2 - (w.te.ti)^2   \ 
@@ -2145,7 +2140,7 @@ def calc_diff_d2jw_dOjdOk(data, params, j, k):
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with no parameters {} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \    d2ci          ti
@@ -2165,7 +2160,7 @@ def calc_diff_S2_d2jw_dOjdOk(data, params, j, k):
     Calculate the spectral desity values for the Oj - Ok double partial derivative of the
     original model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                          _k_
          d2J(w)     2    \    d2ci          ti
@@ -2186,7 +2181,7 @@ def calc_diff_S2_te_d2jw_dOjdOk(data, params, j, k):
     original model-free formula with the parameters {S2, te} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \    d2ci        /      S2             (1 - S2)(te + ti)te    \ 
@@ -2210,7 +2205,7 @@ def calc_diff_S2_d2jw_dOjdS2(data, params, j, k):
     Calculate the spectral desity values for the Oj - S2 double partial derivative of the original
     model-free formula with the parameter {S2} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci            1
@@ -2230,7 +2225,7 @@ def calc_diff_S2_te_d2jw_dOjdS2(data, params, j, k):
     Calculate the spectral desity values for the Oj - S2 double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci      /      1                 (te + ti)te         \ 
@@ -2254,7 +2249,7 @@ def calc_diff_S2_te_d2jw_dOjdte(data, params, j, k):
     Calculate the spectral desity values for the Oj - te double partial derivative of the original
     model-free formula with the parameters {S2, te} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                _k_
          d2J(w)     2          \   dci          (te + ti)^2 - (w.te.ti)^2
@@ -2278,7 +2273,7 @@ def calc_S2_te_d2jw_dS2dte(data, params, j, k):
     Calculate the spectral desity values for the S2 - te double partial derivative of the original
     model-free formula with the parameters {S2, te} with or without diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)       2 \               (te + ti)^2 - (w.te.ti)^2
@@ -2302,7 +2297,7 @@ def calc_S2_te_d2jw_dte2(data, params, j, k):
     Calculate the spectral desity values for the te - te double partial derivative of the original
     model-free formula with the parameters {S2, te} with or without diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                 _k_
         d2J(w)       4          \             (te + ti)^3 + 3.w^2.ti^3.te.(te + ti) - (w.ti)^4.te^3
@@ -2326,7 +2321,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                      (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
@@ -2354,7 +2349,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                      (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
@@ -2394,7 +2389,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \      /    dti   dti  /             3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -2428,7 +2423,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /             3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -2480,7 +2475,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci   dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2498,7 +2493,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2523,7 +2518,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdOj(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci   dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2542,7 +2537,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   / dci   dti  /      1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                        (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2571,7 +2566,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdS2(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \        dti  /   1 - (w.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2590,7 +2585,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti  /   1 - (w.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2618,7 +2613,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdS2f(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \        dti         (ts + ti)^2 - (w.ts.ti)^2
@@ -2636,7 +2631,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \   /      dti         (ts + ti)^2 - (w.ts.ti)^2       dci            (ts + ti)ts         \ 
@@ -2657,7 +2652,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                           _k_
          d2J(w)        2  \        dti  /        (tf + ti)^2 - (w.tf.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2676,7 +2671,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                           _k_
          d2J(w)        2  \   /      dti  /        (tf + ti)^2 - (w.tf.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2705,7 +2700,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                      _k_
          d2J(w)     4                \        dti                   (tf + ti)^2 - 3(w.tf.ti)^2
@@ -2724,7 +2719,7 @@ def calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                 _k_
          d2J(w)     2           \   /       dti                        (tf + ti)^2 - 3(w.tf.ti)^2       dci          (tf + ti)^2 - (w.tf.ti)^2   \ 
@@ -2749,7 +2744,7 @@ def calc_diff_S2f_S2_ts_d2jw_dGjdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                       _k_
          d2J(w)     4                 \        dti                   (ts + ti)^2 - 3(w.ts.ti)^2
@@ -2768,7 +2763,7 @@ def calc_ellipsoid_S2f_S2_ts_d2jw_dGjdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                  _k_
          d2J(w)     2            \   /       dti                        (ts + ti)^2 - 3(w.ts.ti)^2       dci          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -2793,7 +2788,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdOk(data, params, j, k):
     extended model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \    d2ci        /      S2            (S2f - S2)(ts + ti)ts   \ 
@@ -2814,7 +2809,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk(data, params, j, k):
     extended model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \    d2ci        /      S2            (1 - S2f)(tf + ti)tf          (S2f - S2)(ts + ti)ts   \ 
@@ -2839,7 +2834,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdS2(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} and {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci      /      1                 (ts + ti)ts         \ 
@@ -2864,7 +2859,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdS2f(data, params, j, k):
     extended model-free formula with the parameters {S2f, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \   dci             (ts + ti)ts
@@ -2885,7 +2880,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdS2f(data, params, j, k):
     extended model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                           _k_
          d2J(w)        2  \   dci      /       (tf + ti)tf                   (ts + ti)ts         \ 
@@ -2910,7 +2905,7 @@ def calc_diff_S2f_tf_S2_ts_d2jw_dOjdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                 _k_
          d2J(w)     2           \   dci          (tf + ti)^2 - (w.tf.ti)^2
@@ -2935,7 +2930,7 @@ def calc_diff_S2f_S2_ts_d2jw_dOjdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                  _k_
          d2J(w)     2            \   dci          (ts + ti)^2 - (w.ts.ti)^2
@@ -2960,7 +2955,7 @@ def calc_S2f_S2_ts_d2jw_dS2dts(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                          _k_
          d2J(w)       2  \               (ts + ti)^2 - (w.ts.ti)^2
@@ -2985,7 +2980,7 @@ def calc_S2f_tf_S2_ts_d2jw_dS2fdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                           _k_
          d2J(w)        2  \               (tf + ti)^2 - (w.tf.ti)^2
@@ -3010,7 +3005,7 @@ def calc_S2f_S2_ts_d2jw_dS2fdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \               (ts + ti)^2 - (w.ts.ti)^2
@@ -3035,7 +3030,7 @@ def calc_S2f_tf_S2_ts_d2jw_dtf2(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2, ts} with or without diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                  _k_
         d2J(w)       4           \             (tf + ti)^3 + 3.w^2.ti^3.tf.(tf + ti) - (w.ti)^4.tf^3
@@ -3060,7 +3055,7 @@ def calc_S2f_S2_ts_d2jw_dts2(data, params, j, k):
     model-free formula with the parameters {S2f, S2, ts} or {S2f, tf, S2, ts} with or without
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                   _k_
         d2J(w)       4            \             (ts + ti)^3 + 3.w^2.ti^3.ts.(ts + ti) - (w.ti)^4.ts^3
@@ -3084,7 +3079,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \      /    dti   dti  /                  3 - (w.ti)^2                        (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
@@ -3112,7 +3107,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk(data, params, j, k):
     Calculate the spectral desity values for the Gj - Gk double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                        (ts + ti)^3 + 3.w^2.ts^3.ti(ts + ti) - (w.ts)^4.ti^3 \ 
@@ -3151,7 +3146,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \      /    dti   dti  /                  3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -3185,7 +3180,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   /      dti   dti  /                  3 - (w.ti)^2                     (tf + ti)^3 + 3.w^2.tf^3.ti(tf + ti) - (w.tf)^4.ti^3
@@ -3237,7 +3232,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci   dti  /           1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3255,7 +3250,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj(data, params, j, k):
     Calculate the spectral desity values for the Gj - Oj double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   / dci   dti  /           1 - (w.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3280,7 +3275,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdOj(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   dci   dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3299,7 +3294,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \   / dci   dti  /           1 - (w.ti)^2                       (tf + ti)^2 - (w.tf.ti)^2                          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3327,7 +3322,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \        dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3345,7 +3340,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
     Calculate the spectral desity values for the Gj - S2f double partial derivative of the extended
     model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \   /      dti  /       1 - (w.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3370,7 +3365,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \        dti  /       1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3389,7 +3384,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \   /      dti  /       1 - (w.ti)^2              (tf + ti)^2 - (w.tf.ti)^2                       (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3418,7 +3413,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdS2s(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                            _k_
          d2J(w)      2     \        dti  /   1 - (w.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3437,7 +3432,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                            _k_
          d2J(w)      2     \   /      dti  /   1 - (w.ti)^2              (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3466,7 +3461,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                      _k_
          d2J(w)     4                \        dti                   (tf + ti)^2 - 3(w.tf.ti)^2
@@ -3485,7 +3480,7 @@ def calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                 _k_
          d2J(w)     2           \   /       dti                        (tf + ti)^2 - 3(w.tf.ti)^2       dci          (tf + ti)^2 - (w.tf.ti)^2   \ 
@@ -3510,7 +3505,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dGjdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                         _k_
          d2J(w)     4                   \        dti                   (ts + ti)^2 - 3(w.ts.ti)^2
@@ -3529,7 +3524,7 @@ def calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                    _k_
          d2J(w)     2              \   /       dti                        (ts + ti)^2 - 3(w.ts.ti)^2       dci          (ts + ti)^2 - (w.ts.ti)^2   \ 
@@ -3554,7 +3549,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dOjdOk(data, params, j, k):
     extended model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \    d2ci        /  S2f . S2s        S2f(1 - S2s)(ts + ti)ts  \ 
@@ -3575,7 +3570,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk(data, params, j, k):
     extended model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                        _k_
          d2J(w)     2  \    d2ci        /  S2f . S2s         (1 - S2f)(tf + ti)tf         S2f(1 - S2s)(ts + ti)ts  \ 
@@ -3600,7 +3595,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
     extended model-free formula with the parameters {S2f, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \   dci      /      S2s           (1 - S2s)(ts + ti)ts    \ 
@@ -3621,7 +3616,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f(data, params, j, k):
     extended model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                         _k_
          d2J(w)      2  \   dci      /      S2s               (tf + ti)tf               (1 - S2s)(ts + ti)ts    \ 
@@ -3646,7 +3641,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdS2s(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} and {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                            _k_
          d2J(w)      2     \   dci      /      1                 (ts + ti)ts         \ 
@@ -3671,7 +3666,7 @@ def calc_diff_S2f_tf_S2s_ts_d2jw_dOjdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} together with diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                 _k_
          d2J(w)     2           \   dci          (tf + ti)^2 - (w.tf.ti)^2
@@ -3696,7 +3691,7 @@ def calc_diff_S2f_S2s_ts_d2jw_dOjdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} together with
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                    _k_
          d2J(w)     2              \   dci          (ts + ti)^2 - (w.ts.ti)^2
@@ -3721,7 +3716,7 @@ def calc_S2f_S2s_ts_d2jw_dS2fdS2s(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                          _k_
           d2J(w)      2  \           /      1                 (ts + ti).ts        \ 
@@ -3746,7 +3741,7 @@ def calc_S2f_tf_S2s_ts_d2jw_dS2fdtf(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                           _k_
          d2J(w)        2  \               (tf + ti)^2 - (w.tf.ti)^2
@@ -3771,7 +3766,7 @@ def calc_S2f_S2s_ts_d2jw_dS2fdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                  _k_
          d2J(w)      2           \               (ts + ti)^2 - (w.ts.ti)^2
@@ -3796,7 +3791,7 @@ def calc_S2f_S2s_ts_d2jw_dS2sdts(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                              _k_
          d2J(w)        2     \               (ts + ti)^2 - (w.ts.ti)^2
@@ -3821,7 +3816,7 @@ def calc_S2f_tf_S2s_ts_d2jw_dtf2(data, params, j, k):
     model-free formula with the parameters {S2f, tf, S2s, ts} with or without diffusion tensor
     parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                  _k_
         d2J(w)       4           \             (tf + ti)^3 + 3.w^2.ti^3.tf.(tf + ti) - (w.ti)^4.tf^3
@@ -3846,7 +3841,7 @@ def calc_S2f_S2s_ts_d2jw_dts2(data, params, j, k):
     model-free formula with the parameters {S2f, S2s, ts} or {S2f, tf, S2s, ts} with or without
     diffusion tensor parameters.
 
-    The model-free Hessian is
+    The model-free Hessian is::
 
                                     _k_
         d2J(w)       4              \             (ts + ti)^3 + 3.w^2.ti^3.ts.(ts + ti) - (w.ti)^4.ts^3

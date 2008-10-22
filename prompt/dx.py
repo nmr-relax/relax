@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'dx' user function class for controlling the OpenDX visualisation software."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 from types import FunctionType

@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'deselect' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

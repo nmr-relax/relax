@@ -36,11 +36,12 @@ def R_2vect(R, vector_orig, vector_fin):
     angle is the arccosine of the dot product of the two unit vectors.
 
     Given a unit vector parallel to the rotation axis, w = [x, y, z] and the rotation angle a,
-    the rotation matrix R is:
+    the rotation matrix R is::
 
               |  1 + (1-cos(a))*(x*x-1)   -z*sin(a)+(1-cos(a))*x*y   y*sin(a)+(1-cos(a))*x*z |
         R  =  |  z*sin(a)+(1-cos(a))*x*y   1 + (1-cos(a))*(y*y-1)   -x*sin(a)+(1-cos(a))*y*z |
               | -y*sin(a)+(1-cos(a))*x*z   x*sin(a)+(1-cos(a))*y*z   1 + (1-cos(a))*(z*z-1)  |
+
 
     @param R:           The 3x3 rotation matrix to update.
     @type R:            3x3 numpy array
@@ -85,19 +86,19 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
     Unit vectors
     ============
 
-    The unit mux vector is
+    The unit mux vector is::
 
                 | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
         mux  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
                 |                    cos(alpha) * sin(beta)                      |
 
-    The unit muy vector is
+    The unit muy vector is::
 
                 | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
         muy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
                 |                   sin(alpha) * sin(beta)                      |
 
-    The unit muz vector is
+    The unit muz vector is::
 
                 | -sin(beta) * cos(gamma) |
         muz  =  |  sin(beta) * sin(gamma) |.
@@ -106,7 +107,7 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
     Rotation matrix
     ===============
 
-    The rotation matrix is defined as the vector of unit vectors
+    The rotation matrix is defined as the vector of unit vectors::
 
         R = [mux, muy, muz].
 

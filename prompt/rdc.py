@@ -21,7 +21,8 @@
 ###############################################################################
 
 # Module docstring.
-"""User functions involved with RDCs."""
+"""Module containing the 'rdc' user function class."""
+__docformat__ = 'plaintext'
 
 # Python module imports.
 import sys

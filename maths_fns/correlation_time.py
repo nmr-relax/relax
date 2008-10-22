@@ -607,7 +607,7 @@ def calc_ellipsoid_d2ti(data, diff_data):
     """Diffusional correlation time Hessians.
 
     tm-tm partial derivatives
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    =========================
 
     The equations are::
 

@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the Monte Carlo simulation 'monte_carlo' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

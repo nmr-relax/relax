@@ -659,26 +659,26 @@ class Model_free_main:
 
         The names are as follows:
 
-            model:  The model-free model name.
-            equation:  The model-free equation type.
-            params:  An array of the model-free parameter names associated with the model.
-            s2:  S2.
-            s2f:  S2f.
-            s2s:  S2s.
-            local_tm:  local tm.
-            te:  te.
-            tf:  tf.
-            ts:  ts.
-            rex:  Rex.
-            r:  Bond length.
-            csa:  CSA value.
-            nucleus:  The heteronucleus type.
-            chi2:  Chi-squared value.
-            iter:  Iterations.
-            f_count:  Function count.
-            g_count:  Gradient count.
-            h_count:  Hessian count.
-            warning:  Minimisation warning.
+            - 'model', the model-free model name.
+            - 'equation', the model-free equation type.
+            - 'params', an array of the model-free parameter names associated with the model.
+            - 's2', S2.
+            - 's2f', S2f.
+            - 's2s', S2s.
+            - 'local_tm', local tm.
+            - 'te', te.
+            - 'tf', tf.
+            - 'ts', ts.
+            - 'rex', Rex.
+            - 'r', bond length.
+            - 'csa', CSA value.
+            - 'nucleus', the heteronucleus type.
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
 
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all

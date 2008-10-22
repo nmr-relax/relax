@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'relax_fit' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 
@@ -49,15 +53,15 @@ class Relax_fit:
         Errors of individual spin at a single time point
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        The standard deviation for a single spin at a single time point is calculated by the formula
+        The variance for a single spin at a single time point is calculated by the formula:
 
         -----
 
-            sigma =  sum({Ii - Iav}^2) / (n - 1) ,
+            sigma^2 =  sum({Ii - Iav}^2) / (n - 1) ,
 
         -----
 
-        where sigma is the variance or square of the standard deviation, n is the total number of
+        where sigma^2 is the variance, sigma is the standard deviation, n is the total number of
         collected spectra for the time point and i is the corresponding index, Ii is the peak
         intensity for spectrum i, Iav is the mean over all spectra, ie the sum of all peak
         intensities divided by n.

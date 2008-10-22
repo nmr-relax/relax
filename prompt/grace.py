@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'grace' user function class for controlling the Grace data viewing software."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 
