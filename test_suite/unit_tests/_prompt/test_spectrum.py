@@ -39,8 +39,8 @@ class Test_spectrum(TestCase):
     spectrum_fns = Spectrum(fake_relax.fake_instance())
 
 
-    def test_error_argfail_error(self):
-        """The error arg test of the spectrum.error() user function."""
+    def test_baseplane_rmsd_argfail_error(self):
+        """The error arg test of the spectrum.baseplane_rmsd() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -49,11 +49,11 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.spectrum_fns.error, error=data[1])
+            self.assertRaises(RelaxNumError, self.spectrum_fns.baseplane_rmsd, error=data[1])
 
 
-    def test_error_argfail_spectrum_id(self):
-        """The spectrum_id arg test of the spectrum.error() user function."""
+    def test_baseplane_rmsd_argfail_spectrum_id(self):
+        """The spectrum_id arg test of the spectrum.baseplane_rmsd() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -62,11 +62,11 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spectrum_fns.error, spectrum_id=data[1])
+            self.assertRaises(RelaxStrError, self.spectrum_fns.baseplane_rmsd, spectrum_id=data[1])
 
 
-    def test_error_argfail_spin_id(self):
-        """The spin_id arg test of the spectrum.error() user function."""
+    def test_baseplane_rmsd_argfail_spin_id(self):
+        """The spin_id arg test of the spectrum.baseplane_rmsd() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -75,7 +75,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.error, spectrum_id='x', spin_id=data[1])
+            self.assertRaises(RelaxNoneStrError, self.spectrum_fns.baseplane_rmsd, spectrum_id='x', spin_id=data[1])
 
 
     def test_integration_points_argfail_N(self):
