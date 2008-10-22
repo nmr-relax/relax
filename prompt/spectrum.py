@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxNoneIntError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from generic_fns import spectrum
 
 
@@ -371,8 +371,18 @@ class Spectrum:
             raise RelaxStrError, ('proton name', proton)
 
         # The intensity column.
-        if int_col and type(int_col) != int:
-            raise RelaxNoneIntError, ('intensity column', int_col)
+        if int_col != None and type(int_col) != int and type(int_col) != list:
+            raise RelaxNoneIntListIntError, ('intensity column', int_col)
+        if type(int_col) == list:
+            # Empty list.
+            if int_col == []:
+                raise RelaxListIntError, ('intensity column', int_col)
+
+            # Check the values.
+            for i in xrange(len(int_col)):
+                if type(int_col[i]) != int:
+                    raise RelaxListIntError, ('intensity column', int_col)
+
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
