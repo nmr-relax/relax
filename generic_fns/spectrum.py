@@ -379,6 +379,9 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Extract the data from the file.
     file_data = extract_data(file, dir)
 
@@ -434,6 +437,14 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if format == 'xeasy':
         det_dimensions(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
 
+    # Add the spectrum id to the relax data store.
+    if not hasattr(cdp, 'spectrum_ids'):
+        cdp.spectrum_ids = []
+    if spectrum_id in cdp.spectrum_ids:
+        raise RelaxError, "The spectrum identification string '%s' already exists." % spectrum_id
+    else:
+        cdp.spectrum_ids.append(spectrum_id)
+
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
         # Extract the data.
@@ -455,5 +466,9 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         if not spin.select:
             continue
 
-        # Assign the data.
-        assign_func(spin=spin, intensity=intensity, spectrum_type=spectrum_type)
+        # Initialise.
+        if not hasattr(spin, 'intensities'):
+            spin.intensities = []
+
+        # Add the data.
+        spin.intensities.append(intensity)

@@ -136,41 +136,6 @@ class Relax_fit(Common_functions):
         return scaling_matrix
 
 
-    def assign_function(self, spin=None, intensity=None, spectrum_type=None):
-        """Place the peak intensity data into the spin container.
-
-        The intensity data can be either that of the reference or saturated spectrum.
-
-        @keyword spin:          The spin container.
-        @type spin:             SpinContainer instance
-        @keyword intensity:     The intensity value.
-        @type intensity:        float
-        @keyword spectrum_type: Unused argument sent in by the caller function.
-        @type spectrum_type:    None
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Initialise.
-        index = None
-        if not hasattr(spin, 'intensities'):
-            spin.intensities = []
-
-        # Determine if the relaxation time already exists for the spin (duplicated spectra).
-        for i in xrange(len(cdp.relax_times)):
-            if self.__relax_time == cdp.relax_times[i]:
-                index = i
-
-        # A new relaxation time has been encountered.
-        if index >= len(spin.intensities):
-            spin.intensities.append([intensity])
-
-        # Duplicated spectra.
-        else:
-            spin.intensities[index].append(intensity)
-
-
     def back_calc(self, spin=None, relax_time_index=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
