@@ -405,6 +405,33 @@ def strip(data):
     return new
 
 
+def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
+    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file."""
+
+    # Tee file.
+    tee_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
+
+    # Tee IO streams.
+    tee_stdin  = stdin
+    tee_stdout = SplitIO()
+    tee_stderr = SplitIO()
+
+    # Print out.
+    if verbosity:
+        print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
+        print "Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path
+        print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
+
+    # Set the tee IO streams.
+    tee_stdout.split(python_stdout, tee_file)
+    tee_stderr.split(python_stderr, tee_file)
+
+    # IO stream redirection.
+    sys.stdin  = tee_stdin
+    sys.stdout = tee_stdout
+    sys.stderr = tee_stderr
+
+
 def test_binary(binary):
     """Function for testing that the binary string corresponds to a valid executable file.
 
@@ -580,28 +607,6 @@ class IO:
         sys.stdin  = self.python_stdin
         sys.stdout = self.python_stdout
         sys.stderr = self.python_stderr
-
-
-    def tee(self, file_name=None, dir=None, compress_type=0, verbosity=1):
-        """Function for turning logging on."""
-
-        # Tee file.
-        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
-
-        # Print out.
-        if verbosity:
-            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
-            print "Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path
-            print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
-
-        # Set the tee IO streams.
-        self.tee_stdout.split(self.python_stdout, self.tee_file)
-        self.tee_stderr.split(self.python_stderr, self.tee_file)
-
-        # IO stream redirection.
-        sys.stdin  = self.tee_stdin
-        sys.stdout = self.tee_stdout
-        sys.stderr = self.tee_stderr
 
 
 class SplitIO:
