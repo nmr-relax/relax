@@ -184,6 +184,11 @@ def log(file_name=None, dir=None, verbosity=1):
     # Log file.
     log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, verbosity=verbosity, return_path=True)
 
+    # Logging IO streams.
+    log_stdin  = stdin
+    log_stdout = None
+    log_stderr = SplitIO()
+
     # Print out.
     if verbosity:
         print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
@@ -192,7 +197,8 @@ def log(file_name=None, dir=None, verbosity=1):
 
     # Set the logging IO streams.
     log_stdout = log_file
-    log_stderr.split(python_stderr, log_file)
+    log_stderr = SplitIO()
+    log_stderr.split(stderr, log_file)
 
     # IO stream redirection.
     sys.stdin  = log_stdin
