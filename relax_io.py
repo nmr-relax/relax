@@ -434,8 +434,8 @@ def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
         print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
 
     # Set the tee IO streams.
-    tee_stdout.split(python_stdout, tee_file)
-    tee_stderr.split(python_stderr, tee_file)
+    tee_stdout.split(stdout, tee_file)
+    tee_stderr.split(stderr, tee_file)
 
     # IO stream redirection.
     sys.stdin  = tee_stdin
