@@ -406,7 +406,19 @@ def strip(data):
 
 
 def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
-    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file."""
+    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file.
+
+    @param file_name:       The name of the file to extract the data from.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current directory
+                            is assumed.
+    @type dir:              str
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @param verbosity:       The verbosity level.
+    @type verbosity:        int
+    """
 
     # Tee file.
     tee_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
