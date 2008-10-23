@@ -72,3 +72,19 @@ monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise('simplex', constraints=False)
 monte_carlo.error_analysis()
+
+# Save the relaxation rates.
+value.write(param='rx', file='devnull', force=True)
+
+# Save the results.
+results.write(file='devnull', force=True)
+
+# Create Grace plots of the data.
+grace.write(y_data_type='chi2', file='devnull', force=True)    # Minimised chi-squared value.
+grace.write(y_data_type='i0', file='devnull', force=True)    # Initial peak intensity.
+grace.write(y_data_type='rx', file='devnull', force=True)    # Relaxation rate.
+grace.write(x_data_type='relax_times', y_data_type='ave_int', file='devnull', force=True)    # Average peak intensities.
+grace.write(x_data_type='relax_times', y_data_type='ave_int', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
+
+# Save the program state.
+state.save(file='devnull', force=True)
