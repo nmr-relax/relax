@@ -39,6 +39,38 @@ from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
+def autodetect_format(file_data):
+    """Automatically detect the format of the peak list.
+
+    @param file_data:   The processed results file data.
+    @type file_data:    list of lists of str
+    """
+
+    # The first header line.
+    for line in file_data:
+        if line != []:
+            break
+
+    # Generic format.
+    if line[0] in ['mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name']:
+        return 'generic'
+
+    # Sparky format.
+    if line[0] == 'Assignment':
+        return 'sparky'
+
+    # NMRView format.
+    if line == ['label', 'dataset', 'sw', 'sf']:
+        return 'nmrview'
+
+    # XEasy format.
+    if line == ['No.', 'Color', 'w1', 'w2', 'ass.', 'in', 'w1', 'ass.', 'in', 'w2', 'Volume', 'Vol.', 'Err.', 'Method', 'Comment']:
+        return 'xeasy'
+
+    # Unsupported format.
+    raise RelaxError, "The format of the peak list file cannot be determined.  Either the file is of a non-standard format or the format is unsupported."
+
+
 def det_dimensions(file_data, proton, heteronuc, int_col):
     """Determine which are the proton and heteronuclei dimensions of the XEasy text file.
 
@@ -340,10 +372,18 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type sep:              str or None
     """
 
-    # Format argument.
-    format_list = ['generic', 'nmrview', 'sparky', 'xeasy']
-    if format not in format_list:
-        raise RelaxArgNotInListError, ('format', format, format_list)
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Extract the data from the file.
+    file_data = extract_data(file, dir)
+
+    # Automatic format detection.
+    format = autodetect_format(file_data)
 
     # Generic.
     if format == 'generic':
@@ -379,16 +419,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Set the intensity reading function.
         intensity_fn = intensity_xeasy
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Test if sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Extract the data from the file.
-    file_data = extract_data(file, dir)
 
     # Determine the number of header lines.
     num = number_of_header_lines(file_data, format, int_col, intensity_fn)
