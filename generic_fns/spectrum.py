@@ -307,16 +307,15 @@ def number_of_header_lines(file_data, format, int_col, intensity):
         return header_lines
 
 
-def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=None, assign_func=None, spectrum_type=None):
+def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
     @type file:             str
     @keyword dir:           The directory where the file is located.
     @type dir:              str
-    @keyword format:        The type of file containing peak intensities.  This can currently be
-                            one of 'generic', 'nmrview', 'sparky' or 'xeasy'.
-    @type format:           str
+    @keyword spectrum_id:   The spectrum identification string.
+    @type spectrum_id:      str
     @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
                             file.
     @type heteronuc:        str
@@ -325,10 +324,20 @@ def read(file=None, dir=None, format=None, heteronuc=None, proton=None, int_col=
     @keyword int_col:       The column containing the peak intensity data (for a non-standard
                             formatted file).
     @type int_col:          int
-    @keyword assign_func:   A function used to place the intensity data within the spin container.
-    @type assign_func:      func
-    @keyword spectrum_type: The optional spectrum type to be sent back into assign_func().
-    @type spectrum_type:    str
+    @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
+    @type int_method:       str
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @type sep:              str or None
     """
 
     # Format argument.
