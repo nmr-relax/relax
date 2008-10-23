@@ -38,11 +38,11 @@ def calc_spheroid_di(data, diff_data):
     """Function for calculating the direction cosine dz.
 
     dz is the dot product between the unit bond vector and the unit vector along Dpar and is given
-    by
+    by::
 
         dz = XH . Dpar.
 
-    The unit Dpar vector is
+    The unit Dpar vector is::
 
                  | sin(theta) * cos(phi) |
         Dpar  =  | sin(theta) * sin(phi) |
@@ -71,13 +71,13 @@ def calc_spheroid_di(data, diff_data):
 def calc_spheroid_ddi(data, diff_data):
     """Function for calculating the partial derivatives of the direction cosine dz.
 
-    The theta partial derivative of the unit Dpar vector is
+    The theta partial derivative of the unit Dpar vector is::
 
         dDpar      | cos(theta) * cos(phi) |
         ------  =  | cos(theta) * sin(phi) |
         dtheta     |      -sin(theta)      |
 
-    The phi partial derivative of the unit Dpar vector is
+    The phi partial derivative of the unit Dpar vector is::
 
         dDpar     | -sin(theta) * sin(phi) |
         -----  =  |  sin(theta) * cos(phi) |
@@ -108,19 +108,19 @@ def calc_spheroid_ddi(data, diff_data):
 def calc_spheroid_d2di(data, diff_data):
     """Function for calculating the second partial derivatives of the direction cosine dz.
 
-    The theta-theta second partial derivative of the unit Dpar vector is
+    The theta-theta second partial derivative of the unit Dpar vector is::
 
         d2Dpar      | -sin(theta) * cos(phi) |
         -------  =  | -sin(theta) * sin(phi) |
         dtheta2     |      -cos(theta)       |
 
-    The theta-phi second partial derivative of the unit Dpar vector is
+    The theta-phi second partial derivative of the unit Dpar vector is::
 
           d2Dpar        | -cos(theta) * sin(phi) |
         -----------  =  |  cos(theta) * cos(phi) |
         dtheta.dphi     |           0            |
 
-    The phi-phi second partial derivative of the unit Dpar vector is
+    The phi-phi second partial derivative of the unit Dpar vector is::
 
         dDpar     | -sin(theta) * cos(phi) |
         -----  =  | -sin(theta) * sin(phi) |
@@ -164,40 +164,40 @@ def calc_ellipsoid_di(data, diff_data):
     """Function for calculating the direction cosines dx, dy, and dz.
 
     Direction cosines
-    ~~~~~~~~~~~~~~~~~
+    =================
 
     dx is the dot product between the unit bond vector and the unit vector along Dx.  The
-    equation is
+    equation is::
 
         dx = XH . Dx
 
     dy is the dot product between the unit bond vector and the unit vector along Dy.  The
-    equation is
+    equation is::
 
         dy = XH . Dy
 
     dz is the dot product between the unit bond vector and the unit vector along Dz.  The
-    equation is
+    equation is::
 
         dz = XH . Dz
 
 
     Unit vectors
-    ~~~~~~~~~~~~
+    ============
 
-    The unit Dx vector is
+    The unit Dx vector is::
 
                | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
         Dx  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
                |                    cos(alpha) * sin(beta)                      |
 
-    The unit Dy vector is
+    The unit Dy vector is::
 
                | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
         Dy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
                |                   sin(alpha) * sin(beta)                      |
 
-    The unit Dz vector is
+    The unit Dz vector is::
 
                | -sin(beta) * cos(gamma) |
         Dz  =  |  sin(beta) * sin(gamma) |
@@ -243,21 +243,21 @@ def calc_ellipsoid_ddi(data, diff_data):
     """Function for calculating the partial derivatives of the direction cosines dx, dy, and dz.
 
     Dx gradient
-    ~~~~~~~~~~~
+    ===========
 
-    The alpha partial derivative of the unit Dx vector is
+    The alpha partial derivative of the unit Dx vector is::
 
          dDx       | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
         ------  =  | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
         dalpha     |                   -sin(alpha) * sin(beta)                      |
 
-    The beta partial derivative of the unit Dx vector is
+    The beta partial derivative of the unit Dx vector is::
 
          dDx      | -cos(alpha) * sin(beta) * cos(gamma) |
         -----  =  |  cos(alpha) * sin(beta) * sin(gamma) |
         dbeta     |       cos(alpha) * cos(beta)         |
 
-    The gamma partial derivative of the unit Dx vector is
+    The gamma partial derivative of the unit Dx vector is::
 
          dDx       | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
         ------  =  |  sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
@@ -265,21 +265,21 @@ def calc_ellipsoid_ddi(data, diff_data):
 
 
     Dy gradient
-    ~~~~~~~~~~~
+    ===========
 
-    The alpha partial derivative of the unit Dy vector is
+    The alpha partial derivative of the unit Dy vector is::
 
          dDy       | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
         ------  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
         dalpha     |                    cos(alpha) * sin(beta)                      |
 
-    The beta partial derivative of the unit Dy vector is
+    The beta partial derivative of the unit Dy vector is::
 
          dDy      | -sin(alpha) * sin(beta) * cos(gamma) |
         -----  =  |  sin(alpha) * sin(beta) * sin(gamma) |
         dbeta     |       sin(alpha) * cos(beta)         |
 
-    The gamma partial derivative of the unit Dy vector is
+    The gamma partial derivative of the unit Dy vector is::
 
          dDy       |  cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
         ------  =  | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
@@ -287,21 +287,21 @@ def calc_ellipsoid_ddi(data, diff_data):
 
 
     Dz gradient
-    ~~~~~~~~~~~
+    ===========
 
-    The alpha partial derivative of the unit Dz vector is
+    The alpha partial derivative of the unit Dz vector is::
 
          dDz       | 0 |
         ------  =  | 0 |
         dalpha     | 0 |
 
-    The beta partial derivative of the unit Dz vector is
+    The beta partial derivative of the unit Dz vector is::
 
          dDz      | -cos(beta) * cos(gamma) |
         -----  =  |  cos(beta) * sin(gamma) |
         dbeta     |        -sin(beta)       |
 
-    The gamma partial derivative of the unit Dz vector is
+    The gamma partial derivative of the unit Dz vector is::
 
          dDz       | sin(beta) * sin(gamma) |
         ------  =  | sin(beta) * cos(gamma) |
@@ -380,39 +380,39 @@ def calc_ellipsoid_d2di(data, diff_data):
     """Function for calculating the second partial derivatives of the direction cosines dx, dy, dz.
 
     Dx Hessian
-    ~~~~~~~~~~
+    ==========
 
-    The alpha-alpha second partial derivative of the unit Dx vector is
+    The alpha-alpha second partial derivative of the unit Dx vector is::
 
          d2Dx       | sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
         -------  =  | sin(alpha) * cos(gamma) + cos(alpha) * cos(beta) * sin(gamma) |
         dalpha2     |                  -cos(alpha) * sin(beta)                      |
 
-    The alpha-beta second partial derivative of the unit Dx vector is
+    The alpha-beta second partial derivative of the unit Dx vector is::
 
             d2Dx         |  sin(alpha) * sin(beta) * cos(gamma) |
         ------------  =  | -sin(alpha) * sin(beta) * sin(gamma) |
         dalpha.dbeta     |      -sin(alpha) * cos(beta)         |
 
-    The alpha-gamma second partial derivative of the unit Dx vector is
+    The alpha-gamma second partial derivative of the unit Dx vector is::
 
             d2Dx          | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
         -------------  =  |  cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
         dalpha.dgamma     |                             0                                  |
 
-    The beta-beta second partial derivative of the unit Dx vector is
+    The beta-beta second partial derivative of the unit Dx vector is::
 
          d2Dx      | -cos(alpha) * cos(beta) * cos(gamma) |
         ------  =  |  cos(alpha) * cos(beta) * sin(gamma) |
         dbeta2     |      -cos(alpha) * sin(beta)         |
 
-    The beta-gamma second partial derivative of the unit Dx vector is
+    The beta-gamma second partial derivative of the unit Dx vector is::
 
             d2Dx         | cos(alpha) * sin(beta) * sin(gamma) |
         ------------  =  | cos(alpha) * sin(beta) * cos(gamma) |
         dbeta.dgamma     |                 0                   |
 
-    The gamma-gamma second partial derivative of the unit Dx vector is
+    The gamma-gamma second partial derivative of the unit Dx vector is::
 
          d2Dx       | sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
         -------  =  | sin(alpha) * cos(gamma) + cos(alpha) * cos(beta) * sin(gamma) |
@@ -420,39 +420,39 @@ def calc_ellipsoid_d2di(data, diff_data):
 
 
     Dy Hessian
-    ~~~~~~~~~~
+    ==========
 
-    The alpha-alpha second partial derivative of the unit Dy vector is
+    The alpha-alpha second partial derivative of the unit Dy vector is::
 
          d2Dy       | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
         -------  =  | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
         dalpha2     |                   -sin(alpha) * sin(beta)                      |
 
-    The alpha-beta second partial derivative of the unit Dy vector is
+    The alpha-beta second partial derivative of the unit Dy vector is::
 
             d2Dy         | -cos(alpha) * sin(beta) * cos(gamma) |
         ------------  =  |  cos(alpha) * sin(beta) * sin(gamma) |
         dalpha.dbeta     |       cos(alpha) * cos(beta)         |
 
-    The alpha-gamma second partial derivative of the unit Dy vector is
+    The alpha-gamma second partial derivative of the unit Dy vector is::
 
             d2Dy          | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
         -------------  =  |  sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
         dalpha.dgamma     |                             0                                  |
 
-    The beta-beta second partial derivative of the unit Dy vector is
+    The beta-beta second partial derivative of the unit Dy vector is::
 
          d2Dy      | -sin(alpha) * cos(beta) * cos(gamma) |
         ------  =  |  sin(alpha) * cos(beta) * sin(gamma) |
         dbeta2     |      -sin(alpha) * sin(beta)         |
 
-    The beta-gamma second partial derivative of the unit Dy vector is
+    The beta-gamma second partial derivative of the unit Dy vector is::
 
             d2Dy         | sin(alpha) * sin(beta) * sin(gamma) |
         ------------  =  | sin(alpha) * sin(beta) * cos(gamma) |
         dbeta.dgamma     |                 0                   |
 
-    The gamma-gamma second partial derivative of the unit Dy vector is
+    The gamma-gamma second partial derivative of the unit Dy vector is::
 
          d2Dy       | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
         -------  =  | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
@@ -460,39 +460,39 @@ def calc_ellipsoid_d2di(data, diff_data):
 
 
     Dz Hessian
-    ~~~~~~~~~~
+    ==========
 
-    The alpha-alpha second partial derivative of the unit Dz vector is
+    The alpha-alpha second partial derivative of the unit Dz vector is::
 
          d2Dz       | 0 |
         -------  =  | 0 |
         dalpha2     | 0 |
 
-    The alpha-beta second partial derivative of the unit Dz vector is
+    The alpha-beta second partial derivative of the unit Dz vector is::
 
             d2Dz         | 0 |
         ------------  =  | 0 |
         dalpha.dbeta     | 0 |
 
-    The alpha-gamma second partial derivative of the unit Dz vector is
+    The alpha-gamma second partial derivative of the unit Dz vector is::
 
              d2Dz         | 0 |
         -------------  =  | 0 |
         dalpha.dgamma     | 0 |
 
-    The beta-beta second partial derivative of the unit Dz vector is
+    The beta-beta second partial derivative of the unit Dz vector is::
 
          d2Dz      |  sin(beta) * cos(gamma) |
         ------  =  | -sin(beta) * sin(gamma) |
         dbeta2     |        -cos(beta)       |
 
-    The beta-gamma second partial derivative of the unit Dz vector is
+    The beta-gamma second partial derivative of the unit Dz vector is::
 
             d2Dz         | cos(beta) * sin(gamma) |
         ------------  =  | cos(beta) * cos(gamma) |
         dbeta.dgamma     |           0            |
 
-    The gamma-gamma second partial derivative of the unit Dz vector is
+    The gamma-gamma second partial derivative of the unit Dz vector is::
 
          d2Dz       |  sin(beta) * cos(gamma) |
         -------  =  | -sin(beta) * sin(gamma) |

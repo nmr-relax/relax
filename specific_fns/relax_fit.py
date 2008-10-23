@@ -278,16 +278,16 @@ class Relax_fit(Common_functions):
 
         The names are as follows:
 
-            params:  An array of the parameter names associated with the model.
-            rx:  Either the R1 or R2 relaxation rate.
-            i0:  The initial intensity.
-            iinf:  The intensity at infinity.
-            chi2:  Chi-squared value.
-            iter:  Iterations.
-            f_count:  Function count.
-            g_count:  Gradient count.
-            h_count:  Hessian count.
-            warning:  Minimisation warning.
+            - 'params', an array of the parameter names associated with the model.
+            - 'rx', either the R1 or R2 relaxation rate.
+            - 'i0', the initial intensity.
+            - 'iinf', the intensity at infinity.
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
 
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all

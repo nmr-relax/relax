@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'molmol' user function class for interacting with MOLMOL."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

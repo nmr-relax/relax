@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing molecular viewing 'view()' user function."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'minimisation' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 from string import split
 import sys

@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'value' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

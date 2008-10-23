@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'palmer' user function class for controlling the Modelfree4 software."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

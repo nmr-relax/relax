@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'gpl' user function for displaying licence information."""
+__docformat__ = 'plaintext'
+
 
 class GPL:
     def __repr__(self):

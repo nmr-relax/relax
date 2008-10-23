@@ -21,7 +21,8 @@
 ###############################################################################
 
 # Module docstring.
-"""User functions involved with pseudocontact shifts."""
+"""Module containing the 'pcs' pseudocontact shift user function class."""
+__docformat__ = 'plaintext'
 
 # Python module imports.
 import sys

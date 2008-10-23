@@ -52,7 +52,7 @@ import generic_fns
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
-from relax_io import log
+from relax_io import log, tee
 import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
 import version

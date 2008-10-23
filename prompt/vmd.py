@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'vmd' user function class for controlling VMD."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 
