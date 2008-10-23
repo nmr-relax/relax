@@ -404,6 +404,7 @@ class Spectrum:
             text = text + ", heteronuc=" + `heteronuc`
             text = text + ", proton=" + `proton`
             text = text + ", int_col=" + `int_col`
+            text = text + ", int_method=" + `int_method`
             text = text + ", mol_name_col=" + `mol_name_col`
             text = text + ", res_num_col=" + `res_num_col`
             text = text + ", res_name_col=" + `res_name_col`
