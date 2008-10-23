@@ -170,7 +170,7 @@ def get_file_path(file_name=None, dir=None):
 
 
 def log(file_name=None, dir=None, verbosity=1):
-    """Function for turning logging on.
+    """Turn on logging, sending both STDOUT and STDERR streams to a file.
 
     @param file_name:   The name of the file to extract the data from.
     @type file_name:    str
