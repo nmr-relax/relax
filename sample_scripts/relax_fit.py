@@ -31,22 +31,46 @@ pipe.create('rx', 'relax_fit')
 structure.read_pdb('Ap4Aase_new_3.pdb')
 structure.load_spins(spin_id='@N')
 
-# Load the peak intensities.
-relax_fit.read(file='T2_ncyc1.list', relax_time=0.0176)
-relax_fit.read(file='T2_ncyc1b.list', relax_time=0.0176)
-relax_fit.read(file='T2_ncyc2.list', relax_time=0.0352)
-relax_fit.read(file='T2_ncyc4.list', relax_time=0.0704)
-relax_fit.read(file='T2_ncyc4b.list', relax_time=0.0704)
-relax_fit.read(file='T2_ncyc6.list', relax_time=0.1056)
-relax_fit.read(file='T2_ncyc9.list', relax_time=0.1584)
-relax_fit.read(file='T2_ncyc9b.list', relax_time=0.1584)
-relax_fit.read(file='T2_ncyc11.list', relax_time=0.1936)
-relax_fit.read(file='T2_ncyc11b.list', relax_time=0.1936)
+# Spectrum names.
+names = [
+    'T2_ncyc1_ave',
+    'T2_ncyc1b_ave',
+    'T2_ncyc2_ave',
+    'T2_ncyc4_ave',
+    'T2_ncyc4b_ave',
+    'T2_ncyc6_ave',
+    'T2_ncyc9_ave',
+    'T2_ncyc9b_ave',
+    'T2_ncyc11_ave',
+    'T2_ncyc11b_ave'
+]
 
-# Calculate the peak intensity averages and the standard deviation of all spectra.
-relax_fit.mean_and_error()
+# Relaxation times (in seconds).
+times = [
+    0.0176,
+    0.0176,
+    0.0352,
+    0.0704,
+    0.0704,
+    0.1056,
+    0.1584,
+    0.1584,
+    0.1936,
+    0.1936
+]
 
-# Deselect unresolved residues.
+# Loop over the spectra.
+for i in xrange(len(names)):
+    # Load the peak intensities.
+    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='heights')
+
+    # Set the relaxation times.
+    relax_fit.relax_time(time=times[i], spectrum_id=names[i])
+
+# Peak intensity error analysis.
+spectrum.error_analysis()
+
+# Deselect unresolved spins.
 deselect.read(file='unresolved')
 
 # Set the relaxation curve type.
