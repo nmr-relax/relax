@@ -197,7 +197,6 @@ def log(file_name=None, dir=None, verbosity=1):
 
     # Set the logging IO streams.
     log_stdout = log_file
-    log_stderr = SplitIO()
     log_stderr.split(stderr, log_file)
 
     # IO stream redirection.
