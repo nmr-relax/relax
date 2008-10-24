@@ -322,6 +322,10 @@ class Internal(Base_struct_API):
         lines = file.readlines()
         file.close()
 
+        # Check for empty files.
+        if lines == []:
+            raise RelaxError, "The PDB file is empty."
+
         # Init.
         model = None
         records = []
