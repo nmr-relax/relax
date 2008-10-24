@@ -943,66 +943,41 @@ class Relax_fit(Common_functions):
                 continue
 
 
-    def read(self, file=None, dir=None, relax_time=0.0, format=None, heteronuc=None, proton=None, int_col=None):
-        """Read in the peak intensity data.
+    def relax_time(self, time=0.0, spectrum_id=None):
+        """Set the relaxation time period associated with a given spectrum.
 
-        This method sets up the global data structures in the current data pipe and then calls
-        intensity.read().
-
-
-        @keyword file:          The name of the file containing the peak intensities.
-        @type file:             str
-        @keyword dir:           The directory where the file is located.
-        @type dir:              str
-        @keyword relax_time:    The time, in seconds, of the relaxation period.
-        @type relax_time:       float
-        @keyword format:        The type of file containing peak intensities.  This can currently be
-                                one of 'sparky', 'xeasy' or 'nmrview'.
-        @type format:           str
-        @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
-                                file.
-        @type heteronuc:        str
-        @keyword proton:        The name of the proton as specified in the peak intensity file.
-        @type proton:           str
-        @keyword int_col:       The column containing the peak intensity data (for a non-standard
-                                formatted file).
-        @type int_col:          int
+        @keyword time:          The time, in seconds, of the relaxation period.
+        @type time:             float
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
         """
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
+
         # Store the relaxation time in the class instance.
-        self.__relax_time = float(relax_time)
+        self.__relax_time = float(time)
 
-        # Global relaxation time data structure.
+        # The index.
+        index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise the global relaxation time data structure if needed.
         if not hasattr(cdp, 'relax_times'):
-            cdp.relax_times = []
+            cdp.relax_times = [None] * len(cdp.spectrum_ids)
 
-        # Number of spectra.
-        if not hasattr(cdp, 'num_spectra'):
-            cdp.num_spectra = []
+        # Index not present in the global relaxation time data structure.
+        while 1:
+            if index > len(cdp.relax_times) - 1:
+                cdp.relax_times.append(None)
+            else:
+                break
 
-        # Determine if the relaxation time already exists for the residue (duplicated spectra).
-        index = None
-        for i in xrange(len(cdp.relax_times)):
-            if relax_time == cdp.relax_times[i]:
-                index = i
-
-        # A new relaxation time.
-        if index == None:
-            # Add the time.
-            cdp.relax_times.append(relax_time)
-
-            # First spectrum.
-            cdp.num_spectra.append(1)
-
-        # Duplicated spectra.
-        else:
-            cdp.num_spectra[index] = cdp.num_spectra[index] + 1
-
-        # Generic intensity function.
-        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function)
+        # Add the time at the correct position.
+        cdp.relax_times[index] = time
 
 
     def return_data(self, spin):
