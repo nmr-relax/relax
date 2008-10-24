@@ -203,9 +203,9 @@ class Relax:
             # The log file.
             log_file = options.log
 
-            # Verify that logging won't erase the script used (a '.py' file)
-            if options.log.endswith(".py"):
-                log_file = 'LOG_FILE'
+            # Fail if the file already exists.
+            if access(log_file, F_OK):
+                raise relax_errors.RelaxFileOverwriteError, (log_file, 'force_flag')
         else:
             log_file = None
 
@@ -218,9 +218,9 @@ class Relax:
             # The tee file.
             tee_file = options.tee
 
-            # Verify that tee won't erase the script used (a '.py' file)
-            if options.tee.endswith(".py"):
-                tee_file = 'TEE_FILE'
+            # Fail if the file already exists.
+            if access(tee_file, F_OK):
+                raise relax_errors.RelaxFileOverwriteError, (tee_file, 'force_flag')
         else:
             tee_file = None
 
