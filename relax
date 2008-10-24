@@ -205,7 +205,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(log_file, F_OK):
-                raise relax_errors.RelaxFileOverwriteError, (log_file, 'force_flag')
+                parser.error("the log file " + `log_file` + " already exists")
         else:
             log_file = None
 
@@ -220,7 +220,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(tee_file, F_OK):
-                raise relax_errors.RelaxFileOverwriteError, (tee_file, 'force_flag')
+                parser.error("the tee file " + `tee_file` + " already exists")
         else:
             tee_file = None
 
