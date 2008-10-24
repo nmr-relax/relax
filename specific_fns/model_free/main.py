@@ -1970,6 +1970,8 @@ class Model_free_main:
             # Test for structural data if required.
             elif need_vect and not hasattr(spin, 'xh_vect'):
                 spin.select = False
+            elif need_vect and spin.xh_vect == None:
+                spin.select = False
 
 
     def remove_tm(self, spin_id=None):
