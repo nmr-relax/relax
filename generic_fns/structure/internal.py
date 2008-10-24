@@ -35,7 +35,7 @@ from warnings import warn
 from api_base import Base_struct_API
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoPdbError
 from relax_io import open_read_file
 from relax_warnings import RelaxWarning
 
@@ -644,6 +644,10 @@ class Internal(Base_struct_API):
                                     (int), residue name (str), atom number (int), atom name(str),
                                     element name (str), and atomic position (array of len 3).
         """
+
+        # Check that the structure is loaded.
+        if not len(self.structural_data):
+            raise RelaxNoPdbError
 
         # Generate the selection object.
         sel_obj = Selection(atom_id)
