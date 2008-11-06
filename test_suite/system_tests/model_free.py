@@ -989,6 +989,13 @@ class Mf(TestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
 
 
+    def test_tylers_peptide(self):
+        """Try a component of model-free analysis on Tyler Reddy's peptide data (truncated)."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/tylers_peptide.py')
+
+
     def test_write_results(self):
         """Writing of model-free results using the user function results.write()."""
 

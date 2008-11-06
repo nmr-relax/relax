@@ -67,6 +67,7 @@ class Test_mol_res_spin(TestCase):
         cdp.mol[1].res[1].spin[0].name = 'C8'
         cdp.mol[1].res[0].spin.add_item(spin_name='N5')
         cdp.mol[1].res[1].spin.add_item(spin_name='N5')
+        cdp.mol[1].res[1].spin.add_item(spin_name='2H', spin_num=132)
 
         # Deselect a number of spins.
         cdp.mol[0].res[0].spin[0].select = 0
@@ -487,8 +488,8 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Test the number of spins counted.
-        self.assertEqual(mol_res_spin.count_spins(), 3)
-        self.assertEqual(mol_res_spin.count_spins(skip_desel=False), 7)
+        self.assertEqual(mol_res_spin.count_spins(), 4)
+        self.assertEqual(mol_res_spin.count_spins(skip_desel=False), 8)
         self.assertEqual(mol_res_spin.count_spins(selection='@N5'), 1)
         self.assertEqual(mol_res_spin.count_spins(selection='@N5', skip_desel=False), 2)
 
@@ -1194,6 +1195,7 @@ class Test_mol_res_spin(TestCase):
         spin2 = mol_res_spin.return_spin(selection=':2&:Glu')
         spin3 = mol_res_spin.return_spin(selection=':4&:Pro', pipe='orig')
         spin4 = mol_res_spin.return_spin(selection='#RNA:-5@N5', pipe='orig')
+        spin5 = mol_res_spin.return_spin(selection=':-4@2H', pipe='orig')
 
         # Test the data of spin 1.
         self.assertNotEqual(spin1, None)
@@ -1214,6 +1216,11 @@ class Test_mol_res_spin(TestCase):
         self.assertNotEqual(spin4, None)
         self.assertEqual(spin4.num, None)
         self.assertEqual(spin4.name, 'N5')
+
+        # Test the data of the RNA res -4, spin 2H.
+        self.assertNotEqual(spin5, None)
+        self.assertEqual(spin5.num, 132)
+        self.assertEqual(spin5.name, '2H')
 
 
     def test_return_spin_pipe_fail(self):
@@ -1347,8 +1354,8 @@ class Test_mol_res_spin(TestCase):
         """
 
         # Spin data.
-        select = [0, 1, 0, 0, 1, 1, 0]
-        name = ['NH', 'NH', None, 'C8', 'N5', 'C8', 'N5']
+        select = [0, 1, 0, 0, 1, 1, 0, 1]
+        name = ['NH', 'NH', None, 'C8', 'N5', 'C8', 'N5', '2H']
 
         # Loop over the spins.
         i = 0
@@ -1363,7 +1370,7 @@ class Test_mol_res_spin(TestCase):
             i = i + 1
 
         # Test loop length.
-        self.assertEqual(i, 7)
+        self.assertEqual(i, 8)
 
 
     def test_spin_loop_single_spin(self):

@@ -170,7 +170,7 @@ def get_file_path(file_name=None, dir=None):
 
 
 def log(file_name=None, dir=None, verbosity=1):
-    """Function for turning logging on.
+    """Turn on logging, sending both STDOUT and STDERR streams to a file.
 
     @param file_name:   The name of the file to extract the data from.
     @type file_name:    str
@@ -184,6 +184,11 @@ def log(file_name=None, dir=None, verbosity=1):
     # Log file.
     log_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, verbosity=verbosity, return_path=True)
 
+    # Logging IO streams.
+    log_stdin  = stdin
+    log_stdout = None
+    log_stderr = SplitIO()
+
     # Print out.
     if verbosity:
         print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
@@ -192,7 +197,7 @@ def log(file_name=None, dir=None, verbosity=1):
 
     # Set the logging IO streams.
     log_stdout = log_file
-    log_stderr.split(python_stderr, log_file)
+    log_stderr.split(stderr, log_file)
 
     # IO stream redirection.
     sys.stdin  = log_stdin
@@ -399,6 +404,45 @@ def strip(data):
     return new
 
 
+def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
+    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file.
+
+    @param file_name:       The name of the file to extract the data from.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current directory
+                            is assumed.
+    @type dir:              str
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @param verbosity:       The verbosity level.
+    @type verbosity:        int
+    """
+
+    # Tee file.
+    tee_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
+
+    # Tee IO streams.
+    tee_stdin  = stdin
+    tee_stdout = SplitIO()
+    tee_stderr = SplitIO()
+
+    # Print out.
+    if verbosity:
+        print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
+        print "Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path
+        print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
+
+    # Set the tee IO streams.
+    tee_stdout.split(stdout, tee_file)
+    tee_stderr.split(stderr, tee_file)
+
+    # IO stream redirection.
+    sys.stdin  = tee_stdin
+    sys.stdout = tee_stdout
+    sys.stderr = tee_stderr
+
+
 def test_binary(binary):
     """Function for testing that the binary string corresponds to a valid executable file.
 
@@ -574,28 +618,6 @@ class IO:
         sys.stdin  = self.python_stdin
         sys.stdout = self.python_stdout
         sys.stderr = self.python_stderr
-
-
-    def tee(self, file_name=None, dir=None, compress_type=0, verbosity=1):
-        """Function for turning logging on."""
-
-        # Tee file.
-        self.tee_file, file_path = self.open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
-
-        # Print out.
-        if verbosity:
-            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
-            print "Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path
-            print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
-
-        # Set the tee IO streams.
-        self.tee_stdout.split(self.python_stdout, self.tee_file)
-        self.tee_stderr.split(self.python_stderr, self.tee_file)
-
-        # IO stream redirection.
-        sys.stdin  = self.tee_stdin
-        sys.stdout = self.tee_stdout
-        sys.stderr = self.tee_stderr
 
 
 class SplitIO:
