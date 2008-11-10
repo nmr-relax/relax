@@ -2335,7 +2335,7 @@ class Model_free_main:
             return 'ps'
 
         # Rex (value at 1st field strength).
-        elif object_name == 'rex' and hasattr(spin, 'frq_labels'):
+        elif object_name == 'rex' and hasattr(spin, 'frq_labels') and spin.frq_labels != None and len(spin.frq_labels):
             return spin.frq_labels[0] + ' MHz'
 
         # Bond length (Angstrom).
