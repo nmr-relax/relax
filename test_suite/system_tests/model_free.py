@@ -143,6 +143,13 @@ class Mf(TestCase):
             self.assertEqual(str(sub_obj1), str(sub_obj2))
 
 
+    def test_bug_12582(self):
+        """Test catching bug #12582 (https://gna.org/bugs/index.php?12582) as submitted by Chris Brosey."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bug_12582.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
