@@ -1740,12 +1740,12 @@ class Model_free_main:
             # Loop over the spins.
             global_index = -1
             for spin in spin_loop():
+                # Increment the global spin index.
+                global_index = global_index + 1
+
                 # Skip deselected spins.
                 if not spin.select:
                     continue
-
-                # Increment the global spin index.
-                global_index = global_index + 1
 
                 # Yield the spin index.
                 yield global_index
