@@ -29,11 +29,11 @@ from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 
 # Relaxation curve fitting modules compilation test.
-C_module_exp_fn = 1
+C_module_exp_fn = True
 try:
     from maths_fns.relax_fit import func
 except ImportError:
-    C_module_exp_fn = 0
+    C_module_exp_fn = False
 
 
 def copy(pipe_from=None, pipe_to=None):

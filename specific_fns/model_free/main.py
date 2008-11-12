@@ -1740,12 +1740,12 @@ class Model_free_main:
             # Loop over the spins.
             global_index = -1
             for spin in spin_loop():
+                # Increment the global spin index.
+                global_index = global_index + 1
+
                 # Skip deselected spins.
                 if not spin.select:
                     continue
-
-                # Increment the global spin index.
-                global_index = global_index + 1
 
                 # Yield the spin index.
                 yield global_index
@@ -2335,7 +2335,7 @@ class Model_free_main:
             return 'ps'
 
         # Rex (value at 1st field strength).
-        elif object_name == 'rex' and hasattr(spin, 'frq_labels'):
+        elif object_name == 'rex' and hasattr(spin, 'frq_labels') and spin.frq_labels != None and len(spin.frq_labels):
             return spin.frq_labels[0] + ' MHz'
 
         # Bond length (Angstrom).
