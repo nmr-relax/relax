@@ -14,7 +14,6 @@ path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0
 
 # Loop over the models.
 for name in ['tm0', 'tm1']:
-
     # Setup.
     pipe.create(pipe_name=name, pipe_type='mf')
     sequence.read(file='noe.500.out', dir=path, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None)
@@ -35,5 +34,6 @@ for name in ['tm0', 'tm1']:
     results.write(file='devnull', force=True, compress_type=1)
 
 # Model selection.
+sequence.display()
 eliminate(function=None, args=None)
 model_selection(method='AIC', modsel_pipe='aic', pipes=['tm0', 'tm1'])
