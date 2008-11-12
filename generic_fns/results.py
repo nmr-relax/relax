@@ -24,6 +24,7 @@
 """Module for reading/writing/displaying the results in a data pipe."""
 
 # Python module imports.
+from os.path import dirname
 from re import search
 from string import split
 import sys
@@ -88,14 +89,14 @@ def read(file='results', directory=None):
     file_path = get_file_path(file_name=file, dir=directory)
 
     # Open the file.
-    file = open_read_file(file_name=file, dir=directory)
+    file = open_read_file(file_name=file_path)
 
     # Determine the format of the file.
     format = determine_format(file)
 
     # XML results.
     if format == 'xml':
-        read_function = ds.from_xml(file, dir=directory)
+        read_function = ds.from_xml(file, dir=dirname(file_path))
 
     # Columnar results.
     elif format == 'columnar':
