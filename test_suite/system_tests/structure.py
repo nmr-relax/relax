@@ -93,6 +93,16 @@ class Structure(TestCase):
             self.assertEqual(str.z[i], z[i])
 
 
+    def test_load_internal_results2(self):
+        """Load the PDB file using the information in a results file (using the internal structural object)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the results file.
+        self.relax.interpreter._Results.read(file=path+'/str_internal')
+
+
     def test_load_scientific_results(self):
         """Load the PDB file using the information in a results file (using the Scientific python structural object)."""
 
