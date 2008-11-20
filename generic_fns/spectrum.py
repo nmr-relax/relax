@@ -452,7 +452,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
-            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s: " % `file_data[i]`))
+            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data '%s'." % `file_data[i]`))
             continue
 
         # Get the spin container.
