@@ -98,4 +98,4 @@ class Relax_fit(TestCase):
 
             # Check intensities (if they exist).
             if hasattr(orig_spin, 'intensities'):
-                self.assertEqual(orig_spin.intensities[0][0], new_spin.intensities[0][0])
+                self.assertEqual(orig_spin.intensities[0], new_spin.intensities[0])
