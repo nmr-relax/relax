@@ -11,16 +11,16 @@ sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
 spin.name(name='N')
 
 # Load the reference spectrum and saturated spectrum peak intensities.
-noe.read(file='ref_ave.list', dir=sys.path[-1] + '/test_suite/shared_data/peak_lists', spectrum_type='ref')
-noe.read(file='sat_ave.list', dir=sys.path[-1] + '/test_suite/shared_data/peak_lists', spectrum_type='sat')
+spectrum.read_intensities(file='ref_ave.list', dir=sys.path[-1] + '/test_suite/shared_data/peak_lists', spectrum_id='ref')
+spectrum.read_intensities(file='sat_ave.list', dir=sys.path[-1] + '/test_suite/shared_data/peak_lists', spectrum_id='sat')
 
 # Set the errors.
-noe.error(error=3600, spectrum_type='ref')
-noe.error(error=3000, spectrum_type='sat')
+spectrum.baseplane_rmsd(error=3600, spectrum_id='ref')
+spectrum.baseplane_rmsd(error=3000, spectrum_id='sat')
 
 # Individual residue errors.
-noe.error(error=122000, spectrum_type='ref', spin_id=":5")
-noe.error(error=8500, spectrum_type='sat', spin_id=":5")
+spectrum.baseplane_rmsd(error=122000, spectrum_type='ref', spin_id=":5")
+spectrum.baseplane_rmsd(error=8500, spectrum_type='sat', spin_id=":5")
 
 # Deselect unresolved residues.
 deselect.read(file='unresolved', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting')
