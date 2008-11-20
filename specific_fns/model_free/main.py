@@ -952,6 +952,10 @@ class Model_free_main:
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
         for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Test the fixed flag.
             if not hasattr(spin, 'fixed'):
                 mf_all_fixed = False
