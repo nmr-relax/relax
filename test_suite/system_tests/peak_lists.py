@@ -64,7 +64,7 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spectrum.read_intensities(file="generic.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='heights')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], 1.0000)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
 
 
     def test_read_peak_list_nmrview(self):
@@ -82,8 +82,8 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spectrum.read_intensities(file="cNTnC.xpk", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='heights')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], -0.1694)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], -0.1142)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], -0.1694)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0], -0.1142)
 
 
     def test_read_peak_list_sparky(self):
@@ -103,10 +103,10 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spectrum.read_intensities(file="ref_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='heights')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], 6262)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], 148614)
-        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities[0][0], 166842)
-        self.assertEqual(cdp.mol[0].res[3].spin[0].intensities[0][0], 128690)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 6262)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0], 148614)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities[0], 166842)
+        self.assertEqual(cdp.mol[0].res[3].spin[0].intensities[0], 128690)
 
 
     def test_read_peak_list_xeasy(self):
@@ -143,12 +143,12 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='heights')
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0][0], 9.714e+03)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0][0], 7.919e+03)
-        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities[0][0], 1.356e+04)
-        self.assertEqual(cdp.mol[0].res[3].spin[0].intensities[0][0], 9.884e+03)
-        self.assertEqual(cdp.mol[0].res[4].spin[0].intensities[0][0], 2.041e+04)
-        self.assertEqual(cdp.mol[0].res[5].spin[0].intensities[0][0], 9.305e+03)
-        self.assertEqual(cdp.mol[0].res[6].spin[0].intensities[0][0], 3.154e+04)
-        self.assertEqual(cdp.mol[0].res[7].spin[0].intensities[0][0], 9.180e+03)
-        self.assertEqual(cdp.mol[0].res[8].spin[0].intensities[0][0], 1.532e+04)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 9.714e+03)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities[0], 7.919e+03)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities[0], 1.356e+04)
+        self.assertEqual(cdp.mol[0].res[3].spin[0].intensities[0], 9.884e+03)
+        self.assertEqual(cdp.mol[0].res[4].spin[0].intensities[0], 2.041e+04)
+        self.assertEqual(cdp.mol[0].res[5].spin[0].intensities[0], 9.305e+03)
+        self.assertEqual(cdp.mol[0].res[6].spin[0].intensities[0], 3.154e+04)
+        self.assertEqual(cdp.mol[0].res[7].spin[0].intensities[0], 9.180e+03)
+        self.assertEqual(cdp.mol[0].res[8].spin[0].intensities[0], 1.532e+04)
