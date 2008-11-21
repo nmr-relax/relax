@@ -198,14 +198,14 @@ class Noe(Common_functions):
         return None
 
 
-    def set_error(self, error=0.0, spectrum_type=None, spin_id=None):
+    def set_error(self, error=0.0, spectrum_id=None, spin_id=None):
         """Set the peak intensity errors.
 
         @param error:           The peak intensity error value defined as the RMSD of the base plane
                                 noise.
         @type error:            float
-        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
-        @type spectrum_type:    str
+        @keyword spectrum_id:   The id of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_id:      str
         @param spin_id:         The spin identification string.
         @type spin_id:          str
         """
@@ -224,7 +224,7 @@ class Noe(Common_functions):
                 continue
 
             # Set the error.
-            if spectrum_type == 'ref':
+            if spectrum_id == 'ref':
                 spin.ref_err = float(error)
-            elif spectrum_type == 'sat':
+            elif spectrum_id == 'sat':
                 spin.sat_err = float(error)
