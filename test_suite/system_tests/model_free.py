@@ -147,7 +147,7 @@ class Mf(TestCase):
         """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bugs_12582_12591.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bugs_12582_12591_12607.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
