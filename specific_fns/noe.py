@@ -76,6 +76,15 @@ class Noe(Common_functions):
         # Test if the current pipe exists.
         pipes.test()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the 2 spectra ids 'ref' and 'sat' exist.
+        if not 'ref' in cdp.spectrum_ids or not 'sat' in cdp.spectrum_ids:
+            raise RelaxError, "The reference and saturated NOE spectra have not been loaded."
+        if len(cdp.spectrum_ids) != 2:
+            raise RelaxError, "The spectrum ids %s should only consist of the labels 'ref' and 'sat'." % cdp.spectrum_ids
+
         # Loop over the spins.
         for spin in spin_loop():
             # Skip deselected spins.
