@@ -32,7 +32,7 @@ import string
 import sys
 
 # relax module imports.
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoSequenceError
 from relax_io import extract_data, strip
@@ -90,15 +90,15 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Test the spectrum id string.
     if spectrum_id not in cdp.spectrum_ids:
         raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist."
 
     # The spectrum id index.
     spect_index = cdp.spectrum_ids.index(spectrum_id)
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Loop over the spins.
     for spin in spin_loop(spin_id):
