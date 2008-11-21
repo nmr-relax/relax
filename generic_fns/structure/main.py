@@ -57,12 +57,16 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
     # Test if the current data pipe exists.
     pipes.test()
 
+    # Alias the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num > 0:
+        raise RelaxNoPdbError
+
     # Print out.
     print "Adding the following spins to the relax data store.\n"
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Loop over all atoms of the spin_id selection.
     for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
