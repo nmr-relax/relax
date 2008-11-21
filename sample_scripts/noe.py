@@ -43,6 +43,9 @@ spectrum.baseplane_rmsd(error=3000, spectrum_id='sat')
 spectrum.baseplane_rmsd(error=122000, spectrum_id='ref', spin_id=":114")
 spectrum.baseplane_rmsd(error=8500, spectrum_id='sat', spin_id=":114")
 
+# Peak intensity error analysis.
+spectrum.error_analysis()
+
 # Deselect unresolved residues.
 deselect.read(file='unresolved')
 
