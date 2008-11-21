@@ -108,7 +108,11 @@ class Noe(Common_functions):
         # Loop over spin data.
         for spin in spin_loop():
             # Check for sufficient data.
-            if not (hasattr(spin, 'ref') and hasattr(spin, 'sat') and hasattr(spin, 'ref_err') and hasattr(spin, 'sat_err')):
+            if not hasattr(spin, 'intensities') or not len(spin.intensities) == 2:
+                spin.select = False
+
+            # Check for sufficient errors.
+            if not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) == 2:
                 spin.select = False
 
 
