@@ -97,6 +97,9 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     # The spectrum id index.
     spect_index = cdp.spectrum_ids.index(spectrum_id)
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
     # Loop over the spins.
     for spin in spin_loop(spin_id):
         # Skip deselected spins.
