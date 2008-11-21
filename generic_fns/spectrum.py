@@ -150,6 +150,20 @@ def det_dimensions(file_data, proton, heteronuc, int_col):
             break
 
 
+def error_analysis():
+    """Determine the peak intensity standard deviation."""
+
+    # Test if the current pipe exists
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+
 def intensity_generic(line, int_col):
     """Function for returning relevant data from the generic peak intensity line.
 
