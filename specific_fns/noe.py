@@ -23,6 +23,7 @@
 # Python module imports.
 from math import sqrt
 from re import match
+from warnings import warn
 
 # relax module imports.
 from base_class import Common_functions
@@ -31,6 +32,7 @@ from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoSequenceError, RelaxRegExpError
 from relax_io import open_write_file
+from relax_warnings import RelaxDeselectWarning
 
 
 class Noe(Common_functions):
@@ -106,13 +108,19 @@ class Noe(Common_functions):
             raise RelaxNoSequenceError
 
         # Loop over spin data.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Check for sufficient data.
             if not hasattr(spin, 'intensities') or not len(spin.intensities) == 2:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient data'))
                 spin.select = False
 
             # Check for sufficient errors.
-            if not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) == 2:
+            elif not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) == 2:
+                warn(RelaxDeselectWarning(spin_id, 'missing errors'))
                 spin.select = False
 
 
