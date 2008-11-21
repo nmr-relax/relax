@@ -71,6 +71,38 @@ def autodetect_format(file_data):
     raise RelaxError, "The format of the peak list file cannot be determined.  Either the file is of a non-standard format or the format is unsupported."
 
 
+def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
+    """Set the peak intensity errors, as defined as the baseplane RMSD.
+
+    @param error:           The peak intensity error value defined as the RMSD of the base plane
+                            noise.
+    @type error:            float
+    @keyword spectrum_id:   The spectrum id.
+    @type spectrum_id:      str
+    @param spin_id:         The spin identification string.
+    @type spin_id:          str
+    """
+
+    # Test if the current pipe exists
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Loop over the spins.
+    for spin in spin_loop(spin_id):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Set the error.
+        if spectrum_id == 'ref':
+            spin.ref_err = float(error)
+        elif spectrum_id == 'sat':
+            spin.sat_err = float(error)
+            
+
 def det_dimensions(file_data, proton, heteronuc, int_col):
     """Determine which are the proton and heteronuclei dimensions of the XEasy text file.
 
