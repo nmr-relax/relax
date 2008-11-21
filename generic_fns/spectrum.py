@@ -107,7 +107,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
         if not hasattr(spin, 'baseplane_rmsd'):
             spin.baseplane_rmsd = [None] * len(cdp.spectrum_ids)
         elif len(spin.baseplane_rmsd) < len(cdp.spectrum_ids):
-            spin.baseplane_rmsd.append([None] * (len(cdp.spectrum_ids) - len(spin.baseplane_rmsd))
+            spin.baseplane_rmsd.append([None] * (len(cdp.spectrum_ids) - len(spin.baseplane_rmsd)))
 
         # Set the error.
         spin.baseplane_rmsd[spect_index] = float(error)
