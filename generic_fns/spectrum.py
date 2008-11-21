@@ -90,18 +90,28 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Test the spectrum id string.
+    if spectrum_id not in cdp.spectrum_ids:
+        raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist."
+
+    # The spectrum id index.
+    spect_index = cdp.spectrum_ids.index(spectrum_id)
+
     # Loop over the spins.
     for spin in spin_loop(spin_id):
         # Skip deselected spins.
         if not spin.select:
             continue
 
+        # Initialise or update the baseplane_rmsd data structure as necessary.
+        if not hasattr(spin, 'baseplane_rmsd'):
+            spin.baseplane_rmsd = [None] * len(cdp.spectrum_ids)
+        elif len(spin.baseplane_rmsd) < len(cdp.spectrum_ids):
+            spin.baseplane_rmsd.append([None] * (len(cdp.spectrum_ids) - len(spin.baseplane_rmsd))
+
         # Set the error.
-        if spectrum_id == 'ref':
-            spin.ref_err = float(error)
-        elif spectrum_id == 'sat':
-            spin.sat_err = float(error)
-            
+        spin.baseplane_rmsd[spect_index] = float(error)
+
 
 def det_dimensions(file_data, proton, heteronuc, int_col):
     """Determine which are the proton and heteronuclei dimensions of the XEasy text file.
