@@ -95,7 +95,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
 
     # Test the spectrum id string.
     if spectrum_id not in cdp.spectrum_ids:
-        raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist."
+        raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id
 
     # The spectrum id index.
     spect_index = cdp.spectrum_ids.index(spectrum_id)
