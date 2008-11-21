@@ -1,8 +1,9 @@
 """This system test catches 2 bugs submitted by Chris Brosey.
 
 The bugs include:
-    - Bug #12582 (https://gna.org/bugs/index.php?12582).
-    - Bug #12591 (https://gna.org/bugs/index.php?12591).
+    - Bug #12582 (https://gna.org/bugs/?12582).
+    - Bug #12591 (https://gna.org/bugs/?12591).
+    - Bug #12607 (https://gna.org/bugs/?12607).
 """
 
 # Python module imports.
@@ -37,3 +38,13 @@ for name in ['tm0', 'tm1']:
 sequence.display()
 eliminate(function=None, args=None)
 model_selection(method='AIC', modsel_pipe='aic', pipes=['tm0', 'tm1'])
+
+
+
+# Catch bug #12607 (https://gna.org/bugs/?12607).
+#################################################
+
+model_free.remove_tm(spin_id=None)
+diffusion_tensor.init(params=1e-08, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=False)
+fix(element='all_spins', fixed=True)
+grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
