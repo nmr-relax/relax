@@ -311,7 +311,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # No data, so close the empty file and exit.
     if data == None or data == []:
-        warn(RelaxWarning("No data can be found, creating an empty file."))
+        warn(RelaxWarning("No data could be found, creating an empty file."))
         file.close()
         return
 
