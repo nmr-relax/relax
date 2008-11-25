@@ -27,6 +27,7 @@
 from numpy import array
 from os import system
 from re import match
+from warnings import warn
 
 # relax module imports.
 import generic_fns
@@ -34,6 +35,7 @@ from generic_fns.mol_res_spin import count_molecules, count_residues, count_spin
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file, test_binary
+from relax_warnings import RelaxWarning
 from specific_fns.setup import get_specific_fn
 
 
@@ -306,6 +308,12 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Get the data.
     data = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
+
+    # No data, so close the empty file and exit.
+    if data == None or data == []:
+        warn(RelaxWarning("No data can be found, creating an empty file."))
+        file.close()
+        return
 
     # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
     graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
