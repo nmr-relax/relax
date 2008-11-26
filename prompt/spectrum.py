@@ -476,3 +476,56 @@ class Spectrum:
 
         # Execute the functional code.
         spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+
+
+    def replicated(self, spectrum_ids=None):
+        """Function for specifying which spectra are replicates.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        spectrum_ids:  The list of replicated spectra identification strings.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function is used to identify which loaded spectra are replicates of each other.
+        This is very important for error analysis.
+
+
+        Examples
+        ~~~~~~~~
+
+        To specify that the NOE spectra labelled 'ref1', 'ref2', and 'ref3' are the same spectrum
+        replicated, type one of:
+
+        relax> spectrum.replicated(['ref1', 'ref2', 'ref3'])
+        relax> spectrum.replicated(spectrum_ids=['ref1', 'ref2', 'ref3'])
+
+        To specify that the two R2 spectra 'ncyc2' and 'ncyc2b' are the same time point, type:
+
+        relax> spectrum.replicated(['ncyc2', 'ncyc2b'])
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "spectrum.replicated("
+            text = text + "spectrum_ids=" + `spectrum_ids` + ")"
+            print text
+
+        # Spectrum ids.
+        if type(spectrum_ids) != list:
+            raise RelaxListStrError, ('spectrum ids', spectrum_ids)
+        else:
+            # Empty list.
+            if spectrum_ids == []:
+                raise RelaxListStrError, ('spectrum ids', spectrum_ids)
+
+            # Check the values.
+            for i in xrange(len(spectrum_ids)):
+                if type(spectrum_ids[i]) != str:
+                    raise RelaxListStrError, ('spectrum ids', spectrum_ids)
+
+        # Execute the functional code.
+        spectrum.replicated(spectrum_ids=spectrum_ids)
