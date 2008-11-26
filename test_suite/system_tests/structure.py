@@ -128,3 +128,85 @@ class Structure(TestCase):
 
         # Check the atomic data.
         self.assertEqual(cdp.structure.structural_data[0].peptide_chains[0].sequence(), res_name)
+
+
+    def test_read_pdb_internal1(self):
+        """Load the '1F35_N_H_molmol.pdb' PDB file (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='internal')
+
+
+    def test_read_pdb_internal2(self):
+        """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='internal')
+
+
+    def test_read_pdb_internal3(self):
+        """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal')
+
+
+    def test_read_pdb_internal4(self):
+        """Load the 'tylers_peptide_trunc.pdb' PDB file (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='internal')
+
+
+    def test_read_pdb_scientific1(self):
+        """Load the '1F35_N_H_molmol.pdb' PDB file (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='scientific')
+
+
+    def test_read_pdb_scientific2(self):
+        """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='scientific')
+
+
+    def test_read_pdb_scientific3(self):
+        """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific')
+
+
+    def test_read_pdb_scientific4(self):
+        """Load the 'tylers_peptide_trunc.pdb' PDB file (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='scientific')
+
+
