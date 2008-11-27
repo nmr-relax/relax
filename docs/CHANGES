@@ -1,3 +1,12 @@
+Version 1.2.15
+(27 November 2008, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.15
+
+    Bugfixes:
+        * Problems with the value.write() user function have been fixed (see bug #12418).
+        * Error analysis in relaxation curve-fitting was incorrectly implemented with standard deviation rather than variance averaging (see bug #12456).
+
+
 Version 1.2.14
 (9 August 2008, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.14
