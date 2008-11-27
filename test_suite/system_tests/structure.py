@@ -170,6 +170,16 @@ class Structure(TestCase):
         self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='internal')
 
 
+    def test_read_pdb_internal5(self):
+        """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
+
+
     def test_read_pdb_scientific1(self):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
@@ -208,5 +218,16 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='scientific')
+
+
+    def test_read_pdb_scientific5(self):
+        """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB.
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
+
 
 
