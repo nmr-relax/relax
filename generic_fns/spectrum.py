@@ -55,7 +55,6 @@ def __errors_height_no_repl():
 
         # Test if the RMSD has been set.
         if not hasattr(spin, 'baseplane_rmsd'):
-            print spin
             raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
 
         # Set the error to the RMSD.
