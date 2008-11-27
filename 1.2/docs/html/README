@@ -1,2 +1,0 @@
-To create a HTML version of the relax manual, go to the directory 'relax/docs/latex/' and run the
-shell script 'create_html'.  The program latex2html is required (along with all its dependencies).

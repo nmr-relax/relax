@@ -1,3 +1,0 @@
-#! /bin/sh
-
-rm -f *.png images* node* *.pl *.html WARNINGS relax.css
