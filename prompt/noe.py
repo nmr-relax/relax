@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxNumError, RelaxStrError
+from relax_errors import RelaxStrError
 from specific_fns.setup import noe_obj
 
 
@@ -77,8 +77,8 @@ class Noe:
             print text
 
         # The spectrum type.
-        if type(spectrum_type) != int and type(spectrum_type) != float:
-            raise RelaxNumError, ('spectrum type', spectrum_type)
+        if type(spectrum_type) != str:
+            raise RelaxStrError, ('spectrum type', spectrum_type)
 
         # The spectrum identification string.
         if type(spectrum_id) != str:
