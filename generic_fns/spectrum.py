@@ -40,6 +40,53 @@ from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
+def __errors_height_no_repl():
+    """Calculate the errors for peak heights when no spectra are replicated."""
+
+    # Loop over the spins and set the error to the RMSD of the base plane noise.
+    for spin, spin_id in spin_loop(return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Skip spins missing intensity data.
+        if not hasattr(spin, 'intensities'):
+            continue
+
+        # Test if the RMSD has been set.
+        if not hasattr(spin, 'baseplane_rmsd'):
+            print spin
+            raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
+
+        # Set the error to the RMSD.
+        spin.intensity_err = spin.baseplane_rmsd
+
+
+def __errors_volume_no_repl():
+    """Calculate the errors for peak volumes when no spectra are replicated."""
+
+    # Loop over the spins and set the error to the RMSD of the base plane noise.
+    for spin, spin_id in spin_loop(return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Skip spins missing intensity data.
+        if not hasattr(spin, 'intensities'):
+            continue
+
+        # Test if the RMSD has been set.
+        if not hasattr(spin, 'baseplane_rmsd'):
+            raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
+
+        # Test that the total number of points have been set.
+        if not hasattr(spin, 'N'):
+            raise RelaxError, "The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id
+
+        # Set the error to the RMSD multiplied by the square root of the total number of points.
+        spin.intensity_err = spin.baseplane_rmsd * sqrt(spin.N)
+
+
 def autodetect_format(file_data):
     """Automatically detect the format of the peak list.
 
@@ -184,24 +231,8 @@ def error_analysis():
             # Print out.
             print "Replicated spectra:  No."
 
-            # Loop over the spins and set the error to the RMSD of the base plane noise.
-            for spin, spin_id in spin_loop(return_id=True):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Skip spins missing intensity data.
-                if not hasattr(spin, 'intensities'):
-                    continue
-
-                # Test if the RMSD has been set.
-                if not hasattr(spin, 'baseplane_rmsd'):
-                    print spin
-                    raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
-
-                # Set the error to the RMSD.
-                spin.intensity_err = spin.baseplane_rmsd
-
+            # Set the errors.
+            __errors_height_no_repl()
 
     # Peak volume category.
     if cdp.int_method == 'volume':
@@ -219,26 +250,8 @@ def error_analysis():
             # Print out.
             print "Replicated spectra:  No."
 
-            # Loop over the spins and set the error to the RMSD of the base plane noise.
-            for spin, spin_id in spin_loop(return_id=True):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Skip spins missing intensity data.
-                if not hasattr(spin, 'intensities'):
-                    continue
-
-                # Test if the RMSD has been set.
-                if not hasattr(spin, 'baseplane_rmsd'):
-                    raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
-
-                # Test that the total number of points have been set.
-                if not hasattr(spin, 'N'):
-                    raise RelaxError, "The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id
-
-                # Set the error to the RMSD multiplied by the square root of the total number of points.
-                spin.intensity_err = spin.baseplane_rmsd * sqrt(spin.N)
+            # Set the errors.
+            __errors_volume_no_repl()
 
 
 def intensity_generic(line, int_col):
