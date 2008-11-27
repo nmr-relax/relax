@@ -535,6 +535,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
         raise RelaxError, "The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method)
 
+    # Check the intensity measure.
+    if not int_method in ['height', 'volume', 'other']:
+        raise RelaxError, "The intensity measure '%s' is not one of 'height', 'volume', 'other'." % int_method
+
     # Set the peak intensity measure.
     cdp.int_method = int_method
 
