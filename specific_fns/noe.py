@@ -249,3 +249,35 @@ class Noe(Common_functions):
                 spin.ref_err = float(error)
             elif spectrum_id == 'sat':
                 spin.sat_err = float(error)
+
+
+    def spectrum_type(self, spectrum_type=None, spectrum_id=None):
+        """Set the spectrum type corresponding to the spectrum_id.
+
+        @keyword spectrum_type: The type of NOE spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @keyword spectrum_id:   The spectrum id string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the current pipe exists
+        pipes.test()
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the spectrum id string.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id
+
+        # The spectrum id index.
+        spect_index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise or update the spectrum_type data structure as necessary.
+        if not hasattr(cdp, 'spectrum_type'):
+            cdp.spectrum_type = [None] * len(cdp.spectrum_ids)
+        elif len(cdp.spectrum_type) < len(cdp.spectrum_ids):
+            cdp.spectrum_type.append([None] * (len(cdp.spectrum_ids) - len(cdp.spectrum_type)))
+
+        # Set the error.
+        cdp.spectrum_type[spect_index] = spectrum_type
