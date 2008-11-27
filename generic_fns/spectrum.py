@@ -26,6 +26,7 @@
 
 
 # Python module imports.
+from math import sqrt
 from re import split
 from warnings import warn
 import string
@@ -232,8 +233,12 @@ def error_analysis():
                 if not hasattr(spin, 'baseplane_rmsd'):
                     raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
 
-                # Set the error to the RMSD.
-                spin.intensity_err = spin.baseplane_rmsd
+                # Test that the total number of points have been set.
+                if not hasattr(spin, 'N'):
+                    raise RelaxError, "The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id
+
+                # Set the error to the RMSD multiplied by the square root of the total number of points.
+                spin.intensity_err = spin.baseplane_rmsd * sqrt(spin.N)
 
 
 def intensity_generic(line, int_col):
