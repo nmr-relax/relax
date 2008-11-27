@@ -34,7 +34,7 @@ import sys
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxArgNotInListError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxArgNotInListError, RelaxImplementError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
@@ -162,6 +162,78 @@ def error_analysis():
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
+
+    # Test if spectra have been loaded.
+    if not hasattr(cdp, 'spectrum_ids'):
+        raise RelaxError, "Error analysis is not possible, no spectra have been loaded."
+
+    # Peak height category.
+    if cdp.int_method == 'height':
+        # Print out.
+        print "Intensity measure:  Peak heights."
+
+        # Do we have replicated spectra?
+        if hasattr(cdp, 'replicated'):
+            # Print out.
+            print "Replicated spectra:  Yes."
+            raise RelaxImplementError
+
+        # No replicated spectra.
+        else:
+            # Print out.
+            print "Replicated spectra:  No."
+
+            # Loop over the spins and set the error to the RMSD of the base plane noise.
+            for spin, spin_id in spin_loop(return_id=True):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins missing intensity data.
+                if not hasattr(spin, 'intensities'):
+                    continue
+
+                # Test if the RMSD has been set.
+                if not hasattr(spin, 'baseplane_rmsd'):
+                    print spin
+                    raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
+
+                # Set the error to the RMSD.
+                spin.intensity_err = spin.baseplane_rmsd
+
+
+    # Peak volume category.
+    if cdp.int_method == 'volume':
+        # Print out.
+        print "Intensity measure:  Peak volumes."
+
+        # Do we have replicated spectra?
+        if hasattr(cdp, 'replicated'):
+            # Print out.
+            print "Replicated spectra:  Yes."
+            raise RelaxImplementError
+
+        # No replicated spectra.
+        else:
+            # Print out.
+            print "Replicated spectra:  No."
+
+            # Loop over the spins and set the error to the RMSD of the base plane noise.
+            for spin, spin_id in spin_loop(return_id=True):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins missing intensity data.
+                if not hasattr(spin, 'intensities'):
+                    continue
+
+                # Test if the RMSD has been set.
+                if not hasattr(spin, 'baseplane_rmsd'):
+                    raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
+
+                # Set the error to the RMSD.
+                spin.intensity_err = spin.baseplane_rmsd
 
 
 def intensity_generic(line, int_col):
@@ -440,6 +512,13 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
+
+    # Test that the intensity measures are identical.
+    if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
+        raise RelaxError, "The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method)
+
+    # Set the peak intensity measure.
+    cdp.int_method = int_method
 
     # Extract the data from the file.
     file_data = extract_data(file, dir)
