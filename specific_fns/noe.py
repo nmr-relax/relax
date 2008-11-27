@@ -81,11 +81,13 @@ class Noe(Common_functions):
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
-        # Test if the 2 spectra ids 'ref' and 'sat' exist.
-        if not 'ref' in cdp.spectrum_ids or not 'sat' in cdp.spectrum_ids:
+        # The spectrum types have not been set.
+        if not hasattr(cdp, 'spectrum_type'):
+            raise RelaxError, "The spectrum types have not been set."
+
+        # Test if the 2 spectra types 'ref' and 'sat' exist.
+        if not 'ref' in cdp.spectrum_type or not 'sat' in cdp.spectrum_type:
             raise RelaxError, "The reference and saturated NOE spectra have not been loaded."
-        if len(cdp.spectrum_ids) != 2:
-            raise RelaxError, "The spectrum ids %s should only consist of the labels 'ref' and 'sat'." % cdp.spectrum_ids
 
         # Loop over the spins.
         for spin in spin_loop():
@@ -93,11 +95,27 @@ class Noe(Common_functions):
             if not spin.select:
                 continue
 
+            # Average intensities (if required).
+            sat = 0.0
+            sat_err = 0.0
+            ref = 0.0
+            ref_err = 0.0
+            for i in xrange(len(cdp.spectrum_type)):
+                # Sat spectra.
+                if cdp.spectrum_type[i] == 'sat':
+                    sat = sat + spin.intensities[i]
+                    sat_err = sat_err + spin.intensity_err[i]
+            
+                # Ref spectra.
+                if cdp.spectrum_type[i] == 'ref':
+                    ref = ref + spin.intensities[i]
+                    ref_err = ref_err + spin.intensity_err[i]
+            
             # Calculate the NOE.
-            spin.noe = spin.sat / spin.ref
+            spin.noe = sat / ref
 
             # Calculate the error.
-            spin.noe_err = sqrt((spin.sat_err * spin.ref)**2 + (spin.ref_err * spin.sat)**2) / spin.ref**2
+            spin.noe_err = sqrt((sat_err * ref)**2 + (ref_err * sat)**2) / ref**2
 
 
     def overfit_deselect(self):
