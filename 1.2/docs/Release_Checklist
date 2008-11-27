@@ -1,0 +1,74 @@
+* Make a copy of the current head to the tags directory using a command such as:
+
+$ svn cp svn+ssh://bugman@svn.gna.org/svn/relax/1.2 svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4
+
+In the commit message, have a header line which says 'relax version 1.2.4.', followed by a short description of the release.
+
+
+
+* Checkout the tagged version with:
+
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/1.2.4 relax-1.2.4
+
+
+
+* Run the test suite to make sure the release is ready.
+
+
+
+* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  Commit the changes and then port the revision back into the main line.
+
+
+
+* Change the version number in file 'version.py'.
+
+
+
+* Generate the binary and source distribution files (and their GPG signatures) by typing:
+
+$ scons binary_dist
+$ scons source_dist
+
+
+
+* Commit the changes so the 'tags' directory is updated.
+
+
+
+* Move the distribution files and their signatures, as well as the PDF manual, to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  Rsync the entire directory contents to download.gna.org/upload/relax/ using the command
+
+$ rsync --delete -av --rsh="ssh" . bugman@download.gna.org:/upload/relax/
+
+
+
+* Modify the http://nmr-relax.com download page to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates.
+
+
+
+* Create the HTML version of the manual with the command:
+
+$ scons user_manual_html
+
+Replace the old manual with the new in the http://nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
+
+
+
+* Create the API documentation for the current version with the command:
+
+$ scons api_manual_html
+
+Replace the old API documentation in the http://nmr-relax.com SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new files.
+
+
+
+* Add the version number to the bug tracker field 'Release' at https://gna.org/bugs/admin/field_values.php?group=relax.
+
+
+
+* Post the release message to the relax-announce mailing list, as a news item on the relax Gna! website, and on the freshmeat website.
+
+On the relax-announce mailing list, write a detailed and full description of the release.  Also add a paragraph with links for downloading the release.  At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Include links to the trackers in the full list of changes.
+
+For the news item, firstly cut and paste the mailing list message.  Item references such as bug #7641, task #3122, etc. are automatically converted into links.  However, this won't happen if it is enclosed in brackets such as (bug #7641).  This can be fixed by using for example (see bug #7641), the word infront of 'bug' or 'task' is essential if brackets are used to allow links to be automatically created to the trackers.  Create three sections using the Savane markup (recipe #236).  Call these = Description =, = Download =, and = Full list of changes =.  For the last section, use the subtitles == Features == ,  == Changes == , and  == Bugfixes ==.  The items in this section start with '* ' to create an unnumbered list.  Strip all leading whitespace from the full list of changes and remove all the links to the trackers (as these will be automatically created).
+
+For freshmeat (http://freshmeat.net), go to the nmr-relax project page at http://freshmeat.net/projects/nmr-relax.  Click on 'add release' in the project menu.  If this is the first release of a new minor number 'x.x.0', a branch will need to be created first by clicking on 'add branch'.  Add the version number, a brief and concise summary of the release, select the release focus category, and update the Tar/BZ2 and Zip URLs.

@@ -1,0 +1,275 @@
+Version 1.2.13
+(19 April 2008, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.13
+
+    Features:
+        * Consistency testing has been added allowing datasets recorded at different magnetic fields to be checked using the consistency function values J(0), Feta, and FR2.
+        * The 'full_analysis.py' script can now perform a model-free analysis in the absence of structural data.
+
+    Changes:
+        * Better support for MS Windows Vista in the scons build system and the relax introduction.
+        * A file listing the unresolved residues is no longer necessary for running the 'full_analysis.py' script.
+        * A few small documentation additions and fixes.
+
+    Bugfixes:
+        * The parameters Dpar and Dper are now properly checked upon initialisation of this spheroidal diffusion tensor.
+        * Initialisation of an empty diffusion tensor to the default values of zero now works.
+        * The default value of the Iinf relaxation curve fitting parameter can now be set.
+        * Fix for the complete failure of the reading in of Art Palmer's Modelfree 4 'mfout' results file (see bug #8997).
+        * Fix for a rare ZeroDivisionError during Monte Carlo simulations (see bug #11004).
+        * relax no longer fails if XH bond vectors cannot be extracted from a PDB file (see bug #11378).
+        * The relax_data.display() user function no longer fails (see bug #11383).
+        * The selection of model-free model 'm0' causes Monte Carlo simulations to fail resulting in zero errors from that residue onwards (see bug #11476).
+        * Another column fusion bug in Modelfree 4's 'mfout' results file can be handled (see bug #11483).
+        * Optimisation fix - the steady-state NOE value, gradient, and Hessian is now properly calculated when an order parameter of exactly 0.0 is encountered.
+
+
+Version 1.2.12
+(17 November 2007, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.12
+
+    Features:
+        N/A
+
+    Changes:
+        N/A
+
+    Bugfixes:
+        * The 'latex_mf_table.py' sample script now works (see bug #10189).
+        * The missing 'num_ri' failure when writing the model-free and J(w) mapping results files has been solved (see bug #10323).
+        * Model elimination was failing in certain situations when applied to the global models (see bug #10320).
+
+
+Version 1.2.11
+(21 October 2007, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.11
+
+    Features:
+        * The Grace plotting abilities have been extended, especially concerning relaxation exponential curve-fitting.
+        * A sample script has been added to plot the difference between the measured and back calculated peak intensities.
+        * Automatic looping over iterations in the 'full_analysis.py' sample script is now possible.
+
+    Changes:
+        * The 'full_analysis.py' sample script has been significantly improved with all user modifiable options shifted to the top of the script.
+        * The default CSA value is now -172 ppm.
+
+    Bugfixes:
+        * The previous release had problems reading results files from relax versions 1.2.0 to 1.2.9, but now results files from all versions can be read (see bug #8248).
+        * The synopsis of the system/functional tests now says '[ Failed ]' if one the tests fails (see bug #8682).
+        * relax now works with Python 2.5 (see bug #9093).
+        * The writing of the model-free results file, which failed under certain circumstances because of the 'heteronuc' and 'proton' attributes, has been fixed (see bug #8996).
+        * The problem whereby there is data loss for deselected residues when using 'results.write()' followed by 'results.read()' has been resolved (see bug #8953).
+        * Relaxation data can now be read if deselected spin systems have a relaxation data value or error value set to 'None' (see bug #9101).
+        * The fatal bug of the reduced spectral density mapping values being incorrectly calculated has been fixed (see bug #9238).
+        * When using the alternate model-free parameter set {S2f, tf, S2s, ts}, the incorrect functions were being called (see bug #9189).
+        * A second fatal problem in the reduced spectral density mapping code, the heteronuclear frequency being overwritten by that of the proton, has been fixed (see bug #9259).
+        * Another problem with relax and Python 2.5, because of the Scientific package, has been resolved (see bug #9390).
+        * The XH bond length is now correctly set in the reduced spectral density mapping analysis (see bug #9562).
+        * The convergence test in the 'full_analysis.py' sample script was failing if spin systems were deselected (see bug #9892 and bug #10022).
+
+
+
+Version 1.2.10
+(12 January 2007, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.10
+
+    Features:
+        * Addition of tests to the 'full_analysis.py' script for the identification of convergence.
+        * Different columns can be specified for the residue number in the 'select.read()' and 'unselect.read()' user functions.
+        * More advanced selection of spin systems or residues is possible through the use of the Boolean operators 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
+        * Addition of a sample script for the creation a LaTeX longtable of the model-free results.
+        * The rows of the model-free and reduced spectral density results files are no longer truncated for deselected spin systems, hence all data is now stored in the results file. (see bug #8059)
+
+    Changes:
+        * The relax core design diagram in the development chapter of the manual has been updated.
+        * Three flow diagrams have been added to the relax manual detailing the steps of different model-free analysis protocols.      
+        * Spin systems are now identified when deselected by the 'eliminate()' user function.
+        * The model-free Molmol cutoff for fast and slow motions has been changed from 100 to 200 ps.
+        * For the clarification of bug #8059 a RelaxNoTensorError is raised instead of returning None when no diffusion tensor data is present. 
+        * The Scons target 'source_dist' now creates and GPG signs both the 'tar.bz2' and 'zip' source distribution packages. (see task #4087)
+
+    Bugfixes:
+        * The C modules can now be compiled on Mac OS X. (see bug #7670)
+        * The order of the proton and heteronucleus dimensions and number of header lines in the XEasy text file is now automatically detected. (see bug #7676)
+        * The 'full_analysis.py' script now throws a RelaxError if only one round of optimisation of the global model has been executed. (see bug #7787)
+        * The model selection of the global model in the 'full_analysis.py' script has been fixed. (see bug #7863)
+        * Monte Carlo simulations no longer fail if the local tm global model has been selected in the 'full_analysis.py' script. (see bug #7875)
+        * The Monte Carlo simulation data in the model-free results file is now correctly read back into the program. (see bug #7755)
+        * The Monte Carlo simulation state used to be turned on after reading a results file containing simulations. (see bug #7890)
+        * After reading model-free results files, model selection would fail as the heteronucleus and proton data structures did not exist. (see bug #7891)
+        * The model-free Molmol fast correlation time macro (te < 100 ps and tf) no longer sets the bond length to zero when no parameter is present.
+        * The docstring fetching Scons target no longer fails. (see bug #8182)
+        * The model-free 'S2 difference stored in a new run' test of the test suite now passes. (see bug #8183)
+        * The 'source_dist' Scons target now works on MS Windows. (see bug #7678)
+        * The MS Windows BAT file execution failure "python: can't open file 'C:\Program': [Errno 2] No such file or directory" has been fixed. (see bug #8201)
+        * The reading in of the results files from relax versions 1.2.0 to 1.2.9 in which deselected spin system lines are truncated now works. (see bug #8248)
+
+
+
+Version 1.2.9
+(9 November 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.9
+
+    Features:
+        N/A
+
+    Changes:
+        * For Mac OS X compatibility, the interpreter has been changed from '/usr/bin/python' to '/usr/bin/env python'.
+
+    Bugfixes:
+        * The infinite chi-squared RelaxError when the chi-squared value is zero has been fixed. (see bug #7641)
+        * Profiling is now functional again. (see bug #7677)
+
+
+
+Version 1.2.8
+(4 November 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.8
+
+    Features:
+        * Preliminary support for RNA/DNA. (bug #7241)
+        * Significant improvements to the SCons build system (see 'scons --help').
+        * Expansion and improvement of the relax development chapter.
+        * The grace.write() user function works with reduced spectral density mapping. (task #4002)
+
+    Changes:
+        * MS Windows installation instructions have been added to the manual.
+        * The RelaxWarning system has been added to standardise warning messages.
+        * The relax manual now describes the test suite. (task #3781)
+        * The 15N CSA values in the sample scripts are now all -172 ppm.
+        * The ambiguity cased by supplying the option 'None' together with Newton optimisation has been resolved in the documentation. (task #3630)
+        * Optimisation tests have been added to the test suite.
+
+    Bugfixes:
+        * Model selection between the global diffusion models no longer fails if all residues of the local tm models have been deselected by model elimination. (bug #7192)
+        * The 'angles.py' sample script no longer fails when residue specific relaxation data is missing (corrupt input data). (bug #7224)
+        * Prior to executing Modelfree4, Dasha, Molmol, Grace, or OpenDX, tests are run to determine if the binary exists, is executable, and is in the system path. (bug #7225)
+        * Model elimination when using the model-free model 'm0' no longer fails. (bug #7226)
+        * The strict checking of the Da and Dr diffusion tensor parameters has been relaxed to allow for optimisation imprecision. (bug #7297)
+        * The reading of Modelfree4 mfout results files no longer fails when residue specific relaxation data is missing (corrupt input data). (bug #7277)
+        * If optimisation returns an infinite value or a NaN value, these are now caught and a RelaxError thrown. (bug #6503, task #3621)
+        * The sigma(NOE) equations of Chapter 8 of the manual have been fixed. (bug #7402)
+        * Files containing relaxation data not consisting of exactly 4 columns will now be read. (bug #7583)
+        * Model-free results files from relax versions prior to 1.2.5 are now properly read. (bug #7587)
+        * Model selection between the global diffusion models does not fail when the local tm models are included. (bug #7616)
+
+
+
+Version 1.2.7
+(18 September 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.7
+
+    Features:
+        * The C modules now compile without problem on MS Windows.
+        * The MS Windows binary distribution packages are now successfully built using the SCons build system.
+        * The batch file 'relax.bat' has been created for running relax from the MS Windows command prompt.
+        * The program introduction width is now 80 characters in MS Windows for proper display from the command prompt.
+
+    Changes:
+        * The program state is saved when a RelaxError occurs in debugging mode.
+        * KeyboardInterupt during script execution in debugging mode will print the Python traceback.
+
+    Bugfixes:
+        * The sconstruct script no longer fails in MS Windows. (bug #6980)
+        * Model selection is now functional on all operating systems. (bug #6873).
+        * The use of the Unix only class 'Popen3' has been removed to allow relax to function on all non-Unix operating systems. (bug #6841)
+        * If the XH bond vector length is 0, the vector is set to None rather than raising a RelaxError. (partial fix to bug #6503)
+        * Fix for the sconstruct script failure on MS Windows due to ImportErrors caused by importing Unix specific code. (bug #6841)
+        * Fix for ImportErrors in MS Windows preventing relax from running. (bug #6841)
+
+
+
+Version 1.2.6
+(21 July 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.6
+
+    Features:
+        N/A
+
+    Changes:
+        N/A
+
+    Bugfixes:
+        * Added the missing PDB file used by one of the OpenDX tests of the relax test-suite. (bug #6404)
+        * Fixed the fatal devnull import failure for Python versions < 2.4. (bug #6403)
+
+
+
+Version 1.2.5
+(20 July 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.5
+
+    Features:
+        * The data analysis chapter has been split into four:  The NOE, relaxation curve-fitting, model-free, and reduced spectral density mapping chapters.
+        * A section called the 'The core design of relax' has been added to the the development chapter of the manual.
+        * The 'Values, gradients, and Hessians' chapter of the manual is now complete.  These are all the equations used during optimisation.
+        * The Hessian kite diagram and the gradient construction diagram have been added to the 'Values, gradients, and Hessians' chapter of the manual.
+
+    Changes:
+        * The distribution archives now unpack to the directory 'relax-x.x.x' rather than just 'relax', where x.x.x is the version number.
+        * All chapters of the manual have been edited and proofed.
+        * The Sparky and XEasy peak intensity reading functions have been split to allow the easy addition of new peak intensity file types.
+        * Test of AIC model selection between diffusion tensors added to the test suite.  (To catch bug #5746)
+        * Changing of the local tm parameter name of 'tm' to 'local_tm' to distinguish it from the global tumbling time 'tm'. (Preparation for fixing bug #6384)
+
+    Bugfixes:
+        * Fix of bug where self.relax.data.select_sim was treated as a list. (bug #5977)
+        * The value.copy() function now handles the value of None. (bug #6288)
+        * The global flag is now set by the relax_data.delete() function. (bug #6383)
+        * The model-free model_statistics() function now tests for the presence of relaxation data. (bug #5806)
+        * Sorting of global from local parameters in 'generic_fns/value.py' simplified and fixed by changing the parameter name 'tm' to 'local_tm'. (bug #6384)
+        * Model-free parameters now set in the OpenDX mapping test of the test-suite. (bug #6388)
+        * Failure of model elimination because of a 'local_tm' and 'tm' mix up. (bug #6389)
+        * Modification of the model-free calculate() function and elimination of the 'combined' flag from the self.model_statistics() function. (bug #5746)
+
+
+
+Version 1.2.4
+(2 May 2006, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.4
+
+    Features:
+        * Added elimination of Monte Carlo simulations to the sample scripts.
+        * Creation of the relax test suite 'relax --test-suite'.
+        * Creation of the committers file.
+        * The hyperref LaTeX package is now used in the relax manual.
+        * Addition of a chapter called 'Open source infrastructure'.
+        * Rewrite of the 'Development of relax' chapter.
+        * Addition of the user function 'run.hybridise()'. (task #3122)
+        * The user function 'relax_data.read()' no longer deselects residues when no data is encountered. (bug #5501)
+        * Residues are deselected by the user functions 'grid_search()', 'calc()', and 'minimise()' if k > n or if there is less than 3 data sets. (bug #5501)
+        * Mapping parameter values onto the structure through Molmol macros. (task #3146)
+        * Added support for arbitrary colour gradients in the Molmol macros. (task #3146)
+        * Addition of a file for colour operations.  All X11 colours and all Molmol colours can be selected by name. (task #3146)
+
+    Changes:
+        * The 'full_analysis.py' sample script now only searches over 6^6 rather than 11^6 grid points for the ellipsoid diffusion tensor to speed up the analysis.
+        * Updated the manual to replace the references to 'make' with 'sconstruct'.
+        * Extension of the installation chapter.
+        * Changed the square and round brackets to curly brackets and replaced ':' with '=' in the user function docstrings.
+        * All the model-free Molmol functions have been moved into their own class Molmol.
+        * The null device can now be opened instead of a file for writing by passing 'devnull' as the name.
+        * Updated the release checklist so that the directory 'relax-x.x.x' is included in the distributions rather than just 'relax'.
+        * Removed the bugs file 'docs/BUGS'.
+
+    Bugfixes:
+        * Small bugs in the sconstruct script have been removed.
+        * The value reading function can now handle rows which contain no data.
+        * The ellipsoid diffusion tensor was being incorrectly initialised in the 'full_analysis.py' script.
+        * Another Numeric version issue.  The model m0 with no parameters which used to be handled okay by the grid search and minimisation code was failing due to changes in Numeric.
+        * In certain situations, the angle folding function which is called after model-free minimisation used the wrong run name.
+        * Fixed the -fPIC option segfault problem on some Linux systems. (bug #5473)
+        * Changed the tm grid search which was between 6-12 ns to be between 1-12ns.
+        * Fixed some grammar in the intro chapter of the manual.
+        * Fixed a bug in the model-free sample script in the spheroid diffusion tensor function.
+        * Removed the spaces in front of the \index{} commands from the manual LaTeX source files.
+        * The diffusion parameters 'Diso', 'Dper', 'Dpar', 'Dratio', 'Dx', 'Dy', and 'Dz' are generated on the fly. (bug #5559)
+        * Fixed the spacing after 'Gna!' in the manual.
+        * The 'grace.write()' user function now plots the associated errors. (bug #5659)
+        * Fix to the parameter errors not being scaled in the value.read() user function. (bug #5670)
+        * Parameter errors were not always included in the results file. (bug #5660)
+        * Removed the memory leak in the relaxation curve-fitting C modules. (bug #5602)
+        * The user function 'value.set()' no longer raises RelaxError in spectral density mapping runs. (bug #5698)
+        * Fix to the broken Molmol pipe. (bug #5752)
+        * Fix of the failure of molmol.view() when the PDB is missing. (bug #5753)
+        * Fix to the failure of relax_data.read() when relaxation data is missing. (bug #5805)
