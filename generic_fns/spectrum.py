@@ -142,7 +142,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
 
     # Test the spectrum id string.
     if spectrum_id not in cdp.spectrum_ids:
-        raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id
+        raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id
 
     # The spectrum id index.
     spect_index = cdp.spectrum_ids.index(spectrum_id)
@@ -631,3 +631,48 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Add the data.
         spin.intensities.append(intensity)
+
+
+def replicated(spectrum_ids=None):
+    """Set which spectra are replicates.
+
+    @keyword spectrum_ids:  A list of spectrum ids corresponding to replicated spectra.
+    @type spectrum_ids:     list of str
+    """
+
+    # Test if the current pipe exists
+    pipes.test()
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Test if spectra have been loaded.
+    if not hasattr(cdp, 'spectrum_ids'):
+        raise RelaxError, "No spectra have been loaded therefore replicates cannot be specified."
+
+    # Test the spectrum id strings.
+    for spectrum_id in spectrum_ids:
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id
+
+    # Initialise.
+    if not hasattr(cdp, 'replicates'):
+        cdp.replicates = []
+
+    # Check if the spectrum id is already in the list.
+    for i in xrange(len(cdp.replicates)):
+        found = False
+        for j in xrange(len(spectrum_ids)):
+            if spectrum_ids[j] in cdp.replicates[i]:
+                found = True
+                spectrum_ids.pop(j)
+
+        # Add the remaining replicates to the list and quit this function.
+        if found:
+            cdp.replicates[i] = cdp.replicates[i] + spectrum_ids
+            print cdp.replicates
+            return
+
+    # Set the replicates.
+    cdp.replicates.append(spectrum_ids)
+    print cdp.replicates
