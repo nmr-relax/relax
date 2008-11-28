@@ -28,12 +28,12 @@
 # Python module imports.
 from math import sqrt
 from re import split
-from warnings import warn
 import string
 import sys
+from warnings import warn
 
 # relax module imports.
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxArgNotInListError, RelaxImplementError, RelaxNoSequenceError
 from relax_io import extract_data, strip
@@ -59,6 +59,150 @@ def __errors_height_no_repl():
 
         # Set the error to the RMSD.
         spin.intensity_err = spin.baseplane_rmsd
+
+
+def __errors_repl(verbosity=0):
+    """Calculate the errors for peak intensities from replicated spectra.
+
+    @keyword verbosity: The amount of information to print.  The higher the value, the greater the
+                        verbosity.
+    @type verbosity:    int
+    """
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # replicated spectra.
+    repl = [False] * len(cdp.spectrum_ids)
+    for i in xrange(len(cdp.replicates)):
+        for j in xrange(len(cdp.replicates[i])):
+            repl[cdp.spectrum_ids.index(cdp.replicates[i][j])] = True
+
+    # Are all spectra replicated?
+    all_repl = not (False in repl)
+    if all_repl:
+        print "All spectra replicated:  Yes."
+    else:
+        print "All spectra replicated:  No."
+
+
+    # Test if the standard deviation has already been calculated.
+    if hasattr(cdp, 'sigma_I'):
+        raise RelaxError, "The peak intensity standard deviation of all spectra has already been calculated."
+
+    # Print out.
+    print "\nCalculating peak intensity standard deviation of all replicated spectra."
+
+    # Initialise.
+    cdp.sigma_I = [0.0] * len(cdp.spectrum_ids)
+    cdp.var_I = [0.0] * len(cdp.spectrum_ids)
+
+    # Loop over the spectra.
+    for i in xrange(len(cdp.spectrum_ids)):
+        # Skip non-replicated spectra.
+        if not repl[i]:
+            continue
+
+        # Skip replicated spectra which already have been used.
+        if cdp.var_I[i] != 0.0:
+            continue
+
+        # The replicated spectra.
+        for j in xrange(len(cdp.replicates)):
+            if cdp.spectrum_ids[i] in cdp.replicates[j]:
+                spectra = cdp.replicates[j]
+
+        # Number of spectra.
+        num_spectra = len(spectra)
+
+        # Indices of the spectra.
+        indices = [None] * num_spectra
+        for j in xrange(num_spectra):
+            indices[j] = cdp.spectrum_ids.index(spectra[j])
+
+        # Print out.
+        print "\nSpectra:  " + `spectra`
+        if verbosity:
+            print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
+
+        # Calculate the mean value.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip and deselect spins which have no data.
+            if not hasattr(spin, 'intensities'):
+                spin.select = False
+                continue
+
+            # Average intensity.
+            ave_intensity = 0.0
+            for j in xrange(num_spectra):
+                ave_intensity = ave_intensity + spin.intensities[indices[j]]
+            ave_intensity = ave_intensity / num_spectra
+
+            # Sum of squared errors.
+            SSE = 0.0
+            for j in xrange(num_spectra):
+                SSE = SSE + (spin.intensities[indices[j]] - ave_intensity) ** 2
+
+            # Variance.
+            #
+            #                   1
+            #       sigma^2 = ----- * sum({Xi - Xav}^2)]
+            #                 n - 1
+            #
+            var_I = 1.0 / (num_spectra - 1.0) * SSE
+
+            # Print out.
+            if verbosity:
+                print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, `ave_intensity`, `var_I`)
+
+            # Sum of variances (for average).
+            cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
+
+        # Average variance.
+        cdp.var_I[indices[0]] = cdp.var_I[indices[0]] / float(count_spins())
+
+        # Set all spectra variances.
+        for j in xrange(num_spectra):
+            cdp.var_I[indices[j]] = cdp.var_I[indices[0]]
+
+        # Print out.
+        print "Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]])
+
+
+    # Average across all spectra if there are time points with a single spectrum.
+    if not all_repl:
+        # Initialise.
+        var_I = 0.0
+        num_dups = 0
+
+        # Loop over all time points.
+        for i in xrange(len(cdp.relax_times)):
+            # Single spectrum (or extraordinarily accurate NMR spectra!).
+            if cdp.var_I[i] == 0.0:
+                continue
+
+            # Sum and count.
+            var_I = var_I + cdp.var_I[i]
+            num_dups = num_dups + 1
+
+        # Average value.
+        var_I = var_I / float(num_dups)
+
+        # Assign the average value to all time points.
+        for i in xrange(len(cdp.relax_times)):
+            cdp.var_I[i] = var_I
+
+        # Print out.
+        print "\nStandard deviation (averaged over all spectra):  " + `var_I`
+
+    # Create the standard deviation data structure.
+    cdp.sigma_I = []
+    for var_I in cdp.var_I:
+        cdp.sigma_I.append(sqrt(var_I))
 
 
 def __errors_volume_no_repl():
@@ -223,7 +367,9 @@ def error_analysis():
         if hasattr(cdp, 'replicates'):
             # Print out.
             print "Replicated spectra:  Yes."
-            raise RelaxImplementError
+
+            # Set the errors.
+            __errors_repl()
 
         # No replicated spectra.
         else:
@@ -250,7 +396,7 @@ def error_analysis():
             print "Replicated spectra:  No."
 
             # Set the errors.
-            __errors_volume_no_repl()
+            __errors_repl()
 
 
 def intensity_generic(line, int_col):
