@@ -220,7 +220,7 @@ def error_analysis():
         print "Intensity measure:  Peak heights."
 
         # Do we have replicated spectra?
-        if hasattr(cdp, 'replicated'):
+        if hasattr(cdp, 'replicates'):
             # Print out.
             print "Replicated spectra:  Yes."
             raise RelaxImplementError
@@ -239,7 +239,7 @@ def error_analysis():
         print "Intensity measure:  Peak volumes."
 
         # Do we have replicated spectra?
-        if hasattr(cdp, 'replicated'):
+        if hasattr(cdp, 'replicates'):
             # Print out.
             print "Replicated spectra:  Yes."
             raise RelaxImplementError
