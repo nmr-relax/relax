@@ -670,9 +670,7 @@ def replicated(spectrum_ids=None):
         # Add the remaining replicates to the list and quit this function.
         if found:
             cdp.replicates[i] = cdp.replicates[i] + spectrum_ids
-            print cdp.replicates
             return
 
     # Set the replicates.
     cdp.replicates.append(spectrum_ids)
-    print cdp.replicates
