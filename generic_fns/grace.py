@@ -189,9 +189,13 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             # Initialise an empty array for the individual spin data.
             spin_data = [mol_name, res_num, res_name, spin.num, spin.name, None, None, None, None]
 
+            # FIXME:  Need to work out how the spin_id string can be handled in Grace.
             # Spin ID string on the x-axis.
+            #if x_data_type == 'spin':
+            #    spin_data[-4] = spin_id
+            # Residue number.
             if x_data_type == 'spin':
-                spin_data[-4] = spin_id
+                spin_data[-4] = res_num
 
             # Parameter value for the x-axis.
             else:
@@ -448,12 +452,16 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
             file.write("@    world xmax " + `cdp.mol[0].res[0].spin[-1].num + 1` + "\n")
 
             # X-axis label.
-            file.write("@    xaxis  label \"Spin number\"\n")
+            # FIXME.
+            #file.write("@    xaxis  label \"Spin number\"\n")
+            file.write("@    xaxis  label \"Residue number\"\n")
 
         # Mixed data.
         if seq_type == 'mixed':
             # X-axis label.
-            file.write("@    xaxis  label \"Spin identification string\"\n")
+            # FIXME.
+            #file.write("@    xaxis  label \"Spin identification string\"\n")
+            file.write("@    xaxis  label \"Residue number\"\n")
 
     else:
         # Get the units.
