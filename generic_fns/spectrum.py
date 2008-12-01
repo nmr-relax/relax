@@ -201,9 +201,19 @@ def __errors_repl(verbosity=0):
         # Print out.
         print "\nStandard deviation (variance averaged over all spectra):  " + `sqrt(var_I)`
 
-    # Create the standard deviation data structure.
+    # Loop over the spectra.
     for i in xrange(len(cdp.spectrum_ids)):
+        # Create the standard deviation data structure.
         cdp.sigma_I[i] = sqrt(cdp.var_I[i])
+
+        # Set the spin specific errors.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Set the error.
+            spin.intensity_err = cdp.sigma_I[i]
 
 
 def __errors_volume_no_repl():
