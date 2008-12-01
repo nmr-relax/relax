@@ -15,6 +15,9 @@
 % Obliterate those painful LaTeX margins!
 \usepackage{vmargin}
 
+% Better Table of contents (Toc), List of figures (Lof), and List of tables (Lot).
+\usepackage{tocloft}
+
 % Better maths.
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -35,6 +38,11 @@
 % New environment.
 \newenvironment{exampleenv}{\footnotesize \begin{ttfamily} \sloppy}{\fussy \end{ttfamily}}
 \newenvironment{spacedpara}{\setlength{\parindent}{0pt} \setlength{\parskip}{2ex plus 0.5ex minus 0.2ex}}{}
+
+% Modify the Toc, Lof, and Lot layout.
+\setlength{\cftsecnumwidth}{10mm}
+\setlength{\cftsubsecnumwidth}{16mm}
+\setlength{\cftfignumwidth}{12mm}
 
 % Maths commands.
 \newcommand{\Par}{{\scriptscriptstyle \parallel}}
