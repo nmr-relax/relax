@@ -686,7 +686,7 @@ class Relax_fit(Common_functions):
             else:
                 values = spin.sim_intensities[sim_index]
 
-            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=cdp.sigma_I, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
