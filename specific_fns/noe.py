@@ -217,18 +217,18 @@ class Noe(Common_functions):
 
         # Reference intensity.
         if object_name == 'ref':
-            grace_string = 'Reference intensity'
+            return 'Reference intensity'
 
         # Saturated intensity.
         if object_name == 'sat':
-            grace_string = 'Saturated intensity'
+            return 'Saturated intensity'
 
         # NOE.
         if object_name == 'noe':
-            grace_string = '\\qNOE\\Q'
+            return '\\qNOE\\Q'
 
-        # Return the Grace string.
-        return grace_string
+        # Return the data type as the Grace string.
+        return data_type
 
 
     def return_units(self, stat_type):
