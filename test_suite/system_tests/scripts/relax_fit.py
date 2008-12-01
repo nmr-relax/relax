@@ -93,4 +93,4 @@ grace.write(x_data_type='relax_times', y_data_type='int', file='devnull', force=
 grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
-state.save(file='devnull', force=True)
+state.save('devnull', force=True)
