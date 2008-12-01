@@ -682,7 +682,7 @@ class Relax_fit(Common_functions):
             ######################################
 
             if sim_index == None:
-                values = spin.ave_intensities
+                values = spin.intensities
             else:
                 values = spin.sim_intensities[sim_index]
 
@@ -898,7 +898,7 @@ class Relax_fit(Common_functions):
         |                                   |                      |                             |
         | Relaxation rate                   | 'rx'                 | '^[Rr]x$'                   |
         |                                   |                      |                             |
-        | Average peak intensities (series) | 'ave_intensities'    | '^[Aa]ve[ -_][Ii]nt$'       |
+        | Peak intensities (series)         | 'intensities'        | '^[Ii]nt$'                  |
         |                                   |                      |                             |
         | Initial intensity                 | 'i0'                 | '^[Ii]0$'                   |
         |                                   |                      |                             |
@@ -913,9 +913,9 @@ class Relax_fit(Common_functions):
         if match('^[Rr]x$', name):
             return 'rx'
 
-        # Average peak intensities (series)
-        if match('^[Aa]ve[ -_][Ii]nt$', name):
-            return 'ave_intensities'
+        # Peak intensities (series)
+        if match('^[Ii]nt$', name):
+            return 'intensities'
 
         # Initial intensity.
         if match('^[Ii]0$', name):
@@ -940,9 +940,9 @@ class Relax_fit(Common_functions):
         if object_name == 'rx':
             grace_string = '\\qR\\sx\\Q'
 
-        # Average peak intensities.
-        elif object_name == 'ave_intensities':
-            grace_string = '\\qAverage peak intensities\\Q'
+        # Peak intensities.
+        elif object_name == 'intensities':
+            grace_string = '\\qPeak intensities\\Q'
 
         # Initial intensity.
         elif object_name == 'i0':
