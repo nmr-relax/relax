@@ -126,6 +126,7 @@ def __errors_repl(verbosity=0):
             print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
         # Calculate the mean value.
+        count = 0
         for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
@@ -161,9 +162,10 @@ def __errors_repl(verbosity=0):
 
             # Sum of variances (for average).
             cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
+            count = count + 1
 
         # Average variance.
-        cdp.var_I[indices[0]] = cdp.var_I[indices[0]] / float(count_spins())
+        cdp.var_I[indices[0]] = cdp.var_I[indices[0]] / float(count)
 
         # Set all spectra variances.
         for j in xrange(num_spectra):
