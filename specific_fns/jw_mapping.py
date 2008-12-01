@@ -196,12 +196,12 @@ class Jw_mapping(Common_functions):
 
         The names are as follows:
 
-            r:  Bond length.
-            csa:  CSA value.
-            heteronuc_type:  The heteronucleus type.
-            j0:  Spectral density value at 0 MHz.
-            jwx:  Spectral density value at the frequency of the heteronucleus.
-            jwh:  Spectral density value at the frequency of the heteronucleus.
+            - 'r', bond length.
+            - 'csa', CSA value.
+            - 'heteronuc_type', the heteronucleus type.
+            - 'j0', spectral density value at 0 MHz.
+            - 'jwx', spectral density value at the frequency of the heteronucleus.
+            - 'jwh', spectral density value at the frequency of the heteronucleus.
 
 
         @keyword set:           An unused variable.

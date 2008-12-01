@@ -52,7 +52,7 @@ import generic_fns
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
-from relax_io import log
+from relax_io import log, tee
 import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
 import version
@@ -202,6 +202,10 @@ class Relax:
 
             # The log file.
             log_file = options.log
+
+            # Fail if the file already exists.
+            if access(log_file, F_OK):
+                parser.error("the log file " + `log_file` + " already exists")
         else:
             log_file = None
 
@@ -213,6 +217,10 @@ class Relax:
 
             # The tee file.
             tee_file = options.tee
+
+            # Fail if the file already exists.
+            if access(tee_file, F_OK):
+                parser.error("the tee file " + `tee_file` + " already exists")
         else:
             tee_file = None
 

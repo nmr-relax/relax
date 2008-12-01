@@ -204,15 +204,15 @@ class Consistency_tests(Common_functions):
 
         The names are as follows:
 
-            r:  Bond length.
-            csa:  CSA value.
-            heteronuc_type:  The heteronucleus type.
-            orientation:  Angle between the 15N-1H vector and the principal axis of the 15N chemical
-                          shift tensor.
-            tc:  Correlation time.
-            j0:  Spectral density value at 0 MHz.
-            f_eta:  Eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
-            f_r2:  R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
+            - 'r', bond length.
+            - 'csa', CSA value.
+            - 'heteronuc_type', the heteronucleus type.
+            - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N
+            chemical shift tensor.
+            - 'tc', correlation time.
+            - 'j0', spectral density value at 0 MHz.
+            - 'f_eta', eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
+            - 'f_r2', R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
 
 
         @keyword set:           An unused variable.

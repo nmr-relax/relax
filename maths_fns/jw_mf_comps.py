@@ -38,7 +38,7 @@ def calc_S2_te_jw_comps(data, params):
     Calculate the components of the spectral density value for the original model-free formula with
     the parameters {S2, te}.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _n_
                  2  \           /      S2             (1 - S2)(te + ti)te    \ 
@@ -46,7 +46,7 @@ def calc_S2_te_jw_comps(data, params):
                  5  /__         \ 1 + (w.ti)^2     (te + ti)^2 + (w.te.ti)^2 /
                     i=m
 
-    Replicated calculations are
+    Replicated calculations are::
 
         w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
@@ -54,7 +54,7 @@ def calc_S2_te_jw_comps(data, params):
         te_ti_te = (te + ti).te.
 
 
-    Calculations which are replicated in the gradient equations are
+    Calculations which are replicated in the gradient equations are::
 
         fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
@@ -92,7 +92,7 @@ def calc_S2f_S2_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, S2, ts}.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _n_
                  2  \           /      S2            (S2f - S2)(ts + ti)ts   \ 
@@ -100,7 +100,7 @@ def calc_S2f_S2_ts_jw_comps(data, params):
                  5  /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                     i=m
 
-    Replicated calculations are
+    Replicated calculations are::
 
         w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
@@ -108,7 +108,7 @@ def calc_S2f_S2_ts_jw_comps(data, params):
         ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are
+    Calculations which are replicated in the gradient equations are::
 
         fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
@@ -147,7 +147,7 @@ def calc_S2f_S2s_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, S2s, ts}.
 
-    The model-free formula is
+    The model-free formula is::
 
                        _n_
                  2     \           /      S2s           (1 - S2s)(ts + ti)ts    \ 
@@ -155,7 +155,7 @@ def calc_S2f_S2s_ts_jw_comps(data, params):
                  5     /__         \ 1 + (w.ti)^2     (ts + ti)^2 + (w.ts.ti)^2 /
                        i=m
 
-    Replicated calculations are
+    Replicated calculations are::
 
         w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
@@ -163,7 +163,7 @@ def calc_S2f_S2s_ts_jw_comps(data, params):
         ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are
+    Calculations which are replicated in the gradient equations are::
 
         fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
@@ -203,7 +203,7 @@ def calc_S2f_tf_S2_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, tf, S2, ts}.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _n_
                  2  \           /      S2            (1 - S2f)(tf + ti)tf
@@ -215,7 +215,7 @@ def calc_S2f_tf_S2_ts_jw_comps(data, params):
                                                 +  ------------------------- |.
                                                    (ts + ti)^2 + (w.ts.ti)^2 /
 
-    Replicated calculations are
+    Replicated calculations are::
 
         w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
@@ -225,7 +225,7 @@ def calc_S2f_tf_S2_ts_jw_comps(data, params):
         ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are
+    Calculations which are replicated in the gradient equations are::
 
         fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
@@ -283,7 +283,7 @@ def calc_S2f_tf_S2s_ts_jw_comps(data, params):
     Calculate the components of the spectral density value for the extended model-free formula with
     the parameters {S2f, tf, S2s, ts}.
 
-    The model-free formula is
+    The model-free formula is::
 
                     _n_
                  2  \           /   S2f . S2s        (1 - S2f)(tf + ti)tf
@@ -295,7 +295,7 @@ def calc_S2f_tf_S2s_ts_jw_comps(data, params):
                                                 +  ------------------------- |.
                                                    (ts + ti)^2 + (w.ts.ti)^2 /
 
-    Replicated calculations are
+    Replicated calculations are::
 
         w_ti_sqrd = (w.ti)^2        (pre-calculated during initialisation),
 
@@ -305,7 +305,7 @@ def calc_S2f_tf_S2s_ts_jw_comps(data, params):
         ts_ti_ts = (ts + ti).ts.
 
 
-    Calculations which are replicated in the gradient equations are
+    Calculations which are replicated in the gradient equations are::
 
         fact_ti = 1 / (1 + (w.ti)^2)    (pre-calculated during initialisation),
 
@@ -371,7 +371,7 @@ def calc_diff_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the original model-free formula
     with no parameters {} or the parameter {S2} together with diffusion tensor parameters.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------.
@@ -391,7 +391,7 @@ def calc_S2_te_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the original model-free formula
     with the parameters {S2, te}.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                                 (te + ti)^2 - (w.te.ti)^2
         fact_djw_dte  =  ti^2 -----------------------------.
@@ -411,7 +411,7 @@ def calc_diff_S2_te_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the original model-free formula
     with the parameters {S2, te} together with diffusion tensor parameters.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,
@@ -449,7 +449,7 @@ def calc_S2f_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2, ts}.
 
-    Replicated calculations are
+    Replicated calculations are::
 
 
                                 (ts + ti)^2 - (w.ts.ti)^2
@@ -470,7 +470,7 @@ def calc_diff_S2f_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,
@@ -509,7 +509,7 @@ def calc_S2f_tf_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2, ts}.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                                 (tf + ti)^2 - (w.tf.ti)^2
         fact_djw_dtf  =  ti^2 -----------------------------,
@@ -535,7 +535,7 @@ def calc_diff_S2f_tf_S2_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,
@@ -596,7 +596,7 @@ def calc_S2f_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2s, ts}.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                                 (ts + ti)^2 - (w.ts.ti)^2
         fact_djw_dts  =  ti^2 -----------------------------.
@@ -616,7 +616,7 @@ def calc_diff_S2f_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, S2s, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,
@@ -654,7 +654,7 @@ def calc_S2f_tf_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2s, ts}.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                                 (tf + ti)^2 - (w.tf.ti)^2
         fact_djw_dtf  =  ti^2 -----------------------------,
@@ -680,7 +680,7 @@ def calc_diff_S2f_tf_S2s_ts_djw_comps(data, params):
     Calculate the components of the spectral density gradient for the extended model-free formula
     with the parameters {S2f, tf, S2, ts} together with diffusion tensor parameters.
 
-    Replicated calculations are
+    Replicated calculations are::
 
                               1 - (w.ti)^2
         fact_ti_djw_dti  =  ----------------,

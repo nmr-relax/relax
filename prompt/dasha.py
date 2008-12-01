@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'dasha' user function class for controlling the Dasha model-free software."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

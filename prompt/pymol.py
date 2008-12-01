@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'pymol' user function class for interacting with PyMOL."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

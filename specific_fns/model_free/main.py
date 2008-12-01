@@ -659,26 +659,26 @@ class Model_free_main:
 
         The names are as follows:
 
-            model:  The model-free model name.
-            equation:  The model-free equation type.
-            params:  An array of the model-free parameter names associated with the model.
-            s2:  S2.
-            s2f:  S2f.
-            s2s:  S2s.
-            local_tm:  local tm.
-            te:  te.
-            tf:  tf.
-            ts:  ts.
-            rex:  Rex.
-            r:  Bond length.
-            csa:  CSA value.
-            nucleus:  The heteronucleus type.
-            chi2:  Chi-squared value.
-            iter:  Iterations.
-            f_count:  Function count.
-            g_count:  Gradient count.
-            h_count:  Hessian count.
-            warning:  Minimisation warning.
+            - 'model', the model-free model name.
+            - 'equation', the model-free equation type.
+            - 'params', an array of the model-free parameter names associated with the model.
+            - 's2', S2.
+            - 's2f', S2f.
+            - 's2s', S2s.
+            - 'local_tm', local tm.
+            - 'te', te.
+            - 'tf', tf.
+            - 'ts', ts.
+            - 'rex', Rex.
+            - 'r', bond length.
+            - 'csa', CSA value.
+            - 'nucleus', the heteronucleus type.
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
 
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all
@@ -952,6 +952,10 @@ class Model_free_main:
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
         for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Test the fixed flag.
             if not hasattr(spin, 'fixed'):
                 mf_all_fixed = False
@@ -1740,12 +1744,12 @@ class Model_free_main:
             # Loop over the spins.
             global_index = -1
             for spin in spin_loop():
+                # Increment the global spin index.
+                global_index = global_index + 1
+
                 # Skip deselected spins.
                 if not spin.select:
                     continue
-
-                # Increment the global spin index.
-                global_index = global_index + 1
 
                 # Yield the spin index.
                 yield global_index
@@ -1969,6 +1973,8 @@ class Model_free_main:
 
             # Test for structural data if required.
             elif need_vect and not hasattr(spin, 'xh_vect'):
+                spin.select = False
+            elif need_vect and spin.xh_vect == None:
                 spin.select = False
 
 
@@ -2333,7 +2339,7 @@ class Model_free_main:
             return 'ps'
 
         # Rex (value at 1st field strength).
-        elif object_name == 'rex' and hasattr(spin, 'frq_labels'):
+        elif object_name == 'rex' and hasattr(spin, 'frq_labels') and spin.frq_labels != None and len(spin.frq_labels):
             return spin.frq_labels[0] + ' MHz'
 
         # Bond length (Angstrom).

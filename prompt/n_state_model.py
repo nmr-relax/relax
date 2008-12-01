@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'n_state_model' user function class."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 

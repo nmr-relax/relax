@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing the 'eliminate' user function for removing failed models."""
+__docformat__ = 'plaintext'
+
 # Python module imports.
 import sys
 from types import FunctionType

@@ -21,7 +21,8 @@
 ###############################################################################
 
 # Module docstring.
-"""User functions for specifying experimental temperatures."""
+"""Module containing the 'temperature' user function class."""
+__docformat__ = 'plaintext'
 
 # Python module imports.
 import sys

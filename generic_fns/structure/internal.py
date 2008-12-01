@@ -35,7 +35,7 @@ from warnings import warn
 from api_base import Base_struct_API
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
-from relax_errors import RelaxError
+from relax_errors import RelaxError, RelaxNoPdbError
 from relax_io import open_read_file
 from relax_warnings import RelaxWarning
 
@@ -123,11 +123,17 @@ class Internal(Base_struct_API):
         @rtype:                 int
         """
 
-        # Loop over the atoms.
-        for i in xrange(len(self.structural_data[struct_index].atom_num)):
-            # Return the index.
-            if self.structural_data[struct_index].atom_num[i] == atom_num:
-                return i
+        # Loop over the structures.
+        for i in xrange(self.num):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
+                continue
+
+            # Loop over the atoms.
+            for j in xrange(len(self.structural_data[i].atom_num)):
+                # Return the index.
+                if self.structural_data[i].atom_num[j] == atom_num:
+                    return j
 
         # Should not be here, the PDB connect records are incorrect.
         warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
@@ -321,6 +327,10 @@ class Internal(Base_struct_API):
         file = open_read_file(file_path)
         lines = file.readlines()
         file.close()
+
+        # Check for empty files.
+        if lines == []:
+            raise RelaxError, "The PDB file is empty."
 
         # Init.
         model = None
@@ -644,6 +654,10 @@ class Internal(Base_struct_API):
                                     (int), residue name (str), atom number (int), atom name(str),
                                     element name (str), and atomic position (array of len 3).
         """
+
+        # Check that the structure is loaded.
+        if not len(self.structural_data):
+            raise RelaxNoPdbError
 
         # Generate the selection object.
         sel_obj = Selection(atom_id)
