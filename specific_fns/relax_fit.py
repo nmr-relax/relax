@@ -157,7 +157,7 @@ class Relax_fit(Common_functions):
         scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
 
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.ave_intensities, sd=cdp.sigma_I, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.intensities, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         func(param_vector)
