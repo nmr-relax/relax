@@ -98,12 +98,15 @@ monte_carlo.error_analysis()
 # Save the relaxation rates.
 value.write(param='rx', file='rx.out', force=True)
 
+# Save the results.
+results.write(file='results', force=True)
+
 # Create Grace plots of the data.
 grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
 grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
 grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
-grace.write(x_data_type='relax_times', y_data_type='ave_int', file='intensities.agr', force=True)    # Average peak intensities.
-grace.write(x_data_type='relax_times', y_data_type='ave_int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
+grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', force=True)    # Average peak intensities.
+grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
 
 # Display the Grace plots.
 grace.view(file='chi2.agr')
@@ -113,4 +116,4 @@ grace.view(file='intensities.agr')
 grace.view(file='intensities_norm.agr')
 
 # Save the program state.
-state.save(file='rx.save', force=True)
+state.save('rx.save', force=True)
