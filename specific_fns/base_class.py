@@ -247,21 +247,21 @@ class Common_functions:
             # Get the value.
             if hasattr(spin, object_name):
                 value = getattr(spin, object_name)
-                if index:
+                if index != None:
                     value = value[index]
             elif hasattr(cdp, object_name):
                 value = getattr(cdp, object_name)
-                if index:
+                if index != None:
                     value = value[index]
 
             # Get the error.
             if hasattr(spin, object_error):
                 error = getattr(spin, object_error)
-                if index:
+                if index != None:
                     error = error[index]
             elif hasattr(cdp, object_error):
                 error = getattr(cdp, object_error)
-                if index:
+                if index != None:
                     error = error[index]
 
         # Simulation value.
@@ -269,12 +269,12 @@ class Common_functions:
             # Get the value.
             if hasattr(spin, object_sim):
                 object = getattr(spin, object_sim)
-                if index:
+                if index != None:
                     object = object[index]
                 value = object[sim]
             elif hasattr(cdp, object_sim):
                 object = getattr(cdp, object_sim)
-                if index:
+                if index != None:
                     object = object[index]
                 value = object[sim]
 
