@@ -182,7 +182,7 @@ def __errors_repl(verbosity=0):
         num_dups = 0
 
         # Loop over all time points.
-        for i in xrange(len(cdp.relax_times)):
+        for i in xrange(len(cdp.spectrum_ids)):
             # Single spectrum (or extraordinarily accurate NMR spectra!).
             if cdp.var_I[i] == 0.0:
                 continue
@@ -195,16 +195,15 @@ def __errors_repl(verbosity=0):
         var_I = var_I / float(num_dups)
 
         # Assign the average value to all time points.
-        for i in xrange(len(cdp.relax_times)):
+        for i in xrange(len(cdp.spectrum_ids)):
             cdp.var_I[i] = var_I
 
         # Print out.
-        print "\nStandard deviation (averaged over all spectra):  " + `var_I`
+        print "\nStandard deviation (variance averaged over all spectra):  " + `sqrt(var_I)`
 
     # Create the standard deviation data structure.
-    cdp.sigma_I = []
-    for var_I in cdp.var_I:
-        cdp.sigma_I.append(sqrt(var_I))
+    for i in xrange(len(cdp.spectrum_ids)):
+        cdp.sigma_I[i] = sqrt(cdp.var_I[i])
 
 
 def __errors_volume_no_repl():
