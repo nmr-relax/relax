@@ -1,3 +1,46 @@
+Version 1.3.3
+(29 November 2008, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.3
+
+    Features:
+        * Dasha can be run from within relax again.
+        * Art Palmer's Modelfree can be run from within relax again.
+        * OpenDX execution and control is once again supported.
+        * NMRView peak lists are now supported.
+        * XEasy peak lists are again supported.
+
+    Changes:
+        * Internal relax cleanups by the addition of the specific model_loop() method - this should eliminate a series of potential hidden bugs.
+        * The results.write() and results.display() now only support XML output.
+        * More information is now extracted from the Modelfree mfout files.
+        * The version of the Modelfree program is checked and if it is an old, buggy version, relax will refuse to execute it.
+        * The system tests can now handle the sometimes large differences in Modelfree results between the GNU gcc and Portland C compiler versions. 
+        * Fixes and improvements to much of the API documentation.
+
+    Bugfixes:
+        * A failure of the minimisation set() function has been fixed.
+        * The reset() user function now works again.
+        * Fixes to the relax data store methods add(), to_xml() and from_xml().
+        * Many fixes for the support of Art Palmer's Modelfree program.
+        * The mapping of the global parameter space (diffusion tensor, etc.) for visualisation in OpenDX has been fixed.
+        * state.save() no longer fails after running state.load() (bug #12437).
+        * Sparky peak lists with the assignment '?-?' are now handled properly (bug #11913).
+        * Error analysis in relaxation curve-fitting was incorrectly implemented with standard deviation rather than variance averaging (bug #12456).
+        * A number of fixes for the LaTeX table generating sample script.
+        * Fixes for the teeing and logging via the -l and -t command line arguments (bug #12489).
+        * Fix for when XH bond vector data from a PDB file is missing for a spin system (bug #12487).
+        * Many fixes for when structural data is missing.
+        * The relax script is no longer overwritten if the log or tee file is not specified on the command line (bug #12498).
+        * Missing RelaxError failure in the sequence handling code (found when trying to solve bug #12582).
+        * A failure in the results.write() user function has been fixed (bug #12582).
+        * Model selection no longer fails if no model is ever selected.
+        * Model selection was failing if spins were deselected (bug #12591).
+        * The directory name can now be part of the file name argument to results.read() (bug #12588).
+        * Optimisation of only the diffusion tensor after calling fix() was failing if some spins were deselected (bug #12607).
+        * The internal PDB reader was failing when the PDB file contained CONECT records (bug #12637).
+
+
+
 Version 1.3.2
 (8 October 2008, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.2

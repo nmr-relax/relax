@@ -123,11 +123,17 @@ class Internal(Base_struct_API):
         @rtype:                 int
         """
 
-        # Loop over the atoms.
-        for i in xrange(len(self.structural_data[struct_index].atom_num)):
-            # Return the index.
-            if self.structural_data[struct_index].atom_num[i] == atom_num:
-                return i
+        # Loop over the structures.
+        for i in xrange(self.num):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
+                continue
+
+            # Loop over the atoms.
+            for j in xrange(len(self.structural_data[i].atom_num)):
+                # Return the index.
+                if self.structural_data[i].atom_num[j] == atom_num:
+                    return j
 
         # Should not be here, the PDB connect records are incorrect.
         warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))

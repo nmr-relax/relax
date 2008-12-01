@@ -150,6 +150,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     duplicate_data = {}
     model_statistics = {}
     skip_function = {}
+    modsel_pipe_exists = False
 
     # Cross validation setup.
     if type(pipes[0]) == list:
@@ -283,16 +284,25 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 best_model = pipe
                 best_crit = crit
 
-        # Print out of selected model.
-        print "The model from the data pipe " + `best_model` + " has been selected."
-
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
+            # Print out of selected model.
+            print "The model from the data pipe " + `best_model` + " has been selected."
+
             # Switch to the selected data pipe.
             switch(best_model)
 
             # Duplicate.
             duplicate_data[best_model](best_model, modsel_pipe, model_info, verbose=False)
 
+            # Model selection pipe now exists.
+            modsel_pipe_exists = True
+
+        # No model selected.
+        else:
+            # Print out of selected model.
+            print "No model has been selected."
+
     # Switch to the model selection pipe.
-    switch(modsel_pipe)
+    if modsel_pipe_exists:
+        switch(modsel_pipe)

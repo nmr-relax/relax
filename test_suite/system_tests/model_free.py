@@ -143,6 +143,19 @@ class Mf(TestCase):
             self.assertEqual(str(sub_obj1), str(sub_obj2))
 
 
+    def test_bugs_12582_12591_12607(self):
+        """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bugs_12582_12591_12607.py')
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test for bug #12607 (S2 changes because it is in the grid search when it should not be).
+        self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
