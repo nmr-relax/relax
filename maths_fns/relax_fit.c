@@ -41,21 +41,19 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
     extern double *values, *sd, *relax_times, *scaling_matrix;
     extern double relax_time_array;
     extern int num_params, num_times;
-            
+
     /* The keyword list */
     static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
 
     /* Parse the function arguments */
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
-    
 
-        
-    Py_XDECREF(numpy_values);    
+    Py_XDECREF(numpy_values);
     Py_XDECREF(numpy_sd);
     Py_XDECREF(numpy_relax_times);
     Py_XDECREF(numpy_scaling_matrix);
-             
+
     /* Make the numpy arrays contiguous */
     numpy_values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
     numpy_sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
@@ -120,7 +118,7 @@ dfunc(PyObject *self, PyObject *args) {
     double aaa[MAXPARAMS] = {1.0, 2.0};
     double *aaa_pointer;
     int i;
-    double* params; 
+    double* params;
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &arg1))
