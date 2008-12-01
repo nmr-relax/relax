@@ -206,14 +206,14 @@ def __errors_repl(verbosity=0):
         # Create the standard deviation data structure.
         cdp.sigma_I[i] = sqrt(cdp.var_I[i])
 
-        # Set the spin specific errors.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+    # Set the spin specific errors.
+    for spin in spin_loop():
+        # Skip deselected spins.
+        if not spin.select:
+            continue
 
-            # Set the error.
-            spin.intensity_err = cdp.sigma_I[i]
+        # Set the error.
+        spin.intensity_err = cdp.sigma_I
 
 
 def __errors_volume_no_repl():
