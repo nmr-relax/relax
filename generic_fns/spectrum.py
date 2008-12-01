@@ -90,9 +90,6 @@ def __errors_repl(verbosity=0):
     if hasattr(cdp, 'sigma_I'):
         raise RelaxError, "The peak intensity standard deviation of all spectra has already been calculated."
 
-    # Print out.
-    print "\nCalculating peak intensity standard deviation of all replicated spectra."
-
     # Initialise.
     cdp.sigma_I = [0.0] * len(cdp.spectrum_ids)
     cdp.var_I = [0.0] * len(cdp.spectrum_ids)
@@ -121,7 +118,7 @@ def __errors_repl(verbosity=0):
             indices[j] = cdp.spectrum_ids.index(spectra[j])
 
         # Print out.
-        print "\nSpectra:  " + `spectra`
+        print "\nReplicated spectra:  " + `spectra`
         if verbosity:
             print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
@@ -177,6 +174,9 @@ def __errors_repl(verbosity=0):
 
     # Average across all spectra if there are time points with a single spectrum.
     if not all_repl:
+        # Print out.
+        print "\nVariance averaging over all spectra."
+
         # Initialise.
         var_I = 0.0
         num_dups = 0
@@ -199,7 +199,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[i] = var_I
 
         # Print out.
-        print "\nStandard deviation (variance averaged over all spectra):  " + `sqrt(var_I)`
+        print "Standard deviation for all spins:  " + `sqrt(var_I)`
 
     # Loop over the spectra.
     for i in xrange(len(cdp.spectrum_ids)):
