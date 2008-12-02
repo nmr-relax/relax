@@ -27,6 +27,7 @@
 from numpy import array
 from os import system
 from re import match
+from warnings import warn
 
 # relax module imports.
 import generic_fns
@@ -34,6 +35,7 @@ from generic_fns.mol_res_spin import count_molecules, count_residues, count_spin
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file, test_binary
+from relax_warnings import RelaxWarning
 from specific_fns.setup import get_specific_fn
 
 
@@ -187,9 +189,13 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             # Initialise an empty array for the individual spin data.
             spin_data = [mol_name, res_num, res_name, spin.num, spin.name, None, None, None, None]
 
+            # FIXME:  Need to work out how the spin_id string can be handled in Grace.
             # Spin ID string on the x-axis.
+            #if x_data_type == 'spin':
+            #    spin_data[-4] = spin_id
+            # Residue number.
             if x_data_type == 'spin':
-                spin_data[-4] = spin_id
+                spin_data[-4] = res_num
 
             # Parameter value for the x-axis.
             else:
@@ -306,6 +312,12 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Get the data.
     data = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
+
+    # No data, so close the empty file and exit.
+    if data == None or data == []:
+        warn(RelaxWarning("No data could be found, creating an empty file."))
+        file.close()
+        return
 
     # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
     graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
@@ -440,12 +452,16 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
             file.write("@    world xmax " + `cdp.mol[0].res[0].spin[-1].num + 1` + "\n")
 
             # X-axis label.
-            file.write("@    xaxis  label \"Spin number\"\n")
+            # FIXME.
+            #file.write("@    xaxis  label \"Spin number\"\n")
+            file.write("@    xaxis  label \"Residue number\"\n")
 
         # Mixed data.
         if seq_type == 'mixed':
             # X-axis label.
-            file.write("@    xaxis  label \"Spin identification string\"\n")
+            # FIXME.
+            #file.write("@    xaxis  label \"Spin identification string\"\n")
+            file.write("@    xaxis  label \"Residue number\"\n")
 
     else:
         # Get the units.

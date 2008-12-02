@@ -69,7 +69,7 @@ class Relax_fit(TestCase):
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak heights.
-        self.relax.interpreter._Relax_fit.read(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", relax_time=0.0176)
+        self.relax.interpreter._Spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", spectrum_id='0.0176')
 
 
         # Test the integrity of the data.
@@ -98,4 +98,4 @@ class Relax_fit(TestCase):
 
             # Check intensities (if they exist).
             if hasattr(orig_spin, 'intensities'):
-                self.assertEqual(orig_spin.intensities[0][0], new_spin.intensities[0][0])
+                self.assertEqual(orig_spin.intensities[0], new_spin.intensities[0])
