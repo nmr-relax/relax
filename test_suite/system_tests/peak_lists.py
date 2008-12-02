@@ -151,17 +151,65 @@ class Peak_lists(TestCase):
         self.assertEqual(cdp.mol[0].res[5].spin[0].intensities[0], 9.305e+03)
         self.assertEqual(cdp.mol[0].res[6].spin[0].intensities[0], 3.154e+04)
         self.assertEqual(cdp.mol[0].res[7].spin[0].intensities[0], 9.180e+03)
-        #self.assertEqual(cdp.mol[0].res[8].spin[0].intensities[0], 1.532e+04)
         self.assertEqual(cdp.mol[0].res[9].spin[0].intensities[0], 1.104e+04)
         self.assertEqual(cdp.mol[0].res[10].spin[0].intensities[0], 7.680e+03)
         self.assertEqual(cdp.mol[0].res[11].spin[0].intensities[0], 5.206e+03)
         self.assertEqual(cdp.mol[0].res[12].spin[0].intensities[0], 2.863e+04)
-        #self.assertEqual(cdp.mol[0].res[13].spin[0].intensities[0], 6.877e+03)
         self.assertEqual(cdp.mol[0].res[14].spin[0].intensities[0], 9.271e+03)
         self.assertEqual(cdp.mol[0].res[15].spin[0].intensities[0], 7.919e+03)
-        #self.assertEqual(cdp.mol[0].res[15].spin[1].intensities[0], 7.123e+03)
         self.assertEqual(cdp.mol[0].res[16].spin[0].intensities[0], 9.962e+03)
         self.assertEqual(cdp.mol[0].res[17].spin[0].intensities[0], 1.260e+04)
         self.assertEqual(cdp.mol[0].res[18].spin[0].intensities[0], 1.545e+04)
         self.assertEqual(cdp.mol[0].res[19].spin[0].intensities[0], 1.963e+04)
         self.assertEqual(cdp.mol[0].res[20].spin[0].intensities[0], 1.918e+04)
+
+
+    def test_read_peak_list_xeasy_2(self):
+        """Test the reading of an XEasy peak list (2)."""
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Create the sequence data, and name the spins.
+        self.relax.interpreter._Residue.create(79)
+        self.relax.interpreter._Spin.name(name='NE1')
+
+        # Read the peak list.
+        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
+
+        # Test the data.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.532e+04)
+
+
+    def test_read_peak_list_xeasy_3(self):
+        """Test the reading of an XEasy peak list (3)."""
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Create the sequence data, and name the spins.
+        self.relax.interpreter._Residue.create(100)
+        self.relax.interpreter._Spin.name(name='C')
+
+        # Read the peak list.
+        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', heteronuc='C', int_method='height')
+
+        # Test the data.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 6.877e+03)
+
+
+    def test_read_peak_list_xeasy_4(self):
+        """Test the reading of an XEasy peak list (4)."""
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Create the sequence data, and name the spins.
+        self.relax.interpreter._Residue.create(107)
+        self.relax.interpreter._Spin.name(name='C')
+
+        # Read the peak list.
+        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
+
+        # Test the data.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 7.123e+03)
