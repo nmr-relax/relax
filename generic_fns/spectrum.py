@@ -424,8 +424,40 @@ def intensity_generic(line, int_col):
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
+    # Determine the number of delays (and associated intensities).
+    i = 5
+    while 1:
+        i = i + 1
+        try:
+            current_field = line[i-1]
+        except:
+            num_delays = int(i - 6)
+            if num_delays == 0:
+                raise RelaxError, "Generic file with no associated delays (and intensities)."
+            break
 
-    # Not implemented yet...
+    # The residue number.
+    res_num = ''
+    try:
+        res_num = int(line[1])
+    except:
+        raise RelaxError, "Improperly formatted generic file."
+
+    # Nuclei names.
+    x_name = ''
+    x_name = line[4]
+    #h_name = ''
+    #h_name = line[5]
+
+    ## The peak intensity column.
+
+    ## Intensity.
+    #try:
+    #    intensity = float(line[int_col])
+    #except ValueError:
+    #    raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+    ## Return the data.
+    #return res_num, h_name, x_name, intensity
 
 
 def intensity_nmrview(line, int_col):
