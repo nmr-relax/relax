@@ -27,7 +27,7 @@ from numpy import float64, zeros
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
 from generic_fns import pipes
 from physical_constants import return_atomic_mass
-from relax_errors import RelaxNoPdbError
+from relax_errors import RelaxError, RelaxNoPdbError
 
 
 
@@ -87,6 +87,10 @@ def centre_of_mass(return_mass=False):
         # Deselected spins.
         if spin_cont and not spin_cont.select:
             continue
+
+        # No element?
+        if element == None:
+            raise RelaxError, "The element corresponding to '%s' does not exist in the PDB file.  Cannot calculate the centre of mass." % id
 
         # Atomic mass.
         mass = return_atomic_mass(element)
