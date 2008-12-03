@@ -22,12 +22,14 @@
 
 # Python module imports.
 from numpy import float64, zeros
+from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
 from generic_fns import pipes
 from physical_constants import return_atomic_mass
 from relax_errors import RelaxError, RelaxNoPdbError
+from relax_warnings import RelaxWarning
 
 
 
@@ -90,10 +92,13 @@ def centre_of_mass(return_mass=False):
 
         # No element?
         if element == None:
-            raise RelaxError, "The element corresponding to '%s' does not exist in the PDB file.  Cannot calculate the centre of mass." % id
+            warn(RelaxWarning("Skipping the atom '%s' as the element name does not exist in the PDB file." % id))
 
         # Atomic mass.
-        mass = return_atomic_mass(element)
+        try:
+            mass = return_atomic_mass(element)
+        except RelaxError:
+            warn(RelaxWarning("Skipping the atom '%s' as the element '%s' is unknown." % (id, element)))
 
         # Total mass.
         M = M + mass
