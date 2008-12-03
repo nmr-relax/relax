@@ -420,6 +420,9 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
             # Connect the two atoms.
             structure.atom_connect(index1=atom_num-1, index2=atom_num)
 
+            # Increment the atom number.
+            atom_num = atom_num + 2
+
 
     # Create the PDB file.
     ######################
