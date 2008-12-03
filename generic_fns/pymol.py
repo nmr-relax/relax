@@ -155,18 +155,22 @@ def cartoon():
     # Get the current data pipe.
     cdp = pipes.get_pipe()
 
-    # Identifier.
-    pdb_file = cdp.structure.file_name
-    id = file_root(pdb_file)
+    # Loop over the PDB files.
+    for i in xrange(cdp.structure.num):
+        # Identifier.
+        pdb_file = cdp.structure.file[i]
+        if cdp.structure.path[i]:
+            pdb_file = cdp.structure.path[i] + sep + pdb_file
+        id = file_root(pdb_file)
 
-    # Hide everything.
-    pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
+        # Hide everything.
+        pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
 
-    # Show the cartoon style.
-    pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
+        # Show the cartoon style.
+        pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
 
-    # Colour by secondary structure.
-    pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+        # Colour by secondary structure.
+        pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
 
 
 def command(command):
