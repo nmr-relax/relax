@@ -304,14 +304,14 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     tensor_pdb_file.close()
 
 
-def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False):
+def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
     """Create a PDB representation of the XH vector distribution.
 
     @param length:      The length to set the vectors to in the PDB file.
     @type length:       float
     @param symmetry:    The symmetry flag which if set will create a second PDB chain 'B' which
         is the same as chain 'A' but with the XH vectors reversed.
-    @type symmetry:     int
+    @type symmetry:     bool
     @param file:        The name of the PDB file to create.
     @type file:         str
     @param dir:         The name of the directory to place the PDB file into.
