@@ -350,6 +350,9 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     # Create the structural object.
     structure = Internal()
 
+    # Add a structure.
+    structure.add_struct(name='vector_dist')
+
     # Initialise the residue and atom numbers.
     res_num = 1
     atom_num = 1
