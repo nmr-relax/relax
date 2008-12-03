@@ -369,7 +369,7 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
     #################
 
     # Loop over the spin systems.
-    for spin in spin_loop():
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip deselected spin systems.
         if not spin.select:
             continue
@@ -382,10 +382,10 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
         vector = spin.xh_vect * length * 1e10
 
         # Add the central X atom.
-        structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.heteronuc, res_name=spin.name, chain_id='A', res_num=spin.num, pos=R, segment_id=None, element=spin.heteronuc, struct_index=None)
+        structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.name, res_name=res_name, chain_id='A', res_num=res_num, pos=R, segment_id=None, element=spin.element, struct_index=None)
 
         # Add the H atom.
-        structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name=spin.proton, res_name=spin.name, chain_id='A', res_num=spin.num, pos=R+vector, segment_id=None, element=spin.proton, struct_index=None)
+        structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=res_name, chain_id='A', res_num=res_num, pos=R+vector, segment_id=None, element='H', struct_index=None)
 
         # Connect the two atoms.
         structure.atom_connect(index1=atom_num-1, index2=atom_num)
@@ -396,7 +396,7 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
     # Symmetry chain.
     if symmetry:
         # Loop over the spin systems.
-        for spin in spin_loop():
+        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
             # Skip deselected spin systems.
             if not spin.select:
                 continue
@@ -409,10 +409,10 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
             vector = spin.xh_vect * length * 1e10
 
             # Add the central X atom.
-            structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.heteronuc, res_name=spin.name, chain_id='B', res_num=spin.num, pos=R, segment_id=None, element=spin.heteronuc, struct_index=None)
+            structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.name, res_name=res_name, chain_id='B', res_num=res_num, pos=R, segment_id=None, element=spin.element, struct_index=None)
 
             # Add the H atom.
-            structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name=spin.proton, res_name=spin.name, chain_id='B', res_num=spin.num, pos=R+vector, segment_id=None, element=spin.proton, struct_index=None)
+            structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=res_name, chain_id='B', res_num=res_num, pos=R+vector, segment_id=None, element='H', struct_index=None)
 
             # Connect the two atoms.
             structure.atom_connect(index1=atom_num-1, index2=atom_num)
