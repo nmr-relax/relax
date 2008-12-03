@@ -1,10 +1,17 @@
 # Script for catching bug #12670 (https://gna.org/bugs/index.php?12670) as submitted by Michael Funk (mifu att nmr dot mpibpc dot mpg dot de).
 
+import sys
+
+
 # Create the 'rx' data pipe.
 pipe.create('rx', 'relax_fit')
 
+# The paths to the data files.
+seq_path = sys.path[-1] + '/test_suite/shared_data/sequence'
+list_path = sys.path[-1] + '/test_suite/shared_data/peak_lists'
+
 # Load the sequence.
-sequence.read('1UBQ.seq', mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+sequence.read('1UBQ.seq', dir=seq_path, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
 
 # Spectrum names.
 names = [
@@ -36,7 +43,7 @@ data_path = '.'
 # Loop over the spectra.
 for i in xrange(len(names)):
     # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.listb', dir=data_path, spectrum_id=names[i], int_method='height', proton='H')
+    spectrum.read_intensities(file=names[i]+'.listb', dir=list_path, spectrum_id=names[i], int_method='height', proton='H')
 
     # Set the relaxation times.
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])
