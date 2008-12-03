@@ -415,7 +415,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
             structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.name, res_name=res_name, chain_id='B', res_num=res_num, pos=R, segment_id=None, element=spin.element, struct_index=None)
 
             # Add the H atom.
-            structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=res_name, chain_id='B', res_num=res_num, pos=R+vector, segment_id=None, element='H', struct_index=None)
+            structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=res_name, chain_id='B', res_num=res_num, pos=R-vector, segment_id=None, element='H', struct_index=None)
 
             # Connect the two atoms.
             structure.atom_connect(index1=atom_num-1, index2=atom_num)
