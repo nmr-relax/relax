@@ -883,7 +883,11 @@ class Relax_fit(Common_functions):
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
-        return cdp.sigma_I
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the error list.
+        return spin.intensity_err
 
 
     def return_data_name(self, name):
