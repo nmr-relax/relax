@@ -20,8 +20,3 @@ structure.vectors()
 
 # Create the PDB file.
 structure.create_vector_dist(file='devnull', force=True)
-
-# PyMOL.
-pymol.view()
-pymol.cartoon()
-pymol.vector_dist()
