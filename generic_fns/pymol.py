@@ -24,7 +24,7 @@
 """Module for interfacing with PyMOL."""
 
 # Python module imports.
-from os import popen
+from os import popen, sep
 from string import split
 
 # relax module imports.
@@ -71,8 +71,15 @@ class Pymol:
         # Reinitialise PyMOL.
         self.pipe_write("reinitialize")
 
-        # Open the PDB file.
-        self.pipe_write("load " + cdp.structure.file_name)
+        # Open the PDB files.
+        for i in xrange(cdp.structure.num):
+            # The file path.
+            file = cdp.structure.file[i]
+            if cdp.structure.path[i]:
+                file = cdp.structure.path[i] + sep + file
+
+            # Open the file in PyMOL.
+            self.pipe_write("load " + file)
 
 
     def pipe_open(self):
