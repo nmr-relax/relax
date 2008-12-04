@@ -1,7 +1,15 @@
 # Script for catching bug #12670 (https://gna.org/bugs/index.php?12670) as submitted by Michael Funk (mifu att nmr dot mpibpc dot mpg dot de).
 
+# Python module imports.
 import sys
 
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+
+
+# Missing temp directory (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = 'temp_script'
 
 # Create the 'rx' data pipe.
 pipe.create('rx', 'relax_fit')
@@ -80,17 +88,17 @@ minimise('simplex', scaling=False, constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.
-value.write(param='rx', file='devnull', force=True)
+value.write(param='rx', file='rx.out', dir=ds.tmpdir, force=True)
 
 # Save the results.
 results.write(file='devnull', force=True)
 
 # Create Grace plots of the data.
-grace.write(y_data_type='chi2', file='devnull', force=True)    # Minimised chi-squared value.
-grace.write(y_data_type='i0', file='devnull', force=True)    # Initial peak intensity.
-grace.write(y_data_type='rx', file='devnull', force=True)    # Relaxation rate.
-grace.write(x_data_type='relax_times', y_data_type='int', file='devnull', force=True)    # Average peak intensities.
-grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
+grace.write(y_data_type='chi2', file='chi2.agr', dir=ds.tmpdir, force=True)    # Minimised chi-squared value.
+grace.write(y_data_type='i0', file='i0.agr', dir=ds.tmpdir, force=True)    # Initial peak intensity.
+grace.write(y_data_type='rx', file='rx.agr', dir=ds.tmpdir, force=True)    # Relaxation rate.
+grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', dir=ds.tmpdir, force=True)    # Average peak intensities.
+grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir=ds.tmpdir, force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
-state.save('devnull', force=True)
+state.save('rx.save', dir=ds.tmpdir, force=True)
