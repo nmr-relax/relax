@@ -22,6 +22,7 @@
 
 # Python module imports.
 from os import sep
+from shutil import rmtree
 from string import split
 import sys
 from tempfile import mkdtemp
