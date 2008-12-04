@@ -425,13 +425,13 @@ def intensity_generic(line, int_col):
     """
 
     # Determine the number of delays (and associated intensities).
-    i = 5
+    i = 6
     while 1:
         i = i + 1
         try:
             current_field = line[i-1]
         except:
-            num_delays = int(i - 6)
+            num_delays = int(i - 7)
             if num_delays == 0:
                 raise RelaxError, "Generic file with no associated delays (and intensities)."
             break
@@ -446,8 +446,8 @@ def intensity_generic(line, int_col):
     # Nuclei names.
     x_name = ''
     x_name = line[4]
-    #h_name = ''
-    #h_name = line[5]
+    h_name = ''
+    h_name = line[5]
 
     ## The peak intensity column.
 

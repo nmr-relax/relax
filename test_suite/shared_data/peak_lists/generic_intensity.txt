@@ -1,7 +1,7 @@
-mol_name    res_num    res_name    spin_num    spin_name    intensity_1    intensity_2    intensity_3    intensity_4    intensity_5    intensity_6    intensity_7    intensity_8    intensity_9    intensity_10
+mol_name    res_num    res_name    spin_num    spin_name    proton    intensity_1    intensity_2    intensity_3    intensity_4    intensity_5    intensity_6    intensity_7    intensity_8    intensity_9    intensity_10
 
-None        20         GLY         None        N            1.0000         0.9714         0.9602         0.9626         0.8839         0.8327         0.7088         0.5098         0.2410         0.1116
-None        23         ALA         None        N            1.0000         0.9789         0.9751         0.9762         0.9074         0.8532         0.7089         0.5170         0.2444         0.1537
-None        34         CYS         None        N            1.0000         0.9659         0.9580         0.9559         0.9325         0.8460         0.7187         0.5303         0.2954         0.1683
-None        35         MET         None        N            1.0000         0.9657         0.9389         0.9366         0.9331         0.8683         0.7169         0.5357         0.2769         0.1625
-None        36         LYS         None        N            1.0000         1.0060         0.9556         0.9456         0.9077         0.8411         0.6788         0.4558         0.2448         0.1569
+None        20         GLY         None        N            H         1.0000         0.9714         0.9602         0.9626         0.8839         0.8327         0.7088         0.5098         0.2410         0.1116
+None        23         ALA         None        N            H         1.0000         0.9789         0.9751         0.9762         0.9074         0.8532         0.7089         0.5170         0.2444         0.1537
+None        34         CYS         None        N            H         1.0000         0.9659         0.9580         0.9559         0.9325         0.8460         0.7187         0.5303         0.2954         0.1683
+None        35         MET         None        N            H         1.0000         0.9657         0.9389         0.9366         0.9331         0.8683         0.7169         0.5357         0.2769         0.1625
+None        36         LYS         None        N            H         1.0000         1.0060         0.9556         0.9456         0.9077         0.8411         0.6788         0.4558         0.2448         0.1569
