@@ -54,8 +54,8 @@ class Relax_fit(TestCase):
         ds.__reset__()
 
 
-    def test_bug_12670(self):
-        """Test the relaxation curve fitting, replicating bug #12670 (https://gna.org/bugs/index.php?12670)."""
+    def test_bug_12670_12679(self):
+        """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/1UBQ_relax_fit.py')
