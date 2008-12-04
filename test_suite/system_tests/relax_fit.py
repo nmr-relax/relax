@@ -22,6 +22,7 @@
 
 # Python module imports.
 import sys
+from tempfile import mkdtemp
 from unittest import TestCase
 
 # relax module imports.
@@ -39,10 +40,17 @@ class Relax_fit(TestCase):
         # Create the data pipe.
         self.relax.interpreter._Pipe.create('mf', 'mf')
 
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Remove the temporary directory.
+        rmtree(ds.tmpdir)
+
+        # Reset the relax data storage object.
         ds.__reset__()
 
 
