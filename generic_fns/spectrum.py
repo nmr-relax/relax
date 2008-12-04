@@ -742,7 +742,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     cdp.int_method = int_method
 
     # Extract the data from the file.
-    file_data = extract_data(file, dir)
+    file_data = extract_data(file, dir, sep=sep)
 
     # Automatic format detection.
     format = autodetect_format(file_data)
