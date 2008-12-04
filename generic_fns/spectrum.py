@@ -254,7 +254,7 @@ def autodetect_format(file_data):
             break
 
     # Generic format.
-    if line[0] in ['mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name']:
+    if line[0] in ['mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name'] or line[0] in ['Num', 'Name']:
         return 'generic'
 
     # Sparky format.
