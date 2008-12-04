@@ -423,7 +423,7 @@ class Spectrum:
 
         # The spectrum identification string (or list).
         if type(spectrum_id) != str and type(spectrum_id) != list:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+            raise RelaxStrListStrError, ('spectrum identification string', spectrum_id)
 
         # The heteronucleus name.
         if type(heteronuc) != str:
