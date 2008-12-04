@@ -451,16 +451,17 @@ def intensity_generic(line, int_col):
 
     # Extract intensities.
     try:
-        intensity = float(line[6])
+        intensity = [float(line[6])]
     except ValueError:
         raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
-    print intensity
-
-    #i = 0
-    #while i < num_delays:
-    #    i = i + 1
-    #    intensity = line[i + 5]
+    i = 1
+    while i < num_delays:
+        i = i + 1
+        try:
+            intensity.append(float(line[i + 5]))
+        except ValueError:
+            raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
     # Return the data.
     return res_num, h_name, x_name, intensity
@@ -825,7 +826,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             spin.intensities = []
 
         # Add the data.
-        spin.intensities.append(intensity)
+        if format == 'generic':
+            spin.intensities = intensity
+        else:
+            spin.intensities.append(intensity)
 
 
 def replicated(spectrum_ids=None):

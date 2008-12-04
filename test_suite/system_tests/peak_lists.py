@@ -65,10 +65,15 @@ class Peak_lists(TestCase):
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[1], 0.9714)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[2], 0.9602)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[3], 0.9626)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[4], 0.8839)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[5], 0.8327)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[6], 0.7088)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[7], 0.5098)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[8], 0.2410)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[9], 0.1116)
 
 
     def test_read_peak_list_nmrview(self):
