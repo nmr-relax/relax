@@ -74,9 +74,9 @@ class Relax_fit(TestCase):
             lines[i] = split(lines[i])
 
         # Check some of the Grace data.
-        self.assertEqual(len(lines[26]), 2)
-        self.assertEqual(lines[26][0], '0.004')
-        self.assertEqual(lines[26][1], '487178.')
+        self.assertEqual(len(lines[23]), 2)
+        self.assertEqual(lines[23][0], '0.004')
+        self.assertEqual(lines[23][1], '487178.0')
 
 
     def test_curve_fitting(self):
