@@ -449,15 +449,21 @@ def intensity_generic(line, int_col):
     h_name = ''
     h_name = line[5]
 
-    ## The peak intensity column.
+    # Extract intensities.
+    try:
+        intensity = float(line[6])
+    except ValueError:
+        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
-    ## Intensity.
-    #try:
-    #    intensity = float(line[int_col])
-    #except ValueError:
-    #    raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
-    ## Return the data.
-    #return res_num, h_name, x_name, intensity
+    print intensity
+
+    #i = 0
+    #while i < num_delays:
+    #    i = i + 1
+    #    intensity = line[i + 5]
+
+    # Return the data.
+    return res_num, h_name, x_name, intensity
 
 
 def intensity_nmrview(line, int_col):
