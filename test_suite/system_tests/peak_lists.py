@@ -28,6 +28,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.mol_res_spin import spin_loop
 
 
 class Peak_lists(TestCase):
@@ -74,6 +75,47 @@ class Peak_lists(TestCase):
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[7], 0.5098)
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[8], 0.2410)
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[9], 0.1116)
+
+
+    def test_read_peak_list_generic2(self):
+        """Test the reading of a generic peak intensity list (test number 2)."""
+        
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Create the sequence data, and name the spins.
+        self.relax.interpreter._Residue.create(20)
+        self.relax.interpreter._Residue.create(23)
+        self.relax.interpreter._Residue.create(34)
+        self.relax.interpreter._Residue.create(35)
+        self.relax.interpreter._Residue.create(36)
+        self.relax.interpreter._Spin.name(name='N')
+        
+        # Spectrum ids.
+        spectrum_ids=['0.0109016', '0.0218032', '0.0436064', '0.0436064', '0.0872128', '0.1744260', '0.3488510', '0.6977020', '1.3954000', '1.9949900']
+
+        # Read the peak list.
+        self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity2.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id=spectrum_ids, int_col=range(2, 12), int_method='volume')
+
+        # The intensities.
+        intensities = []
+        intensities.append([1.0000, 0.9714, 0.9602, 0.9626, 0.8839, 0.8327, 0.7088, 0.5098, 0.2410, 0.1116])
+        intensities.append([1.0000, 0.9789, 0.9751, 0.9762, 0.9074, 0.8532, 0.7089, 0.5170, 0.2444, 0.1537])
+        intensities.append([1.0000, 0.9659, 0.9580, 0.9559, 0.9325, 0.8460, 0.7187, 0.5303, 0.2954, 0.1683])
+        intensities.append([1.0000, 0.9657, 0.9389, 0.9366, 0.9331, 0.8683, 0.7169, 0.5357, 0.2769, 0.1625])
+        intensities.append([1.0000, 1.0060, 0.9556, 0.9456, 0.9077, 0.8411, 0.6788, 0.4558, 0.2448, 0.1569])
+
+        # Test the spectrum ids.
+        self.assertEqual(cdp.spectrum_ids, spectrum_ids)
+
+        # Test the data.
+        index = 0
+        for spin in spin_loop():
+            for j in xrange(len(spin.intensities)):
+                self.assertEqual(spin.intensities[j], intensities[index][j])
+
+            # Increment the index.
+            index = index + 1
 
 
     def test_read_peak_list_nmrview(self):
