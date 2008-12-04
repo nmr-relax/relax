@@ -45,13 +45,14 @@ class Relax_fit(TestCase):
 
         # Create a temporary directory for dumping files.
         ds.tmpdir = mkdtemp()
+        self.tmpdir = ds.tmpdir
 
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
         # Remove the temporary directory.
-        rmtree(ds.tmpdir)
+        rmtree(self.tmpdir)
 
         # Reset the relax data storage object.
         ds.__reset__()
