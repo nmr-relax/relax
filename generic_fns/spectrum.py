@@ -463,6 +463,10 @@ def intensity_generic(line, int_col):
         except ValueError:
             raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
+    print ''
+    print 'The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).'
+    print '    ' + `res_num`, h_name, x_name, intensity 
+
     # Return the data.
     return res_num, h_name, x_name, intensity
 
