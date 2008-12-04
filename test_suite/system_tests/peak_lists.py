@@ -61,9 +61,13 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spin.name(name='N')
         
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="generic.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='height')
+        self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='height')
 
         # Test the data.
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
 
 
