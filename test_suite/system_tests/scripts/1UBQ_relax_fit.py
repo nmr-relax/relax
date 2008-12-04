@@ -101,4 +101,4 @@ grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr'
 grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir=ds.tmpdir, force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
-state.save('rx.save', dir=ds.tmpdir, force=True)
+state.save('rx.save', dir_name=ds.tmpdir, force=True)
