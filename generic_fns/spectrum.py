@@ -38,7 +38,6 @@ from generic_fns import pipes
 from relax_errors import RelaxError, RelaxArgNotInListError, RelaxImplementError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
-from specific_fns.relax_fit import Relax_fit
 
 
 def __errors_height_no_repl():
@@ -411,7 +410,7 @@ def error_analysis():
             __errors_repl()
 
 
-def intensity_generic(line, int_col, file_data_header):
+def intensity_generic(line, int_col):
     """Function for returning relevant data from the generic peak intensity line.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
@@ -425,46 +424,8 @@ def intensity_generic(line, int_col, file_data_header):
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
-    # Determine the number of delays (and associated intensities).
-    i = 5
-    while 1:
-        i = i + 1
-        try:
-            current_field = line[i-1]
-        except:
-            num_delays = int(i - 6)
-            if num_delays == 0:
-                raise RelaxError, "Generic file with no associated delays (and intensities)."
-            break
 
-    # The residue number.
-    res_num = ''
-    try:
-        res_num = int(line[1])
-    except:
-        raise RelaxError, "Improperly formatted generic file."
-
-    # Nuclei names.
-    x_name = ''
-    x_name = line[4]
-    #h_name = ''
-    #h_name = line[5]
-
-    # Extract both delays and associated intensities.
-    i = 0
-    while i < num_delays:
-        i = i + 1
-        delay = file_data_header[0][i + 4]
-        intensity = line[i + 4]
-        Relax_fit.relax_time(time=file_data_header[0][i + 6], spectrum_id=line[i + 6])
-
-    ## Intensity.
-    #try:
-    #    intensity = float(line[int_col])
-    #except ValueError:
-    #    raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
-    ## Return the data.
-    #return res_num, h_name, x_name, intensity
+    # Not implemented yet...
 
 
 def intensity_nmrview(line, int_col):
@@ -782,11 +743,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     num = number_of_header_lines(file_data, format, int_col, intensity_fn)
     print "Number of header lines found: " + `num`
 
-    # Store the header (if using the generic file type).
-    if format == 'generic':
-        file_data_header = file_data[:num]
-        file_data_header = strip(file_data_header)
-
     # Remove the header.
     file_data = file_data[num:]
 
@@ -808,10 +764,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
         # Extract the data.
-        if format == 'generic':
-            res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col, file_data_header)
-        else:
-            res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col)
+        res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col)
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
