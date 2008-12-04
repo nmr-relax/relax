@@ -327,7 +327,7 @@ def det_dimensions(file_data, proton, heteronuc, int_col):
     # Loop over the lines of the file until the proton and heteronucleus is reached.
     for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, w1_name, w2_name, intensity = intensity_xeasy(file_data[i], int_col)
+        w1_name, w2_name, spin_id, intensity = intensity_xeasy(file_data[i], int_col)
 
         # Proton in w1, heteronucleus in w2.
         if w1_name == proton and w2_name == heteronuc:
@@ -467,8 +467,11 @@ def intensity_generic(line, int_col):
     print 'The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).'
     print '    ' + `res_num`, h_name, x_name, intensity 
 
+    # Generate the spin_id.
+    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+
     # Return the data.
-    return res_num, h_name, x_name, intensity
+    return h_name, x_name, spin_id, intensity
 
 
 def intensity_nmrview(line, int_col):
@@ -524,8 +527,11 @@ def intensity_nmrview(line, int_col):
     except ValueError:
         raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
+    # Generate the spin_id.
+    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+
     # Return the data.
-    return res_num, h_name, x_name, intensity
+    return h_name, x_name, spin_id, intensity
 
 
 def intensity_sparky(line, int_col):
@@ -573,8 +579,11 @@ def intensity_sparky(line, int_col):
         except ValueError:
             raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
+    # Generate the spin_id.
+    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+
     # Return the data.
-    return res_num, h_name, x_name, intensity
+    return h_name, x_name, spin_id, intensity
 
 
 def intensity_xeasy(line, int_col, H_dim='w1'):
@@ -619,8 +628,11 @@ def intensity_xeasy(line, int_col, H_dim='w1'):
     except ValueError:
         raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
 
+    # Generate the spin_id.
+    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+
     # Return the data.
-    return res_num, h_name, x_name, intensity
+    return h_name, x_name, spin_id, intensity
 
 
 def number_of_header_lines(file_data, format, int_col, intensity):
@@ -807,7 +819,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
         # Extract the data.
-        res_num, H_name, X_name, intensity = intensity_fn(file_data[i], int_col)
+        H_name, X_name, spin_id, intensity = intensity_fn(file_data[i], int_col)
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
@@ -815,7 +827,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             continue
 
         # Get the spin container.
-        spin_id = generate_spin_id(res_num=res_num, spin_name=X_name)
         spin = return_spin(spin_id)
         if not spin:
             warn(RelaxNoSpinWarning(spin_id))
