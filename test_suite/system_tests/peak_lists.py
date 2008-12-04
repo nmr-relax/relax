@@ -95,7 +95,7 @@ class Peak_lists(TestCase):
         spectrum_ids=['0.0109016', '0.0218032', '0.0436064', '0.0436064', '0.0872128', '0.1744260', '0.3488510', '0.6977020', '1.3954000', '1.9949900']
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity2.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id=spectrum_ids, int_col=range(2, 12), int_method='volume')
+        self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity2.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id=spectrum_ids, int_col=range(2, 12), int_method='volume', mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None)
 
         # The intensities.
         intensities = []
