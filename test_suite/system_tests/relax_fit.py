@@ -21,6 +21,8 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
+from string import split
 import sys
 from tempfile import mkdtemp
 from unittest import TestCase
@@ -59,6 +61,20 @@ class Relax_fit(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/1UBQ_relax_fit.py')
+
+        # Open the intensities.agr file.
+        file = open(ds.tmpdir + sep + 'intensities.agr')
+        lines = file.readlines()
+        file.close()
+
+        # Split up the lines.
+        for i in xrange(len(lines)):
+            lines[i] = split(lines[i])
+
+        # Check some of the Grace data.
+        self.assertEqual(len(lines[26]), 2)
+        self.assertEqual(lines[26][0], '0.004')
+        self.assertEqual(lines[26][1], '487178.')
 
 
     def test_curve_fitting(self):
