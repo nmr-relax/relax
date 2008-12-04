@@ -421,8 +421,8 @@ class Spectrum:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # The spectrum identification string.
-        if type(spectrum_id) != str:
+        # The spectrum identification string (or list).
+        if type(spectrum_id) != str and type(spectrum_id) != list:
             raise RelaxStrError, ('spectrum identification string', spectrum_id)
 
         # The heteronucleus name.
