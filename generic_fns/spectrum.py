@@ -33,7 +33,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxArgNotInListError, RelaxImplementError, RelaxNoSequenceError
 from relax_io import extract_data, strip
@@ -467,8 +467,8 @@ def intensity_generic(line, int_col):
     print 'The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).'
     print '    ' + `res_num`, h_name, x_name, intensity 
 
-    # Generate the spin_id.
-    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+    # Generate the spin identification string.
+    spin_id = generate_spin_id_data_array(data=line, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None)
 
     # Return the data.
     return h_name, x_name, spin_id, intensity
