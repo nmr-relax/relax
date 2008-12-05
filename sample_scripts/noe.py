@@ -32,16 +32,23 @@ structure.read_pdb('Ap4Aase_new_3.pdb')
 structure.load_spins(spin_id='@N')
 
 # Load the reference spectrum and saturated spectrum peak intensities.
-noe.read(file='ref.list', spectrum_type='ref')
-noe.read(file='sat.list', spectrum_type='sat')
+spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave')
+spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave')
+
+# Set the spectrum types.
+noe.spectrum_type('ref', 'ref_ave')
+noe.spectrum_type('sat', 'sat_ave')
 
 # Set the errors.
-noe.error(error=3600, spectrum_type='ref')
-noe.error(error=3000, spectrum_type='sat')
+spectrum.baseplane_rmsd(error=3600, spectrum_id='ref_ave')
+spectrum.baseplane_rmsd(error=3000, spectrum_id='sat_ave')
 
 # Individual residue errors.
-noe.error(error=122000, spectrum_type='ref', spin_id=":114")
-noe.error(error=8500, spectrum_type='sat', spin_id=":114")
+spectrum.baseplane_rmsd(error=122000, spectrum_id='ref_ave', spin_id=":114")
+spectrum.baseplane_rmsd(error=8500, spectrum_id='sat_ave', spin_id=":114")
+
+# Peak intensity error analysis.
+spectrum.error_analysis()
 
 # Deselect unresolved residues.
 deselect.read(file='unresolved')
@@ -53,8 +60,8 @@ calc()
 value.write(param='noe', file='noe.out', force=True)
 
 # Create grace files.
-grace.write(y_data_type='ref', file='ref.agr', force=True)
-grace.write(y_data_type='sat', file='sat.agr', force=True)
+grace.write(y_data_type='ref_ave', file='ref.agr', force=True)
+grace.write(y_data_type='sat_ave', file='sat.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 # View the grace files.

@@ -265,7 +265,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
             raise RelaxValueError, param
 
     # Extract the data from the file.
-    file_data = extract_data(file)
+    file_data = extract_data(file, dir=dir, sep=sep)
 
     # Count the number of header lines.
     header_lines = 0

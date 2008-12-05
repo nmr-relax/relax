@@ -71,3 +71,10 @@ class Generic(TestCase):
 
         # Test if the difference is 0.2!
         self.assertAlmostEqual(dp_new.mol[0].res[7].spin[0].s2, 0.2)
+
+
+    def test_xh_vector_distribution(self):
+        """Test the creation of a PDB representation of the distribution of XH bond vectors."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/xh_vector_dist.py')
