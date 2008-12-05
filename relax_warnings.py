@@ -113,6 +113,15 @@ class RelaxNoPDBFileWarning(BaseWarning):
         self.text = "The PDB file %s cannot be found, no structures will be loaded." % file
 
 
+# Misc.
+#######
+
+# Deselection warnings
+class RelaxDeselectWarning(BaseWarning):
+    def __init__(self, spin_id, reason):
+        self.text = "The spin '%s' has been deselected because of %s." % (spin_id, reason)
+
+
 
 # Format warning messages.
 warnings.formatwarning = format

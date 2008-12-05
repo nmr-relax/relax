@@ -21,7 +21,11 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
+from shutil import rmtree
+from string import split
 import sys
+from tempfile import mkdtemp
 from unittest import TestCase
 
 # relax module imports.
@@ -39,11 +43,40 @@ class Relax_fit(TestCase):
         # Create the data pipe.
         self.relax.interpreter._Pipe.create('mf', 'mf')
 
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+        self.tmpdir = ds.tmpdir
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Remove the temporary directory.
+        rmtree(self.tmpdir)
+
+        # Reset the relax data storage object.
         ds.__reset__()
+
+
+    def test_bug_12670_12679(self):
+        """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/1UBQ_relax_fit.py')
+
+        # Open the intensities.agr file.
+        file = open(ds.tmpdir + sep + 'intensities.agr')
+        lines = file.readlines()
+        file.close()
+
+        # Split up the lines.
+        for i in xrange(len(lines)):
+            lines[i] = split(lines[i])
+
+        # Check some of the Grace data.
+        self.assertEqual(len(lines[23]), 2)
+        self.assertEqual(lines[23][0], '0.004')
+        self.assertEqual(lines[23][1], '487178.0')
 
 
     def test_curve_fitting(self):
@@ -69,7 +102,7 @@ class Relax_fit(TestCase):
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak heights.
-        self.relax.interpreter._Relax_fit.read(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", relax_time=0.0176)
+        self.relax.interpreter._Spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", spectrum_id='0.0176')
 
 
         # Test the integrity of the data.
@@ -98,4 +131,4 @@ class Relax_fit(TestCase):
 
             # Check intensities (if they exist).
             if hasattr(orig_spin, 'intensities'):
-                self.assertEqual(orig_spin.intensities[0][0], new_spin.intensities[0][0])
+                self.assertEqual(orig_spin.intensities[0], new_spin.intensities[0])

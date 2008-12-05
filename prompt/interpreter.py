@@ -83,6 +83,7 @@ from results import Results
 from pipe import Pipe
 from select import Select
 from sequence import Sequence
+from spectrum import Spectrum
 from spin import Spin
 from state import State
 from deselect import Deselect
@@ -168,6 +169,7 @@ class Interpreter:
         self._Pipe = Pipe(relax)
         self._Select = Select(relax)
         self._Sequence = Sequence(relax)
+        self._Spectrum = Spectrum(relax)
         self._Spin = Spin(relax)
         self._State = State(relax)
         self._Deselect = Deselect(relax)
@@ -238,6 +240,7 @@ class Interpreter:
         pipe = self._Pipe
         select = self._Select
         sequence = self._Sequence
+        spectrum = self._Spectrum
         spin = self._Spin
         state = self._State
         deselect = self._Deselect

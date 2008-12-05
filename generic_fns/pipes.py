@@ -75,6 +75,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         'N-state':  N-state model of domain dynamics,
         'noe':  Steady state NOE calculation,
         'relax_fit':  Relaxation curve fitting,
+        'relax_disp':  Relaxation dispersion,
         'srls':  SRLS analysis.
     @type pipe_type:    str
     @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe
@@ -83,7 +84,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     """
 
     # List of valid data pipe types.
-    valid = ['ct', 'jw', 'mf', 'N-state', 'noe', 'relax_fit', 'srls']
+    valid = ['ct', 'jw', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
 
     # Test if pipe_type is valid.
     if not pipe_type in valid:

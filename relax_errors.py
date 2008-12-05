@@ -381,6 +381,13 @@ class RelaxNoneIntError(BaseError):
         if Debug:
             self.save_state()
 
+# None, integer, or list of integers.
+class RelaxNoneIntListIntError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must either be None, an integer or an array of integers."
+        if Debug:
+            self.save_state()
+
 # None, integer, or string.
 class RelaxNoneIntStrError(BaseError):
     def __init__(self, name, value):

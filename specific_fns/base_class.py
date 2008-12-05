@@ -213,19 +213,30 @@ class Common_functions:
         @rtype:         tuple of length 2 of floats or None
         """
 
+        # Initialise.
+        cdp = pipes.get_pipe()
+        index = None
+
         # Get the object name.
         object_name = self.return_data_name(param)
 
-        # The data type does not exist.
-        if not object_name:
-            raise RelaxError, "The parameter " + `param` + " does not exist."
-
         # The error and simulation names.
-        object_error = object_name + '_err'
-        object_sim = object_name + '_sim'
+        if object_name:
+            object_error = object_name + '_err'
+            object_sim = object_name + '_sim'
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        # The data type does not exist.
+        else:
+            # Is it a spectrum id?
+            if param in cdp.spectrum_ids:
+                index = cdp.spectrum_ids.index(param)
+                object_name = 'intensities'
+                object_error = 'intensity_err'
+                object_sim = 'intensity_sim'
+
+            # Unknown data type.
+            else:
+                raise RelaxError, "The parameter " + `param` + " does not exist."
 
         # Initial values.
         value = None
@@ -236,23 +247,35 @@ class Common_functions:
             # Get the value.
             if hasattr(spin, object_name):
                 value = getattr(spin, object_name)
+                if index != None:
+                    value = value[index]
             elif hasattr(cdp, object_name):
                 value = getattr(cdp, object_name)
+                if index != None:
+                    value = value[index]
 
             # Get the error.
             if hasattr(spin, object_error):
                 error = getattr(spin, object_error)
+                if index != None:
+                    error = error[index]
             elif hasattr(cdp, object_error):
                 error = getattr(cdp, object_error)
+                if index != None:
+                    error = error[index]
 
         # Simulation value.
         else:
             # Get the value.
             if hasattr(spin, object_sim):
                 object = getattr(spin, object_sim)
+                if index != None:
+                    object = object[index]
                 value = object[sim]
             elif hasattr(cdp, object_sim):
                 object = getattr(cdp, object_sim)
+                if index != None:
+                    object = object[index]
                 value = object[sim]
 
         # Return the data.
