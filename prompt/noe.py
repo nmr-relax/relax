@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxNoneIntError, RelaxStrError
+from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from specific_fns.setup import noe_obj
 
 
