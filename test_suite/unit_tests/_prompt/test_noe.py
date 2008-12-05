@@ -39,7 +39,7 @@ class Test_noe(TestCase):
     noe_fns = Noe(fake_relax.fake_instance())
 
 
-    def test_read_argfail_spectrum_type(self):
+    def test_spectrum_type_argfail_spectrum_type(self):
         """The spectrum_type arg test of the noe.spectrum_type() user function."""
 
         # Loop over the data types.
@@ -52,7 +52,7 @@ class Test_noe(TestCase):
             self.assertRaises(RelaxStrError, self.noe_fns.spectrum_type, spectrum_type=data[1])
 
 
-    def test_read_argfail_spectrum_id(self):
+    def test_spectrum_type_argfail_spectrum_id(self):
         """The spectrum_id arg test of the noe.spectrum_type() user function."""
 
         # Loop over the data types.
