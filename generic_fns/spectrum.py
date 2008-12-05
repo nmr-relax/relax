@@ -468,7 +468,7 @@ def intensity_generic(line, int_col):
     print '    ' + `res_num`, h_name, x_name, intensity 
 
     # Generate the spin identification string.
-    spin_id = generate_spin_id_data_array(data=line, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None)
+    spin_id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
     # Return the data.
     return h_name, x_name, spin_id, intensity
