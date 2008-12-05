@@ -47,12 +47,12 @@ class Noe:
 
 
     def spectrum_type(self, spectrum_type=None, spectrum_id=None):
-        """Function for setting the spectrum type for pre-loaded peak intensities.
+        """Set the steady-state NOE spectrum type for pre-loaded peak intensities.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        spectrum_type:  The type of NOE spectrum, one of 'ref' or 'sat'.
+        spectrum_type:  The type of steady-state NOE spectrum, one of 'ref' or 'sat'.
 
         spectrum_id:  The spectrum identification string.
 
@@ -61,8 +61,8 @@ class Noe:
         ~~~~~~~~~~~
 
         The spectrum_type argument can have the following values:
-            'ref':  The NOE reference spectrum.
-            'sat':  The NOE spectrum with proton saturation turned on.
+            'ref':  The steady-state NOE reference spectrum.
+            'sat':  The steady-state NOE spectrum with proton saturation turned on.
 
         Peak intensities should be loaded before calling this user function via the
         'spectrum.read_intensities()' user function.  The intensity values will then be associated
