@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.noe import Noe
-from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
@@ -97,11 +97,11 @@ class Test_noe(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.noe_fns.read, file='noes', lower_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.noe_fns.read, file='noes', lower_col=data[1])
 
 
     def test_read_argfail_upper_col(self):
@@ -110,11 +110,11 @@ class Test_noe(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.noe_fns.read, file='noes', upper_col=data[1])
+            self.assertRaises(RelaxNoneIntError, self.noe_fns.read, file='noes', upper_col=data[1])
 
 
     def test_read_argfail_sep(self):
