@@ -37,7 +37,7 @@ class Noe:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for calculating NOE data."""
+        """Class for handling steady-state NOE and NOESY data."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
