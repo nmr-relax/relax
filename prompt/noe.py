@@ -29,6 +29,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import noesy
 from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from specific_fns.setup import noe_obj
 
@@ -131,7 +132,7 @@ class Noe:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        noe_obj.read_constraints(frq=frq, file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+        noesy.read_constraints(frq=frq, file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
 
     def spectrum_type(self, spectrum_type=None, spectrum_id=None):
