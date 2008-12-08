@@ -131,7 +131,7 @@ class Noe:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        noe.read_constraints(frq=frq, file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+        noe_obj.read_constraints(frq=frq, file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
 
     def spectrum_type(self, spectrum_type=None, spectrum_id=None):
