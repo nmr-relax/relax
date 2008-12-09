@@ -76,7 +76,7 @@ class Noe_restraints(TestCase):
                 create_residue(res_nums[i][j])
 
                 # Loop over the atoms.
-                for k in range(len(spin_names[i][j][k])):
+                for k in range(len(spin_names[i][j])):
                     # Create the spin.
                     create_spin(spin_names[i][j][k])
 
