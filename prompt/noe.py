@@ -74,7 +74,8 @@ class Noe:
         This function can automatically determine the format of the file, for example Xplor
         formatted restraint files.  A generically formatted file is also supported if it contains
         minimally four columns with the two proton names and the upper and lower bounds, as
-        specified by the *_col arguments.
+        specified by the *_col arguments.  The proton names need to be in the spin identification
+        string format.
 
 
         Examples
@@ -132,7 +133,7 @@ class Noe:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        noesy.read_restraints(frq=frq, file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+        noesy.read_restraints(file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
 
     def spectrum_type(self, spectrum_type=None, spectrum_id=None):
