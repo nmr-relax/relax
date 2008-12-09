@@ -1,0 +1,25 @@
+! These are H-bond restraints for standard RNA as taken from http://bass.chem.yale.edu/labdocs/packages/xplor.html.
+! A1-U4 Watson-Crick (A-form RNA)
+assign (segid A and resid  1 and name N1 ) (segid B and resid  4 and name H3 )  1.93 0.20 0.20
+assign (segid A and resid  1 and name N1 ) (segid B and resid  4 and name N3 )  2.95 0.20 0.20
+assign (segid A and resid  1 and name N6 ) (segid B and resid  4 and name O4 )  2.83 0.20 0.20
+assign (segid A and resid  1 and name H62) (segid B and resid  4 and name O4 )  1.82 0.20 0.20  
+! U2-A3 Watson-Crick (A-form RNA)
+assign (segid A and resid  2 and name H3 ) (segid B and resid  3 and name N1 )  1.93 0.20 0.20
+assign (segid A and resid  2 and name N3 ) (segid B and resid  3 and name N1 )  2.95 0.20 0.20
+assign (segid A and resid  2 and name O4 ) (segid B and resid  3 and name N6 )  2.83 0.20 0.20
+assign (segid A and resid  2 and name O4 ) (segid B and resid  3 and name H62)  1.82 0.20 0.20  
+! G3-C2 Watson-Crick (A-form RNA)
+assign (segid A and resid  3 and name H1 ) (segid B and resid  2 and name N3 )  1.89 0.20 0.20
+assign (segid A and resid  3 and name N1 ) (segid B and resid  2 and name N3 )  2.91 0.20 0.20
+assign (segid A and resid  3 and name H22) (segid B and resid  2 and name O2 )  2.08 0.20 0.20
+assign (segid A and resid  3 and name N2 ) (segid B and resid  2 and name O2 )  3.08 0.20 0.20
+assign (segid A and resid  3 and name O6 ) (segid B and resid  2 and name H42)  1.71 0.20 0.20
+assign (segid A and resid  3 and name O6 ) (segid B and resid  2 and name N4 )  2.72 0.20 0.20
+! C4-G1 Watson-Crick (A-form RNA)
+assign (segid A and resid  4 and name N3 ) (segid B and resid  1 and name H1 )  1.89 0.20 0.20
+assign (segid A and resid  4 and name N3 ) (segid B and resid  1 and name N1 )  2.91 0.20 0.20
+assign (segid A and resid  4 and name O2 ) (segid B and resid  1 and name H22)  2.08 0.20 0.20
+assign (segid A and resid  4 and name O2 ) (segid B and resid  1 and name N2 )  3.08 0.20 0.20
+assign (segid A and resid  4 and name H42) (segid B and resid  1 and name O6 )  1.71 0.20 0.20
+assign (segid A and resid  4 and name N4 ) (segid B and resid  1 and name O6 )  2.72 0.20 0.20
