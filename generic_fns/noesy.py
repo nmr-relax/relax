@@ -23,6 +23,9 @@
 # Module docstring.
 """Module for NOESY related operations."""
 
+# relax module imports.
+from generic_fns import pipes
+
 
 def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
     """Load NOESY or ROESY constraint information from file.
