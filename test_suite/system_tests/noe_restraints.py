@@ -97,7 +97,7 @@ class Noe_restraints(TestCase):
         self.rna_seq()
 
         # Read the Xplor input file.
-        self.relax.interpreter._Noe.read_restraints(file=noe_rna_hbond.dat, dir=sys.path[-1] + '/test_suite/shared_data/noe_restraints')
+        self.relax.interpreter._Noe.read_restraints(file='noe_rna_hbond.dat', dir=sys.path[-1] + '/test_suite/shared_data/noe_restraints')
 
         # The restraint data.
         restraints = [
