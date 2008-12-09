@@ -89,3 +89,37 @@ class Noe_restraints(TestCase):
 
         # Read the Xplor input file.
         self.relax.interpreter._Noe.read_restraints(file=noe_rna_hbond.dat, dir=sys.path[-1] + '/test_suite/shared_data/noe_restraints')
+
+        # The restraint data.
+        restraints = [
+            ['#A:1@N1',  '#B:4@H3',  1.93, 0.20, 0.20],
+            ['#A:1@N1',  '#B:4@N3',  2.95, 0.20, 0.20],
+            ['#A:1@N6', ' #B:4@O4',  2.83, 0.20, 0.20],
+            ['#A:1@H62', '#B:4@O4',  1.82, 0.20, 0.20],
+            ['#A:2@H3',  '#B:3@N1',  1.93, 0.20, 0.20],
+            ['#A:2@N3',  '#B:3@N1',  2.95, 0.20, 0.20],
+            ['#A:2@O4',  '#B:3@N6',  2.83, 0.20, 0.20],
+            ['#A:2@O4',  '#B:3@H62', 1.82, 0.20, 0.20],
+            ['#A:3@H1',  '#B:2@N3',  1.89, 0.20, 0.20],
+            ['#A:3@N1',  '#B:2@N3',  2.91, 0.20, 0.20],
+            ['#A:3@H22', '#B:2@O2',  2.08, 0.20, 0.20],
+            ['#A:3@N2',  '#B:2@O2',  3.08, 0.20, 0.20],
+            ['#A:3@O6',  '#B:2@H42', 1.71, 0.20, 0.20],
+            ['#A:3@O6',  '#B:2@N4',  2.72, 0.20, 0.20],
+            ['#A:4@N3',  '#B:1@H1',  1.89, 0.20, 0.20],
+            ['#A:4@N3',  '#B:1@N1',  2.91, 0.20, 0.20],
+            ['#A:4@O2',  '#B:1@H22', 2.08, 0.20, 0.20],
+            ['#A:4@O2',  '#B:1@N2',  3.08, 0.20, 0.20],
+            ['#A:4@H42', '#B:1@O6',  1.71, 0.20, 0.20],
+            ['#A:4@N4',  '#B:1@O6',  2.72, 0.20, 0.20]
+        ]
+
+        # Convert to lower and upper bound format.
+        for i in range(len(restraints)):
+            restraints[i] = [restraints[i][0], restraints[i][1], restraints[i][2]-restraints[i][3], restraints[i][2]+restraints[i][4]]
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test that the restraints are properly set.
+        self.assertEqual(cdp.noe_restraints, restraints)
