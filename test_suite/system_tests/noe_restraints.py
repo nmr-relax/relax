@@ -78,7 +78,7 @@ class Noe_restraints(TestCase):
                 # Loop over the atoms.
                 for k in range(len(spin_names[i][j][k])):
                     # Create the spin.
-                    create_spin(spin_names[i][j][k]))
+                    create_spin(spin_names[i][j][k])
 
 
     def test_read_xplor_rna(self):
