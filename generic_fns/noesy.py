@@ -24,7 +24,7 @@
 """Module for NOESY related operations."""
 
 
-def read_constraints(file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
+def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
     """Load NOESY or ROESY constraint information from file.
 
     If the input file is a pre-formatted Xplor file, the column number and separator arguments will
