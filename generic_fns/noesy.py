@@ -25,6 +25,9 @@
 
 # relax module imports.
 from generic_fns import pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from relax_errors import RelaxNoSequenceError
+from relax_io import open_read_file
 
 
 def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
@@ -53,4 +56,16 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
     # Test if the current data pipe exists.
     pipes.test()
 
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Open the file.
+    file = open_read_file(file_name=file, dir=dir)
+    lines = file.readlines()
+
+    # Determine the file type.
+    format = __file_format(lines)
