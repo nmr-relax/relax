@@ -909,6 +909,10 @@ class Internal(Base_struct_API):
             if model != None and model != model_num:
                 continue
 
+            # Print out.
+            if model_num != None:
+                print "Loading model: " + `model_num`
+
             # Add an empty structure.
             self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
 
