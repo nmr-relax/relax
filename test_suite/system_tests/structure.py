@@ -139,6 +139,12 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='internal')
 
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
 
     def test_read_pdb_internal2(self):
         """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the internal structural object PDB reader)."""
@@ -148,6 +154,12 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='internal')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
 
 
     def test_read_pdb_internal3(self):
@@ -159,6 +171,12 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal')
 
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
 
     def test_read_pdb_internal4(self):
         """Load the 'tylers_peptide_trunc.pdb' PDB file (using the internal structural object PDB reader)."""
@@ -168,6 +186,12 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='internal')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
 
 
     def test_read_pdb_internal5(self):
@@ -179,6 +203,12 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
 
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
 
     def test_read_pdb_scientific1(self):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the Scientific python structural object PDB reader)."""
@@ -188,6 +218,12 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='scientific')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
 
 
     def test_read_pdb_scientific2(self):
@@ -199,6 +235,12 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='scientific')
 
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
 
     def test_read_pdb_scientific3(self):
         """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the Scientific python structural object PDB reader)."""
@@ -208,6 +250,12 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
 
 
     def test_read_pdb_scientific4(self):
@@ -219,6 +267,12 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='scientific')
 
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
 
     def test_read_pdb_scientific5(self):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the Scientific python structural object PDB reader)."""
@@ -229,5 +283,8 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
 
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
 
-
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
