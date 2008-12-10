@@ -197,9 +197,6 @@ def cone_pdb(file=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # The file root.
-    id = file_root(file)
-
     # Read in the cone PDB file.
     pymol.pipe_write("load " + file)
 
@@ -324,9 +321,6 @@ def tensor_pdb(file=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # The file root.
-    id = file_root(file)
-
     # Read in the tensor PDB file.
     pymol.pipe_write("load " + file)
 
@@ -398,7 +392,7 @@ def vector_dist(file=None):
     id = file_root(file)
 
     # Read in the vector distribution PDB file.
-    pymol.pipe_write("load " + id)
+    pymol.pipe_write("load " + file)
 
 
     # Create a surface.
