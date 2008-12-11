@@ -178,7 +178,7 @@ def centre(atom_id=None, pipe=None):
     print "Paramagnetic centre located at: " + `pos`
 
     # Set the centre (place it into the current data pipe).
-    cdp.paramagnetic_centre = pos
+    dp.paramagnetic_centre = pos
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
