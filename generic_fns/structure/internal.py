@@ -904,6 +904,7 @@ class Internal(Base_struct_API):
                 print "Loading all structures from the PDB file."
 
         # Loop over all models in the PDB file.
+        i = 0
         for model_num, records in self.__parse_models(file_path):
             # Only load the desired model.
             if model != None and model != model_num:
@@ -917,7 +918,10 @@ class Internal(Base_struct_API):
             self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
 
             # Fill the structural data object.
-            self.__fill_object_from_pdb(records, struct_index=struct_index)
+            self.__fill_object_from_pdb(records, struct_index=i)
+
+            # Increment the structure index.
+            i = i + 1
 
         # Loading worked.
         return True
