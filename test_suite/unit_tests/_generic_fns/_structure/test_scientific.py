@@ -294,7 +294,9 @@ class Test_scientific(TestCase):
             self.assertEqual(spin_num, 163)
             self.assertEqual(spin_name, 'OE1')
             self.assertEqual(element, 'O')
-            self.assertEqual(pos.tostring(), '\\\x8f\xc2\xf5(\x1c$@\xecQ\xb8\x1e\x85\xeb\x05\xc0\x89A`\xe5\xd0b*\xc0')
+            self.assertEqual(pos[0], float('10.055'))
+            self.assertEqual(pos[1], float('-2.74'))
+            self.assertEqual(pos[2], float('-13.193'))
 
             # Increment the atom count.
             atom_count = atom_count + 1
