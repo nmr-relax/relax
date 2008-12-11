@@ -81,9 +81,9 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
             # The container.
             mol_cont = return_molecule(id)
 
-        # The is only one molecule and it is unnamed.
-        elif cdp.mol[0].name == None and len(cdp.mol) == 1:
-            mol_cont = cdp.mol[0]
+        # Get the unnamed molecule, assuming there is only one.
+        else:
+            mol_cont = return_molecule()
 
         # Add the molecule if it doesn't exist.
         if mol_cont == None:
