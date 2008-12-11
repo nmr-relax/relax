@@ -153,7 +153,7 @@ def centre(atom_id=None, pipe=None):
     # Test the data pipe.
     pipes.test(pipe)
 
-    # Get the current data pipe.
+    # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
     # Test if the structure has been loaded.
@@ -178,7 +178,8 @@ def centre(atom_id=None, pipe=None):
     print "Paramagnetic centre located at: " + `pos`
 
     # Set the centre (place it into the current data pipe).
-    dp.paramagnetic_centre = pos
+    cdp = pipes.get_pipe()
+    cdp.paramagnetic_centre = pos
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
