@@ -23,14 +23,16 @@
 # Python module imports.
 from math import sqrt
 from re import match
+from warnings import warn
 
 # relax module imports.
 from base_class import Common_functions
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import intensity, pipes
+from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoSequenceError, RelaxRegExpError
 from relax_io import open_write_file
+from relax_warnings import RelaxDeselectWarning
 
 
 class Noe(Common_functions):
@@ -76,17 +78,44 @@ class Noe(Common_functions):
         # Test if the current pipe exists.
         pipes.test()
 
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # The spectrum types have not been set.
+        if not hasattr(cdp, 'spectrum_type'):
+            raise RelaxError, "The spectrum types have not been set."
+
+        # Test if the 2 spectra types 'ref' and 'sat' exist.
+        if not 'ref' in cdp.spectrum_type or not 'sat' in cdp.spectrum_type:
+            raise RelaxError, "The reference and saturated NOE spectra have not been loaded."
+
         # Loop over the spins.
         for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
                 continue
 
+            # Average intensities (if required).
+            sat = 0.0
+            sat_err = 0.0
+            ref = 0.0
+            ref_err = 0.0
+            for i in xrange(len(cdp.spectrum_type)):
+                # Sat spectra.
+                if cdp.spectrum_type[i] == 'sat':
+                    sat = sat + spin.intensities[i]
+                    sat_err = sat_err + spin.intensity_err[i]
+            
+                # Ref spectra.
+                if cdp.spectrum_type[i] == 'ref':
+                    ref = ref + spin.intensities[i]
+                    ref_err = ref_err + spin.intensity_err[i]
+            
             # Calculate the NOE.
-            spin.noe = spin.sat / spin.ref
+            spin.noe = sat / ref
 
             # Calculate the error.
-            spin.noe_err = sqrt((spin.sat_err * spin.ref)**2 + (spin.ref_err * spin.sat)**2) / spin.ref**2
+            spin.noe_err = sqrt((sat_err * ref)**2 + (ref_err * sat)**2) / ref**2
 
 
     def overfit_deselect(self):
@@ -97,9 +126,19 @@ class Noe(Common_functions):
             raise RelaxNoSequenceError
 
         # Loop over spin data.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Check for sufficient data.
-            if not (hasattr(spin, 'ref') and hasattr(spin, 'sat') and hasattr(spin, 'ref_err') and hasattr(spin, 'sat_err')):
+            if not hasattr(spin, 'intensities') or not len(spin.intensities) == 2:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient data'))
+                spin.select = False
+
+            # Check for sufficient errors.
+            elif not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) == 2:
+                warn(RelaxDeselectWarning(spin_id, 'missing errors'))
                 spin.select = False
 
 
@@ -178,18 +217,18 @@ class Noe(Common_functions):
 
         # Reference intensity.
         if object_name == 'ref':
-            grace_string = 'Reference intensity'
+            return 'Reference intensity'
 
         # Saturated intensity.
         if object_name == 'sat':
-            grace_string = 'Saturated intensity'
+            return 'Saturated intensity'
 
         # NOE.
         if object_name == 'noe':
-            grace_string = '\\qNOE\\Q'
+            return '\\qNOE\\Q'
 
-        # Return the Grace string.
-        return grace_string
+        # Return the data type as the Grace string.
+        return data_type
 
 
     def return_units(self, stat_type):
@@ -198,14 +237,14 @@ class Noe(Common_functions):
         return None
 
 
-    def set_error(self, error=0.0, spectrum_type=None, spin_id=None):
+    def set_error(self, error=0.0, spectrum_id=None, spin_id=None):
         """Set the peak intensity errors.
 
         @param error:           The peak intensity error value defined as the RMSD of the base plane
                                 noise.
         @type error:            float
-        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
-        @type spectrum_type:    str
+        @keyword spectrum_id:   The id of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_id:      str
         @param spin_id:         The spin identification string.
         @type spin_id:          str
         """
@@ -224,7 +263,39 @@ class Noe(Common_functions):
                 continue
 
             # Set the error.
-            if spectrum_type == 'ref':
+            if spectrum_id == 'ref':
                 spin.ref_err = float(error)
-            elif spectrum_type == 'sat':
+            elif spectrum_id == 'sat':
                 spin.sat_err = float(error)
+
+
+    def spectrum_type(self, spectrum_type=None, spectrum_id=None):
+        """Set the spectrum type corresponding to the spectrum_id.
+
+        @keyword spectrum_type: The type of NOE spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @keyword spectrum_id:   The spectrum id string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the current pipe exists
+        pipes.test()
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the spectrum id string.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id
+
+        # The spectrum id index.
+        spect_index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise or update the spectrum_type data structure as necessary.
+        if not hasattr(cdp, 'spectrum_type'):
+            cdp.spectrum_type = [None] * len(cdp.spectrum_ids)
+        elif len(cdp.spectrum_type) < len(cdp.spectrum_ids):
+            cdp.spectrum_type.append([None] * (len(cdp.spectrum_ids) - len(cdp.spectrum_type)))
+
+        # Set the error.
+        cdp.spectrum_type[spect_index] = spectrum_type

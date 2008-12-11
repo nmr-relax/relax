@@ -27,7 +27,7 @@ from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
-from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.mass import centre_of_mass
 from internal import Internal
@@ -304,14 +304,14 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     tensor_pdb_file.close()
 
 
-def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False):
+def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=False):
     """Create a PDB representation of the XH vector distribution.
 
     @param length:      The length to set the vectors to in the PDB file.
     @type length:       float
     @param symmetry:    The symmetry flag which if set will create a second PDB chain 'B' which
         is the same as chain 'A' but with the XH vectors reversed.
-    @type symmetry:     int
+    @type symmetry:     bool
     @param file:        The name of the PDB file to create.
     @type file:         str
     @param dir:         The name of the directory to place the PDB file into.
@@ -350,6 +350,9 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
     # Create the structural object.
     structure = Internal()
 
+    # Add a structure.
+    structure.add_struct(name='vector_dist')
+
     # Initialise the residue and atom numbers.
     res_num = 1
     atom_num = 1
@@ -369,7 +372,7 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
     #################
 
     # Loop over the spin systems.
-    for spin in spin_loop():
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Skip deselected spin systems.
         if not spin.select:
             continue
@@ -382,10 +385,10 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
         vector = spin.xh_vect * length * 1e10
 
         # Add the central X atom.
-        structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.heteronuc, res_name=spin.name, chain_id='A', res_num=spin.num, pos=R, segment_id=None, element=spin.heteronuc, struct_index=None)
+        structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.name, res_name=res_name, chain_id='A', res_num=res_num, pos=R, segment_id=None, element=spin.element, struct_index=None)
 
         # Add the H atom.
-        structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name=spin.proton, res_name=spin.name, chain_id='A', res_num=spin.num, pos=R+vector, segment_id=None, element=spin.proton, struct_index=None)
+        structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=res_name, chain_id='A', res_num=res_num, pos=R+vector, segment_id=None, element='H', struct_index=None)
 
         # Connect the two atoms.
         structure.atom_connect(index1=atom_num-1, index2=atom_num)
@@ -396,7 +399,7 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
     # Symmetry chain.
     if symmetry:
         # Loop over the spin systems.
-        for spin in spin_loop():
+        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
             # Skip deselected spin systems.
             if not spin.select:
                 continue
@@ -409,13 +412,16 @@ def create_vector_dist(length=None, symmetry=1, file=None, dir=None, force=False
             vector = spin.xh_vect * length * 1e10
 
             # Add the central X atom.
-            structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.heteronuc, res_name=spin.name, chain_id='B', res_num=spin.num, pos=R, segment_id=None, element=spin.heteronuc, struct_index=None)
+            structure.atom_add(pdb_record='ATOM', atom_num=atom_num, atom_name=spin.name, res_name=res_name, chain_id='B', res_num=res_num, pos=R, segment_id=None, element=spin.element, struct_index=None)
 
             # Add the H atom.
-            structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name=spin.proton, res_name=spin.name, chain_id='B', res_num=spin.num, pos=R+vector, segment_id=None, element=spin.proton, struct_index=None)
+            structure.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=res_name, chain_id='B', res_num=res_num, pos=R-vector, segment_id=None, element='H', struct_index=None)
 
             # Connect the two atoms.
             structure.atom_connect(index1=atom_num-1, index2=atom_num)
+
+            # Increment the atom number.
+            atom_num = atom_num + 2
 
 
     # Create the PDB file.

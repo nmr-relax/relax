@@ -24,16 +24,18 @@
 """Module for interfacing with Grace (also known as Xmgrace, Xmgr, and ace)."""
 
 # Python module imports.
-from numpy import array
+from numpy import array, ndarray
 from os import system
 from re import match
+from warnings import warn
 
 # relax module imports.
 import generic_fns
-from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, spin_loop
+from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
 from relax_io import get_file_path, open_write_file, test_binary
+from relax_warnings import RelaxWarning
 from specific_fns.setup import get_specific_fn
 
 
@@ -187,9 +189,13 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             # Initialise an empty array for the individual spin data.
             spin_data = [mol_name, res_num, res_name, spin.num, spin.name, None, None, None, None]
 
+            # FIXME:  Need to work out how the spin_id string can be handled in Grace.
             # Spin ID string on the x-axis.
+            #if x_data_type == 'spin':
+            #    spin_data[-4] = spin_id
+            # Residue number.
             if x_data_type == 'spin':
-                spin_data[-4] = spin_id
+                spin_data[-4] = res_num
 
             # Parameter value for the x-axis.
             else:
@@ -307,18 +313,29 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Get the data.
     data = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
 
+    # Generate the spin_ids for all the data.
+    spin_ids = []
+    for line in data:
+        spin_ids.append(generate_spin_id(line[0], line[1], line[2], line[3], line[4]))
+
+    # No data, so close the empty file and exit.
+    if data == None or data == []:
+        warn(RelaxWarning("No data could be found, creating an empty file."))
+        file.close()
+        return
+
     # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
     graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
 
     # Test for multiple data sets.
     multi = False
-    if type(data[0][-4]) == list:
+    if type(data[0][-4]) == list or isinstance(data[0][-4], ndarray):
         multi = True
 
     # Multiple data sets.
     if multi:
         # Write the header.
-        write_multi_header(data, file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string, norm=norm)
+        write_multi_header(data, file=file, spin_ids=spin_ids, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string, norm=norm)
 
         # Write the data.
         write_multi_data(data, file=file, graph_type=graph_type, norm=norm)
@@ -440,12 +457,16 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
             file.write("@    world xmax " + `cdp.mol[0].res[0].spin[-1].num + 1` + "\n")
 
             # X-axis label.
-            file.write("@    xaxis  label \"Spin number\"\n")
+            # FIXME.
+            #file.write("@    xaxis  label \"Spin number\"\n")
+            file.write("@    xaxis  label \"Residue number\"\n")
 
         # Mixed data.
         if seq_type == 'mixed':
             # X-axis label.
-            file.write("@    xaxis  label \"Spin identification string\"\n")
+            # FIXME.
+            #file.write("@    xaxis  label \"Spin identification string\"\n")
+            file.write("@    xaxis  label \"Residue number\"\n")
 
     else:
         # Get the units.
@@ -557,15 +578,15 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         file.write("&\n")
 
 
-def write_multi_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None, norm=False):
+def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None, norm=False):
     """Write the grace header.
 
     @param data:                    The graph numerical data.
     @type data:                     list of lists of float
     @keyword file:                  The file object to write the data to.
     @type file:                     file object
-    @keyword spin_id:               The spin identification string.
-    @type spin_id:                  str
+    @keyword spin_ids:              A list of spin identification strings.
+    @type spin_ids:                 list of str
     @keyword x_data_type:           The category of the X-axis data.
     @type x_data_type:              str
     @keyword y_data_type:           The category of the Y-axis data.
@@ -667,4 +688,4 @@ def write_multi_header(data, file=None, spin_id=None, x_data_type=None, y_data_t
         file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
 
         # Legend.
-        file.write("@    s%i legend \"Spin %s\"\n" % (i, data[i][5]))
+        file.write("@    s%i legend \"Spin %s\"\n" % (i, spin_ids[i]))

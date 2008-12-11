@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import fromstring
 import sys
 from unittest import TestCase
 
@@ -56,16 +55,16 @@ class Angles(TestCase):
         xh_vects = [
             None,
             None,
-            fromstring('\xf8s\xf3<\xec,\xda?\x01\xb4\xea\xdc\xa8\xc8\xe9\xbf\x94~dBlj\xdb?'),
-            fromstring('\xd6I\x05\xbe57\xbd\xbf\x90\x96\xc8\x86B\xa9\xef\xbf\xdfp\x96\xa7\x85\xf4\xb6\xbf'),
-            fromstring('\xe3\xdds\x90O\xb0\x90\xbf%\xccH\xdf\xe49\xef\xbf\xf1\xb6\x81\x05\xc5\xe6\xcb?'),
-            fromstring('\x8d\xbd5x9a\xd0\xbf\xa2,\xdc\x89\x8f\xbc\xee\xbf\x8f\xb7_\x143\xee\xbb\xbf'),
-            fromstring('\x03\xa2\x0f4+\x86\xed?(Y\xf1\xcc&a\xd8?\x0c\xb6!g\xe1\xee\xae?'),
-            fromstring('\xe3\xee?\x82\x17\xa5\xed?\xa4\xa6\x01\x07\xa2\x05\xd2??\xd8\xd0\xba\xde\xfe\xcf?'),
+            [0.408991870425, -0.805744582632, 0.428370537602],
+            [-0.114123686687, -0.989411605119, -0.0896686109685],
+            [-0.0162975723187, -0.975817142584, 0.217980029763],
+            [-0.255934111969, -0.960517663248, -0.109103386377],
+            [0.922628022844, 0.38092966093, 0.0604162634271],
+            [0.926402811426, 0.281593806116, 0.249965516299],
             None,
             None,
-            fromstring('u\xff\xd6\xe1\xde?\xea?\x9a1\xbf\x1b&@\xe2?g\xd5\xf0\xb8\x9b\xf0\xa5\xbf'),
-            fromstring('\x0f\x95|\\\xd1\x97\xcc\xbfC0\xf2\xe9\xa3\xc1\xa1\xbf\xa7\xb1H9\xf0+\xef\xbf'),
+            [0.820296708196, 0.570330671495, -0.0428513205774],
+            [-0.223383112106, -0.034680483158, -0.974113571055],
             None,
             None,
             None,
