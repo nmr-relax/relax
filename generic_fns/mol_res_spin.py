@@ -1603,6 +1603,10 @@ def return_molecule(selection=None, pipe=None):
         if mol not in select_obj:
             continue
 
+        # Skip named molecules if the selection is None.
+        if selection == None and mol.name != None:
+            continue
+
         # Store the molecule container.
         mol_container = mol
 
