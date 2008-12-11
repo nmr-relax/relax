@@ -315,6 +315,10 @@ class Mf(TestCase):
             iter = 156
             f_count = 701
             g_count = 163
+        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
+            iter = 156
+            f_count = 695
+            g_count = 162
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -366,6 +370,9 @@ class Mf(TestCase):
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
             f_count = 384
             g_count = 384
+        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
+            f_count = 377
+            g_count = 377
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -466,6 +473,9 @@ class Mf(TestCase):
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
             f_count = 757
             g_count = 757
+        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
+            f_count = 757
+            g_count = 757
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -513,6 +523,10 @@ class Mf(TestCase):
         g_count = 23
         h_count = 18
         warning = None
+
+        # Optimisation differences.
+        if SYSTEM == 'Darwin' and ARCH[0] == '32bit':
+            f_count = 94
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -568,6 +582,9 @@ class Mf(TestCase):
         elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
             f_count = 165
             g_count = 165
+        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
+            f_count = 160
+            g_count = 160
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
