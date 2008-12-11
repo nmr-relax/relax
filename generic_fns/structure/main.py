@@ -25,6 +25,7 @@ from math import sqrt
 from numpy import dot, float64, ndarray, zeros
 from os import F_OK, access
 from re import search
+from string import replace
 import sys
 from warnings import warn
 
@@ -70,6 +71,15 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
 
     # Loop over all atoms of the spin_id selection.
     for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+
+        # Remove the '+' regular expression character from the mol, res, and spin names!
+        if mol_name and search('\+', mol_name):
+            mol_name = replace(mol_name, '+', '')
+        if res_name and search('\+', res_name):
+            res_name = replace(res_name, '+', '')
+        if atom_name and search('\+', atom_name):
+            atom_name = replace(atom_name, '+', '')
+
         # Initialise the identification string.
         id = ''
 
