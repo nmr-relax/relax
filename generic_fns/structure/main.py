@@ -73,7 +73,17 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+    model_index = -1
+    last_model = None
+    for model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+        # Update the model info.
+        if last_model != model_num:
+            model_index = model_index + 1
+            last_model = model_num
+
+        # Only load one set of spins if combine_models is set.
+        if combine_models and model_index >= 1:
+            break
 
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
