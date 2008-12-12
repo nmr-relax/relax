@@ -311,7 +311,7 @@ class Structure:
         generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
 
 
-    def read_pdb(self, file=None, dir=None, model=None, parser='scientific'):
+    def read_pdb(self, file=None, dir=None, read_mol=None, set_mol_names=None, read_model=None, set_model_nums=None, parser='scientific'):
         """The PDB loading function.
 
         Keyword Arguments
@@ -321,7 +321,13 @@ class Structure:
 
         dir:  The directory where the file is located.
 
-        model:  The PDB model number.
+        read_mol:  If set, only the given molecule(s) will be read.
+
+        set_mol_names:  Set the names of the read molecules.
+
+        read_model:  If set, only the given model number(s) from the PDB file will be read.
+
+        set_model_nums:  Set the model numbers of the read molecules.
 
         parser:  The PDB parser used to read the file.
 
@@ -329,9 +335,10 @@ class Structure:
         Description
         ~~~~~~~~~~~
 
-        To load a specific model from the PDB file, set the model flag to an integer i.  The
-        structure beginning with the line 'MODEL i' in the PDB file will be loaded.  Otherwise all
-        structures will be loaded starting from the model number 1.
+        To load a specific model from the PDB file, set the read_model flag to an integer i.  The
+        structures beginning with the line 'MODEL i' in the PDB file will be loaded and the model
+        number for these structures will be set to i.  If this argument is not set, all structures
+        from all models will be read.
 
         A few different PDB parsers can be used to read the structural data.  These are selected by
         setting the 'parser' argument to one of:
