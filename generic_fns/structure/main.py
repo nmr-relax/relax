@@ -42,17 +42,20 @@ from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorW
 
 
 
-def load_spins(spin_id=None, str_id=None, ave_pos=False):
+def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
 
-    @keyword spin_id:   The molecule, residue, and spin identifier string.
-    @type spin_id:      str
-    @keyword str_id:    The structure identifier.  This can be the file name, model number, or
-                        structure number.
-    @type str_id:       int or str
-    @keyword ave_pos:   A flag specifying if the average atom position or the atom position from all
-                        loaded structures is loaded into the SpinContainer.
-    @type ave_pos:      bool
+    @keyword spin_id:           The molecule, residue, and spin identifier string.
+    @type spin_id:              str
+    @keyword str_id:            The structure identifier.  This can be the file name, model number,
+                                or structure number.
+    @type str_id:               int or str
+    @keyword combine_models:    A flag specifying if spins from only one structure of the ensemble
+                                or from all should be loaded.
+    @type combine_models:       bool
+    @keyword ave_pos:           A flag specifying if the average atom position or the atom position
+                                from all loaded structures is loaded into the SpinContainer.
+    @type ave_pos:              bool
     """
 
     # Test if the current data pipe exists.
