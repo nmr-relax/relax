@@ -918,7 +918,7 @@ class Internal(Base_struct_API):
             self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
 
             # Fill the structural data object.
-            self.__fill_object_from_pdb(records, struct_index=i)
+            self.__fill_object_from_pdb(records, struct_index=len(self.structural_data)-1)
 
             # Increment the structure index.
             i = i + 1
