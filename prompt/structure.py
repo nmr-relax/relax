@@ -31,7 +31,7 @@ import sys
 import generic_fns.structure.geometric
 import generic_fns.structure.main
 import help
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxStrError
 
 
 class Structure:
@@ -311,7 +311,7 @@ class Structure:
         generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
 
 
-    def read_pdb(self, file=None, dir=None, read_mol=None, set_mol_names=None, read_model=None, set_model_nums=None, parser='scientific'):
+    def read_pdb(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal'):
         """The PDB loading function.
 
         Keyword Arguments
@@ -323,11 +323,11 @@ class Structure:
 
         read_mol:  If set, only the given molecule(s) will be read.
 
-        set_mol_names:  Set the names of the read molecules.
+        set_mol_name:  Set the names of the read molecules.
 
         read_model:  If set, only the given model number(s) from the PDB file will be read.
 
-        set_model_nums:  Set the model numbers of the read molecules.
+        set_model_num:  Set the model numbers of the read molecules.
 
         parser:  The PDB parser used to read the file.
 
@@ -335,33 +335,73 @@ class Structure:
         Description
         ~~~~~~~~~~~
 
-        To load a specific model from the PDB file, set the read_model flag to an integer i.  The
-        structures beginning with the line 'MODEL i' in the PDB file will be loaded and the model
-        number for these structures will be set to i.  If this argument is not set, all structures
-        from all models will be read.
+        The reading of PDB files into relax is quite a flexible procedure allowing for both models,
+        defined as an ensemble of the same molecule but with different atomic positions, and
+        different molecules within the same model.  One of more molecules can exist in one or more
+        models.  The flexibility allows PDB models to be converted into different molecules and
+        different PDB files loaded as the same molecule but as different models.  This flexibility
+        is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and
+        'set_model_num'.
 
-        A few different PDB parsers can be used to read the structural data.  These are selected by
+        A few different PDB parsers can be used to read the structural data.  The choice of which to
+        use depends on whether your PDB file is supported by that reader.  These are selected by
         setting the 'parser' argument to one of:
 
             'scientific' - the Scientific Python PDB parser.
             'internal' - a lower quality and less reliable, although faster, PDB parser built into
                 relax.
 
+        In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB
+        readers in relax recognise this.  The molecule level is quite different between the
+        Scientific Python and internal readers.  For how Scientific Python defines molecules, please
+        see its documentation.  The internal reader is far simpler as it defines molecules using the
+        TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.
 
-        Example
-        ~~~~~~~
+        The 'set_mol_name' argument is used to name the molecules within the PDB (within one
+        model).  If not set, then the molecules will be named after the file name, with the molecule
+        number appended if more than one exists.
 
-        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', type one of:
+        Note that relax will complain if it cannot work out what to do.
+
+
+        Examples
+        ~~~~~~~~
+
+        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all
+        models and all molecules, type one of:
 
         relax> structure.read_pdb('test.pdb', '~/pdb')
         relax> structure.read_pdb(file='test.pdb', dir='pdb')
 
 
-        To load the 10th model from the file 'test.pdb' using the internal relax parser, use one of:
+        To load the 10th model from the file 'test.pdb' using the Scientific Python PDB parser and
+        naming it 'CaM', use one of:
 
-        relax> structure.read_pdb('test.pdb', model=10, parser='internal')
-        relax> structure.read_pdb(file='test.pdb', model=10, parser='internal')
+        relax> structure.read_pdb('test.pdb', read_model=10, set_mol_name='CaM',
+                                  parser='scientific')
+        relax> structure.read_pdb(file='test.pdb', read_model=10, set_mol_name='CaM',
+                                  parser='scientific')
 
+
+        To load models 1 and 5 from the file 'test.pdb' as two different structures of the same
+        model, type one of:
+
+        relax> structure.read_pdb('test.pdb', read_model=[1, 5], set_model_num=[1, 1])
+        relax> structure.read_pdb('test.pdb', set_mol_name=['CaM_1', 'CaM_2'], read_model=[1, 5],
+                                  set_model_num=[1, 1])
+
+        To load the files 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_2.pdb',
+        'lactose_MCMM4_S1_3.pdb' and 'lactose_MCMM4_S1_4.pdb' as models, type the following sequence
+        of commands:
+
+        relax> structure.read_pdb('lactose_MCMM4_S1_1.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=1)
+        relax> structure.read_pdb('lactose_MCMM4_S1_2.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=2)
+        relax> structure.read_pdb('lactose_MCMM4_S1_3.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=3)
+        relax> structure.read_pdb('lactose_MCMM4_S1_4.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=4)
         """
 
         # Function intro text.
@@ -369,7 +409,10 @@ class Structure:
             text = sys.ps3 + "structure.read_pdb("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", model=" + `model`
+            text = text + ", read_mol=" + `read_mol`
+            text = text + ", set_mol_name=" + `set_mol_name`
+            text = text + ", read_model=" + `read_model`
+            text = text + ", set_model_num=" + `set_model_num`
             text = text + ", parser=" + `parser` + ")"
             print text
 
@@ -381,16 +424,44 @@ class Structure:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # The model argument.
-        if model != None and type(model) != int:
-            raise RelaxNoneIntError, ('model', model)
+        # The read_mol, read_models, and set_model_num arguments.
+        arg_list = [read_mol, read_model, set_model_num]
+        arg_desc = ['read molecule number', 'read model', 'set model numbers']
+        for i in range(len(arg_list)):
+            # Basic type check.
+            if arg_list[i] != None and type(arg_list[i]) != int and type(arg_list[i]) != list:
+                raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+
+            # List check.
+            if type(arg_list[i]) == list:
+                # Zero size list.
+                if len(arg_list[i]) == 0:
+                    raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+
+                # Element check.
+                for j in range(len(arg_list[i])):
+                    if type(arg_list[i][j]) != int:
+                        raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+
+        # The set_mol_name arguments.
+        if set_mol_name != None and type(set_mol_name) != str and type(set_mol_name) != list:
+            raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
+        if type(set_mol_name) == list:
+            # Zero size list.
+            if len(set_mol_name) == 0:
+                raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
+
+            # Element check.
+            for i in range(len(set_mol_name)):
+                if type(set_mol_name[i]) != str:
+                    raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
 
         # PDB parser.
         if type(parser) != str:
             raise RelaxStrError, ('PDB parser', parser)
 
         # Execute the functional code.
-        generic_fns.structure.main.read_pdb(file=file, dir=dir, model=model, parser=parser)
+        generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
     def vectors(self, attached='H', spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
