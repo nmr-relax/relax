@@ -285,7 +285,7 @@ class Base_struct_API:
                     warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory or the directory of the results file."))
 
 
-    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, struct_index=None, verbosity=False):
         """Prototype method stub for loading structures from a PDB file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
@@ -294,8 +294,21 @@ class Base_struct_API:
 
         @param file_path:       The full path of the PDB file.
         @type file_path:        str
-        @param model:           The structural model to use.
-        @type model:            int
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                                molecules are determined differently by the different parsers, but
+                                are numbered consecutively from 1.  If set to None, then all
+                                molecules will be loaded.
+        @type read_mol:         None, int, or list of int
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
+                                then the molecules will be automatically labelled based on the file
+                                name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all
+                                models will be loaded.
+        @type read_model:       None, int, or list of int
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
+                                the PDB model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
         @param struct_index:    The index of the structure.  This optional argument can be useful
                                 for reloading a structure.
         @type struct_index:     int
