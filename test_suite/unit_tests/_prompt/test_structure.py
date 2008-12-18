@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from prompt.structure import Structure
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.structure_testing_base import Structure_base_class
 
 # Unit test imports.
@@ -197,17 +197,56 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.structure_fns.read_pdb, file='test.pdb', dir=data[1])
 
 
-    def test_read_pdb_argfail_model(self):
-        """The model arg test of the structure.read_pdb() user function."""
+    def test_read_pdb_argfail_read_mol(self):
+        """The read_mol arg test of the structure.read_pdb() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, bin, and int arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'bin' or data[0] == 'int':
+            # Catch the None, int, and int list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'int list':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.structure_fns.read_pdb, file='test.pdb', model=data[1])
+            self.assertRaises(RelaxNoneIntListIntError, self.structure_fns.read_pdb, file='test.pdb', read_mol=data[1])
+
+
+    def test_read_pdb_argfail_set_mol_names(self):
+        """The set_mol_names arg test of the structure.read_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, str, and str list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str' or data[0] == 'str list':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrListStrError, self.structure_fns.read_pdb, file='test.pdb', set_mol_names=data[1])
+
+
+    def test_read_pdb_argfail_read_model(self):
+        """The read_model arg test of the structure.read_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and int list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'int list':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntListIntError, self.structure_fns.read_pdb, file='test.pdb', read_model=data[1])
+
+
+    def test_read_pdb_argfail_set_model_nums(self):
+        """The set_model_nums arg test of the structure.read_pdb() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None, int, and int list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'int list':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntListIntError, self.structure_fns.read_pdb, file='test.pdb', set_model_nums=data[1])
 
 
     def test_read_pdb_argfail_parser(self):
