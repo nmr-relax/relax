@@ -75,7 +75,7 @@ class Test_main(TestCase):
         results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='internal')
 
         # Duplicate the data.
         self.inst.duplicate_data('orig', 'new', model_index=0)
@@ -94,7 +94,7 @@ class Test_main(TestCase):
         results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='internal')
 
         # Duplicate the data, model by model.
         self.inst.duplicate_data('orig', 'new', model_index=0)
@@ -110,13 +110,13 @@ class Test_main(TestCase):
         results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
 
         # Load a structure.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='internal')
 
         # Create a new model-free data pipe.
         ds.add(pipe_name='new', pipe_type='mf')
 
         # Load the structure for the second pipe.
-        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1, parser='internal')
+        structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='internal')
 
         # Modify the structure.
         dp = pipes.get_pipe('new')
