@@ -105,12 +105,12 @@ class Noe(Common_functions):
                 if cdp.spectrum_type[i] == 'sat':
                     sat = sat + spin.intensities[i]
                     sat_err = sat_err + spin.intensity_err[i]
-            
+
                 # Ref spectra.
                 if cdp.spectrum_type[i] == 'ref':
                     ref = ref + spin.intensities[i]
                     ref_err = ref_err + spin.intensity_err[i]
-            
+
             # Calculate the NOE.
             spin.noe = sat / ref
 

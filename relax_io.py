@@ -521,7 +521,7 @@ class DummyFileObject:
 
     def readlines(self):
         """Mimic the file object readlines() method.
-        
+
         This method works even if this dummy file object is closed!
 
 

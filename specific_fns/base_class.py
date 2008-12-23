@@ -209,7 +209,7 @@ class Common_functions:
         @type param:    str
         @param sim:     The Monte Carlo simulation index.
         @type sim:      None or int
-        @return:        The value and error corresponding to 
+        @return:        The value and error corresponding to
         @rtype:         tuple of length 2 of floats or None
         """
 
@@ -442,7 +442,7 @@ class Common_functions:
 
     def sim_return_param(self, spin, index):
         """Return the array of simulation parameter values.
- 
+
         @param spin:        The spin container.
         @type spin:         SpinContainer instance
         @param index:       The index of the parameter to return the array of values for.

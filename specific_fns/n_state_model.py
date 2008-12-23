@@ -191,7 +191,7 @@ class N_state_model(Common_functions):
 
         # No data is present.
         if not list:
-            raise RelaxError, "Neither RDC, PCS, nor alignment tensor data is present." 
+            raise RelaxError, "Neither RDC, PCS, nor alignment tensor data is present."
 
         # Return the list.
         return list
@@ -319,7 +319,7 @@ class N_state_model(Common_functions):
 
         As::
                     N-1
-                    \ 
+                    \
             pN = 1 - >  pc,
                     /__
                     c=1
@@ -1066,6 +1066,7 @@ class N_state_model(Common_functions):
         Note that setting the probability for state N will do nothing as it is equal to one minus
         all the other probabilities.
         """
+
         __docformat__ = "plaintext"
 
         # Get the current data pipe.
@@ -1398,7 +1399,7 @@ class N_state_model(Common_functions):
                     for rdc in spin.rdc:
                         if type(rdc) == float:
                             n = n + 1
-        
+
             # PCS data (skipping array elements set to None).
             if 'pcs' in data_types:
                 if hasattr(spin, 'pcs'):
@@ -1466,7 +1467,7 @@ class N_state_model(Common_functions):
                 exists = True
         if not exists:
             raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
-            
+
         # Set the reference domain.
         cdp.ref_domain = ref
 
@@ -1534,6 +1535,7 @@ class N_state_model(Common_functions):
         The objects corresponding to the object names are lists (or arrays) with each element
         corrsponding to each state.
         """
+
         __docformat__ = "plaintext"
 
         # Probability.
@@ -1662,6 +1664,7 @@ class N_state_model(Common_functions):
         To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the
         last, the number c should be added to the end of the parameter name.  So the Euler angle
         gamma of the third state is specified using the string 'gamma2'.
+
         """
         __docformat__ = "plaintext"
 
