@@ -46,6 +46,7 @@ from noe import Noe
 from palmer import Palmer
 from peak_lists import Peak_lists
 from pipe_create import Pipe_create
+from relax_disp import Relax_disp
 from relax_fit import Relax_fit
 from results import Results
 from sequence import Sequence
@@ -69,6 +70,7 @@ __all__ = ['angles',
            'palmer',
            'peak_lists'
            'pipe_create',
+           'relax_disp',
            'relax_fit',
            'results',
            'sequence',
@@ -110,6 +112,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
         suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
         suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Relax_disp))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
         suite_array.append(TestLoader().loadTestsFromTestCase(Results))
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
