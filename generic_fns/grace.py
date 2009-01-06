@@ -26,14 +26,13 @@
 # Python module imports.
 from numpy import array, ndarray
 from os import system
-from re import match
 from warnings import warn
 
 # relax module imports.
 import generic_fns
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError, RelaxRegExpError
+from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
 from relax_io import get_file_path, open_write_file, test_binary
 from relax_warnings import RelaxWarning
 from specific_fns.setup import get_specific_fn
