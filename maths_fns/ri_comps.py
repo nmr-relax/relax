@@ -248,7 +248,6 @@
 
 # Python module imports.
 from math import pi
-from numpy import float64, zeros
 
 
 # The main functions for the calculation of the Ri components.
