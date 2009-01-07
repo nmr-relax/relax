@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The relaxation curve fitting specific code."""
+"""The relaxation dispersion curve fitting specific code."""
 
 # Python module imports.
 from numpy import array, average, dot, float64, identity, zeros
@@ -38,10 +39,10 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNo
 
 # C modules.
 if C_module_exp_fn:
-    from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
+    from maths_fns.relax_disp import setup, func, dfunc, d2func, back_calc_I
 
 
-class Relax_fit(Common_functions):
+class Relax_disp(Common_functions):
     """Class containing functions for relaxation curve fitting."""
 
     def assemble_param_vector(self, spin=None, sim_index=None):
@@ -379,6 +380,40 @@ class Relax_fit(Common_functions):
                 spin.iinf = param_vector[2]
 
 
+    def exp_type(self, exp='cpmg'):
+        """Function for selecting the relaxation dispersion experiment type performed.
+        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
+        @type exp:    str
+        """
+
+        # Test if the current pipe exists.
+        pipes.test
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the pipe type is set to 'relax_disp'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_disp':
+            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
+
+        # Test if the sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+       # CPMG relaxation dispersion experiments.
+       if exp = 'cpmg':
+           print "CPMG relaxation dispersion experiments."
+
+       # R1rho relaxation dispersion experiments.
+       elif exp = 'r1rho':
+           print "R1rho relaxation dispersion experiments."
+
+       # Invalid relaxation dispersion experiment.
+       else:
+           raise RelaxError, "The relaxation dispersion experiment '" + exp + "' is invalid."
+
+
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
         """The exponential curve fitting grid search function.
 
@@ -707,7 +742,7 @@ class Relax_fit(Common_functions):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
                     index = index + len(relax_error[k])
 
-                min_options = min_options + (self.relax_fit.lm_dri, lm_error)
+                min_options = min_options + (self.relax_disp.lm_dri, lm_error)
 
 
             # Minimisation.
@@ -968,10 +1003,11 @@ class Relax_fit(Common_functions):
         return None
 
 
-    def select_model(self, model='exp'):
+    def select_model(self, model='fast'):
         """Function for selecting the model of the exponential curve.
 
-        @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
+        @keyword model: The relaxation dispersion time scale for curve fitting.  Can be one of
+                        'fast' or 'slow'.
         @type model:    str
         """
 
@@ -981,24 +1017,24 @@ class Relax_fit(Common_functions):
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
-        # Test if the pipe type is set to 'relax_fit'.
+        # Test if the pipe type is set to 'relax_disp'.
         function_type = cdp.pipe_type
-        if function_type != 'relax_fit':
+        if function_type != 'relax_disp':
             raise RelaxFuncSetupError, specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Two parameter exponential fit.
-        if model == 'exp':
+        # Fast-exchange regime.
+        if model == 'fast':
             print "Two parameter exponential fit."
-            params = ['Rx', 'I0']
+            params = ['R2', 'Rex', 'kex']
 
-        # Three parameter inversion recovery fit.
-        elif model == 'inv':
+        # Slow-exchange regime.
+        elif model == 'slow':
             print "Three parameter inversion recovery fit."
-            params = ['Rx', 'I0', 'Iinf']
+            params = ['R2A', 'kA', 'dw']
 
         # Invalid model.
         else:
@@ -1010,7 +1046,7 @@ class Relax_fit(Common_functions):
 
     def set_doc(self):
         """
-        Relaxation curve fitting set details
+        Relaxation dispersion curve fitting set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and
