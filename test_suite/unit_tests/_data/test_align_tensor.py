@@ -21,8 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import cos, pi, sin
-from numpy import array, dot, transpose
+from numpy import array
 from unittest import TestCase
 
 # relax module imports.
