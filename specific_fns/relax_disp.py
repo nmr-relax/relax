@@ -168,6 +168,43 @@ class Relax_disp(Common_functions):
         return results[relax_time_index]
 
 
+    def cpmg_frq(self, frq=0, spectrum_id=None):
+        """Set the CPMG frequency associated with a given spectrum.
+
+        @keyword frq:           The frequency, in Hz, of the CPMG train.
+        @type frq:              int
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
+
+        # Store the CPMG frequency in the class instance.
+        self.__cpmg_frq = int(frq)
+
+        # The index.
+        index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise the global CPMG frequency data structure if needed.
+        if not hasattr(cdp, 'frq'):
+            cdp.frq = [None] * len(cdp.spectrum_ids)
+
+       # Index not present in the global CPMG frequency data structure.
+       while 1:
+           if index > len(cdp.frq) - 1:
+               cdp.frq.append(None)
+           else:
+               break
+
+        # Add the frequency at the correct position.
+        cdp.frq[index] = frq
+
+
     def create_mc_data(self, spin_id):
         """Create the Monte Carlo peak intensity data.
 
@@ -311,20 +348,25 @@ class Relax_disp(Common_functions):
         Relaxation curve fitting default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        These values are completely arbitrary as peak heights (or volumes) are extremely variable
-        and the Rx value is a compensation for both the R1 and R2 values.
-        ___________________________________________________________________
-        |                        |               |                        |
-        | Data type              | Object name   | Value                  |
-        |________________________|_______________|________________________|
-        |                        |               |                        |
-        | Relaxation rate        | 'rx'          | 8.0                    |
-        |                        |               |                        |
-        | Initial intensity      | 'i0'          | 10000.0                |
-        |                        |               |                        |
-        | Intensity at infinity  | 'iinf'        | 0.0                    |
-        |                        |               |                        |
-        |________________________|_______________|________________________|
+        These values are arbitrary and will depend on the system studied.
+        ________________________________________________________________________________
+        |                                                   |               |          |
+        | Data type                                         | Object name   | Value    |
+        |___________________________________________________|_______________|__________|
+        |                                                   |               |          |
+        | Relaxation rate                                   | 'R2'          | 8.0      |
+        |                                                   |               |          |
+        | Chemical exchange contribution to 'R2'            | 'Rex'         | 2.0      |
+        |                                                   |               |          |
+        | Exchange rate                                     | 'kex'         | 10000.0  |
+        |                                                   |               |          |
+        | Relaxation rate for state A                       | 'R2A'         | 0.0      |
+        |                                                   |               |          |
+        | Exchange rate from state A to state B             | 'kA'          | 10000.0  |
+        |                                                   |               |          |
+        | Chemical shift difference between states A and B  | 'dw'          | 100      |
+        |                                                   |               |          |
+        |___________________________________________________|_______________|__________|
 
         """
 
@@ -852,43 +894,6 @@ class Relax_disp(Common_functions):
             if len(spin.intensities) < 3:
                 spin.select = False
                 continue
-
-
-    def relax_time(self, time=0.0, spectrum_id=None):
-        """Set the relaxation time period associated with a given spectrum.
-
-        @keyword time:          The time, in seconds, of the relaxation period.
-        @type time:             float
-        @keyword spectrum_id:   The spectrum identification string.
-        @type spectrum_id:      str
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Test if the spectrum id exists.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
-
-        # Store the relaxation time in the class instance.
-        self.__relax_time = float(time)
-
-        # The index.
-        index = cdp.spectrum_ids.index(spectrum_id)
-
-        # Initialise the global relaxation time data structure if needed.
-        if not hasattr(cdp, 'relax_times'):
-            cdp.relax_times = [None] * len(cdp.spectrum_ids)
-
-        # Index not present in the global relaxation time data structure.
-        while 1:
-            if index > len(cdp.relax_times) - 1:
-                cdp.relax_times.append(None)
-            else:
-                break
-
-        # Add the time at the correct position.
-        cdp.relax_times[index] = time
 
 
     def return_data(self, spin):
