@@ -26,7 +26,6 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes, selection
-from relax_errors import RelaxError, RelaxNoPipeError
 
 
 class Test_selection(TestCase):
