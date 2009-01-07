@@ -25,7 +25,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxError
 
 
 class Empty_container:
