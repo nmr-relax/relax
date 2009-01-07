@@ -27,7 +27,7 @@
 from math import log
 
 # relax module imports.
-from pipes import cdp_name, get_type, has_pipe, pipe_names, switch
+from pipes import get_type, has_pipe, pipe_names, switch
 from relax_errors import RelaxError, RelaxPipeError
 from specific_fns.setup import get_specific_fn
 

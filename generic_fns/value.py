@@ -24,15 +24,14 @@
 """Module for the manipulation of parameter and constant values."""
 
 # Python module imports.
-from numpy import ndarray, zeros
-from re import compile, match
+from numpy import ndarray
 import sys
 
 # relax module imports.
-from generic_fns import diffusion_tensor, minimise, pipes
+from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoResError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
+from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
 from specific_fns.setup import get_specific_fn
 

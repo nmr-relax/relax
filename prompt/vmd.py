@@ -30,7 +30,6 @@ import sys
 # relax module imports.
 import help
 from generic_fns import vmd
-from relax_errors import RelaxStrError
 
 
 class Vmd:

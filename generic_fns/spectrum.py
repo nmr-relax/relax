@@ -29,13 +29,12 @@
 from math import sqrt
 from re import split
 import string
-import sys
 from warnings import warn
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxArgNotInListError, RelaxImplementError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxImplementError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 

@@ -27,11 +27,9 @@ from warnings import warn
 
 # relax module imports.
 from base_class import Common_functions
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from relax_errors import RelaxArgNotInListError, RelaxError, RelaxInvalidDataError, RelaxNoSequenceError, RelaxRegExpError
-from relax_io import open_write_file
+from relax_errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
 
 

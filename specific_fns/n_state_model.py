@@ -26,7 +26,7 @@
 # Python module imports.
 from math import acos, cos, pi, sqrt
 from minfx.generic import generic_minimise
-from numpy import array, dot, float64, identity, ones, zeros
+from numpy import array, dot, float64, identity, zeros
 from numpy.linalg import inv, norm
 from re import search
 from warnings import warn

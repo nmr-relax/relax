@@ -23,7 +23,6 @@
 
 # Python module imports.
 from re import search
-from string import replace
 
 # relax module imports.
 from base_class import Common_functions

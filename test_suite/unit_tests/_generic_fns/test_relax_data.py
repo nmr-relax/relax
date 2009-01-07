@@ -25,7 +25,6 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns import relax_data
-from relax_errors import RelaxError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 

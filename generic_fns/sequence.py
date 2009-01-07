@@ -23,9 +23,6 @@
 # Module docstring.
 """Module for handling the molecule, residue, and spin sequence."""
 
-# Python module imports.
-from copy import deepcopy
-
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 import pipes

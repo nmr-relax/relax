@@ -25,12 +25,11 @@
 
 # Python module imports.
 from copy import deepcopy
-import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoResError, RelaxNoRDCError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
+from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
 from relax_io import extract_data, strip
 
 
