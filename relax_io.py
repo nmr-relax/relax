@@ -37,7 +37,7 @@ if dep_check.gzip_module:
     from gzip import GzipFile
 if dep_check.devnull_import:
     from os import devnull
-from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep, stat
+from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext
 from re import match, search
 from string import split
@@ -46,6 +46,7 @@ from sys import stdin, stdout, stderr
 
 # relax module imports.
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+from relax_warnings import RelaxWarning
 
 
 
