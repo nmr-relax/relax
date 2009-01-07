@@ -191,18 +191,18 @@ class Relax_disp(Common_functions):
         index = cdp.spectrum_ids.index(spectrum_id)
 
         # Initialise the global CPMG frequency data structure if needed.
-        if not hasattr(cdp, 'frq'):
-            cdp.frq = [None] * len(cdp.spectrum_ids)
+        if not hasattr(cdp, 'cpmg_frqs'):
+            cdp.cpmg_frqs = [None] * len(cdp.spectrum_ids)
 
        # Index not present in the global CPMG frequency data structure.
        while 1:
-           if index > len(cdp.frq) - 1:
-               cdp.frq.append(None)
+           if index > len(cdp.cpmg_frqs) - 1:
+               cdp.cpmg_frqs.append(None)
            else:
                break
 
         # Add the frequency at the correct position.
-        cdp.frq[index] = frq
+        cdp.cpmg_frqs[index] = frq
 
 
     def create_mc_data(self, spin_id):
