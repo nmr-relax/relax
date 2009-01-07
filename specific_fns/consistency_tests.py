@@ -23,7 +23,6 @@
 
 # Python module imports.
 from re import search
-from string import replace
 
 # relax module imports.
 from base_class import Common_functions
@@ -251,7 +250,7 @@ class Consistency_tests(Common_functions):
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         These default values are found in the file 'physical_constants.py'.
 
-         ______________________________________________________________________________________ 
+         ______________________________________________________________________________________
         |                                       |                    |                         |
         | Data type                             | Object name        | Value                   |
         |_______________________________________|____________________|_________________________|

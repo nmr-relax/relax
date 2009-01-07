@@ -37,7 +37,6 @@ with the command:
 
 # Python module imports.
 from string import replace
-import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop

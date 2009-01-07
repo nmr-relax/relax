@@ -143,10 +143,10 @@ g31P = 10.841 * 1e7
 # Function for returning the desired gyromagnetic ratio.
 def return_gyromagnetic_ratio(nucleus=None):
     """Return the gyromagnetic ratio for the given nucleus type.
- 
+
     @keyword nucleus:   The nucleus type.
     @type nucleus:      str
-    @raises RelaxError: If the nucleus type is unknown.           
+    @raises RelaxError: If the nucleus type is unknown.
     @returns:           The desired gyromagnetic ratio.
     @rtype:             float
     """
@@ -194,7 +194,7 @@ def return_atomic_mass(element=None):
 
     @keyword element:   The element type.
     @type element:      str
-    @raises RelaxError: If the element type is unknown.           
+    @raises RelaxError: If the element type is unknown.
     @returns:           The desired atomic mass.
     @rtype:             float
     """

@@ -24,7 +24,6 @@
 # Python module imports.
 from math import pi
 from numpy import dot, float64, ones, sum, transpose, zeros
-import sys
 
 # relax module imports.
 from relax_errors import RelaxError

@@ -20,9 +20,6 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-from numpy import float64, zeros
-
 
 ############################
 # Spectral density values. #

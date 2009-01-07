@@ -23,9 +23,6 @@
 # Module docstring.
 """Module for holding certain model components fixed during optimisation."""
 
-# Python module imports.
-from re import match
-
 # relax module imports.
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop

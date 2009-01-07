@@ -29,7 +29,6 @@ import sys
 
 # relax module imports.
 from generic_fns import angles
-from relax_errors import RelaxStrError
 
 
 class Angles:
