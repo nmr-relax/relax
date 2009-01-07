@@ -35,7 +35,7 @@ import sys
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import diffusion_tensor, pipes
 from physical_constants import return_gyromagnetic_ratio
-from relax_errors import RelaxDirError, RelaxFileError, RelaxFileOverwriteError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNucleusError, RelaxProgFailError
+from relax_errors import RelaxDirError, RelaxFileError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
 

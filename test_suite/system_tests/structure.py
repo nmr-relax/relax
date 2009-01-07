@@ -198,7 +198,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
@@ -278,7 +278,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')

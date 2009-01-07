@@ -215,7 +215,7 @@ class Align_tensor:
             5:  {Azz, Axx-yy, Axy, Axz, Ayz}  (units of Hertz),
             6:  {Pxx, Pyy, Pxy, Pxz, Pyz}  (unitless),
             7:  {Pzz, Pxx-yy, Pxy, Pxz, Pyz}  (unitless),
- 
+
         Other formats may be added later.  The relationship between the Saupe order matrix S and the
         alignment tensor A is
 

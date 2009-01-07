@@ -29,13 +29,12 @@
 from math import sqrt
 from re import split
 import string
-import sys
 from warnings import warn
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxArgNotInListError, RelaxImplementError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxImplementError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
@@ -465,7 +464,7 @@ def intensity_generic(line, int_col):
 
     print ''
     print 'The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).'
-    print '    ' + `res_num`, h_name, x_name, intensity 
+    print '    ' + `res_num`, h_name, x_name, intensity
 
     # Generate the spin identification string.
     spin_id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)

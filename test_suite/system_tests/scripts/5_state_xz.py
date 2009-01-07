@@ -30,7 +30,7 @@ n_state_model.set_domain(tensor='chi3 C-dom', domain='C')
 n_state_model.set_domain(tensor='chi4 C-dom', domain='C')
 n_state_model.set_domain(tensor='chi5 C-dom', domain='C')
 
-# Set that they are non-reduced tensors. 
+# Set that they are non-reduced tensors.
 n_state_model.set_type(tensor='chi1 C-dom', red=False)
 n_state_model.set_type(tensor='chi2 C-dom', red=False)
 n_state_model.set_type(tensor='chi3 C-dom', red=False)
@@ -60,7 +60,7 @@ n_state_model.set_domain(tensor='chi3 N-dom', domain='N')
 n_state_model.set_domain(tensor='chi4 N-dom', domain='N')
 n_state_model.set_domain(tensor='chi5 N-dom', domain='N')
 
-# Set that they are non-reduced tensors. 
+# Set that they are non-reduced tensors.
 n_state_model.set_type(tensor='chi1 N-dom', red=True)
 n_state_model.set_type(tensor='chi2 N-dom', red=True)
 n_state_model.set_type(tensor='chi3 N-dom', red=True)
