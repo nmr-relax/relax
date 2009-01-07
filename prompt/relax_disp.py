@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the 'relax_fit' user function class."""
+"""Module containing the 'relax_disp' user function class."""
 __docformat__ = 'plaintext'
 
 # Python module imports.
@@ -30,14 +31,14 @@ import sys
 # relax module imports.
 import help
 from relax_errors import RelaxNumError, RelaxStrError
-from specific_fns.setup import relax_fit_obj
+from specific_fns.setup import relax_disp_obj
 
 
-class Relax_fit:
+class Relax_disp:
     def __init__(self, relax):
         # Help.
         self.__relax_help__ = \
-        """Class for relaxation curve fitting."""
+        """Class for relaxation dispersion curve fitting."""
 
         # Add the generic help string.
         self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
@@ -46,70 +47,76 @@ class Relax_fit:
         self.__relax__ = relax
 
 
-    def relax_time(self, time=0.0, spectrum_id=None):
-        """Function for setting the relaxation time period associated with each spectrum.
+    def exp_type(self, exp='cpmg'):
+        """Function for the selection of the relaxation dispersion experiments to analyse.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        time:  The time, in seconds, of the relaxation period.
-
-        spectrum_id:  The spectrum identification string.
+        exp:  The type of relaxation dispersion experiment performed.
 
 
-        Description
-        ~~~~~~~~~~~
+        The preet experiments
+        ~~~~~~~~~~~~~~~~~~~~~
 
-        Peak intensities should be loaded before calling this user function via the
-        'spectrum.read_intensities()' user function.  The intensity values will then be associated
-        with a spectrum identifier.  To associate each spectrum identifier with a time point in the
-        relaxation curve prior to optimisation, this user function should be called.
+        The supported experiments will include CPMG ('cpmg') and R1rho ('r1rho').
+
+
+        Examples
+        ~~~~~~~~
+
+        To pick the experiment type 'cpmg' for all selected spins, type:
+
+        relax> relax_disp.exp_type('cpmg')
+        relax> relax_disp.exp_type(exp='cpmg')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.relax_time("
-            text = text + "time=" + `time`
-            text = text + ", spectrum_id=" + `spectrum_id` + ")"
+            text = sys.ps3 + "relax_disp.exp_type("
+            text = text + "exp=" + `exp` + ")"
             print text
 
-        # The relaxation time.
-        if type(time) != int and type(time) != float:
-            raise RelaxNumError, ('relaxation time', time)
-
-        # The spectrum identification string.
-        if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+        # The exp argument.
+        if type(exp) != str:
+            raise RelaxStrError, ('exp', exp)
 
         # Execute the functional code.
-        relax_fit_obj.relax_time(time=time, spectrum_id=spectrum_id)
+        relax_disp_obj.exp_type(exp=exp)
 
 
-    def select_model(self, model='exp'):
-        """Function for the selection of the relaxation curve type.
+    def select_model(self, model='fast'):
+        """Function for the selection of the relaxation dispersion curve type.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        model:  The type of relaxation curve to fit.
+        model:  The type of relaxation dispersion curve to fit (relating to the NMR time scale).
 
 
         The preset models
         ~~~~~~~~~~~~~~~~~
 
-        The supported relaxation experiments include the default two parameter exponential fit,
-        selected by setting the 'fit_type' argument to 'exp', and the three parameter inversion
-        recovery experiment in which the peak intensity limit is a non-zero value, selected by
-        setting the argument to 'inv'.
+        The supported equations will include the default fast-exchange limit as well as the
+        slow-exchange limit.
 
         The parameters of these two models are
-            'exp': [Rx, I0],
-            'inv': [Rx, I0, Iinf].
+            'fast': [R2, Rex, kex],
+            'slow': [R2A, kA, dw].
+
+
+        Examples
+        ~~~~~~~~
+
+        To pick the model 'fast' for all selected spins, type:
+
+        relax> relax_disp.select_model('fast')
+        relax> relax_disp.select_model(exp='fast')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.select_model("
+            text = sys.ps3 + "relax_disp.select_model("
             text = text + "model=" + `model` + ")"
             print text
 
@@ -118,4 +125,4 @@ class Relax_fit:
             raise RelaxStrError, ('model', model)
 
         # Execute the functional code.
-        relax_fit_obj.select_model(model=model)
+        relax_disp_obj.select_model(model=model)
