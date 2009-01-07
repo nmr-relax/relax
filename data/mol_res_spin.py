@@ -24,7 +24,6 @@
 """The molecule-residue-spin containers."""
 
 # Python module imports.
-from copy import deepcopy
 import numpy
 from re import match
 

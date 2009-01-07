@@ -117,7 +117,7 @@ class Interpreter:
         self.__show_script = show_script
         self.__quit_flag = quit
         self.__raise_relax_error = raise_relax_error
-        
+
         # The prompts.
         sys.ps1 = 'relax> '
         sys.ps2 = 'relax| '
@@ -468,7 +468,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     except:
         raise
 
-    # Add an empty line to make exiting relax look better. 
+    # Add an empty line to make exiting relax look better.
     if show_script:
         sys.stdout.write("\n")
 

@@ -3054,7 +3054,7 @@ class Model_free_main:
 
     def sim_return_param(self, model_index, index):
         """Return the array of simulation parameter values.
- 
+
         @param model_index: The model index.  This is zero for the global models or equal to the
                             global spin index (which covers the molecule, residue, and spin
                             indices).

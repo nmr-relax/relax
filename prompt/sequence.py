@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import sequence
-from relax_errors import RelaxError, RelaxBinError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Sequence:
