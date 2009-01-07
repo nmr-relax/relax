@@ -36,9 +36,8 @@ The functionality of this module is diverse:
 """
 
 # Python module imports.
-from os import F_OK, access
-from re import compile, match, search, split
-from string import replace, strip
+from re import split
+from string import strip
 from textwrap import fill
 from warnings import warn
 

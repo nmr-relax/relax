@@ -26,12 +26,11 @@
 # Python module imports.
 from copy import deepcopy
 from numpy import float64, zeros
-import sys
 
 # relax module imports.
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoResError, RelaxNoPCSError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
 from relax_io import extract_data, strip
 
 
@@ -153,7 +152,7 @@ def centre(atom_id=None, pipe=None):
     # Test the data pipe.
     pipes.test(pipe)
 
-    # Get the current data pipe.
+    # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
     # Test if the structure has been loaded.
@@ -178,6 +177,7 @@ def centre(atom_id=None, pipe=None):
     print "Paramagnetic centre located at: " + `pos`
 
     # Set the centre (place it into the current data pipe).
+    cdp = pipes.get_pipe()
     cdp.paramagnetic_centre = pos
 
 

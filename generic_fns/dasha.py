@@ -25,16 +25,14 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, chdir, getcwd, system, popen3
-from re import match, search
-from string import lower, split
+from os import F_OK, access, chdir, getcwd, popen3
+from string import lower
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import angles, diffusion_tensor, pipes, value
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, spin_loop
-from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNucleusError
+from relax_errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
 

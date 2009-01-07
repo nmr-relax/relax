@@ -25,8 +25,8 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import cos, pi, sin
-from numpy import arccos, dot, float64, linalg, transpose, zeros
+from math import pi
+from numpy import arccos, dot, float64, linalg, zeros
 from re import search
 import sys
 

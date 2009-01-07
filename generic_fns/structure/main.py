@@ -42,17 +42,20 @@ from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorW
 
 
 
-def load_spins(spin_id=None, str_id=None, ave_pos=False):
+def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
 
-    @keyword spin_id:   The molecule, residue, and spin identifier string.
-    @type spin_id:      str
-    @keyword str_id:    The structure identifier.  This can be the file name, model number, or
-                        structure number.
-    @type str_id:       int or str
-    @keyword ave_pos:   A flag specifying if the average atom position or the atom position from all
-                        loaded structures is loaded into the SpinContainer.
-    @type ave_pos:      bool
+    @keyword spin_id:           The molecule, residue, and spin identifier string.
+    @type spin_id:              str
+    @keyword str_id:            The structure identifier.  This can be the file name, model number,
+                                or structure number.
+    @type str_id:               int or str
+    @keyword combine_models:    A flag specifying if spins from only one structure of the ensemble
+                                or from all should be loaded.
+    @type combine_models:       bool
+    @keyword ave_pos:           A flag specifying if the average atom position or the atom position
+                                from all loaded structures is loaded into the SpinContainer.
+    @type ave_pos:              bool
     """
 
     # Test if the current data pipe exists.
@@ -70,7 +73,17 @@ def load_spins(spin_id=None, str_id=None, ave_pos=False):
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+    model_index = -1
+    last_model = None
+    for model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+        # Update the model info.
+        if last_model != model_num:
+            model_index = model_index + 1
+            last_model = model_num
+
+        # Only load one set of spins if combine_models is set.
+        if combine_models and model_index >= 1:
+            break
 
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):

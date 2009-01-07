@@ -777,8 +777,8 @@ class Internal(Base_struct_API):
                                     return_warnings are set)
         """
 
-        # Generate the selection object, using upper case to avoid PDB file issues.
-        sel_obj = Selection(upper(atom_id))
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
 
         # Initialise some objects.
         vectors = []
@@ -800,7 +800,7 @@ class Internal(Base_struct_API):
             # Loop over all atoms.
             for j in xrange(len(struct.atom_name)):
                 # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(struct.atom_num[j], struct.atom_name[j], struct.res_num[j], struct.res_name[j]):
+                if sel_obj and not sel_obj.contains_spin(struct.atom_num[j], struct.atom_name[j], struct.res_num[j], struct.res_name[j], self.name[i]):
                     continue
 
                 # More than one matching atom!
@@ -918,7 +918,7 @@ class Internal(Base_struct_API):
             self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
 
             # Fill the structural data object.
-            self.__fill_object_from_pdb(records, struct_index=i)
+            self.__fill_object_from_pdb(records, struct_index=len(self.structural_data)-1)
 
             # Increment the structure index.
             i = i + 1

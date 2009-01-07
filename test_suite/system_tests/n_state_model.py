@@ -39,7 +39,6 @@ class N_state_model(TestCase):
         ds.__reset__()
 
 
-
     def test_5_state_xz(self):
         """A 5-state model in the xz-plane (no pivotting of alpha).
 
@@ -84,3 +83,10 @@ class N_state_model(TestCase):
         self.assertAlmostEqual(cdp.gamma[2], 0.0)
         self.assertAlmostEqual(cdp.gamma[3], 0.0)
         self.assertAlmostEqual(cdp.gamma[4], 0.0)
+
+
+    def test_lactose_n_state(self):
+        """The 4-state model analysis of lactose using RDCs and PCSs."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/lactose_n_state.py')
