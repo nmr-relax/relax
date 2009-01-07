@@ -26,7 +26,6 @@ from warnings import warn
 
 # relax module imports.
 from align_tensor import AlignTensorList
-from data_classes import Element
 from diff_tensor import DiffTensorData
 import generic_fns
 from mol_res_spin import MoleculeList

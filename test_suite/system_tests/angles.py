@@ -48,7 +48,7 @@ class Angles(TestCase):
         cdp = pipes.get_pipe()
 
         # Res info.
-        res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG'] 
+        res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG']
         spin_num = [1, 11, 28, 51, 59, 71, 91, 104, 116, 133, 150, 167, None, None, None]
         spin_name = ['N']*12 + [None]*3
         attached_atoms = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H', None, None, None]

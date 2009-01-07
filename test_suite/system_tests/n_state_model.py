@@ -39,7 +39,6 @@ class N_state_model(TestCase):
         ds.__reset__()
 
 
-
     def test_5_state_xz(self):
         """A 5-state model in the xz-plane (no pivotting of alpha).
 

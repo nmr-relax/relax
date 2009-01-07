@@ -25,7 +25,6 @@
 
 # Python module imports.
 from os import popen, sep
-from string import split
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
