@@ -29,7 +29,7 @@ from types import ListType
 # relax module imports.
 from data_classes import Element
 from relax_errors import RelaxError
-from relax_xml import fill_object_contents, node_value_to_python, xml_to_object
+from relax_xml import fill_object_contents, xml_to_object
 
 
 
