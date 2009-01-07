@@ -123,7 +123,7 @@ class Relax_disp(Common_functions):
             # Intensity scaling.
             elif search('^i', spin.params[i]):
                 # Find the position of the first time point.
-                pos = cdp.relax_times.index(min(cdp.relax_times))
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
                 scaling_matrix[i, i] = 1.0 / average(spin.intensities[pos])
@@ -156,7 +156,7 @@ class Relax_disp(Common_functions):
         scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
 
         # Initialise the relaxation fit functions.
-        setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.intensities, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+        setup(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=spin.intensities, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
         func(param_vector)
@@ -237,7 +237,7 @@ class Relax_disp(Common_functions):
         cdp = pipes.get_pipe()
 
         # Loop over the spectral time points.
-        for j in xrange(len(cdp.relax_times)):
+        for j in xrange(len(cdp.cpmg_frqs)):
             # Back calculate the value.
             value = self.back_calc(spin=spin, relax_time_index=j)
 
@@ -354,7 +354,7 @@ class Relax_disp(Common_functions):
         | Data type                                         | Object name   | Value    |
         |___________________________________________________|_______________|__________|
         |                                                   |               |          |
-        | Relaxation rate                                   | 'R2'          | 8.0      |
+        | Transversal relaxation rate                       | 'R2'          | 8.0      |
         |                                                   |               |          |
         | Chemical exchange contribution to 'R2'            | 'Rex'         | 2.0      |
         |                                                   |               |          |
@@ -557,7 +557,7 @@ class Relax_disp(Common_functions):
             # Intensity
             elif search('^I', spin.params[i]):
                 # Find the position of the first time point.
-                pos = cdp.relax_times.index(min(cdp.relax_times))
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
                 min_options.append([inc[j], 0.0, average(spin.intensities[pos])])
@@ -761,7 +761,7 @@ class Relax_disp(Common_functions):
             else:
                 values = spin.sim_intensities[sim_index]
 
-            setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
+            setup(num_params=len(spin.params), num_times=len(cdp.cpmg_frqs), values=values, sd=spin.intensity_err, cpmg_frqs=cdp.cpmg_frqs, scaling_matrix=scaling_matrix)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -778,9 +778,9 @@ class Relax_disp(Common_functions):
 
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
                 # Reconstruct the error data structure.
-                lm_error = zeros(len(spin.relax_times), float64)
+                lm_error = zeros(len(spin.cpmg_frqs), float64)
                 index = 0
-                for k in xrange(len(spin.relax_times)):
+                for k in xrange(len(spin.cpmg_frqs)):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
                     index = index + len(relax_error[k])
 
@@ -933,21 +933,25 @@ class Relax_disp(Common_functions):
         Relaxation curve fitting data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        __________________________________________________________________________________________
-        |                                   |                      |                             |
-        | Data type                         | Object name          | Patterns                    |
-        |___________________________________|______________________|_____________________________|
-        |                                   |                      |                             |
-        | Relaxation rate                   | 'rx'                 | '^[Rr]x$'                   |
-        |                                   |                      |                             |
-        | Peak intensities (series)         | 'intensities'        | '^[Ii]nt$'                  |
-        |                                   |                      |                             |
-        | Initial intensity                 | 'i0'                 | '^[Ii]0$'                   |
-        |                                   |                      |                             |
-        | Intensity at infinity             | 'iinf'               | '^[Ii]inf$'                 |
-        |                                   |                      |                             |
-        | Relaxation period times (series)  | 'relax_times'        | '^[Rr]elax[ -_][Tt]imes$'   |
-        |___________________________________|______________________|_____________________________|
+        _______________________________________________________________________________________________
+        |                                                   |              |                          |
+        | Data type                                         | Object name  | Patterns                 |
+        |___________________________________________________|______________|__________________________|
+        |                                                   |              |                          |
+        | Transversal relaxation rate                       | 'R2'         | '^[Rr]2$'                |
+        |                                                   |              |                          |
+        | Chemical exchange contribution to 'R2'            | 'Rex'        | '^[Rr]ex$'               |
+        |                                                   |              |                          |
+        | Exchange rate                                     | 'kex'        | '^[Kk]ex$'               |
+        |                                                   |              |                          |
+        | Relaxation rate for state A                       | 'R2A'        | '^[Rr]2A$'               |
+        |                                                   |              |                          |
+        | Exchange rate from state A to state B             | 'kA'         | '^[Kk]A$'                |
+        |                                                   |              |                          |
+        | Chemical shift difference between states A and B  | 'dw'         | '^[Dd]w$'                |
+        |                                                   |              |                          |
+        | CPMG pulse train frequency (series)               | 'cpmg_frqs'  | '^[Cc]pmg[ -_][Ff]rqs$'  |
+        |___________________________________________________|______________|__________________________|
 
         """
 
@@ -967,9 +971,9 @@ class Relax_disp(Common_functions):
         if match('^[Ii]inf$', name):
             return 'iinf'
 
-        # Relaxation period times (series).
-        if match('^[Rr]elax[ -_][Tt]imes$', name):
-            return 'relax_times'
+        # CPMG pulse train frequency (series).
+        if match('^[Cc]pmg[ -_][Ff]rqs$', name):
+            return 'cpmg_frqs'
 
 
     def return_grace_string(self, data_type):
@@ -995,8 +999,8 @@ class Relax_disp(Common_functions):
             grace_string = '\\qI\\sinf\\Q'
 
         # Intensity at infinity.
-        elif object_name == 'relax_times':
-            grace_string = '\\qRelaxation time period (s)\\Q'
+        elif object_name == 'cpmg_frqs':
+            grace_string = '\\qCPMG pulse train frequency (Hz)\\Q'
 
         # Return the Grace string.
         return grace_string
