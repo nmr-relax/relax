@@ -23,9 +23,6 @@
 # Module docstring.
 """Module implementing the mathematical modelling step of model elimination."""
 
-# Python module imports.
-from copy import deepcopy
-
 # relax module imports.
 from generic_fns import pipes
 from relax_errors import RelaxError

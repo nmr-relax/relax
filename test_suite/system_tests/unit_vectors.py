@@ -78,7 +78,7 @@ class Unit_vectors(TestCase):
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
-        
+
         # Remove the spin numbers.
         self.relax.interpreter._Spin.number()
 
@@ -106,7 +106,7 @@ class Unit_vectors(TestCase):
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
-        
+
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
 
@@ -131,7 +131,7 @@ class Unit_vectors(TestCase):
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
-        
+
         # Remove the spin numbers.
         self.relax.interpreter._Spin.number()
 

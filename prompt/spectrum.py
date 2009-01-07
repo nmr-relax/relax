@@ -160,7 +160,7 @@ class Spectrum:
         If there are in addition to the replicated spectra loaded peak intensities which only
         consist of a single spectrum, i.e. not all spectra are replicated, then the variances of
         replicated replicated spectra sets will be averaged.  This will be used for the entire
-        experiment so that there will be only a single error value for all spins and for all 
+        experiment so that there will be only a single error value for all spins and for all
         spectra.
 
 

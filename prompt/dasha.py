@@ -162,7 +162,7 @@ class Dasha:
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        dir:  The directory where the file 'dasha_results' is found. 
+        dir:  The directory where the file 'dasha_results' is found.
         """
 
         # Function intro text.

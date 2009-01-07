@@ -26,7 +26,7 @@
 # relax module imports.
 import dep_check
 from generic_fns import pipes
-from relax_errors import RelaxNoPdbError
+from relax_errors import RelaxError, RelaxNoPdbError
 
 
 def view():

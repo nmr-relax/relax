@@ -24,17 +24,15 @@
 """The relaxation curve fitting specific code."""
 
 # Python module imports.
-from math import sqrt
 from numpy import array, average, dot, float64, identity, zeros
 from numpy.linalg import inv
 from re import match, search
-import sys
 
 # relax module imports.
 from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import pipes
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 

@@ -33,23 +33,23 @@ from generic_fns.mol_res_spin import spin_loop
 
 class Peak_lists(TestCase):
     """TestCase class for the functional tests for the support of different peak intensity files."""
-        
+
     def setUp(self):
         """Set up for all the functional tests."""
-        
+
         # Create a data pipe.
         self.relax.interpreter._Pipe.create('mf', 'mf')
-        
-        
+
+
     def tearDown(self):
         """Reset the relax data storage object."""
-        
+
         ds.__reset__()
-        
-        
+
+
     def test_read_peak_list_generic(self):
         """Test the reading of a generic peak intensity list."""
-        
+
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
@@ -60,7 +60,7 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Residue.create(35)
         self.relax.interpreter._Residue.create(36)
         self.relax.interpreter._Spin.name(name='N')
-        
+
         # Read the peak list.
         self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='height')
 
@@ -79,7 +79,7 @@ class Peak_lists(TestCase):
 
     def test_read_peak_list_generic2(self):
         """Test the reading of a generic peak intensity list (test number 2)."""
-        
+
         # Get the current data pipe.
         cdp = pipes.get_pipe()
 
@@ -90,9 +90,9 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Residue.create(35)
         self.relax.interpreter._Residue.create(36)
         self.relax.interpreter._Spin.name(name='N')
-        
+
         # Spectrum ids.
-        spectrum_ids=['0.0109016', '0.0218032', '0.0436064', '0.0436064', '0.0872128', '0.1744260', '0.3488510', '0.6977020', '1.3954000', '1.9949900']
+        spectrum_ids = ['0.0109016', '0.0218032', '0.0436064', '0.0436064', '0.0872128', '0.1744260', '0.3488510', '0.6977020', '1.3954000', '1.9949900']
 
         # Read the peak list.
         self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity2.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id=spectrum_ids, int_col=range(2, 12), int_method='volume', mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None)
