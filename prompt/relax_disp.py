@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxNumError, RelaxStrError
+from relax_errors import RelaxNoneNumError, RelaxNumError, RelaxStrError
 from specific_fns.setup import relax_disp_obj
 
 
@@ -107,7 +107,7 @@ class Relax_disp:
         ~~~~~~~~~~~
 
         This user function allows the CPMG pulse train frequency of a given spectrum to be set.
-        If a value of 0 is set for frequency, then the spectrum will be treated as a reference
+        If None is given for frequency, then the spectrum will be treated as a reference
         spectrum.
 
 
@@ -116,8 +116,8 @@ class Relax_disp:
 
         To identify the reference spectrum called 'reference_spectrum', type:
 
-        relax> relax_disp.cpmg_frq(0, 'reference_spectrum')
-        relax> relax_disp.cpmg_frq(cpmg_frq=0, spectrum_id='reference_spectrum')
+        relax> relax_disp.cpmg_frq(None, 'reference_spectrum')
+        relax> relax_disp.cpmg_frq(cpmg_frq=None, spectrum_id='reference_spectrum')
 
         To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type:
 
@@ -128,13 +128,13 @@ class Relax_disp:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_disp.cpmg_frq("
-            text = text + ", cpmg_frq=" + `cpmg_frq` + ")"
-            text = text + "spectrum_id=" + `spectrum_id`
+            text = text + ", cpmg_frq=" + `cpmg_frq`
+            text = text + "spectrum_id=" + `spectrum_id` + ")"
             print text
 
         # The cpmg_frq argument.
-        if type(cpmg_frq) != float and type(cpmg_frq) != int:
-            raise RelaxNumError, ('cpmg_frq', cpmg_frq)
+        if type(cpmg_frq) != float and type(cpmg_frq) != int and cpmg_frq != None:
+            raise RelaxNoneNumError, ('cpmg_frq', cpmg_frq)
 
         # The spectrum_id argument.
         if type(spectrum_id) != str:
