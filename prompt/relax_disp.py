@@ -92,13 +92,13 @@ class Relax_disp:
         relax_disp_obj.cpmg_delayT(id=id, delayT=delayT)
 
 
-    def cpmg_frq(self, frq=0, spectrum_id=None):
+    def cpmg_frq(self, cpmg_frq=0, spectrum_id=None):
         """Set the CPMG frequency associated with a given spectrum.
 
         Keyword arguments.
         ~~~~~~~~~~~~~~~~~~
 
-        frq:   The frequency, in Hz, of the CPMG pulse train.
+        cpmg_frq:   The frequency, in Hz, of the CPMG pulse train.
 
         spectrum_id:   The spectrum identification string.
 
@@ -117,31 +117,31 @@ class Relax_disp:
         To identify the reference spectrum called 'reference_spectrum', type:
 
         relax> relax_disp.cpmg_frq(0, 'reference_spectrum')
-        relax> relax_disp.cpmg_frq(frq=0, spectrum_id='reference_spectrum')
+        relax> relax_disp.cpmg_frq(cpmg_frq=0, spectrum_id='reference_spectrum')
 
         To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type:
 
         relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')
-        relax> relax_disp.cpmg_frq(frq=200, spectrum_id='200_Hz_spectrum')
+        relax> relax_disp.cpmg_frq(fcpmg_rq=200, spectrum_id='200_Hz_spectrum')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frq("
+            text = sys.ps3 + "cpmg_frq("
             text = text + "spectrum_id=" + `spectrum_id`
-            text = text + ", frq=" + `frq` + ")"
+            text = text + ", cpmg_frq=" + `cpmg_frq` + ")"
             print text
 
-        # The frq argument.
-        if type(frq) != int:
-            raise RelaxIntError, ('frq', frq)
+        # The cpmg_frq argument.
+        if type(cpmg_frq) != int:
+            raise RelaxIntError, ('cpmg_frq', cpmg_frq)
 
         # The spectrum_id argument.
         if type(spectrum_id) != str:
              raise RelaxStrError, ('spectrum_id', spectrum_id)
 
         # Execute the functional code.
-        relax_disp_obj.cpmg_frq(frq=frq, spectrum_id=spectrum_id)
+        relax_disp_obj.cpmg_frq(cpmg_frq=cpmg_frq, spectrum_id=spectrum_id)
 
 
     def exp_type(self, exp='cpmg'):
