@@ -621,13 +621,6 @@ class ModelList(list):
     Here different models are defined as the same molecule but with different conformations.
     """
 
-    def __init__(self):
-        """Add the first model container to create an empty but complete data structure."""
-
-        # Add the initial model container.
-        self.append(ModelContainer())
-
-
     def __repr__(self):
         """The string representation of the object.
 
@@ -820,13 +813,6 @@ class ModelContainer(object):
 class StructList(list):
     """List type data container for holding the different structures within one model."""
 
-    def __init__(self):
-        """Set up the first structure container."""
-
-        # Add the initial structure container at index 0.
-        self.append(StructContainer())
-
-
     def __repr__(self):
         """The string representation of the object.
 
@@ -841,11 +827,13 @@ class StructList(list):
         return text
 
 
-    def add_item(self, struct_name=None):
-        """Append an empty StructContainer to the StructList.
+    def add_item(self, struct_name=None, struct_cont=None):
+        """Append the given StructContainer instance to the StructList.
 
         @keyword struct_name:   The structure number.
         @type struct_name:      int
+        @keyword struct_cont:   The data structure for the structure.
+        @type struct_cont:      StructContainer instance
         """
 
         # If no structure data exists, replace the empty first structure with this structure (just a renaming).
@@ -860,7 +848,7 @@ class StructList(list):
                     raise RelaxError, "The structure '" + `struct_name` + "' already exists."
 
             # Append an empty StructContainer.
-            self.append(StructContainer(struct_name))
+            self.append(struct_cont)
 
 
     def is_empty(self):
