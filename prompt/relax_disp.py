@@ -80,7 +80,7 @@ class Relax_disp:
             raise RelaxNumError, ('CPMG constant time delay (T)', delayT)
 
         # Execute the functional code.
-        specific_fns.relax_disp.cpmg_delayT(id=id, delayT=delayT)
+        relax_disp_obj.cpmg_delayT(id=id, delayT=delayT)
 
 
     def exp_type(self, exp='cpmg'):

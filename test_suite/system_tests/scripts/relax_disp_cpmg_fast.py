@@ -24,10 +24,10 @@ names = [
 frq.set(id='600', frq=600.0 * 1e6)
 
 # Relaxation dispersion CPMG constant time delay T (in s).
-cpmg_delayT(id='600', delayT=0.020)
+relax_disp.cpmg_delayT(id='600', delayT=0.020)
 
 # Relaxation dispersion CPMG frequencies (in Hz).
-cpmg_frq = [
+relax_disp.cpmg_frq = [
     0.1936
 ]
 
