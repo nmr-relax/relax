@@ -123,6 +123,25 @@ class Relax_disp:
 
         relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')
         relax> relax_disp.cpmg_frq(frq=200, spectrum_id='200_Hz_spectrum')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "frq("
+            text = text + "spectrum_id=" + `spectrum_id`
+            text = text + ", frq=" + `frq` + ")"
+            print text
+
+        # The frq argument.
+        if type(frq) != int:
+            raise RelaxIntError, ('frq', frq)
+
+        # The spectrum_id argument.
+        if type(spectrum_id) != str:
+             raise RelaxStrError, ('spectrum_id', spectrum_id)
+
+        # Execute the functional code.
+        relax_disp_obj.cpmg_frq(frq=frq, spectrum_id=spectrum_id)
 
 
     def exp_type(self, exp='cpmg'):
