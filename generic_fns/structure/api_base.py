@@ -614,6 +614,7 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+
 class ModelList(list):
     """List type data container for the different structural models.
 
@@ -729,3 +730,89 @@ class ModelList(list):
 
             # Add the structure data.
             self[i].struct.to_xml(doc, model_element)
+
+
+
+class ModelContainer(object):
+    """Class containing all the model specific data."""
+
+    def __init__(self, model_num=None):
+        """Set up the default objects of the model data container."""
+
+        # The model number.
+        self.num = model_num
+
+        # The empty structure list.
+        self.struct = StructList()
+
+
+    def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        # Intro.
+        text = "Class containing the data for model %s.\n" % self.num
+
+        # Objects.
+        text = text + "\n"
+        text = text + "Objects:\n"
+        for name in dir(self):
+            # Structure list.
+            if name == 'struct':
+                text = text + "  struct: The list of %s structures within the model.\n" % len(self.struct)
+                continue
+
+            # Skip the ModelContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # Add the object's attribute to the text string.
+            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+
+        return text
+
+
+    def is_empty(self):
+        """Method for testing if this ModelContainer object is empty.
+
+        @return:    True if this container is empty and the model number has not been set, False
+                    otherwise.
+        @rtype:     bool
+        """
+
+        # The model num has been set.
+        if self.num != None:
+            return False
+
+        # An object has been added to the container.
+        for name in dir(self):
+            # Skip the objects initialised in __init__().
+            if name == 'num' or name == 'struct':
+                continue
+
+            # Skip the ModelContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The structure list is not empty.
+        if not self.struct.is_empty():
+            return False
+
+        # The ModelContainer is unmodified.
+        return True
+
+
