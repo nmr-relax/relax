@@ -816,3 +816,116 @@ class ModelContainer(object):
         return True
 
 
+
+class StructList(list):
+    """List type data container for holding the different structures within one model."""
+
+    def __init__(self):
+        """Set up the first structure container."""
+
+        # Add the initial structure container at index 0.
+        self.append(StructContainer())
+
+
+    def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        text = "Structures.\n\n"
+        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
+        for i in xrange(len(self)):
+            text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
+        return text
+
+
+    def add_item(self, struct_name=None):
+        """Append an empty StructContainer to the StructList.
+
+        @keyword struct_name:   The structure number.
+        @type struct_name:      int
+        """
+
+        # If no structure data exists, replace the empty first structure with this structure (just a renaming).
+        if self.is_empty():
+            self[0].name = struct_name
+
+        # Otherwise append an empty StructContainer.
+        else:
+            # Test if the structure already exists.
+            for i in xrange(len(self)):
+                if self[i].name == struct_name:
+                    raise RelaxError, "The structure '" + `struct_name` + "' already exists."
+
+            # Append an empty StructContainer.
+            self.append(StructContainer(struct_name))
+
+
+    def is_empty(self):
+        """Method for testing if this StructList object is empty.
+
+        @return:    True if this list only has one StructContainer and the structure name has not
+                    been set, False otherwise.
+        @rtype:     bool
+        """
+
+        # There is only one StructContainer and it is empty.
+        if len(self) == 1 and self[0].is_empty():
+            return True
+
+        # Otherwise.
+        return False
+
+
+    def from_xml(self, struct_nodes):
+        """Recreate a structure list data structure from the XML structure nodes.
+
+        @param struct_nodes:    The structure XML nodes.
+        @type struct_nodes:     xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the structures.
+        for struct_node in struct_nodes:
+            # Get the structure details and add the structure to the StructList structure.
+            name = eval(struct_node.getAttribute('name'))
+            if name == 'None':
+                name = None
+            self.add_item(struct_name=name)
+
+            # Get the structure nodes.
+            struct_nodes = struct_node.getElementsByTagName('struct')
+
+            # Recreate the structure data structures for the current structure.
+            self[-1].struct.from_xml(struct_nodes)
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each structure.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the structure XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the structures.
+        for i in xrange(len(self)):
+            # Create an XML element for this structure and add it to the higher level element.
+            struct_element = doc.createElement('struct')
+            element.appendChild(struct_element)
+
+            # Set the structure attributes.
+            struct_element.setAttribute('desc', 'Structure container')
+            struct_element.setAttribute('name', str(self[i].name))
+
+            # Add all simple python objects within the StructContainer to the XML element.
+            fill_object_contents(doc, struct_element, object=self[i], blacklist=['name'] + self[i].__class__.__dict__.keys())
+
+            # Add the structure data.
+            self[i].struct.to_xml(doc, struct_element)
