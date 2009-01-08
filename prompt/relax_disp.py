@@ -127,14 +127,14 @@ class Relax_disp:
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "cpmg_frq("
-            text = text + "spectrum_id=" + `spectrum_id`
+            text = sys.ps3 + "relax_disp.cpmg_frq("
             text = text + ", cpmg_frq=" + `cpmg_frq` + ")"
+            text = text + "spectrum_id=" + `spectrum_id`
             print text
 
         # The cpmg_frq argument.
-        if type(cpmg_frq) != int:
-            raise RelaxIntError, ('cpmg_frq', cpmg_frq)
+        if type(cpmg_frq) != float and type(cpmg_frq) != int:
+            raise RelaxNumError, ('cpmg_frq', cpmg_frq)
 
         # The spectrum_id argument.
         if type(spectrum_id) != str:
