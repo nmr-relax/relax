@@ -77,6 +77,7 @@ from pcs import PCS
 from pymol import Pymol
 from rdc import RDC
 from relax_data import Relax_data
+from relax_disp import Relax_disp
 from relax_fit import Relax_fit
 from results import Results
 from pipe import Pipe
@@ -162,6 +163,7 @@ class Interpreter:
         self._Pymol = Pymol(relax)
         self._RDC = RDC(relax)
         self._Relax_data = Relax_data(relax)
+        self._Relax_disp = Relax_disp(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Results = Results(relax)
         self._Pipe = Pipe(relax)
@@ -231,6 +233,7 @@ class Interpreter:
         pymol = self._Pymol
         rdc = self._RDC
         relax_data = self._Relax_data
+        relax_disp = self._Relax_disp
         relax_fit = self._Relax_fit
         residue = self._Residue
         results = self._Results

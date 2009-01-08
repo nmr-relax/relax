@@ -32,4 +32,5 @@ __all__ = [ 'base_class',
             'model_free',
             'n_state_model',
             'noe',
+            'relax_disp',
             'relax_fit']

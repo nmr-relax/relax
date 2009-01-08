@@ -27,6 +27,7 @@ from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
+from specific_fns.relax_disp import Relax_disp
 from specific_fns.relax_fit import Relax_fit
 from relax_errors import RelaxError, RelaxFuncSetupError
 
@@ -38,6 +39,7 @@ jw_mapping_obj = Jw_mapping()
 model_free_obj = Model_free()
 n_state_model_obj = N_state_model()
 noe_obj = Noe()
+relax_disp_obj = Relax_disp()
 relax_fit_obj = Relax_fit()
 
 
@@ -265,6 +267,10 @@ def get_instance(function_type):
     if function_type == 'N-state':
         return n_state_model_obj
 
+    # Relaxation dispersion curve fitting.
+    if function_type == 'relax_disp':
+        return relax_disp_obj
+
     # Relaxation curve fitting.
     if function_type == 'relax_fit':
         return relax_fit_obj
@@ -299,6 +305,10 @@ def get_string(function_type):
     # The N-state model.
     if function_type == 'N-state':
         return "the N-state model"
+
+    # Relaxation dispersion curve fitting.
+    if function_type == 'relax_disp':
+        return "relaxation dispersion curve fitting"
 
     # Relaxation curve fitting.
     if function_type == 'relax_fit':

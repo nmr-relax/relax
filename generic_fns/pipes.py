@@ -74,8 +74,8 @@ def create(pipe_name=None, pipe_type=None, switch=True):
         'mf':  Model-free analysis,
         'N-state':  N-state model of domain dynamics,
         'noe':  Steady state NOE calculation,
-        'relax_fit':  Relaxation curve fitting,
         'relax_disp':  Relaxation dispersion,
+        'relax_fit':  Relaxation curve fitting,
         'srls':  SRLS analysis.
     @type pipe_type:    str
     @keyword switch:    If True, this new pipe will be switched to, otherwise the current data pipe

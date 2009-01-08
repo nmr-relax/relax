@@ -39,7 +39,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNo
 
 # C modules.
 if C_module_exp_fn:
-    from maths_fns.relax_disp import setup, func, dfunc, d2func, back_calc_I
+    from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
 
 class Relax_disp(Common_functions):
@@ -196,12 +196,12 @@ class Relax_disp(Common_functions):
         if not hasattr(cdp, 'cpmg_frqs'):
             cdp.cpmg_frqs = [None] * len(cdp.spectrum_ids)
 
-       # Index not present in the global CPMG frequency data structure.
-       while 1:
-           if index > len(cdp.cpmg_frqs) - 1:
-               cdp.cpmg_frqs.append(None)
-           else:
-               break
+        # Index not present in the global CPMG frequency data structure.
+        while 1:
+            if index > len(cdp.cpmg_frqs) - 1:
+                cdp.cpmg_frqs.append(None)
+            else:
+                break
 
         # Add the frequency at the correct position.
         cdp.cpmg_frqs[index] = frq
@@ -445,17 +445,17 @@ class Relax_disp(Common_functions):
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-       # CPMG relaxation dispersion experiments.
-       if exp = 'cpmg':
-           print "CPMG relaxation dispersion experiments."
+        # CPMG relaxation dispersion experiments.
+        if exp == 'cpmg':
+            print "CPMG relaxation dispersion experiments."
 
-       # R1rho relaxation dispersion experiments.
-       elif exp = 'r1rho':
-           print "R1rho relaxation dispersion experiments."
+        # R1rho relaxation dispersion experiments.
+        elif exp == 'r1rho':
+            print "R1rho relaxation dispersion experiments."
 
-       # Invalid relaxation dispersion experiment.
-       else:
-           raise RelaxError, "The relaxation dispersion experiment '" + exp + "' is invalid."
+        # Invalid relaxation dispersion experiment.
+        else:
+            raise RelaxError, "The relaxation dispersion experiment '" + exp + "' is invalid."
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
