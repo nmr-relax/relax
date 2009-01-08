@@ -58,7 +58,7 @@ class Base_struct_API:
         self.model = []
         self.file = []
         self.path = []
-        self.structural_data = []
+        self.structural_data = ModelList()
 
 
     def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
@@ -612,3 +612,120 @@ class Base_struct_API:
 
         # Raise the error.
         raise RelaxImplementError
+
+
+class ModelList(list):
+    """List type data container for the different structural models.
+
+    Here different models are defined as the same molecule but with different conformations.
+    """
+
+    def __init__(self):
+        """Add the first model container to create an empty but complete data structure."""
+
+        # Add the initial model container.
+        self.append(ModelContainer())
+
+
+    def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        text = "Models.\n\n"
+        text = text + "%-8s%-8s" % ("Index", "Model number") + "\n"
+        for i in xrange(len(self)):
+            text = text + "%-8i%-8s" % (i, self[i].num) + "\n"
+        return text
+
+
+    def add_item(self, model_num=None):
+        """Append an empty ModelContainer to the ModelList.
+
+        @keyword model_num: The model number.
+        @type model_num:    int
+        """
+
+        # If no model data exists, replace the empty first model with this model (just a renumbering).
+        if self.is_empty():
+            self[0].num = model_num
+
+        # Otherwise append an empty ModelContainer.
+        else:
+            # Test if the model number already exists.
+            for i in xrange(len(self)):
+                if self[i].num == model_num:
+                    raise RelaxError, "The model '" + `model_num` + "' already exists."
+
+            # Append an empty ModelContainer.
+            self.append(ModelContainer(model_num))
+
+
+    def is_empty(self):
+        """Method for testing if this ModelList object is empty.
+
+        @return:    True if this list only has one ModelContainer and the model name has not
+                    been set, False otherwise.
+        @rtype:     bool
+        """
+
+        # There is only one ModelContainer and it is empty.
+        if len(self) == 1 and self[0].is_empty():
+            return True
+
+        # Otherwise.
+        return False
+
+
+    def from_xml(self, model_nodes):
+        """Recreate a model list data structure from the XML model nodes.
+
+        @param model_nodes: The model XML nodes.
+        @type model_nodes:  xml.dom.minicompat.NodeList instance
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the models.
+        for model_node in model_nodes:
+            # Get the model details and add the model to the ModelList structure.
+            num = eval(model_node.getAttribute('num'))
+            if num == 'None':
+                num = None
+            self.add_item(model_num=num)
+
+            # Get the structure nodes.
+            struct_nodes = model_node.getElementsByTagName('struct')
+
+            # Recreate the structure data structures for the current model.
+            self[-1].struct.from_xml(struct_nodes)
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each model.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the model XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the models.
+        for i in xrange(len(self)):
+            # Create an XML element for this model and add it to the higher level element.
+            model_element = doc.createElement('model')
+            element.appendChild(model_element)
+
+            # Set the model attributes.
+            model_element.setAttribute('desc', 'Model container')
+            model_element.setAttribute('num', str(self[i].num))
+
+            # Add all simple python objects within the ModelContainer to the XML element.
+            fill_object_contents(doc, model_element, object=self[i], blacklist=['num', 'struct'] + self[i].__class__.__dict__.keys())
+
+            # Add the structure data.
+            self[i].struct.to_xml(doc, model_element)
