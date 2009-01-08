@@ -47,6 +47,42 @@ class Relax_disp:
         self.__relax__ = relax
 
 
+    def cpmg_delayT(self, id=None, delayT=None):
+        """Set the CPMG constant time delay (T) of the experiment.
+
+        Keyword arguments
+        ~~~~~~~~~~~~~~~~~
+
+        id:  The experiment identification string.
+
+        delayT:   The CPMG constant time delay (T) in s.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function allows the CPMG constant time delay (T) of a given experiment to be set.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "delayT("
+            text = text + "id=" + `id`
+            text = text + ", delayT=" + `delayT` + ")"
+            print text
+
+        # Id string.
+        if type(id) != str:
+            raise RelaxStrError, ('experiment identification string', id)
+
+        # The CPMG constant time delay (T).
+        if type(delayT) != float and type(delayT) != int:
+            raise RelaxNumError, ('CPMG constant time delay (T)', delayT)
+
+        # Execute the functional code.
+        specific_fns.relax_disp.cpmg_delayT(id=id, delayT=delayT)
+
+
     def exp_type(self, exp='cpmg'):
         """Function for the selection of the relaxation dispersion experiments to analyse.
 
