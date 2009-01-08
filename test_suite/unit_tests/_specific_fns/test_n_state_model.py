@@ -25,7 +25,6 @@ from math import pi
 from unittest import TestCase
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from specific_fns import n_state_model
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class

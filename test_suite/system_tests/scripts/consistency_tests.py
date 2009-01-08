@@ -3,8 +3,6 @@
 # Python module imports.
 from os import devnull
 import sys
-# relax module imports.
-from relax_io import open_write_file
 
 # Create the run.
 name = 'consistency'

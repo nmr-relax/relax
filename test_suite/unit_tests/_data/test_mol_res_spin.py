@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from data.mol_res_spin import SpinContainer, SpinList, ResidueContainer, ResidueList, MoleculeContainer, MoleculeList
+from data.mol_res_spin import MoleculeList
 
 
 class Test_mol_res_spin(TestCase):
