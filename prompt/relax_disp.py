@@ -62,6 +62,15 @@ class Relax_disp:
         ~~~~~~~~~~~
 
         This user function allows the CPMG constant time delay (T) of a given experiment to be set.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set a CPMG constant time delay T of 20 ms (0.020 s) for experiments '600', type:
+
+        relax> relax_disp.cpmg_delayT('600', 0.020)
+        relax> relax_disp.cpmg_delayT(id='600', delayT=0.020)
         """
 
         # Function intro text.
@@ -81,6 +90,39 @@ class Relax_disp:
 
         # Execute the functional code.
         relax_disp_obj.cpmg_delayT(id=id, delayT=delayT)
+
+
+    def cpmg_frq(self, frq=0, spectrum_id=None):
+        """Set the CPMG frequency associated with a given spectrum.
+
+        Keyword arguments.
+        ~~~~~~~~~~~~~~~~~~
+
+        frq:   The frequency, in Hz, of the CPMG pulse train.
+
+        spectrum_id:   The spectrum identification string.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function allows the CPMG pulse train frequency of a given spectrum to be set.
+        If a value of 0 is set for frequency, then the spectrum will be treated as a reference
+        spectrum.
+
+
+        Examples
+        ~~~~~~~~
+
+        To identify the reference spectrum called 'reference_spectrum', type:
+
+        relax> relax_disp.cpmg_frq(0, 'reference_spectrum')
+        relax> relax_disp.cpmg_frq(frq=0, spectrum_id='reference_spectrum')
+
+        To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type:
+
+        relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')
+        relax> relax_disp.cpmg_frq(frq=200, spectrum_id='200_Hz_spectrum')
 
 
     def exp_type(self, exp='cpmg'):
