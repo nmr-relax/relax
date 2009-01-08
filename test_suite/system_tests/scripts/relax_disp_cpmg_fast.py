@@ -15,17 +15,18 @@ sequence.read('Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
-## Spectrum names.
-#names = [
-#    'T2_ncyc1_ave',
-#    'T2_ncyc11b_ave'
-#]
-#
-## Relaxation dispersion CPMG frequencies (in Hz).
-#frq = [
-#    0.0176,
-#    0.1936
-#]
+# Spectrum names.
+names = [
+    'T2_ncyc1_ave'
+]
+
+# Relaxation dispersion magnetic field (in Hz).
+frq.set(id='600', frq=600.0 * 1e6)
+
+# Relaxation dispersion CPMG frequencies (in Hz).
+cpmg_frq = [
+    0.1936
+]
 
 # Set the relaxation dispersion experiment type.
 relax_disp.exp_type('cpmg')
