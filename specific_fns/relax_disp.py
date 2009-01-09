@@ -334,9 +334,12 @@ class Relax_disp(Common_functions):
         The names are as follows:
 
             - 'params', an array of the parameter names associated with the model.
-            - 'rx', either the R1 or R2 relaxation rate.
-            - 'i0', the initial intensity.
-            - 'iinf', the intensity at infinity.
+            - 'R2', the transversal relaxation rate.
+            - 'Rex', the chemical exchange contribution to 'R2'.
+            - 'kex', the exchange rate.
+            - 'R2A', the transversal relaxation rate for state A.
+            - 'kA', the exchange rate from state A to state B.
+            - 'dw', the chemical shift difference between states A and B.
             - 'chi2', chi-squared value.
             - 'iter', iterations.
             - 'f_count', function count.
@@ -346,9 +349,8 @@ class Relax_disp(Common_functions):
 
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for
-                                model-free parameter names, or to 'min' for minimisation specific
-                                object names.
+                                names, to 'generic' for generic object names, 'params' for parameter
+                                names,or to 'min' for minimisation specific object names.
         @type set:              str
         @keyword error_names:   A flag which if True will add the error object names as well.
         @type error_names:      bool
@@ -368,9 +370,12 @@ class Relax_disp(Common_functions):
 
         # Parameters.
         if set == 'all' or set == 'params':
-            names.append('rx')
-            names.append('i0')
-            names.append('iinf')
+            names.append('r2')
+            names.append('rex')
+            names.append('kex')
+            names.append('r2a')
+            names.append('ka')
+            names.append('dw')
 
         # Minimisation statistics.
         if set == 'all' or set == 'min':
@@ -383,15 +388,21 @@ class Relax_disp(Common_functions):
 
         # Parameter errors.
         if error_names and (set == 'all' or set == 'params'):
-            names.append('rx_err')
-            names.append('i0_err')
-            names.append('iinf_err')
+            names.append('r2_err')
+            names.append('rex_err')
+            names.append('kex_err')
+            names.append('r2a_err')
+            names.append('ka_err')
+            names.append('dw_err')
 
         # Parameter simulation values.
         if sim_names and (set == 'all' or set == 'params'):
-            names.append('rx_sim')
-            names.append('i0_sim')
-            names.append('iinf_sim')
+            names.append('r2_sim')
+            names.append('rex_sim')
+            names.append('kex_sim')
+            names.append('r2a_sim')
+            names.append('ka_sim')
+            names.append('dw_sim')
 
         # Return the names.
         return names
