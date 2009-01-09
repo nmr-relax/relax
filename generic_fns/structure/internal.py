@@ -841,7 +841,7 @@ class Internal(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, struct_index=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
         """Method for loading structures from a PDB file.
 
         @param file_path:       The full path of the PDB file.
@@ -861,9 +861,6 @@ class Internal(Base_struct_API):
         @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
                                 the PDB model numbers will be preserved, if they exist.
         @type set_model_num:    None, int, or list of int
-        @param struct_index:    The index of the structure.  This optional argument can be useful
-                                for reloading a structure.
-        @type struct_index:     int
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
         @return:                The status of the loading of the PDB file.
@@ -882,59 +879,67 @@ class Internal(Base_struct_API):
         # Separate the file name and path.
         path, file = os.path.split(file_path)
 
+        # Convert the structure reading args into lists.
+        if read_mol and type(read_mol) != list:
+            read_mol = [read_mol]
+        if set_mol_name and type(set_mol_name) != list:
+            set_mol_name = [set_mol_name]
+        if read_model and type(read_model) != list:
+            read_model = [read_model]
+        if set_model_num and type(set_model_num) != list:
+            set_model_num = [set_model_num]
+
         # The ID name.
-        name = file
-        if model != None:
-            name = name + "_" + `model`
+        #name = file
+        #if model != None:
+        #    name = name + "_" + `model`
 
         # Use pointers (references) if the PDB data exists in another pipe.
-        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
-            # Skip the current pipe.
-            if pipe_name == pipes.cdp_name():
-                continue
+        #for data_pipe, pipe_name in pipes.pipe_loop(name=True):
+        #    # Skip the current pipe.
+        #    if pipe_name == pipes.cdp_name():
+        #        continue
 
-            # Structure exists.
-            if hasattr(data_pipe, 'structure'):
-                # Loop over the structures.
-                for i in xrange(data_pipe.structure.num):
-                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
-                        # Add the structure.
-                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
+        #    # Structure exists.
+        #    if hasattr(data_pipe, 'structure'):
+        #        # Loop over the structures.
+        #        for i in xrange(data_pipe.structure.num):
+        #            if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
+        #                # Add the structure.
+        #                self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
-                        # Print out.
-                        if verbosity:
-                            print "Using the structures from the data pipe " + `pipe_name` + "."
-                            print self.structural_data[i]
+        #                # Print out.
+        #                if verbosity:
+        #                    print "Using the structures from the data pipe " + `pipe_name` + "."
+        #                    print self.structural_data[i]
 
-                        # Exit this function.
-                        return True
+        #                # Exit this function.
+        #                return True
 
         # Print out.
-        if verbosity:
-            if type(model) == int:
-                print "Loading structure " + `model` + " from the PDB file."
-            else:
-                print "Loading all structures from the PDB file."
+        #if verbosity:
+        #    if type(model) == int:
+        #        print "Loading structure " + `model` + " from the PDB file."
+        #    else:
+        #        print "Loading all structures from the PDB file."
 
         # Loop over all models in the PDB file.
-        i = 0
-        for model_num, records in self.__parse_models(file_path):
+        for model_num, model_records in self.__parse_models(file_path):
             # Only load the desired model.
-            if model != None and model != model_num:
+            if read_model and model_num not in read_model:
                 continue
 
             # Print out.
             if model_num != None:
                 print "Loading model: " + `model_num`
 
-            # Add an empty structure.
-            self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
+            # Loop over the structures of the model.
+            for struct_num, struct_records in self.__parse_structs(model_records):
+                # Add an empty structure.
+                self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
 
-            # Fill the structural data object.
-            self.__fill_object_from_pdb(records, struct_index=len(self.structural_data)-1)
-
-            # Increment the structure index.
-            i = i + 1
+                # Fill the structural data object.
+                self.__fill_object_from_pdb(struct_records, struct_index=len(self.structural_data)-1)
 
         # Loading worked.
         return True
