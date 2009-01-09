@@ -194,13 +194,13 @@ class Internal(Base_struct_API):
         return bonded_num, bonded_name, element, pos, attached_name, None
 
 
-    def __fill_object_from_pdb(self, records, struct_index):
+    def __fill_object_from_pdb(self, records, struct_cont):
         """Method for generating a complete Structure_container object from the given PDB records.
 
         @param records:         A list of structural PDB records.
         @type records:          list of str
-        @param struct_index:    The index of the structural container to add the data to.
-        @type struct_index:     int
+        @param struct_cont:     The structural data container.
+        @type struct_cont:      StructContainer instance
         """
 
         # Loop over the records.
@@ -368,6 +368,48 @@ class Internal(Base_struct_API):
             yield model, records
 
 
+    def __parse_mols(self, records):
+        """Generator function for looping over the molecules in the PDB records of a model.
+
+        @param records:     The list of PDB records for the model, or if no models exist the entire
+                            PDB file.
+        @type records:      list of str
+        @return:            The molecule number and all the records for that molecule.
+        @rtype:             tuple of int and list of str
+        """
+
+        # Check for empty records.
+        if records == []:
+            raise RelaxError, "There are no PDB records for this model."
+
+        # Init.
+        mol_num = 1
+        mol_records = []
+
+        # Loop over the data.
+        for record in records:
+            # A molecule termination record.
+            if search('^TER', record):
+                # Yield the info.
+                yield mol_num, mol_records
+
+                # Reset the records.
+                mol_records = []
+
+                # Increment the molecule number.
+                mol_num = mol_num + 1
+
+                # Skip the rest of this loop.
+                continue
+
+            # Append the line as a record of the molecule.
+            mol_records.append(record)
+
+        # If records is not empty then there is only a single molecule, so yield the lot.
+        if len(mol_records):
+            yield mol_num, mol_records
+
+
     def __parse_pdb_record(self, record):
         """Parse the PDB record string and return an array of the corresponding atomic information.
 
@@ -521,50 +563,6 @@ class Internal(Base_struct_API):
 
         # Return the atomic info.
         return fields
-
-
-    def __parse_structs(self, records):
-        """Generator function for looping over the structures in the PDB records of a model.
-
-        @param records:     The list of PDB records for the model, or if no models exist the entire
-                            PDB file.
-        @type records:      list of str
-        @return:            The structure number and all the records for that structure.
-        @rtype:             tuple of int and list of str
-        """
-
-        # Check for empty records.
-        if records == []:
-            raise RelaxError, "There are no PDB records for this model."
-
-        print records
-
-        # Init.
-        struct_num = 1
-        struct_records = []
-
-        # Loop over the data.
-        for record in records:
-            # A structure termination record.
-            if search('^TER', record):
-                # Yield the info.
-                yield struct_num, struct_records
-
-                # Reset the records.
-                struct_records = []
-
-                # Increment the structure number.
-                struct_num = struct_num + 1
-
-                # Skip the rest of this loop.
-                continue
-
-            # Append the line as a record of the structure.
-            struct_records.append(record)
-
-        # If records is not empty then there is only a single structure, so yield the lot.
-        if len(struct_records):
-            yield struct_num, struct_records
 
 
     def __validate_data_arrays(self, struct):
@@ -968,6 +966,7 @@ class Internal(Base_struct_API):
         #        print "Loading all structures from the PDB file."
 
         # Loop over all models in the PDB file.
+        model_index = 0
         for model_num, model_records in self.__parse_models(file_path):
             # Only load the desired model.
             if read_model and model_num not in read_model:
@@ -975,15 +974,46 @@ class Internal(Base_struct_API):
 
             # Print out.
             if model_num != None:
-                print "Loading model: " + `model_num`
+                print "%-25s %-10s" % ("Loading from model: ", `model_num`)
 
-            # Loop over the structures of the model.
-            for struct_num, struct_records in self.__parse_structs(model_records):
-                # Add an empty structure.
-                self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
+            # Set the target model number.
+            if set_model_num:
+                new_model_num = set_model_num[model_index]
+            else:
+                new_model_num = model_num
+            print "%-25s %-10s\n" % ("Loading to model: ", `new_model_num`)
 
-                # Fill the structural data object.
-                self.__fill_object_from_pdb(struct_records, struct_index=len(self.structural_data)-1)
+            # Add a new model.
+            self.structural_data.add_item(new_model_num)
+
+            # Loop over the molecules of the model.
+            mol_index = 0
+            for mol_num, mol_records in self.__parse_mols(model_records):
+                # Set the target molecule name.
+                if set_mol_name:
+                    new_mol_name = set_mol_name[mol_index]
+                else:
+                    # Set the name to the file name plus the structure number.
+                    new_mol_name = file + '_mol' + `mol_num`
+
+                # Print out.
+                print "%-25s %-10s" % ("Loading from molecule: ", `mol_num`)
+                print "%-25s %-10s" % ("Structure ID string: ", `new_mol_name`)
+
+                # Generate the molecule container.
+                mol = Molecule_container(mol_name=new_mol_name, file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
+
+                # Add the molecule to the last model.
+                self.structural_data[-1].mol.add_item(mol_name=mol_name, mol_cont=mol)
+
+                # Fill the molecular data object.
+                self.__fill_object_from_pdb(mol_records, model_index=len(self.structural_data), mol_index=len(self.structural_data[-1].mol))
+
+                # Increment the molecule index.
+                mol_index = mol_index + 1
+
+            # Increment the model index.
+            model_index = model_index + 1
 
         # Loading worked.
         return True
@@ -1336,8 +1366,8 @@ class Internal(Base_struct_API):
         file.write("END\n")
 
 
-class Structure_container:
-    """The container for the structural information.
+class Molecule_container:
+    """The container for the molecular information.
 
     The structural data object for this class is a container possessing a number of different arrays
     corresponding to different structural information.  These objects include:
@@ -1360,11 +1390,28 @@ class Structure_container:
     """
 
 
-    def __init__(self):
-        """Initialise all the arrays."""
+    def __init__(self, mol_name=None, file_name=None, file_path=None, file_model=None, file_mol_num=None):
+        """Initialise the molecular container.
 
-        # The model.
-        self.model = None
+        @keyword mol_name:          The molecule ID string.
+        @type mol_name:             str
+        @keyword file_name:         The name of the file from which the molecular data has been
+                                    extracted.
+        @type file_name:            None or str
+        @keyword file_path:         The full path to the file specified by 'file_name'.
+        @type file_path:            None or str
+        @keyword file_model:        The model in the file from which this data has been extracted.
+        @type file_model:           None or str
+        @keyword file_mol_num:      The molecule in the file from which this data has been extracted.
+        @type file_mol_num:         None or str
+        """
+
+        # Set the molecule info.
+        self.mol_name = mol_name
+        self.file_name = file_name
+        self.file_path = file_path
+        self.file_model = file_model
+        self.file_mol_num = file_mol_num
 
         # The atom num (array of int).
         self.atom_num = []
