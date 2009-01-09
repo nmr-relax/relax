@@ -523,6 +523,50 @@ class Internal(Base_struct_API):
         return fields
 
 
+    def __parse_structs(self, records):
+        """Generator function for looping over the structures in the PDB records of a model.
+
+        @param records:     The list of PDB records for the model, or if no models exist the entire
+                            PDB file.
+        @type records:      list of str
+        @return:            The structure number and all the records for that structure.
+        @rtype:             tuple of int and list of str
+        """
+
+        # Check for empty records.
+        if records == []:
+            raise RelaxError, "There are no PDB records for this model."
+
+        print records
+
+        # Init.
+        struct_num = 1
+        struct_records = []
+
+        # Loop over the data.
+        for record in records:
+            # A structure termination record.
+            if search('^TER', record):
+                # Yield the info.
+                yield struct_num, struct_records
+
+                # Reset the records.
+                struct_records = []
+
+                # Increment the structure number.
+                struct_num = struct_num + 1
+
+                # Skip the rest of this loop.
+                continue
+
+            # Append the line as a record of the structure.
+            struct_records.append(record)
+
+        # If records is not empty then there is only a single structure, so yield the lot.
+        if len(struct_records):
+            yield struct_num, struct_records
+
+
     def __validate_data_arrays(self, struct):
         """Check the validity of the data arrays in the given structure object.
 
