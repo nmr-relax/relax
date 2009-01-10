@@ -88,7 +88,7 @@ class Relax_disp(Common_functions):
                 else:
                     param_vector.append(spin.kex)
 
-            # Relaxation rate for state A.
+            # Transversal relaxation rate for state A.
             if spin.params[i] == 'R2A':
                 if sim_index != None:
                     param_vector.append(spin.r2a_sim[sim_index])
@@ -485,7 +485,7 @@ class Relax_disp(Common_functions):
             # Exchange rate.
             spin.kex_sim[sim_index] = param_vector[2]
 
-            # Relaxation rate for state A.
+            # Transversal relaxation rate for state A.
             spin.r2a_sim[sim_index] = param_vector[3]
 
             # Exchange rate from state A to state B.
@@ -505,7 +505,7 @@ class Relax_disp(Common_functions):
             # Exchange rate.
             spin.kex = param_vector[2]
 
-            # Relaxation rate for state A.
+            # Transversal relaxation rate for state A.
             spin.r2a = param_vector[3]
 
             # Exchange rate from state A to state B.
@@ -1075,23 +1075,35 @@ class Relax_disp(Common_functions):
         # Get the object name.
         object_name = self.return_data_name(data_type)
 
-        # Relaxation rate.
-        if object_name == 'rx':
-            grace_string = '\\qR\\sx\\Q'
-
         # Peak intensities.
-        elif object_name == 'intensities':
+        if object_name == 'intensities':
             grace_string = '\\qPeak intensities\\Q'
 
-        # Initial intensity.
-        elif object_name == 'i0':
-            grace_string = '\\qI\\s0\\Q'
+        # Transversal relaxation rate.
+        elif object_name == 'r2':
+            grace_string = '\\qR\\s2\\N (s\\S-1\\N)\\Q'
 
-        # Intensity at infinity.
-        elif object_name == 'iinf':
-            grace_string = '\\qI\\sinf\\Q'
+        # Chemical exchange contribution to 'R2'.
+        elif object_name == 'rex':
+            grace_string = '\\qR\\sex\\N (s\\S-1\\N)\\Q'
 
-        # Intensity at infinity.
+        # Exchange rate.
+        elif object_name == 'kex':
+            grace_string = '\\qk\\sex\\N (s\\S-1\\N)\\Q'
+
+        # Transversal relaxation rate for state A.
+        elif object_name == 'r2a':
+            grace_string = '\\qR\\s2,A\\N (s\\S-1\\N)\\Q'
+
+        # Exchange rate from state A to state B.
+        elif object_name == 'ka':
+            grace_string = '\\qk\\sA\\N (s\\S-1\\N)\\Q'
+
+        # Chemical shift difference between states A and B.
+        elif object_name == 'dw':
+            grace_string = '\\q\\xDw\\f{} (Hz)\\Q'
+
+        # CPMG pulse train frequency
         elif object_name == 'cpmg_frqs':
             grace_string = '\\qCPMG pulse train frequency (Hz)\\Q'
 
