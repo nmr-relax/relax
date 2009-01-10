@@ -1026,43 +1026,57 @@ class Relax_disp(Common_functions):
         Relaxation curve fitting data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        _______________________________________________________________________________________________
-        |                                                   |              |                          |
-        | Data type                                         | Object name  | Patterns                 |
-        |___________________________________________________|______________|__________________________|
-        |                                                   |              |                          |
-        | Transversal relaxation rate                       | 'R2'         | '^[Rr]2$'                |
-        |                                                   |              |                          |
-        | Chemical exchange contribution to 'R2'            | 'Rex'        | '^[Rr]ex$'               |
-        |                                                   |              |                          |
-        | Exchange rate                                     | 'kex'        | '^[Kk]ex$'               |
-        |                                                   |              |                          |
-        | Transversal relaxation rate for state A           | 'R2A'        | '^[Rr]2A$'               |
-        |                                                   |              |                          |
-        | Exchange rate from state A to state B             | 'kA'         | '^[Kk]A$'                |
-        |                                                   |              |                          |
-        | Chemical shift difference between states A and B  | 'dw'         | '^[Dd]w$'                |
-        |                                                   |              |                          |
-        | CPMG pulse train frequency (series)               | 'cpmg_frqs'  | '^[Cc]pmg[ -_][Ff]rqs$'  |
-        |___________________________________________________|______________|__________________________|
+        _________________________________________________________________________________________________
+        |                                                   |                |                          |
+        | Data type                                         | Object name    | Patterns                 |
+        |___________________________________________________|________________|__________________________|
+        |                                                   |                |                          |
+        | Transversal relaxation rate                       | 'R2'           | '^[Rr]2$'                |
+        |                                                   |                |                          |
+        | Chemical exchange contribution to 'R2'            | 'Rex'          | '^[Rr]ex$'               |
+        |                                                   |                |                          |
+        | Exchange rate                                     | 'kex'          | '^[Kk]ex$'               |
+        |                                                   |                |                          |
+        | Transversal relaxation rate for state A           | 'R2A'          | '^[Rr]2A$'               |
+        |                                                   |                |                          |
+        | Exchange rate from state A to state B             | 'kA'           | '^[Kk]A$'                |
+        |                                                   |                |                          |
+        | Chemical shift difference between states A and B  | 'dw'           | '^[Dd]w$'                |
+        |                                                   |                |                          |
+        | Peak intensities (series)                         | 'intensities'  | '^[Ii]nt$                |
+        |                                                   |                |                          |
+        | CPMG pulse train frequency (series)               | 'cpmg_frqs'    | '^[Cc]pmg[ -_][Ff]rqs$'  |
+        |___________________________________________________|________________|__________________________|
 
         """
 
-        # Relaxation rate.
-        if match('^[Rr]x$', name):
-            return 'rx'
+        # Transversal relaxation rate.
+        if match('^[Rr]2$', name):
+            return 'r2'
+
+        # Chemical exchange contribution to 'R2'.
+        if match('^[Rr]ex$', name):
+            return 'rex'
+
+        # Exchange rate.
+        if match('^[Kk]ex$', name):
+            return 'kex'
+
+        # Transversal relaxation rate for state A.
+        if match('^[Rr]2A$', name):
+            return 'r2a'
+
+        # Exchange rate from state A to state B.
+        if match('^[Kk]A$', name):
+            return 'ka'
+
+        # Chemical shift difference between states A and B.
+        if match ('^[Dd]w$', name):
+            return 'dw'
 
         # Peak intensities (series)
         if match('^[Ii]nt$', name):
             return 'intensities'
-
-        # Initial intensity.
-        if match('^[Ii]0$', name):
-            return 'i0'
-
-        # Intensity at infinity.
-        if match('^[Ii]inf$', name):
-            return 'iinf'
 
         # CPMG pulse train frequency (series).
         if match('^[Cc]pmg[ -_][Ff]rqs$', name):
