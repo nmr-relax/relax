@@ -1156,12 +1156,12 @@ class Relax_disp(Common_functions):
 
         # Fast-exchange regime.
         if model == 'fast':
-            print "Two parameter exponential fit."
+            print "Fast-exchange regime."
             params = ['R2', 'Rex', 'kex']
 
         # Slow-exchange regime.
         elif model == 'slow':
-            print "Three parameter inversion recovery fit."
+            print "Slow-exchange regime."
             params = ['R2A', 'kA', 'dw']
 
         # Invalid model.
