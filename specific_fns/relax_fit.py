@@ -954,7 +954,7 @@ class Relax_fit(Common_functions):
         elif object_name == 'iinf':
             grace_string = '\\qI\\sinf\\Q'
 
-        # Intensity at infinity.
+        # Relaxation period times (series).
         elif object_name == 'relax_times':
             grace_string = '\\qRelaxation time period (s)\\Q'
 
