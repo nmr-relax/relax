@@ -10,7 +10,7 @@ pipe.create('rex', 'relax_disp')
 data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen/500_MHz'
 
 # Load the sequence.
-sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen/500_MHz')
+sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/curve_fitting_disp/Hansen')
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
