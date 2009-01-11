@@ -1,6 +1,6 @@
 from unittest import TestCase
-from STAR.TagTable import TagTable
-import STAR
+from TagTable import TagTable
+import __init__
 #from TagTable import *
 #from SaveFrame import *
 import unittest
@@ -9,13 +9,13 @@ import unittest
 class AllChecks(TestCase):
     def testcheck_integrity(self):
         """TagTable"""
-        STAR.verbosity = 2
+        __init__.verbosity = 2
     ##    text = """_A a _B "b'" """; free = 1
         text = """_A a b c d e"""; free = None
         tt = TagTable(  free      = free,
                         tagnames  = [],
                         tagvalues = [],
-                        verbosity = STAR.verbosity)
+                        verbosity = __init__.verbosity)
         pos = tt.parse( text = text, pos = 0)
         self.assertEqual(pos,len(text))
         

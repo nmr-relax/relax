@@ -1,21 +1,21 @@
 """
 Classes for dealing with STAR syntax
 """
-from STAR.Text import pattern_quotes_needed
-from STAR.Text import quotes_add
-from STAR.Text import pattern_quotes_needed_2
-from STAR.Text import pattern_quoted
-from STAR.Text import tag_value_quoted_parse
-from STAR.Text import pattern_tags_loop
-from STAR.Text import pattern_tags_loop_2
-from STAR.Text import pattern_tagname_2
-from STAR.Text import pattern_tagtable_stop_2
-from STAR.Text import pattern_tagtable_loop_2
-from STAR.Text import pattern_unquoted_find
-from STAR.Text import pattern_tag_name
-from STAR.Text import tag_value_parse
-from STAR.Utils import Lister
-from STAR.Utils import transpose
+from Text import pattern_quotes_needed
+from Text import quotes_add
+from Text import pattern_quotes_needed_2
+from Text import pattern_quoted
+from Text import tag_value_quoted_parse
+from Text import pattern_tags_loop
+from Text import pattern_tags_loop_2
+from Text import pattern_tagname_2
+from Text import pattern_tagtable_stop_2
+from Text import pattern_tagtable_loop_2
+from Text import pattern_unquoted_find
+from Text import pattern_tag_name
+from Text import tag_value_parse
+from Utils import Lister
+from Utils import transpose
 import string
 import types
 import re

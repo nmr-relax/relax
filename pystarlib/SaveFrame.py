@@ -1,7 +1,7 @@
 """
 Classes for dealing with STAR syntax
 """
-from STAR.Utils import Lister
+from Utils import Lister
 
 
 """

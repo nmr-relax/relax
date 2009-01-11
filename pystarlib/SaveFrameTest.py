@@ -2,10 +2,10 @@
 Unit test for SaveFrameTest.py
 Setup taken from "Dive Into Python"
 """
-from STAR.TagTable import TagTable
+from TagTable import TagTable
 import unittest
 from unittest import TestCase
-from STAR.SaveFrame import SaveFrame
+from SaveFrame import SaveFrame
 
 
 class AllChecks(TestCase):

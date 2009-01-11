@@ -1,8 +1,8 @@
 """Unit test
 """
-from STAR.File import File
-from STAR import Utils
-import STAR
+from File import File
+import Utils
+import __init__
 
 import os   
 import zipfile
@@ -68,7 +68,7 @@ Extra Test Routine going over some entries in the NMR Restraints Grid
 def testEntry(entry):
     print "Testing Entry"
     strf = File() 
-    STAR.verbosity = 2
+    __init__.verbosity = 2
     # Freely available on the web so not included in package.
     stage = "2-parsed"
 #    stage = "3-converted-DOCR"

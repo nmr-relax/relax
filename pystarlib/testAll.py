@@ -6,11 +6,11 @@ python testAll.py
 """
 if __name__ == "__main__":
     modList = ( 
-               "STAR.TextTest", 
-               "STAR.UtilsTest", 
-               "STAR.TagTableTest", 
-               "STAR.SaveFrameTest", 
-               "STAR.FileTest", 
+               "TextTest", 
+               "UtilsTest", 
+               "TagTableTest", 
+               "SaveFrameTest", 
+               "FileTest", 
                )
     # Next line is to fool pydev extensions into thinking suite is defined in the regular way.
     suite = None
