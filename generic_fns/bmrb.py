@@ -23,10 +23,13 @@
 # Module docstring.
 """Module for interfacing with the BMRB (http://www.bmrb.wisc.edu/) by handling NMR-STAR v3.1 files."""
 
+# Python module imports.
+from os import F_OK, access
+
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from relax_errors import RelaxError, RelaxNoPipeError
-from relax_io import open_read_file, open_write_file
+from relax_errors import RelaxError, RelaxFileOverwriteError, RelaxNoPipeError
+from relax_io import get_file_path
 from specific_fns.setup import get_specific_fn
 
 
@@ -68,7 +71,7 @@ def read(file=None, directory=None):
     read_function(file)
 
 
-def write(file=None, directory=None, force=False, compress_type=0, verbosity=1):
+def write(file=None, directory=None, force=False):
     """Create a BMRB NMR-STAR v3.1 formatted file."""
 
     # Test if the current data pipe exists.
@@ -82,11 +85,12 @@ def write(file=None, directory=None, force=False, compress_type=0, verbosity=1):
     # Specific results writing function.
     write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
 
-    # Open the file for writing.
-    results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
+    # Get the full file path.
+    file_path = get_file_path(file, directory)
 
-    # Write the results.
-    write_function(results_file)
+    # Fail if the file already exists and the force flag is False.
+    if access(file_path, F_OK) and not force:
+        raise RelaxFileOverwriteError, (file_path, 'force flag')
 
-    # Close the results file.
-    results_file.close()
+    # Execute the specific BMRB writing code.
+    write_function(file_path)
