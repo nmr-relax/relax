@@ -61,6 +61,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'base_data_loop':
             function = inst.base_data_loop
 
+        # BMRB NMR-STAR v3.1 writing function.
+        if eqi == 'bmrb_write':
+            function = inst.bmrb_write
+
         # Calculate function.
         if eqi == 'calculate':
             function = inst.calculate
