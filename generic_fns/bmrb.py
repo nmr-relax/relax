@@ -62,7 +62,7 @@ def read(file=None, directory=None):
     file = open_read_file(file_name=file, dir=directory)
 
     # Specific results reading function.
-    read_function = get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type, raise_error=False)
+    read_function = get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
 
     # Read the results.
     read_function(file)
@@ -80,7 +80,7 @@ def write(file=None, directory=None, force=False, compress_type=0, verbosity=1):
         directory = ds.current_pipe
 
     # Specific results writing function.
-    write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
+    write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
 
     # Open the file for writing.
     results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
