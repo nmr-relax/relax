@@ -92,5 +92,8 @@ def write(file=None, directory=None, force=False):
     if access(file_path, F_OK) and not force:
         raise RelaxFileOverwriteError, (file_path, 'force flag')
 
+    # Print out.
+    print "Opening the file '%s' for writing." % file_path
+
     # Execute the specific BMRB writing code.
     write_function(file_path)
