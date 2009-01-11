@@ -80,7 +80,7 @@ class Bmrb:
 
             # Specifics of the collected data.
             frame.tagtables.append(TagTable(tagnames=['_Sample_conditions_label'], tagvalues=[['$condition_one']]))
-            frame.tagtables.append(TagTable(tagnames=['_Spectrometer_frequency_1H'], tagvalues=[[str(int(cdp.frq[cdp.remap_table[i]]/1e6))]]))
+            frame.tagtables.append(TagTable(tagnames=['_Spectrometer_frequency_1H'], tagvalues=[[str(cdp.frq[cdp.remap_table[i]]/1e6)]]))
             if ri_label in ['T1', 'T2']:
                 frame.tagtables.append(TagTable(tagnames=['_'+ri_label+'_coherence_type'], tagvalues=[[coherence]]))
                 frame.tagtables.append(TagTable(tagnames=['_'+ri_label+'_value_units'], tagvalues=[['1/s']]))
