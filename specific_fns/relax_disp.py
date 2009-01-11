@@ -62,7 +62,7 @@ class Relax_disp(Common_functions):
         # Loop over the model parameters.
         for i in xrange(len(spin.params)):
             # Transversal relaxation rate.
-            if spin.params[i] == 'R2':
+            if spin.params[i] == 'r2':
                 if sim_index != None:
                     param_vector.append(spin.r2_sim[sim_index])
                 elif spin.r2 == None:
@@ -71,7 +71,7 @@ class Relax_disp(Common_functions):
                     param_vector.append(spin.r2)
 
             # Chemical exchange contribution to 'R2'.
-            elif spin.params[i] == 'Rex':
+            elif spin.params[i] == 'rex':
                 if sim_index != None:
                     param_vector.append(spin.rex_sim[sim_index])
                 elif spin.rex == None:
@@ -89,7 +89,7 @@ class Relax_disp(Common_functions):
                     param_vector.append(spin.kex)
 
             # Transversal relaxation rate for state A.
-            if spin.params[i] == 'R2A':
+            if spin.params[i] == 'r2a':
                 if sim_index != None:
                     param_vector.append(spin.r2a_sim[sim_index])
                 elif spin.r2a == None:
@@ -98,7 +98,7 @@ class Relax_disp(Common_functions):
                     param_vector.append(spin.r2a)
 
             # Exchange rate from state A to state B.
-            if spin.params[i] == 'kA':
+            if spin.params[i] == 'ka':
                 if sim_index != None:
                     param_vector.append(spin.ka_sim[sim_index])
                 elif spin.ka == None:
@@ -1032,15 +1032,15 @@ class Relax_disp(Common_functions):
         | Data type                                         | Object name    | Patterns                 |
         |___________________________________________________|________________|__________________________|
         |                                                   |                |                          |
-        | Transversal relaxation rate                       | 'R2'           | '^[Rr]2$'                |
+        | Transversal relaxation rate                       | 'r2'           | '^[Rr]2$'                |
         |                                                   |                |                          |
-        | Chemical exchange contribution to 'R2'            | 'Rex'          | '^[Rr]ex$'               |
+        | Chemical exchange contribution to 'R2'            | 'rex'          | '^[Rr]ex$'               |
         |                                                   |                |                          |
         | Exchange rate                                     | 'kex'          | '^[Kk]ex$'               |
         |                                                   |                |                          |
-        | Transversal relaxation rate for state A           | 'R2A'          | '^[Rr]2A$'               |
+        | Transversal relaxation rate for state A           | 'r2a'          | '^[Rr]2A$'               |
         |                                                   |                |                          |
-        | Exchange rate from state A to state B             | 'kA'           | '^[Kk]A$'                |
+        | Exchange rate from state A to state B             | 'ka'           | '^[Kk]A$'                |
         |                                                   |                |                          |
         | Chemical shift difference between states A and B  | 'dw'           | '^[Dd]w$'                |
         |                                                   |                |                          |
