@@ -27,6 +27,20 @@ from pystarlib.File import File
 class Bmrb:
     """Class containing methods related to BMRB STAR file reading and writing."""
 
+    def bmrb_read(self, file_path):
+        """Read the model-free results from a BMRB NMR-STAR v3.1 formatted file.
+
+        @param file_path:   The full file path.
+        @type file_path:    str
+        """
+
+        # Initialise the pystarlib File object.
+        file = File(title='relax_model_free_results', filename=file_path)
+
+        # Read the contents of the STAR formatted file.
+        file.read()
+
+
     def bmrb_write(self, file_path):
         """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
 
