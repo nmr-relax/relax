@@ -64,11 +64,11 @@ class Bmrb(TestCase):
         self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=path)
 
         # Write the BMRB STAR formatted file.
-        self.relax.interpreter._Bmrb.write(file=self.tmpfile, force=True)
+        self.relax.interpreter._BMRB.write(file=self.tmpfile, force=True)
 
         # Create a new data pipe for reading the data back in.
         self.relax.interpreter._Pipe.create('bmrb', 'mf')
 
         # Read the BMRB STAR formatted file.
-        self.relax.interpreter._Bmrb.read(file=self.tmpfile)
+        self.relax.interpreter._BMRB.read(file=self.tmpfile)
 
