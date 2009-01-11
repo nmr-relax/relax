@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,11 +31,12 @@ __all__ = [ 'main',
             'results']
 
 # relax module imports.
+from bmrb import Bmrb
 from main import Model_free_main
 from mf_minimise import Mf_minimise
 from molmol import Molmol
 from results import Results
 from specific_fns.base_class import Common_functions
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Common_functions):
+class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, Common_functions):
     """Parent class containing all the model-free specific functions."""
