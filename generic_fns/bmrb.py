@@ -29,7 +29,7 @@ from os import F_OK, access
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
-from relax_io import get_file_path
+from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
 
 
@@ -95,6 +95,9 @@ def write(file=None, directory=None, force=False):
 
     # Print out.
     print "Opening the file '%s' for writing." % file_path
+
+    # Create the directories.
+    mkdir_nofail(directory, verbosity=0)
 
     # Execute the specific BMRB writing code.
     write_function(file_path)
