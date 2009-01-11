@@ -26,6 +26,7 @@
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError
+from specific_fns.setup import get_specific_fn
 
 
 def display():
