@@ -20,13 +20,22 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from pystarlib.File import File
+
 
 class Bmrb:
     """Class containing methods related to BMRB STAR file reading and writing."""
 
-    def bmrb_write(self, file):
+    def bmrb_write(self, file_path):
         """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
 
-        @param file:    The writable file object.
-        @type file:     file object
+        @param file_path:   The full file path.
+        @type file_path:    str
         """
+
+        # Initialise the pystarlib File object.
+        file = File(title='relax_model_free_results', filename=file_path)
+
+        # Write the contents to the STAR formatted file.
+        file.write()
