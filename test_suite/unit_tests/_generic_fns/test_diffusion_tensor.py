@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from generic_fns import diffusion_tensor
-from relax_errors import RelaxStrError, RelaxUnknownParamError
+from relax_errors import RelaxStrError
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 

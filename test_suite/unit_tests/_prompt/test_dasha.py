@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.dasha import Dasha
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxNoneStrError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
