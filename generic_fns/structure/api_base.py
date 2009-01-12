@@ -689,11 +689,11 @@ class ModelList(list):
                 num = None
             self.add_item(model_num=num)
 
-            # Get the structure nodes.
-            struct_nodes = model_node.getElementsByTagName('struct')
+            # Get the molecule nodes.
+            mol_nodes = model_node.getElementsByTagName('mol')
 
-            # Recreate the structure data structures for the current model.
-            self[-1].struct.from_xml(struct_nodes)
+            # Recreate the molecule data structures for the current model.
+            self[-1].mol.from_xml(mol_nodes)
 
 
     def to_xml(self, doc, element):
@@ -716,10 +716,10 @@ class ModelList(list):
             model_element.setAttribute('num', str(self[i].num))
 
             # Add all simple python objects within the ModelContainer to the XML element.
-            fill_object_contents(doc, model_element, object=self[i], blacklist=['num', 'struct'] + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, model_element, object=self[i], blacklist=['num', 'mol'] + self[i].__class__.__dict__.keys())
 
-            # Add the structure data.
-            self[i].struct.to_xml(doc, model_element)
+            # Add the molecule data.
+            self[i].mol.to_xml(doc, model_element)
 
 
 
@@ -732,8 +732,8 @@ class ModelContainer(object):
         # The model number.
         self.num = model_num
 
-        # The empty structure list.
-        self.struct = StructList()
+        # The empty molecule list.
+        self.mol = MolList()
 
 
     def __repr__(self):
@@ -750,9 +750,9 @@ class ModelContainer(object):
         text = text + "\n"
         text = text + "Objects:\n"
         for name in dir(self):
-            # Structure list.
-            if name == 'struct':
-                text = text + "  struct: The list of %s structures within the model.\n" % len(self.struct)
+            # Molecule list.
+            if name == 'mol':
+                text = text + "  mol: The list of %s molecules within the model.\n" % len(self.mol)
                 continue
 
             # Skip the ModelContainer methods.
@@ -784,7 +784,7 @@ class ModelContainer(object):
         # An object has been added to the container.
         for name in dir(self):
             # Skip the objects initialised in __init__().
-            if name == 'num' or name == 'struct':
+            if name == 'num' or name == 'mol':
                 continue
 
             # Skip the ModelContainer methods.
@@ -798,8 +798,8 @@ class ModelContainer(object):
             # An object has been added.
             return False
 
-        # The structure list is not empty.
-        if not self.struct.is_empty():
+        # The molecule list is not empty.
+        if not self.mol.is_empty():
             return False
 
         # The ModelContainer is unmodified.
@@ -807,8 +807,8 @@ class ModelContainer(object):
 
 
 
-class StructList(list):
-    """List type data container for holding the different structures within one model."""
+class MolList(list):
+    """List type data container for holding the different molecules of one model."""
 
     def __repr__(self):
         """The string representation of the object.
@@ -817,46 +817,46 @@ class StructList(list):
         value or the "<...desc...>" notation), a rich-formatted description of the object is given.
         """
 
-        text = "Structures.\n\n"
+        text = "Molecules.\n\n"
         text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
         for i in xrange(len(self)):
             text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
         return text
 
 
-    def add_item(self, struct_name=None, struct_cont=None):
-        """Append the given StructContainer instance to the StructList.
+    def add_item(self, mol_name=None, mol_cont=None):
+        """Append the given MolContainer instance to the MolList.
 
-        @keyword struct_name:   The structure number.
-        @type struct_name:      int
-        @keyword struct_cont:   The data structure for the structure.
-        @type struct_cont:      StructContainer instance
+        @keyword mol_name:	The molecule number.
+        @type mol_name:      	int
+        @keyword mol_cont:   	The data structure for the molecule.
+        @type mol_cont:      	MolContainer instance
         """
 
-        # If no structure data exists, replace the empty first structure with this structure (just a renaming).
+        # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
         if self.is_empty():
-            self[0].name = struct_name
+            self[0].name = mol_name
 
-        # Otherwise append an empty StructContainer.
+        # Otherwise append an empty MolContainer.
         else:
-            # Test if the structure already exists.
+            # Test if the molecule already exists.
             for i in xrange(len(self)):
-                if self[i].name == struct_name:
-                    raise RelaxError, "The structure '" + `struct_name` + "' already exists."
+                if self[i].name == mol_name:
+                    raise RelaxError, "The molecule '" + `mol_name` + "' already exists."
 
-            # Append an empty StructContainer.
-            self.append(struct_cont)
+            # Append an empty MolContainer.
+            self.append(mol_cont)
 
 
     def is_empty(self):
-        """Method for testing if this StructList object is empty.
+        """Method for testing if this MolList object is empty.
 
-        @return:    True if this list only has one StructContainer and the structure name has not
+        @return:    True if this list only has one MolContainer and the molecule name has not
                     been set, False otherwise.
         @rtype:     bool
         """
 
-        # There is only one StructContainer and it is empty.
+        # There is only one MolContainer and it is empty.
         if len(self) == 1 and self[0].is_empty():
             return True
 
@@ -864,53 +864,53 @@ class StructList(list):
         return False
 
 
-    def from_xml(self, struct_nodes):
-        """Recreate a structure list data structure from the XML structure nodes.
+    def from_xml(self, mol_nodes):
+        """Recreate a molecule list data structure from the XML molecule nodes.
 
-        @param struct_nodes:    The structure XML nodes.
-        @type struct_nodes:     xml.dom.minicompat.NodeList instance
+        @param mol_nodes:    The molecule XML nodes.
+        @type mol_nodes:     xml.dom.minicompat.NodeList instance
         """
 
         # Test if empty.
         if not self.is_empty():
             raise RelaxFromXMLNotEmptyError, self.__class__.__name__
 
-        # Loop over the structures.
-        for struct_node in struct_nodes:
-            # Get the structure details and add the structure to the StructList structure.
-            name = eval(struct_node.getAttribute('name'))
+        # Loop over the molecules.
+        for mol_node in mol_nodes:
+            # Get the molecule details and add the molecule to the MolList structure.
+            name = eval(mol_node.getAttribute('name'))
             if name == 'None':
                 name = None
-            self.add_item(struct_name=name)
+            self.add_item(mol_name=name)
 
-            # Get the structure nodes.
-            struct_nodes = struct_node.getElementsByTagName('struct')
+            # Get the molecule nodes.
+            mol_nodes = mol_node.getElementsByTagName('mol')
 
-            # Recreate the structure data structures for the current structure.
-            self[-1].struct.from_xml(struct_nodes)
+            # Recreate the molecule data structures for the current molecule.
+            self[-1].mol.from_xml(mol_nodes)
 
 
     def to_xml(self, doc, element):
-        """Create XML elements for each structure.
+        """Create XML elements for each molecule.
 
         @param doc:     The XML document object.
         @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the structure XML elements to.
+        @param element: The element to add the molecule XML elements to.
         @type element:  XML element object
         """
 
-        # Loop over the structures.
+        # Loop over the molecules.
         for i in xrange(len(self)):
-            # Create an XML element for this structure and add it to the higher level element.
-            struct_element = doc.createElement('struct')
-            element.appendChild(struct_element)
+            # Create an XML element for this molecule and add it to the higher level element.
+            mol_element = doc.createElement('mol')
+            element.appendChild(mol_element)
 
-            # Set the structure attributes.
-            struct_element.setAttribute('desc', 'Structure container')
-            struct_element.setAttribute('name', str(self[i].name))
+            # Set the molecule attributes.
+            mol_element.setAttribute('desc', 'Molecule container')
+            mol_element.setAttribute('name', str(self[i].name))
 
-            # Add all simple python objects within the StructContainer to the XML element.
-            fill_object_contents(doc, struct_element, object=self[i], blacklist=['name'] + self[i].__class__.__dict__.keys())
+            # Add all simple python objects within the MolContainer to the XML element.
+            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name'] + self[i].__class__.__dict__.keys())
 
-            # Add the structure data.
-            self[i].struct.to_xml(doc, struct_element)
+            # Add the molecule data.
+            self[i].mol.to_xml(doc, mol_element)
