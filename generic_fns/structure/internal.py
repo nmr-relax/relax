@@ -376,161 +376,6 @@ class Internal(Base_struct_API):
             yield mol_num, mol_records
 
 
-    def __parse_pdb_record(self, record):
-        """Parse the PDB record string and return an array of the corresponding atomic information.
-
-        The format of the ATOM and HETATM records is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "ATOM"       |                                                |
-         |  7 - 11 | Integer      | serial       | Atom serial number.                            |
-         | 13 - 16 | Atom         | name         | Atom name.                                     |
-         | 17      | Character    | altLoc       | Alternate location indicator.                  |
-         | 18 - 20 | Residue name | resName      | Residue name.                                  |
-         | 22      | Character    | chainID      | Chain identifier.                              |
-         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
-         | 27      | AChar        | iCode        | Code for insertion of residues.                |
-         | 31 - 38 | Real(8.3)    | x            | Orthogonal coordinates for X in Angstroms.     |
-         | 39 - 46 | Real(8.3)    | y            | Orthogonal coordinates for Y in Angstroms.     |
-         | 47 - 54 | Real(8.3)    | z            | Orthogonal coordinates for Z in Angstroms.     |
-         | 55 - 60 | Real(6.2)    | occupancy    | Occupancy.                                     |
-         | 61 - 66 | Real(6.2)    | tempFactor   | Temperature factor.                            |
-         | 73 - 76 | LString(4)   | segID        | Segment identifier, left-justified.            |
-         | 77 - 78 | LString(2)   | element      | Element symbol, right-justified.               |
-         | 79 - 80 | LString(2)   | charge       | Charge on the atom.                            |
-         |_________|______________|______________|________________________________________________|
-
-
-        The format of the TER record is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "TER   "     |                                                |
-         |  7 - 11 | Integer      | serial       | Serial number.                                 |
-         | 18 - 20 | Residue name | resName      | Residue name.                                  |
-         | 22      | Character    | chainID      | Chain identifier.                              |
-         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
-         | 27      | AChar        | iCode        | Insertion code.                                |
-         |_________|______________|______________|________________________________________________|
-
-
-        The format of the CONECT record is::
-         __________________________________________________________________________________________
-         |         |              |              |                                                |
-         | Columns | Data type    | Field        | Definition                                     |
-         |_________|______________|______________|________________________________________________|
-         |         |              |              |                                                |
-         |  1 -  6 | Record name  | "CONECT"     |                                                |
-         |  7 - 11 | Integer      | serial       | Atom serial number                             |
-         | 12 - 16 | Integer      | serial       | Serial number of bonded atom                   |
-         | 17 - 21 | Integer      | serial       | Serial number of bonded atom                   |
-         | 22 - 26 | Integer      | serial       | Serial number of bonded atom                   |
-         | 27 - 31 | Integer      | serial       | Serial number of bonded atom                   |
-         | 32 - 36 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 37 - 41 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 42 - 46 | Integer      | serial       | Serial number of salt bridged atom             |
-         | 47 - 51 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 52 - 56 | Integer      | serial       | Serial number of hydrogen bonded atom          |
-         | 57 - 61 | Integer      | serial       | Serial number of salt bridged atom             |
-         |_________|______________|______________|________________________________________________|
-
-
-        @param record:  The single line PDB record.
-        @type record:   str
-        @return:        The list of atomic information, each element corresponding to the PDB fields
-                        as defined in "Protein Data Bank Contents Guide: Atomic Coordinate Entry
-                        Format Description" version 2.1 (draft), October 25, 1996.
-        @rtype:         list of str
-        """
-
-        # Initialise.
-        fields = []
-
-        # ATOM and HETATM records.
-        if search('^ATOM', record) or search('^HETATM', record):
-            # Split up the record.
-            fields.append(record[0:6])
-            fields.append(record[6:11])
-            fields.append(record[12:16])
-            fields.append(record[16])
-            fields.append(record[17:20])
-            fields.append(record[21])
-            fields.append(record[22:26])
-            fields.append(record[26])
-            fields.append(record[30:38])
-            fields.append(record[38:46])
-            fields.append(record[46:54])
-            fields.append(record[54:60])
-            fields.append(record[60:66])
-            fields.append(record[72:76])
-            fields.append(record[76:78])
-            fields.append(record[78:80])
-
-            # Loop over the fields.
-            for i in xrange(len(fields)):
-                # Strip all whitespace.
-                fields[i] = strip(fields[i])
-
-                # Replace nothingness with None.
-                if fields[i] == '':
-                    fields[i] = None
-
-            # Convert strings to numbers.
-            if fields[1]:
-                fields[1] = int(fields[1])
-            if fields[6]:
-                fields[6] = int(fields[6])
-            if fields[8]:
-                fields[8] = float(fields[8])
-            if fields[9]:
-                fields[9] = float(fields[9])
-            if fields[10]:
-                fields[10] = float(fields[10])
-            if fields[11]:
-                fields[11] = float(fields[11])
-            if fields[12]:
-                fields[12] = float(fields[12])
-
-        # CONECT records.
-        if search('^CONECT', record):
-            # Split up the record.
-            fields.append(record[0:6])
-            fields.append(record[6:11])
-            fields.append(record[11:16])
-            fields.append(record[16:21])
-            fields.append(record[21:26])
-            fields.append(record[26:31])
-
-            # Loop over the fields.
-            for i in xrange(len(fields)):
-                # Strip all whitespace.
-                fields[i] = strip(fields[i])
-
-                # Replace nothingness with None.
-                if fields[i] == '':
-                    fields[i] = None
-
-            # Convert strings to numbers.
-            if fields[1]:
-                fields[1] = int(fields[1])
-            if fields[2]:
-                fields[2] = int(fields[2])
-            if fields[3]:
-                fields[3] = int(fields[3])
-            if fields[4]:
-                fields[4] = int(fields[4])
-            if fields[5]:
-                fields[5] = int(fields[5])
-
-        # Return the atomic info.
-        return fields
-
-
     def __validate_data_arrays(self, struct):
         """Check the validity of the data arrays in the given structure object.
 
@@ -1334,6 +1179,161 @@ class MolContainer:
 
         # The z coordinate (array of float).
         self.z = []
+
+
+    def __parse_pdb_record(self, record):
+        """Parse the PDB record string and return an array of the corresponding atomic information.
+
+        The format of the ATOM and HETATM records is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "ATOM"       |                                                |
+         |  7 - 11 | Integer      | serial       | Atom serial number.                            |
+         | 13 - 16 | Atom         | name         | Atom name.                                     |
+         | 17      | Character    | altLoc       | Alternate location indicator.                  |
+         | 18 - 20 | Residue name | resName      | Residue name.                                  |
+         | 22      | Character    | chainID      | Chain identifier.                              |
+         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
+         | 27      | AChar        | iCode        | Code for insertion of residues.                |
+         | 31 - 38 | Real(8.3)    | x            | Orthogonal coordinates for X in Angstroms.     |
+         | 39 - 46 | Real(8.3)    | y            | Orthogonal coordinates for Y in Angstroms.     |
+         | 47 - 54 | Real(8.3)    | z            | Orthogonal coordinates for Z in Angstroms.     |
+         | 55 - 60 | Real(6.2)    | occupancy    | Occupancy.                                     |
+         | 61 - 66 | Real(6.2)    | tempFactor   | Temperature factor.                            |
+         | 73 - 76 | LString(4)   | segID        | Segment identifier, left-justified.            |
+         | 77 - 78 | LString(2)   | element      | Element symbol, right-justified.               |
+         | 79 - 80 | LString(2)   | charge       | Charge on the atom.                            |
+         |_________|______________|______________|________________________________________________|
+
+
+        The format of the TER record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "TER   "     |                                                |
+         |  7 - 11 | Integer      | serial       | Serial number.                                 |
+         | 18 - 20 | Residue name | resName      | Residue name.                                  |
+         | 22      | Character    | chainID      | Chain identifier.                              |
+         | 23 - 26 | Integer      | resSeq       | Residue sequence number.                       |
+         | 27      | AChar        | iCode        | Insertion code.                                |
+         |_________|______________|______________|________________________________________________|
+
+
+        The format of the CONECT record is::
+         __________________________________________________________________________________________
+         |         |              |              |                                                |
+         | Columns | Data type    | Field        | Definition                                     |
+         |_________|______________|______________|________________________________________________|
+         |         |              |              |                                                |
+         |  1 -  6 | Record name  | "CONECT"     |                                                |
+         |  7 - 11 | Integer      | serial       | Atom serial number                             |
+         | 12 - 16 | Integer      | serial       | Serial number of bonded atom                   |
+         | 17 - 21 | Integer      | serial       | Serial number of bonded atom                   |
+         | 22 - 26 | Integer      | serial       | Serial number of bonded atom                   |
+         | 27 - 31 | Integer      | serial       | Serial number of bonded atom                   |
+         | 32 - 36 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 37 - 41 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 42 - 46 | Integer      | serial       | Serial number of salt bridged atom             |
+         | 47 - 51 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 52 - 56 | Integer      | serial       | Serial number of hydrogen bonded atom          |
+         | 57 - 61 | Integer      | serial       | Serial number of salt bridged atom             |
+         |_________|______________|______________|________________________________________________|
+
+
+        @param record:  The single line PDB record.
+        @type record:   str
+        @return:        The list of atomic information, each element corresponding to the PDB fields
+                        as defined in "Protein Data Bank Contents Guide: Atomic Coordinate Entry
+                        Format Description" version 2.1 (draft), October 25, 1996.
+        @rtype:         list of str
+        """
+
+        # Initialise.
+        fields = []
+
+        # ATOM and HETATM records.
+        if search('^ATOM', record) or search('^HETATM', record):
+            # Split up the record.
+            fields.append(record[0:6])
+            fields.append(record[6:11])
+            fields.append(record[12:16])
+            fields.append(record[16])
+            fields.append(record[17:20])
+            fields.append(record[21])
+            fields.append(record[22:26])
+            fields.append(record[26])
+            fields.append(record[30:38])
+            fields.append(record[38:46])
+            fields.append(record[46:54])
+            fields.append(record[54:60])
+            fields.append(record[60:66])
+            fields.append(record[72:76])
+            fields.append(record[76:78])
+            fields.append(record[78:80])
+
+            # Loop over the fields.
+            for i in xrange(len(fields)):
+                # Strip all whitespace.
+                fields[i] = strip(fields[i])
+
+                # Replace nothingness with None.
+                if fields[i] == '':
+                    fields[i] = None
+
+            # Convert strings to numbers.
+            if fields[1]:
+                fields[1] = int(fields[1])
+            if fields[6]:
+                fields[6] = int(fields[6])
+            if fields[8]:
+                fields[8] = float(fields[8])
+            if fields[9]:
+                fields[9] = float(fields[9])
+            if fields[10]:
+                fields[10] = float(fields[10])
+            if fields[11]:
+                fields[11] = float(fields[11])
+            if fields[12]:
+                fields[12] = float(fields[12])
+
+        # CONECT records.
+        if search('^CONECT', record):
+            # Split up the record.
+            fields.append(record[0:6])
+            fields.append(record[6:11])
+            fields.append(record[11:16])
+            fields.append(record[16:21])
+            fields.append(record[21:26])
+            fields.append(record[26:31])
+
+            # Loop over the fields.
+            for i in xrange(len(fields)):
+                # Strip all whitespace.
+                fields[i] = strip(fields[i])
+
+                # Replace nothingness with None.
+                if fields[i] == '':
+                    fields[i] = None
+
+            # Convert strings to numbers.
+            if fields[1]:
+                fields[1] = int(fields[1])
+            if fields[2]:
+                fields[2] = int(fields[2])
+            if fields[3]:
+                fields[3] = int(fields[3])
+            if fields[4]:
+                fields[4] = int(fields[4])
+            if fields[5]:
+                fields[5] = int(fields[5])
+
+        # Return the atomic info.
+        return fields
 
 
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
