@@ -120,7 +120,7 @@ class Test_main(TestCase):
 
         # Modify the structure.
         dp = pipes.get_pipe('new')
-        dp.structure.file[0] = 'test'
+        dp.structure.structural_data[0].mol[0].file_name = 'test'
 
         # Duplicate the data and catch the error.
         self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_index=0)
