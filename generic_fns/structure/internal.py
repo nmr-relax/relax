@@ -1004,7 +1004,7 @@ class Internal(Base_struct_API):
                 mol = Molecule_container(mol_name=new_mol_name, file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
 
                 # Add the molecule to the last model.
-                self.structural_data[-1].mol.add_item(mol_name=mol_name, mol_cont=mol)
+                self.structural_data[-1].mol.add_item(mol_name=new_mol_name, mol_cont=mol)
 
                 # Fill the molecular data object.
                 self.__fill_object_from_pdb(mol_records, model_index=len(self.structural_data), mol_index=len(self.structural_data[-1].mol))
