@@ -27,7 +27,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.structure.internal import Internal
+from generic_fns.structure.internal import Internal, MolContainer
 from relax_io import file_root
 
 
@@ -49,9 +49,11 @@ class Test_internal(TestCase):
         self.test_pdb_file_name = expanded[1]
         self.test_pdb_root = file_root(self.test_pdb_path)
 
-
         # Instantiate the structural data object.
         self.data = Internal()
+
+        # Instantiate a MolContainer object.
+        self.mol_cont = MolContainer()
 
 
     def tearDown(self):
@@ -65,10 +67,10 @@ class Test_internal(TestCase):
 
 
     def test___parse_pdb_record(self):
-        """Test the private Internal.__parse_pdb_record() method."""
+        """Test the private MolContainer.__parse_pdb_record() method."""
 
         # Parse a PDB record.
-        record = self.data._Internal__parse_pdb_record('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C')
+        record = self.mol_cont._MolContainer__parse_pdb_record('ATOM    158  CG  GLU    11       9.590  -1.041 -11.596  1.00  0.00           C')
 
         # Test the elements.
         self.assertEqual(record[0], 'ATOM')
