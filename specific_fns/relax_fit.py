@@ -167,6 +167,22 @@ class Relax_fit(Common_functions):
         return results[relax_time_index]
 
 
+    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0, int_ref=0):
+        """Calculate the effective transversal relaxation rate from the peak intensities. The
+        equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
+
+        If 'cpmg' is chosen, the equation used is:
+        r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
+
+        If 'r1rho' is chosen, nothing happens yet, as the code is not implemented.
+        """
+
+        if exp_type == 'cpmg':
+            r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
+
+        return r2eff
+
+
     def create_mc_data(self, spin_id):
         """Create the Monte Carlo peak intensity data.
 
