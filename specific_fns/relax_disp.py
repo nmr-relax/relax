@@ -543,7 +543,8 @@ class Relax_disp(Common_functions):
 
         # R1rho relaxation dispersion experiments.
         elif exp == 'r1rho':
-            print "R1rho relaxation dispersion experiments."
+            #print "R1rho relaxation dispersion experiments."
+            raise RelaxError, "R1rho relaxation dispersion experiments have not been implemented yet."
 
         # Invalid relaxation dispersion experiment.
         else:
