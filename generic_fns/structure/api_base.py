@@ -83,60 +83,6 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
-        """Prototype method stub for adding an atom to the structural data object.
-
-        This method will create the key-value pair for the given atom.
-
-
-        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
-        @type pdb_record:       str or None
-        @keyword atom_num:      The atom number.
-        @type atom_num:         int or None
-        @keyword atom_name:     The atom name, e.g. 'H1'.
-        @type atom_name:        str or None
-        @keyword res_name:      The residue name.
-        @type res_name:         str or None
-        @keyword chain_id:      The chain identifier.
-        @type chain_id:         str or None
-        @keyword res_num:       The residue number.
-        @type res_num:          int or None
-        @keyword pos:           The position vector of coordinates.
-        @type pos:              list (length = 3)
-        @keyword segment_id:    The segment identifier.
-        @type segment_id:       str or None
-        @keyword element:       The element symbol.
-        @type element:          str or None
-        @keyword struct_index:  The index of the structure to add the atom to.  If not supplied and
-                                multiple structures or models are loaded, then the atom will be
-                                added to all structures.
-        @type struct_index:     None or int
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
-
-
-    def atom_connect(self, index1=None, index2=None, struct_index=None):
-        """Prototype method stub for connecting two atoms within the data structure object.
-
-        This method should connect the atoms corresponding to the indices.
-
-
-        @keyword index1:        The index of the first atom.
-        @type index1:           int
-        @keyword index2:        The index of the second atom.
-        @type index2:           int
-        @keyword struct_index:  The index of the structure to connect the atoms of.  If not supplied
-                                and multiple structures or models are loaded, then the atoms will be
-                                connected within all structures.
-        @type struct_index:     None or int
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
-
-
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Prototype generator method stub for looping over all atoms in the structural data object.
 
