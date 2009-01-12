@@ -893,7 +893,7 @@ class Internal(Base_struct_API):
                 self.structural_data[-1].mol.add_item(mol_name=new_mol_name, mol_cont=mol)
 
                 # Fill the molecular data object.
-                self.structural_data[-1].mol[-1].__fill_object_from_pdb(mol_records)
+                self.structural_data[-1].mol[-1].fill_object_from_pdb(mol_records)
 
                 # Increment the molecule index.
                 mol_index = mol_index + 1
@@ -1336,38 +1336,6 @@ class MolContainer:
         self.z = []
 
 
-    def __fill_object_from_pdb(self, records):
-        """Method for generating a complete Structure_container object from the given PDB records.
-
-        @param records:         A list of structural PDB records.
-        @type records:          list of str
-        """
-
-        # Loop over the records.
-        for record in records:
-            # Parse the record.
-            record = self.__parse_pdb_record(record)
-
-            # Nothing to do.
-            if not record:
-                continue
-
-            # Add the atom.
-            if record[0] == 'ATOM' or record[0] == 'HETATM':
-                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14])
-
-            # Connect atoms.
-            if record[0] == 'CONECT':
-                # Loop over the atoms of the record.
-                for i in xrange(len(record)-2):
-                    # Skip if there is no record.
-                    if record[i+2] == None:
-                        continue
-
-                    # Make the connection.
-                    self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index))
-
-
     def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
         """Method for adding an atom to the structural data object.
 
@@ -1438,3 +1406,35 @@ class MolContainer:
                 self.structural_data[i].bonded[index1].append(index2)
             if index1 not in self.structural_data[i].bonded[index2]:
                 self.structural_data[i].bonded[index2].append(index1)
+
+
+    def fill_object_from_pdb(self, records):
+        """Method for generating a complete Structure_container object from the given PDB records.
+
+        @param records:         A list of structural PDB records.
+        @type records:          list of str
+        """
+
+        # Loop over the records.
+        for record in records:
+            # Parse the record.
+            record = self.__parse_pdb_record(record)
+
+            # Nothing to do.
+            if not record:
+                continue
+
+            # Add the atom.
+            if record[0] == 'ATOM' or record[0] == 'HETATM':
+                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14])
+
+            # Connect atoms.
+            if record[0] == 'CONECT':
+                # Loop over the atoms of the record.
+                for i in xrange(len(record)-2):
+                    # Skip if there is no record.
+                    if record[i+2] == None:
+                        continue
+
+                    # Make the connection.
+                    self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index))
