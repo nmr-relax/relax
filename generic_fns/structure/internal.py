@@ -36,7 +36,7 @@ from api_base import Base_struct_API
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError, RelaxNoPdbError
-from relax_io import open_read_file
+from relax_io import file_root, open_read_file
 from relax_warnings import RelaxWarning
 
 
@@ -697,7 +697,7 @@ class Internal(Base_struct_API):
                     new_mol_name = set_mol_name[mol_index]
                 else:
                     # Set the name to the file name plus the structure number.
-                    new_mol_name = file + '_mol' + `mol_num`
+                    new_mol_name = file_root(file) + '_mol' + `mol_num`
 
                 # Print out.
                 print "%-25s %-10s" % ("Loading from molecule: ", `mol_num`)
