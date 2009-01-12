@@ -1003,7 +1003,7 @@ class Internal(Base_struct_API):
                 print "%-25s %-10s" % ("Structure ID string: ", `new_mol_name`)
 
                 # Generate the molecule container.
-                mol = Molecule_container(mol_name=new_mol_name, file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
+                mol = MolContainer(mol_name=new_mol_name, file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
 
                 # Add the molecule to the last model.
                 self.structural_data[-1].mol.add_item(mol_name=new_mol_name, mol_cont=mol)
@@ -1368,7 +1368,7 @@ class Internal(Base_struct_API):
         file.write("END\n")
 
 
-class Molecule_container:
+class MolContainer:
     """The container for the molecular information.
 
     The structural data object for this class is a container possessing a number of different arrays
