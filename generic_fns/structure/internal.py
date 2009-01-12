@@ -111,34 +111,6 @@ class Internal(Base_struct_API):
             self.structural_data.append(str)
 
 
-    def __atom_index(self, atom_num, struct_index):
-        """Find the atom index corresponding to the given atom number.
-
-        @param atom_num:        The atom number to find the index of.
-        @type atom_num:         int
-        @param struct_index:    The index of the structural container to extract the atom index
-                                from.
-        @type struct_index:     int
-        @return:                The atom index corresponding to the atom.
-        @rtype:                 int
-        """
-
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
-                continue
-
-            # Loop over the atoms.
-            for j in xrange(len(self.structural_data[i].atom_num)):
-                # Return the index.
-                if self.structural_data[i].atom_num[j] == atom_num:
-                    return j
-
-        # Should not be here, the PDB connect records are incorrect.
-        warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
-
-
     def __bonded_atom(self, attached_atom, index, struct_index):
         """Find the atom named attached_atom directly bonded to the atom located at the index.
 
@@ -1179,6 +1151,34 @@ class MolContainer:
 
         # The z coordinate (array of float).
         self.z = []
+
+
+    def __atom_index(self, atom_num, struct_index):
+        """Find the atom index corresponding to the given atom number.
+
+        @param atom_num:        The atom number to find the index of.
+        @type atom_num:         int
+        @param struct_index:    The index of the structural container to extract the atom index
+                                from.
+        @type struct_index:     int
+        @return:                The atom index corresponding to the atom.
+        @rtype:                 int
+        """
+
+        # Loop over the structures.
+        for i in xrange(self.num):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
+                continue
+
+            # Loop over the atoms.
+            for j in xrange(len(self.structural_data[i].atom_num)):
+                # Return the index.
+                if self.structural_data[i].atom_num[j] == atom_num:
+                    return j
+
+        # Should not be here, the PDB connect records are incorrect.
+        warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
 
 
     def __parse_pdb_record(self, record):
