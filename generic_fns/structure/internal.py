@@ -1362,25 +1362,19 @@ class MolContainer:
         @type element:          str or None
         """
 
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
-                continue
-
-            # Append to all the arrays.
-            self.structural_data[i].atom_num.append(atom_num)
-            self.structural_data[i].atom_name.append(atom_name)
-            self.structural_data[i].bonded.append([])
-            self.structural_data[i].chain_id.append(chain_id)
-            self.structural_data[i].element.append(element)
-            self.structural_data[i].pdb_record.append(pdb_record)
-            self.structural_data[i].res_name.append(res_name)
-            self.structural_data[i].res_num.append(res_num)
-            self.structural_data[i].seg_id.append(segment_id)
-            self.structural_data[i].x.append(pos[0])
-            self.structural_data[i].y.append(pos[1])
-            self.structural_data[i].z.append(pos[2])
+        # Append to all the arrays.
+        self.atom_num.append(atom_num)
+        self.atom_name.append(atom_name)
+        self.bonded.append([])
+        self.chain_id.append(chain_id)
+        self.element.append(element)
+        self.pdb_record.append(pdb_record)
+        self.res_name.append(res_name)
+        self.res_num.append(res_num)
+        self.seg_id.append(segment_id)
+        self.x.append(pos[0])
+        self.y.append(pos[1])
+        self.z.append(pos[2])
 
 
     def atom_connect(self, index1=None, index2=None):
@@ -1395,17 +1389,11 @@ class MolContainer:
         @type index2:           int
         """
 
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
-                continue
-
-            # Update the bonded array structure, if necessary.
-            if index2 not in self.structural_data[i].bonded[index1]:
-                self.structural_data[i].bonded[index1].append(index2)
-            if index1 not in self.structural_data[i].bonded[index2]:
-                self.structural_data[i].bonded[index2].append(index1)
+        # Update the bonded array structure, if necessary.
+        if index2 not in self.bonded[index1]:
+            self.bonded[index1].append(index2)
+        if index1 not in self.bonded[index2]:
+            self.bonded[index2].append(index1)
 
 
     def fill_object_from_pdb(self, records):
