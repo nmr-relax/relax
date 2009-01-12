@@ -194,13 +194,15 @@ class Internal(Base_struct_API):
         return bonded_num, bonded_name, element, pos, attached_name, None
 
 
-    def __fill_object_from_pdb(self, records, struct_cont):
+    def __fill_object_from_pdb(self, records, model_index, mol_index):
         """Method for generating a complete Structure_container object from the given PDB records.
 
         @param records:         A list of structural PDB records.
         @type records:          list of str
-        @param struct_cont:     The structural data container.
-        @type struct_cont:      StructContainer instance
+        @param model_index:     The model index.
+        @type model_index:      int
+        @param mol_index:       The molecule index.
+        @type mol_index:        int
         """
 
         # Loop over the records.
@@ -214,7 +216,7 @@ class Internal(Base_struct_API):
 
             # Add the atom.
             if record[0] == 'ATOM' or record[0] == 'HETATM':
-                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], struct_index=struct_index)
+                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], model_index=model_index, mol_index=mol_index)
 
             # Connect atoms.
             if record[0] == 'CONECT':
