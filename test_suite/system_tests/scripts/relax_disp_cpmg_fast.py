@@ -15,6 +15,12 @@ sequence.read('fake_sequence.in', dir=sys.path[-1] + '/test_suite/shared_data/cu
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
+# Set the relaxation dispersion experiment type.
+relax_disp.exp_type('cpmg')
+
+# Set the relaxation dispersion curve type.
+relax_disp.select_model('fast')
+
 # Relaxation dispersion magnetic field (in Hz).
 frq.set(id='500', frq=500.0 * 1e6)
 
@@ -66,12 +72,6 @@ cpmg_frq = [
     933.33,
     533.33
 ]
-
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('cpmg')
-
-# Set the relaxation dispersion curve type.
-relax_disp.select_model('fast')
 
 # Loop over the spectra.
 for i in xrange(len(names)):
