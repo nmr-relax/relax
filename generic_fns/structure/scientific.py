@@ -520,7 +520,7 @@ class Scientific_data(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, struct_index=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
         @param file_path:       The full path of the file.
@@ -540,9 +540,6 @@ class Scientific_data(Base_struct_API):
         @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
                                 the PDB model numbers will be preserved, if they exist.
         @type set_model_num:    None, int, or list of int
-        @param struct_index:    The index of the structure.  This optional argument can be useful
-                                for reloading a structure.
-        @type struct_index:     int
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
         @return:                The status of the loading of the PDB file.
