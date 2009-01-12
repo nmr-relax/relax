@@ -28,6 +28,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.structure.internal import Internal
+from relax_io import file_root
 
 
 class Test_internal(TestCase):
@@ -46,6 +47,7 @@ class Test_internal(TestCase):
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]
+        self.test_pdb_root = file_root(self.test_pdb_path)
 
 
         # Instantiate the structural data object.
@@ -209,13 +211,19 @@ class Test_internal(TestCase):
         # Load the PDB file.
         self.data.load_pdb(self.test_pdb_path)
 
+        # The ModelContainer and MolContainer.
+        model = self.data.structural_data[0]
+        mol = model.mol[0]
+
         # Test the structural data.
-        self.assertEqual(len(self.data.file), 1)
-        self.assertEqual(self.data.file[0], self.test_pdb_file_name)
-        self.assertEqual(self.data.path[0], self.test_pdb_dir)
-        self.assertEqual(self.data.model[0], 1)
         self.assertEqual(len(self.data.structural_data), 1)
-        self.assertEqual(type(self.data.structural_data), list)
+        self.assertEqual(len(model.mol), 1)
+        self.assertEqual(model.num, 1)
+        self.assertEqual(mol.mol_name, self.test_pdb_root+'_mol1')
+        self.assertEqual(mol.file_name, self.test_pdb_file_name)
+        self.assertEqual(mol.file_path, self.test_pdb_dir)
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_mol_num, 1)
 
         # The real atomic data.
         atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
@@ -231,16 +239,15 @@ class Test_internal(TestCase):
         z = [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.880, 10.560, 10.415, 9.754, 8.900, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.640, 3.889, 4.956, 3.700, 3.430, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.350, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.030, -9.410, -8.336, -10.080, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.540, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
 
         # Test the atomic data.
-        str = self.data.structural_data[0]
-        for i in xrange(len(self.data.structural_data[0].atom_name)):
-            self.assertEqual(str.atom_name[i], atom_name[i])
-            self.assertEqual(str.bonded[i], bonded[i])
-            self.assertEqual(str.chain_id[i], chain_id[i])
-            self.assertEqual(str.element[i], element[i])
-            self.assertEqual(str.pdb_record[i], pdb_record[i])
-            self.assertEqual(str.res_name[i], res_name[i])
-            self.assertEqual(str.res_num[i], res_num[i])
-            self.assertEqual(str.seg_id[i], seg_id[i])
-            self.assertEqual(str.x[i], x[i])
-            self.assertEqual(str.y[i], y[i])
-            self.assertEqual(str.z[i], z[i])
+        for i in xrange(len(mol.atom_name)):
+            self.assertEqual(mol.atom_name[i], atom_name[i])
+            self.assertEqual(mol.bonded[i], bonded[i])
+            self.assertEqual(mol.chain_id[i], chain_id[i])
+            self.assertEqual(mol.element[i], element[i])
+            self.assertEqual(mol.pdb_record[i], pdb_record[i])
+            self.assertEqual(mol.res_name[i], res_name[i])
+            self.assertEqual(mol.res_num[i], res_num[i])
+            self.assertEqual(mol.seg_id[i], seg_id[i])
+            self.assertEqual(mol.x[i], x[i])
+            self.assertEqual(mol.y[i], y[i])
+            self.assertEqual(mol.z[i], z[i])
