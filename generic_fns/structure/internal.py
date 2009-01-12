@@ -546,86 +546,6 @@ class Internal(Base_struct_API):
             raise RelaxError, "The structural data is invalid."
 
 
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
-        """Method for adding an atom to the structural data object.
-
-        This method will create the key-value pair for the given atom.
-
-
-        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
-        @type pdb_record:       str or None
-        @keyword atom_num:      The atom number.
-        @type atom_num:         int or None
-        @keyword atom_name:     The atom name, e.g. 'H1'.
-        @type atom_name:        str or None
-        @keyword res_name:      The residue name.
-        @type res_name:         str or None
-        @keyword chain_id:      The chain identifier.
-        @type chain_id:         str or None
-        @keyword res_num:       The residue number.
-        @type res_num:          int or None
-        @keyword pos:           The position vector of coordinates.
-        @type pos:              list (length = 3)
-        @keyword segment_id:    The segment identifier.
-        @type segment_id:       str or None
-        @keyword element:       The element symbol.
-        @type element:          str or None
-        @keyword struct_index:  The index of the structure to add the atom to.  If not supplied and
-                                multiple structures or models are loaded, then the atom will be
-                                added to all structures.
-        @type struct_index:     None or int
-        """
-
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
-                continue
-
-            # Append to all the arrays.
-            self.structural_data[i].atom_num.append(atom_num)
-            self.structural_data[i].atom_name.append(atom_name)
-            self.structural_data[i].bonded.append([])
-            self.structural_data[i].chain_id.append(chain_id)
-            self.structural_data[i].element.append(element)
-            self.structural_data[i].pdb_record.append(pdb_record)
-            self.structural_data[i].res_name.append(res_name)
-            self.structural_data[i].res_num.append(res_num)
-            self.structural_data[i].seg_id.append(segment_id)
-            self.structural_data[i].x.append(pos[0])
-            self.structural_data[i].y.append(pos[1])
-            self.structural_data[i].z.append(pos[2])
-
-
-    def atom_connect(self, index1=None, index2=None, struct_index=None):
-        """Method for connecting two atoms within the data structure object.
-
-        This method will append index2 to the array at bonded[index1] and vice versa.
-
-
-        @keyword index1:        The index of the first atom.
-        @type index1:           int
-        @keyword index2:        The index of the second atom.
-        @type index2:           int
-        @keyword struct_index:  The index of the structure to connect the atoms of.  If not supplied
-                                and multiple structures or models are loaded, then the atoms will be
-                                connected within all structures.
-        @type struct_index:     None or int
-        """
-
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
-                continue
-
-            # Update the bonded array structure, if necessary.
-            if index2 not in self.structural_data[i].bonded[index1]:
-                self.structural_data[i].bonded[index1].append(index2)
-            if index1 not in self.structural_data[i].bonded[index2]:
-                self.structural_data[i].bonded[index2].append(index1)
-
-
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
@@ -1446,3 +1366,75 @@ class MolContainer:
 
                     # Make the connection.
                     self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index))
+
+
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
+        """Method for adding an atom to the structural data object.
+
+        This method will create the key-value pair for the given atom.
+
+
+        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
+        @type pdb_record:       str or None
+        @keyword atom_num:      The atom number.
+        @type atom_num:         int or None
+        @keyword atom_name:     The atom name, e.g. 'H1'.
+        @type atom_name:        str or None
+        @keyword res_name:      The residue name.
+        @type res_name:         str or None
+        @keyword chain_id:      The chain identifier.
+        @type chain_id:         str or None
+        @keyword res_num:       The residue number.
+        @type res_num:          int or None
+        @keyword pos:           The position vector of coordinates.
+        @type pos:              list (length = 3)
+        @keyword segment_id:    The segment identifier.
+        @type segment_id:       str or None
+        @keyword element:       The element symbol.
+        @type element:          str or None
+        """
+
+        # Loop over the structures.
+        for i in xrange(self.num):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
+                continue
+
+            # Append to all the arrays.
+            self.structural_data[i].atom_num.append(atom_num)
+            self.structural_data[i].atom_name.append(atom_name)
+            self.structural_data[i].bonded.append([])
+            self.structural_data[i].chain_id.append(chain_id)
+            self.structural_data[i].element.append(element)
+            self.structural_data[i].pdb_record.append(pdb_record)
+            self.structural_data[i].res_name.append(res_name)
+            self.structural_data[i].res_num.append(res_num)
+            self.structural_data[i].seg_id.append(segment_id)
+            self.structural_data[i].x.append(pos[0])
+            self.structural_data[i].y.append(pos[1])
+            self.structural_data[i].z.append(pos[2])
+
+
+    def atom_connect(self, index1=None, index2=None):
+        """Method for connecting two atoms within the data structure object.
+
+        This method will append index2 to the array at bonded[index1] and vice versa.
+
+
+        @keyword index1:        The index of the first atom.
+        @type index1:           int
+        @keyword index2:        The index of the second atom.
+        @type index2:           int
+        """
+
+        # Loop over the structures.
+        for i in xrange(self.num):
+            # Skip non-matching structures.
+            if struct_index != None and struct_index != i:
+                continue
+
+            # Update the bonded array structure, if necessary.
+            if index2 not in self.structural_data[i].bonded[index1]:
+                self.structural_data[i].bonded[index1].append(index2)
+            if index1 not in self.structural_data[i].bonded[index2]:
+                self.structural_data[i].bonded[index2].append(index1)
