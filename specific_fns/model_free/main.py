@@ -1130,7 +1130,7 @@ class Model_free_main:
             # Otherwise compare the objects inside the container.
             else:
                 # Modifiable object checks.
-                self.__compare_objects(dp_from.structure, dp_to.structure)
+                self.__compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
 
                 # Tests for the model and molecule containers.
                 if len(dp_from.structure.structural_data) != len(dp_from.structure.structural_data):
@@ -1138,12 +1138,22 @@ class Model_free_main:
 
                 # Loop over the models.
                 for model_index in range(len(dp_from.structure.structural_data)):
+                    # Alias.
+                    model_from = dp_from.structure.structural_data[model_index]
+                    model_to = dp_to.structure.structural_data[model_index]
+
+                    # Model numbers.
+                    if model_from.num != model_to.num:
+                            raise RelaxError, "The structure models are not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+
                     # Molecule number.
-                    if len(dp_from.structure.structural_data[model_index].mol) != len(dp_from.structure.structural_data[model_index].mol):
+                    if len(model_from.mol) != len(model_to.mol):
                         raise RelaxError, "The number of molecules is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
-                    # Modifiable object checks.
-                    self.__compare_objects()
+                    # Loop over the models.
+                    for mol_index in range(len(model_from.mol)):
+                        # Modifiable object checks.
+                        self.__compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
 
         # No sequence data, so skip the rest.
         if dp_from.mol.is_empty():
