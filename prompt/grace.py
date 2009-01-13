@@ -35,6 +35,7 @@ from generic_fns import grace, minimise
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.noe import Noe
+from specific_fns.relax_disp import Relax_disp
 from specific_fns.relax_fit import Relax_fit
 
 
@@ -253,6 +254,7 @@ class Grace:
     write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
     write.__doc__ = write.__doc__ + minimise.return_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + Relax_disp.return_data_name.__doc__ + "\n"
     write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
     write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
     write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
