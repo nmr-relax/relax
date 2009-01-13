@@ -520,7 +520,7 @@ class Scientific_data(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=True):
         """Function for loading the structures from the PDB file.
 
         @param file_path:       The full path of the file.
@@ -558,98 +558,99 @@ class Scientific_data(Base_struct_API):
         # Separate the file name and path.
         path, file = os.path.split(file_path)
 
-        # The ID name.
-        name = file
-        if model != None:
-            name = name + "_" + `model`
+        # Convert the structure reading args into lists.
+        if read_mol and type(read_mol) != list:
+            read_mol = [read_mol]
+        if set_mol_name and type(set_mol_name) != list:
+            set_mol_name = [set_mol_name]
+        if read_model and type(read_model) != list:
+            read_model = [read_model]
+        if set_model_num and type(set_model_num) != list:
+            set_model_num = [set_model_num]
 
         # Use pointers (references) if the PDB data exists in another data pipe.
-        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
-            # Skip the current pipe.
-            if pipe_name == pipes.cdp_name():
-                continue
+        #for data_pipe, pipe_name in pipes.pipe_loop(name=True):
+        #    # Skip the current pipe.
+        #    if pipe_name == pipes.cdp_name():
+        #        continue
 
-            # Structure exists.
-            if hasattr(data_pipe, 'structure'):
-                # Loop over the structures.
-                for i in xrange(data_pipe.structure.num):
-                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific' and len(data_pipe.structure.structural_data):
-                        # Add the structure.
-                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
+        #    # Structure exists.
+        #    if hasattr(data_pipe, 'structure'):
+        #        # Loop over the structures.
+        #        for i in xrange(data_pipe.structure.num):
+        #            if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific' and len(data_pipe.structure.structural_data):
+        #                # Add the structure.
+        #                self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
 
-                        # Print out.
-                        if verbosity:
-                            print "Using the structures from the data pipe " + `pipe_name` + "."
-                            print self.structural_data[i]
+        #                # Print out.
+        #                if verbosity:
+        #                    print "Using the structures from the data pipe " + `pipe_name` + "."
+        #                    print self.structural_data[i]
 
-                        # Exit this function.
-                        return True
+        #                # Exit this function.
+        #                return True
 
         # Load the structure i from the PDB file.
-        if type(model) == int:
-            # Print out.
-            if verbosity:
-                print "Loading structure " + `model` + " from the PDB file."
+        #if type(model) == int:
+        #    # Print out.
+        #    if verbosity:
+        #        print "Loading structure " + `model` + " from the PDB file."
 
-            # Load the structure into 'str'.
-            str = Scientific.IO.PDB.Structure(file_path, model)
+        #    # Load the structure into 'str'.
+        #    str = Scientific.IO.PDB.Structure(file_path, model)
 
-            # Test the structure.
-            if len(str) == 0:
-                raise RelaxPdbLoadError, file_path
+        #    # Test the structure.
+        #    if len(str) == 0:
+        #        raise RelaxPdbLoadError, file_path
+
+        #    # Print the PDB info.
+        #    if verbosity:
+        #        print str
+#
+#            # Add the structure.
+#            self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
+
+
+        # Print out.
+        if verbosity:
+            print "Loading all structures from the PDB file."
+
+        # Load all models.
+        models = []
+        model_flag = True
+        model_num = 1
+        while 1:
+            # Only load the desired model.
+            if read_model and model_num not in read_model:
+                continue
+
+            # Load the pdb files.
+            model = Scientific.IO.PDB.Structure(file_path, model_num)
+
+            # No model 1.
+            if not len(model) and not len(models):
+                # Load the PDB without a model number.
+                model = Scientific.IO.PDB.Structure(file_path)
+                model_flag = False
+
+                # Ok, nothing is loadable from this file.
+                if not len(model):
+                    raise RelaxPdbLoadError, file_path
+
+            # Test if the last structure has been reached.
+            if not len(model):
+                del model
+                break
 
             # Print the PDB info.
             if verbosity:
-                print str
+                print model
 
-            # Add the structure.
-            self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
+            # Append the model to the list.
+            models.append(model)
 
-
-        # Load all structures.
-        else:
-            # Print out.
-            if verbosity:
-                print "Loading all structures from the PDB file."
-
-            # First model.
-            i = 1
-
-            # Loop over all the other structures.
-            while 1:
-                # Load the pdb files.
-                str = Scientific.IO.PDB.Structure(file_path, i)
-
-                # No model 1.
-                if len(str) == 0 and i == 1:
-                    # Load the PDB without a model number.
-                    str = Scientific.IO.PDB.Structure(file_path)
-
-                    # Ok, nothing is loadable from this file.
-                    if len(str) == 0:
-                        raise RelaxPdbLoadError, file_path
-
-                    # Set the model number.
-                    model = None
-
-                # Set the model number.
-                else:
-                    model = i
-
-                # Test if the last structure has been reached.
-                if len(str) == 0:
-                    del str
-                    break
-
-                # Print the PDB info.
-                if verbosity:
-                    print str
-
-                # Place the structure in 'self.structural_data'.
-                self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
-
-                # Increment i.
-                i = i + 1
+            # Increment the model counter.
+            model_num = model_num + 1
 
         # Loading worked.
         return True
