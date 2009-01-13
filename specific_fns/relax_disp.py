@@ -149,11 +149,55 @@ class Relax_disp(Common_functions):
                 pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
 
                 # Scaling.
-                scaling_matrix[i, i] = 1.0 / average(spin.r2effs[pos])
+                scaling_matrix[i, i] = 1.0 / average(spin.r2eff[pos])
 
-            # No scaling for other parameters.
-            else:
-                pass
+            # Transversal relaxation rate scaling.
+            elif spin.params[i] == 'R2':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1.0 / average(spin.r2[pos])
+
+            # Chemical exchange contribution to 'R2' scaling.
+            elif spin.params[i] == 'Rex':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1.0 / average(spin.rex[pos])
+
+            # Exchange rate scaling.
+            elif spin.params[i] == 'kex':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1.0 / average(spin.kex[pos])
+
+            # Transversal relaxation rate for state A scaling
+            elif spin.params[i] == 'R2A':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1.0 / average(spin.r2a[pos])
+
+            # Exchange rate from state A to state B scaling.
+            elif spin.params[i] == 'kA':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1.0 / average(spin.ka[pos])
+
+            # Chemical shift difference between states A and B scaling.
+            elif spin.params[i] == 'dw':
+                # Find the position of the first CPMG pulse train frequency point.
+                pos = cdp.cpmg_frqs.index(min(cdp.cpmg_frqs))
+
+                # Scaling.
+                scaling_matrix[i, i] = 1.0 / average(spin.dw[pos])
 
             # Increment i.
             i = i + 1
