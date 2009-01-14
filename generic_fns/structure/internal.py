@@ -655,13 +655,18 @@ class Internal(Base_struct_API):
             mol_conts.append([])
             mol_index = 0
             orig_mol_num = []
+            new_mol_name = []
             for mol_num, mol_records in self.__parse_mols(model_records):
+                # Only load the desired model.
+                if read_mol and mol_num not in read_mol:
+                    continue
+
                 # Set the target molecule name.
                 if set_mol_name:
-                    new_mol_name = set_mol_name[mol_index]
+                    new_mol_name.append(set_mol_name[mol_index])
                 else:
                     # Set the name to the file name plus the structure number.
-                    new_mol_name = file_root(file) + '_mol' + `mol_num`
+                    new_mol_name.append(file_root(file) + '_mol' + `mol_num`)
 
                 # Store the original mol number.
                 orig_mol_num.append(mol_num)
@@ -682,7 +687,7 @@ class Internal(Base_struct_API):
             model_index = model_index + 1
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=set_mol_name)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name)
 
         # Loading worked.
         return True
