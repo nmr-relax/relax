@@ -641,27 +641,20 @@ class Internal(Base_struct_API):
 
         # Loop over all models in the PDB file.
         model_index = 0
+        orig_model_num = []
+        mol_conts = []
         for model_num, model_records in self.__parse_models(file_path):
             # Only load the desired model.
             if read_model and model_num not in read_model:
                 continue
 
-            # Print out.
-            if model_num != None:
-                print "%-25s %-10s" % ("Loading from model: ", `model_num`)
-
-            # Set the target model number.
-            if set_model_num:
-                new_model_num = set_model_num[model_index]
-            else:
-                new_model_num = model_num
-            print "%-25s %-10s\n" % ("Loading to model: ", `new_model_num`)
-
-            # Add a new model.
-            self.structural_data.add_item(new_model_num)
+            # Store the original model number.
+            orig_model_num.append(model_num)
 
             # Loop over the molecules of the model.
+            mol_conts.append([])
             mol_index = 0
+            orig_mol_num = []
             for mol_num, mol_records in self.__parse_mols(model_records):
                 # Set the target molecule name.
                 if set_mol_name:
@@ -670,24 +663,26 @@ class Internal(Base_struct_API):
                     # Set the name to the file name plus the structure number.
                     new_mol_name = file_root(file) + '_mol' + `mol_num`
 
-                # Print out.
-                print "%-25s %-10s" % ("Loading from molecule: ", `mol_num`)
-                print "%-25s %-10s" % ("Structure ID string: ", `new_mol_name`)
+                # Store the original mol number.
+                orig_mol_num.append(mol_num)
 
                 # Generate the molecule container.
                 mol = MolContainer(mol_name=new_mol_name, file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
 
-                # Add the molecule to the last model.
-                self.structural_data[-1].mol.add_item(mol_name=new_mol_name, mol_cont=mol)
-
                 # Fill the molecular data object.
-                self.structural_data[-1].mol[-1].fill_object_from_pdb(mol_records)
+                mol.fill_object_from_pdb(mol_records)
+
+                # Store the molecule container.
+                mol_conts[model_index].append(mol)
 
                 # Increment the molecule index.
                 mol_index = mol_index + 1
 
             # Increment the model index.
             model_index = model_index + 1
+
+        # Create the structural data data structures.
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=set_mol_name)
 
         # Loading worked.
         return True
