@@ -298,13 +298,17 @@ class Base_struct_API:
         if len(orig_mol_num) != len(data_matrix[0]):
             raise RelaxError, "Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num), len(data_matrix[0]))
 
+        # Model numbers do not change.
+        if not set_model_num:
+            set_model_num = orig_model_num
+
         # Test the model mapping.
         if len(set_model_num) != len(data_matrix):
             raise RelaxError, "Failure of the mapping of new model numbers, %s new model numbers verses %s models in the structural data." % (len(set_model_num), len(data_matrix))
 
-        # Test the structure mapping.
-        if len(set_mol_num) != len(data_matrix[0]):
-            raise RelaxError, "Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_num), len(data_matrix[0]))
+        # Test the molecule mapping.
+        if len(set_mol_name) != len(data_matrix[0]):
+            raise RelaxError, "Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_name), len(data_matrix[0]))
 
         # Test that the target models and structures are absent, and get the already existing model numbers.
         current_models = []
