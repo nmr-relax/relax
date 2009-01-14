@@ -275,6 +275,70 @@ class Base_struct_API:
         return len(self.structural_data)
 
 
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None):
+        """From the given structural data, expand the structural data data structure.
+
+        @param data_matrix:         A matrix of structural objects.
+        @type data_matrix:          list of lists of structural objects
+        @keyword orig_model_num:    The original model numbers (for storage).
+        @type orig_model_num:       list of int
+        @keyword set_model_num:     The new model numbers (for model renumbering).
+        @type set_model_num:        list of int
+        @keyword orig_mol_num:      The original molecule numbers (for storage).
+        @type orig_mol_num:         list of int
+        @keyword set_mol_name:      The molecule names (for naming the molecules).
+        @type set_mol_name:         list of str
+        """
+
+        # Test the number of models.
+        if len(orig_model_num) != len(data_matrix):
+            raise RelaxError, "Structural data mismatch, %s original models verses %s in the structural data." % (len(orig_model_num), len(data_matrix))
+
+        # Test the number of molecules.
+        if len(orig_mol_num) != len(data_matrix[0]):
+            raise RelaxError, "Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num), len(data_matrix[0]))
+
+        # Test the model mapping.
+        if len(set_model_num) != len(data_matrix):
+            raise RelaxError, "Failure of the mapping of new model numbers, %s new model numbers verses %s models in the structural data." % (len(set_model_num), len(data_matrix))
+
+        # Test the structure mapping.
+        if len(set_mol_num) != len(data_matrix[0]):
+            raise RelaxError, "Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_num), len(data_matrix[0]))
+
+        # Test that the target models and structures are absent, and get the already existing model numbers.
+        current_models = []
+        for i in range(len(self.structural_data)):
+            # Create a list of current models.
+            current_models.append(self.structural_data[i].num)
+
+            # Loop over the structures.
+            for j in range(len(self.structural_data[i])):
+                if self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].name in set_mol_name:
+                    raise RelaxError, "The molecule %s of model %s already exists." % (self.structural_data[i].mol[j].name, self.structural_data[i].num)
+
+        # Loop over the models.
+        for i in range(len(set_model_num)):
+            # The model doesn't currently exist.
+            if set_model_num[i] not in current_models:
+                # Create the model.
+                self.structural_data.add_item(set_model_num[i])
+
+                # Add the model number to the current_models list.
+                current_models.append(set_model_num[i])
+
+                # Get the model.
+                model = self.structural_data[-1]
+
+            # Otherwise get the pre-existing model.
+            else:
+                model = self.structural_data[current_models.index(set_model_num[i])]
+
+            # Pack the structures.
+            for j in range(len(set_mol_name)):
+                model.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+
+
     def to_xml(self, doc, element):
         """Prototype method for converting the structural object to an XML representation.
 
