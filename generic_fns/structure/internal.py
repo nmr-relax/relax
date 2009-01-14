@@ -639,40 +639,6 @@ class Internal(Base_struct_API):
         if set_model_num and type(set_model_num) != list:
             set_model_num = [set_model_num]
 
-        # The ID name.
-        #name = file
-        #if model != None:
-        #    name = name + "_" + `model`
-
-        # Use pointers (references) if the PDB data exists in another pipe.
-        #for data_pipe, pipe_name in pipes.pipe_loop(name=True):
-        #    # Skip the current pipe.
-        #    if pipe_name == pipes.cdp_name():
-        #        continue
-
-        #    # Structure exists.
-        #    if hasattr(data_pipe, 'structure'):
-        #        # Loop over the structures.
-        #        for i in xrange(data_pipe.structure.num):
-        #            if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
-        #                # Add the structure.
-        #                self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
-
-        #                # Print out.
-        #                if verbosity:
-        #                    print "Using the structures from the data pipe " + `pipe_name` + "."
-        #                    print self.structural_data[i]
-
-        #                # Exit this function.
-        #                return True
-
-        # Print out.
-        #if verbosity:
-        #    if type(model) == int:
-        #        print "Loading structure " + `model` + " from the PDB file."
-        #    else:
-        #        print "Loading all structures from the PDB file."
-
         # Loop over all models in the PDB file.
         model_index = 0
         for model_num, model_records in self.__parse_models(file_path):
