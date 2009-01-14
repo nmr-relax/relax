@@ -315,7 +315,7 @@ class Base_struct_API:
             # Loop over the structures.
             for j in range(len(self.structural_data[i])):
                 if self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].name in set_mol_name:
-                    raise RelaxError, "The molecule %s of model %s already exists." % (self.structural_data[i].mol[j].name, self.structural_data[i].num)
+                    raise RelaxError, "The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].name, self.structural_data[i].num)
 
         # Loop over the models.
         for i in range(len(set_model_num)):
@@ -334,8 +334,12 @@ class Base_struct_API:
             else:
                 model = self.structural_data[current_models.index(set_model_num[i])]
 
-            # Pack the structures.
+            # Loop over the molecules.
             for j in range(len(set_mol_name)):
+                # Print out.
+                print "Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i])
+
+                # Pack the structures.
                 model.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
 
 
