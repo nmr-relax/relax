@@ -344,7 +344,7 @@ class Base_struct_API:
                 print "Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i])
 
                 # Pack the structures.
-                model.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+                model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
 
 
     def to_xml(self, doc, element):
