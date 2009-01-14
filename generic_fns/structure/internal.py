@@ -672,7 +672,7 @@ class Internal(Base_struct_API):
                 orig_mol_num.append(mol_num)
 
                 # Generate the molecule container.
-                mol = MolContainer(mol_name=new_mol_name, file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
+                mol = MolContainer(mol_name=new_mol_name[-1], file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
 
                 # Fill the molecular data object.
                 mol.fill_object_from_pdb(mol_records)
