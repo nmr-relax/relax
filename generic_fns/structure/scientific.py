@@ -594,19 +594,26 @@ class Scientific_data(Base_struct_API):
             print "Loading all structures from the PDB file."
 
         # Load all models.
-        models = []
         model_flag = True
         model_num = 1
+        orig_model_num = []
+        mol_conts = []
         while 1:
             # Only load the desired model.
             if read_model and model_num not in read_model:
                 continue
 
-            # Load the pdb files.
+            # Append an empty list to the molecule container structure for a new model.
+            mol_conts.append([])
+
+            # Store the original model number.
+            orig_model_num.append(model_num)
+
+            # Load the PDB file.
             model = Scientific.IO.PDB.Structure(file_path, model_num)
 
             # No model 1.
-            if not len(model) and not len(models):
+            if not len(model) and not len(mol_conts):
                 # Load the PDB without a model number.
                 model = Scientific.IO.PDB.Structure(file_path)
                 model_flag = False
@@ -624,11 +631,16 @@ class Scientific_data(Base_struct_API):
             if verbosity:
                 print model
 
-            # Append the model to the list.
-            models.append(model)
+            # Append the molecules.
+            for key in model.molecules.keys():
+                mol_conts[-1].append(model.molecules[key])
 
             # Increment the model counter.
             model_num = model_num + 1
+
+        # Create the structural data data structures.
+        print mol_conts
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])), set_mol_name=set_mol_name)
 
         # Loading worked.
         return True
