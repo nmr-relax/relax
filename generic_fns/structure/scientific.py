@@ -608,37 +608,22 @@ class Scientific_data(Base_struct_API):
             if verbosity:
                 print model
 
-            # First add the peptide chains.
+            # First add the peptide chains (generating the molecule names and incrementing the molecule index).
             for mol in model.peptide_chains:
-                # Append the molecule.
                 mol_conts[-1].append(mol)
-
-                # The molecule name.
                 self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
-
-                # Increment the molecule index.
                 mol_index = mol_index + 1
 
-            # Then the nucleotide chains.
+            # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
             for mol in model.nucleotide_chains:
-                # Append the molecule.
                 mol_conts[-1].append(mol)
-
-                # The molecule name.
                 self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
-
-                # Increment the molecule index.
                 mol_index = mol_index + 1
 
-            # Finally all other molecules.
+            # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             for key in model.molecules.keys():
-                # Append the molecule.
                 mol_conts[-1].append(model.molecules[key])
-
-                # The molecule name.
                 self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
-
-                # Increment the molecule index.
                 mol_index = mol_index + 1
 
             # Increment the model counter.
