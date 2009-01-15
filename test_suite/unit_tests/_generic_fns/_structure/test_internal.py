@@ -221,7 +221,7 @@ class Test_internal(TestCase):
         self.assertEqual(len(self.data.structural_data), 1)
         self.assertEqual(len(model.mol), 1)
         self.assertEqual(model.num, 1)
-        self.assertEqual(mol.name, self.test_pdb_root+'_mol1')
+        self.assertEqual(mol.mol_name, self.test_pdb_root+'_mol1')
         self.assertEqual(mol.file_name, self.test_pdb_file_name)
         self.assertEqual(mol.file_path, self.test_pdb_dir)
         self.assertEqual(mol.file_model, 1)
