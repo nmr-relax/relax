@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from unittest import TestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.scientific import Scientific_data
+from relax_io import file_root
 
 
 class Test_scientific(TestCase):
@@ -47,6 +48,7 @@ class Test_scientific(TestCase):
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]
+        self.test_pdb_root = file_root(self.test_pdb_path)
 
         # Instantiate the structural data object.
         self.data = Scientific_data()
@@ -247,10 +249,16 @@ class Test_scientific(TestCase):
         # Load the PDB file.
         self.data.load_pdb(self.test_pdb_path)
 
+        # The ModelContainer and MolContainer.
+        model = self.data.structural_data[0]
+        mol = model.mol[0]
+
         # Test the structural data.
-        self.assertEqual(self.data.file[0], self.test_pdb_file_name)
-        self.assertEqual(self.data.path[0], self.test_pdb_dir)
-        self.assertEqual(self.data.model[0], 1)
         self.assertEqual(len(self.data.structural_data), 1)
-        self.assertEqual(type(self.data.structural_data), list)
-        self.assertEqual(self.data.structural_data[0].filename, self.test_pdb_path)
+        self.assertEqual(len(model.mol), 1)
+        self.assertEqual(model.num, 1)
+        self.assertEqual(mol.name, self.test_pdb_root+'_mol1')
+        self.assertEqual(mol.file_name, self.test_pdb_file_name)
+        self.assertEqual(mol.file_path, self.test_pdb_dir)
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_mol_num, 1)
