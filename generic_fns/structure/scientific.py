@@ -586,7 +586,7 @@ class Scientific_data(Base_struct_API):
         while 1:
             # Only load the desired model.
             if read_model and model_num not in read_model:
-                continue
+                break
 
             # Load the PDB file.
             model = Scientific.IO.PDB.Structure(file_path, model_num)
