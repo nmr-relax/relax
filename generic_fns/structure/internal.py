@@ -696,6 +696,9 @@ class Internal(Base_struct_API):
         @type struct_index:     int
         """
 
+        # Validate the structural data.
+        self.validate()
+
         # Initialise record counts.
         num_hetatm = 0
         num_atom = 0
