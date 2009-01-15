@@ -28,7 +28,7 @@ from numpy import array, float64, linalg, zeros
 import os
 from os import F_OK, access
 from re import search
-from string import split, strip, upper
+from string import digits, split, strip, upper
 from warnings import warn
 
 # relax module imports.
@@ -1321,6 +1321,29 @@ class MolContainer:
             self.bonded[index2].append(index1)
 
 
+    def __det_pdb_element(self, atom_name):
+        """Try to determine the element from the PDB atom name.
+
+        @param atom_name:   The PDB atom name.
+        @type atom_name:    str
+        @return:            The element name, or None if unsuccessful.
+        @rtype:             str or None
+        """
+
+        # Strip away atom numbering, from the front and end.
+        element = strip(atom_name, digits)
+
+        # Allowed element list.
+        elements = ['H', 'C', 'N', 'O', 'F', 'P']
+
+        # Return the element, if in the list.
+        if element in elements:
+            return element
+
+        # Else, throw a warning.
+        warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
+
+
     def fill_object_from_pdb(self, records):
         """Method for generating a complete Structure_container object from the given PDB records.
 
@@ -1339,7 +1362,13 @@ class MolContainer:
 
             # Add the atom.
             if record[0] == 'ATOM' or record[0] == 'HETATM':
-                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14])
+                # Attempt at determining the element, if missing.
+                element = record[14]
+                if not element:
+                    element = self.__det_pdb_element(record[2])
+
+                # Add.
+                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=element)
 
             # Connect atoms.
             if record[0] == 'CONECT':
