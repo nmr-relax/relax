@@ -609,22 +609,25 @@ class Scientific_data(Base_struct_API):
                 print model
 
             # First add the peptide chains (generating the molecule names and incrementing the molecule index).
-            for mol in model.peptide_chains:
-                mol_conts[-1].append(mol)
-                self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
-                mol_index = mol_index + 1
+            if hasattr(model, 'peptide_chains'):
+                for mol in model.peptide_chains:
+                    mol_conts[-1].append(mol)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    mol_index = mol_index + 1
 
             # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
-            for mol in model.nucleotide_chains:
-                mol_conts[-1].append(mol)
-                self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
-                mol_index = mol_index + 1
+            if hasattr(model, 'nucleotide_chains'):
+                for mol in model.nucleotide_chains:
+                    mol_conts[-1].append(mol)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    mol_index = mol_index + 1
 
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
-            for key in model.molecules.keys():
-                mol_conts[-1].append(model.molecules[key])
-                self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
-                mol_index = mol_index + 1
+            if hasattr(model, 'molecules'):
+                for key in model.molecules.keys():
+                    mol_conts[-1].append(model.molecules[key])
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    mol_index = mol_index + 1
 
             # Increment the model counter.
             model_num = model_num + 1
