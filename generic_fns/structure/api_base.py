@@ -36,6 +36,7 @@ from warnings import warn
 # relax module import.
 from data.relax_xml import fill_object_contents, xml_to_object
 from relax_errors import RelaxError, RelaxFileError, RelaxImplementError
+from relax_io import file_root
 from relax_warnings import RelaxWarning
 
 
@@ -345,6 +346,31 @@ class Base_struct_API:
 
                 # Pack the structures.
                 model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+
+
+    def target_mol_name(self, set=None, target=None, index=None, mol_num=None, file=None):
+        """Add the new molecule name to the target data structure.
+
+        @keyword set:       The list of new molecule names.  If not supplied, the names will be
+                            generated from the file name.
+        @type set:          None or list of str
+        @keyword target:    The target molecule name data structure to which the new name will be
+                            appended.
+        @type target:       list
+        @keyword index:     The molecule index, matching the set argument.
+        @type index:        int
+        @keyword mol_num:   The molecule number.
+        @type mol_num:      int
+        @keyword file:      The name of the file, excluding all directories.
+        @type file:         str
+        """
+
+        # Set the target molecule name.
+        if set:
+            target.append(set[index])
+        else:
+            # Set the name to the file name plus the structure number.
+            target.append(file_root(file) + '_mol' + `mol_num`)
 
 
     def to_xml(self, doc, element):
