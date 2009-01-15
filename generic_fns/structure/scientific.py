@@ -193,7 +193,7 @@ class Scientific_data(Base_struct_API):
                 res_index = res_index + 1
 
                 # Skip non-matching residues.
-                if sel_obj and not sel_obj.contains_res(res_num, res_name, mol.name):
+                if sel_obj and not sel_obj.contains_res(res_num, res_name, mol.mol_name):
                     continue
 
                 # Yield the residue info.
@@ -207,7 +207,7 @@ class Scientific_data(Base_struct_API):
                 res_index = res_index + 1
 
                 # Skip non-matching residues.
-                if sel_obj and not sel_obj.contains_res(res.number, res.name, mol.name):
+                if sel_obj and not sel_obj.contains_res(res.number, res.name, mol.mol_name):
                     continue
 
                 # Yield the residue info.
@@ -262,7 +262,7 @@ class Scientific_data(Base_struct_API):
                 mol = model.mol[mol_index]
 
                 # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol.name):
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
                     continue
 
                 # Loop over the residues.
@@ -277,7 +277,7 @@ class Scientific_data(Base_struct_API):
                         atom_index = atom_index + 1
 
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
                             continue
 
                         # The atom position.
@@ -287,10 +287,10 @@ class Scientific_data(Base_struct_API):
                             pos = atom.position.array
 
                         # The molecule name.
-                        mol_name = mol.name
+                        mol_name = mol.mol_name
 
                         # Replace empty variables with None.
-                        if not mol.name:
+                        if not mol.mol_name:
                             mol_name = None
                         if not res_num:
                             res_num = None
@@ -646,7 +646,7 @@ class Scientific_data(Base_struct_API):
             model_num = model_num + 1
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])+1), set_mol_name=new_mol_name)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])+1), set_mol_name=new_mol_name, file_name=file, file_path=path)
 
         # Loading worked.
         return True

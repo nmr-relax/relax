@@ -416,7 +416,7 @@ class Internal(Base_struct_API):
                 mol = model.mol[mol_index]
 
                 # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol.name):
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
                     continue
 
                 # Loop over all atoms.
@@ -453,7 +453,7 @@ class Internal(Base_struct_API):
                         pos = array([mol.x[i], mol.y[i], mol.z[i]], float64)
 
                     # The molecule name.
-                    mol_name = mol.name
+                    mol_name = mol.mol_name
 
                     # Build the tuple to be yielded.
                     atomic_tuple = ()
@@ -652,7 +652,7 @@ class Internal(Base_struct_API):
                 orig_mol_num.append(mol_num)
 
                 # Generate the molecule container.
-                mol = MolContainer(mol_name=new_mol_name[-1], file_name=file, file_path=path, file_model=model_num, file_mol_num=mol_num)
+                mol = MolContainer()
 
                 # Fill the molecular data object.
                 mol.fill_object_from_pdb(mol_records)
@@ -667,7 +667,7 @@ class Internal(Base_struct_API):
             model_index = model_index + 1
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
 
         # Loading worked.
         return True
@@ -1044,28 +1044,8 @@ class MolContainer:
     """
 
 
-    def __init__(self, mol_name=None, file_name=None, file_path=None, file_model=None, file_mol_num=None):
-        """Initialise the molecular container.
-
-        @keyword mol_name:          The molecule ID string.
-        @type mol_name:             str
-        @keyword file_name:         The name of the file from which the molecular data has been
-                                    extracted.
-        @type file_name:            None or str
-        @keyword file_path:         The full path to the file specified by 'file_name'.
-        @type file_path:            None or str
-        @keyword file_model:        The model in the file from which this data has been extracted.
-        @type file_model:           None or str
-        @keyword file_mol_num:      The molecule in the file from which this data has been extracted.
-        @type file_mol_num:         None or str
-        """
-
-        # Set the molecule info.
-        self.mol_name = mol_name
-        self.file_name = file_name
-        self.file_path = file_path
-        self.file_model = file_model
-        self.file_mol_num = file_mol_num
+    def __init__(self):
+        """Initialise the molecular container."""
 
         # The atom num (array of int).
         self.atom_num = []
