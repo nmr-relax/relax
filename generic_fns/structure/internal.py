@@ -1115,12 +1115,15 @@ class MolContainer:
         @rtype:             str or None
         """
 
+        # Strip away the "'" character (for RNA, etc.).
+        element = strip(atom_name, "'")
+
         # Strip away atom numbering, from the front and end.
         element = strip(atom_name, digits)
 
         # Amino acid atom translation table (note, numbers have been stripped already!).
         table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
-                 'N': ['NE', 'NH'],
+                 'N': ['ND', 'NE', 'NH'],
                  'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HT'],
                  'O': ['OG', 'OD', 'OE'],
                  'S': ['SD', 'SG']
