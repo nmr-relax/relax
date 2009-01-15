@@ -165,72 +165,11 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos, attached_name, None
 
 
-    def __molecule_loop(self, struct, sel_obj=None):
-        """Generator function for looping over molecules in the Scientific PDB data objects.
-
-        @param struct:      The individual structure object, the highest level Scientific Python PDB
-                            object.
-        @type struct:       Scientific Python PDB object
-        @keyword sel_obj:   The selection object.
-        @type sel_obj:      instance of generic_fns.mol_res_spin.Selection
-        @return:            A tuple of the Scientific Python PDB object representing a single
-                            molecule, the molecule name, and molecule type.
-        @rtype:             (Scientific Python PDB object, str, str)
-        """
-
-        # Protein.
-        if struct.peptide_chains:
-            for chain in struct.peptide_chains:
-                # The molecule name.
-                if hasattr(chain, 'chain_id') and chain.chain_id:
-                    mol_name = chain.chain_id
-                elif hasattr(chain, 'segment_id') and chain.segment_id:
-                    mol_name = chain.segment_id
-                else:
-                    mol_name = None
-
-                # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol_name):
-                    continue
-
-                # Yield the molecule and its name.
-                yield chain, mol_name, 'protein'
-
-        # RNA/DNA.
-        if struct.nucleotide_chains:
-            for chain in struct.nucleotide_chains:
-                # The molecule name.
-                if hasattr(chain, 'chain_id') and chain.chain_id:
-                    mol_name = chain.chain_id
-                elif hasattr(chain, 'segment_id') and chain.segment_id:
-                    mol_name = chain.segment_id
-                else:
-                    mol_name = None
-
-                # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol_name):
-                    continue
-
-                # Yield the molecule and its name.
-                yield chain, mol_name, 'nucleic acid'
-
-        # Other molecules.
-        if struct.molecules:
-            for key in struct.molecules:
-                # Yield the molecule and its name.
-                yield struct.molecules[key], key, 'other'
-
-
-    def __residue_loop(self, mol, mol_name, mol_type, sel_obj=None):
+    def __residue_loop(self, mol, sel_obj=None):
         """Generator function for looping over all residues in the Scientific PDB data objects.
 
         @param mol:         The individual molecule Scientific Python PDB data object.
         @type mol:          Scientific Python PDB object
-        @param mol_name:    The name of the molecule.
-        @type mol_name:     str or None
-        @param mol_type:    The type of the molecule.  This can be one of 'protein', 'nucleic acid',
-                            or 'other'.
-        @type mol_type:     str
         @keyword sel_obj:   The selection object.
         @type sel_obj:      instance of generic_fns.mol_res_spin.Selection
         @return:            A tuple of the Scientific Python PDB object representing a single
@@ -239,32 +178,40 @@ class Scientific_data(Base_struct_API):
         """
 
         # Proteins, RNA, and DNA.
-        if mol_type != 'other':
+        if mol.mol_type != 'other':
             # Loop over the residues of the protein in the PDB file.
+            res_index = -1
             for res in mol.residues:
                 # Residue number and name.
-                if mol_type == 'nucleic acid':
+                if mol.mol_type == 'nucleic acid':
                     res_name = res.name[-1]
                 else:
                     res_name = res.name
                 res_num = res.number
 
+                # Residue index.
+                res_index = res_index + 1
+
                 # Skip non-matching residues.
-                if sel_obj and not sel_obj.contains_res(res_num, res_name, mol_name):
+                if sel_obj and not sel_obj.contains_res(res_num, res_name, mol.name):
                     continue
 
                 # Yield the residue info.
-                yield res, res_num, res_name
+                yield res, res_num, res_name, res_index
 
         # Other molecules.
         else:
+            res_index = -1
             for res in mol:
+                # Residue index.
+                res_index = res_index + 1
+
                 # Skip non-matching residues.
-                if sel_obj and not sel_obj.contains_res(res.number, res.name, mol_name):
+                if sel_obj and not sel_obj.contains_res(res.number, res.name, mol.name):
                     continue
 
                 # Yield the residue info.
-                yield res, res.number, res.name
+                yield res, res.number, res.name, res_index
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -307,25 +254,43 @@ class Scientific_data(Base_struct_API):
         sel_obj = Selection(atom_id)
 
         # Loop over the models.
-        for struct in self.structural_data:
-            # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
-                # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_name, mol_type, sel_obj):
+        for model_index in range(len(self.structural_data)):
+            model = self.structural_data[model_index]
+
+            # Loop over the molecules.
+            for mol_index in range(len(model.mol)):
+                mol = model.mol[mol_index]
+
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.name):
+                    continue
+
+                # Loop over the residues.
+                for res, res_num, res_name, res_index in self.__residue_loop(mol, sel_obj):
                     # Loop over the atoms of the residue.
+                    atom_index = -1
                     for atom in res:
-                        # Atom number, name, and position.
+                        # Atom number, name, index, and element type.
                         atom_num = atom.properties['serial_number']
                         atom_name = atom.name
                         element = atom.properties['element']
-                        pos = atom.position.array
+                        atom_index = atom_index + 1
 
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.name):
                             continue
 
+                        # The atom position.
+                        if ave:
+                            pos = self.__ave_atom_pos(mol_index, res_index, atom_index)
+                        else:
+                            pos = atom.position.array
+
+                        # The molecule name.
+                        mol_name = mol.name
+
                         # Replace empty variables with None.
-                        if not mol_name:
+                        if not mol.name:
                             mol_name = None
                         if not res_num:
                             res_num = None
@@ -339,7 +304,10 @@ class Scientific_data(Base_struct_API):
                         # Build the tuple to be yielded.
                         atomic_tuple = ()
                         if model_num_flag:
-                            atomic_tuple = atomic_tuple + (struct.model,)
+                            if ave:
+                                atomic_tuple = atomic_tuple + (None,)
+                            else:
+                                atomic_tuple = atomic_tuple + (model.num,)
                         if mol_name_flag:
                             atomic_tuple = atomic_tuple + (mol_name,)
                         if res_num_flag:
@@ -357,6 +325,10 @@ class Scientific_data(Base_struct_API):
 
                         # Yield the information.
                         yield atomic_tuple
+
+            # Break out of the loop if the ave flag is set, as data from only one model is used.
+            if ave:
+                break
 
 
     def attached_atom(self, atom_id=None, attached_atom=None, model=None):
@@ -430,6 +402,44 @@ class Scientific_data(Base_struct_API):
 
         # Return the atom info.
         return bonded_num, bonded_name, element, pos_array
+
+
+    def __ave_atom_pos(self, mol_index, res_index, atom_index):
+        """Determine the average atom position across all models.
+
+        @param mol_index:   The molecule index.
+        @type mol_index:    int
+        @param res_index:   The residue index.
+        @type res_index:    int
+        @param atom_index:  The atom index.
+        @type atom_index:   int
+        """
+
+        # Init.
+        pos = zeros(3, float64)
+
+        # Loop over the models.
+        for model in self.structural_data:
+            # The exact molecule.
+            mol = model.mol[mol_index]
+
+            # The residue.
+            if mol.mol_type != 'other':
+                res = mol.residues[res_index]
+            else:
+                res = mol[res_index]
+
+            # The atom.
+            atom = res[atom_index]
+
+            # Sum the position.
+            pos = pos + atom.position.array
+
+        # Average the position array.
+        pos = pos / len(self.structural_data)
+
+        # Return the ave position.
+        return pos
 
 
     def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
@@ -611,6 +621,7 @@ class Scientific_data(Base_struct_API):
             # First add the peptide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'peptide_chains'):
                 for mol in model.peptide_chains:
+                    mol.mol_type = 'protein'
                     mol_conts[-1].append(mol)
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
@@ -618,6 +629,7 @@ class Scientific_data(Base_struct_API):
             # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'nucleotide_chains'):
                 for mol in model.nucleotide_chains:
+                    mol.mol_type = 'nucleic acid'
                     mol_conts[-1].append(mol)
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
@@ -625,6 +637,7 @@ class Scientific_data(Base_struct_API):
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'molecules'):
                 for key in model.molecules.keys():
+                    mol.mol_type = 'other'
                     mol_conts[-1].append(model.molecules[key])
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
