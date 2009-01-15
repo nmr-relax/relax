@@ -603,12 +603,6 @@ class Scientific_data(Base_struct_API):
             if read_model and model_num not in read_model:
                 continue
 
-            # Append an empty list to the molecule container structure for a new model.
-            mol_conts.append([])
-
-            # Store the original model number.
-            orig_model_num.append(model_num)
-
             # Load the PDB file.
             model = Scientific.IO.PDB.Structure(file_path, model_num)
 
@@ -627,11 +621,25 @@ class Scientific_data(Base_struct_API):
                 del model
                 break
 
+            # Append an empty list to the molecule container structure for a new model.
+            mol_conts.append([])
+
+            # Store the original model number.
+            orig_model_num.append(model_num)
+
             # Print the PDB info.
             if verbosity:
                 print model
 
-            # Append the molecules.
+            # First add the peptide chains.
+            for mol in model.peptide_chains:
+                mol_conts[-1].append(mol)
+
+            # Then the nucleotide chains.
+            for mol in model.nucleotide_chains:
+                mol_conts[-1].append(mol)
+
+            # Finally all other molecules.
             for key in model.molecules.keys():
                 mol_conts[-1].append(model.molecules[key])
 
@@ -639,7 +647,6 @@ class Scientific_data(Base_struct_API):
             model_num = model_num + 1
 
         # Create the structural data data structures.
-        print mol_conts
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])), set_mol_name=set_mol_name)
 
         # Loading worked.
