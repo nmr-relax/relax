@@ -1333,8 +1333,22 @@ class MolContainer:
         # Strip away atom numbering, from the front and end.
         element = strip(atom_name, digits)
 
+        # Amino acid atom translation table (note, numbers have been stripped already!).
+        table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
+                 'N': ['NE', 'NH'],
+                 'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HT'],
+                 'O': ['OG', 'OD', 'OE'],
+                 'S': ['SD']
+        }
+
+        # Translate amino acids.
+        for key in table.keys():
+            if element in table[key]:
+                element = key
+                break
+
         # Allowed element list.
-        elements = ['H', 'C', 'N', 'O', 'F', 'P']
+        elements = ['H', 'C', 'N', 'O', 'F', 'P', 'S']
 
         # Return the element, if in the list.
         if element in elements:
