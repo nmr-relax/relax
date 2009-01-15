@@ -266,14 +266,28 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def num_structures(self):
-        """Method for returning the number of loaded structures (i.e. number of NMR models, etc.).
+    def num_models(self):
+        """Method for returning the number of models.
 
-        @return:    The number of structures which have been loaded.
+        @return:    The number of models in the structural object.
         @rtype:     int
         """
 
         return len(self.structural_data)
+
+
+    def num_molecules(self):
+        """Method for returning the number of molecules.
+
+        @return:    The number of molecules in the structural object.
+        @rtype:     int
+        """
+
+        # Validate the structural object.
+        self.validate()
+
+        # Return the number.
+        return len(self.structural_data[0].mol)
 
 
     def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None):
