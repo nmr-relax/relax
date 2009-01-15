@@ -568,31 +568,6 @@ class Scientific_data(Base_struct_API):
         if set_model_num and type(set_model_num) != list:
             set_model_num = [set_model_num]
 
-        # Load the structure i from the PDB file.
-        #if type(model) == int:
-        #    # Print out.
-        #    if verbosity:
-        #        print "Loading structure " + `model` + " from the PDB file."
-
-        #    # Load the structure into 'str'.
-        #    str = Scientific.IO.PDB.Structure(file_path, model)
-
-        #    # Test the structure.
-        #    if len(str) == 0:
-        #        raise RelaxPdbLoadError, file_path
-
-        #    # Print the PDB info.
-        #    if verbosity:
-        #        print str
-#
-#            # Add the structure.
-#            self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
-
-
-        # Print out.
-        if verbosity:
-            print "Loading all structures from the PDB file."
-
         # Load all models.
         model_flag = True
         model_num = 1
