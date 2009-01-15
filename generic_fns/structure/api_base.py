@@ -682,6 +682,21 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def validate(self):
+        """Check the integrity of the structural data.
+
+        The number of molecules must be the same in all models.
+        """
+
+        # Reference number of molecules.
+        num_mols = len(self.structural_data[0].mol)
+
+        # Loop over all other models.
+        for i in range(1, len(self.structural_data)+1):
+            if num_mols != len(self.structural_data[i].mol):
+                raise RelaxError, "The structural object is not valid - the number of molecules is not the same for all models."
+
+
 
 class ModelList(list):
     """List type data container for the different structural models.
