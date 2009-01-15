@@ -1483,25 +1483,34 @@ def parse_token(token):
                 indices.append(i)
 
         # Range.
+        valid_range = True
         if indices:
             # Invalid range element, only one range char '-' and one negative sign is allowed.
             if len(indices) > 2:
-                raise RelaxError, "The range element " + `element` + " is invalid."
+                print "The range element " + `element` + " is invalid.  Assuming the '-' character does not specify a range."
+                valid_range = False
 
             # Convert the two numbers to integers.
             try:
                 start = int(element[:indices[0]])
                 end = int(element[indices[0]+1:])
             except ValueError:
-                raise RelaxError, "The range element " + `element` + " is invalid as either the start or end of the range are not integers."
+                print "The range element " + `element` + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."
+                valid_range = False
 
             # Test that the starting number is less than the end.
-            if start >= end:
-                raise RelaxError, "The starting number of the range element " + `element` + " needs to be less than the end number."
+            if valid_range and start >= end:
+                print "The starting number of the range element " + `element` + " needs to be less than the end number.  Assuming the '-' character does not specify a range."
+                valid_range = False
 
             # Create the range and append it to the list.
-            for i in range(start, end+1):
-                list.append(i)
+            if valid_range:
+                for i in range(start, end+1):
+                    list.append(i)
+
+            # Just append the string (even though it might be junk).
+            else:
+                list.append(element)
 
         # Number or name.
         else:
