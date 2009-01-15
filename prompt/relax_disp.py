@@ -182,6 +182,22 @@ class Relax_disp:
         relax_disp_obj.exp_type(exp=exp)
 
 
+    def r2eff_read(self):
+        """Function for reading 'R2eff' values directly, instead of calculating them within relax
+        starting from the intensities.
+
+        THIS FUNCTION IS NOT WRITTEN YET.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+
+        Examples
+        ~~~~~~~~
+
+        """
+
+
     def select_model(self, model='fast'):
         """Function for the selection of the relaxation dispersion curve type.
 
