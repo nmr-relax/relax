@@ -1123,7 +1123,7 @@ class MolContainer:
                  'N': ['NE', 'NH'],
                  'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HT'],
                  'O': ['OG', 'OD', 'OE'],
-                 'S': ['SD']
+                 'S': ['SD', 'SG']
         }
 
         # Translate amino acids.
