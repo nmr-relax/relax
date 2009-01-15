@@ -891,6 +891,9 @@ class MolList(list):
             # Append an empty MolContainer.
             self.append(mol_cont)
 
+            # Set the molecule name.
+            self[-1].name = mol_name
+
 
     def is_empty(self):
         """Method for testing if this MolList object is empty.
