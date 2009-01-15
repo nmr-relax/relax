@@ -407,12 +407,17 @@ class Internal(Base_struct_API):
         # Generate the selection object.
         sel_obj = Selection(atom_id)
 
-        # Average properties mode.
-        if ave:
-            # Loop over the molecules of the first model.
-            for mol_index in range(len(self.structural_data[0])):
-                # Alias the molecule.
-                mol = self.structural_data[0].mol[mol_index]
+        # Loop over the models.
+        for model_index in range(len(self.structural_data)):
+            model = self.structural_data[model_index]
+
+            # Loop over the molecules.
+            for mol_index in range(len(model.mol)):
+                mol = model.mol[mol_index]
+
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.name):
+                    continue
 
                 # Loop over all atoms.
                 for i in xrange(len(mol.atom_name)):
@@ -428,27 +433,37 @@ class Internal(Base_struct_API):
                     element = mol.element[i]
                     pos = zeros(3, float64)
 
-                    # Loop over the models.
-                    for model_index in range(len(self.structural_data)):
-                        # Alias.
-                        mol = self.structural_data[model_index].mol[mol_index]
+                    # The atom position.
+                    if ave:
+                        # Loop over the models.
+                        for model_index2 in range(len(self.structural_data)):
+                            # Alias.
+                            mol = self.structural_data[model_index2].mol[mol_index]
 
-                        # Some sanity checks.
-                        if mol.atom_num[i] != atom_num:
-                            raise RelaxError, "The loaded structures do not contain the same atoms.  The average structural properties can not be calculated."
+                            # Some sanity checks.
+                            if mol.atom_num[i] != atom_num:
+                                raise RelaxError, "The loaded structures do not contain the same atoms.  The average structural properties can not be calculated."
 
-                        # Sum the atom positions.
-                        pos = pos + array([mol.x[i], mol.y[i], mol.z[i]], float64)
+                            # Sum the atom positions.
+                            pos = pos + array([mol.x[i], mol.y[i], mol.z[i]], float64)
 
-                    # Average the position array (divide by the number of models).
-                    pos = pos / len(self.structural_data)
+                        # Average the position array (divide by the number of models).
+                        pos = pos / len(self.structural_data)
+                    else:
+                        pos = array([mol.x[i], mol.y[i], mol.z[i]], float64)
+
+                    # The molecule name.
+                    mol_name = mol.name
 
                     # Build the tuple to be yielded.
                     atomic_tuple = ()
                     if model_num_flag:
-                        atomic_tuple = atomic_tuple + (None,)
+                        if ave:
+                            atomic_tuple = atomic_tuple + (None,)
+                        else:
+                            atomic_tuple = atomic_tuple + (model.num,)
                     if mol_name_flag:
-                        atomic_tuple = atomic_tuple + (mol.mol_name,)
+                        atomic_tuple = atomic_tuple + (mol_name,)
                     if res_num_flag:
                         atomic_tuple = atomic_tuple + (res_num,)
                     if res_name_flag:
@@ -465,44 +480,9 @@ class Internal(Base_struct_API):
                     # Yield the information.
                     yield atomic_tuple
 
-        # Individual structure mode.
-        else:
-            # Loop over the models.
-            for model in self.structural_data:
-                # Explicit structure identifier.
-                #if type(str_id) == int:
-                #    if str_id != c:
-                #        continue
-
-                # Loop over the molecules.
-                for mol in model.mol:
-                    # Loop over all atoms.
-                    for i in xrange(len(mol.atom_name)):
-                        # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i]):
-                            continue
-
-                        # Build the tuple to be yielded.
-                        atomic_tuple = ()
-                        if model_num_flag:
-                            atomic_tuple = atomic_tuple + (model.num,)
-                        if mol_name_flag:
-                            atomic_tuple = atomic_tuple + (mol.mol_name,)
-                        if res_num_flag:
-                            atomic_tuple = atomic_tuple + (mol.res_num[i],)
-                        if res_name_flag:
-                            atomic_tuple = atomic_tuple + (mol.res_name[i],)
-                        if atom_num_flag:
-                            atomic_tuple = atomic_tuple + (mol.atom_num[i],)
-                        if atom_name_flag:
-                            atomic_tuple = atomic_tuple + (mol.atom_name[i],)
-                        if element_flag:
-                            atomic_tuple = atomic_tuple + (mol.element[i],)
-                        if pos_flag:
-                            atomic_tuple = atomic_tuple + (array([mol.x[i], mol.y[i], mol.z[i]], float64),)
-
-                        # Yield the information.
-                        yield atomic_tuple
+            # Break out of the loop if the ave flag is set, as data from only one model is used.
+            if ave:
+                break
 
 
     def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
