@@ -623,22 +623,23 @@ class Scientific_data(Base_struct_API):
                 for mol in model.peptide_chains:
                     mol.mol_type = 'protein'
                     mol_conts[-1].append(mol)
+                    mol_conts[-1][-1].mol_type = 'protein'
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
 
             # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'nucleotide_chains'):
                 for mol in model.nucleotide_chains:
-                    mol.mol_type = 'nucleic acid'
                     mol_conts[-1].append(mol)
+                    mol_conts[-1][-1].mol_type = 'nucleic acid'
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
 
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'molecules'):
                 for key in model.molecules.keys():
-                    mol.mol_type = 'other'
-                    mol_conts[-1].append(model.molecules[key])
+                    mol_conts[-1].append(model.molecules[key][0])
+                    mol_conts[-1][-1].mol_type = 'other'
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
 
