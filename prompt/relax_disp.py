@@ -153,7 +153,7 @@ class Relax_disp:
         exp:  The type of relaxation dispersion experiment performed.
 
 
-        The preet experiments
+        The preset experiments
         ~~~~~~~~~~~~~~~~~~~~~
 
         The supported experiments will include CPMG ('cpmg') and R1rho ('r1rho').
@@ -216,6 +216,22 @@ class Relax_disp:
         The parameters of these two models are
             'fast': [R2, Rex, kex],
             'slow': [R2A, kA, dw].
+
+        The equations for these two models are
+                                       /              /        kex       \   4 * cpmg_frq \
+            'fast': R2eff = R2 + Rex * | 1 - 2 * Tanh | ---------------- | * ------------ |
+                                       \              \ 2 * 4 * cpmg_frq /        kex     /
+
+                                       /     /      dw      \   4 * cpmg_frq \
+            'slow': R2eff = R2A + kA - | Sin | ------------ | * ------------ |
+                                       \     \ 4 * cpmg_frq /        dw      /
+
+            where cpmg_frq = 1 / ( 4 * cpmg_tau )
+
+        The references for these equations are
+            'fast': Millet et al., JACS, 2000, 122 : 2867 - 2877 (equation 19)
+                    Kovrigin et al., JMagRes, 2006, 180 : 93 - 104 (equation 1)
+            'slow': Tollinger et al., JACS, 2001, 123: 11341-11352 (equation 2)
 
 
         Examples
