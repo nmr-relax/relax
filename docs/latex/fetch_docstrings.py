@@ -367,7 +367,7 @@ class Fetch_docstrings:
 
         # R1 and R2.
         string = self.safe_replacement(string, 'R1', 'R$_1$')
-        string = self.safe_replacement(string, 'R2', 'R$_1$')
+        string = self.safe_replacement(string, 'R2', 'R$_2$')
 
 
         # Model-free parameters.
