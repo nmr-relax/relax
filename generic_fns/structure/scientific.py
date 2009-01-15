@@ -202,7 +202,10 @@ class Scientific_data(Base_struct_API):
         # Other molecules.
         else:
             res_index = -1
+            print mol
+            print "\n"*10
             for res in mol:
+                print res
                 # Residue index.
                 res_index = res_index + 1
 
@@ -638,8 +641,15 @@ class Scientific_data(Base_struct_API):
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'molecules'):
                 for key in model.molecules.keys():
-                    mol_conts[-1].append(model.molecules[key][0])
+                    # Add an empty list-type container.
+                    mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].mol_type = 'other'
+
+                    # Loop over the molecules.
+                    for mol in model.molecules[key]:
+                        mol_conts[-1][-1].append(mol)
+
+                    # Update structures.
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
 
@@ -651,3 +661,7 @@ class Scientific_data(Base_struct_API):
 
         # Loading worked.
         return True
+
+
+class MolContainer(list):
+    """The empty list-type container for the non-protein and non-RNA molecular information."""
