@@ -1106,6 +1106,43 @@ class MolContainer:
         warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
 
 
+    def __det_pdb_element(self, atom_name):
+        """Try to determine the element from the PDB atom name.
+
+        @param atom_name:   The PDB atom name.
+        @type atom_name:    str
+        @return:            The element name, or None if unsuccessful.
+        @rtype:             str or None
+        """
+
+        # Strip away atom numbering, from the front and end.
+        element = strip(atom_name, digits)
+
+        # Amino acid atom translation table (note, numbers have been stripped already!).
+        table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
+                 'N': ['NE', 'NH'],
+                 'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HT'],
+                 'O': ['OG', 'OD', 'OE'],
+                 'S': ['SD']
+        }
+
+        # Translate amino acids.
+        for key in table.keys():
+            if element in table[key]:
+                element = key
+                break
+
+        # Allowed element list.
+        elements = ['H', 'C', 'N', 'O', 'F', 'P', 'S']
+
+        # Return the element, if in the list.
+        if element in elements:
+            return element
+
+        # Else, throw a warning.
+        warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
+
+
     def __parse_pdb_record(self, record):
         """Parse the PDB record string and return an array of the corresponding atomic information.
 
@@ -1319,43 +1356,6 @@ class MolContainer:
             self.bonded[index1].append(index2)
         if index1 not in self.bonded[index2]:
             self.bonded[index2].append(index1)
-
-
-    def __det_pdb_element(self, atom_name):
-        """Try to determine the element from the PDB atom name.
-
-        @param atom_name:   The PDB atom name.
-        @type atom_name:    str
-        @return:            The element name, or None if unsuccessful.
-        @rtype:             str or None
-        """
-
-        # Strip away atom numbering, from the front and end.
-        element = strip(atom_name, digits)
-
-        # Amino acid atom translation table (note, numbers have been stripped already!).
-        table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
-                 'N': ['NE', 'NH'],
-                 'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HT'],
-                 'O': ['OG', 'OD', 'OE'],
-                 'S': ['SD']
-        }
-
-        # Translate amino acids.
-        for key in table.keys():
-            if element in table[key]:
-                element = key
-                break
-
-        # Allowed element list.
-        elements = ['H', 'C', 'N', 'O', 'F', 'P', 'S']
-
-        # Return the element, if in the list.
-        if element in elements:
-            return element
-
-        # Else, throw a warning.
-        warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
 
 
     def fill_object_from_pdb(self, records):
