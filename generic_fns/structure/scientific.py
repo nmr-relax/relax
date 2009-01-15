@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -596,8 +596,10 @@ class Scientific_data(Base_struct_API):
                 del model
                 break
 
-            # Append an empty list to the molecule container structure for a new model.
+            # Append an empty list to the molecule container structure for a new model, set the molecule index, and initialise the target name structure.
             mol_conts.append([])
+            mol_index = 0
+            new_mol_name = []
 
             # Store the original model number.
             orig_model_num.append(model_num)
@@ -608,15 +610,36 @@ class Scientific_data(Base_struct_API):
 
             # First add the peptide chains.
             for mol in model.peptide_chains:
+                # Append the molecule.
                 mol_conts[-1].append(mol)
+
+                # The molecule name.
+                self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+
+                # Increment the molecule index.
+                mol_index = mol_index + 1
 
             # Then the nucleotide chains.
             for mol in model.nucleotide_chains:
+                # Append the molecule.
                 mol_conts[-1].append(mol)
+
+                # The molecule name.
+                self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+
+                # Increment the molecule index.
+                mol_index = mol_index + 1
 
             # Finally all other molecules.
             for key in model.molecules.keys():
+                # Append the molecule.
                 mol_conts[-1].append(model.molecules[key])
+
+                # The molecule name.
+                self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+
+                # Increment the molecule index.
+                mol_index = mol_index + 1
 
             # Increment the model counter.
             model_num = model_num + 1
