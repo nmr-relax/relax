@@ -92,7 +92,7 @@ class Test_scientific(TestCase):
         self.data.load_pdb(self.test_pdb_path)
 
         # Create the selection object (which should match the residue name of None).
-        sel_obj = Selection('#Ap4Aase')
+        sel_obj = Selection('#Ap4Aase_res1-12_mol1')
 
         # Loop over the residues.
         res_count = 0
