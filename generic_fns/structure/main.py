@@ -65,7 +65,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     cdp = pipes.get_pipe()
 
     # Test if the structure exists.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num > 0:
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
         raise RelaxNoPdbError
 
     # Print out.
