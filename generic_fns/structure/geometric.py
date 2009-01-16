@@ -181,7 +181,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     structure = Internal()
 
     # Add a structure.
-    structure.add_struct(name='diff_tensor')
+    structure.add_molecule(name='diff_tensor')
 
     # Loop over the pipes.
     for pipe_index in xrange(len(pipe_list)):
@@ -351,7 +351,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     structure = Internal()
 
     # Add a structure.
-    structure.add_struct(name='vector_dist')
+    structure.add_molecule(name='vector_dist')
 
     # Initialise the residue and atom numbers.
     res_num = 1

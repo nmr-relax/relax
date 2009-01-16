@@ -62,22 +62,19 @@ class Base_struct_API:
         self.structural_data = ModelList()
 
 
-    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
-        """Prototype method stub for adding the given structure to the store.
+    def add_molecule(self, name=None, model=None, file=None, path=None, str=None):
+        """Prototype method stub for adding the given molecule to the store.
 
-        @keyword name:          The structural identifier.
+        @keyword name:          The molecule identification string.
         @type name:             str
-        @keyword model:         The structural model.
+        @keyword model:         The number of the model to add the molecule to.
         @type model:            int or None
-        @keyword file:          The name of the file containing the structure.
+        @keyword file:          The name of the file containing the molecule.
         @type file:             str
         @keyword path:          The optional path where the file is located.
         @type path:             str
-        @keyword str:           The object containing the structural data.
-        @type str:              Structure_container instance
-        @keyword struct_index:  The index of the structural container, used for replacing the
-                                structure.
-        @type struct_index:     int or None.
+        @keyword str:           The molecule object, containing the structural data.
+        @type str:              class instance
         """
 
         # Raise the error.
@@ -230,6 +227,43 @@ class Base_struct_API:
                     warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory, the directory of the results file or in the directory" + `self.path[i]` + "."))
                 else:
                     warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory or the directory of the results file."))
+
+
+    def get_model(self, model):
+        """Return or create the model.
+
+        @param model:   The model number.
+        @type model:    int or None
+        @return:        The ModelContainer corresponding to the model number or that newly created.
+        @rteyp:         ModelContainer instance
+        """
+
+        # Check if the target is a single model.
+        if model == None and self.num_models() > 1:
+            raise RelaxError, "The target model cannot be determined as there are %s models already present." % self.num_modes()
+
+        # No model specified.
+        if model == None:
+            # Create the first model, if necessary.
+            if self.num_models():
+                self.structural_data.add_item()
+
+            # Alias the first model.
+            model_cont = self.structural_data[0]
+
+        # The model has been specified.
+        else:
+            # Get the preexisting model.
+            found = False
+            for model_cont in self.structural_data:
+                if model_cont.num == model:
+                    found = True
+                    break
+
+            # Add the model if it doesn't exist.
+            if not found:
+                self.structural_data.add_item(model)
+                model_cont = self.structural_data[-1]
 
 
     def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):

@@ -53,12 +53,12 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
+    def add_molecule(self, name=None, model=None, file=None, path=None, str=None):
         """Add the given structure to the store.
 
         @keyword name:          The structural identifier.
         @type name:             str
-        @keyword model:         The structural model.
+        @keyword model:         The number of the model to add the molecule to.
         @type model:            int or None
         @keyword file:          The name of the file containing the structure.
         @type file:             str
@@ -66,13 +66,19 @@ class Internal(Base_struct_API):
         @type path:             str
         @keyword str:           The object containing the structural data.
         @type str:              Structure_container instance
-        @keyword struct_index:  The index of the structural container, used for replacing the
-                                structure.
-        @type struct_index:     int or None.
         """
 
+        # Check if the target is a single model.
+        if model == None and self.num_models() > 1:
+            raise RelaxError, "The target model cannot be determined as there are %s models already present." % self.num_modes()
+
+        # Get the model.
+        model_cont = self.get_model(model)
+
+        # Check that the name does not already exist.
+
         # Some checks.
-        if struct_index != None:
+        if model != None:
             # Index check.
             if struct_index >= self.num:
                 raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
