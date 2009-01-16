@@ -464,25 +464,25 @@ class Structure:
         generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
-    def vectors(self, attached='H', spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
-        """Extract unit bond vectors from the structure.
+    def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
+        """Extract and store the bond vectors from the loaded structures in the spin container.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
-        attached:  The type of atom attached to the spin.  Regular expression is allowed, for
-        example 'H*'.
+        attached:  The name of the second atom which attached to the spin of interest.  Regular
+        expression is allowed, for example 'H*'.
 
         spin_id:  The spin identification string.
 
-        struct_index:  The index of the structure to extract bond vectors from (which if set to None
-        will cause all vectors to be extracted).
+        model:  The model to extract bond vectors from (which if set to None will cause the vectors
+        of all models to be extracted).
 
         verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
 
-        ave:  A flag which if True will cause all extracted bond vectors to be averaged.  If only
-        one vector is extracted, this argument will have no effect.
+        ave:  A flag which if True will cause the bond vectors from all models to be averaged.  If
+        vectors from only one model is extracted, this argument will have no effect.
 
         unit:  A flag which if True will cause the unit vector to calculated rather than the full
         length bond vector.
@@ -492,20 +492,20 @@ class Structure:
         ~~~~~~~~~~~
 
         For a number of types of analysis, bond vectors or unit bond vectors are required for the
-        calculations.  This user function allows these vectors to be extracted from a loaded
-        structure.  The bond vector will be that from the spin system loaded in relax to the bonded
-        atom specified by the 'attached' argument.  For example if 'attached' is set to 'H', all
-        attached protons will be searched for.  If set to 'CA', all atoms named 'CA' in the
-        structure will be searched for.
+        calculations.  This user function allows these vectors to be extracted from the loaded
+        structures.  The bond vector will be that from the atom associated with the spin system
+        loaded in relax to the bonded atom specified by the 'attached' argument.  For example if
+        'attached' is set to 'H' and the protein backbone amide spins 'N' are loaded, the all 'N-H'
+        vectors will be extracted.  But if set to 'CA', all atoms named 'CA' in the structures will
+        be searched for and all 'N-Ca' bond vectors will be extracted.
 
         The extraction of vectors can occur in a number of ways.  For example if an NMR structure
-        with N models is loaded (or if multiple structures from any source of the same compound are
-        loaded), there are three options for extracting the bond vector.  Firstly the bond vector of
-        a single model or structure can be extracted by specifying the structural index
-        'struct_index', where 0 corresponds to the first structure/model.  Secondly the bond vectors
-        from all structures/models can be extracted if 'struct_index' is None and 'ave' is set to
-        False.  Thirdly, if 'struct_index' is None and 'ave' is set to True, then a single vector
-        which is the average of all structures/models will be calculated.
+        with N models is loaded or if multiple molecules, from any source, of the same compound are
+        loaded as different models, there are three options for extracting the bond vector.  Firstly
+        the bond vector of a single model can be extracted by setting the 'model' argument.
+        Secondly the bond vectors from all models can be extracted if 'model' is None and 'ave' is
+        set to False.  Thirdly, if 'model' is None and 'ave' is set to True, then a single vector
+        which is the average for all models will be calculated.
 
 
         Example
@@ -552,7 +552,7 @@ class Structure:
             text = sys.ps3 + "structure.vectors("
             text = text + "attached=" + `attached`
             text = text + ", spin_id=" + `spin_id`
-            text = text + ", struct_index=" + `struct_index`
+            text = text + ", model=" + `model`
             text = text + ", verbosity=" + `verbosity`
             text = text + ", ave=" + `ave`
             text = text + ", unit=" + `unit` + ")"
@@ -564,11 +564,11 @@ class Structure:
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('Spin identification string', spin_id)
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
-        # The struct_index argument.
-        if struct_index != None and type(struct_index) != int:
-            raise RelaxNoneIntError, ('structure index', struct_index)
+        # The model argument.
+        if model != None and type(model) != int:
+            raise RelaxNoneIntError, ('model', model)
 
         # The verbosity level.
         if type(verbosity) != int:
@@ -583,7 +583,7 @@ class Structure:
             raise RelaxBoolError, ('unit vector flag', unit)
 
         # Execute the functional code.
-        generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, struct_index=struct_index, verbosity=verbosity, ave=ave, unit=unit)
+        generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
 
 
     def write_pdb(self, file=None, dir=None, struct_index=None, force=False):
