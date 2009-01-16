@@ -255,8 +255,8 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
-    """Extract the bond vectors from the loaded structures.
+def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):
+    """Extract the bond vectors from the loaded structures and store them in the spin container.
 
     @keyword attached:      The name of the atom attached to the spin, as given in the structural
                             file.  Regular expression can be used, for example 'H*'.  This uses
@@ -264,9 +264,9 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
     @type attached:         str
     @keyword spin_id:       The spin identifier string.
     @type spin_id:          str
-    @keyword struct_index:  The index of the structure to extract the vector from.  If None, all
+    @keyword model:         The index of the structure to extract the vector from.  If None, all
                             vectors will be extracted.
-    @type struct_index:     str
+    @type model:            str
     @keyword verbosity:     The higher the value, the more information is printed to screen.
     @type verbosity:        int
     @keyword ave:           A flag which if True will cause the average of all vectors to be
@@ -290,21 +290,21 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
     # Print out.
     if verbosity:
-        # Number of structures.
-        num = cdp.structure.num_structures()
+        # Number of models.
+        num_models = cdp.structure.num_models()
 
-        # Multiple structures loaded.
-        if num > 1:
-            if struct_index:
-                print "Extracting vectors for structure " + `struct_index` + "."
+        # Multiple models loaded.
+        if num_models > 1:
+            if model:
+                print "Extracting vectors for model '%s'." % model
             else:
-                print "Extracting vectors for all " + `num` + " structures."
+                print "Extracting vectors for all %s models." % num_models
                 if ave:
                     print "Averaging all vectors."
 
-        # Single structure loaded.
+        # Single model loaded.
         else:
-            print "Extracting vectors from the single structure."
+            print "Extracting vectors from the single model."
 
         # Unit vectors.
         if unit:
@@ -333,12 +333,12 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         if not spin.select:
             continue
 
-        # The spin identification string.  The residue name is not included to allow structures with point mutations to be used.
+        # The spin identification string.  The residue name is not included to allow molecules with point mutations to be used as different models.
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_num=spin.num, spin_name=spin.name)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
-            warn(RelaxWarning("Either the spin number or name must be set for the spin " + `id` + " to identify the corresponding atom in the structure."))
+            warn(RelaxWarning("Either the spin number or name must be set for the spin " + `id` + " to identify the corresponding atom in the molecule."))
             continue
 
         # The bond vector already exists.
@@ -349,7 +349,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, struct_index=struct_index, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, model=model, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
