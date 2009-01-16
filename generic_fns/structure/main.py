@@ -264,8 +264,8 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
     @type attached:         str
     @keyword spin_id:       The spin identifier string.
     @type spin_id:          str
-    @keyword model:         The index of the structure to extract the vector from.  If None, all
-                            vectors will be extracted.
+    @keyword model:         The model to extract the vector from.  If None, all vectors will be
+                            extracted.
     @type model:            str
     @keyword verbosity:     The higher the value, the more information is printed to screen.
     @type verbosity:        int
