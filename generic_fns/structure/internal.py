@@ -485,7 +485,7 @@ class Internal(Base_struct_API):
                 break
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
+    def bond_vectors(self, atom_id=None, attached_atom=None, model_num=None, return_name=False, return_warnings=False):
         """Find the bond vector between the atoms of 'attached_atom' and 'atom_id'.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
@@ -493,16 +493,16 @@ class Internal(Base_struct_API):
         @type atom_id:              str
         @keyword attached_atom:     The name of the bonded atom.
         @type attached_atom:        str
-        @keyword struct_index:      The index of the structure to return the vectors from.  If not
-                                    supplied and multiple structures/models exist, then vectors from
-                                    all structures will be returned.
-        @type struct_index:         None or int
+        @keyword model_num:         The model of which to return the vectors from.  If not supplied
+                                    and multiple models exist, then vectors from all models will be
+                                    returned.
+        @type model_num:            None or int
         @keyword return_name:       A flag which if True will cause the name of the attached atom to
                                     be returned together with the bond vectors.
         @type return_name:          bool
         @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
         @type return_warnings:      bool
-        @return:                    The list of bond vectors for each structure.
+        @return:                    The list of bond vectors for each model.
         @rtype:                     list of numpy arrays (or a tuple if return_name or
                                     return_warnings are set)
         """
@@ -515,50 +515,53 @@ class Internal(Base_struct_API):
         attached_name = None
         warnings = None
 
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Single structure.
-            if struct_index and struct_index != i:
+        # Loop over the models.
+        for model in self.structural_data:
+            # Single model.
+            if model_num and model_num != model.num:
                 continue
 
-            # Alias.
-            struct = self.structural_data[i]
-
-            # Init.
-            atom_found = False
-
-            # Loop over all atoms.
-            for j in xrange(len(struct.atom_name)):
-                # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(struct.atom_num[j], struct.atom_name[j], struct.res_num[j], struct.res_name[j], self.name[i]):
+            # Loop over the molecules.
+            for mol in model.mol:
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
                     continue
 
-                # More than one matching atom!
+                # Init.
+                atom_found = False
+
+                # Loop over all atoms.
+                for j in xrange(len(struct.atom_name)):
+                    # Skip non-matching atoms.
+                    if sel_obj and not sel_obj.contains_spin(struct.atom_num[j], struct.atom_name[j], struct.res_num[j], struct.res_name[j], self.name[i]):
+                        continue
+
+                    # More than one matching atom!
+                    if atom_found:
+                        raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+
+                    # The atom has been found, so store some info.
+                    atom_found = True
+                    index = j
+
+                # Found the atom.
                 if atom_found:
-                    raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+                    # Get the atom bonded to this model/molecule/residue/atom.
+                    bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, i)
 
-                # The atom has been found, so store some info.
-                atom_found = True
-                index = j
+                    # No bonded atom.
+                    if (bonded_num, bonded_name, element) == (None, None, None):
+                        continue
 
-            # Found the atom.
-            if atom_found:
-                # Get the atom bonded to this structure/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, i)
+                    # The bond vector.
+                    vector = array(pos, float64) - array([struct.x[index], struct.y[index], struct.z[index]], float64)
 
-                # No bonded atom.
-                if (bonded_num, bonded_name, element) == (None, None, None):
-                    continue
+                    # Append the vector to the vectors array.
+                    vectors.append(vector)
 
-                # The bond vector.
-                vector = array(pos, float64) - array([struct.x[index], struct.y[index], struct.z[index]], float64)
-
-                # Append the vector to the vectors array.
-                vectors.append(vector)
-
-            # Not found.
-            else:
-                warnings = "Cannot find the atom in the structure"
+                # Not found.
+                else:
+                    warnings = "Cannot find the atom in the structure"
 
         # Build the tuple to be yielded.
         data = (vectors,)
