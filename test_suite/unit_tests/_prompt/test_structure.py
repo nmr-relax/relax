@@ -287,8 +287,8 @@ class Test_structure(Structure_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.structure_fns.vectors, spin_id=data[1])
 
 
-    def test_vectors_argfail_struct_index(self):
-        """The struct_index arg test of the structure.vectors() user function."""
+    def test_vectors_argfail_model(self):
+        """The model arg test of the structure.vectors() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -297,7 +297,7 @@ class Test_structure(Structure_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.structure_fns.vectors, struct_index=data[1])
+            self.assertRaises(RelaxNoneIntError, self.structure_fns.vectors, model=data[1])
 
 
     def test_vectors_argfail_verbosity(self):
