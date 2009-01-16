@@ -68,10 +68,6 @@ class Internal(Base_struct_API):
         @type str:              Structure_container instance
         """
 
-        # Check if the target is a single model.
-        if model == None and self.num_models() > 1:
-            raise RelaxError, "The target model cannot be determined as there are %s models already present." % self.num_modes()
-
         # Get the model.
         model_cont = self.get_model(model)
 
