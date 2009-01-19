@@ -218,11 +218,11 @@ class Relax_disp:
             'slow': [R2A, kA, dw].
 
         The equations for these two models are
-                                       /              /        kex       \   4 * cpmg_frq \
+                                       /              /        kex       \   4 * cpmg_frq \\
             'fast': R2eff = R2 + Rex * | 1 - 2 * Tanh | ---------------- | * ------------ |
                                        \              \ 2 * 4 * cpmg_frq /        kex     /
 
-                                       /     /      dw      \   4 * cpmg_frq \
+                                       /     /      dw      \   4 * cpmg_frq \\
             'slow': R2eff = R2A + kA - | Sin | ------------ | * ------------ |
                                        \     \ 4 * cpmg_frq /        dw      /
 
