@@ -371,7 +371,7 @@ class Scientific_data(Base_struct_API):
 
             # The residue.
             if mol.mol_type != 'other':
-                res = mol.residues[res_index]
+                res = mol.data.residues[res_index]
             else:
                 res = mol[res_index]
 
