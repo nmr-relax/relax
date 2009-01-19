@@ -66,15 +66,15 @@ class Internal(Base_struct_API):
         self.pack_structs([[MolContainer()]], orig_model_num=[model], set_mol_name=[name])
 
 
-    def __bonded_atom(self, attached_atom, index, struct_index):
+    def __bonded_atom(self, attached_atom, index, mol):
         """Find the atom named attached_atom directly bonded to the atom located at the index.
 
         @param attached_atom:   The name of the attached atom to return.
         @type attached_atom:    str
         @param index:           The index of the atom which the attached atom is attached to. 
         @type index:            int
-        @param struct_index:    The index of the structure.
-        @type struct_index:     int
+        @param mol:             The molecule container.
+        @type mol:              MolContainer instance
         @return:                A tuple of information about the bonded atom.
         @rtype:                 tuple consisting of the atom number (int), atom name (str), element
                                 name (str), and atomic position (Numeric array of len 3)
@@ -82,16 +82,15 @@ class Internal(Base_struct_API):
 
         # Init.
         bonded_found = False
-        struct = self.structural_data[struct_index]
 
         # No bonded atoms, so go find everything within 1.2 Angstroms and say they are bonded.
-        if not struct.bonded[index]:
-            self.__find_bonded_atoms(index, struct_index)
+        if not mol.bonded[index]:
+            self.__find_bonded_atoms(index, mol)
 
         # Loop over the bonded atoms.
         matching_list = []
-        for bonded_index in struct.bonded[index]:
-            if relax_re.search(struct.atom_name[bonded_index], attached_atom):
+        for bonded_index in mol.bonded[index]:
+            if relax_re.search(mol.atom_name[bonded_index], attached_atom):
                 matching_list.append(bonded_index)
         num_attached = len(matching_list)
 
@@ -100,7 +99,7 @@ class Internal(Base_struct_API):
             # Get the atom names.
             matching_names = []
             for i in matching_list:
-                matching_names.append(struct.atom_name[i])
+                matching_names.append(mol.atom_name[i])
 
             # Return nothing but a warning.
             return None, None, None, None, None, 'More than one attached atom found: ' + `matching_names`
@@ -111,17 +110,17 @@ class Internal(Base_struct_API):
 
         # The bonded atom info.
         index = matching_list[0]
-        bonded_num = struct.atom_num[index]
-        bonded_name = struct.atom_name[index]
-        element = struct.element[index]
-        pos = [struct.x[index], struct.y[index], struct.z[index]]
-        attached_name = struct.atom_name[index]
+        bonded_num = mol.atom_num[index]
+        bonded_name = mol.atom_name[index]
+        element = mol.element[index]
+        pos = [mol.x[index], mol.y[index], mol.z[index]]
+        attached_name = mol.atom_name[index]
 
         # Return the information.
         return bonded_num, bonded_name, element, pos, attached_name, None
 
 
-    def __find_bonded_atoms(self, index, struct_index, radius=1.2):
+    def __find_bonded_atoms(self, index, mol, radius=1.2):
         """Find all atoms within a sphere and say that they are attached to the central atom.
 
         The found atoms will be added to the 'bonded' data structure.
@@ -129,20 +128,17 @@ class Internal(Base_struct_API):
 
         @param index:           The index of the central atom.
         @type index:            int
-        @param struct_index:    The index of the structure.
-        @type struct_index:     int
+        @param mol:             The molecule container.
+        @type mol:              MolContainer instance
         """
 
-        # Init.
-        struct = self.structural_data[struct_index]
-
         # Central atom info.
-        centre = array([struct.x[index], struct.y[index], struct.z[index]], float64)
+        centre = array([mol.x[index], mol.y[index], mol.z[index]], float64)
 
         # Atom loop.
-        for i in xrange(len(struct.atom_num)):
+        for i in xrange(len(mol.atom_num)):
             # The atom's position.
-            pos = array([struct.x[i], struct.y[i], struct.z[i]], float64)
+            pos = array([mol.x[i], mol.y[i], mol.z[i]], float64)
 
             # The distance from the centre.
             dist = linalg.norm(centre-pos)
