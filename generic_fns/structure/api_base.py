@@ -62,19 +62,13 @@ class Base_struct_API:
         self.structural_data = ModelList()
 
 
-    def add_molecule(self, name=None, model=None, file=None, path=None, str=None):
+    def add_molecule(self, name=None, model=None):
         """Prototype method stub for adding the given molecule to the store.
 
         @keyword name:          The molecule identification string.
         @type name:             str
         @keyword model:         The number of the model to add the molecule to.
         @type model:            int or None
-        @keyword file:          The name of the file containing the molecule.
-        @type file:             str
-        @keyword path:          The optional path where the file is located.
-        @type path:             str
-        @keyword str:           The molecule object, containing the structural data.
-        @type str:              class instance
         """
 
         # Raise the error.
