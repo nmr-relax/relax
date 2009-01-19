@@ -744,7 +744,7 @@ class ModelList(list):
         """
 
         # If no model data exists, replace the empty first model with this model (just a renumbering).
-        if self.is_empty():
+        if len(self) and self.is_empty():
             self[0].num = model_num
 
         # Otherwise append an empty ModelContainer.
