@@ -1006,10 +1006,10 @@ class MolList(list):
 
             # Set the molecule attributes.
             mol_element.setAttribute('desc', 'Molecule container')
-            mol_element.setAttribute('name', str(self[i].name))
+            mol_element.setAttribute('name', str(self[i].mol_name))
 
             # Add all simple python objects within the MolContainer to the XML element.
             fill_object_contents(doc, mol_element, object=self[i], blacklist=['name'] + self[i].__class__.__dict__.keys())
 
             # Add the molecule data.
-            self[i].mol.to_xml(doc, mol_element)
+            self[i].to_xml(doc, mol_element)
