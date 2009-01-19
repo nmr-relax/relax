@@ -60,64 +60,6 @@ class Scientific_data(Base_struct_API):
         Base_struct_API.__init__(self)
 
 
-    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
-        """Add the given structure to the store.
-
-        @keyword name:          The structural identifier.
-        @type name:             str
-        @keyword model:         The structural model.
-        @type model:            int or None
-        @keyword file:          The name of the file containing the structure.
-        @type file:             str
-        @keyword path:          The optional path where the file is located.
-        @type path:             str
-        @keyword str:           The object containing the structural data.
-        @type str:              Structure_container instance
-        @keyword struct_index:  The index of the structural container, used for replacing the
-                                structure.
-        @type struct_index:     int or None.
-        """
-
-        # Some checks.
-        if struct_index != None:
-            # Index check.
-            if struct_index >= self.num:
-                raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
-
-            # ID check.
-            if name != self.name[struct_index]:
-                raise RelaxError, "The ID names " + `name` + " and " + `self.name[struct_index]` + " do not match."
-
-            # Model.
-            if model != self.model[struct_index]:
-                raise RelaxError, "The models " + `model` + " and " + `self.model[struct_index]` + " do not match."
-
-            # File name.
-            if file != self.file[struct_index]:
-                raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
-
-        # Initialise.
-        else:
-            self.num = self.num + 1
-            self.name.append(name)
-            self.model.append(model)
-            self.file.append(file)
-            self.path.append(path)
-
-        # Initialise the structural object if not provided.
-        if str == None:
-            raise RelaxError, "The Scientific python structural object cannot be set to None."
-
-        # Add the structural data.
-        if struct_index != None:
-            if struct_index >= len(self.structural_data):
-                self.structural_data.append(str)
-            else:
-                self.structural_data[struct_index] = str
-        else:
-            self.structural_data.append(str)
-
-
     def __find_bonded_atom(self, attached_atom, mol_type, res):
         """Find the atom named attached_atom directly bonded to the desired atom.
 
