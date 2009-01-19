@@ -53,12 +53,7 @@ class Base_struct_API:
     def __init__(self):
         """Initialise the structural object."""
 
-        # Initialise the variables used to keep track of multiple structures.
-        self.num = 0
-        self.name = []
-        self.model = []
-        self.file = []
-        self.path = []
+        # Initialise the empty model list.
         self.structural_data = ModelList()
 
 
