@@ -315,7 +315,7 @@ class Scientific_data(Base_struct_API):
             # Loop over each individual molecule.
             for mol in model.mol:
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol.mol_type, sel_obj):
+                for res, res_num, res_name in self.__residue_loop(mol, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
@@ -428,7 +428,7 @@ class Scientific_data(Base_struct_API):
             # Loop over each individual molecule.
             for mol in model.mol:
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol.mol_name, mol.mol_type, sel_obj):
+                for res, res_num, res_name in self.__residue_loop(mol, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
