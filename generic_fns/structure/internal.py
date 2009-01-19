@@ -1392,7 +1392,7 @@ class MolContainer:
         """
 
         # Create an XML element for this molecule and add it to the higher level element.
-        mol_element = doc.createElement('mol')
+        mol_element = doc.createElement('mol_cont')
         element.appendChild(mol_element)
 
         # Set the molecule attributes.
