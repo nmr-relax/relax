@@ -1350,7 +1350,7 @@ class MolContainer:
                         continue
 
                     # Make the connection.
-                    self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index))
+                    self.atom_connect(index1=self.__atom_index(record[1]), index2=self.__atom_index(record[i+2]))
 
 
     def is_empty(self):
