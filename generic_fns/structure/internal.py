@@ -486,9 +486,9 @@ class Internal(Base_struct_API):
                 atom_found = False
 
                 # Loop over all atoms.
-                for j in xrange(len(mol.atom_name)):
+                for i in xrange(len(mol.atom_name)):
                     # Skip non-matching atoms.
-                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[j], mol.atom_name[j], mol.res_num[j], mol.res_name[j], self.name[i]):
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.name):
                         continue
 
                     # More than one matching atom!
@@ -497,12 +497,12 @@ class Internal(Base_struct_API):
 
                     # The atom has been found, so store some info.
                     atom_found = True
-                    index = j
+                    index = i
 
                 # Found the atom.
                 if atom_found:
                     # Get the atom bonded to this model/molecule/residue/atom.
-                    bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, i)
+                    bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, mol)
 
                     # No bonded atom.
                     if (bonded_num, bonded_name, element) == (None, None, None):
