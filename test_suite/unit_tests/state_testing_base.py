@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove, tmpfile
+from os import tmpfile
 import sys
 
 # relax module imports.

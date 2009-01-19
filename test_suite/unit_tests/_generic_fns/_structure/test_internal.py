@@ -21,14 +21,12 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import fromstring
 from os import path
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.internal import Internal
 
 

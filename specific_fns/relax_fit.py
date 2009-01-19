@@ -591,10 +591,10 @@ class Relax_fit(Common_functions):
         @type min_algor:            str
         @keyword min_options:       An array of options to be used by the minimisation algorithm.
         @type min_options:          array of str
-        @keyword func_tol:          The function tolerence which, when reached, terminates optimisation.
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.
                                     Setting this to None turns of the check.
         @type func_tol:             None or float
-        @keyword grad_tol:          The gradient tolerence which, when reached, terminates optimisation.
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.
                                     Setting this to None turns of the check.
         @type grad_tol:             None or float
         @keyword max_iterations:    The maximum number of iterations for the algorithm.
@@ -954,7 +954,7 @@ class Relax_fit(Common_functions):
         elif object_name == 'iinf':
             grace_string = '\\qI\\sinf\\Q'
 
-        # Intensity at infinity.
+        # Relaxation period times (series).
         elif object_name == 'relax_times':
             grace_string = '\\qRelaxation time period (s)\\Q'
 
