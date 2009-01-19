@@ -349,7 +349,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, model=model, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, model_num=model, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
