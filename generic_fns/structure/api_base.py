@@ -766,6 +766,10 @@ class ModelList(list):
         @rtype:     bool
         """
 
+        # No ModelContainers.
+        if len(self) == 0:
+            return True
+
         # There is only one ModelContainer and it is empty.
         if len(self) == 1 and self[0].is_empty():
             return True
