@@ -153,7 +153,7 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
+    def bond_vectors(self, atom_id=None, attached_atom=None, model_num=None, return_name=False, return_warnings=False):
         """Prototype method stub for finding the bond vectors between 'attached_atom' and 'atom_id'.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
@@ -161,10 +161,10 @@ class Base_struct_API:
         @type atom_id:              str
         @keyword attached_atom:     The name of the bonded atom.
         @type attached_atom:        str
-        @keyword struct_index:      The index of the structure to return the vectors from.  If not
-                                    supplied and multiple structures/models exist, then vectors from
-                                    all structures will be returned.
-        @type struct_index:         None or int
+        @keyword model_num:         The model of which to return the vectors from.  If not supplied
+                                    and multiple models exist, then vectors from all models will be
+                                    returned.
+        @type model_num:            None or int
         @keyword return_name:       A flag which if True will cause the name of the attached atom to
                                     be returned together with the bond vectors.
         @type return_name:          bool
