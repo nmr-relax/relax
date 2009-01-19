@@ -373,7 +373,7 @@ class Scientific_data(Base_struct_API):
             if mol.mol_type != 'other':
                 res = mol.data.residues[res_index]
             else:
-                res = mol[res_index]
+                res = mol.data[res_index]
 
             # The atom.
             atom = res[atom_index]
