@@ -124,7 +124,7 @@ class Scientific_data(Base_struct_API):
         if mol.mol_type != 'other':
             # Loop over the residues of the protein in the PDB file.
             res_index = -1
-            for res in mol.residues:
+            for res in mol.data.residues:
                 # Residue number and name.
                 if mol.mol_type == 'nucleic acid':
                     res_name = res.name[-1]
@@ -147,7 +147,7 @@ class Scientific_data(Base_struct_API):
             res_index = -1
             print mol
             print "\n"*10
-            for res in mol:
+            for res in mol.data:
                 print res
                 # Residue index.
                 res_index = res_index + 1
