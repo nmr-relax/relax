@@ -486,9 +486,9 @@ class Internal(Base_struct_API):
                 atom_found = False
 
                 # Loop over all atoms.
-                for j in xrange(len(struct.atom_name)):
+                for j in xrange(len(mol.atom_name)):
                     # Skip non-matching atoms.
-                    if sel_obj and not sel_obj.contains_spin(struct.atom_num[j], struct.atom_name[j], struct.res_num[j], struct.res_name[j], self.name[i]):
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[j], mol.atom_name[j], mol.res_num[j], mol.res_name[j], self.name[i]):
                         continue
 
                     # More than one matching atom!
@@ -509,7 +509,7 @@ class Internal(Base_struct_API):
                         continue
 
                     # The bond vector.
-                    vector = array(pos, float64) - array([struct.x[index], struct.y[index], struct.z[index]], float64)
+                    vector = array(pos, float64) - array([mol.x[index], mol.y[index], mol.z[index]], float64)
 
                     # Append the vector to the vectors array.
                     vectors.append(vector)
