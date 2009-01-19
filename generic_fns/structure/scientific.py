@@ -591,8 +591,9 @@ class Scientific_data(Base_struct_API):
                     mol_conts[-1][-1].mol_type = 'other'
 
                     # Loop over the molecules.
+                    mol_conts[-1][-1].data = []
                     for mol in model.molecules[key]:
-                        mol_conts[-1][-1].append(mol)
+                        mol_conts[-1][-1].data.append(mol)
 
                     # Update structures.
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
