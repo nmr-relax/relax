@@ -145,7 +145,7 @@ class Internal(Base_struct_API):
 
             # Connect the atoms if within the radius value.
             if dist < radius:
-                self.atom_connect(index, i)
+                mol.atom_connect(index, i)
 
 
     def __get_chemical_name(self, hetID):

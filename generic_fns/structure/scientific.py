@@ -304,18 +304,18 @@ class Scientific_data(Base_struct_API):
         pos_array = []
 
         # Loop over the models.
-        for struct in self.structural_data:
+        for model in self.structural_data:
             # Init.
             atom_found = False
 
             # Skip non-matching models.
-            if model != None and model != struct.model:
+            if model != None and model != model.num:
                 continue
 
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
+            for mol in model.mol:
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
+                for res, res_num, res_name in self.__residue_loop(mol, mol.mol_type, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
@@ -323,7 +323,7 @@ class Scientific_data(Base_struct_API):
                         atom_name = atom.name
 
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
                             continue
 
                         # More than one matching atom!
@@ -334,7 +334,7 @@ class Scientific_data(Base_struct_API):
                         atom_found = True
                         atom_num_match = atom_num
                         atom_name_match = atom_name
-                        mol_type_match = mol_type
+                        mol_type_match = mol.mol_type
                         res_match = res
 
             # Found the atom.
@@ -426,9 +426,9 @@ class Scientific_data(Base_struct_API):
             atom_found = False
 
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(model, sel_obj):
+            for mol in model.mol:
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_name, mol_type, sel_obj):
+                for res, res_num, res_name in self.__residue_loop(mol, mol.mol_name, mol.mol_type, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
@@ -436,7 +436,7 @@ class Scientific_data(Base_struct_API):
                         atom_name = atom.name
 
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
                             continue
 
                         # More than one matching atom!
@@ -446,7 +446,7 @@ class Scientific_data(Base_struct_API):
                         # The atom has been found, so store some info.
                         atom_found = True
                         pos_match = atom.position.array
-                        mol_type_match = mol_type
+                        mol_type_match = mol.mol_type
                         res_match = res
 
             # Found the atom.
