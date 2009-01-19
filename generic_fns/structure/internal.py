@@ -1363,53 +1363,40 @@ class MolContainer:
         if hasattr(self, 'file_mol_num'): return False
         if hasattr(self, 'file_model'): return False
 
-        # The atom num (array of int).
-        if not atom_num == []:
-            return False
-
-        # The atom name (array of str).
-        if not atom_name == []:
-            return False
-
-        # The bonded atom indices (array of arrays of int).
-        if not bonded == []:
-            return False
-
-        # The chain ID (array of str).
-        if not chain_id == []:
-            return False
-
-        # The element symbol (array of str).
-        if not element == []:
-            return False
-
-        # The optional PDB record name (array of str).
-        if not pdb_record == []:
-            return False
-
-        # The residue name (array of str).
-        if not res_name == []:
-            return False
-
-        # The residue number (array of int).
-        if not res_num == []:
-            return False
-
-        # The segment ID (array of int).
-        if not seg_id == []:
-            return False
-
-        # The x coordinate (array of float).
-        if not x == []:
-            return False
-
-        # The y coordinate (array of float).
-        if not y == []:
-            return False
-
-        # The z coordinate (array of float).
-        if not z == []:
-            return False
+        # Internal data structures.
+        if not self.atom_num == []: return False
+        if not self.atom_name == []: return False
+        if not self.bonded == []: return False
+        if not self.chain_id == []: return False
+        if not self.element == []: return False
+        if not self.pdb_record == []: return False
+        if not self.res_name == []: return False
+        if not self.res_num == []: return False
+        if not self.seg_id == []: return False
+        if not self.x == []: return False
+        if not self.y == []: return False
+        if not self.z == []: return False
 
         # Ok, now this thing must be empty.
         return True
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for the contents of this molecule container.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the molecule XML elements to.
+        @type element:  XML element object
+        """
+
+        # Create an XML element for this molecule and add it to the higher level element.
+        mol_element = doc.createElement('mol')
+        element.appendChild(mol_element)
+
+        # Set the molecule attributes.
+        mol_element.setAttribute('desc', 'Molecule container')
+        mol_element.setAttribute('name', str(self.mol_name))
+
+        # Add all simple python objects within the MolContainer to the XML element.
+        fill_object_contents(doc, mol_element, object=self, blacklist=self.__class__.__dict__.keys())
