@@ -37,6 +37,7 @@ from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
+from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
@@ -567,7 +568,8 @@ class Scientific_data(Base_struct_API):
             if hasattr(model, 'peptide_chains'):
                 for mol in model.peptide_chains:
                     mol.mol_type = 'protein'
-                    mol_conts[-1].append(mol)
+                    mol_conts[-1].append(MolContainer())
+                    mol_conts[-1][-1].data = mol
                     mol_conts[-1][-1].mol_type = 'protein'
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
@@ -575,7 +577,8 @@ class Scientific_data(Base_struct_API):
             # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'nucleotide_chains'):
                 for mol in model.nucleotide_chains:
-                    mol_conts[-1].append(mol)
+                    mol_conts[-1].append(MolContainer())
+                    mol_conts[-1][-1].data = mol
                     mol_conts[-1][-1].mol_type = 'nucleic acid'
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
                     mol_index = mol_index + 1
@@ -605,5 +608,26 @@ class Scientific_data(Base_struct_API):
         return True
 
 
-class MolContainer(list):
+class MolContainer:
     """The empty list-type container for the non-protein and non-RNA molecular information."""
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for the contents of this molecule container.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the molecule XML elements to.
+        @type element:  XML element object
+        """
+
+        # Create an XML element for this molecule and add it to the higher level element.
+        mol_element = doc.createElement('mol')
+        element.appendChild(mol_element)
+
+        # Set the molecule attributes.
+        mol_element.setAttribute('desc', 'Molecule container')
+        mol_element.setAttribute('name', str(self.mol_name))
+
+        # Add all simple python objects within the MolContainer to the XML element.
+        fill_object_contents(doc, mol_element, object=self, blacklist=['data'] + self.__class__.__dict__.keys())
