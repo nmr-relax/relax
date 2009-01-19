@@ -964,6 +964,10 @@ class MolList(list):
         @rtype:     bool
         """
 
+        # No MolContainers.
+        if len(self) == 0:
+            return True
+
         # There is only one MolContainer and it is empty.
         if len(self) == 1 and hasattr(self[0], 'is_empty') and self[0].is_empty():
             return True
