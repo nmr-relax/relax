@@ -442,7 +442,7 @@ class Base_struct_API:
 
         # No contents to store, so pack up the structural containers.
         if not self.structural_data.is_empty():
-            self.structural_data.to_xml(doc, element)
+            self.structural_data.to_xml(doc, str_element)
 
 
     def write_pdb(self, file, struct_index=None):
