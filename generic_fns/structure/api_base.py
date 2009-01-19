@@ -440,18 +440,8 @@ class Base_struct_API:
         str_element.setAttribute('desc', 'Structural information')
         str_element.setAttribute('id', self.id)
 
-        # Blacklist methods.
-        blacklist = []
-        for name in dir(self):
-            # Get the object.
-            obj = getattr(self, name)
-
-            # Add methods to the list.
-            if isinstance(obj, MethodType):
-                blacklist.append(name)
-
-        # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, str_element, object=self, blacklist=blacklist + ['structural_data'] + self.__class__.__dict__.keys())
+        # No contents to store, so pack up the structural containers.
+        self.structural_data.to_xml(doc, element)
 
 
     def write_pdb(self, file, struct_index=None):
