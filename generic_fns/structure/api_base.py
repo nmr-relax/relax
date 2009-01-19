@@ -955,7 +955,7 @@ class MolList(list):
         else:
             # Test if the molecule already exists.
             for i in xrange(len(self)):
-                if self[i].name == mol_name:
+                if self[i].mol_name == mol_name:
                     raise RelaxError, "The molecule '" + `mol_name` + "' already exists."
 
             # Append an empty MolContainer.
