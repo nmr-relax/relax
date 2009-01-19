@@ -399,7 +399,7 @@ class Base_struct_API:
                 model.mol[-1].file_name = file_name
                 model.mol[-1].file_path = file_path
                 model.mol[-1].file_mol_num = orig_mol_num[j]
-                model.mol[-1].file_model = orig_model_num[j]
+                model.mol[-1].file_model = orig_model_num[i]
 
 
 
