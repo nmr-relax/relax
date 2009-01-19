@@ -1351,3 +1351,65 @@ class MolContainer:
 
                     # Make the connection.
                     self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index))
+
+
+    def is_empty(self):
+        """Check if the container is empty."""
+
+        # Set attributes.
+        if hasattr(self, 'mol_name'): return False
+        if hasattr(self, 'file_name'): return False
+        if hasattr(self, 'file_path'): return False
+        if hasattr(self, 'file_mol_num'): return False
+        if hasattr(self, 'file_model'): return False
+
+        # The atom num (array of int).
+        if not atom_num == []:
+            return False
+
+        # The atom name (array of str).
+        if not atom_name == []:
+            return False
+
+        # The bonded atom indices (array of arrays of int).
+        if not bonded == []:
+            return False
+
+        # The chain ID (array of str).
+        if not chain_id == []:
+            return False
+
+        # The element symbol (array of str).
+        if not element == []:
+            return False
+
+        # The optional PDB record name (array of str).
+        if not pdb_record == []:
+            return False
+
+        # The residue name (array of str).
+        if not res_name == []:
+            return False
+
+        # The residue number (array of int).
+        if not res_num == []:
+            return False
+
+        # The segment ID (array of int).
+        if not seg_id == []:
+            return False
+
+        # The x coordinate (array of float).
+        if not x == []:
+            return False
+
+        # The y coordinate (array of float).
+        if not y == []:
+            return False
+
+        # The z coordinate (array of float).
+        if not z == []:
+            return False
+
+        # Ok, now this thing must be empty.
+        return True
