@@ -484,7 +484,7 @@ class Internal(Base_struct_API):
                 # Loop over all atoms.
                 for i in xrange(len(mol.atom_name)):
                     # Skip non-matching atoms.
-                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.name):
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
                         continue
 
                     # More than one matching atom!
