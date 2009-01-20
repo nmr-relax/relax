@@ -278,6 +278,10 @@ class Internal(Base_struct_API):
 
         # Loop over the data.
         for record in records:
+            # A PDB termination record.
+            if search('^END', record):
+                break
+
             # A molecule termination record.
             if search('^TER', record):
                 # Yield the info.
