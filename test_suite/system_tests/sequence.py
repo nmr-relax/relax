@@ -49,7 +49,7 @@ class Sequence(TestCase):
         """Load all aspartic acid atoms from the single residue in a loaded protein PDB file."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1)
 
         # Load all the ASP atoms (1 molecule, 1 ASP residue, and all atoms).
         self.relax.interpreter._Structure.load_spins(spin_id=':ASP')
@@ -96,7 +96,7 @@ class Sequence(TestCase):
         """Load the glycine backbone amide N and Ca spins from a loaded protein PDB file."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1)
 
         # Generate the sequence of nitrogen spins (1 molecule, all GLY residues, and only N spins).
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@N')
@@ -144,7 +144,7 @@ class Sequence(TestCase):
         """Load the glycine backbone amide N spins from a loaded protein PDB file."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1)
 
         # Generate the sequence (1 molecule, all GLY residues, and only N spins).
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@N')
@@ -183,7 +183,7 @@ class Sequence(TestCase):
         """Load the protein backbone amide N spins from a loaded PDB file."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', model=1)
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1)
 
         # Generate the sequence (1 molecule, all residues, and only N spins).
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
