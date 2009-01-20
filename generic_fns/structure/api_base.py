@@ -30,6 +30,7 @@ documented.
 
 # Python module imports.
 from os import sep
+from re import match
 from types import MethodType
 from warnings import warn
 
