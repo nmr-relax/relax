@@ -59,7 +59,7 @@ class Sequence(TestCase):
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(cdp.mol[0].name, 'Ap4Aase_res1-12_mol1')
         self.assertEqual(len(cdp.mol[0].res), 1)
 
         # 1st residue.
@@ -109,7 +109,7 @@ class Sequence(TestCase):
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(cdp.mol[0].name, 'Ap4Aase_res1-12_mol1')
         self.assertEqual(len(cdp.mol[0].res), 3)
 
         # 1st residue.
@@ -154,7 +154,7 @@ class Sequence(TestCase):
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(cdp.mol[0].name, 'Ap4Aase_res1-12_mol1')
         self.assertEqual(len(cdp.mol[0].res), 3)
 
         # 1st residue.
@@ -193,7 +193,7 @@ class Sequence(TestCase):
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(cdp.mol[0].name, 'Ap4Aase_res1-12_mol1')
         self.assertEqual(len(cdp.mol[0].res), 12)
 
         # 1st residue.
