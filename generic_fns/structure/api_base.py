@@ -929,7 +929,7 @@ class MolList(list):
         text = "Molecules.\n\n"
         text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s" % (i, self[i].name) + "\n"
+            text = text + "%-8i%-8s" % (i, self[i].mol_name) + "\n"
         return text
 
 
