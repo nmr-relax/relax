@@ -117,17 +117,21 @@ class Structure(TestCase):
 
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
-        self.assertEqual(cdp.structure.file, ['Ap4Aase_res1-12.pdb'])
-        self.assertEqual(cdp.structure.path, [''])
         self.assert_(hasattr(cdp.structure, 'structural_data'))
         self.assert_(len(cdp.structure.structural_data))
-        print cdp.structure.structural_data
+        self.assert_(len(cdp.structure.structural_data[0].mol))
+
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
+        self.assertEqual(mol.file_path, '')
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_struct_num, 1)
 
         # The real atomic data.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
 
         # Check the atomic data.
-        self.assertEqual(cdp.structure.structural_data[0].peptide_chains[0].sequence(), res_name)
+        self.assertEqual(mol.sequence(), res_name)
 
 
     def test_read_pdb_internal1(self):
