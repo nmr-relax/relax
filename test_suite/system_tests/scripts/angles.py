@@ -4,9 +4,6 @@ import sys
 # Create the data pipe.
 pipe.create('mf', 'mf')
 
-# Read the sequence.
-sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
-
 # Read a PDB file.
 structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1)
 
