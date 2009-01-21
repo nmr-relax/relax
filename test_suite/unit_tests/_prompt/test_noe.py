@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.noe import Noe
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES

@@ -1187,10 +1187,10 @@ class N_state_model(Common_functions):
         @type min_algor:        str
         @param min_options:     An array of options to be used by the minimisation algorithm.
         @type min_options:      array of str
-        @param func_tol:        The function tolerence which, when reached, terminates optimisation.
+        @param func_tol:        The function tolerance which, when reached, terminates optimisation.
                                 Setting this to None turns of the check.
         @type func_tol:         None or float
-        @param grad_tol:        The gradient tolerence which, when reached, terminates optimisation.
+        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.
                                 Setting this to None turns of the check.
         @type grad_tol:         None or float
         @param max_iterations:  The maximum number of iterations for the algorithm.

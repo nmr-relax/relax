@@ -23,7 +23,6 @@
 
 # Import statements.
 from glob import glob
-import platform
 from os import F_OK, access, chdir, getcwd, path, remove, sep, system
 from shutil import move
 import sys
