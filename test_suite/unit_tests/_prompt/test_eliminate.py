@@ -24,7 +24,6 @@
 from unittest import TestCase
 
 # relax module imports.
-from generic_fns import eliminate
 from prompt.eliminate import Eliminate
 from relax_errors import RelaxFunctionError, RelaxNoneTupleError
 
