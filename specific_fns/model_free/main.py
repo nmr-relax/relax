@@ -1137,10 +1137,10 @@ class Model_free_main:
                     raise RelaxError, "The number of structural models is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
                 # Loop over the models.
-                for model_index in range(len(dp_from.structure.structural_data)):
+                for i in range(len(dp_from.structure.structural_data)):
                     # Alias.
-                    model_from = dp_from.structure.structural_data[model_index]
-                    model_to = dp_to.structure.structural_data[model_index]
+                    model_from = dp_from.structure.structural_data[i]
+                    model_to = dp_to.structure.structural_data[i]
 
                     # Model numbers.
                     if model_from.num != model_to.num:
