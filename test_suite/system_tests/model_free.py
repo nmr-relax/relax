@@ -210,7 +210,7 @@ class Mf(TestCase):
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
 
         # Read the PDF file and set the vectors.
-        self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, model=1)
+        self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, read_model=1)
         self.relax.interpreter._Structure.load_spins('@N')
         self.relax.interpreter._Structure.vectors(attached='H')
 
