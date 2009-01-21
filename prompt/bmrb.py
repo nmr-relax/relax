@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008 Edward d'Auvergne                              #
+# Copyright (C) 2003-2005,2008-2009 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns import bmrb
+import bmrb
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
