@@ -1144,7 +1144,7 @@ class Model_free_main:
 
                     # Model numbers.
                     if model_from.num != model_to.num:
-                            raise RelaxError, "The structure models are not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                        raise RelaxError, "The structure models are not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
                     # Molecule number.
                     if len(model_from.mol) != len(model_to.mol):
