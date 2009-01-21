@@ -366,8 +366,8 @@ class Base_struct_API:
 
             # Loop over the structures.
             for j in range(len(self.structural_data[i].mol)):
-                if self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].name in set_mol_name:
-                    raise RelaxError, "The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].name, self.structural_data[i].num)
+                if self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].mol_name in set_mol_name:
+                    raise RelaxError, "The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num)
 
         # Loop over the models.
         for i in range(len(set_model_num)):
