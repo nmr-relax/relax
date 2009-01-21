@@ -944,7 +944,7 @@ class MolList(list):
 
         # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
         if len(self) and self.is_empty():
-            self[0].name = mol_name
+            self[0].mol_name = mol_name
 
         # Otherwise append an empty MolContainer.
         else:
