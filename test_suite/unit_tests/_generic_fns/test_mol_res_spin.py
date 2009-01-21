@@ -985,20 +985,6 @@ class Test_mol_res_spin(TestCase):
         self.assertEqual(list[5], 'Gly')
 
 
-    def test_parse_token_range_fail1(self):
-        """Failure of the generic_fns.mol_res_spin.parse_token() function on the string '1-5-7'."""
-
-        # Parse the invalid token.
-        self.assertRaises(RelaxError, mol_res_spin.parse_token, '1-5-7')
-
-
-    def test_parse_token_range_fail2(self):
-        """Failure of the generic_fns.mol_res_spin.parse_token() function on the string '1--3'."""
-
-        # Parse the invalid token.
-        self.assertRaises(RelaxError, mol_res_spin.parse_token, '1--3')
-
-
     def test_residue_loop(self):
         """Test the proper operation of the residue loop with residue selection.
 

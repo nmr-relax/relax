@@ -24,7 +24,6 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes, value
 from test_suite.unit_tests.value_testing_base import Value_base_class
 

@@ -24,9 +24,8 @@
 from unittest import TestCase
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from prompt.sequence import Sequence
-from relax_errors import RelaxError, RelaxBinError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Unit test imports.
