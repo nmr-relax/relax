@@ -679,7 +679,6 @@ class MolContainer:
                     self.data = []
                     for mol in model.molecules[key]:
                         self.data.append(mol)
-
                     return
 
                 mol_num = mol_num + 1
