@@ -971,13 +971,25 @@ class MolList(list):
         if not self.is_empty():
             raise RelaxFromXMLNotEmptyError, self.__class__.__name__
 
+        # Some imports (here to break circular import issues).
+        from internal import Internal
+        from scientific import Scientific
+
         # Loop over the molecules.
         for mol_node in mol_nodes:
-            # Get the molecule details and add the molecule to the MolList structure.
+            # Initialise a MolContainer instance.
+            if id == 'internal':
+                mol_cont = Internal()
+            elif id == 'scientific':
+                mol_cont = Scientific()
+
+            # Get the molecule name.
             name = mol_node.getAttribute('name')
             if name == 'None':
                 name = None
-            self.add_item(mol_name=name)
+
+            # Add the molecule to the MolList structure.
+            self.add_item(mol_name=name, mol_cont=mol_cont)
 
             # Execute the specific MolContainer from_xml() method.
             self[-1].from_xml(mol_node)
