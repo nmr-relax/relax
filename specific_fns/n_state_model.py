@@ -809,11 +809,11 @@ class N_state_model(Common_functions):
         if not hasattr(cdp, 'params'):
             cdp.params = []
 
-        # Determine the number of states, if not already set.
+        # Determine the number of states (loaded as structural models), if not already set.
         if not hasattr(cdp, 'N'):
             # Set the number.
             if hasattr(cdp, 'structure'):
-                cdp.N = cdp.structure.num_structures()
+                cdp.N = cdp.structure.num_models()
 
             # Otherwise return as the rest cannot be updated without N.
             else:
