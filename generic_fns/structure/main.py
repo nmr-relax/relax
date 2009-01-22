@@ -97,6 +97,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         id = ''
 
         # Get the molecule container corresponding to the molecule name.
+        mol_cont = None
         if mol_name:
             # Update the ID string.
             id = id + '#' + mol_name
@@ -104,17 +105,28 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
             # The container.
             mol_cont = return_molecule(id)
 
-        # Get the unnamed molecule, assuming there is only one.
-        else:
-            mol_cont = return_molecule()
-
         # Add the molecule if it doesn't exist.
         if mol_cont == None:
-            # Add the molecule.
-            cdp.mol.add_item(mol_name=mol_name)
+            # Get the unnamed molecule, assuming there is only one.
+            mol_cont = return_molecule()
 
-            # Get the container.
-            mol_cont = cdp.mol[-1]
+            # Got something!
+            if mol_cont != None:
+                # Rename the molecule container if the mol name is given and the sole container is unnamed.
+                if mol_cont.name == None and mol_name:
+                    # Print out.
+                    print "Renaming the unnamed sole molecule to '%s'." % mol_name
+
+                    # Set the name.
+                    mol_cont.name = mol_name
+
+            # Nothing exists yet.
+            else:
+                # Add the molecule.
+                cdp.mol.add_item(mol_name=mol_name)
+
+                # Get the container.
+                mol_cont = cdp.mol[-1]
 
         # Add the residue number to the ID string (residue name is ignored because only the number is unique).
         id = id + ':' + `res_num`
