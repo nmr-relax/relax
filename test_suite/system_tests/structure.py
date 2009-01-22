@@ -128,7 +128,7 @@ class Structure(TestCase):
 
         mol = cdp.structure.structural_data[0].mol[0]
         self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
-        self.assertEqual(mol.file_path, '')
+        self.assertEqual(mol.file_path, 'test_suite/shared_data/structures')
         self.assertEqual(mol.file_model, 1)
         self.assertEqual(mol.file_mol_num, 1)
 
