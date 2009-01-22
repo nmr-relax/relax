@@ -644,6 +644,9 @@ class MolContainer:
         # Load the PDB file.
         model = Scientific.IO.PDB.Structure(file_path, self.file_model)
 
+        # Print out.
+        print "\n" + `model`
+
         # Index for finding the molecule.
         mol_index = 0
 
