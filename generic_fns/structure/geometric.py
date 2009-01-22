@@ -327,7 +327,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     cdp = pipes.get_pipe()
 
     # Test if a structure has been loaded.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num > 0:
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() > 0:
         raise RelaxNoPdbError
 
     # Test if sequence data is loaded.
