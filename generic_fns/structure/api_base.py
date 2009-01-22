@@ -970,8 +970,8 @@ class MolList(list):
                 name = None
             self.add_item(mol_name=name)
 
-            # Recreate the molecule data structures for the current molecule.
-            self[-1].mol.from_xml(mol_nodes)
+            # Execute the specific MolContainer from_xml() method.
+            self[-1].mol[-1].from_xml(mol_node)
 
 
     def to_xml(self, doc, element):
