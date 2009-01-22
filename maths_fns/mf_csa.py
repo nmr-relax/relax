@@ -25,19 +25,28 @@ from Numeric import Float64, matrixmultiply, ones, sum, transpose, zeros
 from math import pi
 import sys
 
-from direction_cosine import *
-from weights import *
+from direction_cosine_csa import *
+from direction_cosine_dipY import *
+from weights_r import *
+from weights_csa1 import *
+from weights_csa2 import *
+from weights_csaC import *
+from weights_dipY import *
 from correlation_time import *
 from jw_mf_comps import *
-from jw_mf import *
-from ri_comps import *
-from ri_prime import *
-from ri import *
+from r_jw_mf import *
+from csa1_jw_mf import *
+from csa2_jw_mf import *
+from dipY_jw_mf import *
+from csacross_jw_mf import *
+from ri_comps_csa_dipY import *
+from ri_prime_csa_dipY import *
+from ri_csa_dipY import *
 from chi2 import *
 
 
-class Mf:
-    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None):
+class Mf_csa:
+    def __init__(self, init_params=None, param_set=None, diff_type=None, diff_params=None, scaling_matrix=None, num_res=None, equations=None, param_types=None, param_values=None, relax_data=None, errors=None, bond_length=None, csa=None, num_frq=0, frq=None, num_ri=None, remap_table=None, noe_r1_table=None, ri_labels=None, gx=0, gh=0, g_ratio=0, h_bar=0, mu0=0, num_params=None, vectors=None, csa_data_ax=None, csa_data_by=None, csa_data_cz=None, csa_labels=None, num_csa=None, cst=None, csea=None, xy_vect_num=None, xy_data=None):
         """The model-free minimisation class.
 
         This class should be initialised before every calculation.
@@ -52,7 +61,11 @@ class Mf:
 
         relax_data:  An array containing the experimental relaxation values.
 
-        errors:  An array containing the experimental errors.
+        csa_data_ax:  An array containing the x resp. alpha values of cst resp. csea.
+
+        csa_data_by:  An array containing the y resp. beta values of cst resp. csea.
+
+        csa_data_cz:  An array containing the z resp. gamma values of cst resp. csea.
 
         bond_length:  The fixed bond length in meters.
 
@@ -193,6 +206,7 @@ class Mf:
             sigma_i are the values of the error set.
         """
 
+
         # Arguments.
         self.param_set = param_set
         self.total_num_params = len(init_params)
@@ -213,6 +227,9 @@ class Mf:
 
         # Total number of ri.
         self.total_num_ri = 0
+
+        # Total number of ri.
+        self.total_num_csa = 0
 
         # Set the function for packaging diffusion tensor parameters.
         if self.diff_data.type == 'sphere':
@@ -268,6 +285,7 @@ class Mf:
             self.data[i].bond_length = bond_length[i]
             self.data[i].csa = csa[i]
             self.data[i].num_ri = num_ri[i]
+            self.data[i].num_csa = num_csa[i]
             self.data[i].num_frq = num_frq[i]
             self.data[i].frq = frq[i]
             self.data[i].remap_table = remap_table[i]
@@ -275,6 +293,15 @@ class Mf:
             self.data[i].ri_labels = ri_labels[i]
             self.data[i].num_params = num_params[i]
             self.data[i].xh_unit_vector = vectors[i]
+            self.data[i].cst = cst[i]
+            self.data[i].csea = csea[i]
+            self.data[i].csa_data_ax = csa_data_ax[i]
+            self.data[i].csa_data_by = csa_data_by[i]
+            self.data[i].csa_data_cz = csa_data_cz[i]
+            self.data[i].csa_labels = csa_labels[i]
+            self.data[i].xy_vect_num = xy_vect_num[i]
+	    if self.data[i].xy_vect_num > 0:
+	        self.data[i].xy_data = xy_data[i]
 
             # Parameter values for minimising soley the diffusion tensor parameters.
             if self.param_set == 'diff':
@@ -385,9 +412,20 @@ class Mf:
         if self.diff_data.calc_di:
             self.diff_data.calc_di(data, self.diff_data)
 
+        # Direction cosine calculations.
+        if self.diff_data.calc_dipY_di:
+		for  z in xrange(data.xy_vect_num):
+            		self.diff_data.calc_dipY_di(data, self.diff_data, z)
+		
+
         # Diffusion tensor weight calculations.
         self.diff_data.calc_ci(data, self.diff_data)
-
+        self.diff_data.calc_csa1_ci(data, self.diff_data)
+        self.diff_data.calc_csa2_ci(data, self.diff_data)
+        self.diff_data.calc_csaC_ci(data, self.diff_data)
+        for z in xrange(data.xy_vect_num):
+	        self.diff_data.calc_dipY_ci(data, self.diff_data, z)
+        
         # Diffusion tensor correlation times.
         self.diff_data.calc_ti(data, self.diff_data)
 
@@ -397,7 +435,12 @@ class Mf:
 
         # Calculate the spectral density values.
         data.jw = data.calc_jw(data, params)
-
+        data.jw_csa1 = data.calc_csa1_jw(data, params)
+        data.jw_csa2 = data.calc_csa2_jw(data, params)
+        data.jw_csaC = data.calc_csaC_jw(data, params)
+        for z in xrange(data.xy_vect_num):
+	        data.jw_dipY[z] = data.calc_dipY_jw(data, params, z)
+        
         # Calculate the relaxation formula components.
         data.create_ri_comps(data, params)
 
@@ -437,7 +480,12 @@ class Mf:
 
         # Diffusion tensor weight calculations.
         self.diff_data.calc_ci(data, self.diff_data)
-
+        self.diff_data.calc_csa1_ci(data, self.diff_data)
+        self.diff_data.calc_csa2_ci(data, self.diff_data)
+        self.diff_data.calc_csaC_ci(data, self.diff_data)
+        for z in xrange(data.xy_vect_num):
+	        self.diff_data.calc_dipY_ci(data, self.diff_data, z)
+	
         # Diffusion tensor correlation times.
         self.diff_data.calc_ti(data, self.diff_data)
 
@@ -451,7 +499,12 @@ class Mf:
 
         # Calculate the spectral density values.
         data.jw = data.calc_jw(data, params)
-
+        data.jw_csa1 = data.calc_csa1_jw(data, params)
+        data.jw_csa2 = data.calc_csa2_jw(data, params)
+        data.jw_csaC = data.calc_csaC_jw(data, params)
+        for z in xrange(data.xy_vect_num):
+	        data.jw_dipY[z] = data.calc_dipY_jw(data, params, z)
+        
         # Calculate the relaxation formula components.
         data.create_ri_comps(data, params)
 
@@ -499,9 +552,20 @@ class Mf:
             if self.diff_data.calc_di:
                 self.diff_data.calc_di(data, self.diff_data)
 
+            # Direction cosine calculations.
+            if self.diff_data.calc_dipY_di:
+		    for  z in xrange(data.xy_vect_num):
+            		    self.diff_data.calc_dipY_di(data, self.diff_data, z)
+		    
+
             # Diffusion tensor weight calculations.
             self.diff_data.calc_ci(data, self.diff_data)
-
+	    self.diff_data.calc_csa1_ci(data, self.diff_data)
+            self.diff_data.calc_csa2_ci(data, self.diff_data)
+            self.diff_data.calc_csaC_ci(data, self.diff_data)
+	    for z in xrange(data.xy_vect_num):
+	            self.diff_data.calc_dipY_ci(data, self.diff_data, z)
+	    
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
 
@@ -515,7 +579,12 @@ class Mf:
 
             # Calculate the spectral density values.
             data.jw = data.calc_jw(data, data.param_values)
-
+            data.jw_csa1 = data.calc_csa1_jw(data, data.param_values)
+            data.jw_csa2 = data.calc_csa2_jw(data, data.param_values)
+            data.jw_csaC = data.calc_csaC_jw(data, data.param_values)
+            for z in xrange(data.xy_vect_num):
+	            data.jw_dipY[z] = data.calc_dipY_jw(data, data.param_values, z)
+	    
             # Calculate the relaxation formula components.
             data.create_ri_comps(data, data.param_values)
 
@@ -566,9 +635,20 @@ class Mf:
             if self.diff_data.calc_di:
                 self.diff_data.calc_di(data, self.diff_data)
 
+            # Direction cosine calculations.
+            if self.diff_data.calc_dipY_di:
+		    for  z in xrange(data.xy_vect_num):
+            		    self.diff_data.calc_dipY_di(data, self.diff_data, z)
+		    
+
             # Diffusion tensor weight calculations.
             self.diff_data.calc_ci(data, self.diff_data)
-
+            self.diff_data.calc_csa1_ci(data, self.diff_data)
+            self.diff_data.calc_csa2_ci(data, self.diff_data)
+            self.diff_data.calc_csaC_ci(data, self.diff_data)
+            for z in xrange(data.xy_vect_num):
+	            self.diff_data.calc_dipY_ci(data, self.diff_data, z)
+	    
             # Diffusion tensor correlation times.
             self.diff_data.calc_ti(data, self.diff_data)
 
@@ -582,7 +662,12 @@ class Mf:
 
             # Calculate the spectral density values.
             data.jw = data.calc_jw(data, params)
-
+            data.jw_csa1 = data.calc_csa1_jw(data, params)
+            data.jw_csa2 = data.calc_csa2_jw(data, params)
+            data.jw_csaC = data.calc_csaC_jw(data, params)
+            for z in xrange(data.xy_vect_num):
+	            data.jw_dipY[z] = data.calc_dipY_jw(data, params, z)
+	    
             # Calculate the relaxation formula components.
             data.create_ri_comps(data, params)
 
@@ -635,7 +720,27 @@ class Mf:
                 data.djw = data.calc_djw[j](data, params, j)
             else:
                 data.djw = data.djw * 0.0
-
+            if data.calc_csa1_djw[j]:
+                data.djw_csa1 = data.calc_csa1_djw[j](data, params, j)
+            else:
+                data.djw_csa1 = data.djw_csa1 * 0.0
+            if data.calc_csa2_djw[j]:
+                data.djw_csa2 = data.calc_csa2_djw[j](data, params, j)
+            else:
+                data.djw_csa2 = data.djw_csa2 * 0.0
+            if data.calc_csaC_djw[j]:
+                data.djw_csaC = data.calc_csaC_djw[j](data, params, j)
+            else:
+                data.djw_csaC = data.djw_csaC * 0.0
+            if data.calc_dipY_djw[j]:
+	            for z in xrange(data.xy_vect_num):
+		            data.djw_dipY[z] = data.calc_dipY_djw[j](data, params, j, z)
+		    
+            else:
+	            for z in xrange(data.xy_vect_num):
+	                    data.djw_dipY[z] = data.djw_dipY[z] * 0.0
+		    
+	    
             # Calculate the relaxation gradient components.
             data.create_dri_comps(data, params)
 
@@ -696,7 +801,28 @@ class Mf:
                 data.djw = data.calc_djw[j](data, params, j)
             else:
                 data.djw = data.djw * 0.0
-
+            if data.calc_csa1_djw[j]:
+                data.djw_csa1 = data.calc_csa1_djw[j](data, params, j)
+            else:
+                data.djw_csa1 = data.djw_csa1 * 0.0
+            if data.calc_csa2_djw[j]:
+                data.djw_csa2 = data.calc_csa2_djw[j](data, params, j)
+            else:
+                data.djw_csa2 = data.djw_csa2 * 0.0
+            if data.calc_csaC_djw[j]:
+                data.djw_csaC = data.calc_csaC_djw[j](data, params, j)
+            else:
+                data.djw_csaC = data.djw_csaC * 0.0
+            if data.calc_dipY_djw[j]:
+	            for z in xrange(data.xy_vect_num):
+		            data.djw_dipY[z] = data.calc_dipY_djw[j](data, params, j, z)
+		    
+            else:
+	            for z in xrange(data.xy_vect_num):
+	                    data.djw_dipY[z] = data.djw_dipY[z] * 0.0
+		    
+	    
+	    
             # Calculate the relaxation gradient components.
             data.create_dri_comps(data, params)
 
@@ -754,10 +880,29 @@ class Mf:
             if self.diff_data.calc_ddi:
                 self.diff_data.calc_ddi(data, self.diff_data)
 
+            # Direction cosine calculations.
+            if self.diff_data.calc_dipY_ddi:
+		    for  z in xrange(data.xy_vect_num):
+            		    self.diff_data.calc_dipY_ddi(data, self.diff_data, z)
+		    
+
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_dci:
                 self.diff_data.calc_dci(data, self.diff_data)
-
+	    
+            if self.diff_data.calc_csa1_dci:
+                self.diff_data.calc_csa1_dci(data, self.diff_data)
+	    
+            if self.diff_data.calc_csa2_dci:
+                self.diff_data.calc_csa2_dci(data, self.diff_data)
+	    
+            if self.diff_data.calc_csaC_dci:
+                self.diff_data.calc_csaC_dci(data, self.diff_data)
+	    
+            for z in xrange(data.xy_vect_num):
+	            if self.diff_data.calc_dipY_dci:
+	                self.diff_data.calc_dipY_dci(data, self.diff_data, z)
+	    
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
 
@@ -772,7 +917,27 @@ class Mf:
                     data.djw = data.calc_djw[j](data, data.param_values, j)
                 else:
                     data.djw = data.djw * 0.0
-
+                if data.calc_csa1_djw[j]:
+                    data.djw_csa1 = data.calc_csa1_djw[j](data, data.param_values, j)
+                else:
+                    data.djw_csa1 = data.djw_csa1 * 0.0
+                if data.calc_csa2_djw[j]:
+                    data.djw_csa2 = data.calc_csa2_djw[j](data, data.param_values, j)
+                else:
+                    data.djw_csa2 = data.djw_csa2 * 0.0
+                if data.calc_csaC_djw[j]:
+                    data.djw_csaC = data.calc_csaC_djw[j](data, data.param_values, j)
+                else:
+                    data.djw_csaC = data.djw_csaC * 0.0
+                if data.calc_dipY_djw[j]:
+	                for z in xrange(data.xy_vect_num):
+	                        data.djw_dipY[z] = data.calc_dipY_djw[j](data, data.param_values, j, z)
+	                
+                else:
+	                for z in xrange(data.xy_vect_num):
+	                        data.djw_dipY[z] = data.djw_dipY[z] * 0.0
+	                
+	        
                 # Calculate the relaxation gradient components.
                 data.create_dri_comps(data, data.param_values)
 
@@ -835,10 +1000,29 @@ class Mf:
             if self.diff_data.calc_ddi:
                 self.diff_data.calc_ddi(data, self.diff_data)
 
+            # Direction cosine calculations.
+            if self.diff_data.calc_dipY_ddi:
+		    for  z in xrange(data.xy_vect_num):
+            		    self.diff_data.calc_dipY_ddi(data, self.diff_data, z)
+		    
+
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_dci:
                 self.diff_data.calc_dci(data, self.diff_data)
-
+            
+            if self.diff_data.calc_csa1_dci:
+                self.diff_data.calc_csa1_dci(data, self.diff_data)
+            
+            if self.diff_data.calc_csa2_dci:
+                self.diff_data.calc_csa2_dci(data, self.diff_data)
+            
+            if self.diff_data.calc_csaC_dci:
+                self.diff_data.calc_csaC_dci(data, self.diff_data)
+            
+            for z in xrange(data.xy_vect_num):
+	            if self.diff_data.calc_dipY_dci:
+	                self.diff_data.calc_dipY_dci(data, self.diff_data, z)
+            
             # Diffusion tensor correlation times.
             self.diff_data.calc_dti(data, self.diff_data)
 
@@ -853,7 +1037,27 @@ class Mf:
                     data.djw = data.calc_djw[j](data, params, j)
                 else:
                     data.djw = data.djw * 0.0
-
+                if data.calc_csa1_djw[j]:
+                    data.djw_csa1 = data.calc_csa1_djw[j](data, params, j)
+                else:
+                    data.djw_csa1 = data.djw_csa1 * 0.0
+                if data.calc_csa2_djw[j]:
+                    data.djw_csa2 = data.calc_csa2_djw[j](data, params, j)
+                else:
+                    data.djw_csa2 = data.djw_csa2 * 0.0
+                if data.calc_csaC_djw[j]:
+                    data.djw_csaC = data.calc_csaC_djw[j](data, params, j)
+                else:
+                    data.djw_csaC = data.djw_csaC * 0.0
+                if data.calc_dipY_djw[j]:
+	                for z in xrange(data.xy_vect_num):
+	                        data.djw_dipY[z] = data.calc_dipY_djw[j](data, params, j, z)
+	                
+                else:
+	                for z in xrange(data.xy_vect_num):
+	                        data.djw_dipY[z] = data.djw_dipY[z] * 0.0
+	                
+                    
                 # Calculate the relaxation gradient components.
                 data.create_dri_comps(data, params)
 
@@ -911,7 +1115,27 @@ class Mf:
                     data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
                 else:
                     data.d2jw = data.d2jw * 0.0
-
+                if data.calc_csa1_d2jw[j][k]:
+                    data.d2jw_csa1 = data.calc_csa1_d2jw[j][k](data, params, j, k)
+                else:
+                    data.d2jw_csa1 = data.d2jw_csa1 * 0.0
+                if data.calc_csa2_d2jw[j][k]:
+                    data.d2jw_csa2 = data.calc_csa2_d2jw[j][k](data, params, j, k)
+                else:
+                    data.d2jw_csa2 = data.d2jw_csa2 * 0.0
+                if data.calc_csaC_d2jw[j][k]:
+                    data.d2jw_csaC = data.calc_csaC_d2jw[j][k](data, params, j, k)
+                else:
+                    data.d2jw_csaC = data.d2jw_csaC * 0.0
+                if data.calc_dipY_d2jw[j][k]:
+	                for z in xrange(data.xy_vect_num):
+	                        data.d2jw_dipY[z] = data.calc_dipY_d2jw[j][k](data, params, j, k, z)
+	                
+                else:
+	                for z in xrange(data.xy_vect_num):
+	                        data.d2jw_dipY[z] = data.d2jw_dipY[z] * 0.0
+	                
+	        
                 # Calculate the relaxation Hessian components.
                 data.create_d2ri_comps(data, params)
 
@@ -964,7 +1188,27 @@ class Mf:
                     data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
                 else:
                     data.d2jw = data.d2jw * 0.0
-
+                if data.calc_csa1_d2jw[j][k]:
+                    data.d2jw_csa1 = data.calc_csa1_d2jw[j][k](data, params, j, k)
+                else:
+                    data.d2jw_csa1 = data.d2jw_csa1 * 0.0
+                if data.calc_csa2_d2jw[j][k]:
+                    data.d2jw_csa2 = data.calc_csa2_d2jw[j][k](data, params, j, k)
+                else:
+                    data.d2jw_csa2 = data.d2jw_csa2 * 0.0
+                if data.calc_csaC_d2jw[j][k]:
+                    data.d2jw_csaC = data.calc_csaC_d2jw[j][k](data, params, j, k)
+                else:
+                    data.d2jw_csaC = data.d2jw_csaC * 0.0
+                if data.calc_dipY_d2jw[j][k]:
+	                for z in xrange(data.xy_vect_num):
+	                        data.d2jw_dipY[z] = data.calc_dipY_d2jw[j][k](data, params, j, k, z)
+	                
+                else:
+	                for z in xrange(data.xy_vect_num):
+	                        data.d2jw_dipY[z] = data.d2jw_dipY[z] * 0.0
+	                
+	        
                 # Calculate the relaxation Hessian components.
                 data.create_d2ri_comps(data, params)
 
@@ -1019,10 +1263,29 @@ class Mf:
             if self.diff_data.calc_d2di:
                self.diff_data.calc_d2di(data, self.diff_data)
 
+            # Direction cosine calculations.
+            if self.diff_data.calc_dipY_d2di:
+		    for  z in xrange(data.xy_vect_num):
+            		    self.diff_data.calc_dipY_d2di(data, self.diff_data, z)
+		    
+
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_d2ci:
                 self.diff_data.calc_d2ci(data, self.diff_data)
-
+            
+            if self.diff_data.calc_csa1_d2ci:
+                self.diff_data.calc_csa1_d2ci(data, self.diff_data)
+            
+            if self.diff_data.calc_csa2_d2ci:
+                self.diff_data.calc_csa2_d2ci(data, self.diff_data)
+            
+            if self.diff_data.calc_csaC_d2ci:
+                self.diff_data.calc_csaC_d2ci(data, self.diff_data)
+            
+            for z in xrange(data.xy_vect_num):
+	            if self.diff_data.calc_dipY_d2ci:
+	                self.diff_data.calc_dipY_d2ci(data, self.diff_data, z)
+            
             # Diffusion tensor correlation times.
             if self.diff_data.calc_d2ti:
                self.diff_data.calc_d2ti(data, self.diff_data)
@@ -1035,7 +1298,27 @@ class Mf:
                         data.d2jw = data.calc_d2jw[j][k](data, data.param_values, j, k)
                     else:
                         data.d2jw = data.d2jw * 0.0
-
+                    if data.calc_csa1_d2jw[j][k]:
+                        data.d2jw_csa1 = data.calc_csa1_d2jw[j][k](data, data.param_values, j, k)
+                    else:
+                        data.d2jw_csa1 = data.d2jw_csa1 * 0.0
+                    if data.calc_csa2_d2jw[j][k]:
+                        data.d2jw_csa2 = data.calc_csa2_d2jw[j][k](data, data.param_values, j, k)
+                    else:
+                        data.d2jw_csa2 = data.d2jw_csa2 * 0.0
+                    if data.calc_csaC_d2jw[j][k]:
+                        data.d2jw_csaC = data.calc_csaC_d2jw[j][k](data, data.param_values, j, k)
+                    else:
+                        data.d2jw_csaC = data.d2jw_csaC * 0.0
+                    if data.calc_dipY_d2jw[j][k]:
+	                    for z in xrange(data.xy_vect_num):
+	                            data.d2jw_dipY[z] = data.calc_dipY_d2jw[j][k](data, data.param_values, j, k, z)
+	                    
+                    else:
+	                    for z in xrange(data.xy_vect_num):
+	                            data.d2jw_dipY[z] = data.d2jw_dipY[z] * 0.0
+	                    
+	            
                     # Calculate the relaxation Hessian components.
                     data.create_d2ri_comps(data, data.param_values)
 
@@ -1093,10 +1376,29 @@ class Mf:
             if self.diff_data.calc_d2di:
                self.diff_data.calc_d2di(data, self.diff_data)
 
+            # Direction cosine calculations.
+            if self.diff_data.calc_dipY_d2di:
+		    for  z in xrange(data.xy_vect_num):
+            		    self.diff_data.calc_dipY_d2di(data, self.diff_data, z)
+		    
+
             # Diffusion tensor weight calculations.
             if self.diff_data.calc_d2ci:
                 self.diff_data.calc_d2ci(data, self.diff_data)
-
+            
+            if self.diff_data.calc_csa1_d2ci:
+                self.diff_data.calc_csa1_d2ci(data, self.diff_data)
+            
+            if self.diff_data.calc_csa2_d2ci:
+                self.diff_data.calc_csa2_d2ci(data, self.diff_data)
+            
+            if self.diff_data.calc_csaC_d2ci:
+                self.diff_data.calc_csaC_d2ci(data, self.diff_data)
+            
+            for z in xrange(data.xy_vect_num):
+	            if self.diff_data.calc_dipY_d2ci:
+	                self.diff_data.calc_dipY_d2ci(data, self.diff_data, z)
+            
             # Diffusion tensor correlation times.
             if self.diff_data.calc_d2ti:
                self.diff_data.calc_d2ti(data, self.diff_data)
@@ -1109,7 +1411,27 @@ class Mf:
                         data.d2jw = data.calc_d2jw[j][k](data, params, j, k)
                     else:
                         data.d2jw = data.d2jw * 0.0
-
+                    if data.calc_csa1_d2jw[j][k]:
+                        data.d2jw_csa1 = data.calc_csa1_d2jw[j][k](data, params, j, k)
+                    else:
+                        data.d2jw_csa1 = data.d2jw_csa1 * 0.0
+                    if data.calc_csa2_d2jw[j][k]:
+                        data.d2jw_csa2 = data.calc_csa2_d2jw[j][k](data, params, j, k)
+                    else:
+                        data.d2jw_csa2 = data.d2jw_csa2 * 0.0
+                    if data.calc_csaC_d2jw[j][k]:
+                        data.d2jw_csaC = data.calc_csaC_d2jw[j][k](data, params, j, k)
+                    else:
+                        data.d2jw_csaC = data.d2jw_csaC * 0.0
+                    if data.calc_dipY_d2jw[j][k]:
+	                    for z in xrange(data.xy_vect_num):
+	                            data.d2jw_dipY[z] = data.calc_dipY_d2jw[j][k](data, params, j, k, z)
+	                    
+                    else:
+	                    for z in xrange(data.xy_vect_num):
+	                            data.d2jw_dipY[z] = data.d2jw_dipY[z] * 0.0
+	                    
+	            
                     # Calculate the relaxation Hessian components.
                     data.create_d2ri_comps(data, params)
 
@@ -1173,11 +1495,25 @@ class Mf:
             diff_data.calc_ddi = None
             diff_data.calc_d2di = None
 
+            diff_data.calc_dipY_di = None
+            diff_data.calc_dipY_ddi = None
+            diff_data.calc_dipY_d2di = None
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_sphere_ci
             diff_data.calc_dci = None
             diff_data.calc_d2ci = None
-
+            diff_data.calc_csa1_ci = calc_csa1_sphere_ci
+            diff_data.calc_csa1_dci = None
+            diff_data.calc_csa1_d2ci = None
+            diff_data.calc_csa2_ci = calc_csa2_sphere_ci
+            diff_data.calc_csa2_dci = None
+            diff_data.calc_csa2_d2ci = None
+            diff_data.calc_csaC_ci = calc_csaC_sphere_ci
+            diff_data.calc_csaC_dci = None
+            diff_data.calc_csaC_d2ci = None
+            diff_data.calc_dipY_ci = calc_dipY_sphere_ci
+            diff_data.calc_dipY_dci = None
+            diff_data.calc_dipY_d2ci = None
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_sphere_ti
             diff_data.calc_dti = calc_sphere_dti
@@ -1196,12 +1532,28 @@ class Mf:
             diff_data.calc_di = calc_spheroid_di
             diff_data.calc_ddi = calc_spheroid_ddi
             diff_data.calc_d2di = calc_spheroid_d2di
+            diff_data.calc_dipY_di = calc_spheroid_dipY_di
+            diff_data.calc_dipY_ddi = calc_spheroid_dipY_ddi
+            diff_data.calc_dipY_d2di = calc_spheroid_dipY_d2di
 
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_spheroid_ci
             diff_data.calc_dci = calc_spheroid_dci
             diff_data.calc_d2ci = calc_spheroid_d2ci
+            diff_data.calc_csa1_ci = calc_csa1_spheroid_ci
+            diff_data.calc_csa1_dci = calc_csa1_spheroid_dci
+            diff_data.calc_csa1_d2ci = calc_csa1_spheroid_d2ci
+            diff_data.calc_csa2_ci = calc_csa2_spheroid_ci
+            diff_data.calc_csa2_dci = calc_csa2_spheroid_dci
+            diff_data.calc_csa2_d2ci = calc_csa2_spheroid_d2ci
+            diff_data.calc_csaC_ci = calc_csaC_spheroid_ci
+            diff_data.calc_csaC_dci = calc_csaC_spheroid_dci
+            diff_data.calc_csaC_d2ci = calc_csaC_spheroid_d2ci
+            diff_data.calc_dipY_ci = calc_dipY_spheroid_ci
+            diff_data.calc_dipY_dci = calc_dipY_spheroid_dci
+            diff_data.calc_dipY_d2ci = calc_dipY_spheroid_d2ci
 
+            
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_spheroid_ti
             diff_data.calc_dti = calc_spheroid_dti
@@ -1209,15 +1561,27 @@ class Mf:
 
             # Unit vectors.
             diff_data.dpar = zeros(3, Float64)
+            diff_data.vecdx = zeros(3, Float64)
+            diff_data.vecdy = zeros(3, Float64)
 
             # Unit vector gradients.
             diff_data.dpar_dtheta = zeros(3, Float64)
             diff_data.dpar_dphi = zeros(3, Float64)
+            diff_data.dvecdx_dtheta = zeros(3, Float64)
+            diff_data.dvecdx_dphi = zeros(3, Float64)
+            diff_data.dvecdy_dtheta = zeros(3, Float64)
+            diff_data.dvecdy_dphi = zeros(3, Float64)
 
             # Unit vector Hessians.
             diff_data.dpar_dtheta2 = zeros(3, Float64)
             diff_data.dpar_dthetadphi = zeros(3, Float64)
             diff_data.dpar_dphi2 = zeros(3, Float64)
+            diff_data.dvecdx_d2theta = zeros(3, Float64)
+            diff_data.dvecdx_d2phi = zeros(3, Float64)
+            diff_data.dvecdx_dthetadphi = zeros(3, Float64)
+            diff_data.dvecdy_d2theta = zeros(3, Float64)
+            diff_data.dvecdy_d2phi = zeros(3, Float64)
+            diff_data.dvecdy_dthetadphi = zeros(3, Float64)
 
         # Diffusion as an ellipsoid.
         elif diff_data.type == 'ellipsoid':
@@ -1232,11 +1596,27 @@ class Mf:
             diff_data.calc_ddi = calc_ellipsoid_ddi
             diff_data.calc_d2di = calc_ellipsoid_d2di
 
+            diff_data.calc_dipY_di = calc_ellipsoid_dipY_di
+            diff_data.calc_dipY_ddi = calc_ellipsoid_dipY_ddi
+            diff_data.calc_dipY_d2di = calc_ellipsoid_dipY_d2di
             # Weight function, gradient, and Hessian.
             diff_data.calc_ci = calc_ellipsoid_ci
             diff_data.calc_dci = calc_ellipsoid_dci
             diff_data.calc_d2ci = calc_ellipsoid_d2ci
+            diff_data.calc_csa1_ci = calc_csa1_ellipsoid_ci
+            diff_data.calc_csa1_dci = calc_csa1_ellipsoid_dci
+            diff_data.calc_csa1_d2ci = calc_csa1_ellipsoid_d2ci
+            diff_data.calc_csa2_ci = calc_csa2_ellipsoid_ci
+            diff_data.calc_csa2_dci = calc_csa2_ellipsoid_dci
+            diff_data.calc_csa2_d2ci = calc_csa2_ellipsoid_d2ci
+            diff_data.calc_csaC_ci = calc_csaC_ellipsoid_ci
+            diff_data.calc_csaC_dci = calc_csaC_ellipsoid_dci
+            diff_data.calc_csaC_d2ci = calc_csaC_ellipsoid_d2ci
 
+            diff_data.calc_dipY_ci = calc_dipY_ellipsoid_ci
+            diff_data.calc_dipY_dci = calc_dipY_ellipsoid_dci
+            diff_data.calc_dipY_d2ci = calc_dipY_ellipsoid_d2ci
+            
             # Global correlation time function, gradient, and Hessian.
             diff_data.calc_ti = calc_ellipsoid_ti
             diff_data.calc_dti = calc_ellipsoid_dti
@@ -1288,8 +1668,14 @@ class Mf:
 
         # Correlation times.
         data.ci = zeros(diff_data.num_indecies, Float64)
+        data.ci_csa1 = zeros(diff_data.num_indecies, Float64)
+        data.ci_csa2 = zeros(diff_data.num_indecies, Float64)
+        data.ci_csaC = zeros(diff_data.num_indecies, Float64)
         data.ci_comps = zeros(diff_data.num_indecies, Float64)
-
+        data.ci_dipY = [] 
+        for z in xrange(data.xy_vect_num):
+	     data.ci_dipY.append(zeros(diff_data.num_indecies, Float64))
+	    
         # Weights.
         data.ti = zeros(diff_data.num_indecies, Float64)
         data.tau_comps = zeros(diff_data.num_indecies, Float64)
@@ -1303,12 +1689,49 @@ class Mf:
             data.dti = zeros((1, diff_data.num_indecies), Float64)
             data.d2ti = zeros((1, 1, diff_data.num_indecies), Float64)
 
+            #csa vectors 
+            data.vec_csa1 = zeros(3, Float64)
+            data.vec_csa2 = zeros(3, Float64)
+
+            #CSA direction cosines
+            data.dx_csa1 = 0.0
+            data.dy_csa1 = 0.0
+            data.dz_csa1 = 0.0
+
+            data.dx_csa2 = 0.0
+            data.dy_csa2 = 0.0
+            data.dz_csa2 = 0.0
+
+            #Dip1 and Dip2 direction cosines
+            data.dx_dipY = []  
+            data.dy_dipY = []
+            data.dz_dipY = []
+            for z in xrange(data.xy_vect_num):
+	            data.dx_dipY.append(0.0)
+	            data.dy_dipY.append(0.0)
+	            data.dz_dipY.append(0.0)
+
+            
         # Diffusion as a spheroid.
         elif self.diff_data.type == 'spheroid':
             # Weight gradient and Hessian.
             data.dci = zeros((4, diff_data.num_indecies), Float64)
+            data.dci_csa1 = zeros((4, diff_data.num_indecies), Float64)
+            data.dci_csa2 = zeros((4, diff_data.num_indecies), Float64)
+            data.dci_csaC = zeros((4, diff_data.num_indecies), Float64)
+	    data.dci_dipY = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.dci_dipY.append(zeros((4, diff_data.num_indecies), Float64))
+	    
             data.d2ci = zeros((4, 4, diff_data.num_indecies), Float64)
-
+            data.d2ci_csa1 = zeros((4, 4, diff_data.num_indecies), Float64)
+            data.d2ci_csa2 = zeros((4, 4, diff_data.num_indecies), Float64)
+            data.d2ci_csaC = zeros((4, 4, diff_data.num_indecies), Float64)
+	    data.d2ci_dipY = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.d2ci_dipY.append(zeros((4, 4, diff_data.num_indecies), Float64))
+	    
+	    
             # Global correlation time gradient and Hessian.
             data.dti = zeros((2, diff_data.num_indecies), Float64)
             data.d2ti = zeros((2, 2, diff_data.num_indecies), Float64)
@@ -1316,18 +1739,91 @@ class Mf:
             # Dot product.
             data.dz = 0
 
+            #csa vectors 
+            data.vec_csa1 = zeros(3, Float64)
+            data.vec_csa2 = zeros(3, Float64)
+
+            #CSA direction cosines
+            data.dx_csa1 = 0.0
+            data.dy_csa1 = 0.0
+            data.dz_csa1 = 0.0
+
+            data.dx_csa2 = 0.0
+            data.dy_csa2 = 0.0
+            data.dz_csa2 = 0.0
+
+            #Dip1 and Dip2 direction cosines
+            data.dx_dipY = []  
+            data.dy_dipY = []
+            data.dz_dipY = []
+            for z in xrange(data.xy_vect_num):
+	            data.dx_dipY.append(0.0)
+	            data.dy_dipY.append(0.0)
+	            data.dz_dipY.append(0.0)
+            
             # Dot product gradient.
             data.ddz_dO = zeros(2, Float64)
+            data.ddx_csa1_dO = zeros(2, Float64)
+            data.ddx_csa2_dO = zeros(2, Float64)
+            data.ddy_csa1_dO = zeros(2, Float64)
+            data.ddy_csa2_dO = zeros(2, Float64)
+            data.ddz_csa1_dO = zeros(2, Float64)
+            data.ddz_csa2_dO = zeros(2, Float64)
+	    data.ddx_dipY_dO = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.ddx_dipY_dO.append(zeros(2, Float64))
+	    
+	    data.ddy_dipY_dO = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.ddy_dipY_dO.append(zeros(2, Float64))
+	    
+	    data.ddz_dipY_dO = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.ddz_dipY_dO.append(zeros(2, Float64))
+	    
 
             # Dot product Hessian.
             data.d2dz_dO2 = zeros((2, 2), Float64)
+            data.d2dx_csa1_dO2 = zeros((2, 2), Float64)
+            data.d2dy_csa1_dO2 = zeros((2, 2), Float64)
+            data.d2dz_csa1_dO2 = zeros((2, 2), Float64)
+            data.d2dx_csa2_dO2 = zeros((2, 2), Float64)
+            data.d2dy_csa2_dO2 = zeros((2, 2), Float64)
+            data.d2dz_csa2_dO2 = zeros((2, 2), Float64)
+            
+	    data.d2dx_dipY_dO2 = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.d2dx_dipY_dO2.append(zeros((2, 2), Float64))
+	    
+	    data.d2dy_dipY_dO2 = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.d2dy_dipY_dO2.append(zeros((2, 2), Float64))
+	    
+	    data.d2dz_dipY_dO2 = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.d2dz_dipY_dO2.append(zeros((2, 2), Float64))
+	    
+
 
         # Diffusion as an ellipsoid.
         elif self.diff_data.type == 'ellipsoid':
             # Weight gradient and Hessian.
             data.dci = zeros((6, diff_data.num_indecies), Float64)
+            data.dci_csa1 = zeros((6, diff_data.num_indecies), Float64)
+            data.dci_csa2 = zeros((6, diff_data.num_indecies), Float64)
+            data.dci_csaC = zeros((6, diff_data.num_indecies), Float64)
+	    data.dci_dipY = [] 
+            for z in xrange(data.xy_vect_num):
+		data.dci_dipY.append(zeros((6, diff_data.num_indecies), Float64))
+	    
             data.d2ci = zeros((6, 6, diff_data.num_indecies), Float64)
-
+            data.d2ci_csa1 = zeros((6, 6, diff_data.num_indecies), Float64)
+            data.d2ci_csa2 = zeros((6, 6, diff_data.num_indecies), Float64)
+            data.d2ci_csaC = zeros((6, 6, diff_data.num_indecies), Float64)
+	    data.d2ci_dipY = [] 
+            for z in xrange(data.xy_vect_num):
+            	data.d2ci_dipY.append(zeros((6, 6, diff_data.num_indecies), Float64))
+	    
             # Global correlation time gradient and Hessian.
             data.dti = zeros((3, diff_data.num_indecies), Float64)
             data.d2ti = zeros((3, 3, diff_data.num_indecies), Float64)
@@ -1337,15 +1833,76 @@ class Mf:
             data.dy = 0.0
             data.dz = 0.0
 
+            #csa vectors 
+            data.vec_csa1 = zeros(3, Float64)
+            data.vec_csa2 = zeros(3, Float64)
+
+            #CSA direction cosines
+            data.dx_csa1 = 0.0
+            data.dy_csa1 = 0.0
+            data.dz_csa1 = 0.0
+
+            data.dx_csa2 = 0.0
+            data.dy_csa2 = 0.0
+            data.dz_csa2 = 0.0
+
+            #Dip1 and Dip2 direction cosines
+            data.dx_dipY = []  
+            data.dy_dipY = []
+            data.dz_dipY = []
+            for z in xrange(data.xy_vect_num):
+	            data.dx_dipY.append(0.0)
+	            data.dy_dipY.append(0.0)
+	            data.dz_dipY.append(0.0)
+            
+
             # Dot product gradients.
             data.ddx_dO = zeros(3, Float64)
             data.ddy_dO = zeros(3, Float64)
             data.ddz_dO = zeros(3, Float64)
+            data.ddx_csa1_dO = zeros(3, Float64)
+            data.ddy_csa1_dO = zeros(3, Float64)
+            data.ddz_csa1_dO = zeros(3, Float64)
+            data.ddx_csa2_dO = zeros(3, Float64)
+            data.ddy_csa2_dO = zeros(3, Float64)
+            data.ddz_csa2_dO = zeros(3, Float64)
+            
+	    data.ddx_dipY_dO = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.ddx_dipY_dO.append(zeros(3, Float64))
+	    
+	    data.ddy_dipY_dO = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.ddy_dipY_dO.append(zeros(3, Float64))
+	    
+	    data.ddz_dipY_dO = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.ddz_dipY_dO.append(zeros(3, Float64))
+	    
 
             # Dot product Hessians.
             data.d2dx_dO2 = zeros((3, 3), Float64)
             data.d2dy_dO2 = zeros((3, 3), Float64)
             data.d2dz_dO2 = zeros((3, 3), Float64)
+            data.d2dx_csa1_dO2 = zeros((3, 3), Float64)
+            data.d2dy_csa1_dO2 = zeros((3, 3), Float64)
+            data.d2dz_csa1_dO2 = zeros((3, 3), Float64)
+            data.d2dx_csa2_dO2 = zeros((3, 3), Float64)
+            data.d2dy_csa2_dO2 = zeros((3, 3), Float64)
+            data.d2dz_csa2_dO2 = zeros((3, 3), Float64)
+	    data.d2dx_dipY_dO2 = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.d2dx_dipY_dO2.append(zeros((3, 3), Float64))
+	    
+	    data.d2dy_dipY_dO2 = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.d2dy_dipY_dO2.append(zeros((3, 3), Float64))
+	    
+	    data.d2dz_dipY_dO2 = [] 
+            for z in xrange(data.xy_vect_num):
+	        data.d2dz_dipY_dO2.append(zeros((3, 3), Float64))
+	    
+	
 
         # Empty spectral density components.
         data.w_ti_sqrd = zeros((data.num_frq, 5, diff_data.num_indecies), Float64)
@@ -1361,42 +1918,130 @@ class Mf:
         data.jw = zeros((data.num_frq, 5), Float64)
         data.djw = zeros((data.num_frq, 5), Float64)
         data.d2jw = zeros((data.num_frq, 5), Float64)
+        data.jw_csa1 = zeros((data.num_frq, 5), Float64)
+        data.djw_csa1 = zeros((data.num_frq, 5), Float64)
+        data.d2jw_csa1 = zeros((data.num_frq, 5), Float64)
+        data.jw_csa2 = zeros((data.num_frq, 5), Float64)
+        data.djw_csa2 = zeros((data.num_frq, 5), Float64)
+        data.d2jw_csa2 = zeros((data.num_frq, 5), Float64)
+        data.jw_csaC = zeros((data.num_frq, 5), Float64)
+        data.djw_csaC = zeros((data.num_frq, 5), Float64)
+        data.d2jw_csaC = zeros((data.num_frq, 5), Float64)
+        
+	data.jw_dipY = [] 
+        for z in xrange(data.xy_vect_num):
+		data.jw_dipY.append(zeros((data.num_frq, 5), Float64))
+	
+	data.djw_dipY = [] 
+        for z in xrange(data.xy_vect_num):
+		data.djw_dipY.append(zeros((data.num_frq, 5), Float64))
+	
+	data.d2jw_dipY = [] 
+        for z in xrange(data.xy_vect_num):
+		data.d2jw_dipY.append(zeros((data.num_frq, 5), Float64))
+	
+
+	
 
         # Calculate the fixed components of the dipolar and CSA constants.
         data.csa_const_fixed = zeros(data.num_frq, Float64)
         data.dip_const_fixed = None
         calc_fixed_csa(data)
         calc_fixed_dip(data)
+	data.dipY_const_fixed = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_const_fixed.append(zeros(data.num_frq, Float64))
+	        calc_fixed_dipY(data, z)
+
+	
+	
 
         # Dipolar and CSA constants.
         data.dip_const_func = 0.0
         data.dip_const_grad = 0.0
         data.dip_const_hess = 0.0
-        data.csa_const_func = zeros(data.num_frq, Float64)
-        data.csa_const_grad = zeros(data.num_frq, Float64)
-        data.csa_const_hess = zeros(data.num_frq, Float64)
+        data.csa1_const_func = zeros(data.num_frq, Float64)
+        data.csa1_const_grad = zeros(data.num_frq, Float64)
+        data.csa1_const_hess = zeros(data.num_frq, Float64)
+        data.csa2_const_func = zeros(data.num_frq, Float64)
+        data.csa2_const_grad = zeros(data.num_frq, Float64)
+        data.csa2_const_hess = zeros(data.num_frq, Float64)
+        data.csaC_const_func = zeros(data.num_frq, Float64)
+        data.csaC_const_grad = zeros(data.num_frq, Float64)
+        data.csaC_const_hess = zeros(data.num_frq, Float64)
+        
+	
+	data.dipY_const_func = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_const_func.append(zeros(data.num_frq, Float64))
+	
+	data.dipY_const_grad = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_const_grad.append(zeros(data.num_frq, Float64))
+	
+	data.dipY_const_hess = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_const_hess.append(zeros(data.num_frq, Float64))
+	
+	
+	
 
         # Components of the transformed relaxation equations.
         data.dip_comps_func = zeros(data.num_ri, Float64)
-        data.csa_comps_func = zeros(data.num_ri, Float64)
+        data.csa1_comps_func = zeros(data.num_ri, Float64)
+        data.csa2_comps_func = zeros(data.num_ri, Float64)
+        data.csaC_comps_func = zeros(data.num_ri, Float64)
+	data.dipY_comps_func = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_comps_func.append(zeros(data.num_ri, Float64))
+	
         data.rex_comps_func = zeros(data.num_ri, Float64)
         data.dip_jw_comps_func = zeros(data.num_ri, Float64)
-        data.csa_jw_comps_func = zeros(data.num_ri, Float64)
+        data.csa1_jw_comps_func = zeros(data.num_ri, Float64)
+        data.csa2_jw_comps_func = zeros(data.num_ri, Float64)
+        data.csaC_jw_comps_func = zeros(data.num_ri, Float64)
+	data.dipY_jw_comps_func = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_jw_comps_func.append(zeros(data.num_ri, Float64))
+	
 
         # First partial derivative components of the transformed relaxation equations.
         data.dip_comps_grad = zeros(data.num_ri, Float64)
-        data.csa_comps_grad = zeros(data.num_ri, Float64)
+        data.csa1_comps_grad = zeros(data.num_ri, Float64)
+        data.csa2_comps_grad = zeros(data.num_ri, Float64)
+        data.csaC_comps_grad = zeros(data.num_ri, Float64)
+	data.dipY_comps_grad = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_comps_grad.append(zeros(data.num_ri, Float64))
+	
         data.rex_comps_grad = zeros(data.num_ri, Float64)
         data.dip_jw_comps_grad = zeros(data.num_ri, Float64)
-        data.csa_jw_comps_grad = zeros(data.num_ri, Float64)
+        data.csa1_jw_comps_grad = zeros(data.num_ri, Float64)
+        data.csa2_jw_comps_grad = zeros(data.num_ri, Float64)
+        data.csaC_jw_comps_grad = zeros(data.num_ri, Float64)
+	data.dipY_jw_comps_grad = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_jw_comps_grad.append(zeros(data.num_ri, Float64))
+	
 
         # First partial derivative components of the transformed relaxation equations.
         data.dip_comps_hess = zeros(data.num_ri, Float64)
-        data.csa_comps_hess = zeros(data.num_ri, Float64)
+        data.csa1_comps_hess = zeros(data.num_ri, Float64)
+        data.csa2_comps_hess = zeros(data.num_ri, Float64)
+        data.csaC_comps_hess = zeros(data.num_ri, Float64)
+	data.dipY_comps_hess = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_comps_hess.append(zeros(data.num_ri, Float64))
+	
         data.rex_comps_hess = zeros(data.num_ri, Float64)
         data.dip_jw_comps_hess = zeros(data.num_ri, Float64)
-        data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
-
+        data.csa1_jw_comps_hess = zeros(data.num_ri, Float64)
+        data.csa2_jw_comps_hess = zeros(data.num_ri, Float64)
+        data.csaC_jw_comps_hess = zeros(data.num_ri, Float64)
+	data.dipY_jw_comps_hess = [] 
+        for z in xrange(data.xy_vect_num):
+		data.dipY_jw_comps_hess.append(zeros(data.num_ri, Float64))
+	
         # Transformed relaxation values, gradients, and Hessians.
         data.ri_prime = zeros((data.num_ri), Float64)
         data.dri_prime = zeros((data.total_num_params, data.num_ri), Float64)
@@ -1432,26 +2077,64 @@ class Mf:
         r1_data.num_frq = data.num_frq
         r1_data.dip_const_fixed = data.dip_const_fixed
         r1_data.csa_const_fixed = data.csa_const_fixed
+        r1_data.dipY_const_fixed = data.dipY_const_fixed
 
         # Components of the transformed relaxation equations.
         r1_data.dip_comps_func = zeros(data.num_ri, Float64)
-        r1_data.csa_comps_func = zeros(data.num_ri, Float64)
+	r1_data.csa1_comps_func = zeros(data.num_ri, Float64)
+        r1_data.csa2_comps_func = zeros(data.num_ri, Float64)
+        r1_data.csaC_comps_func = zeros(data.num_ri, Float64)
+	r1_data.dipY_comps_func = [] 
+        for z in xrange(data.xy_vect_num):
+		r1_data.dipY_comps_func.append(zeros(data.num_ri, Float64))
+	
         r1_data.dip_jw_comps_func = zeros(data.num_ri, Float64)
-        r1_data.csa_jw_comps_func = zeros(data.num_ri, Float64)
+        r1_data.csa1_jw_comps_func = zeros(data.num_ri, Float64)
+        r1_data.csa2_jw_comps_func = zeros(data.num_ri, Float64)
+        r1_data.csaC_jw_comps_func = zeros(data.num_ri, Float64)
+	r1_data.dipY_jw_comps_func = [] 
+        for z in xrange(data.xy_vect_num):
+		r1_data.dipY_jw_comps_func.append(zeros(data.num_ri, Float64))
+	
+	
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
         r1_data.dip_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.csa_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.csa1_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.csa2_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.csaC_comps_grad = zeros(data.num_ri, Float64)
+	r1_data.dipY_comps_grad = [] 
+        for z in xrange(data.xy_vect_num):
+		r1_data.dipY_comps_grad.append(zeros(data.num_ri, Float64))
+	
         r1_data.rex_comps_grad = zeros(data.num_ri, Float64)
         r1_data.dip_jw_comps_grad = zeros(data.num_ri, Float64)
-        r1_data.csa_jw_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.csa1_jw_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.csa2_jw_comps_grad = zeros(data.num_ri, Float64)
+        r1_data.csaC_jw_comps_grad = zeros(data.num_ri, Float64)
+	r1_data.dipY_jw_comps_grad = [] 
+        for z in xrange(data.xy_vect_num):
+		r1_data.dipY_jw_comps_grad.append(zeros(data.num_ri, Float64))
+	
 
         # Initialise the first partial derivative components of the transformed relaxation equations.
         r1_data.dip_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.csa_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.csa1_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.csa2_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.csaC_comps_hess = zeros(data.num_ri, Float64)
+	r1_data.dipY_comps_hess = [] 
+        for z in xrange(data.xy_vect_num):
+		r1_data.dipY_comps_hess.append(zeros(data.num_ri, Float64))
+	
         r1_data.rex_comps_hess = zeros(data.num_ri, Float64)
         r1_data.dip_jw_comps_hess = zeros(data.num_ri, Float64)
-        r1_data.csa_jw_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.csa1_jw_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.csa2_jw_comps_hess = zeros(data.num_ri, Float64)
+        r1_data.csaC_jw_comps_hess = zeros(data.num_ri, Float64)
+	r1_data.dipY_jw_comps_hess = [] 
+        for z in xrange(data.xy_vect_num):
+		r1_data.dipY_jw_comps_hess.append(zeros(data.num_ri, Float64))
+	
 
         # Initialise the transformed relaxation values, gradients, and Hessians.
         r1_data.ri_prime = zeros(data.num_ri, Float64)
@@ -1574,12 +2257,37 @@ class Mf:
 
         # Create empty spectral density gradient and Hessian function data structures.
         data.calc_djw = []
+        data.calc_csa1_djw = []
+        data.calc_csa2_djw = []
+        data.calc_csaC_djw = []
+	data.calc_dipY_djw = [] 
+	
         data.calc_d2jw = []
+        data.calc_csa1_d2jw = []
+        data.calc_csa2_d2jw = []
+        data.calc_csaC_d2jw = []
+	data.calc_dipY_d2jw = [] 
+	
         for i in xrange(data.total_num_params):
             data.calc_djw.append(None)
+            data.calc_csa1_djw.append(None)
+            data.calc_csa2_djw.append(None)
+            data.calc_csaC_djw.append(None)
+	    data.calc_dipY_djw.append(None)
+	    
             data.calc_d2jw.append([])
+            data.calc_csa1_d2jw.append([])
+            data.calc_csa2_d2jw.append([])
+            data.calc_csaC_d2jw.append([])
+            data.calc_dipY_d2jw.append([])
+	    
             for j in xrange(data.total_num_params):
                 data.calc_d2jw[i].append(None)
+                data.calc_csa1_d2jw[i].append(None)
+                data.calc_csa2_d2jw[i].append(None)
+                data.calc_csaC_d2jw[i].append(None)
+                data.calc_dipY_d2jw[i].append(None)
+		
 
 
         # The original model-free equations {S2, te, Rex, r, CSA}.
@@ -1619,6 +2327,12 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    None
                     data.calc_jw =          calc_jw
+                    data.calc_csa1_jw =          calc_csa1_jw
+                    data.calc_csa2_jw =          calc_csa2_jw
+                    data.calc_csaC_jw =          calc_csaC_jw
+                    data.calc_dipY_jw =          calc_dipY_jw
+	        	    
+		    
 
                     # Gradient.
                     data.calc_djw_comps = None
@@ -1628,25 +2342,55 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    None
                     data.calc_jw =          calc_S2_jw
+                    data.calc_csa1_jw =          calc_csa1_S2_jw
+                    data.calc_csa2_jw =          calc_csa2_S2_jw
+                    data.calc_csaC_jw =          calc_csaC_S2_jw
+                    data.calc_dipY_jw =          calc_dipY_S2_jw
 
                     # Gradient.
                     data.calc_djw_comps =       None
                     data.calc_djw[data.s2_li] = calc_S2_djw_dS2
+                    data.calc_csa1_djw[data.s2_li] = calc_csa1_S2_djw_dS2
+                    data.calc_csa2_djw[data.s2_li] = calc_csa2_S2_djw_dS2
+                    data.calc_csaC_djw[data.s2_li] = calc_csaC_S2_djw_dS2
+                    data.calc_dipY_djw[data.s2_li] = calc_dipY_S2_djw_dS2
 
                 # Model-free parameters {S2, te}.
                 elif data.s2_i != None and data.te_i != None:
                     # Equation.
                     data.calc_jw_comps =    calc_S2_te_jw_comps
                     data.calc_jw =          calc_S2_te_jw
+                    data.calc_csa1_jw =          calc_csa1_S2_te_jw
+                    data.calc_csa2_jw =          calc_csa2_S2_te_jw
+                    data.calc_csaC_jw =          calc_csaC_S2_te_jw
+                    data.calc_dipY_jw =          calc_dipY_S2_te_jw
 
                     # Gradient.
                     data.calc_djw_comps =       calc_S2_te_djw_comps
                     data.calc_djw[data.s2_li] = calc_S2_te_djw_dS2
+                    data.calc_csa1_djw[data.s2_li] = calc_csa1_S2_te_djw_dS2
+                    data.calc_csa2_djw[data.s2_li] = calc_csa2_S2_te_djw_dS2
+                    data.calc_csaC_djw[data.s2_li] = calc_csaC_S2_te_djw_dS2
+                    data.calc_dipY_djw[data.s2_li] = calc_dipY_S2_te_djw_dS2
+		    
                     data.calc_djw[data.te_li] = calc_S2_te_djw_dte
+                    data.calc_csa1_djw[data.te_li] = calc_csa1_S2_te_djw_dte
+                    data.calc_csa2_djw[data.te_li] = calc_csa2_S2_te_djw_dte
+                    data.calc_csaC_djw[data.te_li] = calc_csaC_S2_te_djw_dte
+                    data.calc_dipY_djw[data.te_li] = calc_dipY_S2_te_djw_dte
+		    
 
                     # Hessian.
                     data.calc_d2jw[data.s2_li][data.te_li] = data.calc_d2jw[data.te_li][data.s2_li] =   calc_S2_te_d2jw_dS2dte
+                    data.calc_csa1_d2jw[data.s2_li][data.te_li] = data.calc_csa1_d2jw[data.te_li][data.s2_li] =   calc_csa1_S2_te_d2jw_dS2dte
+                    data.calc_csa2_d2jw[data.s2_li][data.te_li] = data.calc_csa2_d2jw[data.te_li][data.s2_li] =   calc_csa2_S2_te_d2jw_dS2dte
+                    data.calc_csaC_d2jw[data.s2_li][data.te_li] = data.calc_csaC_d2jw[data.te_li][data.s2_li] =   calc_csaC_S2_te_d2jw_dS2dte
+                    data.calc_dipY_d2jw[data.s2_li][data.te_li] = data.calc_dipY_d2jw[data.te_li][data.s2_li] =   calc_dipY_S2_te_d2jw_dS2dte
                     data.calc_d2jw[data.te_li][data.te_li] =                                            calc_S2_te_d2jw_dte2
+                    data.calc_csa1_d2jw[data.te_li][data.te_li] =                                            calc_csa1_S2_te_d2jw_dte2
+                    data.calc_csa2_d2jw[data.te_li][data.te_li] =                                            calc_csa2_S2_te_d2jw_dte2
+                    data.calc_csaC_d2jw[data.te_li][data.te_li] =                                            calc_csaC_S2_te_d2jw_dte2
+                    data.calc_dipY_d2jw[data.te_li][data.te_li] =                                            calc_dipY_S2_te_d2jw_dte2
 
                 # Bad parameter combination.
                 else:
@@ -1660,6 +2404,10 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    None
                     data.calc_jw =          calc_jw
+                    data.calc_csa1_jw =          calc_csa1_jw
+                    data.calc_csa2_jw =          calc_csa2_jw
+                    data.calc_csaC_jw =          calc_csaC_jw
+                    data.calc_dipY_jw =          calc_dipY_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_djw_comps
@@ -1668,15 +2416,31 @@ class Mf:
                     if self.diff_data.type == 'sphere':
                         # Gradient.
                         data.calc_djw[0] = calc_diff_djw_dGj
+                        data.calc_csa1_djw[0] = calc_csa1_diff_djw_dGj
+                        data.calc_csa2_djw[0] = calc_csa2_diff_djw_dGj
+                        data.calc_csaC_djw[0] = calc_csaC_diff_djw_dGj
+                        data.calc_dipY_djw[0] = calc_dipY_diff_djw_dGj
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][0] = calc_csa1_diff_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][0] = calc_csa2_diff_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][0] = calc_csaC_diff_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][0] = calc_dipY_diff_d2jw_dGjdGk
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = calc_diff_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = calc_csa1_diff_djw_dGj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = calc_csa2_diff_djw_dGj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = calc_csaC_diff_djw_dGj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = calc_dipY_diff_djw_dGj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_diff_d2jw_dGjdGk
@@ -1692,11 +2456,72 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_diff_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_diff_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_diff_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_diff_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_diff_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_diff_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_diff_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_diff_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_diff_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_diff_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_diff_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_diff_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_diff_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_diff_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_diff_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_diff_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_diff_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_diff_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_diff_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_diff_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_diff_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_diff_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_diff_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_diff_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_diff_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_diff_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_diff_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_diff_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_diff_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_diff_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_diff_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_diff_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_diff_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_diff_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_diff_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_diff_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_d2jw_dOjdOk
+
+
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = data.calc_csa1_djw[2] = calc_csa1_ellipsoid_djw_dGj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = data.calc_csa2_djw[2] = calc_csa2_ellipsoid_djw_dGj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = data.calc_csaC_djw[2] = calc_csaC_ellipsoid_djw_dGj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = data.calc_dipY_djw[2] = calc_dipY_ellipsoid_djw_dGj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_ellipsoid_d2jw_dGjdGk
@@ -1723,11 +2548,111 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_ellipsoid_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][4] = data.calc_csa1_d2jw[4][0] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][5] = data.calc_csa1_d2jw[5][0] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][4] = data.calc_csa1_d2jw[4][1] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][5] = data.calc_csa1_d2jw[5][1] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][4] = data.calc_csa1_d2jw[4][2] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][5] = data.calc_csa1_d2jw[5][2] =   calc_csa1_ellipsoid_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][4] = data.calc_csa1_d2jw[4][3] =   calc_csa1_diff_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][5] = data.calc_csa1_d2jw[5][3] =   calc_csa1_diff_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][4] =                               calc_csa1_diff_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][5] = data.calc_csa1_d2jw[5][4] =   calc_csa1_diff_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[5][5] =                               calc_csa1_diff_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_ellipsoid_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_ellipsoid_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][4] = data.calc_csa2_d2jw[4][0] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][5] = data.calc_csa2_d2jw[5][0] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][4] = data.calc_csa2_d2jw[4][1] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][5] = data.calc_csa2_d2jw[5][1] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][4] = data.calc_csa2_d2jw[4][2] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][5] = data.calc_csa2_d2jw[5][2] =   calc_csa2_ellipsoid_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][4] = data.calc_csa2_d2jw[4][3] =   calc_csa2_diff_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][5] = data.calc_csa2_d2jw[5][3] =   calc_csa2_diff_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][4] =                               calc_csa2_diff_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][5] = data.calc_csa2_d2jw[5][4] =   calc_csa2_diff_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[5][5] =                               calc_csa2_diff_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_ellipsoid_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_ellipsoid_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_ellipsoid_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_ellipsoid_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_ellipsoid_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_ellipsoid_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][4] = data.calc_csaC_d2jw[4][0] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][5] = data.calc_csaC_d2jw[5][0] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][4] = data.calc_csaC_d2jw[4][1] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][5] = data.calc_csaC_d2jw[5][1] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][4] = data.calc_csaC_d2jw[4][2] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][5] = data.calc_csaC_d2jw[5][2] =   calc_csaC_ellipsoid_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][4] = data.calc_csaC_d2jw[4][3] =   calc_csaC_diff_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][5] = data.calc_csaC_d2jw[5][3] =   calc_csaC_diff_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][4] =                               calc_csaC_diff_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][5] = data.calc_csaC_d2jw[5][4] =   calc_csaC_diff_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[5][5] =                               calc_csaC_diff_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_ellipsoid_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_ellipsoid_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_ellipsoid_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_ellipsoid_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_ellipsoid_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_ellipsoid_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][4] = data.calc_dipY_d2jw[4][0] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][5] = data.calc_dipY_d2jw[5][0] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][4] = data.calc_dipY_d2jw[4][1] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][5] = data.calc_dipY_d2jw[5][1] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][4] = data.calc_dipY_d2jw[4][2] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][5] = data.calc_dipY_d2jw[5][2] =   calc_dipY_ellipsoid_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][4] = data.calc_dipY_d2jw[4][3] =   calc_dipY_diff_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][5] = data.calc_dipY_d2jw[5][3] =   calc_dipY_diff_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][4] =                               calc_dipY_diff_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][5] = data.calc_dipY_d2jw[5][4] =   calc_dipY_diff_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[5][5] =                               calc_dipY_diff_d2jw_dOjdOk
+
                 # Diffusion parameters and model-free parameters {S2}.
                 elif data.s2_i != None and data.te_i == None:
                     # Equation.
                     data.calc_jw_comps =    None
                     data.calc_jw =          calc_S2_jw
+                    data.calc_csa1_jw =          calc_csa1_S2_jw
+                    data.calc_csa2_jw =          calc_csa2_S2_jw
+                    data.calc_csaC_jw =          calc_csaC_S2_jw
+                    data.calc_dipY_jw =          calc_dipY_S2_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_djw_comps
@@ -1735,22 +2660,47 @@ class Mf:
                     if self.param_set != 'diff':
                         # Gradient.
                         data.calc_djw[data.s2_li] = calc_S2_djw_dS2
+                        data.calc_csa1_djw[data.s2_li] = calc_csa1_S2_djw_dS2
+                        data.calc_csa2_djw[data.s2_li] = calc_csa2_S2_djw_dS2
+                        data.calc_csaC_djw[data.s2_li] = calc_csaC_S2_djw_dS2
+                        data.calc_dipY_djw[data.s2_li] = calc_dipY_S2_djw_dS2
 
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
                         data.calc_djw[0] = calc_diff_S2_djw_dGj
+                        data.calc_csa1_djw[0] = calc_csa1_diff_S2_djw_dGj
+                        data.calc_csa2_djw[0] = calc_csa2_diff_S2_djw_dGj
+                        data.calc_csaC_djw[0] = calc_csaC_diff_S2_djw_dGj
+                        data.calc_dipY_djw[0] = calc_dipY_diff_S2_djw_dGj
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][0] = calc_csa1_diff_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][0] = calc_csa2_diff_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][0] = calc_csaC_diff_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][0] = calc_dipY_diff_S2_d2jw_dGjdGk
+			
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[0][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][0] = calc_csa1_diff_S2_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[0][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][0] = calc_csa2_diff_S2_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[0][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][0] = calc_csaC_diff_S2_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[0][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][0] = calc_dipY_diff_S2_d2jw_dGjdS2
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = calc_csa1_diff_S2_djw_dGj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = calc_csa2_diff_S2_djw_dGj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = calc_csaC_diff_S2_djw_dGj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = calc_dipY_diff_S2_djw_dGj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_diff_S2_d2jw_dGjdGk
@@ -1766,17 +2716,99 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_diff_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_diff_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_diff_S2_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_diff_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_diff_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_diff_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_diff_S2_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_diff_S2_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_diff_S2_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_diff_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_diff_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_diff_S2_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_diff_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_diff_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_diff_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_diff_S2_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_diff_S2_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_diff_S2_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_diff_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_diff_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_diff_S2_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_diff_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_diff_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_diff_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_diff_S2_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_diff_S2_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_diff_S2_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_diff_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_diff_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_diff_S2_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_diff_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_diff_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_diff_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_diff_S2_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_diff_S2_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_diff_S2_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2_d2jw_dOjdOk
+
+
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_d2jw_dGjdS2
                             data.calc_d2jw[2][data.s2_li] = data.calc_d2jw[data.s2_li][2] = calc_diff_S2_d2jw_dOjdS2
                             data.calc_d2jw[3][data.s2_li] = data.calc_d2jw[data.s2_li][3] = calc_diff_S2_d2jw_dOjdS2
 
+                            data.calc_csa1_d2jw[0][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][0] = calc_csa1_diff_S2_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][1] = calc_csa1_diff_S2_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][2] = calc_csa1_diff_S2_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][3] = calc_csa1_diff_S2_d2jw_dOjdS2
+
+                            data.calc_csa2_d2jw[0][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][0] = calc_csa2_diff_S2_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][1] = calc_csa2_diff_S2_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][2] = calc_csa2_diff_S2_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][3] = calc_csa2_diff_S2_d2jw_dOjdS2
+
+                            data.calc_csaC_d2jw[0][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][0] = calc_csaC_diff_S2_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][1] = calc_csaC_diff_S2_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][2] = calc_csaC_diff_S2_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][3] = calc_csaC_diff_S2_d2jw_dOjdS2
+
+                            data.calc_dipY_d2jw[0][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][0] = calc_dipY_diff_S2_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][1] = calc_dipY_diff_S2_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][2] = calc_dipY_diff_S2_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][3] = calc_dipY_diff_S2_d2jw_dOjdS2
+
+
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = data.calc_csa1_djw[2] = calc_csa1_ellipsoid_S2_djw_dGj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = data.calc_csa2_djw[2] = calc_csa2_ellipsoid_S2_djw_dGj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = data.calc_csaC_djw[2] = calc_csaC_ellipsoid_S2_djw_dGj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = data.calc_dipY_djw[2] = calc_dipY_ellipsoid_S2_djw_dGj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_ellipsoid_S2_d2jw_dGjdGk
@@ -1803,6 +2835,103 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_ellipsoid_S2_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][4] = data.calc_csa1_d2jw[4][0] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][5] = data.calc_csa1_d2jw[5][0] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][4] = data.calc_csa1_d2jw[4][1] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][5] = data.calc_csa1_d2jw[5][1] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][4] = data.calc_csa1_d2jw[4][2] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][5] = data.calc_csa1_d2jw[5][2] =   calc_csa1_ellipsoid_S2_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][4] = data.calc_csa1_d2jw[4][3] =   calc_csa1_diff_S2_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][5] = data.calc_csa1_d2jw[5][3] =   calc_csa1_diff_S2_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][4] =                               calc_csa1_diff_S2_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][5] = data.calc_csa1_d2jw[5][4] =   calc_csa1_diff_S2_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[5][5] =                               calc_csa1_diff_S2_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_ellipsoid_S2_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][4] = data.calc_csa2_d2jw[4][0] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][5] = data.calc_csa2_d2jw[5][0] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][4] = data.calc_csa2_d2jw[4][1] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][5] = data.calc_csa2_d2jw[5][1] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][4] = data.calc_csa2_d2jw[4][2] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][5] = data.calc_csa2_d2jw[5][2] =   calc_csa2_ellipsoid_S2_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][4] = data.calc_csa2_d2jw[4][3] =   calc_csa2_diff_S2_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][5] = data.calc_csa2_d2jw[5][3] =   calc_csa2_diff_S2_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][4] =                               calc_csa2_diff_S2_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][5] = data.calc_csa2_d2jw[5][4] =   calc_csa2_diff_S2_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[5][5] =                               calc_csa2_diff_S2_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_ellipsoid_S2_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][4] = data.calc_csaC_d2jw[4][0] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][5] = data.calc_csaC_d2jw[5][0] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][4] = data.calc_csaC_d2jw[4][1] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][5] = data.calc_csaC_d2jw[5][1] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][4] = data.calc_csaC_d2jw[4][2] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][5] = data.calc_csaC_d2jw[5][2] =   calc_csaC_ellipsoid_S2_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][4] = data.calc_csaC_d2jw[4][3] =   calc_csaC_diff_S2_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][5] = data.calc_csaC_d2jw[5][3] =   calc_csaC_diff_S2_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][4] =                               calc_csaC_diff_S2_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][5] = data.calc_csaC_d2jw[5][4] =   calc_csaC_diff_S2_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[5][5] =                               calc_csaC_diff_S2_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_ellipsoid_S2_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_ellipsoid_S2_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][4] = data.calc_dipY_d2jw[4][0] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][5] = data.calc_dipY_d2jw[5][0] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][4] = data.calc_dipY_d2jw[4][1] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][5] = data.calc_dipY_d2jw[5][1] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][4] = data.calc_dipY_d2jw[4][2] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][5] = data.calc_dipY_d2jw[5][2] =   calc_dipY_ellipsoid_S2_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][4] = data.calc_dipY_d2jw[4][3] =   calc_dipY_diff_S2_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][5] = data.calc_dipY_d2jw[5][3] =   calc_dipY_diff_S2_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][4] =                               calc_dipY_diff_S2_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][5] = data.calc_dipY_d2jw[5][4] =   calc_dipY_diff_S2_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[5][5] =                               calc_dipY_diff_S2_d2jw_dOjdOk
+
+
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_d2jw_dGjdS2
@@ -1810,6 +2939,30 @@ class Mf:
                             data.calc_d2jw[3][data.s2_li] = data.calc_d2jw[data.s2_li][3] = calc_diff_S2_d2jw_dOjdS2
                             data.calc_d2jw[4][data.s2_li] = data.calc_d2jw[data.s2_li][4] = calc_diff_S2_d2jw_dOjdS2
                             data.calc_d2jw[5][data.s2_li] = data.calc_d2jw[data.s2_li][5] = calc_diff_S2_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[0][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][0] = calc_csa1_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][1] = calc_csa1_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][2] = calc_csa1_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][3] = calc_csa1_diff_S2_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[4][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][4] = calc_csa1_diff_S2_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[5][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][5] = calc_csa1_diff_S2_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[0][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][0] = calc_csa2_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][1] = calc_csa2_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][2] = calc_csa2_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][3] = calc_csa2_diff_S2_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[4][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][4] = calc_csa2_diff_S2_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[5][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][5] = calc_csa2_diff_S2_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[0][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][0] = calc_csaC_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][1] = calc_csaC_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][2] = calc_csaC_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][3] = calc_csaC_diff_S2_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[4][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][4] = calc_csaC_diff_S2_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[5][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][5] = calc_csaC_diff_S2_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[0][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][0] = calc_dipY_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][1] = calc_dipY_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][2] = calc_dipY_ellipsoid_S2_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][3] = calc_dipY_diff_S2_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[4][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][4] = calc_dipY_diff_S2_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[5][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][5] = calc_dipY_diff_S2_d2jw_dOjdS2
 
 
                 # Diffusion parameters and model-free parameters {S2, te}.
@@ -1817,6 +2970,10 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    calc_S2_te_jw_comps
                     data.calc_jw =          calc_S2_te_jw
+                    data.calc_csa1_jw =          calc_csa1_S2_te_jw
+                    data.calc_csa2_jw =          calc_csa2_S2_te_jw
+                    data.calc_csaC_jw =          calc_csaC_S2_te_jw
+                    data.calc_dipY_jw =          calc_dipY_S2_te_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2_te_djw_comps
@@ -1825,27 +2982,68 @@ class Mf:
                         # Gradient.
                         data.calc_djw[data.s2_li] = calc_S2_te_djw_dS2
                         data.calc_djw[data.te_li] = calc_S2_te_djw_dte
+                        data.calc_csa1_djw[data.s2_li] = calc_csa1_S2_te_djw_dS2
+                        data.calc_csa1_djw[data.te_li] = calc_csa1_S2_te_djw_dte
+                        data.calc_csa2_djw[data.s2_li] = calc_csa2_S2_te_djw_dS2
+                        data.calc_csa2_djw[data.te_li] = calc_csa2_S2_te_djw_dte
+                        data.calc_csaC_djw[data.s2_li] = calc_csaC_S2_te_djw_dS2
+                        data.calc_csaC_djw[data.te_li] = calc_csaC_S2_te_djw_dte
+                        data.calc_dipY_djw[data.s2_li] = calc_dipY_S2_te_djw_dS2
+                        data.calc_dipY_djw[data.te_li] = calc_dipY_S2_te_djw_dte
 
                         # Hessian.
                         data.calc_d2jw[data.s2_li][data.te_li] = data.calc_d2jw[data.te_li][data.s2_li] =   calc_S2_te_d2jw_dS2dte
                         data.calc_d2jw[data.te_li][data.te_li] =                                            calc_S2_te_d2jw_dte2
+                        data.calc_csa1_d2jw[data.s2_li][data.te_li] = data.calc_csa1_d2jw[data.te_li][data.s2_li] =   calc_csa1_S2_te_d2jw_dS2dte
+                        data.calc_csa1_d2jw[data.te_li][data.te_li] =                                            calc_csa1_S2_te_d2jw_dte2
+                        data.calc_csa2_d2jw[data.s2_li][data.te_li] = data.calc_csa2_d2jw[data.te_li][data.s2_li] =   calc_csa2_S2_te_d2jw_dS2dte
+                        data.calc_csa2_d2jw[data.te_li][data.te_li] =                                            calc_csa2_S2_te_d2jw_dte2
+                        data.calc_csaC_d2jw[data.s2_li][data.te_li] = data.calc_csaC_d2jw[data.te_li][data.s2_li] =   calc_csaC_S2_te_d2jw_dS2dte
+                        data.calc_csaC_d2jw[data.te_li][data.te_li] =                                            calc_csaC_S2_te_d2jw_dte2
+                        data.calc_dipY_d2jw[data.s2_li][data.te_li] = data.calc_dipY_d2jw[data.te_li][data.s2_li] =   calc_dipY_S2_te_d2jw_dS2dte
+                        data.calc_dipY_d2jw[data.te_li][data.te_li] =                                            calc_dipY_S2_te_d2jw_dte2
 
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
                         data.calc_djw[0] = calc_diff_S2_te_djw_dGj
+                        data.calc_csa1_djw[0] = calc_csa1_diff_S2_te_djw_dGj
+                        data.calc_csa2_djw[0] = calc_csa2_diff_S2_te_djw_dGj
+                        data.calc_csaC_djw[0] = calc_csaC_diff_S2_te_djw_dGj
+                        data.calc_dipY_djw[0] = calc_dipY_diff_S2_te_djw_dGj
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][0] = calc_csa1_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][0] = calc_csa2_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][0] = calc_csaC_diff_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][0] = calc_dipY_diff_S2_te_d2jw_dGjdGk
+			
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[0][data.te_li] = data.calc_d2jw[data.te_li][0] = calc_diff_S2_te_d2jw_dGjdte
+                            data.calc_csa1_d2jw[0][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][0] = calc_csa1_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[0][data.te_li] = data.calc_csa1_d2jw[data.te_li][0] = calc_csa1_diff_S2_te_d2jw_dGjdte
+                            data.calc_csa2_d2jw[0][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][0] = calc_csa2_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[0][data.te_li] = data.calc_csa2_d2jw[data.te_li][0] = calc_csa2_diff_S2_te_d2jw_dGjdte
+                            data.calc_csaC_d2jw[0][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][0] = calc_csaC_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[0][data.te_li] = data.calc_csaC_d2jw[data.te_li][0] = calc_csaC_diff_S2_te_d2jw_dGjdte
+                            data.calc_dipY_d2jw[0][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][0] = calc_dipY_diff_S2_te_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[0][data.te_li] = data.calc_dipY_d2jw[data.te_li][0] = calc_dipY_diff_S2_te_d2jw_dGjdte
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2_te_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2_te_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = calc_csa1_diff_S2_te_djw_dGj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2_te_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = calc_csa2_diff_S2_te_djw_dGj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2_te_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = calc_csaC_diff_S2_te_djw_dGj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2_te_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = calc_dipY_diff_S2_te_djw_dGj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2_te_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_diff_S2_te_d2jw_dGjdGk
@@ -1861,6 +3059,59 @@ class Mf:
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2_te_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2_te_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_diff_S2_te_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_diff_S2_te_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2_te_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_diff_S2_te_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_diff_S2_te_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2_te_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_diff_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_diff_S2_te_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_diff_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_diff_S2_te_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2_te_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_diff_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_diff_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_diff_S2_te_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_diff_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_diff_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_diff_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_diff_S2_te_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_diff_S2_te_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_diff_S2_te_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2_te_d2jw_dOjdOk
+
+
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_diff_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_diff_S2_te_d2jw_dGjdS2
@@ -1872,11 +3123,60 @@ class Mf:
                             data.calc_d2jw[2][data.te_li] = data.calc_d2jw[data.te_li][2] = calc_diff_S2_te_d2jw_dOjdte
                             data.calc_d2jw[3][data.te_li] = data.calc_d2jw[data.te_li][3] = calc_diff_S2_te_d2jw_dOjdte
 
+                            data.calc_csa1_d2jw[0][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][0] = calc_csa1_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][1] = calc_csa1_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][2] = calc_csa1_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][3] = calc_csa1_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_csa1_d2jw[0][data.te_li] = data.calc_csa1_d2jw[data.te_li][0] = calc_csa1_diff_S2_te_d2jw_dGjdte
+                            data.calc_csa1_d2jw[1][data.te_li] = data.calc_csa1_d2jw[data.te_li][1] = calc_csa1_diff_S2_te_d2jw_dGjdte
+                            data.calc_csa1_d2jw[2][data.te_li] = data.calc_csa1_d2jw[data.te_li][2] = calc_csa1_diff_S2_te_d2jw_dOjdte
+                            data.calc_csa1_d2jw[3][data.te_li] = data.calc_csa1_d2jw[data.te_li][3] = calc_csa1_diff_S2_te_d2jw_dOjdte
+
+                            data.calc_csa2_d2jw[0][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][0] = calc_csa2_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][1] = calc_csa2_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][2] = calc_csa2_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][3] = calc_csa2_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_csa2_d2jw[0][data.te_li] = data.calc_csa2_d2jw[data.te_li][0] = calc_csa2_diff_S2_te_d2jw_dGjdte
+                            data.calc_csa2_d2jw[1][data.te_li] = data.calc_csa2_d2jw[data.te_li][1] = calc_csa2_diff_S2_te_d2jw_dGjdte
+                            data.calc_csa2_d2jw[2][data.te_li] = data.calc_csa2_d2jw[data.te_li][2] = calc_csa2_diff_S2_te_d2jw_dOjdte
+                            data.calc_csa2_d2jw[3][data.te_li] = data.calc_csa2_d2jw[data.te_li][3] = calc_csa2_diff_S2_te_d2jw_dOjdte
+
+                            data.calc_csaC_d2jw[0][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][0] = calc_csaC_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][1] = calc_csaC_diff_S2_te_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][2] = calc_csaC_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][3] = calc_csaC_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_csaC_d2jw[0][data.te_li] = data.calc_csaC_d2jw[data.te_li][0] = calc_csaC_diff_S2_te_d2jw_dGjdte
+                            data.calc_csaC_d2jw[1][data.te_li] = data.calc_csaC_d2jw[data.te_li][1] = calc_csaC_diff_S2_te_d2jw_dGjdte
+                            data.calc_csaC_d2jw[2][data.te_li] = data.calc_csaC_d2jw[data.te_li][2] = calc_csaC_diff_S2_te_d2jw_dOjdte
+                            data.calc_csaC_d2jw[3][data.te_li] = data.calc_csaC_d2jw[data.te_li][3] = calc_csaC_diff_S2_te_d2jw_dOjdte
+
+                            data.calc_dipY_d2jw[0][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][0] = calc_dipY_diff_S2_te_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][1] = calc_dipY_diff_S2_te_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][2] = calc_dipY_diff_S2_te_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][3] = calc_dipY_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_dipY_d2jw[0][data.te_li] = data.calc_dipY_d2jw[data.te_li][0] = calc_dipY_diff_S2_te_d2jw_dGjdte
+                            data.calc_dipY_d2jw[1][data.te_li] = data.calc_dipY_d2jw[data.te_li][1] = calc_dipY_diff_S2_te_d2jw_dGjdte
+                            data.calc_dipY_d2jw[2][data.te_li] = data.calc_dipY_d2jw[data.te_li][2] = calc_dipY_diff_S2_te_d2jw_dOjdte
+                            data.calc_dipY_d2jw[3][data.te_li] = data.calc_dipY_d2jw[data.te_li][3] = calc_dipY_diff_S2_te_d2jw_dOjdte
+
+
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2_te_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2_te_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = data.calc_csa1_djw[2] = calc_csa1_ellipsoid_S2_te_djw_dGj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2_te_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = data.calc_csa2_djw[2] = calc_csa2_ellipsoid_S2_te_djw_dGj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2_te_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = data.calc_csaC_djw[2] = calc_csaC_ellipsoid_S2_te_djw_dGj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2_te_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = data.calc_dipY_djw[2] = calc_dipY_ellipsoid_S2_te_djw_dGj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2_te_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_ellipsoid_S2_te_d2jw_dGjdGk
@@ -1903,6 +3203,103 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2_te_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2_te_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_ellipsoid_S2_te_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][4] = data.calc_csa1_d2jw[4][0] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][5] = data.calc_csa1_d2jw[5][0] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][4] = data.calc_csa1_d2jw[4][1] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][5] = data.calc_csa1_d2jw[5][1] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][4] = data.calc_csa1_d2jw[4][2] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][5] = data.calc_csa1_d2jw[5][2] =   calc_csa1_ellipsoid_S2_te_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][4] = data.calc_csa1_d2jw[4][3] =   calc_csa1_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][5] = data.calc_csa1_d2jw[5][3] =   calc_csa1_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][4] =                               calc_csa1_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][5] = data.calc_csa1_d2jw[5][4] =   calc_csa1_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[5][5] =                               calc_csa1_diff_S2_te_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_ellipsoid_S2_te_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][4] = data.calc_csa2_d2jw[4][0] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][5] = data.calc_csa2_d2jw[5][0] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][4] = data.calc_csa2_d2jw[4][1] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][5] = data.calc_csa2_d2jw[5][1] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][4] = data.calc_csa2_d2jw[4][2] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][5] = data.calc_csa2_d2jw[5][2] =   calc_csa2_ellipsoid_S2_te_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][4] = data.calc_csa2_d2jw[4][3] =   calc_csa2_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][5] = data.calc_csa2_d2jw[5][3] =   calc_csa2_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][4] =                               calc_csa2_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][5] = data.calc_csa2_d2jw[5][4] =   calc_csa2_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[5][5] =                               calc_csa2_diff_S2_te_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_ellipsoid_S2_te_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][4] = data.calc_csaC_d2jw[4][0] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][5] = data.calc_csaC_d2jw[5][0] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][4] = data.calc_csaC_d2jw[4][1] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][5] = data.calc_csaC_d2jw[5][1] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][4] = data.calc_csaC_d2jw[4][2] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][5] = data.calc_csaC_d2jw[5][2] =   calc_csaC_ellipsoid_S2_te_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][4] = data.calc_csaC_d2jw[4][3] =   calc_csaC_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][5] = data.calc_csaC_d2jw[5][3] =   calc_csaC_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][4] =                               calc_csaC_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][5] = data.calc_csaC_d2jw[5][4] =   calc_csaC_diff_S2_te_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[5][5] =                               calc_csaC_diff_S2_te_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_ellipsoid_S2_te_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][4] = data.calc_dipY_d2jw[4][0] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][5] = data.calc_dipY_d2jw[5][0] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][4] = data.calc_dipY_d2jw[4][1] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][5] = data.calc_dipY_d2jw[5][1] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][4] = data.calc_dipY_d2jw[4][2] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][5] = data.calc_dipY_d2jw[5][2] =   calc_dipY_ellipsoid_S2_te_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2_te_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][4] = data.calc_dipY_d2jw[4][3] =   calc_dipY_diff_S2_te_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][5] = data.calc_dipY_d2jw[5][3] =   calc_dipY_diff_S2_te_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][4] =                               calc_dipY_diff_S2_te_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][5] = data.calc_dipY_d2jw[5][4] =   calc_dipY_diff_S2_te_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[5][5] =                               calc_dipY_diff_S2_te_d2jw_dOjdOk
+
+
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2_li] = data.calc_d2jw[data.s2_li][0] = calc_ellipsoid_S2_te_d2jw_dGjdS2
                             data.calc_d2jw[1][data.s2_li] = data.calc_d2jw[data.s2_li][1] = calc_ellipsoid_S2_te_d2jw_dGjdS2
@@ -1917,6 +3314,63 @@ class Mf:
                             data.calc_d2jw[3][data.te_li] = data.calc_d2jw[data.te_li][3] = calc_diff_S2_te_d2jw_dOjdte
                             data.calc_d2jw[4][data.te_li] = data.calc_d2jw[data.te_li][4] = calc_diff_S2_te_d2jw_dOjdte
                             data.calc_d2jw[5][data.te_li] = data.calc_d2jw[data.te_li][5] = calc_diff_S2_te_d2jw_dOjdte
+
+                            data.calc_csa1_d2jw[0][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][0] = calc_csa1_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][1] = calc_csa1_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][2] = calc_csa1_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][3] = calc_csa1_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[4][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][4] = calc_csa1_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[5][data.s2_li] = data.calc_csa1_d2jw[data.s2_li][5] = calc_csa1_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_csa1_d2jw[0][data.te_li] = data.calc_csa1_d2jw[data.te_li][0] = calc_csa1_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csa1_d2jw[1][data.te_li] = data.calc_csa1_d2jw[data.te_li][1] = calc_csa1_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csa1_d2jw[2][data.te_li] = data.calc_csa1_d2jw[data.te_li][2] = calc_csa1_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csa1_d2jw[3][data.te_li] = data.calc_csa1_d2jw[data.te_li][3] = calc_csa1_diff_S2_te_d2jw_dOjdte
+                            data.calc_csa1_d2jw[4][data.te_li] = data.calc_csa1_d2jw[data.te_li][4] = calc_csa1_diff_S2_te_d2jw_dOjdte
+                            data.calc_csa1_d2jw[5][data.te_li] = data.calc_csa1_d2jw[data.te_li][5] = calc_csa1_diff_S2_te_d2jw_dOjdte
+
+                            data.calc_csa2_d2jw[0][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][0] = calc_csa2_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][1] = calc_csa2_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][2] = calc_csa2_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][3] = calc_csa2_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[4][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][4] = calc_csa2_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[5][data.s2_li] = data.calc_csa2_d2jw[data.s2_li][5] = calc_csa2_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_csa2_d2jw[0][data.te_li] = data.calc_csa2_d2jw[data.te_li][0] = calc_csa2_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csa2_d2jw[1][data.te_li] = data.calc_csa2_d2jw[data.te_li][1] = calc_csa2_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csa2_d2jw[2][data.te_li] = data.calc_csa2_d2jw[data.te_li][2] = calc_csa2_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csa2_d2jw[3][data.te_li] = data.calc_csa2_d2jw[data.te_li][3] = calc_csa2_diff_S2_te_d2jw_dOjdte
+                            data.calc_csa2_d2jw[4][data.te_li] = data.calc_csa2_d2jw[data.te_li][4] = calc_csa2_diff_S2_te_d2jw_dOjdte
+                            data.calc_csa2_d2jw[5][data.te_li] = data.calc_csa2_d2jw[data.te_li][5] = calc_csa2_diff_S2_te_d2jw_dOjdte
+
+                            data.calc_csaC_d2jw[0][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][0] = calc_csaC_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][1] = calc_csaC_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][2] = calc_csaC_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][3] = calc_csaC_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[4][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][4] = calc_csaC_diff_S2_te_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[5][data.s2_li] = data.calc_csaC_d2jw[data.s2_li][5] = calc_csaC_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_csaC_d2jw[0][data.te_li] = data.calc_csaC_d2jw[data.te_li][0] = calc_csaC_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csaC_d2jw[1][data.te_li] = data.calc_csaC_d2jw[data.te_li][1] = calc_csaC_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csaC_d2jw[2][data.te_li] = data.calc_csaC_d2jw[data.te_li][2] = calc_csaC_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_csaC_d2jw[3][data.te_li] = data.calc_csaC_d2jw[data.te_li][3] = calc_csaC_diff_S2_te_d2jw_dOjdte
+                            data.calc_csaC_d2jw[4][data.te_li] = data.calc_csaC_d2jw[data.te_li][4] = calc_csaC_diff_S2_te_d2jw_dOjdte
+                            data.calc_csaC_d2jw[5][data.te_li] = data.calc_csaC_d2jw[data.te_li][5] = calc_csaC_diff_S2_te_d2jw_dOjdte
+
+                            data.calc_dipY_d2jw[0][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][0] = calc_dipY_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][1] = calc_dipY_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][2] = calc_dipY_ellipsoid_S2_te_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][3] = calc_dipY_diff_S2_te_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[4][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][4] = calc_dipY_diff_S2_te_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[5][data.s2_li] = data.calc_dipY_d2jw[data.s2_li][5] = calc_dipY_diff_S2_te_d2jw_dOjdS2
+
+                            data.calc_dipY_d2jw[0][data.te_li] = data.calc_dipY_d2jw[data.te_li][0] = calc_dipY_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_dipY_d2jw[1][data.te_li] = data.calc_dipY_d2jw[data.te_li][1] = calc_dipY_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_dipY_d2jw[2][data.te_li] = data.calc_dipY_d2jw[data.te_li][2] = calc_dipY_ellipsoid_S2_te_d2jw_dGjdte
+                            data.calc_dipY_d2jw[3][data.te_li] = data.calc_dipY_d2jw[data.te_li][3] = calc_dipY_diff_S2_te_d2jw_dOjdte
+                            data.calc_dipY_d2jw[4][data.te_li] = data.calc_dipY_d2jw[data.te_li][4] = calc_dipY_diff_S2_te_d2jw_dOjdte
+                            data.calc_dipY_d2jw[5][data.te_li] = data.calc_dipY_d2jw[data.te_li][5] = calc_dipY_diff_S2_te_d2jw_dOjdte
+
 
                 # Bad parameter combination.
                 else:
@@ -1968,23 +3422,55 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    calc_S2f_S2_ts_jw_comps
                     data.calc_jw =          calc_S2f_S2_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_S2_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_S2_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_S2_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_S2_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps =           calc_S2f_S2_ts_djw_comps
                     data.calc_djw[data.s2f_li] =    calc_S2f_S2_ts_djw_dS2f
                     data.calc_djw[data.s2_li] =     calc_S2f_S2_ts_djw_dS2
                     data.calc_djw[data.ts_li] =     calc_S2f_S2_ts_djw_dts
+                    data.calc_csa1_djw[data.s2f_li] =    calc_csa1_S2f_S2_ts_djw_dS2f
+                    data.calc_csa1_djw[data.s2_li] =     calc_csa1_S2f_S2_ts_djw_dS2
+                    data.calc_csa1_djw[data.ts_li] =     calc_csa1_S2f_S2_ts_djw_dts
+                    data.calc_csa2_djw[data.s2f_li] =    calc_csa2_S2f_S2_ts_djw_dS2f
+                    data.calc_csa2_djw[data.s2_li] =     calc_csa2_S2f_S2_ts_djw_dS2
+                    data.calc_csa2_djw[data.ts_li] =     calc_csa2_S2f_S2_ts_djw_dts
+                    data.calc_csaC_djw[data.s2f_li] =    calc_csaC_S2f_S2_ts_djw_dS2f
+                    data.calc_csaC_djw[data.s2_li] =     calc_csaC_S2f_S2_ts_djw_dS2
+                    data.calc_csaC_djw[data.ts_li] =     calc_csaC_S2f_S2_ts_djw_dts
+                    data.calc_dipY_djw[data.s2f_li] =    calc_dipY_S2f_S2_ts_djw_dS2f
+                    data.calc_dipY_djw[data.s2_li] =     calc_dipY_S2f_S2_ts_djw_dS2
+                    data.calc_dipY_djw[data.ts_li] =     calc_dipY_S2f_S2_ts_djw_dts
 
                     # Hessian.
                     data.calc_d2jw[data.s2f_li][data.ts_li] = data.calc_d2jw[data.ts_li][data.s2f_li] = calc_S2f_S2_ts_d2jw_dS2fdts
                     data.calc_d2jw[data.s2_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2_li]  = calc_S2f_S2_ts_d2jw_dS2dts
                     data.calc_d2jw[data.ts_li][data.ts_li]  =                                           calc_S2f_S2_ts_d2jw_dts2
+                    data.calc_csa1_d2jw[data.s2f_li][data.ts_li] = data.calc_csa1_d2jw[data.ts_li][data.s2f_li] = calc_csa1_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_csa1_d2jw[data.s2_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2_li]  = calc_csa1_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_csa1_d2jw[data.ts_li][data.ts_li]  =                                           calc_csa1_S2f_S2_ts_d2jw_dts2
+                    data.calc_csa2_d2jw[data.s2f_li][data.ts_li] = data.calc_csa2_d2jw[data.ts_li][data.s2f_li] = calc_csa2_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_csa2_d2jw[data.s2_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2_li]  = calc_csa2_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_csa2_d2jw[data.ts_li][data.ts_li]  =                                           calc_csa2_S2f_S2_ts_d2jw_dts2
+                    data.calc_csaC_d2jw[data.s2f_li][data.ts_li] = data.calc_csaC_d2jw[data.ts_li][data.s2f_li] = calc_csaC_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_csaC_d2jw[data.s2_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2_li]  = calc_csaC_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_csaC_d2jw[data.ts_li][data.ts_li]  =                                           calc_csaC_S2f_S2_ts_d2jw_dts2
+                    data.calc_dipY_d2jw[data.s2f_li][data.ts_li] = data.calc_dipY_d2jw[data.ts_li][data.s2f_li] = calc_dipY_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_dipY_d2jw[data.s2_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2_li]  = calc_dipY_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_dipY_d2jw[data.ts_li][data.ts_li]  =                                           calc_dipY_S2f_S2_ts_d2jw_dts2
 
                 # Model-free parameters {S2f, tf, S2, ts}.
                 elif data.s2f_i != None and data.tf_i != None and data.s2_i != None and data.ts_i != None:
                     # Equation.
                     data.calc_jw_comps =    calc_S2f_tf_S2_ts_jw_comps
                     data.calc_jw =          calc_S2f_tf_S2_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_tf_S2_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_tf_S2_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_tf_S2_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_tf_S2_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps =          calc_S2f_tf_S2_ts_djw_comps
@@ -1992,6 +3478,22 @@ class Mf:
                     data.calc_djw[data.tf_li] =    calc_S2f_tf_S2_ts_djw_dtf
                     data.calc_djw[data.s2_li] =    calc_S2f_S2_ts_djw_dS2
                     data.calc_djw[data.ts_li] =    calc_S2f_S2_ts_djw_dts
+                    data.calc_csa1_djw[data.s2f_li] =   calc_csa1_S2f_tf_S2_ts_djw_dS2f
+                    data.calc_csa1_djw[data.tf_li] =    calc_csa1_S2f_tf_S2_ts_djw_dtf
+                    data.calc_csa1_djw[data.s2_li] =    calc_csa1_S2f_S2_ts_djw_dS2
+                    data.calc_csa1_djw[data.ts_li] =    calc_csa1_S2f_S2_ts_djw_dts
+                    data.calc_csa2_djw[data.s2f_li] =   calc_csa2_S2f_tf_S2_ts_djw_dS2f
+                    data.calc_csa2_djw[data.tf_li] =    calc_csa2_S2f_tf_S2_ts_djw_dtf
+                    data.calc_csa2_djw[data.s2_li] =    calc_csa2_S2f_S2_ts_djw_dS2
+                    data.calc_csa2_djw[data.ts_li] =    calc_csa2_S2f_S2_ts_djw_dts
+                    data.calc_csaC_djw[data.s2f_li] =   calc_csaC_S2f_tf_S2_ts_djw_dS2f
+                    data.calc_csaC_djw[data.tf_li] =    calc_csaC_S2f_tf_S2_ts_djw_dtf
+                    data.calc_csaC_djw[data.s2_li] =    calc_csaC_S2f_S2_ts_djw_dS2
+                    data.calc_csaC_djw[data.ts_li] =    calc_csaC_S2f_S2_ts_djw_dts
+                    data.calc_dipY_djw[data.s2f_li] =   calc_dipY_S2f_tf_S2_ts_djw_dS2f
+                    data.calc_dipY_djw[data.tf_li] =    calc_dipY_S2f_tf_S2_ts_djw_dtf
+                    data.calc_dipY_djw[data.s2_li] =    calc_dipY_S2f_S2_ts_djw_dS2
+                    data.calc_dipY_djw[data.ts_li] =    calc_dipY_S2f_S2_ts_djw_dts
 
                     # Hessian.
                     data.calc_d2jw[data.s2f_li][data.tf_li] = data.calc_d2jw[data.tf_li][data.s2f_li] = calc_S2f_tf_S2_ts_d2jw_dS2fdtf
@@ -1999,6 +3501,26 @@ class Mf:
                     data.calc_d2jw[data.s2_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2_li]  = calc_S2f_S2_ts_d2jw_dS2dts
                     data.calc_d2jw[data.tf_li][data.tf_li]  =                                           calc_S2f_tf_S2_ts_d2jw_dtf2
                     data.calc_d2jw[data.ts_li][data.ts_li]  =                                           calc_S2f_S2_ts_d2jw_dts2
+                    data.calc_csa1_d2jw[data.s2f_li][data.tf_li] = data.calc_csa1_d2jw[data.tf_li][data.s2f_li] = calc_csa1_S2f_tf_S2_ts_d2jw_dS2fdtf
+                    data.calc_csa1_d2jw[data.s2f_li][data.ts_li] = data.calc_csa1_d2jw[data.ts_li][data.s2f_li] = calc_csa1_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_csa1_d2jw[data.s2_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2_li]  = calc_csa1_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_csa1_d2jw[data.tf_li][data.tf_li]  =                                                calc_csa1_S2f_tf_S2_ts_d2jw_dtf2
+                    data.calc_csa1_d2jw[data.ts_li][data.ts_li]  =                                                calc_csa1_S2f_S2_ts_d2jw_dts2
+                    data.calc_csa2_d2jw[data.s2f_li][data.tf_li] = data.calc_csa2_d2jw[data.tf_li][data.s2f_li] = calc_csa2_S2f_tf_S2_ts_d2jw_dS2fdtf
+                    data.calc_csa2_d2jw[data.s2f_li][data.ts_li] = data.calc_csa2_d2jw[data.ts_li][data.s2f_li] = calc_csa2_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_csa2_d2jw[data.s2_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2_li]  = calc_csa2_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_csa2_d2jw[data.tf_li][data.tf_li]  =                                                calc_csa2_S2f_tf_S2_ts_d2jw_dtf2
+                    data.calc_csa2_d2jw[data.ts_li][data.ts_li]  =                                                calc_csa2_S2f_S2_ts_d2jw_dts2
+                    data.calc_csaC_d2jw[data.s2f_li][data.tf_li] = data.calc_csaC_d2jw[data.tf_li][data.s2f_li] = calc_csaC_S2f_tf_S2_ts_d2jw_dS2fdtf
+                    data.calc_csaC_d2jw[data.s2f_li][data.ts_li] = data.calc_csaC_d2jw[data.ts_li][data.s2f_li] = calc_csaC_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_csaC_d2jw[data.s2_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2_li]  = calc_csaC_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_csaC_d2jw[data.tf_li][data.tf_li]  =                                                calc_csaC_S2f_tf_S2_ts_d2jw_dtf2
+                    data.calc_csaC_d2jw[data.ts_li][data.ts_li]  =                                                calc_csaC_S2f_S2_ts_d2jw_dts2
+                    data.calc_dipY_d2jw[data.s2f_li][data.tf_li] = data.calc_dipY_d2jw[data.tf_li][data.s2f_li] = calc_dipY_S2f_tf_S2_ts_d2jw_dS2fdtf
+                    data.calc_dipY_d2jw[data.s2f_li][data.ts_li] = data.calc_dipY_d2jw[data.ts_li][data.s2f_li] = calc_dipY_S2f_S2_ts_d2jw_dS2fdts
+                    data.calc_dipY_d2jw[data.s2_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2_li]  = calc_dipY_S2f_S2_ts_d2jw_dS2dts
+                    data.calc_dipY_d2jw[data.tf_li][data.tf_li]  =                                                calc_dipY_S2f_tf_S2_ts_d2jw_dtf2
+                    data.calc_dipY_d2jw[data.ts_li][data.ts_li]  =                                                calc_dipY_S2f_S2_ts_d2jw_dts2
 
                 # Bad parameter combination.
                 else:
@@ -2012,6 +3534,10 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    calc_S2f_S2_ts_jw_comps
                     data.calc_jw =          calc_S2f_S2_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_S2_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_S2_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_S2_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_S2_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_S2_ts_djw_comps
@@ -2021,29 +3547,82 @@ class Mf:
                         data.calc_djw[data.s2f_li] =    calc_S2f_S2_ts_djw_dS2f
                         data.calc_djw[data.s2_li] =     calc_S2f_S2_ts_djw_dS2
                         data.calc_djw[data.ts_li] =     calc_S2f_S2_ts_djw_dts
+                        data.calc_csa1_djw[data.s2f_li] =    calc_csa1_S2f_S2_ts_djw_dS2f
+                        data.calc_csa1_djw[data.s2_li] =     calc_csa1_S2f_S2_ts_djw_dS2
+                        data.calc_csa1_djw[data.ts_li] =     calc_csa1_S2f_S2_ts_djw_dts
+                        data.calc_csa2_djw[data.s2f_li] =    calc_csa2_S2f_S2_ts_djw_dS2f
+                        data.calc_csa2_djw[data.s2_li] =     calc_csa2_S2f_S2_ts_djw_dS2
+                        data.calc_csa2_djw[data.ts_li] =     calc_csa2_S2f_S2_ts_djw_dts
+                        data.calc_csaC_djw[data.s2f_li] =    calc_csaC_S2f_S2_ts_djw_dS2f
+                        data.calc_csaC_djw[data.s2_li] =     calc_csaC_S2f_S2_ts_djw_dS2
+                        data.calc_csaC_djw[data.ts_li] =     calc_csaC_S2f_S2_ts_djw_dts
+                        data.calc_dipY_djw[data.s2f_li] =    calc_dipY_S2f_S2_ts_djw_dS2f
+                        data.calc_dipY_djw[data.s2_li] =     calc_dipY_S2f_S2_ts_djw_dS2
+                        data.calc_dipY_djw[data.ts_li] =     calc_dipY_S2f_S2_ts_djw_dts
 
                         # Hessian.
                         data.calc_d2jw[data.s2f_li][data.ts_li] = data.calc_d2jw[data.ts_li][data.s2f_li] = calc_S2f_S2_ts_d2jw_dS2fdts
                         data.calc_d2jw[data.s2_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2_li]  = calc_S2f_S2_ts_d2jw_dS2dts
                         data.calc_d2jw[data.ts_li][data.ts_li]  =                                           calc_S2f_S2_ts_d2jw_dts2
+                        data.calc_csa1_d2jw[data.s2f_li][data.ts_li] = data.calc_csa1_d2jw[data.ts_li][data.s2f_li] = calc_csa1_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_csa1_d2jw[data.s2_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2_li]  = calc_csa1_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_csa1_d2jw[data.ts_li][data.ts_li]  =                                                calc_csa1_S2f_S2_ts_d2jw_dts2
+                        data.calc_csa2_d2jw[data.s2f_li][data.ts_li] = data.calc_csa2_d2jw[data.ts_li][data.s2f_li] = calc_csa2_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_csa2_d2jw[data.s2_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2_li]  = calc_csa2_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_csa2_d2jw[data.ts_li][data.ts_li]  =                                                calc_csa2_S2f_S2_ts_d2jw_dts2
+                        data.calc_csaC_d2jw[data.s2f_li][data.ts_li] = data.calc_csaC_d2jw[data.ts_li][data.s2f_li] = calc_csaC_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_csaC_d2jw[data.s2_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2_li]  = calc_csaC_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_csaC_d2jw[data.ts_li][data.ts_li]  =                                                calc_csaC_S2f_S2_ts_d2jw_dts2
+                        data.calc_dipY_d2jw[data.s2f_li][data.ts_li] = data.calc_dipY_d2jw[data.ts_li][data.s2f_li] = calc_dipY_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_dipY_d2jw[data.s2_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2_li]  = calc_dipY_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_dipY_d2jw[data.ts_li][data.ts_li]  =                                                calc_dipY_S2f_S2_ts_d2jw_dts2
 
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
                         data.calc_djw[0] = calc_diff_S2f_S2_ts_djw_dGj
+                        data.calc_csa1_djw[0] = calc_csa1_diff_S2f_S2_ts_djw_dGj
+                        data.calc_csa2_djw[0] = calc_csa2_diff_S2f_S2_ts_djw_dGj
+                        data.calc_csaC_djw[0] = calc_csaC_diff_S2f_S2_ts_djw_dGj
+                        data.calc_dipY_djw[0] = calc_dipY_diff_S2f_S2_ts_djw_dGj
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][0] = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][0] = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][0] = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][0] = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdGk
+			
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
                             data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[0][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[0][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[0][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[0][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2_ts_djw_dGj
-                        data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_S2_ts_djw_dOj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2_ts_djw_dGj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2f_S2_ts_djw_dOj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2f_S2_ts_djw_dOj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2f_S2_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_diff_S2f_S2_ts_d2jw_dGjdGk
@@ -2058,6 +3637,59 @@ class Mf:
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_diff_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_diff_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_diff_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_diff_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_diff_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_diff_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_diff_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_diff_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_diff_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_diff_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+
 
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2_ts_d2jw_dGjdS2f
@@ -2075,11 +3707,80 @@ class Mf:
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
 
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][1]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][2]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][1]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][2]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][1]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][2]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][1]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][2]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+
+
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_S2_ts_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = data.calc_csa1_djw[2] = calc_csa1_ellipsoid_S2f_S2_ts_djw_dGj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = data.calc_csa2_djw[2] = calc_csa2_ellipsoid_S2f_S2_ts_djw_dGj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2f_S2_ts_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = data.calc_csaC_djw[2] = calc_csaC_ellipsoid_S2f_S2_ts_djw_dGj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2f_S2_ts_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = data.calc_dipY_djw[2] = calc_dipY_ellipsoid_S2f_S2_ts_djw_dGj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2f_S2_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
@@ -2106,6 +3807,103 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_S2_ts_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][4] = data.calc_csa1_d2jw[4][0] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][5] = data.calc_csa1_d2jw[5][0] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][4] = data.calc_csa1_d2jw[4][1] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][5] = data.calc_csa1_d2jw[5][1] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][4] = data.calc_csa1_d2jw[4][2] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][5] = data.calc_csa1_d2jw[5][2] =   calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][4] = data.calc_csa1_d2jw[4][3] =   calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][5] = data.calc_csa1_d2jw[5][3] =   calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][4] =                               calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][5] = data.calc_csa1_d2jw[5][4] =   calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[5][5] =                               calc_csa1_diff_S2f_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][4] = data.calc_csa2_d2jw[4][0] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][5] = data.calc_csa2_d2jw[5][0] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][4] = data.calc_csa2_d2jw[4][1] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][5] = data.calc_csa2_d2jw[5][1] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][4] = data.calc_csa2_d2jw[4][2] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][5] = data.calc_csa2_d2jw[5][2] =   calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][4] = data.calc_csa2_d2jw[4][3] =   calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][5] = data.calc_csa2_d2jw[5][3] =   calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][4] =                               calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][5] = data.calc_csa2_d2jw[5][4] =   calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[5][5] =                               calc_csa2_diff_S2f_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][4] = data.calc_csaC_d2jw[4][0] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][5] = data.calc_csaC_d2jw[5][0] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][4] = data.calc_csaC_d2jw[4][1] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][5] = data.calc_csaC_d2jw[5][1] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][4] = data.calc_csaC_d2jw[4][2] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][5] = data.calc_csaC_d2jw[5][2] =   calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][4] = data.calc_csaC_d2jw[4][3] =   calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][5] = data.calc_csaC_d2jw[5][3] =   calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][4] =                               calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][5] = data.calc_csaC_d2jw[5][4] =   calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[5][5] =                               calc_csaC_diff_S2f_S2_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][4] = data.calc_dipY_d2jw[4][0] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][5] = data.calc_dipY_d2jw[5][0] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][4] = data.calc_dipY_d2jw[4][1] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][5] = data.calc_dipY_d2jw[5][1] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][4] = data.calc_dipY_d2jw[4][2] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][5] = data.calc_dipY_d2jw[5][2] =   calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][4] = data.calc_dipY_d2jw[4][3] =   calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][5] = data.calc_dipY_d2jw[5][3] =   calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][4] =                               calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][5] = data.calc_dipY_d2jw[5][4] =   calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[5][5] =                               calc_dipY_diff_S2f_S2_ts_d2jw_dOjdOk
+
+
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
@@ -2128,12 +3926,101 @@ class Mf:
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
 
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[4][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][4] = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[5][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][5] = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][0]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][1]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][2]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[4][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][4]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[5][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][5]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[4][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][4]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[5][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][5]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[4][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][4] = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[5][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][5] = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][0]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][1]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][2]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[4][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][4]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[5][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][5]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[4][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][4]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[5][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][5]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[4][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][4] = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[5][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][5] = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][0]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][1]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][2]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[4][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][4]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[5][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][5]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[4][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][4]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[5][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][5]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[4][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][4] = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[5][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][5] = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][0]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][1]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][2]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[4][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][4]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[5][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][5]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[4][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][4]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[5][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][5]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+
+
 
                 # Diffusion parameters and model-free parameters {S2f, tf, S2, ts}.
                 elif data.s2f_i != None and data.tf_i != None and data.s2_i != None and data.ts_i != None:
                     # Equation.
                     data.calc_jw_comps =    calc_S2f_tf_S2_ts_jw_comps
                     data.calc_jw =          calc_S2f_tf_S2_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_tf_S2_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_tf_S2_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_tf_S2_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_tf_S2_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_tf_S2_ts_djw_comps
@@ -2144,6 +4031,22 @@ class Mf:
                         data.calc_djw[data.tf_li] =     calc_S2f_tf_S2_ts_djw_dtf
                         data.calc_djw[data.s2_li] =     calc_S2f_S2_ts_djw_dS2
                         data.calc_djw[data.ts_li] =     calc_S2f_S2_ts_djw_dts
+                        data.calc_csa1_djw[data.s2f_li] =    calc_csa1_S2f_tf_S2_ts_djw_dS2f
+                        data.calc_csa1_djw[data.tf_li] =     calc_csa1_S2f_tf_S2_ts_djw_dtf
+                        data.calc_csa1_djw[data.s2_li] =     calc_csa1_S2f_S2_ts_djw_dS2
+                        data.calc_csa1_djw[data.ts_li] =     calc_csa1_S2f_S2_ts_djw_dts
+                        data.calc_csa2_djw[data.s2f_li] =    calc_csa2_S2f_tf_S2_ts_djw_dS2f
+                        data.calc_csa2_djw[data.tf_li] =     calc_csa2_S2f_tf_S2_ts_djw_dtf
+                        data.calc_csa2_djw[data.s2_li] =     calc_csa2_S2f_S2_ts_djw_dS2
+                        data.calc_csa2_djw[data.ts_li] =     calc_csa2_S2f_S2_ts_djw_dts
+                        data.calc_csaC_djw[data.s2f_li] =    calc_csaC_S2f_tf_S2_ts_djw_dS2f
+                        data.calc_csaC_djw[data.tf_li] =     calc_csaC_S2f_tf_S2_ts_djw_dtf
+                        data.calc_csaC_djw[data.s2_li] =     calc_csaC_S2f_S2_ts_djw_dS2
+                        data.calc_csaC_djw[data.ts_li] =     calc_csaC_S2f_S2_ts_djw_dts
+                        data.calc_dipY_djw[data.s2f_li] =    calc_dipY_S2f_tf_S2_ts_djw_dS2f
+                        data.calc_dipY_djw[data.tf_li] =     calc_dipY_S2f_tf_S2_ts_djw_dtf
+                        data.calc_dipY_djw[data.s2_li] =     calc_dipY_S2f_S2_ts_djw_dS2
+                        data.calc_dipY_djw[data.ts_li] =     calc_dipY_S2f_S2_ts_djw_dts
 
                         # Hessian.
                         data.calc_d2jw[data.s2f_li][data.tf_li] = data.calc_d2jw[data.tf_li][data.s2f_li] = calc_S2f_tf_S2_ts_d2jw_dS2fdtf
@@ -2151,25 +4054,78 @@ class Mf:
                         data.calc_d2jw[data.s2_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2_li]  = calc_S2f_S2_ts_d2jw_dS2dts
                         data.calc_d2jw[data.tf_li][data.tf_li]  =                                           calc_S2f_tf_S2_ts_d2jw_dtf2
                         data.calc_d2jw[data.ts_li][data.ts_li]  =                                           calc_S2f_S2_ts_d2jw_dts2
+                        data.calc_csa1_d2jw[data.s2f_li][data.tf_li] = data.calc_csa1_d2jw[data.tf_li][data.s2f_li] = calc_csa1_S2f_tf_S2_ts_d2jw_dS2fdtf
+                        data.calc_csa1_d2jw[data.s2f_li][data.ts_li] = data.calc_csa1_d2jw[data.ts_li][data.s2f_li] = calc_csa1_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_csa1_d2jw[data.s2_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2_li]  = calc_csa1_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_csa1_d2jw[data.tf_li][data.tf_li]  =                                                calc_csa1_S2f_tf_S2_ts_d2jw_dtf2
+                        data.calc_csa1_d2jw[data.ts_li][data.ts_li]  =                                                calc_csa1_S2f_S2_ts_d2jw_dts2
+                        data.calc_csa2_d2jw[data.s2f_li][data.tf_li] = data.calc_csa2_d2jw[data.tf_li][data.s2f_li] = calc_csa2_S2f_tf_S2_ts_d2jw_dS2fdtf
+                        data.calc_csa2_d2jw[data.s2f_li][data.ts_li] = data.calc_csa2_d2jw[data.ts_li][data.s2f_li] = calc_csa2_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_csa2_d2jw[data.s2_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2_li]  = calc_csa2_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_csa2_d2jw[data.tf_li][data.tf_li]  =                                                calc_csa2_S2f_tf_S2_ts_d2jw_dtf2
+                        data.calc_csa2_d2jw[data.ts_li][data.ts_li]  =                                                calc_csa2_S2f_S2_ts_d2jw_dts2
+                        data.calc_csaC_d2jw[data.s2f_li][data.tf_li] = data.calc_csaC_d2jw[data.tf_li][data.s2f_li] = calc_csaC_S2f_tf_S2_ts_d2jw_dS2fdtf
+                        data.calc_csaC_d2jw[data.s2f_li][data.ts_li] = data.calc_csaC_d2jw[data.ts_li][data.s2f_li] = calc_csaC_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_csaC_d2jw[data.s2_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2_li]  = calc_csaC_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_csaC_d2jw[data.tf_li][data.tf_li]  =                                                calc_csaC_S2f_tf_S2_ts_d2jw_dtf2
+                        data.calc_csaC_d2jw[data.ts_li][data.ts_li]  =                                                calc_csaC_S2f_S2_ts_d2jw_dts2
+                        data.calc_dipY_d2jw[data.s2f_li][data.tf_li] = data.calc_dipY_d2jw[data.tf_li][data.s2f_li] = calc_dipY_S2f_tf_S2_ts_d2jw_dS2fdtf
+                        data.calc_dipY_d2jw[data.s2f_li][data.ts_li] = data.calc_dipY_d2jw[data.ts_li][data.s2f_li] = calc_dipY_S2f_S2_ts_d2jw_dS2fdts
+                        data.calc_dipY_d2jw[data.s2_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2_li]  = calc_dipY_S2f_S2_ts_d2jw_dS2dts
+                        data.calc_dipY_d2jw[data.tf_li][data.tf_li]  =                                                calc_dipY_S2f_tf_S2_ts_d2jw_dtf2
+                        data.calc_dipY_d2jw[data.ts_li][data.ts_li]  =                                                calc_dipY_S2f_S2_ts_d2jw_dts2
 
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
                         data.calc_djw[0] = calc_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csa1_djw[0] = calc_csa1_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csa2_djw[0] = calc_csa2_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csaC_djw[0] = calc_csaC_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_dipY_djw[0] = calc_dipY_diff_S2f_tf_S2_ts_djw_dGj
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][0] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][0] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][0] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][0] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+			
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  = calc_diff_S2f_tf_S2_ts_d2jw_dGjdtf
                             data.calc_d2jw[0][data.s2_li]  = data.calc_d2jw[data.s2_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdS2
                             data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  = calc_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[0][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][0]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[0][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[0][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][0]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[0][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[0][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][0]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[0][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[0][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][0]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[0][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2_ts_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = calc_csa1_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = calc_csa2_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = calc_csaC_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = calc_dipY_diff_S2f_tf_S2_ts_djw_dGj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2f_tf_S2_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_diff_S2f_tf_S2_ts_d2jw_dGjdGk
@@ -2184,6 +4140,59 @@ class Mf:
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
 
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
@@ -2206,11 +4215,100 @@ class Mf:
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
 
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][0]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[1][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][1]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[2][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][2]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csa1_d2jw[3][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][3]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_csa1_d2jw[0][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][1]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][2]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][0]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[1][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][1]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[2][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][2]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csa2_d2jw[3][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][3]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_csa2_d2jw[0][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][1]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][2]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][0]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[1][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][1]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[2][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][2]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csaC_d2jw[3][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][3]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_csaC_d2jw[0][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][1]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][2]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][0]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[1][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][1]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[2][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][2]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_dipY_d2jw[3][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][3]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_dipY_d2jw[0][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][1]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][2]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_diff_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+
+
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_tf_S2_ts_djw_dGj
                         data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = data.calc_csa1_djw[2] = calc_csa1_ellipsoid_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = data.calc_csa2_djw[2] = calc_csa2_ellipsoid_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = data.calc_csaC_djw[2] = calc_csaC_ellipsoid_S2f_tf_S2_ts_djw_dGj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2f_tf_S2_ts_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = data.calc_dipY_djw[2] = calc_dipY_ellipsoid_S2f_tf_S2_ts_djw_dGj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2f_tf_S2_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
@@ -2236,6 +4334,103 @@ class Mf:
                         data.calc_d2jw[4][4] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][4] = data.calc_csa1_d2jw[4][0] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][5] = data.calc_csa1_d2jw[5][0] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][4] = data.calc_csa1_d2jw[4][1] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][5] = data.calc_csa1_d2jw[5][1] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][4] = data.calc_csa1_d2jw[4][2] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][5] = data.calc_csa1_d2jw[5][2] =   calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][4] = data.calc_csa1_d2jw[4][3] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][5] = data.calc_csa1_d2jw[5][3] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][4] =                               calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][5] = data.calc_csa1_d2jw[5][4] =   calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[5][5] =                               calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][4] = data.calc_csa2_d2jw[4][0] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][5] = data.calc_csa2_d2jw[5][0] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][4] = data.calc_csa2_d2jw[4][1] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][5] = data.calc_csa2_d2jw[5][1] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][4] = data.calc_csa2_d2jw[4][2] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][5] = data.calc_csa2_d2jw[5][2] =   calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][4] = data.calc_csa2_d2jw[4][3] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][5] = data.calc_csa2_d2jw[5][3] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][4] =                               calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][5] = data.calc_csa2_d2jw[5][4] =   calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[5][5] =                               calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][4] = data.calc_csaC_d2jw[4][0] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][5] = data.calc_csaC_d2jw[5][0] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][4] = data.calc_csaC_d2jw[4][1] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][5] = data.calc_csaC_d2jw[5][1] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][4] = data.calc_csaC_d2jw[4][2] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][5] = data.calc_csaC_d2jw[5][2] =   calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][4] = data.calc_csaC_d2jw[4][3] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][5] = data.calc_csaC_d2jw[5][3] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][4] =                               calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][5] = data.calc_csaC_d2jw[5][4] =   calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[5][5] =                               calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][4] = data.calc_dipY_d2jw[4][0] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][5] = data.calc_dipY_d2jw[5][0] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][4] = data.calc_dipY_d2jw[4][1] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][5] = data.calc_dipY_d2jw[5][1] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][4] = data.calc_dipY_d2jw[4][2] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][5] = data.calc_dipY_d2jw[5][2] =   calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][4] = data.calc_dipY_d2jw[4][3] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][5] = data.calc_dipY_d2jw[5][3] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][4] =                               calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][5] = data.calc_dipY_d2jw[5][4] =   calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[5][5] =                               calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdOk
+
 
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
@@ -2265,6 +4460,119 @@ class Mf:
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[4][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][4] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[5][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][5] = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][0]  = calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[1][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][1]  = calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[2][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][2]  = calc_csa1_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[3][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][3]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csa1_d2jw[4][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][4]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csa1_d2jw[5][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][5]  = calc_csa1_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_csa1_d2jw[0][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][0]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[1][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][1]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[2][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][2]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa1_d2jw[3][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[4][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][4]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa1_d2jw[5][data.s2_li]  = data.calc_csa1_d2jw[data.s2_li][5]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[4][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][4]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[5][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][5]  = calc_csa1_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[4][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][4] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[5][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][5] = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][0]  = calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[1][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][1]  = calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[2][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][2]  = calc_csa2_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[3][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][3]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csa2_d2jw[4][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][4]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csa2_d2jw[5][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][5]  = calc_csa2_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_csa2_d2jw[0][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][0]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[1][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][1]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[2][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][2]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csa2_d2jw[3][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[4][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][4]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csa2_d2jw[5][data.s2_li]  = data.calc_csa2_d2jw[data.s2_li][5]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[4][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][4]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[5][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][5]  = calc_csa2_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[4][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][4] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[5][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][5] = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][0]  = calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[1][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][1]  = calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[2][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][2]  = calc_csaC_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[3][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][3]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csaC_d2jw[4][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][4]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_csaC_d2jw[5][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][5]  = calc_csaC_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_csaC_d2jw[0][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][0]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[1][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][1]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[2][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][2]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_csaC_d2jw[3][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[4][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][4]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_csaC_d2jw[5][data.s2_li]  = data.calc_csaC_d2jw[data.s2_li][5]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[4][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][4]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[5][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][5]  = calc_csaC_diff_S2f_S2_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[4][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][4] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[5][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][5] = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][0]  = calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[1][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][1]  = calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[2][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][2]  = calc_dipY_ellipsoid_S2f_tf_S2_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[3][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][3]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_dipY_d2jw[4][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][4]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+                            data.calc_dipY_d2jw[5][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][5]  = calc_dipY_diff_S2f_tf_S2_ts_d2jw_dOjdtf
+
+                            data.calc_dipY_d2jw[0][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][0]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[1][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][1]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[2][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][2]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdS2
+                            data.calc_dipY_d2jw[3][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[4][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][4]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+                            data.calc_dipY_d2jw[5][data.s2_li]  = data.calc_dipY_d2jw[data.s2_li][5]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdS2
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_ellipsoid_S2f_S2_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[4][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][4]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[5][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][5]  = calc_dipY_diff_S2f_S2_ts_d2jw_dOjdts
+
 
                 # Bad parameter combination.
                 else:
@@ -2315,24 +4623,60 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    calc_S2f_S2s_ts_jw_comps
                     data.calc_jw =          calc_S2f_S2s_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_S2s_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_S2s_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_S2s_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_S2s_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps =           calc_S2f_S2s_ts_djw_comps
                     data.calc_djw[data.s2f_li] =    calc_S2f_S2s_ts_djw_dS2f
                     data.calc_djw[data.s2s_li] =    calc_S2f_tf_S2s_ts_djw_dS2s
                     data.calc_djw[data.ts_li] =     calc_S2f_S2s_ts_djw_dts
+                    data.calc_csa1_djw[data.s2f_li] =    calc_csa1_S2f_S2s_ts_djw_dS2f
+                    data.calc_csa1_djw[data.s2s_li] =    calc_csa1_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_csa1_djw[data.ts_li] =     calc_csa1_S2f_S2s_ts_djw_dts
+                    data.calc_csa2_djw[data.s2f_li] =    calc_csa2_S2f_S2s_ts_djw_dS2f
+                    data.calc_csa2_djw[data.s2s_li] =    calc_csa2_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_csa2_djw[data.ts_li] =     calc_csa2_S2f_S2s_ts_djw_dts
+                    data.calc_csaC_djw[data.s2f_li] =    calc_csaC_S2f_S2s_ts_djw_dS2f
+                    data.calc_csaC_djw[data.s2s_li] =    calc_csaC_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_csaC_djw[data.ts_li] =     calc_csaC_S2f_S2s_ts_djw_dts
+                    data.calc_dipY_djw[data.s2f_li] =    calc_dipY_S2f_S2s_ts_djw_dS2f
+                    data.calc_dipY_djw[data.s2s_li] =    calc_dipY_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_dipY_djw[data.ts_li] =     calc_dipY_S2f_S2s_ts_djw_dts
 
                     # Hessian.
                     data.calc_d2jw[data.s2f_li][data.s2s_li] = data.calc_d2jw[data.s2s_li][data.s2f_li] =   calc_S2f_S2s_ts_d2jw_dS2fdS2s
                     data.calc_d2jw[data.s2f_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2f_li]  =   calc_S2f_S2s_ts_d2jw_dS2fdts
                     data.calc_d2jw[data.s2s_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2s_li]  =   calc_S2f_S2s_ts_d2jw_dS2sdts
                     data.calc_d2jw[data.ts_li][data.ts_li]   =                                              calc_S2f_S2s_ts_d2jw_dts2
+                    data.calc_csa1_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][data.s2f_li] =   calc_csa1_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_csa1_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2f_li]  =   calc_csa1_S2f_S2s_ts_d2jw_dS2fdts
+                    data.calc_csa1_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2s_li]  =   calc_csa1_S2f_S2s_ts_d2jw_dS2sdts
+                    data.calc_csa1_d2jw[data.ts_li][data.ts_li]   =                                              calc_csa1_S2f_S2s_ts_d2jw_dts2
+                    data.calc_csa2_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][data.s2f_li] =   calc_csa2_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_csa2_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2f_li]  =   calc_csa2_S2f_S2s_ts_d2jw_dS2fdts
+                    data.calc_csa2_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2s_li]  =   calc_csa2_S2f_S2s_ts_d2jw_dS2sdts
+                    data.calc_csa2_d2jw[data.ts_li][data.ts_li]   =                                              calc_csa2_S2f_S2s_ts_d2jw_dts2
+                    data.calc_csaC_d2jw[data.s2f_li][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][data.s2f_li] =   calc_csaC_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_csaC_d2jw[data.s2f_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2f_li]  =   calc_csaC_S2f_S2s_ts_d2jw_dS2fdts
+                    data.calc_csaC_d2jw[data.s2s_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2s_li]  =   calc_csaC_S2f_S2s_ts_d2jw_dS2sdts
+                    data.calc_csaC_d2jw[data.ts_li][data.ts_li]   =                                              calc_csaC_S2f_S2s_ts_d2jw_dts2
+                    data.calc_dipY_d2jw[data.s2f_li][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][data.s2f_li] =   calc_dipY_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_dipY_d2jw[data.s2f_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2f_li]  =   calc_dipY_S2f_S2s_ts_d2jw_dS2fdts
+                    data.calc_dipY_d2jw[data.s2s_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2s_li]  =   calc_dipY_S2f_S2s_ts_d2jw_dS2sdts
+                    data.calc_dipY_d2jw[data.ts_li][data.ts_li]   =                                              calc_dipY_S2f_S2s_ts_d2jw_dts2
 
                 # Model-free parameters {S2f, tf, S2s, ts}.
                 elif data.s2f_i != None and data.tf_i != None and data.s2s_i != None and data.ts_i != None:
                     # Equation.
                     data.calc_jw_comps =    calc_S2f_tf_S2s_ts_jw_comps
                     data.calc_jw =          calc_S2f_tf_S2s_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_tf_S2s_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_tf_S2s_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_tf_S2s_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_tf_S2s_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps =           calc_S2f_tf_S2s_ts_djw_comps
@@ -2340,6 +4684,22 @@ class Mf:
                     data.calc_djw[data.tf_li] =     calc_S2f_tf_S2s_ts_djw_dtf
                     data.calc_djw[data.s2s_li] =    calc_S2f_tf_S2s_ts_djw_dS2s
                     data.calc_djw[data.ts_li] =     calc_S2f_tf_S2s_ts_djw_dts
+                    data.calc_csa1_djw[data.s2f_li] =    calc_csa1_S2f_tf_S2s_ts_djw_dS2f
+                    data.calc_csa1_djw[data.tf_li] =     calc_csa1_S2f_tf_S2s_ts_djw_dtf
+                    data.calc_csa1_djw[data.s2s_li] =    calc_csa1_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_csa1_djw[data.ts_li] =     calc_csa1_S2f_tf_S2s_ts_djw_dts
+                    data.calc_csa2_djw[data.s2f_li] =    calc_csa2_S2f_tf_S2s_ts_djw_dS2f
+                    data.calc_csa2_djw[data.tf_li] =     calc_csa2_S2f_tf_S2s_ts_djw_dtf
+                    data.calc_csa2_djw[data.s2s_li] =    calc_csa2_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_csa2_djw[data.ts_li] =     calc_csa2_S2f_tf_S2s_ts_djw_dts
+                    data.calc_csaC_djw[data.s2f_li] =    calc_csaC_S2f_tf_S2s_ts_djw_dS2f
+                    data.calc_csaC_djw[data.tf_li] =     calc_csaC_S2f_tf_S2s_ts_djw_dtf
+                    data.calc_csaC_djw[data.s2s_li] =    calc_csaC_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_csaC_djw[data.ts_li] =     calc_csaC_S2f_tf_S2s_ts_djw_dts
+                    data.calc_dipY_djw[data.s2f_li] =    calc_dipY_S2f_tf_S2s_ts_djw_dS2f
+                    data.calc_dipY_djw[data.tf_li] =     calc_dipY_S2f_tf_S2s_ts_djw_dtf
+                    data.calc_dipY_djw[data.s2s_li] =    calc_dipY_S2f_tf_S2s_ts_djw_dS2s
+                    data.calc_dipY_djw[data.ts_li] =     calc_dipY_S2f_tf_S2s_ts_djw_dts
 
                     # Hessian.
                     data.calc_d2jw[data.s2f_li][data.s2s_li] = data.calc_d2jw[data.s2s_li][data.s2f_li] =   calc_S2f_S2s_ts_d2jw_dS2fdS2s
@@ -2348,6 +4708,30 @@ class Mf:
                     data.calc_d2jw[data.s2s_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2s_li]  =   calc_S2f_tf_S2s_ts_d2jw_dS2sdts
                     data.calc_d2jw[data.tf_li][data.tf_li]   =                                              calc_S2f_tf_S2s_ts_d2jw_dtf2
                     data.calc_d2jw[data.ts_li][data.ts_li]   =                                              calc_S2f_tf_S2s_ts_d2jw_dts2
+                    data.calc_csa1_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][data.s2f_li] =   calc_csa1_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_csa1_d2jw[data.s2f_li][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][data.s2f_li]  =   calc_csa1_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                    data.calc_csa1_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2f_li]  =   calc_csa1_S2f_tf_S2s_ts_d2jw_dS2fdts
+                    data.calc_csa1_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2s_li]  =   calc_csa1_S2f_tf_S2s_ts_d2jw_dS2sdts
+                    data.calc_csa1_d2jw[data.tf_li][data.tf_li]   =                                                   calc_csa1_S2f_tf_S2s_ts_d2jw_dtf2
+                    data.calc_csa1_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csa1_S2f_tf_S2s_ts_d2jw_dts2
+                    data.calc_csa2_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][data.s2f_li] =   calc_csa2_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_csa2_d2jw[data.s2f_li][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][data.s2f_li]  =   calc_csa2_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                    data.calc_csa2_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2f_li]  =   calc_csa2_S2f_tf_S2s_ts_d2jw_dS2fdts
+                    data.calc_csa2_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2s_li]  =   calc_csa2_S2f_tf_S2s_ts_d2jw_dS2sdts
+                    data.calc_csa2_d2jw[data.tf_li][data.tf_li]   =                                                   calc_csa2_S2f_tf_S2s_ts_d2jw_dtf2
+                    data.calc_csa2_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csa2_S2f_tf_S2s_ts_d2jw_dts2
+                    data.calc_csaC_d2jw[data.s2f_li][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][data.s2f_li] =   calc_csaC_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_csaC_d2jw[data.s2f_li][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][data.s2f_li]  =   calc_csaC_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                    data.calc_csaC_d2jw[data.s2f_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2f_li]  =   calc_csaC_S2f_tf_S2s_ts_d2jw_dS2fdts
+                    data.calc_csaC_d2jw[data.s2s_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2s_li]  =   calc_csaC_S2f_tf_S2s_ts_d2jw_dS2sdts
+                    data.calc_csaC_d2jw[data.tf_li][data.tf_li]   =                                                   calc_csaC_S2f_tf_S2s_ts_d2jw_dtf2
+                    data.calc_csaC_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csaC_S2f_tf_S2s_ts_d2jw_dts2
+                    data.calc_dipY_d2jw[data.s2f_li][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][data.s2f_li] =   calc_dipY_S2f_S2s_ts_d2jw_dS2fdS2s
+                    data.calc_dipY_d2jw[data.s2f_li][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][data.s2f_li]  =   calc_dipY_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                    data.calc_dipY_d2jw[data.s2f_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2f_li]  =   calc_dipY_S2f_tf_S2s_ts_d2jw_dS2fdts
+                    data.calc_dipY_d2jw[data.s2s_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2s_li]  =   calc_dipY_S2f_tf_S2s_ts_d2jw_dS2sdts
+                    data.calc_dipY_d2jw[data.tf_li][data.tf_li]   =                                                   calc_dipY_S2f_tf_S2s_ts_d2jw_dtf2
+                    data.calc_dipY_d2jw[data.ts_li][data.ts_li]   =                                                   calc_dipY_S2f_tf_S2s_ts_d2jw_dts2
 
                 # Bad parameter combination.
                 else:
@@ -2361,6 +4745,10 @@ class Mf:
                     # Equation.
                     data.calc_jw_comps =    calc_diff_S2f_S2s_ts_jw_comps
                     data.calc_jw =          calc_S2f_S2s_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_S2s_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_S2s_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_S2s_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_S2s_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_S2s_ts_djw_comps
@@ -2370,30 +4758,87 @@ class Mf:
                         data.calc_djw[data.s2f_li] =    calc_diff_S2f_S2s_ts_djw_dS2f
                         data.calc_djw[data.s2s_li] =    calc_diff_S2f_S2s_ts_djw_dS2s
                         data.calc_djw[data.ts_li] =     calc_diff_S2f_S2s_ts_djw_dts
+                        data.calc_csa1_djw[data.s2f_li] =    calc_csa1_diff_S2f_S2s_ts_djw_dS2f
+                        data.calc_csa1_djw[data.s2s_li] =    calc_csa1_diff_S2f_S2s_ts_djw_dS2s
+                        data.calc_csa1_djw[data.ts_li] =     calc_csa1_diff_S2f_S2s_ts_djw_dts
+                        data.calc_csa2_djw[data.s2f_li] =    calc_csa2_diff_S2f_S2s_ts_djw_dS2f
+                        data.calc_csa2_djw[data.s2s_li] =    calc_csa2_diff_S2f_S2s_ts_djw_dS2s
+                        data.calc_csa2_djw[data.ts_li] =     calc_csa2_diff_S2f_S2s_ts_djw_dts
+                        data.calc_csaC_djw[data.s2f_li] =    calc_csaC_diff_S2f_S2s_ts_djw_dS2f
+                        data.calc_csaC_djw[data.s2s_li] =    calc_csaC_diff_S2f_S2s_ts_djw_dS2s
+                        data.calc_csaC_djw[data.ts_li] =     calc_csaC_diff_S2f_S2s_ts_djw_dts
+                        data.calc_dipY_djw[data.s2f_li] =    calc_dipY_diff_S2f_S2s_ts_djw_dS2f
+                        data.calc_dipY_djw[data.s2s_li] =    calc_dipY_diff_S2f_S2s_ts_djw_dS2s
+                        data.calc_dipY_djw[data.ts_li] =     calc_dipY_diff_S2f_S2s_ts_djw_dts
 
                         # Hessian.
                         data.calc_d2jw[data.s2f_li][data.s2s_li] = data.calc_d2jw[data.s2s_li][data.s2f_li] =   calc_S2f_S2s_ts_d2jw_dS2fdS2s
                         data.calc_d2jw[data.s2f_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2f_li]  =   calc_diff_S2f_S2s_ts_d2jw_dS2fdts
                         data.calc_d2jw[data.s2s_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2s_li]  =   calc_diff_S2f_S2s_ts_d2jw_dS2sdts
                         data.calc_d2jw[data.ts_li][data.ts_li]   =                                              calc_diff_S2f_S2s_ts_d2jw_dts2
+                        data.calc_csa1_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][data.s2f_li] =   calc_csa1_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_csa1_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2f_li]  =   calc_csa1_diff_S2f_S2s_ts_d2jw_dS2fdts
+                        data.calc_csa1_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2s_li]  =   calc_csa1_diff_S2f_S2s_ts_d2jw_dS2sdts
+                        data.calc_csa1_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csa1_diff_S2f_S2s_ts_d2jw_dts2
+                        data.calc_csa2_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][data.s2f_li] =   calc_csa2_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_csa2_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2f_li]  =   calc_csa2_diff_S2f_S2s_ts_d2jw_dS2fdts
+                        data.calc_csa2_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2s_li]  =   calc_csa2_diff_S2f_S2s_ts_d2jw_dS2sdts
+                        data.calc_csa2_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csa2_diff_S2f_S2s_ts_d2jw_dts2
+                        data.calc_csaC_d2jw[data.s2f_li][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][data.s2f_li] =   calc_csaC_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_csaC_d2jw[data.s2f_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2f_li]  =   calc_csaC_diff_S2f_S2s_ts_d2jw_dS2fdts
+                        data.calc_csaC_d2jw[data.s2s_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2s_li]  =   calc_csaC_diff_S2f_S2s_ts_d2jw_dS2sdts
+                        data.calc_csaC_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csaC_diff_S2f_S2s_ts_d2jw_dts2
+                        data.calc_dipY_d2jw[data.s2f_li][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][data.s2f_li] =   calc_dipY_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_dipY_d2jw[data.s2f_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2f_li]  =   calc_dipY_diff_S2f_S2s_ts_d2jw_dS2fdts
+                        data.calc_dipY_d2jw[data.s2s_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2s_li]  =   calc_dipY_diff_S2f_S2s_ts_d2jw_dS2sdts
+                        data.calc_dipY_d2jw[data.ts_li][data.ts_li]   =                                                   calc_dipY_diff_S2f_S2s_ts_d2jw_dts2
 
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
                         data.calc_djw[0] = calc_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_csa1_djw[0] = calc_csa1_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_csa2_djw[0] = calc_csa2_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_csaC_djw[0] = calc_csaC_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_dipY_djw[0] = calc_dipY_diff_S2f_S2s_ts_djw_dGj
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][0] = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][0] = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][0] = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][0] = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdGk
+			
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_S2s_ts_d2jw_dGjdS2s
                             data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  =   calc_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[0][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][0] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[0][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][0] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[0][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][0] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[0][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][0] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_S2s_ts_djw_dGj
                         data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csa1_djw[0] = data.calc_csa1_djw[1] = calc_csa1_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csa2_djw[0] = data.calc_csa2_djw[1] = calc_csa2_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csaC_djw[0] = data.calc_csaC_djw[1] = calc_csaC_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_dipY_djw[0] = data.calc_dipY_djw[1] = calc_dipY_diff_S2f_S2s_ts_djw_dGj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2f_S2s_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_diff_S2f_S2s_ts_d2jw_dGjdGk
@@ -2408,6 +4853,59 @@ class Mf:
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+
 
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_S2s_ts_d2jw_dGjdS2f
@@ -2425,11 +4923,80 @@ class Mf:
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
 
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][0] = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[1][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][1] = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[2][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][2] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa1_d2jw[3][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][3] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][0] = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[1][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][1] = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[2][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][2] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa2_d2jw[3][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][3] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][0] = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[1][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][1] = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[2][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][2] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csaC_d2jw[3][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][3] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][0] = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[1][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][1] = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[2][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][2] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_dipY_d2jw[3][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][3] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+
+
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_S2s_ts_djw_dGj
-                        data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_S2s_ts_djw_dGj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2f_S2s_ts_djw_dOj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2f_S2s_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
@@ -2456,6 +5023,103 @@ class Mf:
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_S2s_ts_d2jw_dOjdOk
 
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][4] = data.calc_csa1_d2jw[4][0] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][5] = data.calc_csa1_d2jw[5][0] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][4] = data.calc_csa1_d2jw[4][1] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][5] = data.calc_csa1_d2jw[5][1] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][4] = data.calc_csa1_d2jw[4][2] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][5] = data.calc_csa1_d2jw[5][2] =   calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][4] = data.calc_csa1_d2jw[4][3] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][5] = data.calc_csa1_d2jw[5][3] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][4] =                               calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][5] = data.calc_csa1_d2jw[5][4] =   calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[5][5] =                               calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][4] = data.calc_csa2_d2jw[4][0] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][5] = data.calc_csa2_d2jw[5][0] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][4] = data.calc_csa2_d2jw[4][1] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][5] = data.calc_csa2_d2jw[5][1] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][4] = data.calc_csa2_d2jw[4][2] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][5] = data.calc_csa2_d2jw[5][2] =   calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][4] = data.calc_csa2_d2jw[4][3] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][5] = data.calc_csa2_d2jw[5][3] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][4] =                               calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][5] = data.calc_csa2_d2jw[5][4] =   calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[5][5] =                               calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][4] = data.calc_csaC_d2jw[4][0] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][5] = data.calc_csaC_d2jw[5][0] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][4] = data.calc_csaC_d2jw[4][1] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][5] = data.calc_csaC_d2jw[5][1] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][4] = data.calc_csaC_d2jw[4][2] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][5] = data.calc_csaC_d2jw[5][2] =   calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][4] = data.calc_csaC_d2jw[4][3] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][5] = data.calc_csaC_d2jw[5][3] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][4] =                               calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][5] = data.calc_csaC_d2jw[5][4] =   calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[5][5] =                               calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][4] = data.calc_dipY_d2jw[4][0] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][5] = data.calc_dipY_d2jw[5][0] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][4] = data.calc_dipY_d2jw[4][1] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][5] = data.calc_dipY_d2jw[5][1] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][4] = data.calc_dipY_d2jw[4][2] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][5] = data.calc_dipY_d2jw[5][2] =   calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][4] = data.calc_dipY_d2jw[4][3] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][5] = data.calc_dipY_d2jw[5][3] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][4] =                               calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][5] = data.calc_dipY_d2jw[5][4] =   calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[5][5] =                               calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdOk
+
+
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[1][data.s2f_li] = data.calc_d2jw[data.s2f_li][1] = calc_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
@@ -2478,11 +5142,100 @@ class Mf:
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
 
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[4][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][4] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[5][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][5] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][0] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[1][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][1] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[2][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][2] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[3][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][3] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa1_d2jw[4][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][4] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa1_d2jw[5][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][5] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[4][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][4]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[5][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][5]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[4][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][4] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[5][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][5] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][0] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[1][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][1] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[2][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][2] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[3][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][3] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa2_d2jw[4][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][4] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa2_d2jw[5][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][5] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[4][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][4]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[5][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][5]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[4][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][4] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[5][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][5] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][0] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[1][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][1] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[2][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][2] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[3][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][3] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csaC_d2jw[4][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][4] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csaC_d2jw[5][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][5] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[4][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][4]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[5][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][5]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[4][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][4] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[5][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][5] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][0] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[1][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][1] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[2][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][2] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[3][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][3] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_dipY_d2jw[4][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][4] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_dipY_d2jw[5][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][5] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[4][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][4]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[5][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][5]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+
+
                 # Diffusion parameters and model-free parameters {S2f, tf, S2s, ts}.
                 elif data.s2f_i != None and data.tf_i != None and data.s2s_i != None and data.ts_i != None:
                     # Equation.
                     data.calc_jw_comps =    calc_diff_S2f_tf_S2s_ts_jw_comps
                     data.calc_jw =          calc_S2f_tf_S2s_ts_jw
+                    data.calc_csa1_jw =          calc_csa1_S2f_tf_S2s_ts_jw
+                    data.calc_csa2_jw =          calc_csa2_S2f_tf_S2s_ts_jw
+                    data.calc_csaC_jw =          calc_csaC_S2f_tf_S2s_ts_jw
+                    data.calc_dipY_jw =          calc_dipY_S2f_tf_S2s_ts_jw
 
                     # Gradient.
                     data.calc_djw_comps = calc_diff_S2f_tf_S2s_ts_djw_comps
@@ -2493,6 +5246,22 @@ class Mf:
                         data.calc_djw[data.tf_li] =     calc_diff_S2f_tf_S2s_ts_djw_dtf
                         data.calc_djw[data.s2s_li] =    calc_diff_S2f_tf_S2s_ts_djw_dS2s
                         data.calc_djw[data.ts_li] =     calc_diff_S2f_tf_S2s_ts_djw_dts
+                        data.calc_csa1_djw[data.s2f_li] =    calc_csa1_diff_S2f_tf_S2s_ts_djw_dS2f
+                        data.calc_csa1_djw[data.tf_li] =     calc_csa1_diff_S2f_tf_S2s_ts_djw_dtf
+                        data.calc_csa1_djw[data.s2s_li] =    calc_csa1_diff_S2f_tf_S2s_ts_djw_dS2s
+                        data.calc_csa1_djw[data.ts_li] =     calc_csa1_diff_S2f_tf_S2s_ts_djw_dts
+                        data.calc_csa2_djw[data.s2f_li] =    calc_csa2_diff_S2f_tf_S2s_ts_djw_dS2f
+                        data.calc_csa2_djw[data.tf_li] =     calc_csa2_diff_S2f_tf_S2s_ts_djw_dtf
+                        data.calc_csa2_djw[data.s2s_li] =    calc_csa2_diff_S2f_tf_S2s_ts_djw_dS2s
+                        data.calc_csa2_djw[data.ts_li] =     calc_csa2_diff_S2f_tf_S2s_ts_djw_dts
+                        data.calc_csaC_djw[data.s2f_li] =    calc_csaC_diff_S2f_tf_S2s_ts_djw_dS2f
+                        data.calc_csaC_djw[data.tf_li] =     calc_csaC_diff_S2f_tf_S2s_ts_djw_dtf
+                        data.calc_csaC_djw[data.s2s_li] =    calc_csaC_diff_S2f_tf_S2s_ts_djw_dS2s
+                        data.calc_csaC_djw[data.ts_li] =     calc_csaC_diff_S2f_tf_S2s_ts_djw_dts
+                        data.calc_dipY_djw[data.s2f_li] =    calc_dipY_diff_S2f_tf_S2s_ts_djw_dS2f
+                        data.calc_dipY_djw[data.tf_li] =     calc_dipY_diff_S2f_tf_S2s_ts_djw_dtf
+                        data.calc_dipY_djw[data.s2s_li] =    calc_dipY_diff_S2f_tf_S2s_ts_djw_dS2s
+                        data.calc_dipY_djw[data.ts_li] =     calc_dipY_diff_S2f_tf_S2s_ts_djw_dts
 
                         # Hessian.
                         data.calc_d2jw[data.s2f_li][data.s2s_li] = data.calc_d2jw[data.s2s_li][data.s2f_li] =   calc_S2f_S2s_ts_d2jw_dS2fdS2s
@@ -2501,25 +5270,82 @@ class Mf:
                         data.calc_d2jw[data.tf_li][data.tf_li]   =                                              calc_diff_S2f_tf_S2s_ts_d2jw_dtf2
                         data.calc_d2jw[data.s2s_li][data.ts_li]  = data.calc_d2jw[data.ts_li][data.s2s_li]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dS2sdts
                         data.calc_d2jw[data.ts_li][data.ts_li]   =                                              calc_diff_S2f_tf_S2s_ts_d2jw_dts2
+                        data.calc_csa1_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][data.s2f_li] =   calc_csa1_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_csa1_d2jw[data.s2f_li][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][data.s2f_li]  =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                        data.calc_csa1_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2f_li]  =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dS2fdts
+                        data.calc_csa1_d2jw[data.tf_li][data.tf_li]   =                                                   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dtf2
+                        data.calc_csa1_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][data.s2s_li]  =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dS2sdts
+                        data.calc_csa1_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dts2
+                        data.calc_csa2_d2jw[data.s2f_li][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][data.s2f_li] =   calc_csa2_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_csa2_d2jw[data.s2f_li][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][data.s2f_li]  =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                        data.calc_csa2_d2jw[data.s2f_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2f_li]  =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dS2fdts
+                        data.calc_csa2_d2jw[data.tf_li][data.tf_li]   =                                                   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dtf2
+                        data.calc_csa2_d2jw[data.s2s_li][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][data.s2s_li]  =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dS2sdts
+                        data.calc_csa2_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dts2
+                        data.calc_csaC_d2jw[data.s2f_li][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][data.s2f_li] =   calc_csaC_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_csaC_d2jw[data.s2f_li][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][data.s2f_li]  =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                        data.calc_csaC_d2jw[data.s2f_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2f_li]  =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dS2fdts
+                        data.calc_csaC_d2jw[data.tf_li][data.tf_li]   =                                                   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dtf2
+                        data.calc_csaC_d2jw[data.s2s_li][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][data.s2s_li]  =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dS2sdts
+                        data.calc_csaC_d2jw[data.ts_li][data.ts_li]   =                                                   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dts2
+                        data.calc_dipY_d2jw[data.s2f_li][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][data.s2f_li] =   calc_dipY_S2f_S2s_ts_d2jw_dS2fdS2s
+                        data.calc_dipY_d2jw[data.s2f_li][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][data.s2f_li]  =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dS2fdtf
+                        data.calc_dipY_d2jw[data.s2f_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2f_li]  =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dS2fdts
+                        data.calc_dipY_d2jw[data.tf_li][data.tf_li]   =                                                   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dtf2
+                        data.calc_dipY_d2jw[data.s2s_li][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][data.s2s_li]  =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dS2sdts
+                        data.calc_dipY_d2jw[data.ts_li][data.ts_li]   =                                                   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dts2
 
                     # Diffusion as a sphere.
                     if self.diff_data.type == 'sphere':
                         # Gradient.
                         data.calc_djw[0] = calc_diff_S2f_tf_S2s_ts_djw_dGj
+                        data.calc_csa1_djw[0] = calc_csa1_diff_S2f_tf_S2s_ts_djw_dGj
+                        data.calc_csa2_djw[0] = calc_csa2_diff_S2f_tf_S2s_ts_djw_dGj
+                        data.calc_csaC_djw[0] = calc_csaC_diff_S2f_tf_S2s_ts_djw_dGj
+                        data.calc_dipY_djw[0] = calc_dipY_diff_S2f_tf_S2s_ts_djw_dGj
 
                         # Hessian.
                         data.calc_d2jw[0][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][0] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][0] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][0] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][0] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+			
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
                             data.calc_d2jw[0][data.tf_li]  = data.calc_d2jw[data.tf_li][0]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
                             data.calc_d2jw[0][data.s2s_li] = data.calc_d2jw[data.s2s_li][0] =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2s
                             data.calc_d2jw[0][data.ts_li]  = data.calc_d2jw[data.ts_li][0]  =   calc_diff_S2f_tf_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[0][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][0]  =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[0][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][0] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[0][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][0]  =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[0][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][0] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[0][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][0]  =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[0][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][0] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[0][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][0]  =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[0][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][0] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdts
 
                     # Diffusion as a spheroid.
                     elif self.diff_data.type == 'spheroid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2s_ts_djw_dGj
-                        data.calc_djw[2] = data.calc_djw[3] = calc_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_djw[0] = data.calc_djw[1] = calc_diff_S2f_tf_S2s_ts_djw_dGj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csa1_djw[2] = data.calc_csa1_djw[3] = calc_csa1_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csa2_djw[2] = data.calc_csa2_djw[3] = calc_csa2_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csaC_djw[2] = data.calc_csaC_djw[3] = calc_csaC_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_dipY_djw[2] = data.calc_dipY_djw[3] = calc_dipY_diff_S2f_tf_S2s_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
@@ -2534,6 +5360,59 @@ class Mf:
                         data.calc_d2jw[2][2] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[2][3] = data.calc_d2jw[3][2] =   calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[3][3] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
 
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
@@ -2556,11 +5435,100 @@ class Mf:
                             data.calc_d2jw[2][data.ts_li]  = data.calc_d2jw[data.ts_li][2]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[3][data.ts_li]  = data.calc_d2jw[data.ts_li][3]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
 
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][0]  = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[1][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][1]  = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[2][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][2]  = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csa1_d2jw[3][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][3]  = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_csa1_d2jw[0][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][0] = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[1][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][1] = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[2][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][2] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa1_d2jw[3][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][3] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][0]  = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[1][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][1]  = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[2][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][2]  = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csa2_d2jw[3][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][3]  = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_csa2_d2jw[0][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][0] = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[1][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][1] = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[2][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][2] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa2_d2jw[3][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][3] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][0]  = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[1][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][1]  = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[2][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][2]  = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csaC_d2jw[3][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][3]  = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_csaC_d2jw[0][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][0] = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[1][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][1] = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[2][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][2] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csaC_d2jw[3][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][3] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][0]  = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[1][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][1]  = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[2][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][2]  = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_dipY_d2jw[3][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][3]  = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_dipY_d2jw[0][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][0] = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[1][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][1] = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[2][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][2] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_dipY_d2jw[3][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][3] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+
+
                     # Diffusion as an ellipsoid.
                     elif self.diff_data.type == 'ellipsoid':
                         # Gradient.
                         data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_tf_S2s_ts_djw_dGj
-                        data.calc_djw[3] = data.calc_djw[4] = data.calc_djw[5] = calc_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_djw[0] = data.calc_djw[1] = data.calc_djw[2] = calc_ellipsoid_S2f_tf_S2s_ts_djw_dGj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csa1_djw[3] = data.calc_csa1_djw[4] = data.calc_csa1_djw[5] = calc_csa1_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csa2_djw[3] = data.calc_csa2_djw[4] = data.calc_csa2_djw[5] = calc_csa2_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_csaC_djw[3] = data.calc_csaC_djw[4] = data.calc_csaC_djw[5] = calc_csaC_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2f_tf_S2s_ts_djw_dOj
+                        data.calc_dipY_djw[3] = data.calc_dipY_djw[4] = data.calc_dipY_djw[5] = calc_dipY_diff_S2f_tf_S2s_ts_djw_dOj
 
                         # Hessian.
                         data.calc_d2jw[0][0] =                          calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
@@ -2586,6 +5554,103 @@ class Mf:
                         data.calc_d2jw[4][4] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[4][5] = data.calc_d2jw[5][4] =   calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
                         data.calc_d2jw[5][5] =                          calc_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csa1_d2jw[0][0] =                               calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][1] = data.calc_csa1_d2jw[1][0] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[0][2] = data.calc_csa1_d2jw[2][0] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][1] =                               calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[1][2] = data.calc_csa1_d2jw[2][1] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa1_d2jw[2][2] =                               calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa1_d2jw[0][3] = data.calc_csa1_d2jw[3][0] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][4] = data.calc_csa1_d2jw[4][0] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[0][5] = data.calc_csa1_d2jw[5][0] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][3] = data.calc_csa1_d2jw[3][1] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][4] = data.calc_csa1_d2jw[4][1] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[1][5] = data.calc_csa1_d2jw[5][1] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][3] = data.calc_csa1_d2jw[3][2] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][4] = data.calc_csa1_d2jw[4][2] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa1_d2jw[2][5] = data.calc_csa1_d2jw[5][2] =   calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa1_d2jw[3][3] =                               calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][4] = data.calc_csa1_d2jw[4][3] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[3][5] = data.calc_csa1_d2jw[5][3] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][4] =                               calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[4][5] = data.calc_csa1_d2jw[5][4] =   calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa1_d2jw[5][5] =                               calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csa2_d2jw[0][0] =                               calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][1] = data.calc_csa2_d2jw[1][0] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[0][2] = data.calc_csa2_d2jw[2][0] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][1] =                               calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[1][2] = data.calc_csa2_d2jw[2][1] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csa2_d2jw[2][2] =                               calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csa2_d2jw[0][3] = data.calc_csa2_d2jw[3][0] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][4] = data.calc_csa2_d2jw[4][0] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[0][5] = data.calc_csa2_d2jw[5][0] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][3] = data.calc_csa2_d2jw[3][1] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][4] = data.calc_csa2_d2jw[4][1] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[1][5] = data.calc_csa2_d2jw[5][1] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][3] = data.calc_csa2_d2jw[3][2] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][4] = data.calc_csa2_d2jw[4][2] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csa2_d2jw[2][5] = data.calc_csa2_d2jw[5][2] =   calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csa2_d2jw[3][3] =                               calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][4] = data.calc_csa2_d2jw[4][3] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[3][5] = data.calc_csa2_d2jw[5][3] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][4] =                               calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[4][5] = data.calc_csa2_d2jw[5][4] =   calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csa2_d2jw[5][5] =                               calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_csaC_d2jw[0][0] =                               calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][1] = data.calc_csaC_d2jw[1][0] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[0][2] = data.calc_csaC_d2jw[2][0] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][1] =                               calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[1][2] = data.calc_csaC_d2jw[2][1] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_csaC_d2jw[2][2] =                               calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_csaC_d2jw[0][3] = data.calc_csaC_d2jw[3][0] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][4] = data.calc_csaC_d2jw[4][0] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[0][5] = data.calc_csaC_d2jw[5][0] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][3] = data.calc_csaC_d2jw[3][1] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][4] = data.calc_csaC_d2jw[4][1] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[1][5] = data.calc_csaC_d2jw[5][1] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][3] = data.calc_csaC_d2jw[3][2] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][4] = data.calc_csaC_d2jw[4][2] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_csaC_d2jw[2][5] = data.calc_csaC_d2jw[5][2] =   calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_csaC_d2jw[3][3] =                               calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][4] = data.calc_csaC_d2jw[4][3] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[3][5] = data.calc_csaC_d2jw[5][3] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][4] =                               calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[4][5] = data.calc_csaC_d2jw[5][4] =   calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_csaC_d2jw[5][5] =                               calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
+                        data.calc_dipY_d2jw[0][0] =                               calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][1] = data.calc_dipY_d2jw[1][0] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[0][2] = data.calc_dipY_d2jw[2][0] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][1] =                               calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[1][2] = data.calc_dipY_d2jw[2][1] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+                        data.calc_dipY_d2jw[2][2] =                               calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdGk
+
+                        data.calc_dipY_d2jw[0][3] = data.calc_dipY_d2jw[3][0] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][4] = data.calc_dipY_d2jw[4][0] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[0][5] = data.calc_dipY_d2jw[5][0] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][3] = data.calc_dipY_d2jw[3][1] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][4] = data.calc_dipY_d2jw[4][1] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[1][5] = data.calc_dipY_d2jw[5][1] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][3] = data.calc_dipY_d2jw[3][2] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][4] = data.calc_dipY_d2jw[4][2] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+                        data.calc_dipY_d2jw[2][5] = data.calc_dipY_d2jw[5][2] =   calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdOj
+
+                        data.calc_dipY_d2jw[3][3] =                               calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][4] = data.calc_dipY_d2jw[4][3] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[3][5] = data.calc_dipY_d2jw[5][3] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][4] =                               calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[4][5] = data.calc_dipY_d2jw[5][4] =   calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+                        data.calc_dipY_d2jw[5][5] =                               calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdOk
+
 
                         if self.param_set != 'diff':
                             data.calc_d2jw[0][data.s2f_li] = data.calc_d2jw[data.s2f_li][0] = calc_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
@@ -2616,6 +5681,119 @@ class Mf:
                             data.calc_d2jw[4][data.ts_li]  = data.calc_d2jw[data.ts_li][4]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
                             data.calc_d2jw[5][data.ts_li]  = data.calc_d2jw[data.ts_li][5]  = calc_diff_S2f_S2s_ts_d2jw_dOjdts
 
+                            data.calc_csa1_d2jw[0][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][0] = calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[1][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][1] = calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[2][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][2] = calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa1_d2jw[3][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][3] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[4][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][4] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa1_d2jw[5][data.s2f_li] = data.calc_csa1_d2jw[data.s2f_li][5] = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa1_d2jw[0][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][0]  = calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[1][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][1]  = calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[2][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][2]  = calc_csa1_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa1_d2jw[3][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][3]  = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csa1_d2jw[4][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][4]  = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csa1_d2jw[5][data.tf_li]  = data.calc_csa1_d2jw[data.tf_li][5]  = calc_csa1_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_csa1_d2jw[0][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][0] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[1][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][1] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[2][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][2] = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa1_d2jw[3][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][3] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa1_d2jw[4][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][4] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa1_d2jw[5][data.s2s_li] = data.calc_csa1_d2jw[data.s2s_li][5] = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa1_d2jw[0][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][0]  = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[1][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][1]  = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[2][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][2]  = calc_csa1_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa1_d2jw[3][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][3]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[4][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][4]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa1_d2jw[5][data.ts_li]  = data.calc_csa1_d2jw[data.ts_li][5]  = calc_csa1_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csa2_d2jw[0][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][0] = calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[1][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][1] = calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[2][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][2] = calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csa2_d2jw[3][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][3] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[4][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][4] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csa2_d2jw[5][data.s2f_li] = data.calc_csa2_d2jw[data.s2f_li][5] = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csa2_d2jw[0][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][0]  = calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[1][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][1]  = calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[2][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][2]  = calc_csa2_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csa2_d2jw[3][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][3]  = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csa2_d2jw[4][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][4]  = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csa2_d2jw[5][data.tf_li]  = data.calc_csa2_d2jw[data.tf_li][5]  = calc_csa2_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_csa2_d2jw[0][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][0] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[1][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][1] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[2][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][2] = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csa2_d2jw[3][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][3] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa2_d2jw[4][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][4] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csa2_d2jw[5][data.s2s_li] = data.calc_csa2_d2jw[data.s2s_li][5] = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csa2_d2jw[0][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][0]  = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[1][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][1]  = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[2][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][2]  = calc_csa2_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csa2_d2jw[3][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][3]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[4][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][4]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csa2_d2jw[5][data.ts_li]  = data.calc_csa2_d2jw[data.ts_li][5]  = calc_csa2_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_csaC_d2jw[0][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][0] = calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[1][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][1] = calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[2][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][2] = calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_csaC_d2jw[3][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][3] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[4][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][4] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_csaC_d2jw[5][data.s2f_li] = data.calc_csaC_d2jw[data.s2f_li][5] = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_csaC_d2jw[0][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][0]  = calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[1][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][1]  = calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[2][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][2]  = calc_csaC_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_csaC_d2jw[3][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][3]  = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csaC_d2jw[4][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][4]  = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_csaC_d2jw[5][data.tf_li]  = data.calc_csaC_d2jw[data.tf_li][5]  = calc_csaC_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_csaC_d2jw[0][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][0] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[1][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][1] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[2][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][2] = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_csaC_d2jw[3][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][3] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csaC_d2jw[4][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][4] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_csaC_d2jw[5][data.s2s_li] = data.calc_csaC_d2jw[data.s2s_li][5] = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_csaC_d2jw[0][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][0]  = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[1][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][1]  = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[2][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][2]  = calc_csaC_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_csaC_d2jw[3][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][3]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[4][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][4]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_csaC_d2jw[5][data.ts_li]  = data.calc_csaC_d2jw[data.ts_li][5]  = calc_csaC_diff_S2f_S2s_ts_d2jw_dOjdts
+
+                            data.calc_dipY_d2jw[0][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][0] = calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[1][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][1] = calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[2][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][2] = calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdS2f
+                            data.calc_dipY_d2jw[3][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][3] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[4][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][4] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+                            data.calc_dipY_d2jw[5][data.s2f_li] = data.calc_dipY_d2jw[data.s2f_li][5] = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdS2f
+
+                            data.calc_dipY_d2jw[0][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][0]  = calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[1][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][1]  = calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[2][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][2]  = calc_dipY_ellipsoid_S2f_tf_S2s_ts_d2jw_dGjdtf
+                            data.calc_dipY_d2jw[3][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][3]  = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_dipY_d2jw[4][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][4]  = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+                            data.calc_dipY_d2jw[5][data.tf_li]  = data.calc_dipY_d2jw[data.tf_li][5]  = calc_dipY_diff_S2f_tf_S2s_ts_d2jw_dOjdtf
+
+                            data.calc_dipY_d2jw[0][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][0] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[1][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][1] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[2][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][2] = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdS2s
+                            data.calc_dipY_d2jw[3][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][3] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_dipY_d2jw[4][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][4] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+                            data.calc_dipY_d2jw[5][data.s2s_li] = data.calc_dipY_d2jw[data.s2s_li][5] = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdS2s
+
+                            data.calc_dipY_d2jw[0][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][0]  = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[1][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][1]  = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[2][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][2]  = calc_dipY_ellipsoid_S2f_S2s_ts_d2jw_dGjdts
+                            data.calc_dipY_d2jw[3][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][3]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[4][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][4]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+                            data.calc_dipY_d2jw[5][data.ts_li]  = data.calc_dipY_d2jw[data.ts_li][5]  = calc_dipY_diff_S2f_S2s_ts_d2jw_dOjdts
+
+
                 # Bad parameter combination.
                 else:
                     print "Invalid combination of parameters for the extended model-free equation."
@@ -2632,11 +5810,33 @@ class Mf:
 
         # Relaxation equation components.
         data.create_dip_func, data.create_dip_grad, data.create_dip_hess = [], [], []
-        data.create_csa_func, data.create_csa_grad, data.create_csa_hess = [], [], []
+        data.create_csa1_func, data.create_csa1_grad, data.create_csa1_hess = [], [], []
+        data.create_csa2_func, data.create_csa2_grad, data.create_csa2_hess = [], [], []
+        data.create_csaC_func, data.create_csaC_grad, data.create_csaC_hess = [], [], []
+        data.create_dipY_func = [] 
+        data.create_dipY_grad = [] 
+        data.create_dipY_hess = [] 
+	#for z in xrange(data.xy_vect_num):
+	#        data.create_dipY_func.append([])
+	#        data.create_dipY_grad.append([])
+	#        data.create_dipY_hess.append([])
+		
+	
         data.create_rex_func, data.create_rex_grad = [], []
 
         data.create_dip_jw_func, data.create_dip_jw_grad, data.create_dip_jw_hess = [], [], []
-        data.create_csa_jw_func, data.create_csa_jw_grad, data.create_csa_jw_hess = [], [], []
+        data.create_csa1_jw_func, data.create_csa1_jw_grad, data.create_csa1_jw_hess = [], [], []
+        data.create_csa2_jw_func, data.create_csa2_jw_grad, data.create_csa2_jw_hess = [], [], []
+        data.create_csaC_jw_func, data.create_csaC_jw_grad, data.create_csaC_jw_hess = [], [], []
+        data.create_dipY_jw_func = [] 
+        data.create_dipY_jw_grad = [] 
+        data.create_dipY_jw_hess = [] 
+	#for z in xrange(data.xy_vect_num):
+	#        data.create_dipY_jw_func.append([]) 
+	#        data.create_dipY_jw_grad.append([])
+	#        data.create_dipY_jw_hess.append([]) 
+	#	
+	
 
         # Ri'
         data.create_ri_prime = None
@@ -2652,17 +5852,45 @@ class Mf:
             data.create_dip_func.append(None)
             data.create_dip_grad.append(None)
             data.create_dip_hess.append(None)
-            data.create_csa_func.append(None)
-            data.create_csa_grad.append(None)
-            data.create_csa_hess.append(None)
+            data.create_csa1_func.append(None)
+            data.create_csa1_grad.append(None)
+            data.create_csa1_hess.append(None)
+            data.create_csa2_func.append(None)
+            data.create_csa2_grad.append(None)
+            data.create_csa2_hess.append(None)
+            data.create_csaC_func.append(None)
+            data.create_csaC_grad.append(None)
+            data.create_csaC_hess.append(None)
+            data.create_dipY_func.append(None)
+            data.create_dipY_grad.append(None)
+            data.create_dipY_hess.append(None)
+            #for z in xrange(data.xy_vect_num):
+	    #        data.create_dipY_func[z].append(None)
+	    #        data.create_dipY_grad[z].append(None)
+	    #        data.create_dipY_hess[z].append(None)
+	    #
             data.create_rex_func.append(None)
             data.create_rex_grad.append(None)
             data.create_dip_jw_func.append(None)
             data.create_dip_jw_grad.append(None)
             data.create_dip_jw_hess.append(None)
-            data.create_csa_jw_func.append(None)
-            data.create_csa_jw_grad.append(None)
-            data.create_csa_jw_hess.append(None)
+            data.create_csa1_jw_func.append(None)
+            data.create_csa1_jw_grad.append(None)
+            data.create_csa1_jw_hess.append(None)
+            data.create_csa2_jw_func.append(None)
+            data.create_csa2_jw_grad.append(None)
+            data.create_csa2_jw_hess.append(None)
+            data.create_csaC_jw_func.append(None)
+            data.create_csaC_jw_grad.append(None)
+            data.create_csaC_jw_hess.append(None)
+            data.create_dipY_jw_func.append(None)
+            data.create_dipY_jw_grad.append(None)
+            data.create_dipY_jw_hess.append(None)
+            #for z in xrange(data.xy_vect_num):
+	    #        data.create_dipY_jw_func[z].append(None)
+	    #        data.create_dipY_jw_grad[z].append(None)
+	    #        data.create_dipY_jw_hess[z].append(None)
+	    #
             data.create_ri.append(None)
             data.create_dri.append(None)
             data.create_d2ri.append(None)
@@ -2677,38 +5905,89 @@ class Mf:
         for i in xrange(data.num_ri):
             # The R1 equations.
             if data.ri_labels[i] == 'R1':
-                data.create_csa_func[i] = comp_r1_csa_const
-                data.create_csa_grad[i] = comp_r1_csa_const
-                data.create_csa_hess[i] = comp_r1_csa_const
+                data.create_csa1_func[i] = comp_r1_csa_const
+                data.create_csa1_grad[i] = comp_r1_csa_const
+                data.create_csa1_hess[i] = comp_r1_csa_const
+                data.create_csa2_func[i] = comp_r1_csa_const
+                data.create_csa2_grad[i] = comp_r1_csa_const
+                data.create_csa2_hess[i] = comp_r1_csa_const
+                data.create_csaC_func[i] = comp_r1_csa_const
+                data.create_csaC_grad[i] = comp_r1_csa_const
+                data.create_csaC_hess[i] = comp_r1_csa_const
+		
                 data.create_dip_jw_func[i] = comp_r1_dip_jw
                 data.create_dip_jw_grad[i] = comp_r1_dip_jw
                 data.create_dip_jw_hess[i] = comp_r1_dip_jw
-                data.create_csa_jw_func[i] = comp_r1_csa_jw
-                data.create_csa_jw_grad[i] = comp_r1_csa_jw
-                data.create_csa_jw_hess[i] = comp_r1_csa_jw
+                data.create_csa1_jw_func[i] = comp_r1_csa_jw
+                data.create_csa1_jw_grad[i] = comp_r1_csa_jw
+                data.create_csa1_jw_hess[i] = comp_r1_csa_jw
+                data.create_csa2_jw_func[i] = comp_r1_csa_jw
+                data.create_csa2_jw_grad[i] = comp_r1_csa_jw
+                data.create_csa2_jw_hess[i] = comp_r1_csa_jw
+                data.create_csaC_jw_func[i] = comp_r1_csa_jw
+                data.create_csaC_jw_grad[i] = comp_r1_csa_jw
+                data.create_csaC_jw_hess[i] = comp_r1_csa_jw
+                data.create_dipY_jw_func[i] = comp_r1_dip_jw
+                data.create_dipY_jw_grad[i] = comp_r1_dip_jw
+                data.create_dipY_jw_hess[i] = comp_r1_dip_jw
+		
 
             # The R2 equations.
             elif data.ri_labels[i] == 'R2':
                 data.create_dip_func[i] = comp_r2_dip_const
                 data.create_dip_grad[i] = comp_r2_dip_const
                 data.create_dip_hess[i] = comp_r2_dip_const
-                data.create_csa_func[i] = comp_r2_csa_const
-                data.create_csa_grad[i] = comp_r2_csa_const
-                data.create_csa_hess[i] = comp_r2_csa_const
+                data.create_csa1_func[i] = comp_r2_csa_const
+                data.create_csa1_grad[i] = comp_r2_csa_const
+                data.create_csa1_hess[i] = comp_r2_csa_const
+                data.create_csa2_func[i] = comp_r2_csa_const
+                data.create_csa2_grad[i] = comp_r2_csa_const
+                data.create_csa2_hess[i] = comp_r2_csa_const
+                data.create_csaC_func[i] = comp_r2_csa_const
+                data.create_csaC_grad[i] = comp_r2_csa_const
+                data.create_csaC_hess[i] = comp_r2_csa_const
+                data.create_dipY_func[i] = comp_r2_dip_const
+                data.create_dipY_grad[i] = comp_r2_dip_const
+                data.create_dipY_hess[i] = comp_r2_dip_const
+                #for z in xrange(data.xy_vect_num):
+	        #        data.create_dipY_func[i][z] = comp_r2_dip_const
+	        #        data.create_dipY_grad[i][z] = comp_r2_dip_const
+	        #        data.create_dipY_hess[i][z] = comp_r2_dip_const
+		#
+#                data.create_csa_func[i] = comp_r2_csa_const
+#                data.create_csa_grad[i] = comp_r2_csa_const
+#                data.create_csa_hess[i] = comp_r2_csa_const
                 data.create_rex_func[i] = comp_rex_const_func
                 data.create_rex_grad[i] = comp_rex_const_grad
                 data.create_dip_jw_func[i] = comp_r2_dip_jw
                 data.create_dip_jw_grad[i] = comp_r2_dip_jw
                 data.create_dip_jw_hess[i] = comp_r2_dip_jw
-                data.create_csa_jw_func[i] = comp_r2_csa_jw
-                data.create_csa_jw_grad[i] = comp_r2_csa_jw
-                data.create_csa_jw_hess[i] = comp_r2_csa_jw
+                data.create_csa1_jw_func[i] = comp_r2_csa_jw
+                data.create_csa1_jw_grad[i] = comp_r2_csa_jw
+                data.create_csa1_jw_hess[i] = comp_r2_csa_jw
+                data.create_csa2_jw_func[i] = comp_r2_csa_jw
+                data.create_csa2_jw_grad[i] = comp_r2_csa_jw
+                data.create_csa2_jw_hess[i] = comp_r2_csa_jw
+                data.create_csaC_jw_func[i] = comp_r2_csa_jw
+                data.create_csaC_jw_grad[i] = comp_r2_csa_jw
+                data.create_csaC_jw_hess[i] = comp_r2_csa_jw
+                data.create_dipY_jw_func[i] = comp_r2_dip_jw
+                data.create_dipY_jw_grad[i] = comp_r2_dip_jw
+                data.create_dipY_jw_hess[i] = comp_r2_dip_jw
+                #for z in xrange(data.xy_vect_num):
+	        #        data.create_dipY_jw_func[i][z] = comp_r2_dip_jw
+	        #        data.create_dipY_jw_grad[i][z] = comp_r2_dip_jw
+	        #        data.create_dipY_jw_hess[i][z] = comp_r2_dip_jw
+		#
 
             # The NOE equations.
             elif data.ri_labels[i] == 'NOE':
                 data.create_dip_jw_func[i] = comp_sigma_noe_dip_jw
                 data.create_dip_jw_grad[i] = comp_sigma_noe_dip_jw
                 data.create_dip_jw_hess[i] = comp_sigma_noe_dip_jw
+                #data.create_dipY_jw_func[i] = comp_sigma_noe_dip_jw
+                #data.create_dipY_jw_grad[i] = comp_sigma_noe_dip_jw
+                #data.create_dipY_jw_hess[i] = comp_sigma_noe_dip_jw
                 data.create_ri[i] = calc_noe
                 data.create_dri[i] = calc_dnoe
                 data.create_d2ri[i] = calc_d2noe
@@ -2884,13 +6163,33 @@ class Mf:
 
             # Calculate the dipolar and CSA constant components.
             comp_dip_const_func(data, data.bond_length)
-            comp_csa_const_func(data, data.csa)
+            comp_csa1_const_func(data, data.cst)
+            comp_csa2_const_func(data, data.cst)
+            comp_csaC_const_func(data, data.cst)
+            for z in xrange(data.xy_vect_num):
+	            comp_dipY_const_func(data, z)
+	    
             for i in xrange(data.num_ri):
+		#print(data.num_ri)
                 data.dip_comps_func[i] = data.dip_const_func
+                for z in xrange(data.xy_vect_num):
+                	data.dipY_comps_func[z][i] = data.dipY_const_func[z]
+		
                 if data.create_dip_func[i]:
                     data.dip_comps_func[i] = data.create_dip_func[i](data.dip_const_func)
-                if data.create_csa_func[i]:
-                    data.csa_comps_func[i] = data.create_csa_func[i](data.csa_const_func[data.remap_table[i]])
+                if data.create_csa1_func[i]:
+                    data.csa1_comps_func[i] = data.create_csa1_func[i](data.csa1_const_func[data.remap_table[i]])
+                if data.create_csa2_func[i]:
+                    data.csa2_comps_func[i] = data.create_csa2_func[i](data.csa2_const_func[data.remap_table[i]])
+                if data.create_csaC_func[i]:
+                    data.csaC_comps_func[i] = data.create_csaC_func[i](data.csaC_const_func[data.remap_table[i]])
+
+                for z in xrange(data.xy_vect_num):
+	                if data.create_dipY_func[i]:
+			    # POZOR POZOR POZOR POZOR POZOR POZOR POZOR POZOR POZOR POZOR !!!
+	                    #data.dipY_comps_func[i][z] = data.create_dipY_func[i](data.dipY_const_func[z])
+	                    data.dipY_comps_func[z][i] = data.create_dipY_func[i](data.dipY_const_func[z])
+		    
 
 
         # The bond length is a parameter {r}.
@@ -2908,10 +6207,23 @@ class Mf:
                 data.create_d2ri_comps = d2ri_comps_r
 
             # Calculate the CSA constant.
-            comp_csa_const_func(data, data.csa)
+            comp_csa1_const_func(data, data.csa_data)
+            comp_csa2_const_func(data, data.csa_data)
+            comp_csaC_const_func(data, data.csa_data)
+            for z in xrange(data.xy_vect_num):
+	            comp_dipY_const_func(data, z)
+	    
             for i in xrange(data.num_ri):
-                if data.create_csa_func[i]:
-                    data.csa_comps_func[i] = data.create_csa_func[i](data.csa_const_func[data.remap_table[i]])
+                if data.create_csa1_func[i]:
+                    data.csa1_comps_func[i] = data.create_csa1_func[i](data.csa1_const_func[data.remap_table[i]])
+                if data.create_csa2_func[i]:
+                    data.csa2_comps_func[i] = data.create_csa2_func[i](data.csa2_const_func[data.remap_table[i]])
+                if data.create_csaC_func[i]:
+                    data.csaC_comps_func[i] = data.create_csaC_func[i](data.csaC_const_func[data.remap_table[i]])
+                for z in xrange(data.xy_vect_num):
+	                if data.create_dipY_func[i]:
+	                    data.dipY_comps_func[z][i] = data.create_dipY_func[i](data.dipY_const_func[z])
+		    
 
 
         # The CSA is a parameter {CSA}.
