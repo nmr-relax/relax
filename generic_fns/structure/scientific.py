@@ -30,7 +30,7 @@ import dep_check
 from math import sqrt
 from numpy import array, dot, float64, zeros
 import os
-from os import F_OK, access
+from os import F_OK, access, sep
 if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
 from warnings import warn
@@ -41,7 +41,7 @@ from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
-from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):
@@ -622,6 +622,64 @@ class MolContainer:
 
         # Recreate the current molecule container.
         xml_to_object(mol_node, self)
+
+        # Re-load the data.
+        self.reload_pdb()
+
+
+    def reload_pdb(self):
+        """Reload the PDB from the original file."""
+
+        # The file path.
+        if self.file_path:
+            file_path = self.file_path + sep + self.file_name
+        else:
+            file_path = self.file_name
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            warn(RelaxNoPDBFileWarning(file_path))
+            return
+
+        # Load the PDB file.
+        model = Scientific.IO.PDB.Structure(file_path, self.file_model)
+
+        # Index for finding the molecule.
+        mol_index = 0
+
+        # First add the peptide chains.
+        if hasattr(model, 'peptide_chains'):
+            for mol in model.peptide_chains:
+                # Pack if the molecule index matches.
+                if mol_index == self.file_mol_num:
+                    self.data = mol
+                    return
+
+                mol_index = mol_index + 1
+
+        # Then the nucleotide chains.
+        if hasattr(model, 'nucleotide_chains'):
+            for mol in model.nucleotide_chains:
+                # Pack if the molecule index matches.
+                if mol_index == self.file_mol_num:
+                    self.data = mol
+                    return
+
+                mol_index = mol_index + 1
+
+        # Finally all other molecules.
+        if hasattr(model, 'molecules'):
+            for key in model.molecules.keys():
+                # Pack if the molecule index matches.
+                if mol_index == self.file_mol_num:
+                    # Loop over the molecules.
+                    self.data = []
+                    for mol in model.molecules[key]:
+                        self.data.append(mol)
+
+                    return
+
+                mol_index = mol_index + 1
 
 
     def to_xml(self, doc, element):
