@@ -138,6 +138,8 @@ class Structure(TestCase):
         # Loop over the residues.
         i = 0
         for res_name in cdp.structure.atom_loop(atom_id='@N', res_name_flag=True):
+            res_name = res_name[0]
+
             # Check the residue data.
             self.assertEqual(res_name, res_list[i])
 
