@@ -174,18 +174,21 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def from_xml(self, str_node, dir=None):
+    def from_xml(self, str_node, dir=None, id=None):
         """Recreate the structural object from the XML structural object node.
 
         @param str_node:    The structural object XML node.
         @type str_node:     xml.dom.minicompat.Element instance
         @keyword dir:       The name of the directory containing the results file.
         @type dir:          str
+        @keyword id:        The specific structural object id string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
         """
 
         # Recreate the model / molecule data structure.
         model_nodes = str_node.getElementsByTagName('model')
-        self.structural_data.from_xml(model_nodes)
+        self.structural_data.from_xml(model_nodes, id=id)
 
 
     def get_model(self, model):
@@ -753,11 +756,14 @@ class ModelList(list):
         return False
 
 
-    def from_xml(self, model_nodes):
+    def from_xml(self, model_nodes, id=None):
         """Recreate a model list data structure from the XML model nodes.
 
         @param model_nodes: The model XML nodes.
         @type model_nodes:  xml.dom.minicompat.NodeList instance
+        @keyword id:        The specific structural object id string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
         """
 
         # Test if empty.
@@ -776,7 +782,7 @@ class ModelList(list):
             mol_nodes = model_node.getElementsByTagName('mol_cont')
 
             # Recreate the molecule data structures for the current model.
-            self[-1].mol.from_xml(mol_nodes)
+            self[-1].mol.from_xml(mol_nodes, id=id)
 
 
     def to_xml(self, doc, element):
@@ -951,11 +957,14 @@ class MolList(list):
         return False
 
 
-    def from_xml(self, mol_nodes):
+    def from_xml(self, mol_nodes, id=None):
         """Recreate a molecule list data structure from the XML molecule nodes.
 
         @param mol_nodes:    The molecule XML nodes.
         @type mol_nodes:     xml.dom.minicompat.NodeList instance
+        @keyword id:        The specific structural object id string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
         """
 
         # Test if empty.
