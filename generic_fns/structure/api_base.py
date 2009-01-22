@@ -936,6 +936,9 @@ class MolList(list):
             # Append an empty MolContainer.
             self.append(mol_cont)
 
+            # Set the name.
+            self[-1].mol_name = mol_name
+
 
     def is_empty(self):
         """Method for testing if this MolList object is empty.
