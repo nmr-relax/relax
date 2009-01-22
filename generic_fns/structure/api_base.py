@@ -450,7 +450,7 @@ class Base_struct_API:
             self.structural_data.to_xml(doc, str_element)
 
 
-    def write_pdb(self, file, struct_index=None):
+    def write_pdb(self, file, model_num=None):
         """Prototype method stub for the creation of a PDB file from the structural data.
 
         The PDB records
@@ -692,9 +692,9 @@ class Base_struct_API:
 
         @param file:            The PDB file object.  This object must be writable.
         @type file:             file object
-        @param struct_index:    The index of the structural container to write.  If None, all
-                                structures will be written.
-        @type struct_index:     int
+        @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
+                                models will be placed into the file.
+        @type model_num:        None or int
         """
 
         # Raise the error.
