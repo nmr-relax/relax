@@ -712,8 +712,17 @@ class Base_struct_API:
 
         # Loop over all other models.
         for i in range(1, len(self.structural_data)):
-            if num_mols != len(self.structural_data[i].mol):
+            # Model alias.
+            model_i = self.structural_data[i]
+
+            # Size check.
+            if num_mols != len(model_i.mol):
                 raise RelaxError, "The structural object is not valid - the number of molecules is not the same for all models."
+
+            # Molecule name check.
+            for j in range(len(model_i.mol)):
+                if model_i.mol[j].mol_name != self.structural_data[0].mol[j].mol_name:
+                    raise RelaxError, "The molecule name '%s' of model %s does not match the corresponding molecule '%s' of model %s." % (model_i.mol[j].mol_name, model_i.num, self.structural_data[0].mol[j].mol_name, self.structural_data[0].num)
 
 
 
