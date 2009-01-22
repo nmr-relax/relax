@@ -1361,6 +1361,17 @@ class MolContainer:
                     self.atom_connect(index1=self.__atom_index(record[1]), index2=self.__atom_index(record[i+2]))
 
 
+    def from_xml(self, mol_node):
+        """Recreate the MolContainer from the XML molecule node.
+
+        @param mol_node:    The molecule XML node.
+        @type mol_node:     xml.dom.minicompat.NodeList instance
+        """
+
+        # Recreate the current molecule container.
+        xml_to_object(mol_node, self)
+
+
     def is_empty(self):
         """Check if the container is empty."""
 
