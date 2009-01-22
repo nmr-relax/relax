@@ -58,7 +58,7 @@ def autoscale_tensor(method='mass'):
     return 1.8e-6
 
 
-def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
+def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -66,8 +66,8 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     bonded together.  This will generate an object representing the outer edge of a cone.
 
 
-    @keyword structure:     The structural data object.
-    @type structure:        instance of class derived from Base_struct_API
+    @keyword mol:           The molecule container.
+    @type mol:              MolContainer instance
     @keyword res_name:      The residue name.
     @type res_name:         str
     @keyword res_num:       The residue number.
@@ -90,10 +90,10 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
     """
 
     # The atom numbers (and indices).
-    atom_num = structure.structural_data[0].atom_num[-1]+1
+    atom_num = mol.atom_num[-1]+1
 
     # Add an atom for the cone apex.
-    structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
+    mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H', struct_index=None)
     origin_atom = atom_num
 
     # Initialise the rotation matrix.
@@ -134,18 +134,18 @@ def cone_edge(structure=None, res_name='CON', res_num=None, apex=None, axis=None
         pos = apex+vector*length
 
         # Add the vector as a H atom of the cone residue.
-        structure.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
+        mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H', struct_index=None)
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
-            structure.atom_connect(index1=atom_num-1, index2=atom_num-2)
+            mol.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
         # Connect the last radial array to the first (to zip up the circle).
         if i == inc-1:
-            structure.atom_connect(index1=atom_num-1, index2=origin_atom)
+            mol.atom_connect(index1=atom_num-1, index2=origin_atom)
 
         # Join the atom to the cone apex.
-        structure.atom_connect(index1=origin_atom-1, index2=atom_num-1)
+        mol.atom_connect(index1=origin_atom-1, index2=atom_num-1)
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
