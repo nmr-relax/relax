@@ -632,7 +632,7 @@ class Internal(Base_struct_API):
         return True
 
 
-    def write_pdb(self, file, struct_index=None):
+    def write_pdb(self, file, model_num=None):
         """Method for the creation of a PDB file from the structural data.
 
         A number of PDB records including HET, HETNAM, FORMUL, HETATM, TER, CONECT, MASTER, and END
@@ -650,9 +650,9 @@ class Internal(Base_struct_API):
 
         @param file:            The PDB file object.  This object must be writable.
         @type file:             file object
-        @param struct_index:    The index of the structural container to write.  If None, all
-                                structures will be written.
-        @type struct_index:     int
+        @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
+                                models will be placed into the file.
+        @type model_num:        None or int
         """
 
         # Validate the structural data.
@@ -673,6 +673,11 @@ class Internal(Base_struct_API):
         file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
         num_remark = 2
 
+        # Determine if model records will be created.
+        model_records = False
+        if model_num == None and self.num_models() > 1:
+            model_records = True
+
 
         ####################
         # Hetrogen section #
@@ -682,31 +687,25 @@ class Internal(Base_struct_API):
         het_data = []
         het_data_coll = []
 
-        # Loop over the structures.
-        for index in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != index:
-                continue
-
-            # Alias the structure container.
-            struct = self.structural_data[index]
-
+        # Loop over the molecules of the first model.
+        index = 0
+        for mol in self.structural_data[0].mol:
             # Check the validity of the data.
-            self.__validate_data_arrays(struct)
+            self.__validate_data_arrays(mol)
 
-            # Append an empty array for this structure.
+            # Append an empty array for this molecule.
             het_data.append([])
 
             # Collect the non-standard residue info.
-            for i in xrange(len(struct.atom_name)):
+            for i in xrange(len(mol.atom_name)):
                 # Skip non-HETATM records and HETATM records with no residue info.
-                if struct.pdb_record[i] != 'HETATM' or struct.res_name[i] == None:
+                if mol.pdb_record[i] != 'HETATM' or mol.res_name[i] == None:
                     continue
 
                 # If the residue is not already stored initialise a new het_data element.
                 # (residue number, residue name, chain ID, number of atoms, atom count array).
-                if not het_data[index] or not struct.res_num[i] == het_data[index][-1][0]:
-                    het_data[index].append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, []])
+                if not het_data[index] or not mol.res_num[i] == het_data[index][-1][0]:
+                    het_data[index].append([mol.res_num[i], mol.res_name[i], mol.chain_id[i], 0, []])
 
                     # Catch missing chain_ids.
                     if het_data[index][-1][2] == None:
@@ -718,16 +717,16 @@ class Internal(Base_struct_API):
                 # Find if the atom has already a count entry.
                 entry = False
                 for j in xrange(len(het_data[index][-1][4])): 
-                    if struct.element[i] == het_data[index][-1][4][j][0]:
+                    if mol.element[i] == het_data[index][-1][4][j][0]:
                         entry = True
 
                 # Create a new specific atom count entry.
                 if not entry:
-                    het_data[index][-1][4].append([struct.element[i], 0])
+                    het_data[index][-1][4].append([mol.element[i], 0])
 
                 # Increment the specific atom count.
                 for j in xrange(len(het_data[index][-1][4])): 
-                    if struct.element[i] == het_data[index][-1][4][j][0]:
+                    if mol.element[i] == het_data[index][-1][4][j][0]:
                         het_data[index][-1][4][j][1] = het_data[index][-1][4][j][1] + 1
 
             # Create the collective hetrogen info data structure.
@@ -756,6 +755,9 @@ class Internal(Base_struct_API):
                 # If there is no match, add the new residue to the collective.
                 if not found:
                     het_data_coll.append(het_data[index][i])
+
+            # Increment the molecule index.
+            index = index + 1
 
 
         # The HET records.
@@ -823,86 +825,84 @@ class Internal(Base_struct_API):
         # Coordinate section #
         ######################
 
-        # Loop over the structures.
-        for index in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != index:
+        # Loop over the models.
+        for model in self.structural_data:
+            # Single model.
+            if model_num and model_num != model.num:
                 continue
 
-            # Alias the structure container.
-            struct = self.structural_data[index]
+            # MODEL record, for multiple models.
+            ####################################
 
-
-            # MODEL record, for multiple structures.
-            ########################################
-
-            if not struct_index and len(self.structural_data) > 1:
+            if model_records:
                 # Print out.
-                print "\nMODEL " + `index+1`
+                print "\nMODEL %s" % model.num
 
                 # Write the model record.
-                file.write("%-6s    %4i\n" % ('MODEL', index+1))
+                file.write("%-6s    %4i\n" % ('MODEL', model.num))
 
 
             # Add the atomic coordinate records (ATOM, HETATM, and TER).
             ############################################################
 
-            # Print out.
-            print "ATOM, HETATM, TER"
+            # Loop over the molecules.
+            for mol in model.mol:
+                # Print out.
+                print "ATOM, HETATM, TER"
 
-            # Loop over the atomic data.
-            for i in xrange(len(struct.atom_name)):
-                # Aliases.
-                atom_num = struct.atom_num[i]
-                atom_name = struct.atom_name[i]
-                res_name = struct.res_name[i]
-                chain_id = struct.chain_id[i]
-                res_num = struct.res_num[i]
-                x = struct.x[i]
-                y = struct.y[i]
-                z = struct.z[i]
-                seg_id = struct.seg_id[i]
-                element = struct.element[i]
+                # Loop over the atomic data.
+                for i in xrange(len(mol.atom_name)):
+                    # Aliases.
+                    atom_num = mol.atom_num[i]
+                    atom_name = mol.atom_name[i]
+                    res_name = mol.res_name[i]
+                    chain_id = mol.chain_id[i]
+                    res_num = mol.res_num[i]
+                    x = mol.x[i]
+                    y = mol.y[i]
+                    z = mol.z[i]
+                    seg_id = mol.seg_id[i]
+                    element = mol.element[i]
 
-                # Replace None with ''.
-                if atom_name == None:
-                    atom_name = ''
-                if res_name == None:
-                    res_name = ''
-                if chain_id == None:
-                    chain_id = ''
-                if res_num == None:
-                    res_num = ''
-                if x == None:
-                    x = ''
-                if y == None:
-                    y = ''
-                if z == None:
-                    z = ''
-                if seg_id == None:
-                    seg_id = ''
-                if element == None:
-                    element = ''
+                    # Replace None with ''.
+                    if atom_name == None:
+                        atom_name = ''
+                    if res_name == None:
+                        res_name = ''
+                    if chain_id == None:
+                        chain_id = ''
+                    if res_num == None:
+                        res_num = ''
+                    if x == None:
+                        x = ''
+                    if y == None:
+                        y = ''
+                    if z == None:
+                        z = ''
+                    if seg_id == None:
+                        seg_id = ''
+                    if element == None:
+                        element = ''
 
-                # Write the ATOM record.
-                if struct.pdb_record[i] == 'ATOM':
-                    file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
-                    num_atom = num_atom + 1
+                    # Write the ATOM record.
+                    if mol.pdb_record[i] == 'ATOM':
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        num_atom = num_atom + 1
 
-                # Write the HETATM record.
-                if struct.pdb_record[i] == 'HETATM':
-                    file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
-                    num_hetatm = num_hetatm + 1
+                    # Write the HETATM record.
+                    if mol.pdb_record[i] == 'HETATM':
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        num_hetatm = num_hetatm + 1
 
-            # Finish off with the TER record.
-            file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num+1, res_name, chain_id, res_num, ''))
-            num_ter = num_ter + 1
+                # Finish off with the TER record.
+                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num+1, res_name, chain_id, res_num, ''))
+                num_ter = num_ter + 1
 
 
             # ENDMDL record, for multiple structures.
             ########################################
 
-            if not struct_index and len(self.structural_data) > 1:
+            if model_records:
                 # Print out.
                 print "ENDMDL"
 
@@ -910,15 +910,18 @@ class Internal(Base_struct_API):
                 file.write("%-6s\n" % 'ENDMDL')
 
 
-            # Create the CONECT records.
-            ############################
+        # Create the CONECT records.
+        ############################
 
-            # Print out.
-            print "CONECT"
+        # Print out.
+        print "CONECT"
 
-            for i in xrange(len(struct.atom_name)):
+        # Loop over the molecules of the first model.
+        for mol in self.structural_data[0].mol:
+            # Loop over the atoms.
+            for i in xrange(len(mol.atom_name)):
                 # No bonded atoms, hence no CONECT record is required.
-                if not len(struct.bonded[i]):
+                if not len(mol.bonded[i]):
                     continue
 
                 # Initialise some data structures.
@@ -927,9 +930,9 @@ class Internal(Base_struct_API):
                 bonded = ['', '', '', '']
 
                 # Loop over the bonded atoms.
-                for j in xrange(len(struct.bonded[i])):
+                for j in xrange(len(mol.bonded[i])):
                     # End of the array, hence create the CONECT record in this iteration.
-                    if j == len(struct.bonded[i])-1:
+                    if j == len(mol.bonded[i])-1:
                         flush = True
 
                     # Only four covalently bonded atoms allowed in one CONECT record.
@@ -937,7 +940,7 @@ class Internal(Base_struct_API):
                         flush = True
 
                     # Get the bonded atom index.
-                    bonded[bonded_index] = struct.bonded[i][j]
+                    bonded[bonded_index] = mol.bonded[i][j]
 
                     # Increment the bonded_index value.
                     bonded_index = bonded_index + 1
@@ -947,7 +950,7 @@ class Internal(Base_struct_API):
                         # Convert the atom indices to atom numbers.
                         for k in range(4):
                             if bonded[k] != '':
-                                bonded[k] = struct.atom_num[bonded[k]]
+                                bonded[k] = mol.atom_num[bonded[k]]
 
                         # Write the CONECT record.
                         file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
