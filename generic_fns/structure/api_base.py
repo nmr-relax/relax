@@ -773,7 +773,7 @@ class ModelList(list):
             self.add_item(model_num=num)
 
             # Get the molecule nodes.
-            mol_nodes = model_node.getElementsByTagName('mol')
+            mol_nodes = model_node.getElementsByTagName('mol_cont')
 
             # Recreate the molecule data structures for the current model.
             self[-1].mol.from_xml(mol_nodes)
