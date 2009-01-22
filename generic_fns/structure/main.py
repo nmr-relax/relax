@@ -415,7 +415,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             print "Extracted " + spin.name + "-" + attached_name + " vectors for " + `id` + '.'
 
 
-def write_pdb(file=None, dir=None, struct_index=None, force=False):
+def write_pdb(file=None, dir=None, model_num=None, force=False):
     """The PDB writing function.
 
     @keyword file:          The name of the PDB file to write.
@@ -423,9 +423,9 @@ def write_pdb(file=None, dir=None, struct_index=None, force=False):
     @keyword dir:           The directory where the PDB file will be placed.  If set to None, then
                             the file will be placed in the current directory.
     @type dir:              str or None
-    @keyword stuct_index:   The index of the structure to write.  If set to None, then all
-                            structures will be written.
-    @type stuct_index:      int or None
+    @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
+                            models will be placed into the file.
+    @type model_num:        None or int
     @keyword force:         The force flag which if True will cause the file to be overwritten.
     @type force:            bool
     """
@@ -455,4 +455,4 @@ def write_pdb(file=None, dir=None, struct_index=None, force=False):
     file = open_write_file(file_path, force=force)
 
     # Write the structures.
-    cdp.structure.write_pdb(file, struct_index=struct_index)
+    cdp.structure.write_pdb(file, model_num=model_num)

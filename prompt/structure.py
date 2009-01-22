@@ -586,7 +586,7 @@ class Structure:
         generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
 
 
-    def write_pdb(self, file=None, dir=None, struct_index=None, force=False):
+    def write_pdb(self, file=None, dir=None, model_num=None, force=False):
         """The PDB writing function.
 
         Keyword Arguments
@@ -596,7 +596,7 @@ class Structure:
 
         dir:  The directory where the file is located.
 
-        struct_index:  The index of the structure to write.
+        model_num:  The optional model to place in the PDB file.
 
         force:  A flag which, if set to True, will overwrite the any pre-existing file.
 
@@ -604,25 +604,23 @@ class Structure:
         Description
         ~~~~~~~~~~~
 
-        If the struct_index argument is None, then each loaded structure will be written to a single
-        file as different models.  This index covers all the structures loaded from individual files
-        and all the structures present as different models within each file.
+        If the model_num argument is None, then all models will be written to a single file.
 
 
         Example
         ~~~~~~~
 
-        To write all structures to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
+        To write all models and molecules to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
         one of:
 
         relax> structure.write_pdb('ensemble.pdb', '~/pdb')
         relax> structure.write_pdb(file='ensemble.pdb', dir='pdb')
 
 
-        To write the 4th model loaded from a PDB file into the new file 'test.pdb', use one of:
+        To write model number 3 into the new file 'test.pdb', use one of:
 
-        relax> structure.write_pdb('test.pdb', struct_index=3)
-        relax> structure.write_pdb(file='test.pdb', struct_index=3)
+        relax> structure.write_pdb('test.pdb', model_num=3)
+        relax> structure.write_pdb(file='test.pdb', model_num=3)
         """
 
         # Function intro text.
@@ -630,7 +628,7 @@ class Structure:
             text = sys.ps3 + "structure.write_pdb("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", struct_index=" + `struct_index`
+            text = text + ", model_num=" + `model_num`
             text = text + ", force=" + `force` + ")"
             print text
 
@@ -642,13 +640,13 @@ class Structure:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # The struct_index argument.
-        if struct_index != None and type(struct_index) != int:
-            raise RelaxNoneIntError, ('structure index', struct_index)
+        # The model_num argument.
+        if model_num != None and type(model_num) != int:
+            raise RelaxNoneIntError, ('model number', model_num)
 
         # The force flag.
         if type(force) != bool:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        generic_fns.structure.main.write_pdb(file=file, dir=dir, struct_index=struct_index, force=force)
+        generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)
