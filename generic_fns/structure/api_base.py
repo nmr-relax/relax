@@ -329,8 +329,8 @@ class Base_struct_API:
         @type set_model_num:        list of int
         @keyword orig_mol_num:      The original molecule numbers (for storage).
         @type orig_mol_num:         list of int
-        @keyword mol_name:          The molecule ID string.
-        @type mol_name:             str
+        @keyword set_mol_name:      The new molecule names.
+        @type set_mol_name:         list of str
         @keyword file_name:         The name of the file from which the molecular data has been
                                     extracted.
         @type file_name:            None or str
