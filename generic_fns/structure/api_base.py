@@ -970,9 +970,6 @@ class MolList(list):
                 name = None
             self.add_item(mol_name=name)
 
-            # Get the molecule nodes.
-            mol_nodes = mol_node.getElementsByTagName('mol')
-
             # Recreate the molecule data structures for the current molecule.
             self[-1].mol.from_xml(mol_nodes)
 
