@@ -130,7 +130,7 @@ class Structure(TestCase):
         self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
         self.assertEqual(mol.file_path, '')
         self.assertEqual(mol.file_model, 1)
-        self.assertEqual(mol.file_struct_num, 1)
+        self.assertEqual(mol.file_mol_num, 1)
 
         # The real atomic data.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
