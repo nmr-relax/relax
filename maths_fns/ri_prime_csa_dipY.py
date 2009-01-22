@@ -20,6 +20,7 @@
 #                                                                             #
 ###############################################################################
 
+from Numeric import sum
 
 # The transformed relaxation equations
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,18 +28,26 @@
 #    Relaxation equations
 #    ~~~~~~~~~~~~~~~~~~~~
 #
-#        R1()  =  dip_const_func . dip_Jw_R1_func  +  csa_const_func . csa_Jw_R1_func
+#        R1()  =  dip_const_func . dip_Jw_R1_func  +  csa1_const_func . csa1_Jw_R1_func  +  csa2_const_func . csa2_Jw_R1_func  +  csaC_const_func . csaC_Jw_R1_func  +  dip1_const_func . dip1_Jw_R1_func  +  dip2_const_func . dip2_Jw_R1_func
 #
 #
-#                 dip_const_func                      csa_const_func
-#        R2()  =  -------------- . dip_Jw_R2_func  +  -------------- . csa_Jw_R2_func  +  rex_const_func
-#                       2                                   6
+#                 dip_const_func                      csa1_const_func
+#        R2()  =  -------------- . dip_Jw_R2_func  +  --------------- . csa1_Jw_R2_func  +                 
+#                       2                                    6
+#
+#                 csa2_const_func                       csaC_const_func
+#                 --------------- . csa2_Jw_R2_func  +  ---------------- . csaC_Jw_R2_func  +
+#                        6                                     6
+#
+#                 dip1_const_func                      dip2_const_func
+#                 -------------- . dip1_Jw_R2_func  +  --------------- . dip2_Jw_R2_func + ... +  rex_const_func 
+#                        2                                    2
 #
 #
 #        sigma_noe()  =  dip_const_func . dip_Jw_sigma_noe_func
 #
 #
-#        Ri  =  dip_comps_func . dip_jw_comps_func  +  csa_comps_func * csa_jw_comps_func  +  rex_comps_func
+#        Ri  =  dip_comps_func . dip_jw_comps_func  +  csa1_comps_func * csa1_jw_comps_func  +  csa2_comps_func * csa2_jw_comps_func  +  csaC_comps_func * csaC_jw_comps_func  +  dip1_comps_func * dip1_jw_comps_func  +  dip2_comps_func * dip2_jw_comps_func + ... +  rex_comps_func
 #
 #
 #
@@ -49,13 +58,14 @@
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 #        dR1()
-#        -----  =  dip_const_func . dip_Jw_R1_grad  +  csa_const_func . csa_Jw_R1_grad
+#        -----  =  dip_const_func . dip_Jw_R1_grad  +  csa1_const_func . csa1_Jw_R1_grad  +  csa2_const_func . csa2_Jw_R1_grad  +  csaC_const_func . csaC_Jw_R1_grad  +  dip1_const_func . dip1_Jw_R1_grad  +  dip2_const_func . dip2_Jw_R1_grad + ...
 #         dJw
 #
 #
-#        dR2()     dip_const_func                      csa_const_func
-#        -----  =  -------------- . dip_Jw_R2_grad  +  -------------- . csa_Jw_R2_grad
-#         dJw            2                                   6
+#
+#        dR2()     dip_const_func                      csa1_const_func                       csa2_const_func                      csaC_const_func                        dip1_const_func                       dip2_const_func                  
+#        -----  =  -------------- . dip_Jw_R2_grad  +  --------------- . csa1_Jw_R2_grad  +  --------------- . csa2_Jw_R2_grad  +  --------------- . csaC_Jw_R2_grad  +  --------------- . dip1_Jw_R2_grad  +  --------------- . dip2_Jw_R2_grad + ...
+#         dJw            2                                    6                                     6                                    6                                      2                                     2                         
 #
 #
 #        dsigma_noe()
@@ -64,7 +74,7 @@
 #
 #
 #        dRi()
-#        -----  =  dip_comps_func . dip_jw_comps_grad  +  csa_comps_func . csa_jw_comps_grad
+#        -----  =  dip_comps_func . dip_jw_comps_grad  +  csa1_comps_func . csa1_jw_comps_grad  +  csa2_comps_func . csa2_jw_comps_grad  +  csaC_comps_func . csaC_jw_comps_grad  +  dip1_comps_func . dip1_jw_comps_grad  +  dip2_comps_func . dip2_jw_comps_grad + ...
 #         dJw
 #
 #
@@ -118,13 +128,13 @@
 #    ~~~
 #
 #        dR1()
-#        -----  =  csa_const_grad . csa_Jw_R1_func
+#        -----  =  csa1_const_grad . csa1_Jw_R1_func  +  csa2_const_grad . csa2_Jw_R1_func  +  csaC_const_grad . csaC_Jw_R1_func
 #        dcsa
 #
 #
-#        dR2()     csa_const_grad
-#        -----  =  -------------- . csa_Jw_R2_func
-#        dcsa            6
+#        dR2()     csa1_const_grad                       csa2_const_grad                       csaC_const_grad                   
+#        -----  =  --------------- . csa1_Jw_R2_func  +  --------------- . csa2_Jw_R2_func  +  --------------- . csaC_Jw_R2_func 
+#        dcsa             6                                     6                                     6                          
 #
 #
 #        dsigma_noe()
@@ -133,7 +143,7 @@
 #
 #
 #        dRi()
-#        -----  =  csa_comps_grad . csa_jw_comps_func
+#        -----  =  csa1_const_grad . csa1_jw_comps_func  +  csa2_const_grad . csa2_jw_comps_func  +  csaC_const_grad . csaC_jw_comps_func
 #        dcsa
 #
 #
@@ -145,13 +155,13 @@
 #    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 #          d2R1()
-#        ---------  =  dip_const_func . dip_Jw_R1_hess  +  csa_const_func . csa_Jw_R1_hess
+#        ---------  =  dip_const_func . dip_Jw_R1_hess  +  csa1_const_func . csa1_Jw_R1_hess  +  csa2_const_func . csa2_Jw_R1_hess  +  csaC_const_func . csaC_Jw_R1_hess  +  dip1_const_func . dip1_Jw_R1_hess  +  dip2_const_func . dip2_Jw_R1_hess + ...
 #        dJwi.dJwj
 #
 #
-#          d2R2()      dip_const_func                      csa_const_func
-#        ---------  =  -------------- . dip_Jw_R2_hess  +  -------------- . csa_Jw_R2_hess
-#        dJwi.dJwj           2                                   6
+#          d2R2()      dip_const_func                      csa1_const_func                       csa2_const_func                       csaC_const_func                       dip1_const_func                       dip2_const_func                  
+#        ---------  =  -------------- . dip_Jw_R2_hess  +  --------------- . csa1_Jw_R2_hess  +  --------------- . csa2_Jw_R2_hess  +  --------------- . csaC_Jw_R2_hess  +  --------------- . dip1_Jw_R2_hess  +  --------------- . dip2_Jw_R2_hess + ...
+#        dJwi.dJwj           2                                    6                                     6                                     6                                     2                                     2                         
 #
 #
 #        d2sigma_noe()
@@ -160,8 +170,9 @@
 #
 #
 #          d2Ri()
-#        ---------  =  dip_comps_func . dip_jw_comps_hess  +  csa_comps_func . csa_jw_comps_hess
+#        ---------  =  dip_comps_func . dip_jw_comps_hess  +  csa1_const_func . csa1_jw_comps_hess  +  csa2_const_func . csa2_jw_comps_hess  +  csaC_const_func . csaC_jw_comps_hess  +  dip1_const_func . dip1_jw_comps_hess  +  dip2_const_func . dip2_jw_comps_hess + ...
 #        dJwi.dJwj
+#
 #
 #
 #    Spectral density parameter - Chemical exchange
@@ -304,13 +315,30 @@
 def func_ri_prime(data):
     """Calculate the transformed relaxation values."""
 
-    return data.dip_comps_func * data.dip_jw_comps_func + data.csa_comps_func * data.csa_jw_comps_func
+    data.mezisoucet = 0.0
+    for z in xrange(data.xy_vect_num):
+	    if z == 0:
+		    data.mezisoucet = data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    else:
+		    data.mezisoucet = data.mezisoucet + data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    
+    
+    return data.dip_comps_func * data.dip_jw_comps_func + data.csa1_comps_func * data.csa1_jw_comps_func + data.csa2_comps_func * data.csa2_jw_comps_func + data.csaC_comps_func * data.csaC_jw_comps_func + data.mezisoucet
 
 
 def func_ri_prime_rex(data):
     """Calculate the transformed relaxation values."""
 
-    return data.dip_comps_func * data.dip_jw_comps_func + data.csa_comps_func * data.csa_jw_comps_func + data.rex_comps_func
+    data.mezisoucet = 0.0
+    for z in xrange(data.xy_vect_num):
+	    if z == 0:
+		    data.mezisoucet = data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    else:
+		    data.mezisoucet = data.mezisoucet + data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    
+    
+    #return data.dip_comps_func * data.dip_jw_comps_func + data.csa1_comps_func * data.csa1_jw_comps_func + data.csa2_comps_func * data.csa2_jw_comps_func + data.csaC_comps_func * data.csaC_jw_comps_func + sum(data.dipY_comps_func * data.dipY_jw_comps_func, axis=0) + data.rex_comps_func
+    return data.dip_comps_func * data.dip_jw_comps_func + data.csa1_comps_func * data.csa1_jw_comps_func + data.csa2_comps_func * data.csa2_jw_comps_func + data.csaC_comps_func * data.csaC_jw_comps_func + data.mezisoucet + data.rex_comps_func
 
 
 # Transformed relaxation gradients.
@@ -320,7 +348,16 @@ def func_ri_prime_rex(data):
 def func_dri_djw_prime(data):
     """Spectral density parameter derivatives."""
 
-    return data.dip_comps_func * data.dip_jw_comps_grad + data.csa_comps_func * data.csa_jw_comps_grad
+    data.mezisoucet = 0.0
+    for z in xrange(data.xy_vect_num):
+	    if z == 0:
+		    data.mezisoucet = data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    else:
+		    data.mezisoucet = data.mezisoucet + data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    
+    
+    #return data.dip_comps_func * data.dip_jw_comps_grad + data.csa1_comps_func * data.csa1_jw_comps_grad + data.csa2_comps_func * data.csa2_jw_comps_grad + data.csaC_comps_func * data.csaC_jw_comps_grad + sum(data.dipY_comps_func * data.dipY_jw_comps_grad, axis=0) 
+    return data.dip_comps_func * data.dip_jw_comps_grad + data.csa1_comps_func * data.csa1_jw_comps_grad + data.csa2_comps_func * data.csa2_jw_comps_grad + data.csaC_comps_func * data.csaC_jw_comps_grad + data.mezisoucet 
 
 
 # dRi/dRex
@@ -355,23 +392,32 @@ def func_d2ri_djwidjwj_prime(data):
     """Spectral density parameter / spectral density parameter Hessian.
 
       d2R1()
-    ---------  =  dip_const_func . dip_Jw_R1_hess  +  csa_const_func . csa_Jw_R1_hess
+    ---------  =  dip_const_func . dip_Jw_R1_hess  +  csa1_const_func . csa1_Jw_R1_hess  +  csa2_const_func . csa2_Jw_R1_hess  +  csaC_const_func . csaC_Jw_R1_hess  +  dip1_const_func . dip1_Jw_R1_hess  +  dip2_const_func . dip2_Jw_R1_hess + ...
     dJwi.dJwj
 
-      d2R2()      dip_const_func                      csa_const_func
-    ---------  =  -------------- . dip_Jw_R2_hess  +  -------------- . csa_Jw_R2_hess
-    dJwi.dJwj           2                                   6
+      d2R2()      dip_const_func                      csa1_const_func                       csa2_const_func                       csaC_const_func                       dip1_const_func                       dip2_const_func                  
+    ---------  =  -------------- . dip_Jw_R2_hess  +  --------------- . csa1_Jw_R2_hess  +  --------------- . csa2_Jw_R2_hess  +  --------------- . csaC_Jw_R2_hess  +  --------------- . dip1_Jw_R2_hess  +  --------------- . dip2_Jw_R2_hess + ...
+    dJwi.dJwj           2                                    6                                     6                                     6                                     2                                     2                         
 
     d2sigma_noe()
     -------------  =  dip_const_func . dip_Jw_sigma_noe_hess
       dJwi.dJwj
 
       d2Ri()
-    ---------  =  dip_comps_func . dip_jw_comps_hess  +  csa_comps_func . csa_jw_comps_hess
+    ---------  =  dip_comps_func . dip_jw_comps_hess  +  csa1_comps_func . csa1_jw_comps_hess  +  csa2_comps_func . csa2_jw_comps_hess  +  csaC_comps_func . csaC_jw_comps_hess  +  dip1_comps_func . dip1_jw_comps_hess  +  dip2_comps_func . dip2_jw_comps_hess + ...
     dJwi.dJwj
     """
 
-    return data.dip_comps_func * data.dip_jw_comps_hess + data.csa_comps_func * data.csa_jw_comps_hess
+    data.mezisoucet = 0.0
+    for z in xrange(data.xy_vect_num):
+	    if z == 0:
+		    data.mezisoucet = data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    else:
+		    data.mezisoucet = data.mezisoucet + data.dipY_comps_func[z] * data.dipY_jw_comps_func[z]
+	    
+    
+    #return data.dip_comps_func * data.dip_jw_comps_hess + data.csa1_comps_func * data.csa1_jw_comps_hess + data.csa2_comps_func * data.csa2_jw_comps_hess + data.csaC_comps_func * data.csaC_jw_comps_hess + sum(data.dipY_comps_func * data.dipY_jw_comps_hess, axis=0) 
+    return data.dip_comps_func * data.dip_jw_comps_hess + data.csa1_comps_func * data.csa1_jw_comps_hess + data.csa2_comps_func * data.csa2_jw_comps_hess + data.csaC_comps_func * data.csaC_jw_comps_hess + data.mezisoucet
 
 
 # d2Ri/dJ(w).dCSA

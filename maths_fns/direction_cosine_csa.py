@@ -23,6 +23,74 @@
 from Numeric import dot
 from math import cos, sin
 
+#alpha=self.relax.specific.csa_data.return_value('m2',3,'CSEA')[0]
+
+
+##########
+# Sphere #
+##########
+
+def calc_sphere_di(data,diff_data):
+    """Function for calculating the direction cosine dz.
+    ---------------------------------------------------
+                    csa1 and csa2 vectors
+    ---------------------------------------------------
+    Unit vectors
+    ~~~~~~~~~~~~
+
+    alpha = csae1
+    beta = csae2
+    gamma = csae3
+
+    The unit Dx vector is
+
+                  | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        csa_x  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+                  |                    cos(alpha) * sin(beta)                      |
+
+    The unit Dy vector is
+
+                  | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        csa_y  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
+                  |                   sin(alpha) * sin(beta)                      |
+
+    The unit Dz vector is not necessary:
+
+                  | -sin(beta) * cos(gamma) |
+        csa_z  =  |  sin(beta) * sin(gamma) |
+                  |        cos(beta)        |
+
+
+    """
+
+    # Trig.
+    data.sin_ea1 = sin(data.csea[0])
+    data.sin_ea2 = sin(data.csea[1])
+    data.sin_ea3 = sin(data.csea[2])
+
+    data.cos_ea1 = cos(data.csea[0])
+    data.cos_ea2 = cos(data.csea[1])
+    data.cos_ea3 = cos(data.csea[2])
+
+    # The unit csa1 vector.
+    data.vec_csa1[0] = -data.sin_ea1 * data.sin_ea3 + data.cos_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa1[1] = -data.sin_ea1 * data.cos_ea3 - data.cos_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa1[2] =  data.cos_ea1 * data.sin_ea2
+
+    # The unit csa2 vector.
+    data.vec_csa2[0] = data.cos_ea1 * data.sin_ea3 + data.sin_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa2[1] = data.cos_ea1 * data.cos_ea3 - data.sin_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa2[2] = data.sin_ea1 * data.sin_ea2
+
+    # Direction cosines.
+    data.dx_csa1 = data.vec_csa1[0]
+    data.dy_csa1 = data.vec_csa1[1]
+    data.dz_csa1 = data.vec_csa1[2]
+
+    data.dx_csa2 = data.vec_csa2[0]
+    data.dy_csa2 = data.vec_csa2[1]
+    data.dz_csa2 = data.vec_csa2[2]
+
 
 
 ############
@@ -46,6 +114,47 @@ def calc_spheroid_di(data, diff_data):
                  | sin(theta) * cos(phi) |
         Dpar  =  | sin(theta) * sin(phi) |
                  |      cos(theta)       |
+    
+    
+    ---------------------------------------------------
+                    Dx and Dy "imaginar" vectors
+    ---------------------------------------------------
+    
+             | cos(theta) * cos(phi) |
+        Dx = | cos(theta) * sin(phi) |
+             |     - sin(theta)      |
+    
+    
+             |  - sin(phi) |
+        Dy = |   cos(phi)  |
+             |      0      |
+    
+    
+    ---------------------------------------------------
+                    csa1 and csa2 vectors
+    ---------------------------------------------------
+    Unit vectors
+    ~~~~~~~~~~~~
+
+    The unit Dx vector is
+
+                  | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        csa_x  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+                  |                    cos(alpha) * sin(beta)                      |
+
+    The unit Dy vector is
+
+                  | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        csa_y  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
+                  |                   sin(alpha) * sin(beta)                      |
+
+    The unit Dz vector is
+
+                  | -sin(beta) * cos(gamma) |
+        csa_z  =  |  sin(beta) * sin(gamma) |
+                  |        cos(beta)        |
+
+
     """
 
     # Components.
@@ -61,6 +170,48 @@ def calc_spheroid_di(data, diff_data):
 
     # Direction cosine.
     data.dz = dot(data.xh_unit_vector, diff_data.dpar)
+
+    # csa_1 vector and csa2 vector
+    # Trig.
+    data.sin_ea1 = sin(data.csea[0])
+    data.sin_ea2 = sin(data.csea[1])
+    data.sin_ea3 = sin(data.csea[2])
+
+    data.cos_ea1 = cos(data.csea[0])
+    data.cos_ea2 = cos(data.csea[1])
+    data.cos_ea3 = cos(data.csea[2])
+    
+    # The unit csa1 vector.
+    data.vec_csa1[0] = -data.sin_ea1 * data.sin_ea3 + data.cos_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa1[1] = -data.sin_ea1 * data.cos_ea3 - data.cos_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa1[2] =  data.cos_ea1 * data.sin_ea2
+
+    # The unit csa2 vector.
+    data.vec_csa2[0] = data.cos_ea1 * data.sin_ea3 + data.sin_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa2[1] = data.cos_ea1 * data.cos_ea3 - data.sin_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa2[2] = data.sin_ea1 * data.sin_ea2
+    
+    # Imaginary vectors Dx and Dy
+    # The unit Dx vector.
+    diff_data.vecdx[0] = diff_data.cos_theta * diff_data.cos_phi
+    diff_data.vecdx[1] = diff_data.cos_theta * diff_data.sin_phi
+    diff_data.vecdx[2] = - diff_data.sin_theta
+    # The unit Dy vector.
+    diff_data.vecdy[0] = - diff_data.sin_phi
+    diff_data.vecdy[1] = diff_data.cos_phi
+    diff_data.vecdy[2] = 0.0
+
+
+    # Direction cosines.
+    data.dx_csa1 = dot(data.vec_csa1, diff_data.vecdx)
+    data.dy_csa1 = dot(data.vec_csa1, diff_data.vecdy)
+    data.dz_csa1 = dot(data.vec_csa1, diff_data.dpar)
+
+    data.dx_csa2 = dot(data.vec_csa2, diff_data.vecdx)
+    data.dy_csa2 = dot(data.vec_csa2, diff_data.vecdy)
+    data.dz_csa2 = dot(data.vec_csa2, diff_data.dpar)
+    
+
 
 
 
@@ -83,6 +234,99 @@ def calc_spheroid_ddi(data, diff_data):
         dphi      |           0            |
 
     O is the orientational parameter set {theta, phi}
+
+    ---------------------------------------------------
+                    Dx and Dy "imaginar" vectors
+    ---------------------------------------------------
+    
+          Dx     | - sin(theta) * cos(phi) |
+        ------ = | - sin(theta) * sin(phi) |
+        dtheta   |     - cos(theta)      |
+    
+    
+          Dy     |  0  |
+        ------ = |  0  |
+        dtheta   |  0  |
+    
+    
+           Dx      | - cos(theta) * sin(phi) |
+         ------  = |  cos(theta) * cos(phi)  |
+          dphi     |            0            |
+               
+               
+           Dy      |  - cos(phi) |
+         ------  = |  - sin(phi) |
+          dphi     |      0      |
+    
+
+    ---------------------------------------------------
+                    csa1 and csa2 vectors
+    ---------------------------------------------------
+    Derivation of the unit vectors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    The derivation of the unit Dx vector by the angle csae1
+
+                  | -cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
+        csa_x  =  | -cos(alpha) * cos(gamma) + sin(alpha) * cos(beta) * sin(gamma) |
+                  |                  - sin(alpha) * sin(beta)                      |
+
+    The derivation of the unit Dy vector by the angle csae1
+
+                  | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        csa_y  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+                  |                    cos(alpha) * sin(beta)                      |
+
+    The derivation of the unit Dz vector by the angle csae1
+
+                  | 0 |
+        csa_z  =  | 0 |
+                  | 0 |
+
+
+    =================================================================
+    
+
+    The derivation of the unit Dx vector by the angle csae2
+
+                  |  - cos(alpha) * sin(beta) * cos(gamma) |
+        csa_x  =  |    cos(alpha) * sin(beta) * sin(gamma) |
+                  |        cos(alpha) * cos(beta)          |
+
+    The derivation of the unit Dy vector by the angle csae2
+
+                  |  - sin(alpha) * sin(beta) * cos(gamma) |
+        csa_y  =  |    sin(alpha) * sin(beta) * sin(gamma) |
+                  |        sin(alpha) * cos(beta)          |
+
+    The unit Dz vector is
+    The derivation of the unit Dz vector by the angle csae2
+
+                  | -cos(beta) * cos(gamma) |
+        csa_z  =  |  cos(beta) * sin(gamma) |
+                  |      - sin(beta)        |
+
+
+    =================================================================
+
+    The derivation of the unit Dx vector by the angle csae3
+
+                  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+        csa_x  =  |  sin(alpha) * sin(gamma) - cos(alpha) * cos(beta) * cos(gamma) |
+                  |                              0                                 |
+
+    The derivation of the unit Dy vector by the angle csae3
+
+                  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma)   |
+        csa_y  =  | - cos(alpha) * sin(gamma) - sin(alpha) * cos(beta) * cos(gamma) |
+                  |                              0                                  |
+
+    The derivation of the unit Dz vector by the angle csae3
+
+                  |  sin(beta) * sin(gamma) |
+        csa_z  =  |  sin(beta) * cos(gamma) |
+                  |            0            |
+
     """
 
     # The theta partial derivative of the unit Dpar vector.
@@ -99,7 +343,69 @@ def calc_spheroid_ddi(data, diff_data):
     data.ddz_dO[0] = dot(data.xh_unit_vector, diff_data.dpar_dtheta)
     data.ddz_dO[1] = dot(data.xh_unit_vector, diff_data.dpar_dphi)
 
+    #===================================================================================
+    # csa_1 vector and csa2 vector
+    # Trig.
+    data.sin_ea1 = sin(data.csea[0])
+    data.sin_ea2 = sin(data.csea[1])
+    data.sin_ea3 = sin(data.csea[2])
 
+    data.cos_ea1 = cos(data.csea[0])
+    data.cos_ea2 = cos(data.csea[1])
+    data.cos_ea3 = cos(data.csea[2])
+    
+    # The unit csa1 vector.
+    data.vec_csa1[0] = -data.sin_ea1 * data.sin_ea3 + data.cos_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa1[1] = -data.sin_ea1 * data.cos_ea3 - data.cos_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa1[2] =  data.cos_ea1 * data.sin_ea2
+
+    # The unit csa2 vector.
+    data.vec_csa2[0] = data.cos_ea1 * data.sin_ea3 + data.sin_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa2[1] = data.cos_ea1 * data.cos_ea3 - data.sin_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa2[2] = data.sin_ea1 * data.sin_ea2
+    
+    # Imaginary vectors Dx and Dy
+    # The theta partial derivation of the unit "imaginary" Dx vector.
+    diff_data.dvecdx_dtheta[0] = - diff_data.sin_theta * diff_data.cos_phi
+    diff_data.dvecdx_dtheta[1] = - diff_data.sin_theta * diff_data.sin_phi
+    diff_data.dvecdx_dtheta[2] = - diff_data.cos_theta
+    # The theta partial derivation of the unit "imaginary" Dy vector.
+    diff_data.dvecdy_dtheta[0] = 0.0
+    diff_data.dvecdy_dtheta[1] = 0.0
+    diff_data.dvecdy_dtheta[2] = 0.0
+
+
+    # Direction cosines.
+    data.ddx_csa1_dO[0] = dot(data.vec_csa1, diff_data.dvecdx_dtheta)
+    data.ddy_csa1_dO[0] = dot(data.vec_csa1, diff_data.dvecdy_dtheta)
+    data.ddz_csa1_dO[0] = dot(data.vec_csa1, diff_data.dpar_dtheta)
+    
+
+    data.ddx_csa2_dO[0] = dot(data.vec_csa2, diff_data.dvecdx_dtheta)
+    data.ddy_csa2_dO[0] = dot(data.vec_csa2, diff_data.dvecdy_dtheta)
+    data.ddz_csa2_dO[0] = dot(data.vec_csa2, diff_data.dpar_dtheta)
+
+    # Imaginary vectors Dx and Dy
+    # The phi partial derivation of the unit "imaginary" Dx vector.
+    diff_data.dvecdx_dphi[0] = - diff_data.cos_theta * diff_data.sin_phi
+    diff_data.dvecdx_dphi[1] = diff_data.cos_theta * diff_data.cos_phi
+    diff_data.dvecdx_dphi[2] = 0.0
+    # The phi partial derivation of the unit "imaginary" Dy vector.
+    diff_data.dvecdy_dphi[0] = - diff_data.cos_phi
+    diff_data.dvecdy_dphi[1] = - diff_data.sin_phi
+    diff_data.dvecdy_dphi[2] = 0.0
+
+
+    # Direction cosines.
+    data.ddx_csa1_dO[1] = dot(data.vec_csa1, diff_data.dvecdx_dphi)
+    data.ddy_csa1_dO[1] = dot(data.vec_csa1, diff_data.dvecdy_dphi)
+    data.ddz_csa1_dO[1] = dot(data.vec_csa1, diff_data.dpar_dphi)
+
+    data.ddx_csa2_dO[1] = dot(data.vec_csa2, diff_data.dvecdx_dphi)
+    data.ddy_csa2_dO[1] = dot(data.vec_csa2, diff_data.dvecdy_dphi)
+    data.ddz_csa2_dO[1] = dot(data.vec_csa2, diff_data.dpar_dphi)
+
+    
 
 # Spheroid direction cosine Hessian.
 ####################################
@@ -148,6 +454,89 @@ def calc_spheroid_d2di(data, diff_data):
     data.d2dz_dO2[0, 1] = data.d2dz_dO2[1, 0] = dot(data.xh_unit_vector, diff_data.dpar_dthetadphi)
     data.d2dz_dO2[1, 1] = dot(data.xh_unit_vector, diff_data.dpar_dphi2)
 
+    #===================================================================================
+    # csa_1 vector and csa2 vector
+    # Trig.
+    data.sin_ea1 = sin(data.csea[0])
+    data.sin_ea2 = sin(data.csea[1])
+    data.sin_ea3 = sin(data.csea[2])
+
+    data.cos_ea1 = cos(data.csea[0])
+    data.cos_ea2 = cos(data.csea[1])
+    data.cos_ea3 = cos(data.csea[2])
+    
+    # The unit csa1 vector.
+    data.vec_csa1[0] = -data.sin_ea1 * data.sin_ea3 + data.cos_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa1[1] = -data.sin_ea1 * data.cos_ea3 - data.cos_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa1[2] =  data.cos_ea1 * data.sin_ea2
+
+    # The unit csa2 vector.
+    data.vec_csa2[0] = data.cos_ea1 * data.sin_ea3 + data.sin_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa2[1] = data.cos_ea1 * data.cos_ea3 - data.sin_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa2[2] = data.sin_ea1 * data.sin_ea2
+    
+
+
+    # Imaginary vectors Dx and Dy
+    # The theta-theta partial derivation of the unit "imaginary" Dx vector.
+    diff_data.dvecdx_d2theta[0] = - diff_data.cos_theta * diff_data.cos_phi
+    diff_data.dvecdx_d2theta[1] = - diff_data.cos_theta * diff_data.sin_phi
+    diff_data.dvecdx_d2theta[2] = diff_data.sin_theta
+    # The theta-theta partial derivation of the unit "imaginary" Dy vector.
+    diff_data.dvecdy_d2theta[0] = 0.0
+    diff_data.dvecdy_d2theta[1] = 0.0
+    diff_data.dvecdy_d2theta[2] = 0.0
+    
+    # Direction cosines.
+    data.d2dx_csa1_dO2[0, 0] = dot(data.vec_csa1, diff_data.dvecdx_d2theta)
+    data.d2dy_csa1_dO2[0, 0] = dot(data.vec_csa1, diff_data.dvecdy_d2theta)
+    data.d2dz_csa1_dO2[0, 0] = dot(data.vec_csa1, diff_data.dpar_dtheta2)
+    
+    data.d2dx_csa2_dO2[0, 0] = dot(data.vec_csa2, diff_data.dvecdx_dtheta)
+    data.d2dy_csa2_dO2[0, 0] = dot(data.vec_csa2, diff_data.dvecdy_dtheta)
+    data.d2dz_csa2_dO2[0, 0] = dot(data.vec_csa2, diff_data.dpar_dtheta)
+    
+
+
+    # Imaginary vectors Dx and Dy
+    # The phi-phi partial derivation of the unit "imaginary" Dx vector.
+    diff_data.dvecdx_d2phi[0] = - diff_data.cos_theta * diff_data.cos_phi
+    diff_data.dvecdx_d2phi[1] = - diff_data.cos_theta * diff_data.sin_phi
+    diff_data.dvecdx_d2phi[2] = 0.0
+    # The phi-phi partial derivation of the unit "imaginary" Dy vector.
+    diff_data.dvecdy_d2phi[0] = diff_data.sin_phi
+    diff_data.dvecdy_d2phi[1] = - diff_data.cos_phi
+    diff_data.dvecdy_d2phi[2] = 0.0
+
+    # Direction cosines.
+    data.d2dx_csa1_dO2[1, 1] = dot(data.vec_csa1, diff_data.dvecdx_d2phi)
+    data.d2dy_csa1_dO2[1, 1] = dot(data.vec_csa1, diff_data.dvecdy_d2phi)
+    data.d2dz_csa1_dO2[1, 1] = dot(data.vec_csa1, diff_data.dpar_dphi2)
+
+    data.d2dx_csa2_dO2[1, 1] = dot(data.vec_csa2, diff_data.dvecdx_d2phi)
+    data.d2dy_csa2_dO2[1, 1] = dot(data.vec_csa2, diff_data.dvecdy_d2phi)
+    data.d2dz_csa2_dO2[1, 1] = dot(data.vec_csa2, diff_data.dpar_dphi2)
+    
+    
+    
+    # Imaginary vectors Dx and Dy
+    # The theta-phi partial derivation of the unit "imaginary" Dx vector.
+    diff_data.dvecdx_dthetadphi[0] = diff_data.sin_theta * diff_data.sin_phi
+    diff_data.dvecdx_dthetadphi[1] = - diff_data.sin_theta * diff_data.cos_phi
+    diff_data.dvecdx_dthetadphi[2] = 0.0
+    # The theta-phi partial derivation of the unit "imaginary" Dy vector.
+    diff_data.dvecdy_dthetadphi[0] = 0.0
+    diff_data.dvecdy_dthetadphi[1] = 0.0
+    diff_data.dvecdy_dthetadphi[2] = 0.0
+
+    # Direction cosines.
+    data.d2dx_csa1_dO2[0, 1] = data.d2dx_csa1_dO2[1, 0] = dot(data.vec_csa1, diff_data.dvecdx_dthetadphi)
+    data.d2dy_csa1_dO2[0, 1] = data.d2dy_csa1_dO2[1, 0] = dot(data.vec_csa1, diff_data.dvecdy_dthetadphi)
+    data.d2dz_csa1_dO2[0, 1] = data.d2dz_csa1_dO2[1, 0] = dot(data.vec_csa1, diff_data.dpar_dthetadphi)
+
+    data.d2dx_csa2_dO2[0, 1] = data.d2dx_csa2_dO2[1, 0] = dot(data.vec_csa2, diff_data.dvecdx_dthetadphi)
+    data.d2dy_csa2_dO2[0, 1] = data.d2dy_csa2_dO2[1, 0] = dot(data.vec_csa2, diff_data.dvecdy_dthetadphi)
+    data.d2dz_csa2_dO2[0, 1] = data.d2dz_csa2_dO2[1, 0] = dot(data.vec_csa2, diff_data.dpar_dthetadphi)
 
 
 
@@ -202,6 +591,49 @@ def calc_ellipsoid_di(data, diff_data):
         Dz  =  |  sin(beta) * sin(gamma) |
                |        cos(beta)        |
 
+    ---------------------------------------------------
+                    csa1 and csa2 vectors
+    ---------------------------------------------------
+    Unit vectors
+    ~~~~~~~~~~~~
+
+    The unit csa_x vector is
+
+                  | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        csa_x  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |
+                  |                    cos(alpha) * sin(beta)                      |
+
+    The unit csa_y vector is
+
+                  | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        csa_y  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |
+                  |                   sin(alpha) * sin(beta)                      |
+
+    The unit csa_z vector is
+
+                  | -sin(beta) * cos(gamma) |
+        csa_z  =  |  sin(beta) * sin(gamma) |
+                  |        cos(beta)        |
+
+    Direction cosines
+    ~~~~~~~~~~~~~~~~~
+
+    dx is the dot product between the unit bond vector and the unit vector along Dx.  The
+    equation is
+
+        dx_csa1 = csa1 . Dx
+
+    dy is the dot product between the unit bond vector and the unit vector along Dy.  The
+    equation is
+
+        dy_csa1 = csa1 . Dy
+
+    dz is the dot product between the unit bond vector and the unit vector along Dz.  The
+    equation is
+
+        dz_csa1 = csa1 . Dz
+
+
     """
 
     # Trig.
@@ -217,7 +649,7 @@ def calc_ellipsoid_di(data, diff_data):
     diff_data.dx[0] = -data.sin_a * data.sin_g + data.cos_a * data.cos_b * data.cos_g
     diff_data.dx[1] = -data.sin_a * data.cos_g - data.cos_a * data.cos_b * data.sin_g
     diff_data.dx[2] =  data.cos_a * data.sin_b
-
+    
     # The unit Dy vector.
     diff_data.dy[0] = data.cos_a * data.sin_g + data.sin_a * data.cos_b * data.cos_g
     diff_data.dy[1] = data.cos_a * data.cos_g - data.sin_a * data.cos_b * data.sin_g
@@ -233,7 +665,34 @@ def calc_ellipsoid_di(data, diff_data):
     data.dy = dot(data.xh_unit_vector, diff_data.dy)
     data.dz = dot(data.xh_unit_vector, diff_data.dz)
 
+    # csa_1 vector and csa2 vector
+    # Trig.
+    data.sin_ea1 = sin(data.csea[0])
+    data.sin_ea2 = sin(data.csea[1])
+    data.sin_ea3 = sin(data.csea[2])
 
+    data.cos_ea1 = cos(data.csea[0])
+    data.cos_ea2 = cos(data.csea[1])
+    data.cos_ea3 = cos(data.csea[2])
+    
+    # The unit csa1 vector.
+    data.vec_csa1[0] = -data.sin_ea1 * data.sin_ea3 + data.cos_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa1[1] = -data.sin_ea1 * data.cos_ea3 - data.cos_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa1[2] =  data.cos_ea1 * data.sin_ea2
+
+    # The unit csa2 vector.
+    data.vec_csa2[0] = data.cos_ea1 * data.sin_ea3 + data.sin_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa2[1] = data.cos_ea1 * data.cos_ea3 - data.sin_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa2[2] = data.sin_ea1 * data.sin_ea2
+
+    # Direction cosines.
+    data.dx_csa1 = dot(data.vec_csa1, diff_data.dx)
+    data.dy_csa1 = dot(data.vec_csa1, diff_data.dy)
+    data.dz_csa1 = dot(data.vec_csa1, diff_data.dz)
+
+    data.dx_csa2 = dot(data.vec_csa2, diff_data.dx)
+    data.dy_csa2 = dot(data.vec_csa2, diff_data.dy)
+    data.dz_csa2 = dot(data.vec_csa2, diff_data.dz)
 
 # Ellipsoid direction cosine gradient.
 ######################################
@@ -370,6 +829,52 @@ def calc_ellipsoid_ddi(data, diff_data):
     data.ddz_dO[1] = dot(data.xh_unit_vector, diff_data.ddz_dbeta)
     data.ddz_dO[2] = dot(data.xh_unit_vector, diff_data.ddz_dgamma)
 
+
+    #===================================================================================
+    # csa_1 vector and csa2 vector
+    # Trig.
+    data.sin_ea1 = sin(data.csea[0])
+    data.sin_ea2 = sin(data.csea[1])
+    data.sin_ea3 = sin(data.csea[2])
+
+    data.cos_ea1 = cos(data.csea[0])
+    data.cos_ea2 = cos(data.csea[1])
+    data.cos_ea3 = cos(data.csea[2])
+    
+    # The unit csa1 vector.
+    data.vec_csa1[0] = -data.sin_ea1 * data.sin_ea3 + data.cos_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa1[1] = -data.sin_ea1 * data.cos_ea3 - data.cos_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa1[2] =  data.cos_ea1 * data.sin_ea2
+
+    # The unit csa2 vector.
+    data.vec_csa2[0] = data.cos_ea1 * data.sin_ea3 + data.sin_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa2[1] = data.cos_ea1 * data.cos_ea3 - data.sin_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa2[2] = data.sin_ea1 * data.sin_ea2
+
+    # Direction cosine gradients
+    ############################
+    # csa1
+    data.ddx_csa1_dO[0] = dot(data.vec_csa1, diff_data.ddx_dalpha)
+    data.ddx_csa1_dO[1] = dot(data.vec_csa1, diff_data.ddx_dbeta)
+    data.ddx_csa1_dO[2] = dot(data.vec_csa1, diff_data.ddx_dgamma)
+
+    data.ddy_csa1_dO[0] = dot(data.vec_csa1, diff_data.ddy_dalpha)
+    data.ddy_csa1_dO[1] = dot(data.vec_csa1, diff_data.ddy_dbeta)
+    data.ddy_csa1_dO[2] = dot(data.vec_csa1, diff_data.ddy_dgamma)
+
+    data.ddz_csa1_dO[1] = dot(data.vec_csa1, diff_data.ddz_dbeta)
+    data.ddz_csa1_dO[2] = dot(data.vec_csa1, diff_data.ddz_dgamma)
+    # csa2
+    data.ddx_csa2_dO[0] = dot(data.vec_csa2, diff_data.ddx_dalpha)
+    data.ddx_csa2_dO[1] = dot(data.vec_csa2, diff_data.ddx_dbeta)
+    data.ddx_csa2_dO[2] = dot(data.vec_csa2, diff_data.ddx_dgamma)
+
+    data.ddy_csa2_dO[0] = dot(data.vec_csa2, diff_data.ddy_dalpha)
+    data.ddy_csa2_dO[1] = dot(data.vec_csa2, diff_data.ddy_dbeta)
+    data.ddy_csa2_dO[2] = dot(data.vec_csa2, diff_data.ddy_dgamma)
+
+    data.ddz_csa2_dO[1] = dot(data.vec_csa2, diff_data.ddz_dbeta)
+    data.ddz_csa2_dO[2] = dot(data.vec_csa2, diff_data.ddz_dgamma)
 
 
 # Ellipsoid direction cosine Hessian.
@@ -597,3 +1102,67 @@ def calc_ellipsoid_d2di(data, diff_data):
     data.d2dz_dO2[1, 1] =                       dot(data.xh_unit_vector, diff_data.d2dz_dbeta2)
     data.d2dz_dO2[1, 2] = data.d2dz_dO2[2, 1] = dot(data.xh_unit_vector, diff_data.d2dz_dbeta_dgamma)
     data.d2dz_dO2[2, 2] =                       dot(data.xh_unit_vector, diff_data.d2dz_dgamma2)
+
+
+    #===================================================================================
+    # csa1 vector and csa2 vector
+    # Trig.
+    data.sin_ea1 = sin(data.csea[0])
+    data.sin_ea2 = sin(data.csea[1])
+    data.sin_ea3 = sin(data.csea[2])
+
+    data.cos_ea1 = cos(data.csea[0])
+    data.cos_ea2 = cos(data.csea[1])
+    data.cos_ea3 = cos(data.csea[2])
+    
+    # The unit csa1 vector.
+    data.vec_csa1[0] = -data.sin_ea1 * data.sin_ea3 + data.cos_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa1[1] = -data.sin_ea1 * data.cos_ea3 - data.cos_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa1[2] =  data.cos_ea1 * data.sin_ea2
+
+    # The unit csa2 vector.
+    data.vec_csa2[0] = data.cos_ea1 * data.sin_ea3 + data.sin_ea1 * data.cos_ea2 * data.cos_ea3
+    data.vec_csa2[1] = data.cos_ea1 * data.cos_ea3 - data.sin_ea1 * data.cos_ea2 * data.sin_ea3
+    data.vec_csa2[2] = data.sin_ea1 * data.sin_ea2
+    
+    
+    # Direction cosine Hessians
+    ###########################
+    #csa1
+    data.d2dx_csa1_dO2[0, 0] =                       dot(data.vec_csa1, diff_data.d2dx_dalpha2)
+    data.d2dx_csa1_dO2[0, 1] = data.d2dx_csa1_dO2[1, 0] = dot(data.vec_csa1, diff_data.d2dx_dalpha_dbeta)
+    data.d2dx_csa1_dO2[0, 2] = data.d2dx_csa1_dO2[2, 0] = dot(data.vec_csa1, diff_data.d2dx_dalpha_dgamma)
+    data.d2dx_csa1_dO2[1, 1] =                       dot(data.vec_csa1, diff_data.d2dx_dbeta2)
+    data.d2dx_csa1_dO2[1, 2] = data.d2dx_csa1_dO2[2, 1] = dot(data.vec_csa1, diff_data.d2dx_dbeta_dgamma)
+    data.d2dx_csa1_dO2[2, 2] =                       dot(data.vec_csa1, diff_data.d2dx_dgamma2)
+
+    data.d2dy_csa1_dO2[0, 0] =                       dot(data.vec_csa1, diff_data.d2dy_dalpha2)
+    data.d2dy_csa1_dO2[0, 1] = data.d2dy_csa1_dO2[1, 0] = dot(data.vec_csa1, diff_data.d2dy_dalpha_dbeta)
+    data.d2dy_csa1_dO2[0, 2] = data.d2dy_csa1_dO2[2, 0] = dot(data.vec_csa1, diff_data.d2dy_dalpha_dgamma)
+    data.d2dy_csa1_dO2[1, 1] =                       dot(data.vec_csa1, diff_data.d2dy_dbeta2)
+    data.d2dy_csa1_dO2[1, 2] = data.d2dy_csa1_dO2[2, 1] = dot(data.vec_csa1, diff_data.d2dy_dbeta_dgamma)
+    data.d2dy_csa1_dO2[2, 2] =                       dot(data.vec_csa1, diff_data.d2dy_dgamma2)
+
+    data.d2dz_csa1_dO2[1, 1] =                       dot(data.vec_csa1, diff_data.d2dz_dbeta2)
+    data.d2dz_csa1_dO2[1, 2] = data.d2dz_csa1_dO2[2, 1] = dot(data.vec_csa1, diff_data.d2dz_dbeta_dgamma)
+    data.d2dz_csa1_dO2[2, 2] =                       dot(data.vec_csa1, diff_data.d2dz_dgamma2)
+    ###########################
+    #csa2
+    data.d2dx_csa2_dO2[0, 0] =                       dot(data.vec_csa2, diff_data.d2dx_dalpha2)
+    data.d2dx_csa2_dO2[0, 1] = data.d2dx_csa2_dO2[1, 0] = dot(data.vec_csa2, diff_data.d2dx_dalpha_dbeta)
+    data.d2dx_csa2_dO2[0, 2] = data.d2dx_csa2_dO2[2, 0] = dot(data.vec_csa2, diff_data.d2dx_dalpha_dgamma)
+    data.d2dx_csa2_dO2[1, 1] =                       dot(data.vec_csa2, diff_data.d2dx_dbeta2)
+    data.d2dx_csa2_dO2[1, 2] = data.d2dx_csa2_dO2[2, 1] = dot(data.vec_csa2, diff_data.d2dx_dbeta_dgamma)
+    data.d2dx_csa2_dO2[2, 2] =                       dot(data.vec_csa2, diff_data.d2dx_dgamma2)
+
+    data.d2dy_csa2_dO2[0, 0] =                       dot(data.vec_csa2, diff_data.d2dy_dalpha2)
+    data.d2dy_csa2_dO2[0, 1] = data.d2dy_csa2_dO2[1, 0] = dot(data.vec_csa2, diff_data.d2dy_dalpha_dbeta)
+    data.d2dy_csa2_dO2[0, 2] = data.d2dy_csa2_dO2[2, 0] = dot(data.vec_csa2, diff_data.d2dy_dalpha_dgamma)
+    data.d2dy_csa2_dO2[1, 1] =                       dot(data.vec_csa2, diff_data.d2dy_dbeta2)
+    data.d2dy_csa2_dO2[1, 2] = data.d2dy_csa2_dO2[2, 1] = dot(data.vec_csa2, diff_data.d2dy_dbeta_dgamma)
+    data.d2dy_csa2_dO2[2, 2] =                       dot(data.vec_csa2, diff_data.d2dy_dgamma2)
+
+    data.d2dz_csa2_dO2[1, 1] =                       dot(data.vec_csa2, diff_data.d2dz_dbeta2)
+    data.d2dz_csa2_dO2[1, 2] = data.d2dz_csa2_dO2[2, 1] = dot(data.vec_csa2, diff_data.d2dz_dbeta_dgamma)
+    data.d2dz_csa2_dO2[2, 2] =                       dot(data.vec_csa2, diff_data.d2dz_dgamma2)
+

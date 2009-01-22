@@ -21,8 +21,8 @@
 ###############################################################################
 
 
-from ri_comps import r1_comps, dr1_comps, d2r1_comps
-from ri_prime import func_ri_prime
+from ri_comps_csa_dipY import r1_comps, dr1_comps, d2r1_comps
+from ri_prime_csa_dipY import func_ri_prime
 
 
 # Calculate the NOE value.
@@ -81,16 +81,37 @@ def calc_d2noe(data, i, frq_num, get_d2r1, params, j, k):
 def calc_r1(data, i, frq_num, params):
     """Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
-    R1()  =  dip_const_func . dip_Jw_R1_func  +  csa_const_func . csa_Jw_R1_func
+    R1()  =  dip_const_func . dip_Jw_R1_func  +  csa1_const_func . csa1_Jw_R1_func  +  csa2_const_func . csa2_Jw_R1_func  +  csaC_const_func . csaC_Jw_R1_func  +  dip1_const_func . dip1_Jw_R1_func  +  dip2_const_func . dip2_Jw_R1_func + ...
     """
 
     # Place data in the R1 data class.
     data.r1_data.remap_table = data.remap_table
     data.r1_data.jw = data.jw
+    data.r1_data.jw_csa1 = data.jw_csa1
+    data.r1_data.jw_csa2 = data.jw_csa2
+    data.r1_data.jw_csaC = data.jw_csaC
+    data.r1_data.jw_dipY = []
+    for j in xrange(data.xy_vect_num):
+        data.r1_data.jw_dipY.append(None)
+    
+    for j in xrange(data.xy_vect_num):
+        data.r1_data.jw_dipY[j] = data.jw_dipY[j]
+    
     data.r1_data.dip_const_func = data.dip_const_func
-    data.r1_data.csa_const_func = data.csa_const_func
+    data.r1_data.dipY_const_func = []
+    for j in xrange(data.xy_vect_num):
+        data.r1_data.dipY_const_func.append(None)
+    
+    for j in xrange(data.xy_vect_num):
+        data.r1_data.dipY_const_func[j] = data.dipY_const_func[j]
+
+    data.r1_data.csa1_const_func = data.csa1_const_func
+    data.r1_data.csa2_const_func = data.csa2_const_func
+    data.r1_data.csaC_const_func = data.csaC_const_func
 
     # Calculate the r1 components.
+    data.r1_data.xy_vect_num = data.xy_vect_num
+    #data.r1_data.xy_data = data.xy_data
     r1_comps(data.r1_data, i, params)
 
     # Calculate the r1 value.
@@ -102,7 +123,7 @@ def calc_dr1(data, i, frq_num, params, j):
     """Calculate the R1 value if there is no R1 data corresponding to the NOE data.
 
     dR1()
-    -----  =  dip_const_func . dip_Jw_R1_grad  +  csa_const_func . csa_Jw_R1_grad
+    -----  =  dip_const_func . dip_Jw_R1_grad  +  csa1_const_func . csa1_Jw_R1_grad  +  csa2_const_func . csa2_Jw_R1_grad  +  csaC_const_func . csaC_Jw_R1_grad  +  dip1_const_func . dip1_Jw_R1_grad  +  dip2_const_func . dip2_Jw_R1_grad + ...
      dJw
 
     dR1()
@@ -121,8 +142,16 @@ def calc_dr1(data, i, frq_num, params, j):
     # Place data in the R1 data class.
     data.r1_data.remap_table = data.remap_table
     data.r1_data.djw = data.djw
+    data.r1_data.djw_csa1 = data.djw_csa1
+    data.r1_data.djw_csa2 = data.djw_csa2
+    data.r1_data.djw_csaC = data.djw_csaC
+    for k in xrange(data.xy_vect_num):
+        data.r1_data.djw_dipY[k] = data.djw_dipY[k]
+
     data.r1_data.dip_const_grad = data.dip_const_grad
     data.r1_data.csa_const_grad = data.csa_const_grad
+    for k in xrange(data.xy_vect_num):
+        data.r1_data.dipY_const_func[k] = data.dipY_const_func[k]
 
     # Calculate the dr1 components.
     dr1_comps(data.r1_data, i, params)
@@ -139,8 +168,16 @@ def calc_d2r1(data, i, frq_num, params, j, k):
     # Place data in the R1 data class.
     data.r1_data.remap_table = data.remap_table
     data.r1_data.d2jw = data.d2jw
+    data.r1_data.d2jw_csa1 = data.d2jw_csa1
+    data.r1_data.d2jw_csa2 = data.d2jw_csa2
+    data.r1_data.d2jw_csaC = data.d2jw_csaC
+    for l in xrange(data.xy_vect_num):
+        data.r1_data.d2jw_dipY[l] = data.d2jw_dipY[l]
+    
     data.r1_data.dip_const_hess = data.dip_const_hess
     data.r1_data.csa_const_hess = data.csa_const_hess
+    for l in xrange(data.xy_vect_num):
+        data.r1_data.dipY_const_func[l] = data.dipY_const_func[l]
 
     # Calculate the dr1 components.
     d2r1_comps(data.r1_data, i, params)
