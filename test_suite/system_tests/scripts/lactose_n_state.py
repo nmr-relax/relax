@@ -18,7 +18,7 @@ pipe.create('lactose', 'N-state')
 # Load the structures.
 NUM_STR = 4
 for i in range(NUM_STR):
-    structure.read_pdb(file='lactose_MCMM4_S1_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1)
+    structure.read_pdb(file='lactose_MCMM4_S1_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
 
 # Load the sequence information.
 structure.load_spins(spin_id=':UNK@C*', ave_pos=False)
