@@ -181,7 +181,7 @@ class Base_struct_API:
         @type str_node:     xml.dom.minicompat.Element instance
         @keyword dir:       The name of the directory containing the results file.
         @type dir:          str
-        @keyword id:        The specific structural object id string.  This can be 'scientific',
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
                             'internal', etc.
         @type id:           str
         """
@@ -761,7 +761,7 @@ class ModelList(list):
 
         @param model_nodes: The model XML nodes.
         @type model_nodes:  xml.dom.minicompat.NodeList instance
-        @keyword id:        The specific structural object id string.  This can be 'scientific',
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
                             'internal', etc.
         @type id:           str
         """
@@ -962,7 +962,7 @@ class MolList(list):
 
         @param mol_nodes:    The molecule XML nodes.
         @type mol_nodes:     xml.dom.minicompat.NodeList instance
-        @keyword id:        The specific structural object id string.  This can be 'scientific',
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
                             'internal', etc.
         @type id:           str
         """
