@@ -195,7 +195,7 @@ class Base_struct_API:
         #    # Load the structure from file and path.
         #    if self.path[i]:
         #        try:
-        #            loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None, struct_index=i)
+        #            loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None)
         #        except RelaxError:
         #            loaded = False
         #    else:
@@ -204,14 +204,14 @@ class Base_struct_API:
         #    # Try without the path to search for the file in the current directory.
         #    if not loaded:
         #        try:
-        #            loaded = self.load_pdb(file_path=self.file[i], model=None, struct_index=i)
+        #            loaded = self.load_pdb(file_path=self.file[i], model=None)
         #        except RelaxError:
         #            loaded = False
 
         #    # Try in the path of the results file.
         #    if not loaded:
         #        try:
-        #            loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None, struct_index=i)
+        #            loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None)
         #        except RelaxError:
         #            loaded = False
 
