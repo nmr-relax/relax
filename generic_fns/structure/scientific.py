@@ -647,34 +647,34 @@ class MolContainer:
         # Print out.
         print "\n" + `model`
 
-        # Index for finding the molecule.
-        mol_index = 0
+        # Counter for finding the molecule.
+        mol_num = 1
 
         # First add the peptide chains.
         if hasattr(model, 'peptide_chains'):
             for mol in model.peptide_chains:
                 # Pack if the molecule index matches.
-                if mol_index == self.file_mol_num:
+                if mol_num == self.file_mol_num:
                     self.data = mol
                     return
 
-                mol_index = mol_index + 1
+                mol_num = mol_num + 1
 
         # Then the nucleotide chains.
         if hasattr(model, 'nucleotide_chains'):
             for mol in model.nucleotide_chains:
                 # Pack if the molecule index matches.
-                if mol_index == self.file_mol_num:
+                if mol_num == self.file_mol_num:
                     self.data = mol
                     return
 
-                mol_index = mol_index + 1
+                mol_num = mol_num + 1
 
         # Finally all other molecules.
         if hasattr(model, 'molecules'):
             for key in model.molecules.keys():
                 # Pack if the molecule index matches.
-                if mol_index == self.file_mol_num:
+                if mol_num == self.file_mol_num:
                     # Loop over the molecules.
                     self.data = []
                     for mol in model.molecules[key]:
@@ -682,7 +682,7 @@ class MolContainer:
 
                     return
 
-                mol_index = mol_index + 1
+                mol_num = mol_num + 1
 
 
     def to_xml(self, doc, element):
