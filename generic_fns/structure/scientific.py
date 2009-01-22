@@ -613,6 +613,17 @@ class MolContainer:
     """The empty list-type container for the non-protein and non-RNA molecular information."""
 
 
+    def from_xml(self, mol_node):
+        """Recreate the MolContainer from the XML molecule node.
+
+        @param mol_node:    The molecule XML node.
+        @type mol_node:     xml.dom.minicompat.NodeList instance
+        """
+
+        # Recreate the current molecule container.
+        xml_to_object(mol_node, self)
+
+
     def to_xml(self, doc, element):
         """Create XML elements for the contents of this molecule container.
 
