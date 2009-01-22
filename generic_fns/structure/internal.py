@@ -64,7 +64,7 @@ class Internal(Base_struct_API):
         """
 
         # Create the structural data data structures.
-        self.pack_structs([[MolContainer()]], orig_model_num=[model], set_mol_name=[name])
+        self.pack_structs([[MolContainer()]], orig_model_num=[model], orig_mol_num=[None], set_mol_name=[name])
 
 
     def __bonded_atom(self, attached_atom, index, mol):
