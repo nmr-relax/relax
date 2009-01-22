@@ -133,10 +133,16 @@ class Structure(TestCase):
         self.assertEqual(mol.file_mol_num, 1)
 
         # The real atomic data.
-        res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
+        res_list = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
 
-        # Check the atomic data.
-        self.assertEqual(mol.sequence(), res_name)
+        # Loop over the residues.
+        i = 0
+        for res_name in cdp.structure.atom_loop(atom_id='@N', res_name_flag=True):
+            # Check the residue data.
+            self.assertEqual(res_name, res_list[i])
+
+            # Increment the residue counter.
+            i = i + 1
 
 
     def test_read_pdb_internal1(self):
