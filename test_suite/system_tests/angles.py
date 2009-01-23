@@ -48,10 +48,10 @@ class Angles(TestCase):
         cdp = pipes.get_pipe()
 
         # Res info.
-        res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY', 'TYR', 'ARG', 'ARG']
-        spin_num = [1, 11, 28, 51, 59, 71, 91, 104, 116, 133, 150, 167, None, None, None]
-        spin_name = ['N']*12 + [None]*3
-        attached_atoms = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H', None, None, None]
+        res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
+        spin_num = [1, 11, 28, 51, 59, 71, 91, 104, 116, 133, 150, 167]
+        spin_name = ['N']*12
+        attached_atoms = [None, None, 'H', 'H', 'H', 'H', 'H', 'H', None, None, 'H', 'H']
         xh_vects = [
             None,
             None,
@@ -64,20 +64,17 @@ class Angles(TestCase):
             None,
             None,
             [0.820296708196, 0.570330671495, -0.0428513205774],
-            [-0.223383112106, -0.034680483158, -0.974113571055],
-            None,
-            None,
-            None,
+            [-0.223383112106, -0.034680483158, -0.974113571055]
         ]
-        alpha = [None, None, 2.8102691247870459, 2.6063738282640672, 2.9263088853837358, 2.5181004004450211, 1.3361463581932049, 1.5031623128368377, None, None, 1.0968465542222101, 1.1932423104331247, None, None, None]
+        alpha = [None, None, 2.8102691247870459, 2.6063738282640672, 2.9263088853837358, 2.5181004004450211, 1.3361463581932049, 1.5031623128368377, None, None, 1.0968465542222101, 1.1932423104331247]
 
         # Molecule checks.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, None)
-        self.assertEqual(len(cdp.mol[0].res), 165)
+        self.assertEqual(cdp.mol[0].name, 'Ap4Aase_res1-12_mol1')
+        self.assertEqual(len(cdp.mol[0].res), 12)
 
-        # Checks for the first 15 residues.
-        for i in xrange(15):
+        # Checks for the first 12 residues.
+        for i in xrange(12):
             print cdp.mol[0].res[i].spin[0]
             # Check the residue and spin info.
             self.assertEqual(cdp.mol[0].res[i].num, i+1)
