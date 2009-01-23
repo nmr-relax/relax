@@ -160,7 +160,7 @@ class PipeContainer(Prototype):
 
             # Fill its contents.
             if not fail:
-                self.structure.from_xml(str_nodes[0], dir=dir)
+                self.structure.from_xml(str_nodes[0], dir=dir, id=parser)
 
 
     def is_empty(self):
