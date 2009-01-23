@@ -426,7 +426,14 @@ class RelaxNoneStrError(BaseError):
 # None, string, or list.
 class RelaxNoneStrListError(BaseError):
     def __init__(self, name, value):
-        self.text = "The " + name + " argument " + `value` + " must either be a string or None."
+        self.text = "The " + name + " argument " + `value` + " must either be None, a string or a list."
+        if Debug:
+            self.save_state()
+
+# None, string, or list of strings.
+class RelaxNoneStrListStrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + `value` + " must either be None, a string or a list of strings."
         if Debug:
             self.save_state()
 
