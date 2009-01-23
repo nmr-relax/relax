@@ -604,8 +604,14 @@ class Internal(Base_struct_API):
                 if set_mol_name:
                     new_mol_name.append(set_mol_name[mol_index])
                 else:
+                    # Number of structures already present for the model.
+                    num_struct = 0
+                    for model in self.structural_data:
+                        if model_index <= len(set_model_num) and set_model_num[model_index] == model.num:
+                            num_struct = len(model.mol)
+
                     # Set the name to the file name plus the structure number.
-                    new_mol_name.append(file_root(file) + '_mol' + `mol_num`)
+                    new_mol_name.append(file_root(file) + '_mol' + `mol_num+num_struct`)
 
                 # Store the original mol number.
                 orig_mol_num.append(mol_num)
