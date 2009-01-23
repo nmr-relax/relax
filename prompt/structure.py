@@ -31,7 +31,7 @@ import sys
 import generic_fns.structure.geometric
 import generic_fns.structure.main
 import help
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxStrError
 
 
 class Structure:
@@ -311,7 +311,7 @@ class Structure:
         generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
 
 
-    def read_pdb(self, file=None, dir=None, model=None, parser='scientific'):
+    def read_pdb(self, file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal'):
         """The PDB loading function.
 
         Keyword Arguments
@@ -321,7 +321,13 @@ class Structure:
 
         dir:  The directory where the file is located.
 
-        model:  The PDB model number.
+        read_mol:  If set, only the given molecule(s) will be read.
+
+        set_mol_name:  Set the names of the read molecules.
+
+        read_model:  If set, only the given model number(s) from the PDB file will be read.
+
+        set_model_num:  Set the model numbers of the read molecules.
 
         parser:  The PDB parser used to read the file.
 
@@ -329,32 +335,73 @@ class Structure:
         Description
         ~~~~~~~~~~~
 
-        To load a specific model from the PDB file, set the model flag to an integer i.  The
-        structure beginning with the line 'MODEL i' in the PDB file will be loaded.  Otherwise all
-        structures will be loaded starting from the model number 1.
+        The reading of PDB files into relax is quite a flexible procedure allowing for both models,
+        defined as an ensemble of the same molecule but with different atomic positions, and
+        different molecules within the same model.  One of more molecules can exist in one or more
+        models.  The flexibility allows PDB models to be converted into different molecules and
+        different PDB files loaded as the same molecule but as different models.  This flexibility
+        is controlled by the four keyword arguments 'read_mol', 'set_mol_name', 'read_model', and
+        'set_model_num'.
 
-        A few different PDB parsers can be used to read the structural data.  These are selected by
+        A few different PDB parsers can be used to read the structural data.  The choice of which to
+        use depends on whether your PDB file is supported by that reader.  These are selected by
         setting the 'parser' argument to one of:
 
             'scientific' - the Scientific Python PDB parser.
             'internal' - a lower quality and less reliable, although faster, PDB parser built into
                 relax.
 
+        In a PDB file, the models are specified by the MODEL PDB record.  All the supported PDB
+        readers in relax recognise this.  The molecule level is quite different between the
+        Scientific Python and internal readers.  For how Scientific Python defines molecules, please
+        see its documentation.  The internal reader is far simpler as it defines molecules using the
+        TER PDB record.  In both cases, the molecules will be numbered consecutively from 1.
 
-        Example
-        ~~~~~~~
+        The 'set_mol_name' argument is used to name the molecules within the PDB (within one
+        model).  If not set, then the molecules will be named after the file name, with the molecule
+        number appended if more than one exists.
 
-        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', type one of:
+        Note that relax will complain if it cannot work out what to do.
+
+
+        Examples
+        ~~~~~~~~
+
+        To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all
+        models and all molecules, type one of:
 
         relax> structure.read_pdb('test.pdb', '~/pdb')
         relax> structure.read_pdb(file='test.pdb', dir='pdb')
 
 
-        To load the 10th model from the file 'test.pdb' using the internal relax parser, use one of:
+        To load the 10th model from the file 'test.pdb' using the Scientific Python PDB parser and
+        naming it 'CaM', use one of:
 
-        relax> structure.read_pdb('test.pdb', model=10, parser='internal')
-        relax> structure.read_pdb(file='test.pdb', model=10, parser='internal')
+        relax> structure.read_pdb('test.pdb', read_model=10, set_mol_name='CaM',
+                                  parser='scientific')
+        relax> structure.read_pdb(file='test.pdb', read_model=10, set_mol_name='CaM',
+                                  parser='scientific')
 
+
+        To load models 1 and 5 from the file 'test.pdb' as two different structures of the same
+        model, type one of:
+
+        relax> structure.read_pdb('test.pdb', read_model=[1, 5], set_model_num=[1, 1])
+        relax> structure.read_pdb('test.pdb', set_mol_name=['CaM_1', 'CaM_2'], read_model=[1, 5],
+                                  set_model_num=[1, 1])
+
+        To load the files 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_2.pdb',
+        'lactose_MCMM4_S1_3.pdb' and 'lactose_MCMM4_S1_4.pdb' as models, type the following sequence
+        of commands:
+
+        relax> structure.read_pdb('lactose_MCMM4_S1_1.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=1)
+        relax> structure.read_pdb('lactose_MCMM4_S1_2.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=2)
+        relax> structure.read_pdb('lactose_MCMM4_S1_3.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=3)
+        relax> structure.read_pdb('lactose_MCMM4_S1_4.pdb', set_mol_name='lactose_MCMM4_S1',
+                                  set_model_num=4)
         """
 
         # Function intro text.
@@ -362,7 +409,10 @@ class Structure:
             text = sys.ps3 + "structure.read_pdb("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", model=" + `model`
+            text = text + ", read_mol=" + `read_mol`
+            text = text + ", set_mol_name=" + `set_mol_name`
+            text = text + ", read_model=" + `read_model`
+            text = text + ", set_model_num=" + `set_model_num`
             text = text + ", parser=" + `parser` + ")"
             print text
 
@@ -374,37 +424,65 @@ class Structure:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # The model argument.
-        if model != None and type(model) != int:
-            raise RelaxNoneIntError, ('model', model)
+        # The read_mol, read_models, and set_model_num arguments.
+        arg_list = [read_mol, read_model, set_model_num]
+        arg_desc = ['read molecule number', 'read model', 'set model numbers']
+        for i in range(len(arg_list)):
+            # Basic type check.
+            if arg_list[i] != None and type(arg_list[i]) != int and type(arg_list[i]) != list:
+                raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+
+            # List check.
+            if type(arg_list[i]) == list:
+                # Zero size list.
+                if len(arg_list[i]) == 0:
+                    raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+
+                # Element check.
+                for j in range(len(arg_list[i])):
+                    if type(arg_list[i][j]) != int:
+                        raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+
+        # The set_mol_name arguments.
+        if set_mol_name != None and type(set_mol_name) != str and type(set_mol_name) != list:
+            raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
+        if type(set_mol_name) == list:
+            # Zero size list.
+            if len(set_mol_name) == 0:
+                raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
+
+            # Element check.
+            for i in range(len(set_mol_name)):
+                if type(set_mol_name[i]) != str:
+                    raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
 
         # PDB parser.
         if type(parser) != str:
             raise RelaxStrError, ('PDB parser', parser)
 
         # Execute the functional code.
-        generic_fns.structure.main.read_pdb(file=file, dir=dir, model=model, parser=parser)
+        generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
 
 
-    def vectors(self, attached='H', spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
-        """Extract unit bond vectors from the structure.
+    def vectors(self, attached='H', spin_id=None, model=None, verbosity=1, ave=True, unit=True):
+        """Extract and store the bond vectors from the loaded structures in the spin container.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
-        attached:  The type of atom attached to the spin.  Regular expression is allowed, for
-        example 'H*'.
+        attached:  The name of the second atom which attached to the spin of interest.  Regular
+        expression is allowed, for example 'H*'.
 
         spin_id:  The spin identification string.
 
-        struct_index:  The index of the structure to extract bond vectors from (which if set to None
-        will cause all vectors to be extracted).
+        model:  The model to extract bond vectors from (which if set to None will cause the vectors
+        of all models to be extracted).
 
         verbosity:  The amount of information to print to screen.  Zero corresponds to minimal
         output while higher values increase the amount of output.  The default value is 1.
 
-        ave:  A flag which if True will cause all extracted bond vectors to be averaged.  If only
-        one vector is extracted, this argument will have no effect.
+        ave:  A flag which if True will cause the bond vectors from all models to be averaged.  If
+        vectors from only one model is extracted, this argument will have no effect.
 
         unit:  A flag which if True will cause the unit vector to calculated rather than the full
         length bond vector.
@@ -414,20 +492,20 @@ class Structure:
         ~~~~~~~~~~~
 
         For a number of types of analysis, bond vectors or unit bond vectors are required for the
-        calculations.  This user function allows these vectors to be extracted from a loaded
-        structure.  The bond vector will be that from the spin system loaded in relax to the bonded
-        atom specified by the 'attached' argument.  For example if 'attached' is set to 'H', all
-        attached protons will be searched for.  If set to 'CA', all atoms named 'CA' in the
-        structure will be searched for.
+        calculations.  This user function allows these vectors to be extracted from the loaded
+        structures.  The bond vector will be that from the atom associated with the spin system
+        loaded in relax to the bonded atom specified by the 'attached' argument.  For example if
+        'attached' is set to 'H' and the protein backbone amide spins 'N' are loaded, the all 'N-H'
+        vectors will be extracted.  But if set to 'CA', all atoms named 'CA' in the structures will
+        be searched for and all 'N-Ca' bond vectors will be extracted.
 
         The extraction of vectors can occur in a number of ways.  For example if an NMR structure
-        with N models is loaded (or if multiple structures from any source of the same compound are
-        loaded), there are three options for extracting the bond vector.  Firstly the bond vector of
-        a single model or structure can be extracted by specifying the structural index
-        'struct_index', where 0 corresponds to the first structure/model.  Secondly the bond vectors
-        from all structures/models can be extracted if 'struct_index' is None and 'ave' is set to
-        False.  Thirdly, if 'struct_index' is None and 'ave' is set to True, then a single vector
-        which is the average of all structures/models will be calculated.
+        with N models is loaded or if multiple molecules, from any source, of the same compound are
+        loaded as different models, there are three options for extracting the bond vector.  Firstly
+        the bond vector of a single model can be extracted by setting the 'model' argument.
+        Secondly the bond vectors from all models can be extracted if 'model' is None and 'ave' is
+        set to False.  Thirdly, if 'model' is None and 'ave' is set to True, then a single vector
+        which is the average for all models will be calculated.
 
 
         Example
@@ -474,7 +552,7 @@ class Structure:
             text = sys.ps3 + "structure.vectors("
             text = text + "attached=" + `attached`
             text = text + ", spin_id=" + `spin_id`
-            text = text + ", struct_index=" + `struct_index`
+            text = text + ", model=" + `model`
             text = text + ", verbosity=" + `verbosity`
             text = text + ", ave=" + `ave`
             text = text + ", unit=" + `unit` + ")"
@@ -486,11 +564,11 @@ class Structure:
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('Spin identification string', spin_id)
+            raise RelaxNoneStrError, ('spin identification string', spin_id)
 
-        # The struct_index argument.
-        if struct_index != None and type(struct_index) != int:
-            raise RelaxNoneIntError, ('structure index', struct_index)
+        # The model argument.
+        if model != None and type(model) != int:
+            raise RelaxNoneIntError, ('model', model)
 
         # The verbosity level.
         if type(verbosity) != int:
@@ -505,10 +583,10 @@ class Structure:
             raise RelaxBoolError, ('unit vector flag', unit)
 
         # Execute the functional code.
-        generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, struct_index=struct_index, verbosity=verbosity, ave=ave, unit=unit)
+        generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
 
 
-    def write_pdb(self, file=None, dir=None, struct_index=None, force=False):
+    def write_pdb(self, file=None, dir=None, model_num=None, force=False):
         """The PDB writing function.
 
         Keyword Arguments
@@ -518,7 +596,7 @@ class Structure:
 
         dir:  The directory where the file is located.
 
-        struct_index:  The index of the structure to write.
+        model_num:  The optional model to place in the PDB file.
 
         force:  A flag which, if set to True, will overwrite the any pre-existing file.
 
@@ -526,25 +604,23 @@ class Structure:
         Description
         ~~~~~~~~~~~
 
-        If the struct_index argument is None, then each loaded structure will be written to a single
-        file as different models.  This index covers all the structures loaded from individual files
-        and all the structures present as different models within each file.
+        If the model_num argument is None, then all models will be written to a single file.
 
 
         Example
         ~~~~~~~
 
-        To write all structures to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
+        To write all models and molecules to the PDB file 'ensemble.pdb' within the directory '~/pdb', type
         one of:
 
         relax> structure.write_pdb('ensemble.pdb', '~/pdb')
         relax> structure.write_pdb(file='ensemble.pdb', dir='pdb')
 
 
-        To write the 4th model loaded from a PDB file into the new file 'test.pdb', use one of:
+        To write model number 3 into the new file 'test.pdb', use one of:
 
-        relax> structure.write_pdb('test.pdb', struct_index=3)
-        relax> structure.write_pdb(file='test.pdb', struct_index=3)
+        relax> structure.write_pdb('test.pdb', model_num=3)
+        relax> structure.write_pdb(file='test.pdb', model_num=3)
         """
 
         # Function intro text.
@@ -552,7 +628,7 @@ class Structure:
             text = sys.ps3 + "structure.write_pdb("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", struct_index=" + `struct_index`
+            text = text + ", model_num=" + `model_num`
             text = text + ", force=" + `force` + ")"
             print text
 
@@ -564,13 +640,13 @@ class Structure:
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
 
-        # The struct_index argument.
-        if struct_index != None and type(struct_index) != int:
-            raise RelaxNoneIntError, ('structure index', struct_index)
+        # The model_num argument.
+        if model_num != None and type(model_num) != int:
+            raise RelaxNoneIntError, ('model number', model_num)
 
         # The force flag.
         if type(force) != bool:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        generic_fns.structure.main.write_pdb(file=file, dir=dir, struct_index=struct_index, force=force)
+        generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)

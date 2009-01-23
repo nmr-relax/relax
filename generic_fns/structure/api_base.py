@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,12 +30,14 @@ documented.
 
 # Python module imports.
 from os import sep
+from re import match
 from types import MethodType
 from warnings import warn
 
 # relax module import.
 from data.relax_xml import fill_object_contents, xml_to_object
-from relax_errors import RelaxError, RelaxFileError, RelaxImplementError
+from relax_errors import RelaxError, RelaxFileError, RelaxFromXMLNotEmptyError, RelaxImplementError
+from relax_io import file_root
 from relax_warnings import RelaxWarning
 
 
@@ -52,85 +54,17 @@ class Base_struct_API:
     def __init__(self):
         """Initialise the structural object."""
 
-        # Initialise the variables used to keep track of multiple structures.
-        self.num = 0
-        self.name = []
-        self.model = []
-        self.file = []
-        self.path = []
-        self.structural_data = []
+        # Initialise the empty model list.
+        self.structural_data = ModelList()
 
 
-    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
-        """Prototype method stub for adding the given structure to the store.
+    def add_molecule(self, name=None, model=None):
+        """Prototype method stub for adding the given molecule to the store.
 
-        @keyword name:          The structural identifier.
+        @keyword name:          The molecule identification string.
         @type name:             str
-        @keyword model:         The structural model.
+        @keyword model:         The number of the model to add the molecule to.
         @type model:            int or None
-        @keyword file:          The name of the file containing the structure.
-        @type file:             str
-        @keyword path:          The optional path where the file is located.
-        @type path:             str
-        @keyword str:           The object containing the structural data.
-        @type str:              Structure_container instance
-        @keyword struct_index:  The index of the structural container, used for replacing the
-                                structure.
-        @type struct_index:     int or None.
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
-
-
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
-        """Prototype method stub for adding an atom to the structural data object.
-
-        This method will create the key-value pair for the given atom.
-
-
-        @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM', 'HETATM', or 'TER'.
-        @type pdb_record:       str or None
-        @keyword atom_num:      The atom number.
-        @type atom_num:         int or None
-        @keyword atom_name:     The atom name, e.g. 'H1'.
-        @type atom_name:        str or None
-        @keyword res_name:      The residue name.
-        @type res_name:         str or None
-        @keyword chain_id:      The chain identifier.
-        @type chain_id:         str or None
-        @keyword res_num:       The residue number.
-        @type res_num:          int or None
-        @keyword pos:           The position vector of coordinates.
-        @type pos:              list (length = 3)
-        @keyword segment_id:    The segment identifier.
-        @type segment_id:       str or None
-        @keyword element:       The element symbol.
-        @type element:          str or None
-        @keyword struct_index:  The index of the structure to add the atom to.  If not supplied and
-                                multiple structures or models are loaded, then the atom will be
-                                added to all structures.
-        @type struct_index:     None or int
-        """
-
-        # Raise the error.
-        raise RelaxImplementError
-
-
-    def atom_connect(self, index1=None, index2=None, struct_index=None):
-        """Prototype method stub for connecting two atoms within the data structure object.
-
-        This method should connect the atoms corresponding to the indices.
-
-
-        @keyword index1:        The index of the first atom.
-        @type index1:           int
-        @keyword index2:        The index of the second atom.
-        @type index2:           int
-        @keyword struct_index:  The index of the structure to connect the atoms of.  If not supplied
-                                and multiple structures or models are loaded, then the atoms will be
-                                connected within all structures.
-        @type struct_index:     None or int
         """
 
         # Raise the error.
@@ -215,7 +149,7 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
+    def bond_vectors(self, atom_id=None, attached_atom=None, model_num=None, return_name=False, return_warnings=False):
         """Prototype method stub for finding the bond vectors between 'attached_atom' and 'atom_id'.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
@@ -223,10 +157,10 @@ class Base_struct_API:
         @type atom_id:              str
         @keyword attached_atom:     The name of the bonded atom.
         @type attached_atom:        str
-        @keyword struct_index:      The index of the structure to return the vectors from.  If not
-                                    supplied and multiple structures/models exist, then vectors from
-                                    all structures will be returned.
-        @type struct_index:         None or int
+        @keyword model_num:         The model of which to return the vectors from.  If not supplied
+                                    and multiple models exist, then vectors from all models will be
+                                    returned.
+        @type model_num:            None or int
         @keyword return_name:       A flag which if True will cause the name of the attached atom to
                                     be returned together with the bond vectors.
         @type return_name:          bool
@@ -240,52 +174,61 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def from_xml(self, str_node, dir=None):
+    def from_xml(self, str_node, dir=None, id=None):
         """Recreate the structural object from the XML structural object node.
 
         @param str_node:    The structural object XML node.
         @type str_node:     xml.dom.minicompat.Element instance
         @keyword dir:       The name of the directory containing the results file.
         @type dir:          str
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
         """
 
-        # Recreate all the data structures.
-        xml_to_object(str_node, self)
-
-        # Loop over the structures and load them.
-        for i in xrange(self.num):
-            # Load the structure from file and path.
-            if self.path[i]:
-                try:
-                    loaded = self.load_pdb(file_path=self.path[i] + sep + self.file[i], model=None, struct_index=i)
-                except RelaxError:
-                    loaded = False
-            else:
-                loaded = False
-
-            # Try without the path to search for the file in the current directory.
-            if not loaded:
-                try:
-                    loaded = self.load_pdb(file_path=self.file[i], model=None, struct_index=i)
-                except RelaxError:
-                    loaded = False
-
-            # Try in the path of the results file.
-            if not loaded:
-                try:
-                    loaded = self.load_pdb(file_path=dir + sep + self.file[i], model=None, struct_index=i)
-                except RelaxError:
-                    loaded = False
-
-            # Can't load the file.
-            if not loaded:
-                if self.path[i]:
-                    warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory, the directory of the results file or in the directory" + `self.path[i]` + "."))
-                else:
-                    warn(RelaxWarning("The structure file " + `self.file[i]` + " cannot be found in the current directory or the directory of the results file."))
+        # Recreate the model / molecule data structure.
+        model_nodes = str_node.getElementsByTagName('model')
+        self.structural_data.from_xml(model_nodes, id=id)
 
 
-    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
+    def get_model(self, model):
+        """Return or create the model.
+
+        @param model:   The model number.
+        @type model:    int or None
+        @return:        The ModelContainer corresponding to the model number or that newly created.
+        @rteyp:         ModelContainer instance
+        """
+
+        # Check if the target is a single model.
+        if model == None and self.num_models() > 1:
+            raise RelaxError, "The target model cannot be determined as there are %s models already present." % self.num_modes()
+
+        # No model specified.
+        if model == None:
+            # Create the first model, if necessary.
+            if self.num_models():
+                self.structural_data.add_item()
+
+            # Alias the first model.
+            model_cont = self.structural_data[0]
+
+        # The model has been specified.
+        else:
+            # Get the preexisting model.
+            found = False
+            for model_cont in self.structural_data:
+                if model_cont.num == model:
+                    found = True
+                    break
+
+            # Add the model if it doesn't exist.
+            if not found:
+                self.structural_data.add_item(model)
+                model_cont = self.structural_data[-1]
+
+
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
         """Prototype method stub for loading structures from a PDB file.
 
         This inherited prototype method is a stub which, if the functionality is desired, should be
@@ -294,11 +237,21 @@ class Base_struct_API:
 
         @param file_path:       The full path of the PDB file.
         @type file_path:        str
-        @param model:           The structural model to use.
-        @type model:            int
-        @param struct_index:    The index of the structure.  This optional argument can be useful
-                                for reloading a structure.
-        @type struct_index:     int
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                                molecules are determined differently by the different parsers, but
+                                are numbered consecutively from 1.  If set to None, then all
+                                molecules will be loaded.
+        @type read_mol:         None, int, or list of int
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
+                                then the molecules will be automatically labelled based on the file
+                                name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all
+                                models will be loaded.
+        @type read_model:       None, int, or list of int
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
+                                the PDB model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
         @return:                The status of the loading of the PDB file.
@@ -309,14 +262,143 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
-    def num_structures(self):
-        """Method for returning the number of loaded structures (i.e. number of NMR models, etc.).
+    def num_models(self):
+        """Method for returning the number of models.
 
-        @return:    The number of structures which have been loaded.
+        @return:    The number of models in the structural object.
         @rtype:     int
         """
 
         return len(self.structural_data)
+
+
+    def num_molecules(self):
+        """Method for returning the number of molecules.
+
+        @return:    The number of molecules in the structural object.
+        @rtype:     int
+        """
+
+        # Validate the structural object.
+        self.validate()
+
+        # Return the number.
+        return len(self.structural_data[0].mol)
+
+
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None):
+        """From the given structural data, expand the structural data data structure.
+
+        @param data_matrix:         A matrix of structural objects.
+        @type data_matrix:          list of lists of structural objects
+        @keyword orig_model_num:    The original model numbers (for storage).
+        @type orig_model_num:       list of int
+        @keyword set_model_num:     The new model numbers (for model renumbering).
+        @type set_model_num:        list of int
+        @keyword orig_mol_num:      The original molecule numbers (for storage).
+        @type orig_mol_num:         list of int
+        @keyword set_mol_name:      The new molecule names.
+        @type set_mol_name:         list of str
+        @keyword file_name:         The name of the file from which the molecular data has been
+                                    extracted.
+        @type file_name:            None or str
+        @keyword file_path:         The full path to the file specified by 'file_name'.
+        @type file_path:            None or str
+        """
+
+        # Test the number of models.
+        if len(orig_model_num) != len(data_matrix):
+            raise RelaxError, "Structural data mismatch, %s original models verses %s in the structural data." % (len(orig_model_num), len(data_matrix))
+
+        # Test the number of molecules.
+        if len(orig_mol_num) != len(data_matrix[0]):
+            raise RelaxError, "Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num), len(data_matrix[0]))
+
+        # Model numbers do not change.
+        if not set_model_num:
+            set_model_num = orig_model_num
+
+        # Test the model mapping.
+        if len(set_model_num) != len(data_matrix):
+            raise RelaxError, "Failure of the mapping of new model numbers, %s new model numbers verses %s models in the structural data." % (len(set_model_num), len(data_matrix))
+
+        # Test the molecule mapping.
+        if len(set_mol_name) != len(data_matrix[0]):
+            raise RelaxError, "Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_name), len(data_matrix[0]))
+
+        # Test that the target models and structures are absent, and get the already existing model numbers.
+        current_models = []
+        for i in range(len(self.structural_data)):
+            # Create a list of current models.
+            current_models.append(self.structural_data[i].num)
+
+            # Loop over the structures.
+            for j in range(len(self.structural_data[i].mol)):
+                if self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].mol_name in set_mol_name:
+                    raise RelaxError, "The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num)
+
+        # Loop over the models.
+        for i in range(len(set_model_num)):
+            # The model doesn't currently exist.
+            if set_model_num[i] not in current_models:
+                # Create the model.
+                self.structural_data.add_item(set_model_num[i])
+
+                # Add the model number to the current_models list.
+                current_models.append(set_model_num[i])
+
+                # Get the model.
+                model = self.structural_data[-1]
+
+            # Otherwise get the pre-existing model.
+            else:
+                model = self.structural_data[current_models.index(set_model_num[i])]
+
+            # Loop over the molecules.
+            for j in range(len(set_mol_name)):
+                # Print out.
+                print "Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i])
+
+                # Consistency check.
+                index = len(model.mol)
+                if model.num != self.structural_data[0].num and self.structural_data[0].mol[index].mol_name != set_mol_name[j]:
+                    raise RelaxError, "The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num)
+
+                # Pack the structures.
+                model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
+
+                # Set the molecule name and store the structure file info. 
+                model.mol[-1].mol_name = set_mol_name[j]
+                model.mol[-1].file_name = file_name
+                model.mol[-1].file_path = file_path
+                model.mol[-1].file_mol_num = orig_mol_num[j]
+                model.mol[-1].file_model = orig_model_num[i]
+
+
+
+    def target_mol_name(self, set=None, target=None, index=None, mol_num=None, file=None):
+        """Add the new molecule name to the target data structure.
+
+        @keyword set:       The list of new molecule names.  If not supplied, the names will be
+                            generated from the file name.
+        @type set:          None or list of str
+        @keyword target:    The target molecule name data structure to which the new name will be
+                            appended.
+        @type target:       list
+        @keyword index:     The molecule index, matching the set argument.
+        @type index:        int
+        @keyword mol_num:   The molecule number.
+        @type mol_num:      int
+        @keyword file:      The name of the file, excluding all directories.
+        @type file:         str
+        """
+
+        # Set the target molecule name.
+        if set:
+            target.append(set[index])
+        else:
+            # Set the name to the file name plus the structure number.
+            target.append(file_root(file) + '_mol' + `mol_num`)
 
 
     def to_xml(self, doc, element):
@@ -336,21 +418,12 @@ class Base_struct_API:
         str_element.setAttribute('desc', 'Structural information')
         str_element.setAttribute('id', self.id)
 
-        # Blacklist methods.
-        blacklist = []
-        for name in dir(self):
-            # Get the object.
-            obj = getattr(self, name)
-
-            # Add methods to the list.
-            if isinstance(obj, MethodType):
-                blacklist.append(name)
-
-        # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, str_element, object=self, blacklist=blacklist + ['structural_data'] + self.__class__.__dict__.keys())
+        # No contents to store, so pack up the structural containers.
+        if not self.structural_data.is_empty():
+            self.structural_data.to_xml(doc, str_element)
 
 
-    def write_pdb(self, file, struct_index=None):
+    def write_pdb(self, file, model_num=None):
         """Prototype method stub for the creation of a PDB file from the structural data.
 
         The PDB records
@@ -592,10 +665,353 @@ class Base_struct_API:
 
         @param file:            The PDB file object.  This object must be writable.
         @type file:             file object
-        @param struct_index:    The index of the structural container to write.  If None, all
-                                structures will be written.
-        @type struct_index:     int
+        @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
+                                models will be placed into the file.
+        @type model_num:        None or int
         """
 
         # Raise the error.
         raise RelaxImplementError
+
+
+    def validate(self):
+        """Check the integrity of the structural data.
+
+        The number of molecules must be the same in all models.
+        """
+
+        # Reference number of molecules.
+        num_mols = len(self.structural_data[0].mol)
+
+        # Loop over all other models.
+        for i in range(1, len(self.structural_data)):
+            # Model alias.
+            model_i = self.structural_data[i]
+
+            # Size check.
+            if num_mols != len(model_i.mol):
+                raise RelaxError, "The structural object is not valid - the number of molecules is not the same for all models."
+
+            # Molecule name check.
+            for j in range(len(model_i.mol)):
+                if model_i.mol[j].mol_name != self.structural_data[0].mol[j].mol_name:
+                    raise RelaxError, "The molecule name '%s' of model %s does not match the corresponding molecule '%s' of model %s." % (model_i.mol[j].mol_name, model_i.num, self.structural_data[0].mol[j].mol_name, self.structural_data[0].num)
+
+
+
+class ModelList(list):
+    """List type data container for the different structural models.
+
+    Here different models are defined as the same molecule but with different conformations.
+    """
+
+    def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        text = "Models.\n\n"
+        text = text + "%-8s%-8s" % ("Index", "Model number") + "\n"
+        for i in xrange(len(self)):
+            text = text + "%-8i%-8s" % (i, self[i].num) + "\n"
+        return text
+
+
+    def add_item(self, model_num=None):
+        """Append an empty ModelContainer to the ModelList.
+
+        @keyword model_num: The model number.
+        @type model_num:    int
+        """
+
+        # If no model data exists, replace the empty first model with this model (just a renumbering).
+        if len(self) and self.is_empty():
+            self[0].num = model_num
+
+        # Otherwise append an empty ModelContainer.
+        else:
+            # Test if the model number already exists.
+            for i in xrange(len(self)):
+                if self[i].num == model_num:
+                    raise RelaxError, "The model '" + `model_num` + "' already exists."
+
+            # Append an empty ModelContainer.
+            self.append(ModelContainer(model_num))
+
+
+    def is_empty(self):
+        """Method for testing if this ModelList object is empty.
+
+        @return:    True if this list only has one ModelContainer and the model name has not
+                    been set, False otherwise.
+        @rtype:     bool
+        """
+
+        # No ModelContainers.
+        if len(self) == 0:
+            return True
+
+        # There is only one ModelContainer and it is empty.
+        if len(self) == 1 and self[0].is_empty():
+            return True
+
+        # Otherwise.
+        return False
+
+
+    def from_xml(self, model_nodes, id=None):
+        """Recreate a model list data structure from the XML model nodes.
+
+        @param model_nodes: The model XML nodes.
+        @type model_nodes:  xml.dom.minicompat.NodeList instance
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the models.
+        for model_node in model_nodes:
+            # Get the model details and add the model to the ModelList structure.
+            num = eval(model_node.getAttribute('num'))
+            if num == 'None':
+                num = None
+            self.add_item(model_num=num)
+
+            # Get the molecule nodes.
+            mol_nodes = model_node.getElementsByTagName('mol_cont')
+
+            # Recreate the molecule data structures for the current model.
+            self[-1].mol.from_xml(mol_nodes, id=id)
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each model.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the model XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the models.
+        for i in xrange(len(self)):
+            # Create an XML element for this model and add it to the higher level element.
+            model_element = doc.createElement('model')
+            element.appendChild(model_element)
+
+            # Set the model attributes.
+            model_element.setAttribute('desc', 'Model container')
+            model_element.setAttribute('num', str(self[i].num))
+
+            # Add all simple python objects within the ModelContainer to the XML element.
+            fill_object_contents(doc, model_element, object=self[i], blacklist=['num', 'mol'] + self[i].__class__.__dict__.keys())
+
+            # Add the molecule data.
+            self[i].mol.to_xml(doc, model_element)
+
+
+
+class ModelContainer(object):
+    """Class containing all the model specific data."""
+
+    def __init__(self, model_num=None):
+        """Set up the default objects of the model data container."""
+
+        # The model number.
+        self.num = model_num
+
+        # The empty molecule list.
+        self.mol = MolList()
+
+
+    def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        # Intro.
+        text = "Class containing the data for model %s.\n" % self.num
+
+        # Objects.
+        text = text + "\n"
+        text = text + "Objects:\n"
+        for name in dir(self):
+            # Molecule list.
+            if name == 'mol':
+                text = text + "  mol: The list of %s molecules within the model.\n" % len(self.mol)
+                continue
+
+            # Skip the ModelContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # Add the object's attribute to the text string.
+            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+
+        return text
+
+
+    def is_empty(self):
+        """Method for testing if this ModelContainer object is empty.
+
+        @return:    True if this container is empty and the model number has not been set, False
+                    otherwise.
+        @rtype:     bool
+        """
+
+        # The model num has been set.
+        if self.num != None:
+            return False
+
+        # An object has been added to the container.
+        for name in dir(self):
+            # Skip the objects initialised in __init__().
+            if name == 'num' or name == 'mol':
+                continue
+
+            # Skip the ModelContainer methods.
+            if name == 'is_empty':
+                continue
+
+            # Skip special objects.
+            if match("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The molecule list is not empty.
+        if not self.mol.is_empty():
+            return False
+
+        # The ModelContainer is unmodified.
+        return True
+
+
+
+class MolList(list):
+    """List type data container for holding the different molecules of one model."""
+
+    def __repr__(self):
+        """The string representation of the object.
+
+        Rather than using the standard Python conventions (either the string representation of the
+        value or the "<...desc...>" notation), a rich-formatted description of the object is given.
+        """
+
+        text = "Molecules.\n\n"
+        text = text + "%-8s%-8s" % ("Index", "Name") + "\n"
+        for i in xrange(len(self)):
+            text = text + "%-8i%-8s" % (i, self[i].mol_name) + "\n"
+        return text
+
+
+    def add_item(self, mol_name=None, mol_cont=None):
+        """Append the given MolContainer instance to the MolList.
+
+        @keyword mol_name:	The molecule number.
+        @type mol_name:      	int
+        @keyword mol_cont:   	The data structure for the molecule.
+        @type mol_cont:      	MolContainer instance
+        """
+
+        # If no molecule data exists, replace the empty first molecule with this molecule (just a renaming).
+        if len(self) and self.is_empty():
+            self[0].mol_name = mol_name
+
+        # Otherwise append an empty MolContainer.
+        else:
+            # Test if the molecule already exists.
+            for i in xrange(len(self)):
+                if self[i].mol_name == mol_name:
+                    raise RelaxError, "The molecule '" + `mol_name` + "' already exists."
+
+            # Append an empty MolContainer.
+            self.append(mol_cont)
+
+            # Set the name.
+            self[-1].mol_name = mol_name
+
+
+    def is_empty(self):
+        """Method for testing if this MolList object is empty.
+
+        @return:    True if this list only has one MolContainer and the molecule name has not
+                    been set, False otherwise.
+        @rtype:     bool
+        """
+
+        # No MolContainers.
+        if len(self) == 0:
+            return True
+
+        # There is only one MolContainer and it is empty.
+        if len(self) == 1 and hasattr(self[0], 'is_empty') and self[0].is_empty():
+            return True
+
+        # Otherwise.
+        return False
+
+
+    def from_xml(self, mol_nodes, id=None):
+        """Recreate a molecule list data structure from the XML molecule nodes.
+
+        @param mol_nodes:    The molecule XML nodes.
+        @type mol_nodes:     xml.dom.minicompat.NodeList instance
+        @keyword id:        The specific structural object ID string.  This can be 'scientific',
+                            'internal', etc.
+        @type id:           str
+        """
+
+        # Test if empty.
+        if not self.is_empty():
+            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+
+        # Loop over the molecules.
+        for mol_node in mol_nodes:
+            # Some imports (here to break circular import issues).
+            if id == 'internal':
+                from internal import MolContainer
+            elif id == 'scientific':
+                from scientific import MolContainer
+
+            # Initialise a MolContainer instance.
+            mol_cont = MolContainer()
+
+            # Get the molecule name.
+            name = mol_node.getAttribute('name')
+            if name == 'None':
+                name = None
+
+            # Add the molecule to the MolList structure.
+            self.add_item(mol_name=name, mol_cont=mol_cont)
+
+            # Execute the specific MolContainer from_xml() method.
+            self[-1].from_xml(mol_node)
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for each molecule.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the molecule XML elements to.
+        @type element:  XML element object
+        """
+
+        # Loop over the molecules.
+        for i in xrange(len(self)):
+            # Add the molecule data.
+            self[i].to_xml(doc, element)

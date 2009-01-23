@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,17 +30,18 @@ import dep_check
 from math import sqrt
 from numpy import array, dot, float64, zeros
 import os
-from os import F_OK, access
+from os import F_OK, access, sep
 if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
 from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
+from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
-from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxZeroVectorWarning
+from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
 class Scientific_data(Base_struct_API):
@@ -58,64 +59,6 @@ class Scientific_data(Base_struct_API):
 
         # Execute the base class __init__() method.
         Base_struct_API.__init__(self)
-
-
-    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
-        """Add the given structure to the store.
-
-        @keyword name:          The structural identifier.
-        @type name:             str
-        @keyword model:         The structural model.
-        @type model:            int or None
-        @keyword file:          The name of the file containing the structure.
-        @type file:             str
-        @keyword path:          The optional path where the file is located.
-        @type path:             str
-        @keyword str:           The object containing the structural data.
-        @type str:              Structure_container instance
-        @keyword struct_index:  The index of the structural container, used for replacing the
-                                structure.
-        @type struct_index:     int or None.
-        """
-
-        # Some checks.
-        if struct_index != None:
-            # Index check.
-            if struct_index >= self.num:
-                raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
-
-            # ID check.
-            if name != self.name[struct_index]:
-                raise RelaxError, "The ID names " + `name` + " and " + `self.name[struct_index]` + " do not match."
-
-            # Model.
-            if model != self.model[struct_index]:
-                raise RelaxError, "The models " + `model` + " and " + `self.model[struct_index]` + " do not match."
-
-            # File name.
-            if file != self.file[struct_index]:
-                raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
-
-        # Initialise.
-        else:
-            self.num = self.num + 1
-            self.name.append(name)
-            self.model.append(model)
-            self.file.append(file)
-            self.path.append(path)
-
-        # Initialise the structural object if not provided.
-        if str == None:
-            raise RelaxError, "The Scientific python structural object cannot be set to None."
-
-        # Add the structural data.
-        if struct_index != None:
-            if struct_index >= len(self.structural_data):
-                self.structural_data.append(str)
-            else:
-                self.structural_data[struct_index] = str
-        else:
-            self.structural_data.append(str)
 
 
     def __find_bonded_atom(self, attached_atom, mol_type, res):
@@ -165,72 +108,11 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos, attached_name, None
 
 
-    def __molecule_loop(self, struct, sel_obj=None):
-        """Generator function for looping over molecules in the Scientific PDB data objects.
-
-        @param struct:      The individual structure object, the highest level Scientific Python PDB
-                            object.
-        @type struct:       Scientific Python PDB object
-        @keyword sel_obj:   The selection object.
-        @type sel_obj:      instance of generic_fns.mol_res_spin.Selection
-        @return:            A tuple of the Scientific Python PDB object representing a single
-                            molecule, the molecule name, and molecule type.
-        @rtype:             (Scientific Python PDB object, str, str)
-        """
-
-        # Protein.
-        if struct.peptide_chains:
-            for chain in struct.peptide_chains:
-                # The molecule name.
-                if hasattr(chain, 'chain_id') and chain.chain_id:
-                    mol_name = chain.chain_id
-                elif hasattr(chain, 'segment_id') and chain.segment_id:
-                    mol_name = chain.segment_id
-                else:
-                    mol_name = None
-
-                # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol_name):
-                    continue
-
-                # Yield the molecule and its name.
-                yield chain, mol_name, 'protein'
-
-        # RNA/DNA.
-        if struct.nucleotide_chains:
-            for chain in struct.nucleotide_chains:
-                # The molecule name.
-                if hasattr(chain, 'chain_id') and chain.chain_id:
-                    mol_name = chain.chain_id
-                elif hasattr(chain, 'segment_id') and chain.segment_id:
-                    mol_name = chain.segment_id
-                else:
-                    mol_name = None
-
-                # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol_name):
-                    continue
-
-                # Yield the molecule and its name.
-                yield chain, mol_name, 'nucleic acid'
-
-        # Other molecules.
-        if struct.molecules:
-            for key in struct.molecules:
-                # Yield the molecule and its name.
-                yield struct.molecules[key], key, 'other'
-
-
-    def __residue_loop(self, mol, mol_name, mol_type, sel_obj=None):
+    def __residue_loop(self, mol, sel_obj=None):
         """Generator function for looping over all residues in the Scientific PDB data objects.
 
         @param mol:         The individual molecule Scientific Python PDB data object.
         @type mol:          Scientific Python PDB object
-        @param mol_name:    The name of the molecule.
-        @type mol_name:     str or None
-        @param mol_type:    The type of the molecule.  This can be one of 'protein', 'nucleic acid',
-                            or 'other'.
-        @type mol_type:     str
         @keyword sel_obj:   The selection object.
         @type sel_obj:      instance of generic_fns.mol_res_spin.Selection
         @return:            A tuple of the Scientific Python PDB object representing a single
@@ -239,32 +121,43 @@ class Scientific_data(Base_struct_API):
         """
 
         # Proteins, RNA, and DNA.
-        if mol_type != 'other':
+        if mol.mol_type != 'other':
             # Loop over the residues of the protein in the PDB file.
-            for res in mol.residues:
+            res_index = -1
+            for res in mol.data.residues:
                 # Residue number and name.
-                if mol_type == 'nucleic acid':
+                if mol.mol_type == 'nucleic acid':
                     res_name = res.name[-1]
                 else:
                     res_name = res.name
                 res_num = res.number
 
+                # Residue index.
+                res_index = res_index + 1
+
                 # Skip non-matching residues.
-                if sel_obj and not sel_obj.contains_res(res_num, res_name, mol_name):
+                if sel_obj and not sel_obj.contains_res(res_num, res_name, mol.mol_name):
                     continue
 
                 # Yield the residue info.
-                yield res, res_num, res_name
+                yield res, res_num, res_name, res_index
 
         # Other molecules.
         else:
-            for res in mol:
+            res_index = -1
+            print mol
+            print "\n"*10
+            for res in mol.data:
+                print res
+                # Residue index.
+                res_index = res_index + 1
+
                 # Skip non-matching residues.
-                if sel_obj and not sel_obj.contains_res(res.number, res.name, mol_name):
+                if sel_obj and not sel_obj.contains_res(res.number, res.name, mol.mol_name):
                     continue
 
                 # Yield the residue info.
-                yield res, res.number, res.name
+                yield res, res.number, res.name, res_index
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -307,25 +200,43 @@ class Scientific_data(Base_struct_API):
         sel_obj = Selection(atom_id)
 
         # Loop over the models.
-        for struct in self.structural_data:
-            # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
-                # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_name, mol_type, sel_obj):
+        for model_index in range(len(self.structural_data)):
+            model = self.structural_data[model_index]
+
+            # Loop over the molecules.
+            for mol_index in range(len(model.mol)):
+                mol = model.mol[mol_index]
+
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                    continue
+
+                # Loop over the residues.
+                for res, res_num, res_name, res_index in self.__residue_loop(mol, sel_obj):
                     # Loop over the atoms of the residue.
+                    atom_index = -1
                     for atom in res:
-                        # Atom number, name, and position.
+                        # Atom number, name, index, and element type.
                         atom_num = atom.properties['serial_number']
                         atom_name = atom.name
                         element = atom.properties['element']
-                        pos = atom.position.array
+                        atom_index = atom_index + 1
 
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
                             continue
 
+                        # The atom position.
+                        if ave:
+                            pos = self.__ave_atom_pos(mol_index, res_index, atom_index)
+                        else:
+                            pos = atom.position.array
+
+                        # The molecule name.
+                        mol_name = mol.mol_name
+
                         # Replace empty variables with None.
-                        if not mol_name:
+                        if not mol.mol_name:
                             mol_name = None
                         if not res_num:
                             res_num = None
@@ -339,7 +250,10 @@ class Scientific_data(Base_struct_API):
                         # Build the tuple to be yielded.
                         atomic_tuple = ()
                         if model_num_flag:
-                            atomic_tuple = atomic_tuple + (struct.model,)
+                            if ave:
+                                atomic_tuple = atomic_tuple + (None,)
+                            else:
+                                atomic_tuple = atomic_tuple + (model.num,)
                         if mol_name_flag:
                             atomic_tuple = atomic_tuple + (mol_name,)
                         if res_num_flag:
@@ -357,6 +271,10 @@ class Scientific_data(Base_struct_API):
 
                         # Yield the information.
                         yield atomic_tuple
+
+            # Break out of the loop if the ave flag is set, as data from only one model is used.
+            if ave:
+                break
 
 
     def attached_atom(self, atom_id=None, attached_atom=None, model=None):
@@ -387,18 +305,18 @@ class Scientific_data(Base_struct_API):
         pos_array = []
 
         # Loop over the models.
-        for struct in self.structural_data:
+        for model in self.structural_data:
             # Init.
             atom_found = False
 
             # Skip non-matching models.
-            if model != None and model != struct.model:
+            if model != None and model != model.num:
                 continue
 
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(struct, sel_obj):
+            for mol in model.mol:
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_type, sel_obj):
+                for res, res_num, res_name, res_index in self.__residue_loop(mol, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
@@ -406,7 +324,7 @@ class Scientific_data(Base_struct_API):
                         atom_name = atom.name
 
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
                             continue
 
                         # More than one matching atom!
@@ -417,7 +335,7 @@ class Scientific_data(Base_struct_API):
                         atom_found = True
                         atom_num_match = atom_num
                         atom_name_match = atom_name
-                        mol_type_match = mol_type
+                        mol_type_match = mol.mol_type
                         res_match = res
 
             # Found the atom.
@@ -432,7 +350,45 @@ class Scientific_data(Base_struct_API):
         return bonded_num, bonded_name, element, pos_array
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
+    def __ave_atom_pos(self, mol_index, res_index, atom_index):
+        """Determine the average atom position across all models.
+
+        @param mol_index:   The molecule index.
+        @type mol_index:    int
+        @param res_index:   The residue index.
+        @type res_index:    int
+        @param atom_index:  The atom index.
+        @type atom_index:   int
+        """
+
+        # Init.
+        pos = zeros(3, float64)
+
+        # Loop over the models.
+        for model in self.structural_data:
+            # The exact molecule.
+            mol = model.mol[mol_index]
+
+            # The residue.
+            if mol.mol_type != 'other':
+                res = mol.data.residues[res_index]
+            else:
+                res = mol.data[res_index]
+
+            # The atom.
+            atom = res[atom_index]
+
+            # Sum the position.
+            pos = pos + atom.position.array
+
+        # Average the position array.
+        pos = pos / len(self.structural_data)
+
+        # Return the ave position.
+        return pos
+
+
+    def bond_vectors(self, atom_id=None, attached_atom=None, model_num=None, return_name=False, return_warnings=False):
         """Find the bond vectors between the atoms of 'attached_atom' and 'atom_id'.
 
         @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
@@ -440,10 +396,10 @@ class Scientific_data(Base_struct_API):
         @type atom_id:              str
         @keyword attached_atom:     The name of the bonded atom.
         @type attached_atom:        str
-        @keyword struct_index:      The index of the structure to return the vectors from.  If not
-                                    supplied and multiple structures/models exist, then vectors from
-                                    all structures will be returned.
-        @type struct_index:         None or int
+        @keyword model_num:         The model of which to return the vectors from.  If not supplied
+                                    and multiple models exist, then vectors from all models will be
+                                    returned.
+        @type model_num:            None or int
         @keyword return_name:       A flag which if True will cause the name of the attached atom to
                                     be returned together with the bond vectors.
         @type return_name:          bool
@@ -461,19 +417,19 @@ class Scientific_data(Base_struct_API):
         attached_name = None
         warnings = None
 
-        # Loop over the structures.
-        for i in xrange(len(self.structural_data)):
-            # Single structure.
-            if struct_index and struct_index != i:
+        # Loop over the models.
+        for model in self.structural_data:
+            # Single model.
+            if model_num and model_num != model.num:
                 continue
 
             # Init.
             atom_found = False
 
             # Loop over each individual molecule.
-            for mol, mol_name, mol_type in self.__molecule_loop(self.structural_data[i], sel_obj):
+            for mol in model.mol:
                 # Loop over the residues of the protein in the PDB file.
-                for res, res_num, res_name in self.__residue_loop(mol, mol_name, mol_type, sel_obj):
+                for res, res_num, res_name, res_index in self.__residue_loop(mol, sel_obj):
                     # Loop over the atoms of the residue.
                     for atom in res:
                         # Atom number, name, and position.
@@ -481,7 +437,7 @@ class Scientific_data(Base_struct_API):
                         atom_name = atom.name
 
                         # Skip non-matching atoms.
-                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol_name):
+                        if sel_obj and not sel_obj.contains_spin(atom_num, atom_name, res_num, res_name, mol.mol_name):
                             continue
 
                         # More than one matching atom!
@@ -491,7 +447,7 @@ class Scientific_data(Base_struct_API):
                         # The atom has been found, so store some info.
                         atom_found = True
                         pos_match = atom.position.array
-                        mol_type_match = mol_type
+                        mol_type_match = mol.mol_type
                         res_match = res
 
             # Found the atom.
@@ -520,16 +476,26 @@ class Scientific_data(Base_struct_API):
         return data
 
 
-    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
         """Function for loading the structures from the PDB file.
 
         @param file_path:       The full path of the file.
         @type file_path:        str
-        @param model:           The PDB model to use.  If None, all models will be loaded.
-        @type model:            int or None
-        @param struct_index:    The index of the structure.  This optional argument can be useful
-                                for reloading a structure.
-        @type struct_index:     int
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                                molecules are determined differently by the different parsers, but
+                                are numbered consecutively from 1.  If set to None, then all
+                                molecules will be loaded.
+        @type read_mol:         None, int, or list of int
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
+                                then the molecules will be automatically labelled based on the file
+                                name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all
+                                models will be loaded.
+        @type read_model:       None, int, or list of int
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
+                                the PDB model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
         @keyword verbosity:     A flag which if True will cause messages to be printed.
         @type verbosity:        bool
         @return:                The status of the loading of the PDB file.
@@ -548,98 +514,192 @@ class Scientific_data(Base_struct_API):
         # Separate the file name and path.
         path, file = os.path.split(file_path)
 
-        # The ID name.
-        name = file
-        if model != None:
-            name = name + "_" + `model`
+        # Convert the structure reading args into lists.
+        if read_mol and type(read_mol) != list:
+            read_mol = [read_mol]
+        if set_mol_name and type(set_mol_name) != list:
+            set_mol_name = [set_mol_name]
+        if read_model and type(read_model) != list:
+            read_model = [read_model]
+        if set_model_num and type(set_model_num) != list:
+            set_model_num = [set_model_num]
 
-        # Use pointers (references) if the PDB data exists in another data pipe.
-        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
-            # Skip the current pipe.
-            if pipe_name == pipes.cdp_name():
-                continue
+        # Load all models.
+        model_flag = True
+        model_num = 1
+        orig_model_num = []
+        mol_conts = []
+        while 1:
+            # Only load the desired model.
+            if read_model and model_num not in read_model:
+                break
 
-            # Structure exists.
-            if hasattr(data_pipe, 'structure'):
-                # Loop over the structures.
-                for i in xrange(data_pipe.structure.num):
-                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'scientific' and len(data_pipe.structure.structural_data):
-                        # Add the structure.
-                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
+            # Load the PDB file.
+            model = Scientific.IO.PDB.Structure(file_path, model_num)
 
-                        # Print out.
-                        if verbosity:
-                            print "Using the structures from the data pipe " + `pipe_name` + "."
-                            print self.structural_data[i]
+            # No model 1.
+            if not len(model) and not len(mol_conts):
+                # Load the PDB without a model number.
+                model = Scientific.IO.PDB.Structure(file_path)
+                model_flag = False
 
-                        # Exit this function.
-                        return True
+                # Ok, nothing is loadable from this file.
+                if not len(model):
+                    raise RelaxPdbLoadError, file_path
 
-        # Load the structure i from the PDB file.
-        if type(model) == int:
-            # Print out.
-            if verbosity:
-                print "Loading structure " + `model` + " from the PDB file."
+            # Test if the last structure has been reached.
+            if not len(model):
+                del model
+                break
 
-            # Load the structure into 'str'.
-            str = Scientific.IO.PDB.Structure(file_path, model)
+            # Append an empty list to the molecule container structure for a new model, set the molecule index, and initialise the target name structure.
+            mol_conts.append([])
+            mol_index = 0
+            new_mol_name = []
 
-            # Test the structure.
-            if len(str) == 0:
-                raise RelaxPdbLoadError, file_path
+            # Store the original model number.
+            orig_model_num.append(model_num)
 
             # Print the PDB info.
             if verbosity:
-                print str
+                print model
 
-            # Add the structure.
-            self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
+            # First add the peptide chains (generating the molecule names and incrementing the molecule index).
+            if hasattr(model, 'peptide_chains'):
+                for mol in model.peptide_chains:
+                    mol.mol_type = 'protein'
+                    mol_conts[-1].append(MolContainer())
+                    mol_conts[-1][-1].data = mol
+                    mol_conts[-1][-1].mol_type = 'protein'
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    mol_index = mol_index + 1
 
+            # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
+            if hasattr(model, 'nucleotide_chains'):
+                for mol in model.nucleotide_chains:
+                    mol_conts[-1].append(MolContainer())
+                    mol_conts[-1][-1].data = mol
+                    mol_conts[-1][-1].mol_type = 'nucleic acid'
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    mol_index = mol_index + 1
 
-        # Load all structures.
-        else:
-            # Print out.
-            if verbosity:
-                print "Loading all structures from the PDB file."
+            # Finally all other molecules (generating the molecule names and incrementing the molecule index).
+            if hasattr(model, 'molecules'):
+                for key in model.molecules.keys():
+                    # Add an empty list-type container.
+                    mol_conts[-1].append(MolContainer())
+                    mol_conts[-1][-1].mol_type = 'other'
 
-            # First model.
-            i = 1
+                    # Loop over the molecules.
+                    mol_conts[-1][-1].data = []
+                    for mol in model.molecules[key]:
+                        mol_conts[-1][-1].data.append(mol)
 
-            # Loop over all the other structures.
-            while 1:
-                # Load the pdb files.
-                str = Scientific.IO.PDB.Structure(file_path, i)
+                    # Update structures.
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    mol_index = mol_index + 1
 
-                # No model 1.
-                if len(str) == 0 and i == 1:
-                    # Load the PDB without a model number.
-                    str = Scientific.IO.PDB.Structure(file_path)
+            # Increment the model counter.
+            model_num = model_num + 1
 
-                    # Ok, nothing is loadable from this file.
-                    if len(str) == 0:
-                        raise RelaxPdbLoadError, file_path
-
-                    # Set the model number.
-                    model = None
-
-                # Set the model number.
-                else:
-                    model = i
-
-                # Test if the last structure has been reached.
-                if len(str) == 0:
-                    del str
-                    break
-
-                # Print the PDB info.
-                if verbosity:
-                    print str
-
-                # Place the structure in 'self.structural_data'.
-                self.add_struct(name=name, model=model, file=file, path=path, str=str, struct_index=struct_index)
-
-                # Increment i.
-                i = i + 1
+        # Create the structural data data structures.
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])+1), set_mol_name=new_mol_name, file_name=file, file_path=path)
 
         # Loading worked.
         return True
+
+
+class MolContainer:
+    """The empty list-type container for the non-protein and non-RNA molecular information."""
+
+
+    def from_xml(self, mol_node):
+        """Recreate the MolContainer from the XML molecule node.
+
+        @param mol_node:    The molecule XML node.
+        @type mol_node:     xml.dom.minicompat.NodeList instance
+        """
+
+        # Recreate the current molecule container.
+        xml_to_object(mol_node, self)
+
+        # Re-load the data.
+        self.reload_pdb()
+
+
+    def reload_pdb(self):
+        """Reload the PDB from the original file."""
+
+        # The file path.
+        if self.file_path:
+            file_path = self.file_path + sep + self.file_name
+        else:
+            file_path = self.file_name
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            warn(RelaxNoPDBFileWarning(file_path))
+            return
+
+        # Load the PDB file.
+        model = Scientific.IO.PDB.Structure(file_path, self.file_model)
+
+        # Print out.
+        print "\n" + `model`
+
+        # Counter for finding the molecule.
+        mol_num = 1
+
+        # First add the peptide chains.
+        if hasattr(model, 'peptide_chains'):
+            for mol in model.peptide_chains:
+                # Pack if the molecule index matches.
+                if mol_num == self.file_mol_num:
+                    self.data = mol
+                    return
+
+                mol_num = mol_num + 1
+
+        # Then the nucleotide chains.
+        if hasattr(model, 'nucleotide_chains'):
+            for mol in model.nucleotide_chains:
+                # Pack if the molecule index matches.
+                if mol_num == self.file_mol_num:
+                    self.data = mol
+                    return
+
+                mol_num = mol_num + 1
+
+        # Finally all other molecules.
+        if hasattr(model, 'molecules'):
+            for key in model.molecules.keys():
+                # Pack if the molecule index matches.
+                if mol_num == self.file_mol_num:
+                    # Loop over the molecules.
+                    self.data = []
+                    for mol in model.molecules[key]:
+                        self.data.append(mol)
+                    return
+
+                mol_num = mol_num + 1
+
+
+    def to_xml(self, doc, element):
+        """Create XML elements for the contents of this molecule container.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the molecule XML elements to.
+        @type element:  XML element object
+        """
+
+        # Create an XML element for this molecule and add it to the higher level element.
+        mol_element = doc.createElement('mol_cont')
+        element.appendChild(mol_element)
+
+        # Set the molecule attributes.
+        mol_element.setAttribute('desc', 'Molecule container')
+        mol_element.setAttribute('name', str(self.mol_name))
+
+        # Add all simple python objects within the MolContainer to the XML element.
+        fill_object_contents(doc, mol_element, object=self, blacklist=['data'] + self.__class__.__dict__.keys())

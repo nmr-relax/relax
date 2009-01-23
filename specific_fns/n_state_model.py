@@ -809,11 +809,11 @@ class N_state_model(Common_functions):
         if not hasattr(cdp, 'params'):
             cdp.params = []
 
-        # Determine the number of states, if not already set.
+        # Determine the number of states (loaded as structural models), if not already set.
         if not hasattr(cdp, 'N'):
             # Set the number.
             if hasattr(cdp, 'structure'):
-                cdp.N = cdp.structure.num_structures()
+                cdp.N = cdp.structure.num_models()
 
             # Otherwise return as the rest cannot be updated without N.
             else:
@@ -1007,15 +1007,18 @@ class N_state_model(Common_functions):
         # Add a structure.
         structure.add_struct(name='cone')
 
+        # Alias the single molecule from the single model.
+        mol = structure.structural_data[0].mol[0]
+
         # Add the pivot point.
-        structure.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
+        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
         # Generate the average pivot-CoM vectors.
         print "\nGenerating the average pivot-CoM vectors."
         sim_vectors = None
         if hasattr(cdp, 'ave_pivot_CoM_sim'):
             sim_vectors = cdp.ave_pivot_CoM_sim
-        res_num = generic_fns.structure.geometric.generate_vector_residues(structure=structure, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+        res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
         print "\nGenerating the cone outer edge."
@@ -1023,15 +1026,15 @@ class N_state_model(Common_functions):
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
             angle = cdp.theta_diff_on_cone
-        cap_start_atom = structure.structural_data[0].atom_num[-1]+1
-        generic_fns.structure.geometric.cone_edge(structure=structure, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
+        cap_start_atom = mol.atom_num[-1]+1
+        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
             print "\nGenerating the cone cap."
-            cone_start_atom = structure.structural_data[0].atom_num[-1]+1
-            generic_fns.structure.geometric.generate_vector_dist(structure=structure, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cap_to_cone(structure=structure, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
+            cone_start_atom = mol.atom_num[-1]+1
+            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
+            generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
 
         # Create the PDB file.
         print "\nGenerating the PDB file."
