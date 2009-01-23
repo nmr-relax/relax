@@ -63,7 +63,7 @@ pipe.create('tag', 'N-state')
 # Load all the tag structures.
 NUM_TAG = 10
 for i in range(NUM_TAG):
-    structure.read_pdb(file='tag_MCMM4_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1)
+    structure.read_pdb(file='tag_MCMM4_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='tag')
 
 # Switch back to the main analysis data pipe.
 pipe.switch('lactose')
