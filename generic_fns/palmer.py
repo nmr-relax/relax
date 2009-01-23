@@ -495,9 +495,10 @@ def create_run(file, binary=None, dir=None):
     file.write("#! /bin/sh\n")
     file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
     if cdp.diff_tensor.type != 'sphere':
-        # Copy the pdb file to the model directory so there are no problems with the existance of *.rotate files.
-        system('cp ' + cdp.structure.path[0] + sep + cdp.structure.file[0] + ' ' + dir)
-        file.write(" -s " + cdp.structure.file[0])
+        # Copy the first pdb file to the model directory so there are no problems with the existance of *.rotate files.
+        mol = cdp.structure.structural_data[0].mol[0]
+        system('cp ' + mol.file_path + sep + mol.file_name + ' ' + dir)
+        file.write(" -s " + mol.file_name)
     file.write("\n")
 
 
@@ -552,7 +553,7 @@ def execute(dir, force, binary):
 
         # Test if the 'PDB' input file exists.
         if cdp.diff_tensor.type != 'sphere':
-            pdb = cdp.structure.file[0]
+            pdb = cdp.structure.structural_data[0].mol[0].file_name
             if not access(pdb, F_OK):
                 raise RelaxFileError, ('PDB', pdb)
         else:

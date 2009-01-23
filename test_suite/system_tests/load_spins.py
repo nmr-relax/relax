@@ -57,7 +57,7 @@ class Load_spins(TestCase):
 
         # Test the molecule and residue data.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, 'PYR')
+        self.assertEqual(cdp.mol[0].name, 'gromacs_phthalic_acid_mol1')
         self.assertEqual(len(cdp.mol[0].res), 1)
         self.assertEqual(cdp.mol[0].res[0].num, 1)
         self.assertEqual(cdp.mol[0].res[0].name, 'PYR')

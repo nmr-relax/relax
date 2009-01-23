@@ -615,7 +615,7 @@ class MoleculeList(list):
             # Test if the molecule name already exists.
             for i in xrange(len(self)):
                 if self[i].name == mol_name:
-                    raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the sequence."
+                    raise RelaxError, "The molecule '%s' already exists in the sequence." % mol_name
 
             # Append an empty MoleculeContainer.
             self.append(MoleculeContainer(mol_name))

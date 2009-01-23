@@ -18,11 +18,11 @@ pipe.create('lactose', 'N-state')
 # Load the structures.
 NUM_STR = 4
 for i in range(NUM_STR):
-    structure.read_pdb(file='lactose_MCMM4_S1_'+`i+1`, dir=str_path, parser='internal')
+    structure.read_pdb(file='lactose_MCMM4_S1_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
 
 # Load the sequence information.
-structure.load_spins(spin_id=':UNK@C*', ave_pos=False)
-structure.load_spins(spin_id=':UNK@H*', ave_pos=False)
+structure.load_spins(spin_id=':UNK@C*', combine_models=False, ave_pos=False)
+structure.load_spins(spin_id=':UNK@H*', combine_models=False, ave_pos=False)
 
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 deselect.spin(spin_id=':UNK@H6')
@@ -63,7 +63,7 @@ pipe.create('tag', 'N-state')
 # Load all the tag structures.
 NUM_TAG = 10
 for i in range(NUM_TAG):
-    structure.read_pdb(file='tag_MCMM4_'+`i+1`, dir=str_path, parser='internal')
+    structure.read_pdb(file='tag_MCMM4_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='tag')
 
 # Switch back to the main analysis data pipe.
 pipe.switch('lactose')
