@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,7 @@
 
 # Python module imports.
 import sys
+from os import sep
 from unittest import TestCase
 
 # relax module imports.
@@ -309,10 +310,10 @@ class Structure(TestCase):
 
         # Read the PDB models.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_1.pdb', dir=path, parser='internal', set_model_num=1)
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_2.pdb', dir=path, parser='internal', set_model_num=2)
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_3.pdb', dir=path, parser='internal', set_model_num=1)
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_4.pdb', dir=path, parser='internal', set_model_num=2)
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_1.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_2.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_3.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_4.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
 
         # Try loading a few protons.
         self.relax.interpreter._Structure.load_spins('@*H*')
@@ -337,7 +338,8 @@ class Structure(TestCase):
         models = [[1, 1, 1], [2, 1, 1]]
 
         for i in range(len(cdp.structure.structural_data)):
-            for j in range(len(model.mol)):
+            for j in range(len(cdp.structure.structural_data[i].mol)):
+                mol = cdp.structure.structural_data[i].mol[j]
                 self.assertEqual(mol.file_name, files[i][j])
                 self.assertEqual(mol.file_path, paths[i][j])
                 self.assertEqual(mol.file_model, models[i][j])
