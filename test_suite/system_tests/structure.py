@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,7 @@
 
 # Python module imports.
 import sys
+from os import sep
 from unittest import TestCase
 
 # relax module imports.
@@ -59,10 +60,15 @@ class Structure(TestCase):
 
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
-        self.assertEqual(cdp.structure.file, ['Ap4Aase_res1-12.pdb'])
-        self.assertEqual(cdp.structure.path, [''])
         self.assert_(hasattr(cdp.structure, 'structural_data'))
         self.assert_(len(cdp.structure.structural_data))
+        self.assert_(len(cdp.structure.structural_data[0].mol))
+
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
+        self.assertEqual(mol.file_path, '')
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_mol_num, 1)
 
         # The real atomic data.
         atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
@@ -78,19 +84,19 @@ class Structure(TestCase):
         z = [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.880, 10.560, 10.415, 9.754, 8.900, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.640, 3.889, 4.956, 3.700, 3.430, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.350, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.030, -9.410, -8.336, -10.080, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.540, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
 
         # Test the atomic data.
-        str = cdp.structure.structural_data[0]
-        for i in xrange(len(str.atom_name)):
-            self.assertEqual(str.atom_name[i], atom_name[i])
-            self.assertEqual(str.bonded[i], bonded[i])
-            self.assertEqual(str.chain_id[i], chain_id[i])
-            self.assertEqual(str.element[i], element[i])
-            self.assertEqual(str.pdb_record[i], pdb_record[i])
-            self.assertEqual(str.res_name[i], res_name[i])
-            self.assertEqual(str.res_num[i], res_num[i])
-            self.assertEqual(str.seg_id[i], seg_id[i])
-            self.assertEqual(str.x[i], x[i])
-            self.assertEqual(str.y[i], y[i])
-            self.assertEqual(str.z[i], z[i])
+        mol = cdp.structure.structural_data[0].mol[0]
+        for i in xrange(len(mol.atom_name)):
+            self.assertEqual(mol.atom_name[i], atom_name[i])
+            self.assertEqual(mol.bonded[i], bonded[i])
+            self.assertEqual(mol.chain_id[i], chain_id[i])
+            self.assertEqual(mol.element[i], element[i])
+            self.assertEqual(mol.pdb_record[i], pdb_record[i])
+            self.assertEqual(mol.res_name[i], res_name[i])
+            self.assertEqual(mol.res_num[i], res_num[i])
+            self.assertEqual(mol.seg_id[i], seg_id[i])
+            self.assertEqual(mol.x[i], x[i])
+            self.assertEqual(mol.y[i], y[i])
+            self.assertEqual(mol.z[i], z[i])
 
 
     def test_load_internal_results2(self):
@@ -117,17 +123,29 @@ class Structure(TestCase):
 
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
-        self.assertEqual(cdp.structure.file, ['Ap4Aase_res1-12.pdb'])
-        self.assertEqual(cdp.structure.path, [''])
         self.assert_(hasattr(cdp.structure, 'structural_data'))
         self.assert_(len(cdp.structure.structural_data))
-        print cdp.structure.structural_data
+        self.assert_(len(cdp.structure.structural_data[0].mol))
+
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
+        self.assertEqual(mol.file_path, 'test_suite/shared_data/structures')
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_mol_num, 1)
 
         # The real atomic data.
-        res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
+        res_list = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
 
-        # Check the atomic data.
-        self.assertEqual(cdp.structure.structural_data[0].peptide_chains[0].sequence(), res_name)
+        # Loop over the residues.
+        i = 0
+        for res_name in cdp.structure.atom_loop(atom_id='@N', res_name_flag=True):
+            res_name = res_name[0]
+
+            # Check the residue data.
+            self.assertEqual(res_name, res_list[i])
+
+            # Increment the residue counter.
+            i = i + 1
 
 
     def test_read_pdb_internal1(self):
@@ -208,6 +226,124 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
+
+
+    def test_read_pdb_mol_2_model_internal(self):
+        """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+
+        # Files.
+        files = ['lactose_MCMM4_S1_1.pdb',
+                 'lactose_MCMM4_S1_2.pdb',
+                 'lactose_MCMM4_S1_3.pdb']
+
+        # Read the PDBs.
+        self.relax.interpreter._Structure.read_pdb(file=files[0], dir=path, parser='internal', set_model_num=1)
+        self.relax.interpreter._Structure.read_pdb(file=files[1], dir=path, parser='internal', set_model_num=1)
+        self.relax.interpreter._Structure.read_pdb(file=files[2], dir=path, parser='internal', set_model_num=1)
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
+
+        i = 0
+        for mol in cdp.structure.structural_data[0].mol:
+            self.assertEqual(mol.file_name, files[i])
+            self.assertEqual(mol.file_path, path)
+            self.assertEqual(mol.file_model, 1)
+            self.assertEqual(mol.file_mol_num, 1)
+            i = i + 1
+
+
+    def test_read_pdb_model_2_mol_internal(self):
+        """Load the 2 models of the 'gromacs_phthalic_acid.pdb' PDB file as separate molecules of the same model (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB models.
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal', read_model=1, set_model_num=1)
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal', read_model=2, set_model_num=1)
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 2)
+
+        i = 0
+        for mol in cdp.structure.structural_data[0].mol:
+            self.assertEqual(mol.file_name, 'gromacs_phthalic_acid.pdb')
+            self.assertEqual(mol.file_path, path)
+            self.assertEqual(mol.file_model, i+1)
+            self.assertEqual(mol.file_mol_num, 1)
+            i = i + 1
+
+
+    def test_read_pdb_complex_internal(self):
+        """Test the packing of models and molecules using 'gromacs_phthalic_acid.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB models.
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_1.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_2.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_3.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_4.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 2)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
+        self.assertEqual(len(cdp.structure.structural_data[1].mol), 3)
+
+        files = [['gromacs_phthalic_acid.pdb', 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_3.pdb'],
+                 ['gromacs_phthalic_acid.pdb', 'lactose_MCMM4_S1_2.pdb', 'lactose_MCMM4_S1_4.pdb']]
+        paths = [[path, path+sep+'lactose', path+sep+'lactose'],
+                 [path, path+sep+'lactose', path+sep+'lactose']]
+        models = [[1, 1, 1], [2, 1, 1]]
+
+        for i in range(len(cdp.structure.structural_data)):
+            for j in range(len(cdp.structure.structural_data[i].mol)):
+                mol = cdp.structure.structural_data[i].mol[j]
+                self.assertEqual(mol.file_name, files[i][j])
+                self.assertEqual(mol.file_path, paths[i][j])
+                self.assertEqual(mol.file_model, models[i][j])
+                self.assertEqual(mol.file_mol_num, 1)
 
 
     def test_read_pdb_scientific1(self):

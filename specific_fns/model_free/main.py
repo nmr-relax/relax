@@ -44,6 +44,47 @@ import specific_fns
 class Model_free_main:
     """Class containing functions specific to model-free analysis."""
 
+    def __compare_objects(self, object_from, object_to, pipe_from, pipe_to):
+        """Compare the contents of the two objects and raise RelaxErrors if they are not the same.
+
+        @param object_from: The first object.
+        @type object_from:  any object
+        @param object_to:   The second object.
+        @type object_to:    any object
+        @param pipe_from:   The name of the data pipe containing the first object.
+        @type pipe_from:    str
+        @param pipe_to:     The name of the data pipe containing the second object.
+        @type pipe_to:      str
+        """
+
+        # Loop over the modifiable objects.
+        for data_name in dir(object_from):
+            # Skip special objects (starting with _, or in the original class and base class namespaces).
+            if search('^_', data_name) or data_name in object_from.__class__.__dict__.keys() or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in object_from.__class__.__bases__[0].__dict__.keys()):
+                continue
+
+            # Skip some more special objects.
+            if data_name in ['structural_data']:
+                continue
+
+            # Get the original object.
+            data_from = None
+            if hasattr(object_from, data_name):
+                data_from = getattr(object_from, data_name)
+
+            # Get the target object.
+            if data_from and not hasattr(object_to, data_name):
+                raise RelaxError, "The structural object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
+            elif data_from:
+                data_to = getattr(object_to, data_name)
+            else:
+                continue
+
+            # The data must match!
+            if data_from != data_to:
+                raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+
+
     def are_mf_params_set(self, spin):
         """Test if the model-free parameter values are set.
 
@@ -1088,32 +1129,31 @@ class Model_free_main:
 
             # Otherwise compare the objects inside the container.
             else:
-                # Loop over the modifiable objects.
-                for data_name in dir(dp_from.structure):
-                    # Skip special objects (starting with _, or in the original class and base class namespaces).
-                    if search('^_', data_name) or data_name in dp_from.structure.__class__.__dict__.keys() or data_name in dp_from.structure.__class__.__bases__[0].__dict__.keys():
-                        continue
+                # Modifiable object checks.
+                self.__compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
 
-                    # Skip some more special objects.
-                    if data_name in ['structural_data']:
-                        continue
+                # Tests for the model and molecule containers.
+                if len(dp_from.structure.structural_data) != len(dp_from.structure.structural_data):
+                    raise RelaxError, "The number of structural models is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
-                    # Get the original object.
-                    data_from = None
-                    if hasattr(dp_from.structure, data_name):
-                        data_from = getattr(dp_from.structure, data_name)
+                # Loop over the models.
+                for i in range(len(dp_from.structure.structural_data)):
+                    # Alias.
+                    model_from = dp_from.structure.structural_data[i]
+                    model_to = dp_to.structure.structural_data[i]
 
-                    # Get the target object.
-                    if data_from and not hasattr(dp_to.structure, data_name):
-                        raise RelaxError, "The structural object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
-                    elif data_from:
-                        data_to = getattr(dp_to.structure, data_name)
-                    else:
-                        continue
+                    # Model numbers.
+                    if model_from.num != model_to.num:
+                        raise RelaxError, "The structure models are not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
 
-                    # The data must match!
-                    if data_from != data_to:
-                        raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                    # Molecule number.
+                    if len(model_from.mol) != len(model_to.mol):
+                        raise RelaxError, "The number of molecules is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+
+                    # Loop over the models.
+                    for mol_index in range(len(model_from.mol)):
+                        # Modifiable object checks.
+                        self.__compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
 
         # No sequence data, so skip the rest.
         if dp_from.mol.is_empty():

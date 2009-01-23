@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -65,7 +65,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     cdp = pipes.get_pipe()
 
     # Test if the structure exists.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num > 0:
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
         raise RelaxNoPdbError
 
     # Print out.
@@ -97,6 +97,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         id = ''
 
         # Get the molecule container corresponding to the molecule name.
+        mol_cont = None
         if mol_name:
             # Update the ID string.
             id = id + '#' + mol_name
@@ -104,17 +105,28 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
             # The container.
             mol_cont = return_molecule(id)
 
-        # Get the unnamed molecule, assuming there is only one.
-        else:
-            mol_cont = return_molecule()
-
         # Add the molecule if it doesn't exist.
         if mol_cont == None:
-            # Add the molecule.
-            cdp.mol.add_item(mol_name=mol_name)
+            # Get the unnamed molecule, assuming there is only one.
+            mol_cont = return_molecule()
 
-            # Get the container.
-            mol_cont = cdp.mol[-1]
+            # Got something!
+            if mol_cont != None:
+                # Rename the molecule container if the mol name is given and the sole container is unnamed.
+                if mol_cont.name == None and mol_name:
+                    # Print out.
+                    print "Renaming the unnamed sole molecule to '%s'." % mol_name
+
+                    # Set the name.
+                    mol_cont.name = mol_name
+
+            # Nothing exists yet.
+            else:
+                # Add the molecule.
+                cdp.mol.add_item(mol_name=mol_name)
+
+                # Get the container.
+                mol_cont = cdp.mol[-1]
 
         # Add the residue number to the ID string (residue name is ignored because only the number is unique).
         id = id + ':' + `res_num`
@@ -157,7 +169,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         spin_cont.element = element
 
 
-def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, verbosity=1):
+def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', verbosity=1, fail=True):
     """The PDB loading function.
 
     Parsers
@@ -174,9 +186,21 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
     @keyword dir:           The directory where the PDB file is located.  If set to None, then the
                             file will be searched for in the current directory.
     @type dir:              str or None
-    @keyword model:         The PDB model to extract from the file.  If set to None, then all models
+    @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                            molecules are determined differently by the different parsers, but are
+                            numbered consecutively from 1.  If set to None, then all molecules will
+                            be loaded.
+    @type read_mol:         None, int, or list of int
+    @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then
+                            the molecules will be automatically labelled based on the file name or
+                            other information.
+    @type set_mol_name:     None, str, or list of str
+    @keyword read_model:    The PDB model to extract from the file.  If set to None, then all models
                             will be loaded.
-    @type model:            int or None
+    @type read_model:       None, int, or list of int
+    @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the
+                            PDB model numbers will be preserved, if they exist.
+    @type set_model_num:    None, int, or list of int
     @keyword parser:        The parser to be used to read the PDB file.
     @type parser:           str
     @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the PDB
@@ -224,7 +248,7 @@ def read_pdb(file=None, dir=None, model=None, parser='scientific', fail=True, ve
             cdp.structure = Internal()
 
     # Load the structures.
-    cdp.structure.load_pdb(file_path, model, verbosity=verbosity)
+    cdp.structure.load_pdb(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
     # Load into Molmol (if running).
     molmol.open_pdb()
@@ -243,8 +267,8 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=True, unit=True):
-    """Extract the bond vectors from the loaded structures.
+def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit=True):
+    """Extract the bond vectors from the loaded structures and store them in the spin container.
 
     @keyword attached:      The name of the atom attached to the spin, as given in the structural
                             file.  Regular expression can be used, for example 'H*'.  This uses
@@ -252,9 +276,9 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
     @type attached:         str
     @keyword spin_id:       The spin identifier string.
     @type spin_id:          str
-    @keyword struct_index:  The index of the structure to extract the vector from.  If None, all
-                            vectors will be extracted.
-    @type struct_index:     str
+    @keyword model:         The model to extract the vector from.  If None, all vectors will be
+                            extracted.
+    @type model:            str
     @keyword verbosity:     The higher the value, the more information is printed to screen.
     @type verbosity:        int
     @keyword ave:           A flag which if True will cause the average of all vectors to be
@@ -278,21 +302,21 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
 
     # Print out.
     if verbosity:
-        # Number of structures.
-        num = cdp.structure.num_structures()
+        # Number of models.
+        num_models = cdp.structure.num_models()
 
-        # Multiple structures loaded.
-        if num > 1:
-            if struct_index:
-                print "Extracting vectors for structure " + `struct_index` + "."
+        # Multiple models loaded.
+        if num_models > 1:
+            if model:
+                print "Extracting vectors for model '%s'." % model
             else:
-                print "Extracting vectors for all " + `num` + " structures."
+                print "Extracting vectors for all %s models." % num_models
                 if ave:
                     print "Averaging all vectors."
 
-        # Single structure loaded.
+        # Single model loaded.
         else:
-            print "Extracting vectors from the single structure."
+            print "Extracting vectors from the single model."
 
         # Unit vectors.
         if unit:
@@ -321,12 +345,12 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
         if not spin.select:
             continue
 
-        # The spin identification string.  The residue name is not included to allow structures with point mutations to be used.
+        # The spin identification string.  The residue name is not included to allow molecules with point mutations to be used as different models.
         id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_num=spin.num, spin_name=spin.name)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
-            warn(RelaxWarning("Either the spin number or name must be set for the spin " + `id` + " to identify the corresponding atom in the structure."))
+            warn(RelaxWarning("Either the spin number or name must be set for the spin " + `id` + " to identify the corresponding atom in the molecule."))
             continue
 
         # The bond vector already exists.
@@ -337,7 +361,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, struct_index=struct_index, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, model_num=model, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
@@ -391,7 +415,7 @@ def vectors(attached=None, spin_id=None, struct_index=None, verbosity=1, ave=Tru
             print "Extracted " + spin.name + "-" + attached_name + " vectors for " + `id` + '.'
 
 
-def write_pdb(file=None, dir=None, struct_index=None, force=False):
+def write_pdb(file=None, dir=None, model_num=None, force=False):
     """The PDB writing function.
 
     @keyword file:          The name of the PDB file to write.
@@ -399,9 +423,9 @@ def write_pdb(file=None, dir=None, struct_index=None, force=False):
     @keyword dir:           The directory where the PDB file will be placed.  If set to None, then
                             the file will be placed in the current directory.
     @type dir:              str or None
-    @keyword stuct_index:   The index of the structure to write.  If set to None, then all
-                            structures will be written.
-    @type stuct_index:      int or None
+    @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
+                            models will be placed into the file.
+    @type model_num:        None or int
     @keyword force:         The force flag which if True will cause the file to be overwritten.
     @type force:            bool
     """
@@ -431,4 +455,4 @@ def write_pdb(file=None, dir=None, struct_index=None, force=False):
     file = open_write_file(file_path, force=force)
 
     # Write the structures.
-    cdp.structure.write_pdb(file, struct_index=struct_index)
+    cdp.structure.write_pdb(file, model_num=model_num)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from unittest import TestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import Selection
 from generic_fns.structure.scientific import Scientific_data
+from relax_io import file_root
 
 
 class Test_scientific(TestCase):
@@ -47,6 +48,7 @@ class Test_scientific(TestCase):
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]
+        self.test_pdb_root = file_root(self.test_pdb_path)
 
         # Instantiate the structural data object.
         self.data = Scientific_data()
@@ -62,69 +64,6 @@ class Test_scientific(TestCase):
         ds.__reset__()
 
 
-    def test___molecule_loop(self):
-        """Test the private Scientific_data.__molecule_loop() method."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Loop over the molecules.
-        mol_count = 0
-        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0]):
-            mol_count = mol_count + 1
-
-        # Test the number of molecules looped over.
-        self.assertEqual(mol_count, 1)
-
-        # Test the molecular data.
-        self.assertEqual(mol_name, None)
-        self.assertEqual(mol_type, 'protein')
-        self.assertEqual(len(mol.residues), 12)
-        self.assertEqual(mol.sequence(), ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY'])
-
-
-    def test___molecule_loop_selection(self):
-        """Test the private Scientific_data.__molecule_loop() method with a selection object."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Create the selection object (which should match the molecule name of None).
-        sel_obj = Selection('@1')
-
-        # Loop over the molecules.
-        mol_count = 0
-        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0], sel_obj):
-            mol_count = mol_count + 1
-
-        # Test the number of molecules looped over.
-        self.assertEqual(mol_count, 1)
-
-        # Test the molecular data.
-        self.assertEqual(mol_name, None)
-        self.assertEqual(mol_type, 'protein')
-        self.assertEqual(len(mol.residues), 12)
-        self.assertEqual(mol.sequence(), ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY'])
-
-
-    def test___molecule_loop_selection_no_match(self):
-        """Test the Scientific_data.__molecule_loop() method with a non-matching selection object."""
-
-        # Load the PDB file.
-        self.data.load_pdb(self.test_pdb_path)
-
-        # Create the non-matching selection object.
-        sel_obj = Selection('#XXX')
-
-        # Loop over the molecules.
-        mol_count = 0
-        for mol, mol_name, mol_type in self.data._Scientific_data__molecule_loop(self.data.structural_data[0], sel_obj):
-            mol_count = mol_count + 1
-
-        # Test the number of molecules looped over.
-        self.assertEqual(mol_count, 0)
-
-
     def test___residue_loop(self):
         """Test the private Scientific_data.__residue_loop() method."""
 
@@ -133,7 +72,7 @@ class Test_scientific(TestCase):
 
         # Loop over the residues.
         res_count = 0
-        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein'):
+        for res, res_num, res_name, res_index in self.data._Scientific_data__residue_loop(self.data.structural_data[0].mol[0]):
             res_count = res_count + 1
 
         # Test the number of residues looped over.
@@ -153,11 +92,11 @@ class Test_scientific(TestCase):
         self.data.load_pdb(self.test_pdb_path)
 
         # Create the selection object (which should match the residue name of None).
-        sel_obj = Selection('#Ap4Aase')
+        sel_obj = Selection('#Ap4Aase_res1-12_mol1')
 
         # Loop over the residues.
         res_count = 0
-        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], 'Ap4Aase', 'protein', sel_obj):
+        for res, res_num, res_name, res_index in self.data._Scientific_data__residue_loop(self.data.structural_data[0].mol[0], sel_obj):
             res_count = res_count + 1
 
         # Test the number of residues looped over.
@@ -181,7 +120,7 @@ class Test_scientific(TestCase):
 
         # Loop over the residues.
         res_count = 0
-        for res, res_num, res_name in self.data._Scientific_data__residue_loop(self.data.structural_data[0].peptide_chains[0], None, 'protein', sel_obj):
+        for res, res_num, res_name, res_index in self.data._Scientific_data__residue_loop(self.data.structural_data[0].mol[0], sel_obj):
             res_count = res_count + 1
 
         # Test the number of residues looped over.
@@ -287,7 +226,7 @@ class Test_scientific(TestCase):
         for model_num, mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@163', model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
             # Test the spin info.
             self.assertEqual(model_num, 1)
-            self.assertEqual(mol_name, None)
+            self.assertEqual(mol_name, 'Ap4Aase_res1-12_mol1')
             self.assertEqual(res_num, 11)
             self.assertEqual(res_name, 'GLU')
             self.assertEqual(spin_num, 163)
@@ -310,10 +249,16 @@ class Test_scientific(TestCase):
         # Load the PDB file.
         self.data.load_pdb(self.test_pdb_path)
 
+        # The ModelContainer and MolContainer.
+        model = self.data.structural_data[0]
+        mol = model.mol[0]
+
         # Test the structural data.
-        self.assertEqual(self.data.file[0], self.test_pdb_file_name)
-        self.assertEqual(self.data.path[0], self.test_pdb_dir)
-        self.assertEqual(self.data.model[0], 1)
         self.assertEqual(len(self.data.structural_data), 1)
-        self.assertEqual(type(self.data.structural_data), list)
-        self.assertEqual(self.data.structural_data[0].filename, self.test_pdb_path)
+        self.assertEqual(len(model.mol), 1)
+        self.assertEqual(model.num, 1)
+        self.assertEqual(mol.mol_name, self.test_pdb_root+'_mol1')
+        self.assertEqual(mol.file_name, self.test_pdb_file_name)
+        self.assertEqual(mol.file_path, self.test_pdb_dir)
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_mol_num, 1)

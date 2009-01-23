@@ -1448,19 +1448,21 @@ def number_spin(spin_id=None, number=None):
         spin.num = number
 
 
-def parse_token(token):
+def parse_token(token, verbosity=False):
     """Parse the token string and return a list of identifying numbers and names.
 
     Firstly the token is split by the ',' character into its individual elements and all whitespace
     stripped from the elements.  Numbers are converted to integers, names are left as strings, and
     ranges are converted into the full list of integers.
 
-    @param token:   The identification string, the elements of which are separated by commas.  Each
-        element can be either a single number, a range of numbers (two numbers separated by '-'), or
-        a name.
-    @type token:    str
-    @return:        A list of identifying numbers and names.
-    @rtype:         list of int and str
+    @param token:       The identification string, the elements of which are separated by commas.
+                        Each element can be either a single number, a range of numbers (two numbers
+                        separated by '-'), or a name.
+    @type token:        str
+    @keyword verbosity: A flag which if True will cause a number of print outs to be activated.
+    @type verbosity:    bool
+    @return:            A list of identifying numbers and names.
+    @rtype:             list of int and str
     """
 
     # No token.
@@ -1487,7 +1489,8 @@ def parse_token(token):
         if indices:
             # Invalid range element, only one range char '-' and one negative sign is allowed.
             if len(indices) > 2:
-                print "The range element " + `element` + " is invalid.  Assuming the '-' character does not specify a range."
+                if verbosity:
+                    print "The range element " + `element` + " is invalid.  Assuming the '-' character does not specify a range."
                 valid_range = False
 
             # Convert the two numbers to integers.
@@ -1495,12 +1498,14 @@ def parse_token(token):
                 start = int(element[:indices[0]])
                 end = int(element[indices[0]+1:])
             except ValueError:
-                print "The range element " + `element` + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."
+                if verbosity:
+                    print "The range element " + `element` + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."
                 valid_range = False
 
             # Test that the starting number is less than the end.
             if valid_range and start >= end:
-                print "The starting number of the range element " + `element` + " needs to be less than the end number.  Assuming the '-' character does not specify a range."
+                if verbosity:
+                    print "The starting number of the range element " + `element` + " needs to be less than the end number.  Assuming the '-' character does not specify a range."
                 valid_range = False
 
             # Create the range and append it to the list.
