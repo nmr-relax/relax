@@ -593,7 +593,7 @@ class Results:
 
         # Read the PDB file (if it exists).
         if not pdb == 'None':
-            generic_fns.structure.main.read_pdb(file=pdb, model=pdb_model, fail=False, verbosity=verbosity)
+            generic_fns.structure.main.read_pdb(file=pdb, set_model_num=pdb_model, fail=False, verbosity=verbosity)
             return True
         else:
             return False

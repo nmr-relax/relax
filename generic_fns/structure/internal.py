@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,15 +28,16 @@ from numpy import array, float64, linalg, zeros
 import os
 from os import F_OK, access
 from re import search
-from string import split, strip, upper
+from string import digits, split, strip, upper
 from warnings import warn
 
 # relax module imports.
 from api_base import Base_struct_API
+from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
 from relax_errors import RelaxError, RelaxNoPdbError
-from relax_io import open_read_file
+from relax_io import file_root, open_read_file
 from relax_warnings import RelaxWarning
 
 
@@ -53,101 +54,28 @@ class Internal(Base_struct_API):
     id = 'internal'
 
 
-    def add_struct(self, name=None, model=None, file=None, path=None, str=None, struct_index=None):
-        """Add the given structure to the store.
+    def add_molecule(self, name=None, model=None):
+        """Add a new molecule to the store.
 
-        @keyword name:          The structural identifier.
+        @keyword name:          The molecule identifier string.
         @type name:             str
-        @keyword model:         The structural model.
+        @keyword model:         The number of the model to add the molecule to.
         @type model:            int or None
-        @keyword file:          The name of the file containing the structure.
-        @type file:             str
-        @keyword path:          The optional path where the file is located.
-        @type path:             str
-        @keyword str:           The object containing the structural data.
-        @type str:              Structure_container instance
-        @keyword struct_index:  The index of the structural container, used for replacing the
-                                structure.
-        @type struct_index:     int or None.
         """
 
-        # Some checks.
-        if struct_index != None:
-            # Index check.
-            if struct_index >= self.num:
-                raise RelaxError, "The structure index of " + `struct_index` + " cannot be more than the total number of structures of " + `self.num` + "."
-
-            # ID check.
-            if name != self.name[struct_index]:
-                raise RelaxError, "The ID names " + `name` + " and " + `self.name[struct_index]` + " do not match."
-
-            # Model.
-            if model != self.model[struct_index]:
-                raise RelaxError, "The models " + `model` + " and " + `self.model[struct_index]` + " do not match."
-
-            # File name.
-            if file != self.file[struct_index]:
-                raise RelaxError, "The file names of " + `file` + " and " + `self.file[struct_index]` + " do not match."
-
-        # Initialise.
-        else:
-            self.num = self.num + 1
-            self.name.append(name)
-            self.model.append(model)
-            self.file.append(file)
-            self.path.append(path)
-
-        # Initialise the structural object if not provided.
-        if str == None:
-            str = Structure_container()
-
-        # Add the structural data.
-        if struct_index != None:
-            if struct_index >= len(self.structural_data):
-                self.structural_data.append(str)
-            else:
-                self.structural_data[struct_index] = str
-        else:
-            self.structural_data.append(str)
+        # Create the structural data data structures.
+        self.pack_structs([[MolContainer()]], orig_model_num=[model], orig_mol_num=[None], set_mol_name=[name])
 
 
-    def __atom_index(self, atom_num, struct_index):
-        """Find the atom index corresponding to the given atom number.
-
-        @param atom_num:        The atom number to find the index of.
-        @type atom_num:         int
-        @param struct_index:    The index of the structural container to extract the atom index
-                                from.
-        @type struct_index:     int
-        @return:                The atom index corresponding to the atom.
-        @rtype:                 int
-        """
-
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
-                continue
-
-            # Loop over the atoms.
-            for j in xrange(len(self.structural_data[i].atom_num)):
-                # Return the index.
-                if self.structural_data[i].atom_num[j] == atom_num:
-                    return j
-
-        # Should not be here, the PDB connect records are incorrect.
-        warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
-
-
-    def __bonded_atom(self, attached_atom, index, struct_index):
+    def __bonded_atom(self, attached_atom, index, mol):
         """Find the atom named attached_atom directly bonded to the atom located at the index.
 
         @param attached_atom:   The name of the attached atom to return.
         @type attached_atom:    str
         @param index:           The index of the atom which the attached atom is attached to. 
         @type index:            int
-        @param struct_index:    The index of the structure.
-        @type struct_index:     int
+        @param mol:             The molecule container.
+        @type mol:              MolContainer instance
         @return:                A tuple of information about the bonded atom.
         @rtype:                 tuple consisting of the atom number (int), atom name (str), element
                                 name (str), and atomic position (Numeric array of len 3)
@@ -155,16 +83,15 @@ class Internal(Base_struct_API):
 
         # Init.
         bonded_found = False
-        struct = self.structural_data[struct_index]
 
         # No bonded atoms, so go find everything within 1.2 Angstroms and say they are bonded.
-        if not struct.bonded[index]:
-            self.__find_bonded_atoms(index, struct_index)
+        if not mol.bonded[index]:
+            self.__find_bonded_atoms(index, mol)
 
         # Loop over the bonded atoms.
         matching_list = []
-        for bonded_index in struct.bonded[index]:
-            if relax_re.search(struct.atom_name[bonded_index], attached_atom):
+        for bonded_index in mol.bonded[index]:
+            if relax_re.search(mol.atom_name[bonded_index], attached_atom):
                 matching_list.append(bonded_index)
         num_attached = len(matching_list)
 
@@ -173,7 +100,7 @@ class Internal(Base_struct_API):
             # Get the atom names.
             matching_names = []
             for i in matching_list:
-                matching_names.append(struct.atom_name[i])
+                matching_names.append(mol.atom_name[i])
 
             # Return nothing but a warning.
             return None, None, None, None, None, 'More than one attached atom found: ' + `matching_names`
@@ -184,51 +111,17 @@ class Internal(Base_struct_API):
 
         # The bonded atom info.
         index = matching_list[0]
-        bonded_num = struct.atom_num[index]
-        bonded_name = struct.atom_name[index]
-        element = struct.element[index]
-        pos = [struct.x[index], struct.y[index], struct.z[index]]
-        attached_name = struct.atom_name[index]
+        bonded_num = mol.atom_num[index]
+        bonded_name = mol.atom_name[index]
+        element = mol.element[index]
+        pos = [mol.x[index], mol.y[index], mol.z[index]]
+        attached_name = mol.atom_name[index]
 
         # Return the information.
         return bonded_num, bonded_name, element, pos, attached_name, None
 
 
-    def __fill_object_from_pdb(self, records, struct_index):
-        """Method for generating a complete Structure_container object from the given PDB records.
-
-        @param records:         A list of structural PDB records.
-        @type records:          list of str
-        @param struct_index:    The index of the structural container to add the data to.
-        @type struct_index:     int
-        """
-
-        # Loop over the records.
-        for record in records:
-            # Parse the record.
-            record = self.__parse_pdb_record(record)
-
-            # Nothing to do.
-            if not record:
-                continue
-
-            # Add the atom.
-            if record[0] == 'ATOM' or record[0] == 'HETATM':
-                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=record[14], struct_index=struct_index)
-
-            # Connect atoms.
-            if record[0] == 'CONECT':
-                # Loop over the atoms of the record.
-                for i in xrange(len(record)-2):
-                    # Skip if there is no record.
-                    if record[i+2] == None:
-                        continue
-
-                    # Make the connection.
-                    self.atom_connect(index1=self.__atom_index(record[1], struct_index), index2=self.__atom_index(record[i+2], struct_index), struct_index=struct_index)
-
-
-    def __find_bonded_atoms(self, index, struct_index, radius=1.2):
+    def __find_bonded_atoms(self, index, mol, radius=1.2):
         """Find all atoms within a sphere and say that they are attached to the central atom.
 
         The found atoms will be added to the 'bonded' data structure.
@@ -236,27 +129,24 @@ class Internal(Base_struct_API):
 
         @param index:           The index of the central atom.
         @type index:            int
-        @param struct_index:    The index of the structure.
-        @type struct_index:     int
+        @param mol:             The molecule container.
+        @type mol:              MolContainer instance
         """
 
-        # Init.
-        struct = self.structural_data[struct_index]
-
         # Central atom info.
-        centre = array([struct.x[index], struct.y[index], struct.z[index]], float64)
+        centre = array([mol.x[index], mol.y[index], mol.z[index]], float64)
 
         # Atom loop.
-        for i in xrange(len(struct.atom_num)):
+        for i in xrange(len(mol.atom_num)):
             # The atom's position.
-            pos = array([struct.x[i], struct.y[i], struct.z[i]], float64)
+            pos = array([mol.x[i], mol.y[i], mol.z[i]], float64)
 
             # The distance from the centre.
             dist = linalg.norm(centre-pos)
 
             # Connect the atoms if within the radius value.
             if dist < radius:
-                self.atom_connect(index, i)
+                mol.atom_connect(index, i)
 
 
     def __get_chemical_name(self, hetID):
@@ -366,6 +256,862 @@ class Internal(Base_struct_API):
         # If records is not empty then there are no models, so yield the lot.
         if len(records):
             yield model, records
+
+
+    def __parse_mols(self, records):
+        """Generator function for looping over the molecules in the PDB records of a model.
+
+        @param records:     The list of PDB records for the model, or if no models exist the entire
+                            PDB file.
+        @type records:      list of str
+        @return:            The molecule number and all the records for that molecule.
+        @rtype:             tuple of int and list of str
+        """
+
+        # Check for empty records.
+        if records == []:
+            raise RelaxError, "There are no PDB records for this model."
+
+        # Init.
+        mol_num = 1
+        mol_records = []
+
+        # Loop over the data.
+        for record in records:
+            # A PDB termination record.
+            if search('^END', record):
+                break
+
+            # A molecule termination record.
+            if search('^TER', record):
+                # Yield the info.
+                yield mol_num, mol_records
+
+                # Reset the records.
+                mol_records = []
+
+                # Increment the molecule number.
+                mol_num = mol_num + 1
+
+                # Skip the rest of this loop.
+                continue
+
+            # Append the line as a record of the molecule.
+            mol_records.append(record)
+
+        # If records is not empty then there is only a single molecule, so yield the lot.
+        if len(mol_records):
+            yield mol_num, mol_records
+
+
+    def __validate_data_arrays(self, struct):
+        """Check the validity of the data arrays in the given structure object.
+
+        @param struct:  The structural object.
+        @type struct:   Structure_container instance
+        """
+
+        # The number of atoms.
+        num = len(struct.atom_name)
+
+        # Check the other lengths.
+        if len(struct.bonded) != num and len(struct.chain_id) != num and len(struct.element) != num and len(struct.pdb_record) != num and len(struct.res_name) != num and len(struct.res_num) != num and len(struct.seg_id) != num and len(struct.x) != num and len(struct.y) != num and len(struct.z) != num:
+            raise RelaxError, "The structural data is invalid."
+
+
+    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
+        """Generator function for looping over all atoms in the internal relax structural object.
+
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
+                                    matching this selection will be yielded.
+        @type atom_id:              str
+        @keyword str_id:            The structure identifier.  This can be the file name, model
+                                    number, or structure number.  If None, then all structures will
+                                    be looped over.
+        @type str_id:               str, int, or None
+        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
+        @type model_num_flag:       bool
+        @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
+        @type mol_name_flag:        bool
+        @keyword res_num_flag:      A flag which if True will cause the residue number to be
+                                    yielded.
+        @type res_num_flag:         bool
+        @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
+        @type res_name_flag:        bool
+        @keyword atom_num_flag:     A flag which if True will cause the atom number to be yielded.
+        @type atom_num_flag:        bool
+        @keyword atom_name_flag:    A flag which if True will cause the atom name to be yielded.
+        @type atom_name_flag:       bool
+        @keyword element_flag:      A flag which if True will cause the element name to be yielded.
+        @type element_flag:         bool
+        @keyword pos_flag:          A flag which if True will cause the atomic position to be
+                                    yielded.
+        @type pos_flag:             bool
+        @keyword ave:               A flag which if True will result in this method returning the
+                                    average atom properties across all loaded structures.
+        @type ave:                  bool
+        @return:                    A tuple of atomic information, as described in the docstring.
+        @rtype:                     tuple consisting of optional molecule name (str), residue number
+                                    (int), residue name (str), atom number (int), atom name(str),
+                                    element name (str), and atomic position (array of len 3).
+        """
+
+        # Check that the structure is loaded.
+        if not len(self.structural_data):
+            raise RelaxNoPdbError
+
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
+
+        # Loop over the models.
+        for model_index in range(len(self.structural_data)):
+            model = self.structural_data[model_index]
+
+            # Loop over the molecules.
+            for mol_index in range(len(model.mol)):
+                mol = model.mol[mol_index]
+
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                    continue
+
+                # Loop over all atoms.
+                for i in xrange(len(mol.atom_name)):
+                    # Skip non-matching atoms.
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i]):
+                        continue
+
+                    # Initialise.
+                    res_num = mol.res_num[i]
+                    res_name = mol.res_name[i]
+                    atom_num = mol.atom_num[i]
+                    atom_name = mol.atom_name[i]
+                    element = mol.element[i]
+                    pos = zeros(3, float64)
+
+                    # The atom position.
+                    if ave:
+                        # Loop over the models.
+                        for model_index2 in range(len(self.structural_data)):
+                            # Alias.
+                            mol = self.structural_data[model_index2].mol[mol_index]
+
+                            # Some sanity checks.
+                            if mol.atom_num[i] != atom_num:
+                                raise RelaxError, "The loaded structures do not contain the same atoms.  The average structural properties can not be calculated."
+
+                            # Sum the atom positions.
+                            pos = pos + array([mol.x[i], mol.y[i], mol.z[i]], float64)
+
+                        # Average the position array (divide by the number of models).
+                        pos = pos / len(self.structural_data)
+                    else:
+                        pos = array([mol.x[i], mol.y[i], mol.z[i]], float64)
+
+                    # The molecule name.
+                    mol_name = mol.mol_name
+
+                    # Build the tuple to be yielded.
+                    atomic_tuple = ()
+                    if model_num_flag:
+                        if ave:
+                            atomic_tuple = atomic_tuple + (None,)
+                        else:
+                            atomic_tuple = atomic_tuple + (model.num,)
+                    if mol_name_flag:
+                        atomic_tuple = atomic_tuple + (mol_name,)
+                    if res_num_flag:
+                        atomic_tuple = atomic_tuple + (res_num,)
+                    if res_name_flag:
+                        atomic_tuple = atomic_tuple + (res_name,)
+                    if atom_num_flag:
+                        atomic_tuple = atomic_tuple + (atom_num,)
+                    if atom_name_flag:
+                        atomic_tuple = atomic_tuple + (atom_name,)
+                    if element_flag:
+                        atomic_tuple = atomic_tuple + (element,)
+                    if pos_flag:
+                        atomic_tuple = atomic_tuple + (pos,)
+
+                    # Yield the information.
+                    yield atomic_tuple
+
+            # Break out of the loop if the ave flag is set, as data from only one model is used.
+            if ave:
+                break
+
+
+    def bond_vectors(self, atom_id=None, attached_atom=None, model_num=None, return_name=False, return_warnings=False):
+        """Find the bond vector between the atoms of 'attached_atom' and 'atom_id'.
+
+        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
+                                    correspond to a single atom in the system.
+        @type atom_id:              str
+        @keyword attached_atom:     The name of the bonded atom.
+        @type attached_atom:        str
+        @keyword model_num:         The model of which to return the vectors from.  If not supplied
+                                    and multiple models exist, then vectors from all models will be
+                                    returned.
+        @type model_num:            None or int
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to
+                                    be returned together with the bond vectors.
+        @type return_name:          bool
+        @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
+        @type return_warnings:      bool
+        @return:                    The list of bond vectors for each model.
+        @rtype:                     list of numpy arrays (or a tuple if return_name or
+                                    return_warnings are set)
+        """
+
+        # Generate the selection object.
+        sel_obj = Selection(atom_id)
+
+        # Initialise some objects.
+        vectors = []
+        attached_name = None
+        warnings = None
+
+        # Loop over the models.
+        for model in self.structural_data:
+            # Single model.
+            if model_num and model_num != model.num:
+                continue
+
+            # Loop over the molecules.
+            for mol in model.mol:
+                # Skip non-matching molecules.
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                    continue
+
+                # Init.
+                atom_found = False
+
+                # Loop over all atoms.
+                for i in xrange(len(mol.atom_name)):
+                    # Skip non-matching atoms.
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                        continue
+
+                    # More than one matching atom!
+                    if atom_found:
+                        raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+
+                    # The atom has been found, so store some info.
+                    atom_found = True
+                    index = i
+
+                # Found the atom.
+                if atom_found:
+                    # Get the atom bonded to this model/molecule/residue/atom.
+                    bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, mol)
+
+                    # No bonded atom.
+                    if (bonded_num, bonded_name, element) == (None, None, None):
+                        continue
+
+                    # The bond vector.
+                    vector = array(pos, float64) - array([mol.x[index], mol.y[index], mol.z[index]], float64)
+
+                    # Append the vector to the vectors array.
+                    vectors.append(vector)
+
+                # Not found.
+                else:
+                    warnings = "Cannot find the atom in the structure"
+
+        # Build the tuple to be yielded.
+        data = (vectors,)
+        if return_name:
+            data = data + (attached_name,)
+        if return_warnings:
+            data = data + (warnings,)
+
+        # Return the data.
+        return data
+
+
+    def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
+        """Method for loading structures from a PDB file.
+
+        @param file_path:       The full path of the PDB file.
+        @type file_path:        str
+        @keyword read_mol:      The molecule(s) to read from the file, independent of model.  The
+                                molecules are determined differently by the different parsers, but
+                                are numbered consecutively from 1.  If set to None, then all
+                                molecules will be loaded.
+        @type read_mol:         None, int, or list of int
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None,
+                                then the molecules will be automatically labelled based on the file
+                                name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword read_model:    The PDB model to extract from the file.  If set to None, then all
+                                models will be loaded.
+        @type read_model:       None, int, or list of int
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then
+                                the PDB model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the PDB file.
+        @rtype:                 bool
+        """
+
+        # Initial print out.
+        if verbosity:
+            print "\nInternal relax PDB parser."
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            # Exit indicating failure.
+            return False
+
+        # Separate the file name and path.
+        path, file = os.path.split(file_path)
+
+        # Convert the structure reading args into lists.
+        if read_mol and type(read_mol) != list:
+            read_mol = [read_mol]
+        if set_mol_name and type(set_mol_name) != list:
+            set_mol_name = [set_mol_name]
+        if read_model and type(read_model) != list:
+            read_model = [read_model]
+        if set_model_num and type(set_model_num) != list:
+            set_model_num = [set_model_num]
+
+        # Loop over all models in the PDB file.
+        model_index = 0
+        orig_model_num = []
+        mol_conts = []
+        for model_num, model_records in self.__parse_models(file_path):
+            # Only load the desired model.
+            if read_model and model_num not in read_model:
+                continue
+
+            # Store the original model number.
+            orig_model_num.append(model_num)
+
+            # Loop over the molecules of the model.
+            mol_conts.append([])
+            mol_index = 0
+            orig_mol_num = []
+            new_mol_name = []
+            for mol_num, mol_records in self.__parse_mols(model_records):
+                # Only load the desired model.
+                if read_mol and mol_num not in read_mol:
+                    continue
+
+                # Set the target molecule name.
+                if set_mol_name:
+                    new_mol_name.append(set_mol_name[mol_index])
+                else:
+                    # Number of structures already present for the model.
+                    num_struct = 0
+                    for model in self.structural_data:
+                        if model_index <= len(set_model_num) and set_model_num[model_index] == model.num:
+                            num_struct = len(model.mol)
+
+                    # Set the name to the file name plus the structure number.
+                    new_mol_name.append(file_root(file) + '_mol' + `mol_num+num_struct`)
+
+                # Store the original mol number.
+                orig_mol_num.append(mol_num)
+
+                # Generate the molecule container.
+                mol = MolContainer()
+
+                # Fill the molecular data object.
+                mol.fill_object_from_pdb(mol_records)
+
+                # Store the molecule container.
+                mol_conts[model_index].append(mol)
+
+                # Increment the molecule index.
+                mol_index = mol_index + 1
+
+            # Increment the model index.
+            model_index = model_index + 1
+
+        # Create the structural data data structures.
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path)
+
+        # Loading worked.
+        return True
+
+
+    def write_pdb(self, file, model_num=None):
+        """Method for the creation of a PDB file from the structural data.
+
+        A number of PDB records including HET, HETNAM, FORMUL, HETATM, TER, CONECT, MASTER, and END
+        are created.  To create the non-standard residue records HET, HETNAM, and FORMUL, the data
+        structure 'het_data' is created.  It is an array of arrays where the first dimension
+        corresponds to a different residue and the second dimension has the elements:
+
+            0.  Residue number.
+            1.  Residue name.
+            2.  Chain ID.
+            3.  Total number of atoms in the residue.
+            4.  Number of H atoms in the residue.
+            5.  Number of C atoms in the residue.
+
+
+        @param file:            The PDB file object.  This object must be writable.
+        @type file:             file object
+        @keyword model_num:     The model to place into the PDB file.  If not supplied, then all
+                                models will be placed into the file.
+        @type model_num:        None or int
+        """
+
+        # Validate the structural data.
+        self.validate()
+
+        # Initialise record counts.
+        num_hetatm = 0
+        num_atom = 0
+        num_ter = 0
+        num_conect = 0
+
+        # Print out.
+        print "\nCreating the PDB records\n"
+
+        # Write some initial remarks.
+        print "REMARK"
+        file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
+        file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
+        num_remark = 2
+
+        # Determine if model records will be created.
+        model_records = False
+        if model_num == None and self.num_models() > 1:
+            model_records = True
+
+
+        ####################
+        # Hetrogen section #
+        ####################
+
+        # Initialise the hetrogen info array.
+        het_data = []
+        het_data_coll = []
+
+        # Loop over the molecules of the first model.
+        index = 0
+        for mol in self.structural_data[0].mol:
+            # Check the validity of the data.
+            self.__validate_data_arrays(mol)
+
+            # Append an empty array for this molecule.
+            het_data.append([])
+
+            # Collect the non-standard residue info.
+            for i in xrange(len(mol.atom_name)):
+                # Skip non-HETATM records and HETATM records with no residue info.
+                if mol.pdb_record[i] != 'HETATM' or mol.res_name[i] == None:
+                    continue
+
+                # If the residue is not already stored initialise a new het_data element.
+                # (residue number, residue name, chain ID, number of atoms, atom count array).
+                if not het_data[index] or not mol.res_num[i] == het_data[index][-1][0]:
+                    het_data[index].append([mol.res_num[i], mol.res_name[i], mol.chain_id[i], 0, []])
+
+                    # Catch missing chain_ids.
+                    if het_data[index][-1][2] == None:
+                        het_data[index][-1][2] = ''
+
+                # Total atom count.
+                het_data[index][-1][3] = het_data[index][-1][3] + 1
+
+                # Find if the atom has already a count entry.
+                entry = False
+                for j in xrange(len(het_data[index][-1][4])): 
+                    if mol.element[i] == het_data[index][-1][4][j][0]:
+                        entry = True
+
+                # Create a new specific atom count entry.
+                if not entry:
+                    het_data[index][-1][4].append([mol.element[i], 0])
+
+                # Increment the specific atom count.
+                for j in xrange(len(het_data[index][-1][4])): 
+                    if mol.element[i] == het_data[index][-1][4][j][0]:
+                        het_data[index][-1][4][j][1] = het_data[index][-1][4][j][1] + 1
+
+            # Create the collective hetrogen info data structure.
+            for i in xrange(len(het_data[index])):
+                # Find the entry in the collective structure.
+                found = False
+                for j in xrange(len(het_data_coll)):
+                    # Matching residue numbers.
+                    if het_data[index][i][0] == het_data_coll[j][0]:
+                        # Change the flag.
+                        found = True
+
+                        # The checks.
+                        if het_data_coll[i][1] != het_data[index][i][1]:
+                            raise RelaxError, "The " + `het_data[index][i][1]` + " residue name of hetrogen " + `het_data[index][i][0]` + " " + het_data[index][i][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][1]` + " name of the previous structures."
+
+                        elif het_data_coll[i][2] != het_data[index][i][2]:
+                            raise RelaxError, "The hetrogen chain id " + `het_data[index][i][2]` + " does not match " + `het_data_coll[j][2]` + " of residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of the previous structures."
+
+                        elif het_data_coll[i][3] != het_data[index][i][3]:
+                            raise RelaxError, "The " + `het_data[index][i][3]` + " atoms of hetrogen " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][3]` + " of the previous structures."
+
+                        elif het_data_coll[i][4] != het_data[index][i][4]:
+                            raise RelaxError, "The atom counts " + `het_data[index][i][4]` +  " for the hetrogen residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " do not match the counts " + `het_data_coll[j][4]` + " of the previous structures."
+
+                # If there is no match, add the new residue to the collective.
+                if not found:
+                    het_data_coll.append(het_data[index][i])
+
+            # Increment the molecule index.
+            index = index + 1
+
+
+        # The HET records.
+        ##################
+
+        # Print out.
+        print "HET"
+
+        # Write the HET records.
+        for het in het_data_coll:
+            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
+
+
+        # The HETNAM records.
+        #####################
+
+        # Print out.
+        print "HETNAM"
+
+        # Loop over the non-standard residues.
+        residues = []
+        for het in het_data_coll:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
+            # Get the chemical name.
+            chemical_name = self.__get_chemical_name(het[1])
+            if not chemical_name:
+                chemical_name = 'Unknown'
+
+            # Write the HETNAM records.
+            file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
+
+
+        # The FORMUL records.
+        #####################
+
+        # Print out.
+        print "FORMUL"
+
+        # Loop over the non-standard residues and generate and write the chemical formula.
+        residues = []
+        for het in het_data_coll:
+            # Test if the residue HETNAM record as already been written (otherwise store its name).
+            if het[1] in residues:
+                continue
+            else:
+                residues.append(het[1])
+
+            # Initialise the chemical formula.
+            formula = ''
+
+            # Loop over the atoms.
+            for atom_count in het[4]:
+                formula = formula + atom_count[0] + `atom_count[1]`
+
+            # The FORMUL record (chemical formula).
+            file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
+
+
+        ######################
+        # Coordinate section #
+        ######################
+
+        # Loop over the models.
+        for model in self.structural_data:
+            # Single model.
+            if model_num and model_num != model.num:
+                continue
+
+            # MODEL record, for multiple models.
+            ####################################
+
+            if model_records:
+                # Print out.
+                print "\nMODEL %s" % model.num
+
+                # Write the model record.
+                file.write("%-6s    %4i\n" % ('MODEL', model.num))
+
+
+            # Add the atomic coordinate records (ATOM, HETATM, and TER).
+            ############################################################
+
+            # Loop over the molecules.
+            for mol in model.mol:
+                # Print out.
+                print "ATOM, HETATM, TER"
+
+                # Loop over the atomic data.
+                for i in xrange(len(mol.atom_name)):
+                    # Aliases.
+                    atom_num = mol.atom_num[i]
+                    atom_name = mol.atom_name[i]
+                    res_name = mol.res_name[i]
+                    chain_id = mol.chain_id[i]
+                    res_num = mol.res_num[i]
+                    x = mol.x[i]
+                    y = mol.y[i]
+                    z = mol.z[i]
+                    seg_id = mol.seg_id[i]
+                    element = mol.element[i]
+
+                    # Replace None with ''.
+                    if atom_name == None:
+                        atom_name = ''
+                    if res_name == None:
+                        res_name = ''
+                    if chain_id == None:
+                        chain_id = ''
+                    if res_num == None:
+                        res_num = ''
+                    if x == None:
+                        x = ''
+                    if y == None:
+                        y = ''
+                    if z == None:
+                        z = ''
+                    if seg_id == None:
+                        seg_id = ''
+                    if element == None:
+                        element = ''
+
+                    # Write the ATOM record.
+                    if mol.pdb_record[i] == 'ATOM':
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        num_atom = num_atom + 1
+
+                    # Write the HETATM record.
+                    if mol.pdb_record[i] == 'HETATM':
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        num_hetatm = num_hetatm + 1
+
+                # Finish off with the TER record.
+                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num+1, res_name, chain_id, res_num, ''))
+                num_ter = num_ter + 1
+
+
+            # ENDMDL record, for multiple structures.
+            ########################################
+
+            if model_records:
+                # Print out.
+                print "ENDMDL"
+
+                # Write the model record.
+                file.write("%-6s\n" % 'ENDMDL')
+
+
+        # Create the CONECT records.
+        ############################
+
+        # Print out.
+        print "CONECT"
+
+        # Loop over the molecules of the first model.
+        for mol in self.structural_data[0].mol:
+            # Loop over the atoms.
+            for i in xrange(len(mol.atom_name)):
+                # No bonded atoms, hence no CONECT record is required.
+                if not len(mol.bonded[i]):
+                    continue
+
+                # Initialise some data structures.
+                flush = 0
+                bonded_index = 0
+                bonded = ['', '', '', '']
+
+                # Loop over the bonded atoms.
+                for j in xrange(len(mol.bonded[i])):
+                    # End of the array, hence create the CONECT record in this iteration.
+                    if j == len(mol.bonded[i])-1:
+                        flush = True
+
+                    # Only four covalently bonded atoms allowed in one CONECT record.
+                    if bonded_index == 3:
+                        flush = True
+
+                    # Get the bonded atom index.
+                    bonded[bonded_index] = mol.bonded[i][j]
+
+                    # Increment the bonded_index value.
+                    bonded_index = bonded_index + 1
+
+                    # Generate the CONECT record and increment the counter.
+                    if flush:
+                        # Convert the atom indices to atom numbers.
+                        for k in range(4):
+                            if bonded[k] != '':
+                                bonded[k] = mol.atom_num[bonded[k]]
+
+                        # Write the CONECT record.
+                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
+
+                        # Reset the flush flag, the bonded atom count, and the bonded atom names.
+                        flush = False
+                        bonded_index = 0
+                        bonded = ['', '', '', '']
+
+                        # Increment the CONECT record count.
+                        num_conect = num_conect + 1
+
+
+
+        # MASTER record.
+        ################
+
+        # Print out.
+        print "\nMASTER"
+
+        # Write the MASTER record.
+        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data_coll), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
+
+
+        # END.
+        ######
+
+        # Print out.
+        print "END"
+
+        # Write the END record.
+        file.write("END\n")
+
+
+class MolContainer:
+    """The container for the molecular information.
+
+    The structural data object for this class is a container possessing a number of different arrays
+    corresponding to different structural information.  These objects include:
+
+        - atom_num:  The atom name.
+        - atom_name:  The atom name.
+        - bonded:  Each element an array of bonded atom indices.
+        - chain_id:  The chain ID.
+        - element:  The element symbol.
+        - pdb_record:  The optional PDB record name (one of ATOM, HETATM, or TER).
+        - res_name:  The residue name.
+        - res_num:  The residue number.
+        - seg_id:  The segment ID.
+        - x:  The x coordinate of the atom.
+        - y:  The y coordinate of the atom.
+        - z:  The z coordinate of the atom.
+
+    All arrays should be of equal length so that an atom index can retrieve all the corresponding
+    data.  Only the atom identification string is compulsory, all other arrays can contain None.
+    """
+
+
+    def __init__(self):
+        """Initialise the molecular container."""
+
+        # The atom num (array of int).
+        self.atom_num = []
+
+        # The atom name (array of str).
+        self.atom_name = []
+
+        # The bonded atom indices (array of arrays of int).
+        self.bonded = []
+
+        # The chain ID (array of str).
+        self.chain_id = []
+
+        # The element symbol (array of str).
+        self.element = []
+
+        # The optional PDB record name (array of str).
+        self.pdb_record = []
+
+        # The residue name (array of str).
+        self.res_name = []
+
+        # The residue number (array of int).
+        self.res_num = []
+
+        # The segment ID (array of int).
+        self.seg_id = []
+
+        # The x coordinate (array of float).
+        self.x = []
+
+        # The y coordinate (array of float).
+        self.y = []
+
+        # The z coordinate (array of float).
+        self.z = []
+
+
+    def __atom_index(self, atom_num):
+        """Find the atom index corresponding to the given atom number.
+
+        @param atom_num:        The atom number to find the index of.
+        @type atom_num:         int
+        @return:                The atom index corresponding to the atom.
+        @rtype:                 int
+        """
+
+        # Loop over the atoms.
+        for j in xrange(len(self.atom_num)):
+            # Return the index.
+            if self.atom_num[j] == atom_num:
+                return j
+
+        # Should not be here, the PDB connect records are incorrect.
+        warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
+
+
+    def __det_pdb_element(self, atom_name):
+        """Try to determine the element from the PDB atom name.
+
+        @param atom_name:   The PDB atom name.
+        @type atom_name:    str
+        @return:            The element name, or None if unsuccessful.
+        @rtype:             str or None
+        """
+
+        # Strip away the "'" character (for RNA, etc.).
+        element = strip(atom_name, "'")
+
+        # Strip away atom numbering, from the front and end.
+        element = strip(atom_name, digits)
+
+        # Amino acid atom translation table (note, numbers have been stripped already!).
+        table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
+                 'N': ['ND', 'NE', 'NH'],
+                 'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HT'],
+                 'O': ['OG', 'OD', 'OE'],
+                 'S': ['SD', 'SG']
+        }
+
+        # Translate amino acids.
+        for key in table.keys():
+            if element in table[key]:
+                element = key
+                break
+
+        # Allowed element list.
+        elements = ['H', 'C', 'N', 'O', 'F', 'P', 'S']
+
+        # Return the element, if in the list.
+        if element in elements:
+            return element
+
+        # Else, throw a warning.
+        warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
 
 
     def __parse_pdb_record(self, record):
@@ -523,22 +1269,7 @@ class Internal(Base_struct_API):
         return fields
 
 
-    def __validate_data_arrays(self, struct):
-        """Check the validity of the data arrays in the given structure object.
-
-        @param struct:  The structural object.
-        @type struct:   Structure_container instance
-        """
-
-        # The number of atoms.
-        num = len(struct.atom_name)
-
-        # Check the other lengths.
-        if len(struct.bonded) != num and len(struct.chain_id) != num and len(struct.element) != num and len(struct.pdb_record) != num and len(struct.res_name) != num and len(struct.res_num) != num and len(struct.seg_id) != num and len(struct.x) != num and len(struct.y) != num and len(struct.z) != num:
-            raise RelaxError, "The structural data is invalid."
-
-
-    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None, struct_index=None):
+    def atom_add(self, pdb_record=None, atom_num=None, atom_name=None, res_name=None, chain_id=None, res_num=None, pos=[None, None, None], segment_id=None, element=None):
         """Method for adding an atom to the structural data object.
 
         This method will create the key-value pair for the given atom.
@@ -562,34 +1293,24 @@ class Internal(Base_struct_API):
         @type segment_id:       str or None
         @keyword element:       The element symbol.
         @type element:          str or None
-        @keyword struct_index:  The index of the structure to add the atom to.  If not supplied and
-                                multiple structures or models are loaded, then the atom will be
-                                added to all structures.
-        @type struct_index:     None or int
         """
 
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
-                continue
-
-            # Append to all the arrays.
-            self.structural_data[i].atom_num.append(atom_num)
-            self.structural_data[i].atom_name.append(atom_name)
-            self.structural_data[i].bonded.append([])
-            self.structural_data[i].chain_id.append(chain_id)
-            self.structural_data[i].element.append(element)
-            self.structural_data[i].pdb_record.append(pdb_record)
-            self.structural_data[i].res_name.append(res_name)
-            self.structural_data[i].res_num.append(res_num)
-            self.structural_data[i].seg_id.append(segment_id)
-            self.structural_data[i].x.append(pos[0])
-            self.structural_data[i].y.append(pos[1])
-            self.structural_data[i].z.append(pos[2])
+        # Append to all the arrays.
+        self.atom_num.append(atom_num)
+        self.atom_name.append(atom_name)
+        self.bonded.append([])
+        self.chain_id.append(chain_id)
+        self.element.append(element)
+        self.pdb_record.append(pdb_record)
+        self.res_name.append(res_name)
+        self.res_num.append(res_num)
+        self.seg_id.append(segment_id)
+        self.x.append(pos[0])
+        self.y.append(pos[1])
+        self.z.append(pos[2])
 
 
-    def atom_connect(self, index1=None, index2=None, struct_index=None):
+    def atom_connect(self, index1=None, index2=None):
         """Method for connecting two atoms within the data structure object.
 
         This method will append index2 to the array at bonded[index1] and vice versa.
@@ -599,743 +1320,108 @@ class Internal(Base_struct_API):
         @type index1:           int
         @keyword index2:        The index of the second atom.
         @type index2:           int
-        @keyword struct_index:  The index of the structure to connect the atoms of.  If not supplied
-                                and multiple structures or models are loaded, then the atoms will be
-                                connected within all structures.
-        @type struct_index:     None or int
         """
 
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != i:
+        # Update the bonded array structure, if necessary.
+        if index2 not in self.bonded[index1]:
+            self.bonded[index1].append(index2)
+        if index1 not in self.bonded[index2]:
+            self.bonded[index2].append(index1)
+
+
+    def fill_object_from_pdb(self, records):
+        """Method for generating a complete Structure_container object from the given PDB records.
+
+        @param records:         A list of structural PDB records.
+        @type records:          list of str
+        """
+
+        # Loop over the records.
+        for record in records:
+            # Parse the record.
+            record = self.__parse_pdb_record(record)
+
+            # Nothing to do.
+            if not record:
                 continue
 
-            # Update the bonded array structure, if necessary.
-            if index2 not in self.structural_data[i].bonded[index1]:
-                self.structural_data[i].bonded[index1].append(index2)
-            if index1 not in self.structural_data[i].bonded[index2]:
-                self.structural_data[i].bonded[index2].append(index1)
+            # Add the atom.
+            if record[0] == 'ATOM' or record[0] == 'HETATM':
+                # Attempt at determining the element, if missing.
+                element = record[14]
+                if not element:
+                    element = self.__det_pdb_element(record[2])
 
+                # Add.
+                self.atom_add(pdb_record=record[0], atom_num=record[1], atom_name=record[2], res_name=record[4], chain_id=record[5], res_num=record[6], pos=[record[8], record[9], record[10]], segment_id=record[13], element=element)
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
-        """Generator function for looping over all atoms in the internal relax structural object.
-
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms
-                                    matching this selection will be yielded.
-        @type atom_id:              str
-        @keyword str_id:            The structure identifier.  This can be the file name, model
-                                    number, or structure number.  If None, then all structures will
-                                    be looped over.
-        @type str_id:               str, int, or None
-        @keyword model_num_flag:    A flag which if True will cause the model number to be yielded.
-        @type model_num_flag:       bool
-        @keyword mol_name_flag:     A flag which if True will cause the molecule name to be yielded.
-        @type mol_name_flag:        bool
-        @keyword res_num_flag:      A flag which if True will cause the residue number to be
-                                    yielded.
-        @type res_num_flag:         bool
-        @keyword res_name_flag:     A flag which if True will cause the residue name to be yielded.
-        @type res_name_flag:        bool
-        @keyword atom_num_flag:     A flag which if True will cause the atom number to be yielded.
-        @type atom_num_flag:        bool
-        @keyword atom_name_flag:    A flag which if True will cause the atom name to be yielded.
-        @type atom_name_flag:       bool
-        @keyword element_flag:      A flag which if True will cause the element name to be yielded.
-        @type element_flag:         bool
-        @keyword pos_flag:          A flag which if True will cause the atomic position to be
-                                    yielded.
-        @type pos_flag:             bool
-        @keyword ave:               A flag which if True will result in this method returning the
-                                    average atom properties across all loaded structures.
-        @type ave:                  bool
-        @return:                    A tuple of atomic information, as described in the docstring.
-        @rtype:                     tuple consisting of optional molecule name (str), residue number
-                                    (int), residue name (str), atom number (int), atom name(str),
-                                    element name (str), and atomic position (array of len 3).
-        """
-
-        # Check that the structure is loaded.
-        if not len(self.structural_data):
-            raise RelaxNoPdbError
-
-        # Generate the selection object.
-        sel_obj = Selection(atom_id)
-
-        # Average properties mode.
-        if ave:
-            # Loop over all atoms.
-            for i in xrange(len(self.structural_data[0].atom_name)):
-                # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(self.structural_data[0].atom_num[i], self.structural_data[0].atom_name[i], self.structural_data[0].res_num[i], self.structural_data[0].res_name[i]):
-                    continue
-
-                # Initialise.
-                model = None
-                mol_name = None
-                res_num = self.structural_data[0].res_num[i]
-                res_name = self.structural_data[0].res_name[i]
-                atom_num = self.structural_data[0].atom_num[i]
-                atom_name = self.structural_data[0].atom_name[i]
-                element = self.structural_data[0].element[i]
-                pos = zeros(3, float64)
-
-                # Loop over the structures.
-                for struct in self.structural_data:
-                    # Some sanity checks.
-                    if struct.atom_num[i] != atom_num:
-                        raise RelaxError, "The loaded structures do not contain the same atoms.  The average structural properties can not be calculated."
-
-                    # Sum the atom positions.
-                    pos = pos + array([struct.x[i], struct.y[i], struct.z[i]], float64)
-
-                # Average the position array.
-                pos = pos / len(self.structural_data)
-
-                # Build the tuple to be yielded.
-                atomic_tuple = ()
-                if model_num_flag:
-                    atomic_tuple = atomic_tuple + (model,)
-                if mol_name_flag:
-                    atomic_tuple = atomic_tuple + (mol_name,)
-                if res_num_flag:
-                    atomic_tuple = atomic_tuple + (res_num,)
-                if res_name_flag:
-                    atomic_tuple = atomic_tuple + (res_name,)
-                if atom_num_flag:
-                    atomic_tuple = atomic_tuple + (atom_num,)
-                if atom_name_flag:
-                    atomic_tuple = atomic_tuple + (atom_name,)
-                if element_flag:
-                    atomic_tuple = atomic_tuple + (element,)
-                if pos_flag:
-                    atomic_tuple = atomic_tuple + (pos,)
-
-                # Yield the information.
-                yield atomic_tuple
-
-        # Individual structure mode.
-        else:
-            # Loop over the models.
-            for c in xrange(self.num):
-                # Explicit structure identifier.
-                if type(str_id) == int:
-                    if str_id != c:
+            # Connect atoms.
+            if record[0] == 'CONECT':
+                # Loop over the atoms of the record.
+                for i in xrange(len(record)-2):
+                    # Skip if there is no record.
+                    if record[i+2] == None:
                         continue
 
-                # Alias the structural data.
-                struct = self.structural_data[c]
-
-                # Loop over all atoms.
-                for i in xrange(len(struct.atom_name)):
-                    # Skip non-matching atoms.
-                    if sel_obj and not sel_obj.contains_spin(struct.atom_num[i], struct.atom_name[i], struct.res_num[i], struct.res_name[i]):
-                        continue
-
-                    # Build the tuple to be yielded.
-                    atomic_tuple = ()
-                    if model_num_flag:
-                        atomic_tuple = atomic_tuple + (self.model[c],)
-                    if mol_name_flag:
-                        atomic_tuple = atomic_tuple + (self.name[c],)
-                    if res_num_flag:
-                        atomic_tuple = atomic_tuple + (struct.res_num[i],)
-                    if res_name_flag:
-                        atomic_tuple = atomic_tuple + (struct.res_name[i],)
-                    if atom_num_flag:
-                        atomic_tuple = atomic_tuple + (struct.atom_num[i],)
-                    if atom_name_flag:
-                        atomic_tuple = atomic_tuple + (struct.atom_name[i],)
-                    if element_flag:
-                        atomic_tuple = atomic_tuple + (struct.element[i],)
-                    if pos_flag:
-                        atomic_tuple = atomic_tuple + (array([struct.x[i], struct.y[i], struct.z[i]], float64),)
-
-                    # Yield the information.
-                    yield atomic_tuple
+                    # Make the connection.
+                    self.atom_connect(index1=self.__atom_index(record[1]), index2=self.__atom_index(record[i+2]))
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, struct_index=None, return_name=False, return_warnings=False):
-        """Find the bond vector between the atoms of 'attached_atom' and 'atom_id'.
+    def from_xml(self, mol_node):
+        """Recreate the MolContainer from the XML molecule node.
 
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
-                                    correspond to a single atom in the system.
-        @type atom_id:              str
-        @keyword attached_atom:     The name of the bonded atom.
-        @type attached_atom:        str
-        @keyword struct_index:      The index of the structure to return the vectors from.  If not
-                                    supplied and multiple structures/models exist, then vectors from
-                                    all structures will be returned.
-        @type struct_index:         None or int
-        @keyword return_name:       A flag which if True will cause the name of the attached atom to
-                                    be returned together with the bond vectors.
-        @type return_name:          bool
-        @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
-        @type return_warnings:      bool
-        @return:                    The list of bond vectors for each structure.
-        @rtype:                     list of numpy arrays (or a tuple if return_name or
-                                    return_warnings are set)
+        @param mol_node:    The molecule XML node.
+        @type mol_node:     xml.dom.minicompat.NodeList instance
         """
 
-        # Generate the selection object.
-        sel_obj = Selection(atom_id)
-
-        # Initialise some objects.
-        vectors = []
-        attached_name = None
-        warnings = None
-
-        # Loop over the structures.
-        for i in xrange(self.num):
-            # Single structure.
-            if struct_index and struct_index != i:
-                continue
-
-            # Alias.
-            struct = self.structural_data[i]
-
-            # Init.
-            atom_found = False
-
-            # Loop over all atoms.
-            for j in xrange(len(struct.atom_name)):
-                # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(struct.atom_num[j], struct.atom_name[j], struct.res_num[j], struct.res_name[j], self.name[i]):
-                    continue
-
-                # More than one matching atom!
-                if atom_found:
-                    raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
-
-                # The atom has been found, so store some info.
-                atom_found = True
-                index = j
-
-            # Found the atom.
-            if atom_found:
-                # Get the atom bonded to this structure/molecule/residue/atom.
-                bonded_num, bonded_name, element, pos, attached_name, warnings = self.__bonded_atom(attached_atom, index, i)
-
-                # No bonded atom.
-                if (bonded_num, bonded_name, element) == (None, None, None):
-                    continue
-
-                # The bond vector.
-                vector = array(pos, float64) - array([struct.x[index], struct.y[index], struct.z[index]], float64)
-
-                # Append the vector to the vectors array.
-                vectors.append(vector)
-
-            # Not found.
-            else:
-                warnings = "Cannot find the atom in the structure"
-
-        # Build the tuple to be yielded.
-        data = (vectors,)
-        if return_name:
-            data = data + (attached_name,)
-        if return_warnings:
-            data = data + (warnings,)
-
-        # Return the data.
-        return data
+        # Recreate the current molecule container.
+        xml_to_object(mol_node, self)
 
 
-    def load_pdb(self, file_path, model=None, struct_index=None, verbosity=False):
-        """Method for loading structures from a PDB file.
+    def is_empty(self):
+        """Check if the container is empty."""
 
-        @param file_path:       The full path of the PDB file.
-        @type file_path:        str
-        @param model:           The PDB model to use.  If None, all models will be loaded.
-        @type model:            int or None
-        @param struct_index:    The index of the structure.  This optional argument can be useful
-                                for reloading a structure.
-        @type struct_index:     int
-        @keyword verbosity:     A flag which if True will cause messages to be printed.
-        @type verbosity:        bool
-        @return:                The status of the loading of the PDB file.
-        @rtype:                 bool
-        """
+        # Set attributes.
+        if hasattr(self, 'mol_name'): return False
+        if hasattr(self, 'file_name'): return False
+        if hasattr(self, 'file_path'): return False
+        if hasattr(self, 'file_mol_num'): return False
+        if hasattr(self, 'file_model'): return False
 
-        # Initial print out.
-        if verbosity:
-            print "\nInternal relax PDB parser."
+        # Internal data structures.
+        if not self.atom_num == []: return False
+        if not self.atom_name == []: return False
+        if not self.bonded == []: return False
+        if not self.chain_id == []: return False
+        if not self.element == []: return False
+        if not self.pdb_record == []: return False
+        if not self.res_name == []: return False
+        if not self.res_num == []: return False
+        if not self.seg_id == []: return False
+        if not self.x == []: return False
+        if not self.y == []: return False
+        if not self.z == []: return False
 
-        # Test if the file exists.
-        if not access(file_path, F_OK):
-            # Exit indicating failure.
-            return False
-
-        # Separate the file name and path.
-        path, file = os.path.split(file_path)
-
-        # The ID name.
-        name = file
-        if model != None:
-            name = name + "_" + `model`
-
-        # Use pointers (references) if the PDB data exists in another pipe.
-        for data_pipe, pipe_name in pipes.pipe_loop(name=True):
-            # Skip the current pipe.
-            if pipe_name == pipes.cdp_name():
-                continue
-
-            # Structure exists.
-            if hasattr(data_pipe, 'structure'):
-                # Loop over the structures.
-                for i in xrange(data_pipe.structure.num):
-                    if data_pipe.structure.name[i] == name and data_pipe.structure.id == 'internal':
-                        # Add the structure.
-                        self.add_struct(name=name, model=model, file=file, path=path, str=data_pipe.structure.structural_data[i], struct_index=struct_index)
-
-                        # Print out.
-                        if verbosity:
-                            print "Using the structures from the data pipe " + `pipe_name` + "."
-                            print self.structural_data[i]
-
-                        # Exit this function.
-                        return True
-
-        # Print out.
-        if verbosity:
-            if type(model) == int:
-                print "Loading structure " + `model` + " from the PDB file."
-            else:
-                print "Loading all structures from the PDB file."
-
-        # Loop over all models in the PDB file.
-        i = 0
-        for model_num, records in self.__parse_models(file_path):
-            # Only load the desired model.
-            if model != None and model != model_num:
-                continue
-
-            # Print out.
-            if model_num != None:
-                print "Loading model: " + `model_num`
-
-            # Add an empty structure.
-            self.add_struct(name=name, model=model_num, file=file, path=path, str=Structure_container(), struct_index=struct_index)
-
-            # Fill the structural data object.
-            self.__fill_object_from_pdb(records, struct_index=len(self.structural_data)-1)
-
-            # Increment the structure index.
-            i = i + 1
-
-        # Loading worked.
+        # Ok, now this thing must be empty.
         return True
 
 
-    def write_pdb(self, file, struct_index=None):
-        """Method for the creation of a PDB file from the structural data.
+    def to_xml(self, doc, element):
+        """Create XML elements for the contents of this molecule container.
 
-        A number of PDB records including HET, HETNAM, FORMUL, HETATM, TER, CONECT, MASTER, and END
-        are created.  To create the non-standard residue records HET, HETNAM, and FORMUL, the data
-        structure 'het_data' is created.  It is an array of arrays where the first dimension
-        corresponds to a different residue and the second dimension has the elements:
-
-            0.  Residue number.
-            1.  Residue name.
-            2.  Chain ID.
-            3.  Total number of atoms in the residue.
-            4.  Number of H atoms in the residue.
-            5.  Number of C atoms in the residue.
-
-
-        @param file:            The PDB file object.  This object must be writable.
-        @type file:             file object
-        @param struct_index:    The index of the structural container to write.  If None, all
-                                structures will be written.
-        @type struct_index:     int
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the molecule XML elements to.
+        @type element:  XML element object
         """
 
-        # Initialise record counts.
-        num_hetatm = 0
-        num_atom = 0
-        num_ter = 0
-        num_conect = 0
-
-        # Print out.
-        print "\nCreating the PDB records\n"
-
-        # Write some initial remarks.
-        print "REMARK"
-        file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
-        file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
-        num_remark = 2
-
-
-        ####################
-        # Hetrogen section #
-        ####################
-
-        # Initialise the hetrogen info array.
-        het_data = []
-        het_data_coll = []
-
-        # Loop over the structures.
-        for index in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != index:
-                continue
-
-            # Alias the structure container.
-            struct = self.structural_data[index]
-
-            # Check the validity of the data.
-            self.__validate_data_arrays(struct)
-
-            # Append an empty array for this structure.
-            het_data.append([])
-
-            # Collect the non-standard residue info.
-            for i in xrange(len(struct.atom_name)):
-                # Skip non-HETATM records and HETATM records with no residue info.
-                if struct.pdb_record[i] != 'HETATM' or struct.res_name[i] == None:
-                    continue
-
-                # If the residue is not already stored initialise a new het_data element.
-                # (residue number, residue name, chain ID, number of atoms, atom count array).
-                if not het_data[index] or not struct.res_num[i] == het_data[index][-1][0]:
-                    het_data[index].append([struct.res_num[i], struct.res_name[i], struct.chain_id[i], 0, []])
-
-                    # Catch missing chain_ids.
-                    if het_data[index][-1][2] == None:
-                        het_data[index][-1][2] = ''
-
-                # Total atom count.
-                het_data[index][-1][3] = het_data[index][-1][3] + 1
-
-                # Find if the atom has already a count entry.
-                entry = False
-                for j in xrange(len(het_data[index][-1][4])): 
-                    if struct.element[i] == het_data[index][-1][4][j][0]:
-                        entry = True
-
-                # Create a new specific atom count entry.
-                if not entry:
-                    het_data[index][-1][4].append([struct.element[i], 0])
-
-                # Increment the specific atom count.
-                for j in xrange(len(het_data[index][-1][4])): 
-                    if struct.element[i] == het_data[index][-1][4][j][0]:
-                        het_data[index][-1][4][j][1] = het_data[index][-1][4][j][1] + 1
-
-            # Create the collective hetrogen info data structure.
-            for i in xrange(len(het_data[index])):
-                # Find the entry in the collective structure.
-                found = False
-                for j in xrange(len(het_data_coll)):
-                    # Matching residue numbers.
-                    if het_data[index][i][0] == het_data_coll[j][0]:
-                        # Change the flag.
-                        found = True
-
-                        # The checks.
-                        if het_data_coll[i][1] != het_data[index][i][1]:
-                            raise RelaxError, "The " + `het_data[index][i][1]` + " residue name of hetrogen " + `het_data[index][i][0]` + " " + het_data[index][i][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][1]` + " name of the previous structures."
-
-                        elif het_data_coll[i][2] != het_data[index][i][2]:
-                            raise RelaxError, "The hetrogen chain id " + `het_data[index][i][2]` + " does not match " + `het_data_coll[j][2]` + " of residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of the previous structures."
-
-                        elif het_data_coll[i][3] != het_data[index][i][3]:
-                            raise RelaxError, "The " + `het_data[index][i][3]` + " atoms of hetrogen " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][3]` + " of the previous structures."
-
-                        elif het_data_coll[i][4] != het_data[index][i][4]:
-                            raise RelaxError, "The atom counts " + `het_data[index][i][4]` +  " for the hetrogen residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " do not match the counts " + `het_data_coll[j][4]` + " of the previous structures."
-
-                # If there is no match, add the new residue to the collective.
-                if not found:
-                    het_data_coll.append(het_data[index][i])
-
-
-        # The HET records.
-        ##################
-
-        # Print out.
-        print "HET"
-
-        # Write the HET records.
-        for het in het_data_coll:
-            file.write("%-6s %3s  %1s%4s%1s  %5s     %-40s\n" % ('HET', het[2], het[1], het[0], '', het[3], ''))
-
-
-        # The HETNAM records.
-        #####################
-
-        # Print out.
-        print "HETNAM"
-
-        # Loop over the non-standard residues.
-        residues = []
-        for het in het_data_coll:
-            # Test if the residue HETNAM record as already been written (otherwise store its name).
-            if het[1] in residues:
-                continue
-            else:
-                residues.append(het[1])
-
-            # Get the chemical name.
-            chemical_name = self.__get_chemical_name(het[1])
-            if not chemical_name:
-                chemical_name = 'Unknown'
-
-            # Write the HETNAM records.
-            file.write("%-6s  %2s %3s %-55s\n" % ('HETNAM', '', het[1], chemical_name))
-
-
-        # The FORMUL records.
-        #####################
-
-        # Print out.
-        print "FORMUL"
-
-        # Loop over the non-standard residues and generate and write the chemical formula.
-        residues = []
-        for het in het_data_coll:
-            # Test if the residue HETNAM record as already been written (otherwise store its name).
-            if het[1] in residues:
-                continue
-            else:
-                residues.append(het[1])
-
-            # Initialise the chemical formula.
-            formula = ''
-
-            # Loop over the atoms.
-            for atom_count in het[4]:
-                formula = formula + atom_count[0] + `atom_count[1]`
-
-            # The FORMUL record (chemical formula).
-            file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
-
-
-        ######################
-        # Coordinate section #
-        ######################
-
-        # Loop over the structures.
-        for index in xrange(self.num):
-            # Skip non-matching structures.
-            if struct_index != None and struct_index != index:
-                continue
-
-            # Alias the structure container.
-            struct = self.structural_data[index]
-
-
-            # MODEL record, for multiple structures.
-            ########################################
-
-            if not struct_index and len(self.structural_data) > 1:
-                # Print out.
-                print "\nMODEL " + `index+1`
-
-                # Write the model record.
-                file.write("%-6s    %4i\n" % ('MODEL', index+1))
-
-
-            # Add the atomic coordinate records (ATOM, HETATM, and TER).
-            ############################################################
-
-            # Print out.
-            print "ATOM, HETATM, TER"
-
-            # Loop over the atomic data.
-            for i in xrange(len(struct.atom_name)):
-                # Aliases.
-                atom_num = struct.atom_num[i]
-                atom_name = struct.atom_name[i]
-                res_name = struct.res_name[i]
-                chain_id = struct.chain_id[i]
-                res_num = struct.res_num[i]
-                x = struct.x[i]
-                y = struct.y[i]
-                z = struct.z[i]
-                seg_id = struct.seg_id[i]
-                element = struct.element[i]
-
-                # Replace None with ''.
-                if atom_name == None:
-                    atom_name = ''
-                if res_name == None:
-                    res_name = ''
-                if chain_id == None:
-                    chain_id = ''
-                if res_num == None:
-                    res_num = ''
-                if x == None:
-                    x = ''
-                if y == None:
-                    y = ''
-                if z == None:
-                    z = ''
-                if seg_id == None:
-                    seg_id = ''
-                if element == None:
-                    element = ''
-
-                # Write the ATOM record.
-                if struct.pdb_record[i] == 'ATOM':
-                    file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
-                    num_atom = num_atom + 1
-
-                # Write the HETATM record.
-                if struct.pdb_record[i] == 'HETATM':
-                    file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
-                    num_hetatm = num_hetatm + 1
-
-            # Finish off with the TER record.
-            file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num+1, res_name, chain_id, res_num, ''))
-            num_ter = num_ter + 1
-
-
-            # ENDMDL record, for multiple structures.
-            ########################################
-
-            if not struct_index and len(self.structural_data) > 1:
-                # Print out.
-                print "ENDMDL"
-
-                # Write the model record.
-                file.write("%-6s\n" % 'ENDMDL')
-
-
-            # Create the CONECT records.
-            ############################
-
-            # Print out.
-            print "CONECT"
-
-            for i in xrange(len(struct.atom_name)):
-                # No bonded atoms, hence no CONECT record is required.
-                if not len(struct.bonded[i]):
-                    continue
-
-                # Initialise some data structures.
-                flush = 0
-                bonded_index = 0
-                bonded = ['', '', '', '']
-
-                # Loop over the bonded atoms.
-                for j in xrange(len(struct.bonded[i])):
-                    # End of the array, hence create the CONECT record in this iteration.
-                    if j == len(struct.bonded[i])-1:
-                        flush = True
-
-                    # Only four covalently bonded atoms allowed in one CONECT record.
-                    if bonded_index == 3:
-                        flush = True
-
-                    # Get the bonded atom index.
-                    bonded[bonded_index] = struct.bonded[i][j]
-
-                    # Increment the bonded_index value.
-                    bonded_index = bonded_index + 1
-
-                    # Generate the CONECT record and increment the counter.
-                    if flush:
-                        # Convert the atom indices to atom numbers.
-                        for k in range(4):
-                            if bonded[k] != '':
-                                bonded[k] = struct.atom_num[bonded[k]]
-
-                        # Write the CONECT record.
-                        file.write("%-6s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('CONECT', i+1, bonded[0], bonded[1], bonded[2], bonded[3], '', '', '', '', '', ''))
-
-                        # Reset the flush flag, the bonded atom count, and the bonded atom names.
-                        flush = False
-                        bonded_index = 0
-                        bonded = ['', '', '', '']
-
-                        # Increment the CONECT record count.
-                        num_conect = num_conect + 1
-
-
-
-        # MASTER record.
-        ################
-
-        # Print out.
-        print "\nMASTER"
-
-        # Write the MASTER record.
-        file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data_coll), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
-
-
-        # END.
-        ######
-
-        # Print out.
-        print "END"
-
-        # Write the END record.
-        file.write("END\n")
-
-
-class Structure_container:
-    """The container for the structural information.
-
-    The structural data object for this class is a container possessing a number of different arrays
-    corresponding to different structural information.  These objects include:
-
-        - atom_num:  The atom name.
-        - atom_name:  The atom name.
-        - bonded:  Each element an array of bonded atom indices.
-        - chain_id:  The chain ID.
-        - element:  The element symbol.
-        - pdb_record:  The optional PDB record name (one of ATOM, HETATM, or TER).
-        - res_name:  The residue name.
-        - res_num:  The residue number.
-        - seg_id:  The segment ID.
-        - x:  The x coordinate of the atom.
-        - y:  The y coordinate of the atom.
-        - z:  The z coordinate of the atom.
-
-    All arrays should be of equal length so that an atom index can retrieve all the corresponding
-    data.  Only the atom identification string is compulsory, all other arrays can contain None.
-    """
-
-
-    def __init__(self):
-        """Initialise all the arrays."""
-
-        # The model.
-        self.model = None
-
-        # The atom num (array of int).
-        self.atom_num = []
-
-        # The atom name (array of str).
-        self.atom_name = []
-
-        # The bonded atom indices (array of arrays of int).
-        self.bonded = []
-
-        # The chain ID (array of str).
-        self.chain_id = []
-
-        # The element symbol (array of str).
-        self.element = []
-
-        # The optional PDB record name (array of str).
-        self.pdb_record = []
-
-        # The residue name (array of str).
-        self.res_name = []
-
-        # The residue number (array of int).
-        self.res_num = []
-
-        # The segment ID (array of int).
-        self.seg_id = []
-
-        # The x coordinate (array of float).
-        self.x = []
-
-        # The y coordinate (array of float).
-        self.y = []
-
-        # The z coordinate (array of float).
-        self.z = []
+        # Create an XML element for this molecule and add it to the higher level element.
+        mol_element = doc.createElement('mol_cont')
+        element.appendChild(mol_element)
+
+        # Set the molecule attributes.
+        mol_element.setAttribute('desc', 'Molecule container')
+        mol_element.setAttribute('name', str(self.mol_name))
+
+        # Add all simple python objects within the MolContainer to the XML element.
+        fill_object_contents(doc, mol_element, object=self, blacklist=self.__class__.__dict__.keys())
