@@ -255,17 +255,15 @@ class Structure(TestCase):
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
         self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assertEqual(len(cdp.structure.structural_data), 3)
-        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
-        self.assertEqual(len(cdp.structure.structural_data[1].mol), 1)
-        self.assertEqual(len(cdp.structure.structural_data[2].mol), 1)
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
 
         i = 0
-        for model in cdp.structure.structural_data:
-            self.assertEqual(model.mol[0].file_name, files[i])
-            self.assertEqual(model.mol[0].file_path, path)
-            self.assertEqual(model.mol[0].file_model, 1)
-            self.assertEqual(model.mol[0].file_mol_num, 1)
+        for mol in cdp.structure.structural_data[0].mol:
+            self.assertEqual(mol.file_name, files[i])
+            self.assertEqual(mol.file_path, path)
+            self.assertEqual(mol.file_model, 1)
+            self.assertEqual(mol.file_mol_num, 1)
             i = i + 1
 
 
