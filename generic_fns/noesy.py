@@ -111,4 +111,4 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
 
     # Parse and extract the NOE restraints.
     if format == 'xplor':
-        restraints = parse_noe_restraints(lines)
+        cdp.noe_restraints = parse_noe_restraints(lines)
