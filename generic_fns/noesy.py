@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,11 +23,35 @@
 # Module docstring.
 """Module for NOESY related operations."""
 
+# Python module imports.
+from re import search
+
 # relax module imports.
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from relax_errors import RelaxNoSequenceError
 from relax_io import open_read_file
+
+
+def __file_format(lines):
+    """Determine the format of the NOE restraints data.
+
+    @param lines:   The file data converted to a list of file lines.
+    @type lines:    list of str
+    @return:        The format of the file.
+    @rtype:         str
+    """
+
+    # Loop over the lines.
+    for line in lines:
+        # Xplor format.
+        if search('^assign ', line):
+            print "Xplor formatted file."
+            return 'xplor'
+
+    # Print out.
+    print "Generic formatted file."
+    return 'generic'
 
 
 def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
@@ -69,3 +93,17 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
 
     # Determine the file type.
     format = __file_format(lines)
+
+    # Generic format checks.
+    if format == 'generic':
+        # Columns must be specified.
+        if proton1_col == None:
+            raise RelaxError, "The proton1_col argument must be specified for the generically formatted NOE restraint file."
+        if proton2_col == None:
+            raise RelaxError, "The proton2_col argument must be specified for the generically formatted NOE restraint file."
+        if lower_col == None:
+            raise RelaxError, "The lower_col argument must be specified for the generically formatted NOE restraint file."
+        if upper_col == None:
+            raise RelaxError, "The upper_col argument must be specified for the generically formatted NOE restraint file."
+
+
