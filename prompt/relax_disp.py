@@ -47,6 +47,44 @@ class Relax_disp:
         self.__relax__ = relax
 
 
+    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0, int_ref=0):
+        """Calculate the effective transversal relaxation rate from the peak intensities.
+
+        THIS FUNCTION IS NOT WRITTEN YET.
+
+
+        Keyword arguments
+        ~~~~~~~~~~~~~~~~~
+
+        exp_type:   The relaxation dispersion experiment type, either 'cpmg' or 'r1rho'.
+
+        id:   The experiment identification string.
+
+        delayT:   The CPMG constant time delay (T) in s.
+
+        int_cpmg:   Intensity of the peak in the CPMG spectrum.
+
+        int_ref:    Intensity of the peak in the reference spectrum.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function allows one to extract 'r2eff' values from epak intensities.
+
+        If 'cpmg' is chosen, the equation used is:
+        r2eff = - ( 1 / delayT ) * log ( int_cpmg / int_ref )
+
+        If 'r1rho' is chosen, nothing happens yet, as the code is not implemented.
+
+
+        Examples
+        ~~~~~~~~
+
+        
+        """
+
+
     def cpmg_delayT(self, id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 
