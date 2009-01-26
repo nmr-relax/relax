@@ -133,7 +133,7 @@ def parse_noe_restraints(lines):
                 char_index = char_index + 1
 
                 # Check if we need to go to the next line.
-                if char_index > len(lines[line_index]):
+                if char_index >= len(lines[line_index]):
                     line_index = line_index + 1
                     char_index = -1
                     continue
