@@ -91,11 +91,8 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
 
     # Open the file.
     file = open_read_file(file_name=file, dir=dir)
-    data = file.read()
+    lines = file.readlines()
     file.close()
-
-    # The lines of the file.
-    lines = split(data, '\n')
 
     # Determine the file type.
     format = __file_format(lines)
@@ -114,4 +111,4 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
 
     # Parse and extract the NOE restraints.
     if format == 'xplor':
-        restraints = parse_noe_restraints(data)
+        restraints = parse_noe_restraints(lines)
