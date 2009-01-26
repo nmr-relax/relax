@@ -22,6 +22,6 @@ assign (segid A and resid  4 and name N3 ) (segid B and resid  1 and name N1 )  
 assign (segid A and resid  4 and name O2 ) (segid B and resid  1 and name H22)  2.08 0.20 0.20
 assign (segid A and resid  4 and name O2 ) (segid B and resid  1 and name N2 )  3.08 0.20 0.20
 assign (segid A and resid  4 and name H42)
-       (segid B and resid  1 and name O6 )  1.71 0.20 0.20
-assign (segid A and resid  4 and name N4 )
+       (segid B and resid  1 and name O6 )  1.71 0.20 0.20  ! This should test things a little.
+assign (segid A and resid  4 and name N4 )  ! This should too !
        (segid B and resid  1 and name O6 )  2.72 0.20 0.20
