@@ -29,7 +29,7 @@ from string import split
 
 # relax module imports.
 from generic_fns import pipes
-from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin
 from generic_fns.xplor import parse_noe_restraints
 from relax_errors import RelaxNoSequenceError
 from relax_io import open_read_file
@@ -112,3 +112,10 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
     # Parse and extract the NOE restraints.
     if format == 'xplor':
         cdp.noe_restraints = parse_noe_restraints(lines)
+
+    # Check for the presence of the spin containers corresponding to the atom ids.
+    for restraint in cdp.noe_restraints:
+        if not return_spin(restraint[0]):
+            raise RelaxError, "The spin container corresponding to '%s' cannot be found." % restraint[0]
+        if not return_spin(restraint[1]):
+            raise RelaxError, "The spin container corresponding to '%s' cannot be found." % restraint[1]
