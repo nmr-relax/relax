@@ -28,6 +28,7 @@ from re import search
 from string import split
 
 # relax module imports.
+from generic_fns.mol_res_spin import return_spin
 from relax_errors import RelaxError
 
 
@@ -119,7 +120,10 @@ def parse_noe_restraints(lines):
                 atom = atom + lines[line_index][char_index]
 
             # Convert the atom data to a relax atom id.
-            data[-1][0] = __convert_to_id(atom)
+            relax_id = __convert_to_id(atom)
+            data[-1][0] = relax_id
+            if not return_spin(relax_id):
+                raise RelaxError, "The spin container corresponding to '%s' (or '%s' in Xplor format) cannot be found." % (relax_id, atom)
 
             # Extract the second atom string.
             atom = ''
@@ -148,7 +152,10 @@ def parse_noe_restraints(lines):
                 atom = atom + lines[line_index][char_index]
 
             # Convert the atom data to a relax atom id.
-            data[-1][1] = __convert_to_id(atom)
+            relax_id = __convert_to_id(atom)
+            data[-1][1] = relax_id
+            if not return_spin(relax_id):
+                raise RelaxError, "The spin container corresponding to '%s' (or '%s' in Xplor format) cannot be found." % (relax_id, atom)
 
             # The rest of the data (NOE restraint info).
             info = split(lines[line_index][char_index+1:])
