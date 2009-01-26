@@ -104,7 +104,7 @@ class Noe_restraints(TestCase):
         restraints = [
             ['#A:1@N1',  '#B:4@H3',  1.93, 0.20, 0.20],
             ['#A:1@N1',  '#B:4@N3',  2.95, 0.20, 0.20],
-            ['#A:1@N6', ' #B:4@O4',  2.83, 0.20, 0.20],
+            ['#A:1@N6',  '#B:4@O4',  2.83, 0.20, 0.20],
             ['#A:1@H62', '#B:4@O4',  1.82, 0.20, 0.20],
             ['#A:2@H3',  '#B:3@N1',  1.93, 0.20, 0.20],
             ['#A:2@N3',  '#B:3@N1',  2.95, 0.20, 0.20],
@@ -124,12 +124,15 @@ class Noe_restraints(TestCase):
             ['#A:4@N4',  '#B:1@O6',  2.72, 0.20, 0.20]
         ]
 
-        # Convert to lower and upper bound format.
-        for i in range(len(restraints)):
-            restraints[i] = [restraints[i][0], restraints[i][1], restraints[i][2]-restraints[i][3], restraints[i][2]+restraints[i][4]]
-
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
         # Test that the restraints are properly set.
-        self.assertEqual(cdp.noe_restraints, restraints)
+        for i in range(len(restraints)):
+            # Atom ids.
+            self.assertEqual(cdp.noe_restraints[i][0], restraints[i][0])
+            self.assertEqual(cdp.noe_restraints[i][1], restraints[i][1])
+
+            # Lower and upper bound.
+            self.assertEqual(cdp.noe_restraints[i][2], restraints[i][2]-restraints[i][3])
+            self.assertEqual(cdp.noe_restraints[i][3], restraints[i][2]+restraints[i][4])
