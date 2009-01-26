@@ -27,6 +27,47 @@
 from re import search
 from string import split
 
+# relax module imports.
+from relax_errors import RelaxError
+
+
+def __convert_to_id(string):
+    """Convert the string into a relax atom id representation.
+
+    @param string:  The Xplor atom string.
+    @type string:   str
+    @return:        The relax atom id.
+    @rtype:         str
+    """
+
+    # Split up the string by the 'and' statements.
+    data = split(string, 'and')
+
+    # Loop over the data.
+    relax_id = ''
+    for i in range(len(data)):
+        # Split by whitespace.
+        info = split(data[i])
+
+        # Don't know what this is!
+        if len(info) != 2:
+            raise RelaxError, "Cannot convert the Xplor atom string '%s' to relax format." % string
+
+        # A molecule identifier.
+        if info[0] == 'segid':
+            relax_id = relax_id + '#' + info[1]
+
+        # A residue identifier.
+        elif info[0] == 'resid':
+            relax_id = relax_id + ':' + info[1]
+
+        # An atom identifier.
+        elif info[0] == 'name':
+            relax_id = relax_id + '@' + info[1]
+
+    # Return the relax id.
+    return relax_id
+
 
 def parse_noe_restraints(lines):
     """Parse and return the NOE restraints from the Xplor lines.
@@ -78,7 +119,7 @@ def parse_noe_restraints(lines):
                 atom = atom + lines[line_index][char_index]
 
             # Convert the atom data to a relax atom id.
-            data[-1][0] = atom
+            data[-1][0] = __convert_to_id(atom)
 
             # Extract the second atom string.
             atom = ''
@@ -107,7 +148,7 @@ def parse_noe_restraints(lines):
                 atom = atom + lines[line_index][char_index]
 
             # Convert the atom data to a relax atom id.
-            data[-1][1] = atom
+            data[-1][1] = __convert_to_id(atom)
 
             # The rest of the data (NOE restraint info).
             info = split(lines[line_index][char_index+1:])
