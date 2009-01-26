@@ -25,10 +25,12 @@
 
 # Python module imports.
 from re import search
+from string import split
 
 # relax module imports.
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns.xplor import parse_noe_restraints
 from relax_errors import RelaxNoSequenceError
 from relax_io import open_read_file
 
@@ -89,7 +91,11 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
 
     # Open the file.
     file = open_read_file(file_name=file, dir=dir)
-    lines = file.readlines()
+    data = file.read()
+    file.close()
+
+    # The lines of the file.
+    lines = split(data, '\n')
 
     # Determine the file type.
     format = __file_format(lines)
@@ -106,4 +112,6 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
         if upper_col == None:
             raise RelaxError, "The upper_col argument must be specified for the generically formatted NOE restraint file."
 
-
+    # Parse and extract the NOE restraints.
+    if format == 'xplor':
+        restraints = parse_noe_restraints(data)
