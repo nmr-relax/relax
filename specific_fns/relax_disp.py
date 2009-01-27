@@ -241,7 +241,7 @@ class Relax_disp(Common_functions):
         return results[result_index]
 
 
-    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0, int_ref=0):
+    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0.0, int_ref=0.0):
         """Calculate the effective transversal relaxation rate from the peak intensities. The
         equation depends on the experiment type chosen, either 'cpmg' or 'r1rho'.
 
@@ -600,7 +600,7 @@ class Relax_disp(Common_functions):
             spin.dw = param_vector[5]
 
 
-    def exp_type(self, exp='cpmg'):
+    def exp_type(self, exp_type='cpmg'):
         """Function for selecting the relaxation dispersion experiment type performed.
         @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg' or 'r1rho'.
         @type exp:    str
@@ -622,18 +622,18 @@ class Relax_disp(Common_functions):
             raise RelaxNoSequenceError
 
         # CPMG relaxation dispersion experiments.
-        if exp == 'cpmg':
+        if exp_type == 'cpmg':
             print "CPMG relaxation dispersion experiments."
             cdp.exp_type = 'cpmg'
 
         # R1rho relaxation dispersion experiments.
-        elif exp == 'r1rho':
+        elif exp_type == 'r1rho':
             print "R1rho relaxation dispersion experiments."
             cdp.exp_type = 'r1rho'
 
         # Invalid relaxation dispersion experiment.
         else:
-            raise RelaxError, "The relaxation dispersion experiment '" + exp + "' is invalid."
+            raise RelaxError, "The relaxation dispersion experiment '" + exp_type + "' is invalid."
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):

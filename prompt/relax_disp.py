@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxNoneNumError, RelaxStrError
+from relax_errors import RelaxNoneNumError, RelaxNumError, RelaxStrError
 from specific_fns.setup import relax_disp_obj
 
 
@@ -47,7 +47,7 @@ class Relax_disp:
         self.__relax__ = relax
 
 
-    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0, int_ref=0):
+    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0.0, int_ref=0.0):
         """Calculate the effective transversal relaxation rate from the peak intensities.
 
         THIS FUNCTION IS NOT WRITTEN YET.
@@ -80,9 +80,40 @@ class Relax_disp:
 
         Examples
         ~~~~~~~~
-
-        
         """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "relax_disp.calc_r2eff("
+            text = text + "exp_type=" + `exp_type`
+            text = text + ", id=" + `id`
+            text = text + ", delayT=" + `delayT`
+            text = text + ", int_cpmg=" + `int_cpmg`
+            text = text + ", int_ref=" + `int_ref` + ")"
+            print text
+
+        # The exp_type argument.
+        if type(exp_type) != str:
+            raise RelaxStrError, ('exp_type', exp_type)
+
+        # The id argument.
+        if type(id) != str:
+            raise RelaxStrError, ('experiment identification string', id)
+
+        # The CPMG constant time delay (T).
+        if type(delayT) != float and type(delayT) != int and delayT != None:
+            raise RelaxNoneNumError, ('CPMG constant time delay (T)', delayT)
+
+        # The CPMG peak intensity.
+        if type(int_cpmg) != float and type(delayT) != int:
+            raise RelaxNumError, ('int_cpmg', int_cpmg)
+
+        # The reference peak intensity.
+        if type(int_ref) != float and type(delayT) != int:
+            raise RelaxNumError, ('int_ref', int_ref)
+
+        # Execute the functional code.
+        relax_disp_obj.calc_r2eff(exp_type=exp_type, id=id, delayT=delayT, int_cpmg=int_cpmg, int_ref=int_ref)
 
 
     def cpmg_delayT(self, id=None, delayT=None):
@@ -122,7 +153,7 @@ class Relax_disp:
         if type(delayT) != float and type(delayT) != int and delayT != None:
             raise RelaxNoneNumError, ('CPMG constant time delay (T)', delayT)
 
-        # Id string.
+        # The id argument.
         if type(id) != str:
             raise RelaxStrError, ('experiment identification string', id)
 
@@ -182,13 +213,13 @@ class Relax_disp:
         relax_disp_obj.cpmg_frq(cpmg_frq=cpmg_frq, spectrum_id=spectrum_id)
 
 
-    def exp_type(self, exp='cpmg'):
+    def exp_type(self, exp_type='cpmg'):
         """Function for the selection of the relaxation dispersion experiments to analyse.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        exp:  The type of relaxation dispersion experiment performed.
+        exp_type:  The type of relaxation dispersion experiment performed.
 
 
         The preset experiments
@@ -203,21 +234,21 @@ class Relax_disp:
         To pick the experiment type 'cpmg' for all selected spins, type:
 
         relax> relax_disp.exp_type('cpmg')
-        relax> relax_disp.exp_type(exp='cpmg')
+        relax> relax_disp.exp_type(exp_type='cpmg')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_disp.exp_type("
-            text = text + "exp=" + `exp` + ")"
+            text = text + "exp_type=" + `exp_type` + ")"
             print text
 
-        # The exp argument.
-        if type(exp) != str:
-            raise RelaxStrError, ('exp', exp)
+        # The exp_type argument.
+        if type(exp_type) != str:
+            raise RelaxStrError, ('exp_type', exp_type)
 
         # Execute the functional code.
-        relax_disp_obj.exp_type(exp=exp)
+        relax_disp_obj.exp_type(exp_type=exp_type)
 
 
     def r2eff_read(self):
@@ -278,7 +309,7 @@ class Relax_disp:
         To pick the model 'fast' for all selected spins, type:
 
         relax> relax_disp.select_model('fast')
-        relax> relax_disp.select_model(exp='fast')
+        relax> relax_disp.select_model(exp_type='fast')
         """
 
         # Function intro text.

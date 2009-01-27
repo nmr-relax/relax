@@ -26,7 +26,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.relax_disp import Relax_disp
-from relax_errors import RelaxNoneNumError, RelaxStrError
+from relax_errors import RelaxNoneNumError, RelaxNumError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
@@ -38,6 +38,70 @@ class Test_relax_disp(TestCase):
 
     # Instantiate the user function class.
     relax_disp_fns = Relax_disp(fake_relax.fake_instance())
+
+
+    def test_relax_calc_r2eff_argfail_exp_type(self):
+        """The exp_type arg test of the relax_disp.relax_calc_r2eff() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_disp_fns.calc_r2eff, exp_type=data[1])
+
+    def test_relax_calc_r2eff_argfail_id(self):
+        """The id arg test of the relax_disp.relax_calc_r2eff() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.relax_disp_fns.calc_r2eff, id=data[1])
+
+
+    def test_relax_calc_r2eff_argfail_delayT(self):
+        """The delayT arg test of the relax_disp.relax_calc_r2eff() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float, int and None arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'int' or data[0] == 'None':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.calc_r2eff, delayT=data[1])
+
+
+    def test_relax_calc_r2eff_argfail_int_cpmg(self):
+        """The int_cpmg arg test of the relax_disp.relax_calc_r2eff() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float, int and None arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, int_cpmg=data[1])
+
+
+    def test_relax_calc_r2eff_argfail_int_ref(self):
+        """The int_ref arg test of the relax_disp.relax_calc_r2eff() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float, int and None arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'int':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNumError, self.relax_disp_fns.calc_r2eff, int_ref=data[1])
 
 
     def test_relax_cpmg_delayT_argfail_id(self):
@@ -92,8 +156,8 @@ class Test_relax_disp(TestCase):
         self.assertRaises(RelaxStrError, self.relax_disp_fns.cpmg_frq, spectrum_id=data[1])
 
 
-    def test_relax_exp_type_argfail_exp(self):
-        """The exp arg test of the relax_disp.exp_type() user function."""
+    def test_relax_exp_type_argfail_exp_type(self):
+        """The exp_type arg test of the relax_disp.exp_type() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -102,7 +166,7 @@ class Test_relax_disp(TestCase):
                 continue
 
         # The argument test.
-        self.assertRaises(RelaxStrError, self.relax_disp_fns.exp_type, exp=data[1])
+        self.assertRaises(RelaxStrError, self.relax_disp_fns.exp_type, exp_type=data[1])
 
 
     def test_relax_select_model_argfail_model(self):
