@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns.mol_res_spin import copy_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
-from relax_errors import RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Spin:
@@ -170,6 +170,85 @@ class Spin:
 
         # Execute the functional code.
         create_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
+
+
+    def create_pseudo(self, spin_name=None, spin_num=None, res_id=None, members=None, averaging='linear'):
+        """Function for creating a spin system representing a pseudo-atom.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        spin_name:  The name of the pseudo-atom spin.
+
+        spin_num:  The spin number.
+
+        res_id:  The molecule and residue ID string identifying the position to add the pseudo-spin
+            to.
+
+        mol_id:  The molecule ID string identifying the molecule to add the pseudo-spin to.
+
+        members:  A list of the atoms the pseudo-atom is composed of.
+
+        averaging:  The positional averaging technique.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will create a spin data container representing a number of pre-existing spin
+        containers as a pseudo-atom.  The optional spin number must not already exist.
+
+
+        Examples
+        ~~~~~~~~
+
+        The following will create the pseudo-atom named 'Q9' consisting of the protons '@H16',
+        '@H17', '@H18':
+
+        relax> spin.create_pseudo('Q9', members=['@H16', '@H17', '@H18'])
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "spin.create_pseudo("
+            text = text + "spin_name=" + `spin_name`
+            text = text + ", spin_num=" + `spin_num`
+            text = text + ", res_id=" + `res_id`
+            text = text + ", members=" + `members`
+            text = text + ", averaging=" + `averaging` + ")"
+            print text
+
+        # Spin name.
+        if type(spin_name) != str:
+            raise RelaxStrError, ('spin name', spin_name)
+
+        # Spin number.
+        if spin_num != None and type(spin_num) != int:
+            raise RelaxNoneIntError, ('spin number', spin_num)
+
+        # The residue ID.
+        if res_id != None and type(res_id) != str:
+            raise RelaxNoneStrError, ('residue identification string', res_id)
+
+        # Member atoms.
+        if type(members) != list:
+            raise RelaxListStrError, ('members', members)
+        else:
+            # Empty list.
+            if members == []:
+                raise RelaxListStrError, ('members', members)
+
+            # Check the values.
+            for i in xrange(len(members)):
+                if type(members[i]) != str:
+                    raise RelaxListStrError, ('members', members)
+
+        # The positional averaging technique.
+        if averaging != None and type(averaging) != str:
+            raise RelaxNoneStrError, ('positional averaging technique', averaging)
+
+        # Execute the functional code.
+        create_pseudo_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id, members=members, averaging=averaging)
 
 
     def delete(self, spin_id=None):
