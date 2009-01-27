@@ -251,6 +251,37 @@ class Spin_base_class:
         self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':1', spin_to=':2@78')
 
 
+    def test_create_pseudo_spin(self):
+        """Test the creation of a pseudo-atom.
+
+        The function tested is both generic_fns.mol_res_spin.create_pseudo_spin() and
+        prompt.spin.create_pseudo().
+        """
+
+        # Create a few new protons.
+        self.spin_fns.create(100, 'H13', res_id='#Old mol:1')
+        self.spin_fns.create(101, 'H14', res_id='#Old mol:1')
+        self.spin_fns.create(102, 'H15', res_id='#Old mol:1')
+
+        # Create a few pseudo-spins.
+        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'])
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Test that the spin numbers are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
+        self.assertEqual(dp.mol[0].res[0].spin[6].num, 101)
+        self.assertEqual(dp.mol[0].res[0].spin[7].num, 102)
+        self.assertEqual(dp.mol[0].res[0].spin[8].num, 105)
+
+        # Test that the spin names are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].name, 'H13')
+        self.assertEqual(dp.mol[0].res[0].spin[6].name, 'H14')
+        self.assertEqual(dp.mol[0].res[0].spin[7].name, 'H15')
+        self.assertEqual(dp.mol[0].res[0].spin[8].name, 'Q3')
+
+
     def test_create_spin(self):
         """Test the creation of a spin.
 
