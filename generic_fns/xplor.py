@@ -28,7 +28,6 @@ from re import search
 from string import split
 
 # relax module imports.
-from generic_fns.mol_res_spin import return_spin
 from relax_errors import RelaxError
 
 
