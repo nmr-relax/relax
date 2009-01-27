@@ -494,22 +494,12 @@ def __linear_ave(positions):
     """Perform linear averaging of the atomic positions.
 
     @param positions:   The atomic positions.  The first index is that of the positions to be
-                        averaged over.  The second, optionally, can be the different models if
-                        present.  The last index is over the x, y, and z coordinates.
-    @type positions:    rank-2 list of floats or rank-3 list of floats
-    @return:            The averaged positions.  Either a single vector or an list of vectors.
-    @rtype:             rank-1 list of floats or rank-2 list of floats
+                        averaged over.  The second index is over the different models.  The last
+                        index is over the x, y, and z coordinates.
+    @type positions:    rank-3 list of floats
+    @return:            The averaged positions as a list of vectors.
+    @rtype:             rank-2 list of floats
     """
-
-    # Multi-model averaging.
-    multi_model = False
-    if type(positions[0][0]) == list:
-        multi_model = True
-
-    # Convert a rank-2 list into a rank-3 list (avoid code duplication).
-    if not multi_model:
-        for i in range(len(positions)):
-            positions[i] = [positions[i]]
 
     # Loop over the multiple models.
     ave = []
@@ -924,7 +914,9 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
             raise RelaxError, "Positional information is not available for the atom '%s'." % atom
 
         # Store the position.
-        positions.append(spin.pos)
+        positions.append([])
+        for i in range(len(spin.pos)):
+            positions[-1].append(spin.pos[i].tolist())
 
     # Add the spin.
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
