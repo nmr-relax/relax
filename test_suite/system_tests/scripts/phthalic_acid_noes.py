@@ -8,9 +8,9 @@ DATA_PATH = sys.path[-1] + '/test_suite/shared_data/'
 
 # Pseudo-atoms.
 PSEUDO = [
-['@Q7', ['@H16', '@H17', '@H18']],
-['@Q9', ['@H20', '@H21', '@H22']],
-['@Q10', ['@H23', '@H24', '@H25']]
+['Q7', ['@H16', '@H17', '@H18']],
+['Q9', ['@H20', '@H21', '@H22']],
+['Q10', ['@H23', '@H24', '@H25']]
 ]
 
 # Clear out the data store.
