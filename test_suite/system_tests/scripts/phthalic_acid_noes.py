@@ -27,7 +27,7 @@ structure.load_spins('@*H*', ave_pos=False)
 
 # Create the pseudo-atoms.
 for i in range(len(PSEUDO)):
-    spin.create_pseudo(spin_name=PSEUDO[i][0], res_id=None, mol_id=None, members=PSEUDO[i][1], averaging='linear')
+    spin.create_pseudo(spin_name=PSEUDO[i][0], res_id=None, members=PSEUDO[i][1], averaging='linear')
 
 # Read the NOE restraints.
 noe.read_restraints(file='phthalic_acid', dir=DATA_PATH+'noe_restraints')
