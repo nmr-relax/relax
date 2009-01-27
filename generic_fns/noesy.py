@@ -26,13 +26,15 @@
 # Python module imports.
 from re import search
 from string import split
+from warnings import warn
 
 # relax module imports.
 from generic_fns import pipes
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin
-from generic_fns.xplor import parse_noe_restraints
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, tokenise
+from generic_fns import xplor
 from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_read_file
+from relax_warnings import RelaxWarning
 
 
 def __file_format(lines):
@@ -54,6 +56,61 @@ def __file_format(lines):
     # Print out.
     print "Generic formatted file."
     return 'generic'
+
+
+def parse_noe_restraints(lines, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
+    """Parse and return the NOE restraints from the generic formatted file.
+
+    @param lines:           The file, or file fragment, split into lines.
+    @type lines:            list of str
+    @keyword proton1_col:   The column containing the first proton of the NOE or ROE cross peak.
+    @type proton1_col:      None or int
+    @keyword proton2_col:   The column containing the second proton of the NOE or ROE cross peak.
+    @type proton2_col:      None or int
+    @keyword lower_col:     The column containing the lower NOE bound.
+    @type lower_col:        None or int
+    @keyword upper_col:     The column containing the upper NOE bound.
+    @type upper_col:        None or int
+    @keyword sep:           The column separator (the default is white space).
+    @type sep:              None or str
+    @return:                The NOE restraint list in the format of two atom identification strings
+                            and the lower and upper restraints.
+    @rtype:                 list of lists of [str, str, float, float]
+    """
+
+    # Default column numbers.
+    if proton1_col == None:
+        warn(RelaxWarning("The proton1_col argument has not been supplied, defaulting to column 1."))
+        proton1_col = 1
+    if proton2_col == None:
+        warn(RelaxWarning("The proton2_col argument has not been supplied, defaulting to column 2."))
+        proton2_col = 2
+    if lower_col == None:
+        warn(RelaxWarning("The lower_col argument has not been supplied, defaulting to column 3."))
+        lower_col = 3
+    if upper_col == None:
+        warn(RelaxWarning("The upper_col argument has not been supplied, defaulting to column 4."))
+        upper_col = 4
+
+    # Loop over the lines.
+    data = []
+    for line in lines:
+        # Split the line.
+        row = split(line, sep)
+
+        # Header lines:
+        if len(row) < 4:
+            continue
+        try:
+            tokenise(row[proton1_col-1])
+        except RelaxError:
+            continue
+
+        # Pack the data.
+        data.append([row[proton1_col-1], row[proton2_col-1], float(row[lower_col-1]), float(row[upper_col-1])])
+
+    # Return the data.
+    return data
 
 
 def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
@@ -97,21 +154,11 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
     # Determine the file type.
     format = __file_format(lines)
 
-    # Generic format checks.
-    if format == 'generic':
-        # Columns must be specified.
-        if proton1_col == None:
-            raise RelaxError, "The proton1_col argument must be specified for the generically formatted NOE restraint file."
-        if proton2_col == None:
-            raise RelaxError, "The proton2_col argument must be specified for the generically formatted NOE restraint file."
-        if lower_col == None:
-            raise RelaxError, "The lower_col argument must be specified for the generically formatted NOE restraint file."
-        if upper_col == None:
-            raise RelaxError, "The upper_col argument must be specified for the generically formatted NOE restraint file."
-
     # Parse and extract the NOE restraints.
     if format == 'xplor':
-        cdp.noe_restraints = parse_noe_restraints(lines)
+        cdp.noe_restraints = xplor.parse_noe_restraints(lines)
+    elif format == 'generic':
+        cdp.noe_restraints = parse_noe_restraints(lines, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
     # Check for the presence of the spin containers corresponding to the atom ids.
     for restraint in cdp.noe_restraints:
