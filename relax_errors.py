@@ -25,6 +25,11 @@
 
 
 # Python module imports.
+try:
+    from bz2 import BZ2File
+    bz2 = True
+except ImportError:
+    bz2 = False
 from cPickle import dump
 from re import match
 import time
@@ -38,14 +43,22 @@ def save_state():
     """Save the program state, for debugging purposes."""
 
     # relax data store singleton import.  Must be done here!
-    from data import Relax_data_store; ds = Relax_data_store()
+    try:
+        from data import Relax_data_store; ds = Relax_data_store()
+
+    # Ok, this is not relax so don't do anything!
+    except ImportError:
+        return
 
     # Append the date and time to the save file.
     now = time.localtime()
     file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], now[2], now[1], now[3], now[4], now[5])
 
     # Open the file for writing.
-    file = open(file_name, 'w')
+    if bz2:
+        file = BZ2File(file_name+'.bz2', 'w')
+    else:
+        file = open(file_name, 'w')
 
     # Pickle the data class and write it to file
     dump(ds, file, 1)
