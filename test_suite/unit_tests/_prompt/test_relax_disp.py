@@ -24,36 +24,23 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.relax_fit import Relax_fit
-from relax_errors import RelaxNumError, RelaxStrError
+from prompt.relax_disp import Relax_disp
+from relax_errors import RelaxNoneNumError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
 import fake_relax
 
 
-class Test_relax_fit(TestCase):
-    """Unit tests for the functions of the 'prompt.relax_fit' module."""
+class Test_relax_disp(TestCase):
+    """Unit tests for the functions of the 'prompt.relax_disp' module."""
 
     # Instantiate the user function class.
-    relax_fit_fns = Relax_fit(fake_relax.fake_instance())
+    relax_disp_fns = Relax_disp(fake_relax.fake_instance())
 
 
-    def test_relax_time_argfail_time(self):
-        """The time arg test of the relax_fit.relax_time() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the float, bin, and int arguments, and skip them.
-            if data[0] == 'float' or data[0] == 'bin' or data[0] == 'int':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxNumError, self.relax_fit_fns.relax_time, time=data[1])
-
-
-    def test_relax_time_argfail_spectrum_id(self):
-        """The spectrum_id arg test of the relax_fit.relax_time() user function."""
+    def test_relax_cpmg_delayT_argfail_id(self):
+        """The id arg test of the relax_disp.relax_cpmg_delayT() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -62,17 +49,17 @@ class Test_relax_fit(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_fit_fns.relax_time, spectrum_id=data[1])
+            self.assertRaises(RelaxStrError, self.relax_disp_fns.cpmg_delayT, id=data[1])
 
 
-    def test_select_model_argfail_model(self):
-        """The model arg test of the relax_fit.select_model() user function."""
+    def test_relax_cpmg_delayT_argfail_delayT(self):
+        """The delayT arg test of the relax_disp.cpmg_delayT() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str arguments, and skip them.
-            if data[0] == 'str':
+            # Catch the float, int and None arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'int' or data[0] == 'None':
                 continue
 
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.relax_fit_fns.select_model, model=data[1])
+        # The argument test.
+        self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_delayT, delayT=data[1])

@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 import help
-from relax_errors import RelaxNoneNumError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxNoneNumError, RelaxStrError
 from specific_fns.setup import relax_disp_obj
 
 
@@ -118,13 +118,13 @@ class Relax_disp:
             text = text + ", delayT=" + `delayT` + ")"
             print text
 
+        # The CPMG constant time delay (T).
+        if type(delayT) != float and type(delayT) != int and delayT != None:
+            raise RelaxNoneNumError, ('CPMG constant time delay (T)', delayT)
+
         # Id string.
         if type(id) != str:
             raise RelaxStrError, ('experiment identification string', id)
-
-        # The CPMG constant time delay (T).
-        if type(delayT) != float and type(delayT) != int:
-            raise RelaxNumError, ('CPMG constant time delay (T)', delayT)
 
         # Execute the functional code.
         relax_disp_obj.cpmg_delayT(id=id, delayT=delayT)
