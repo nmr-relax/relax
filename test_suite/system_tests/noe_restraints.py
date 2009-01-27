@@ -91,6 +91,80 @@ class Noe_restraints(TestCase):
         self.relax.interpreter._Sequence.display()
 
 
+    def test_read_generic_phthalic_acid(self):
+        """Test the reading of phthalic acid NOE restraints in generic format."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
+
+        # The restraint data.
+        restraints = [
+            ['@H1',  '@H6',  3.0, 5.0],
+            ['@H3',  '@H9',  3.0, 5.0],
+            ['@H3',  '@H10', 3.0, 5.0],
+            ['@H3',  '@H11', 3.0, 5.0],
+            ['@H3',  '@H19', 3.0, 5.0],
+            ['@H3',  '@Q9',  3.0, 6.0],
+            ['@H4',  '@H8',  3.0, 5.0],
+            ['@H4',  '@H9',  3.0, 5.0],
+            ['@H4',  '@H10', 3.0, 5.0],
+            ['@H4',  '@H11', 3.0, 5.0],
+            ['@H4',  '@H15', 3.0, 5.0],
+            ['@H4',  '@H19', 3.0, 5.0],
+            ['@H4',  '@Q9',  3.0, 6.0],
+            ['@H5',  '@H9',  3.0, 5.0],
+            ['@H5',  '@Q7',  3.0, 6.0],
+            ['@H5',  '@Q9',  3.0, 6.0],
+            ['@H6',  '@H8',  3.0, 5.0],
+            ['@H6',  '@H9',  3.0, 5.0],
+            ['@H6',  '@H10', 3.0, 5.0],
+            ['@H6',  '@H11', 3.0, 5.0],
+            ['@H6',  '@H15', 3.0, 5.0],
+            ['@H6',  '@Q7',  3.0, 6.0],
+            ['@H6',  '@H19', 3.0, 5.0],
+            ['@H6',  '@Q9',  3.0, 6.0],
+            ['@H26', '@H1',  3.0, 5.0],
+            ['@H26', '@H8',  3.0, 5.0],
+            ['@H26', '@H9',  3.0, 5.0],
+            ['@H26', '@H10', 3.0, 5.0],
+            ['@H26', '@H11', 3.0, 5.0],
+            ['@H26', '@H15', 3.0, 5.0],
+            ['@H26', '@Q7',  3.0, 6.0],
+            ['@H26', '@H19', 3.0, 5.0],
+            ['@H26', '@Q9',  3.0, 6.0],
+            ['@H27', '@H1',  3.0, 5.0],
+            ['@H27', '@H8',  3.0, 5.0],
+            ['@H27', '@H9',  3.0, 5.0],
+            ['@H27', '@H11', 3.0, 5.0],
+            ['@H27', '@H13', 3.0, 5.0],
+            ['@H27', '@H15', 3.0, 5.0],
+            ['@H27', '@Q7',  3.0, 6.0],
+            ['@H27', '@H19', 3.0, 5.0],
+            ['@H27', '@Q9',  3.0, 6.0],
+            ['@H28', '@H1',  3.0, 5.0],
+            ['@H28', '@H8',  3.0, 5.0],
+            ['@H28', '@H9',  3.0, 5.0],
+            ['@H28', '@H11', 3.0, 5.0],
+            ['@H28', '@H15', 3.0, 5.0],
+            ['@H28', '@Q7',  3.0, 6.0],
+            ['@H28', '@H19', 3.0, 5.0],
+            ['@H28', '@Q9',  3.0, 6.0]
+        ]
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test that the restraints are properly set.
+        for i in range(len(restraints)):
+            # Atom ids.
+            self.assertEqual(cdp.noe_restraints[i][0], restraints[i][0])
+            self.assertEqual(cdp.noe_restraints[i][1], restraints[i][1])
+
+            # Lower and upper bound.
+            self.assertEqual(cdp.noe_restraints[i][2], restraints[i][2])
+            self.assertEqual(cdp.noe_restraints[i][3], restraints[i][3])
+
+
     def test_read_xplor_rna(self):
         """Test the reading of RNA H-bond restraints in Xplor format."""
 
