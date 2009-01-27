@@ -45,7 +45,7 @@ from warnings import warn
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
 from generic_fns import relax_re
-from relax_errors import RelaxError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoSpinError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 
 
@@ -490,6 +490,46 @@ class Selection(object):
 
 
 
+def __linear_ave(positions):
+    """Perform linear averaging of the atomic positions.
+
+    @param positions:   The atomic positions.  The first index is that of the positions to be
+                        averaged over.  The second, optionally, can be the different models if
+                        present.  The last index is over the x, y, and z coordinates.
+    @type positions:    rank-2 list of floats or rank-3 list of floats
+    @return:            The averaged positions.  Either a single vector or an list of vectors.
+    @rtype:             rank-1 list of floats or rank-2 list of floats
+    """
+
+    # Multi-model averaging.
+    multi_model = False
+    if type(positions[0][0]) == list:
+        multi_model = True
+
+    # Convert a rank-2 list into a rank-3 list (avoid code duplication).
+    if not multi_model:
+        for i in range(len(positions)):
+            positions[i] = [positions[i]]
+
+    # Loop over the multiple models.
+    ave = []
+    for model_index in range(len(positions[0])):
+        # Append an empty vector.
+        ave.append([0.0, 0.0, 0.0])
+
+        # Loop over the x, y, and z coordinates.
+        for coord_index in range(3):
+            # Loop over the atomic positions.
+            for atom_index in range(len(positions)):
+                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
+
+            # Average.
+            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
+
+    # Return the averaged positions.
+    return ave
+
+
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     """Copy the contents of a molecule container to a new molecule.
 
@@ -831,6 +871,69 @@ def create_residue(res_num=None, res_name=None, mol_id=None):
 
     # Add the residue.
     mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
+
+
+def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None):
+    """Add a pseudo-atom spin container into the relax data store.
+    
+    @param spin_name:   The name of the new pseudo-spin.
+    @type spin_name:    str
+    @param spin_num:    The identification number of the new spin.
+    @type spin_num:     int
+    @param res_id:      The molecule and residue identification string.
+    @type res_id:       str
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Split up the selection string.
+    mol_token, res_token, spin_token = tokenise(res_id)
+
+    # Disallow spin selections.
+    if spin_token != None:
+        raise RelaxSpinSelectDisallowError
+
+    # Get the residue container to add the spin to.
+    if res_id:
+        res_to_cont = return_residue(res_id)
+        if res_to_cont == None:
+            raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
+    else:
+        res_to_cont = cdp.mol[0].res[0]
+
+    # Check the averaging technique.
+    if averaging not in ['linear']:
+        raise RelaxError, "The '%s' averaging technique is unknown." % averaging
+
+    # Get the spin positions.
+    positions = []
+    for atom in members:
+        # Get the spin container.
+        spin = return_spin(atom)
+
+        # Test that the spin exists.
+        if spin == None:
+            raise RelaxNoSpinError, atom
+
+        # Test the position.
+        if not hasattr(spin, 'pos') or not spin.pos:
+            raise RelaxError, "Positional information is not available for the atom '%s'." % atom
+
+        # Store the position.
+        positions.append(spin.pos)
+
+    # Add the spin.
+    res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+    spin = res_to_cont.spin[-1]
+
+    # Set the pseudo-atom spin container attributes.
+    spin.averaging = averaging
+    if averaging == 'linear':
+        spin.pos = __linear_ave(positions)
 
 
 def create_spin(spin_num=None, spin_name=None, res_id=None):
