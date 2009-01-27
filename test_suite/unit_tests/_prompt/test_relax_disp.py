@@ -63,3 +63,28 @@ class Test_relax_disp(TestCase):
 
         # The argument test.
         self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_delayT, delayT=data[1])
+
+
+    def test_relax_cpmg_frq_argfail_cpmg_frq(self):
+        """The cpmg_frq arg test of the relax_disp.cpmg_frq() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the float, int and None arguments, and skip them.
+            if data[0] == 'float' or data[0] == 'int' or data[0] == 'None':
+                continue
+
+        # The argument test.
+        self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_frq, cpmg_frq=data[1])
+
+    def test_relax_cpmg_frq_argfail_spectrum_id(self):
+        """The spectrum_id arg test of the relax_disp.cpmg_frq() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+        # The argument test.
+        self.assertRaises(RelaxStrError, self.relax_disp_fns.cpmg_frq, spectrum_id=data[1])
