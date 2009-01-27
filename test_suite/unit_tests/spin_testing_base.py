@@ -264,7 +264,7 @@ class Spin_base_class:
         self.spin_fns.create(102, 'H15', res_id='#Old mol:1')
 
         # Create a few pseudo-spins.
-        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'])
+        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
