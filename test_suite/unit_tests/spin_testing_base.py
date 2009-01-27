@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -19,6 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
 #                                                                             #
 ###############################################################################
+
+# Python module imports.
+from numpy import array
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -263,11 +266,16 @@ class Spin_base_class:
         self.spin_fns.create(101, 'H14', res_id='#Old mol:1')
         self.spin_fns.create(102, 'H15', res_id='#Old mol:1')
 
-        # Create a few pseudo-spins.
-        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
-
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
+
+        # Set some atomic positions.
+        dp.mol[0].res[0].spin[5].pos = [array([3.0, 0.0, 0.0])]
+        dp.mol[0].res[0].spin[6].pos = [array([0.0, 3.0, 0.0])]
+        dp.mol[0].res[0].spin[7].pos = [array([0.0, 0.0, 3.0])]
+
+        # Create a pseudo-spin.
+        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
 
         # Test that the spin numbers are correct.
         self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
@@ -280,6 +288,12 @@ class Spin_base_class:
         self.assertEqual(dp.mol[0].res[0].spin[6].name, 'H14')
         self.assertEqual(dp.mol[0].res[0].spin[7].name, 'H15')
         self.assertEqual(dp.mol[0].res[0].spin[8].name, 'Q3')
+
+        # Test the averaged position.
+        self.assertEqual(len(dp.mol[0].res[0].spin[8].pos), 1)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][0], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][1], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][2], 1.0)
 
 
     def test_create_spin(self):
