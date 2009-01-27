@@ -36,6 +36,7 @@ The functionality of this module is diverse:
 """
 
 # Python module imports.
+from numpy import array
 from re import split
 from string import strip
 from textwrap import fill
@@ -496,16 +497,16 @@ def __linear_ave(positions):
     @param positions:   The atomic positions.  The first index is that of the positions to be
                         averaged over.  The second index is over the different models.  The last
                         index is over the x, y, and z coordinates.
-    @type positions:    rank-3 list of floats
+    @type positions:    list of lists of numpy float arrays
     @return:            The averaged positions as a list of vectors.
-    @rtype:             rank-2 list of floats
+    @rtype:             list of numpy float arrays
     """
 
     # Loop over the multiple models.
     ave = []
     for model_index in range(len(positions[0])):
         # Append an empty vector.
-        ave.append([0.0, 0.0, 0.0])
+        ave.append(array([0.0, 0.0, 0.0]))
 
         # Loop over the x, y, and z coordinates.
         for coord_index in range(3):
