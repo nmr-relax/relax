@@ -31,7 +31,7 @@ from string import split
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin
 from generic_fns.xplor import parse_noe_restraints
-from relax_errors import RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoSequenceError
 from relax_io import open_read_file
 
 
