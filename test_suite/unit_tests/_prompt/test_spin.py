@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.spin import Spin
-from relax_errors import RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxIntError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 # Unit test imports.
@@ -193,7 +193,7 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create_pseudo, averaging=data[1], spin_name='Q')
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.create_pseudo, averaging=data[1], spin_name='Q', members=['x'])
 
 
     def test_delete_argfail_spin_id(self):
