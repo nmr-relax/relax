@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 import help
-from generic_fns.mol_res_spin import copy_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
+from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
 from relax_errors import RelaxIntError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
@@ -128,7 +128,7 @@ class Spin:
 
         spin_name:  The name of the spin.
 
-        res_id:  The residue ID string identifying the residue to add the spin to.
+        res_id:  The molecule and residue ID string identifying the residue to add the spin to.
 
 
         Description
