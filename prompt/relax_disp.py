@@ -47,7 +47,7 @@ class Relax_disp:
         self.__relax__ = relax
 
 
-    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=0.0, int_ref=1.0):
+    def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
         """Calculate the effective transversal relaxation rate from the peak intensities.
 
         THIS FUNCTION IS NOT WRITTEN YET.
