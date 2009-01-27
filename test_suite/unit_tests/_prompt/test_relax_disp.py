@@ -77,6 +77,7 @@ class Test_relax_disp(TestCase):
         # The argument test.
         self.assertRaises(RelaxNoneNumError, self.relax_disp_fns.cpmg_frq, cpmg_frq=data[1])
 
+
     def test_relax_cpmg_frq_argfail_spectrum_id(self):
         """The spectrum_id arg test of the relax_disp.cpmg_frq() user function."""
 
@@ -88,3 +89,16 @@ class Test_relax_disp(TestCase):
 
         # The argument test.
         self.assertRaises(RelaxStrError, self.relax_disp_fns.cpmg_frq, spectrum_id=data[1])
+
+
+    def test_relax_exp_type_argfail_exp(self):
+        """The exp arg test of the relax_disp.exp_type() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
+                continue
+
+        # The argument test.
+        self.assertRaises(RelaxStrError, self.relax_disp_fns.exp_type, exp=data[1])
