@@ -296,7 +296,7 @@ class Spin_base_class:
         self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][2], 1.0)
 
         # Test the pseudo-spin info.
-        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, 'Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, '@Q3')
         self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
         self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q3')
         self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
