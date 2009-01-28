@@ -919,6 +919,18 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         for i in range(len(spin.pos)):
             positions[-1].append(spin.pos[i].tolist())
 
+    # Now add the pseudo-spin name to the spins belonging to it (after the tests).
+    for atom in members:
+        # Get the spin container.
+        spin = return_spin(atom)
+
+        # Add the pseudo-spin number and name.
+        if res_id:
+            spin.pseudo_name = res_id + '@' + spin_name
+        else:
+            spin.pseudo_name = '@' + spin_name
+        spin.pseudo_num = spin_num
+
     # Add the spin.
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
     spin = res_to_cont.spin[-1]
