@@ -937,6 +937,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
     # Set the pseudo-atom spin container attributes.
     spin.averaging = averaging
+    spin.members = members
     if averaging == 'linear':
         spin.pos = __linear_ave(positions)
 
