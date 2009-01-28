@@ -298,9 +298,9 @@ class Spin_base_class:
         # Test the pseudo-spin info.
         self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, 'Q3')
         self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
-        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, 'Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q3')
         self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
-        self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_name, 'Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_name, '@Q3')
         self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_num, 105)
         self.assertEqual(dp.mol[0].res[0].spin[8].members, ['@H13', '@H14', '@H15'])
         self.assertEqual(dp.mol[0].res[0].spin[8].averaging, 'linear')
@@ -347,9 +347,9 @@ class Spin_base_class:
         self.assertEqual(dp.mol[0].res[0].spin[7].pos[1][2], 0.0)
 
         # Test the pseudo-spin info.
-        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, 'Q10')
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, '@Q10')
         self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
-        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, 'Q10')
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q10')
         self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
         self.assertEqual(dp.mol[0].res[0].spin[7].members, ['@H93', '@H94'])
         self.assertEqual(dp.mol[0].res[0].spin[7].averaging, 'linear')
