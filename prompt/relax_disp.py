@@ -282,11 +282,11 @@ class Relax_disp:
         The supported equations will include the default fast-exchange limit as well as the
         slow-exchange limit.
 
-        The parameters of these two models are
+        The parameters of these two models are:
             'fast': [R2, Rex, kex],
             'slow': [R2A, kA, dw].
 
-        The equations for these two models are
+        The equations for these two models are:
                                        /              /        kex       \   4 * cpmg_frq \ 
             'fast': R2eff = R2 + Rex * | 1 - 2 * Tanh | ---------------- | * ------------ |
                                        \              \ 2 * 4 * cpmg_frq /        kex     /
@@ -297,10 +297,10 @@ class Relax_disp:
 
             where cpmg_frq = 1 / ( 4 * cpmg_tau )
 
-        The references for these equations are
-            'fast': Millet et al., JACS, 2000, 122 : 2867 - 2877 (equation 19)
-                    Kovrigin et al., JMagRes, 2006, 180 : 93 - 104 (equation 1)
-            'slow': Tollinger et al., JACS, 2001, 123: 11341-11352 (equation 2)
+        The references for these equations are:
+            'fast': Millet et al., JACS, 2000, 122. 2867 - 2877 (equation 19),
+                    Kovrigin et al., JMagRes, 2006, 180. 93 - 104 (equation 1),
+            'slow': Tollinger et al., JACS, 2001, 123. 11341-11352 (equation 2).
 
 
         Examples
