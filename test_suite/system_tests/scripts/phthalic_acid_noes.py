@@ -32,4 +32,7 @@ for i in range(len(PSEUDO)):
 # Read the NOE restraints.
 noe.read_restraints(file='phthalic_acid', dir=DATA_PATH+'noe_restraints')
 
+# Calculate the average NOE potential.
+calc()
+
 
