@@ -525,9 +525,9 @@ def find_index(data, ri_label, frq_label):
 
 
 def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
-    """Function for reading R1, R2, or NOE relaxation data.
+    """Function for reading R1, R2, NOE, or R2eff relaxation data.
 
-    @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @param ri_label:        The relaxation data type, ie 'R1', 'R2', 'NOE', or 'R2eff'.
     @type ri_label:         str
     @param frq_label:       The field strength label.
     @type frq_label:        str
