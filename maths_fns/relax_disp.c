@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Edward d'Auvergne
+ * Copyright (C) 2009 Sebastien Morin
  *
  * This file is part of the program relax.
  *

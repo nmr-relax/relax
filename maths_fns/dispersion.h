@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Gary S Thompson (see https://gna.org/users for contact
  *                                     details)
+ * Copyright (C) 2009 Sebastien Morin
  *
  * This file is part of the program relax.
  *
