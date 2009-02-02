@@ -745,9 +745,9 @@ class RelaxModelError(BaseError):
 class RelaxNoModelError(BaseError):
     def __init__(self, name=None):
         if name != None:
-            self.text = "The " + name + " model has not been setup."
+            self.text = "The specific " + name + " model has not been selected or set up."
         else:
-            self.text = "The model has not been setup."
+            self.text = "The specific model has not been selected or set up."
         if Debug:
             save_state()
 
