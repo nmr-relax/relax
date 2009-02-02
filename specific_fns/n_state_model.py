@@ -163,7 +163,13 @@ class N_state_model(Common_functions):
     def __base_data_types(self):
         """Determine all the base data types.
 
-        @return:    A list of all the base data types.  This can include 'rdc', 'pcs', and 'tensor'.
+        The base data types can include::
+            - 'rdc', residual dipolar couplings.
+            - 'pcs', pseudo-contact shifts.
+            - 'noesy', NOE restraints.
+            - 'tensor', alignment tensors.
+
+        @return:    A list of all the base data types.
         @rtype:     list of str
         """
 
@@ -189,9 +195,13 @@ class N_state_model(Common_functions):
         if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
             list.append('tensor')
 
+        # NOESY data search.
+        if hasattr(cdp, 'noe_restraints'):
+            list.append('noesy')
+
         # No data is present.
         if not list:
-            raise RelaxError, "Neither RDC, PCS, nor alignment tensor data is present."
+            raise RelaxError, "Neither RDC, PCS, NOESY nor alignment tensor data is present."
 
         # Return the list.
         return list
