@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -871,6 +871,26 @@ class N_state_model(Common_functions):
             if not exists:
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
+
+    def calculate(self, verbosity=1):
+        """Calculation function.
+
+        Currently this function simply calculates the NOESY flat-bottom quadratic energy potential,
+        if NOE restraints are available.
+
+        @param verbosity:       A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type verbosity:        int
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the N-state model has been set up.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError, 'N-state'
+
+        
 
     def CoM(self, pivot_point=None, centre=None):
         """Centre of mass analysis.
