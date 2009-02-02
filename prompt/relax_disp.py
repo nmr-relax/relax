@@ -50,9 +50,6 @@ class Relax_disp:
     def calc_r2eff(self, exp_type='cpmg', id=None, delayT=None, int_cpmg=1.0, int_ref=1.0):
         """Calculate the effective transversal relaxation rate from the peak intensities.
 
-        THIS FUNCTION IS NOT WRITTEN YET.
-
-
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
 
@@ -80,6 +77,15 @@ class Relax_disp:
 
         Examples
         ~~~~~~~~
+
+        To calculate r2eff from a CPMG experiment, for experiment named '600', a constant time delay
+        T of 20 ms (0.020 s) and intensities of CPMG and reference peak of, respectively, 0.742 and
+        0.9641, type:
+
+        relax> relax_disp.calc_r2eff('cpmg', '600', 0.020, 0.742, 0.9641)
+        relax> relax_disp.calc_r2eff(exp_type='cpmg', id='600', delayT=0.020, int_cpmg=0.742, int_ref=0.9641)
+
+        ANOTHER EXAMPLE FOR BATCH USE (FROM PEAK INTENSITY LISTS) WILL SOON BE ADDED.
         """
 
         # Function intro text.
