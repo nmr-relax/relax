@@ -32,6 +32,9 @@ for i in range(len(PSEUDO)):
 # Read the NOE restraints.
 noe.read_restraints(file='phthalic_acid', dir=DATA_PATH+'noe_restraints')
 
+# Set the type of N-state model.
+n_state_model.select_model(model='fixed')
+
 # Calculate the average NOE potential.
 calc()
 
