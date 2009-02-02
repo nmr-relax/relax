@@ -32,6 +32,7 @@ except ImportError:
     bz2 = False
 from cPickle import dump
 from re import match
+from sys import stderr
 import time
 from types import ClassType
 
@@ -56,8 +57,10 @@ def save_state():
 
     # Open the file for writing.
     if bz2:
+        stderr.write("\n\nStoring the relax state in the file '%s.bz2'.\n\n\n" % file_name)
         file = BZ2File(file_name+'.bz2', 'w')
     else:
+        stderr.write("\n\nStoring the relax state in the file '%s'.\n\n\n" % file_name)
         file = open(file_name, 'w')
 
     # Pickle the data class and write it to file
