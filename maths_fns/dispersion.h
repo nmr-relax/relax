@@ -18,9 +18,9 @@
  * along with relax; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef RELAX_EXPONENTIAL 
-#define RELAX_EXPONENTIAL
+#ifndef RELAX_DISPERSION 
+#define RELAX_DISPERSION
 
-void exponential(double *params, double *relax_times, double *back_calc, int num_times);
+void dispersion(double *params, double *relax_times, double *back_calc, int num_times);
 
 #endif

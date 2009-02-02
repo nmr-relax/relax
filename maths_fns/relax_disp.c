@@ -25,11 +25,11 @@
 #include <numpy/arrayobject.h>
 
 /* The header for all functions which will be called */
-#include "relax_fit.h"
+#include "relax_disp.h"
 
-/* functions for chi2 and exponential */
+/* functions for chi2 and dispersion */
 #include "c_chi2.h"
-#include "exponential.h"
+#include "dispersion.h"
 
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
@@ -97,7 +97,7 @@ func(PyObject *self, PyObject *args) {
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
-    exponential(params, relax_times, back_calc, num_times);
+    dispersion(params, relax_times, back_calc, num_times);
 
     Py_DECREF(numpy_params);
     /* Calculate and return the chi-squared value */
@@ -131,7 +131,7 @@ dfunc(PyObject *self, PyObject *args) {
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
-    exponential(params, relax_times, back_calc, num_times);
+    dispersion(params, relax_times, back_calc, num_times);
 
 
     /* Test code (convert aaa to a numpy array */
@@ -177,8 +177,8 @@ back_calc_I(PyObject *self, PyObject *args) {
 
 
 /* The method table for the functions called by Python */
-static PyMethodDef relax_fit_methods[] = {
-    {"setup", (PyCFunction)setup, METH_VARARGS | METH_KEYWORDS, "The main relaxation curve fitting setup function."},
+static PyMethodDef relax_disp_methods[] = {
+    {"setup", (PyCFunction)setup, METH_VARARGS | METH_KEYWORDS, "The main relaxation dispersion curve fitting setup function."},
     {"func", func, METH_VARARGS},
     {"dfunc", dfunc, METH_VARARGS},
     {"d2func", d2func, METH_VARARGS},
@@ -189,9 +189,9 @@ static PyMethodDef relax_fit_methods[] = {
 
 /* Initialise as a Python module */
 PyMODINIT_FUNC
-initrelax_fit(void)
+initrelax_disp(void)
 {
-    (void) Py_InitModule("relax_fit", relax_fit_methods);
+    (void) Py_InitModule("relax_disp", relax_disp_methods);
 
     /* Import the numpy array module.  This is essential. */
     import_array();

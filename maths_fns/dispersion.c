@@ -26,12 +26,12 @@
 #include <numpy/arrayobject.h>
 
 /* The header for all functions which will be called */
-#include "relax_fit.h"
+#include "relax_disp.h"
 
 
 
-void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
-	/* Function to back calculate the peak intensities.
+void dispersion(double *params, double *relax_times, double *back_calc, int num_times) {
+	/* Function to back calculate the effective transversal relaxation rate (R2eff).
 	*/
 
     /* Declarations */
