@@ -274,44 +274,6 @@ class Relax_disp(Common_functions):
             return r2eff
 
 
-    def cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
-        """Set the CPMG frequency associated with a given spectrum.
-
-        @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
-        @type cpmg_frq:         float
-        @keyword spectrum_id:   The spectrum identification string.
-        @type spectrum_id:      str
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Test if the spectrum id exists.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
-
-        # Store the CPMG frequency in the class instance.
-        if cpmg_frq != None:
-            self.__cpmg_frq = float(cpmg_frq)
-
-        # The index.
-        index = cdp.spectrum_ids.index(spectrum_id)
-
-        # Initialise the global CPMG frequency data structure if needed.
-        if not hasattr(cdp, 'cpmg_frqs'):
-            cdp.cpmg_frqs = [None] * len(cdp.spectrum_ids)
-
-        # Index not present in the global CPMG frequency data structure.
-        while 1:
-            if index > len(cdp.cpmg_frqs) - 1:
-                cdp.cpmg_frqs.append(None)
-            else:
-                break
-
-        # Add the frequency at the correct position.
-        cdp.cpmg_frqs[index] = cpmg_frq
-
-
     def cpmg_delayT(self, id=None, delayT=None):
         """Set the CPMG constant time delay (T) of the experiment.
 
@@ -352,6 +314,44 @@ class Relax_disp(Common_functions):
         # Set the CPMG constant time delay (T).
         cdp.delayT[id] = delayT
         print "The CPMG delay T for experiment " + `id` + " has been set to " + `cdp.delayT[id]`  + " s."
+
+
+    def cpmg_frq(self, cpmg_frq=None, spectrum_id=None):
+        """Set the CPMG frequency associated with a given spectrum.
+
+        @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
+        @type cpmg_frq:         float
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
+
+        # Store the CPMG frequency in the class instance.
+        if cpmg_frq != None:
+            self.__cpmg_frq = float(cpmg_frq)
+
+        # The index.
+        index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise the global CPMG frequency data structure if needed.
+        if not hasattr(cdp, 'cpmg_frqs'):
+            cdp.cpmg_frqs = [None] * len(cdp.spectrum_ids)
+
+        # Index not present in the global CPMG frequency data structure.
+        while 1:
+            if index > len(cdp.cpmg_frqs) - 1:
+                cdp.cpmg_frqs.append(None)
+            else:
+                break
+
+        # Add the frequency at the correct position.
+        cdp.cpmg_frqs[index] = cpmg_frq
 
 
     def create_mc_data(self, spin_id):
@@ -1113,26 +1113,6 @@ class Relax_disp(Common_functions):
         return spin.intensities
 
 
-    def return_error(self, spin_id):
-        """Return the standard deviation data structure.
-
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The standard deviation data structure.
-        @rtype:         list of float
-        """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Get the spin container.
-        spin = return_spin(spin_id)
-
-        # Return the error list.
-        return spin.intensity_err
-
-
     def return_data_name(self, name):
         """
         Relaxation dispersion curve fitting data type string matching patterns
@@ -1193,6 +1173,26 @@ class Relax_disp(Common_functions):
         # CPMG pulse train frequency (series).
         if match('^[Cc]pmg[ -_][Ff]rqs$', name):
             return 'cpmg_frqs'
+
+
+    def return_error(self, spin_id):
+        """Return the standard deviation data structure.
+
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The standard deviation data structure.
+        @rtype:         list of float
+        """
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the error list.
+        return spin.intensity_err
 
 
     def return_grace_string(self, data_type):
