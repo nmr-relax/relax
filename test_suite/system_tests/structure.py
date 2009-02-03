@@ -228,6 +228,40 @@ class Structure(TestCase):
         self.relax.interpreter._Structure.load_spins()
 
 
+    def test_read_pdb_internal6(self):
+        """Load the 'lactose_MCMM4_S1_1.pdb' and 'lactose_MCMM4_S1_2.pdb' PDB files as 2 separate structures (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+
+        # Read the PDB twice.
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_2.pdb', dir=path, parser='internal')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+
+    def test_read_pdb_internal7(self):
+        """Load the 'lactose_MCMM4_S1_1.pdb' PDB file twice as 2 separate structures (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+
+        # Read the PDB twice.
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+
     def test_read_pdb_mol_2_model_internal(self):
         """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the internal structural object PDB reader)."""
 
