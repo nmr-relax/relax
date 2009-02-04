@@ -614,6 +614,10 @@ class Scientific_data(Base_struct_API):
                     for mol in model.molecules[key]:
                         mol_conts[-1][-1].data.append(mol)
 
+                    # Check.
+                    if set_mol_name and mol_index >= len(set_mol_name):
+                        raise RelaxError, "The %s molecules read exceeds the number of molecule names supplied in %s." % (mol_index+1, set_mol_name)
+
                     # Update structures.
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
