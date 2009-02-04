@@ -569,16 +569,12 @@ class Scientific_data(Base_struct_API):
             mol_index = 0
             new_mol_name = []
 
-            # Set the target molecule number offset.
-            if set_mol_name:
-                mol_offset = [set_mol_name[mol_index]]
-            else:
-                # Number of structures already present for the model.
-                mol_offset = 0
-                for i in range(len(self.structural_data)):
-                    model_index = model_load_num - 1
-                    if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == self.structural_data[i].num):
-                        mol_offset = len(self.structural_data[i].mol)
+            # Set the target molecule number offset (if molecules already exist).
+            mol_offset = 0
+            for i in range(len(self.structural_data)):
+                model_index = model_load_num - 1
+                if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == self.structural_data[i].num):
+                    mol_offset = len(self.structural_data[i].mol)
 
             # Store the original model number.
             orig_model_num.append(model_num)
