@@ -607,7 +607,7 @@ class Internal(Base_struct_API):
                     # Number of structures already present for the model.
                     num_struct = 0
                     for model in self.structural_data:
-                        if model_index <= len(set_model_num) and set_model_num[model_index] == model.num:
+                        if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == model.num):
                             num_struct = len(model.mol)
 
                     # Set the name to the file name plus the structure number.
