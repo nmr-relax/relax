@@ -41,6 +41,7 @@ from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
+from relax_io import file_root
 from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
@@ -557,6 +558,17 @@ class Scientific_data(Base_struct_API):
             mol_index = 0
             new_mol_name = []
 
+            # Set the target molecule number offset.
+            if set_mol_name:
+                mol_offset = [set_mol_name[mol_index]]
+            else:
+                # Number of structures already present for the model.
+                mol_offset = 0
+                for i in range(len(self.structural_data)):
+                    model_index = model_num - 1
+                    if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == self.structural_data[i].num):
+                        mol_offset = len(self.structural_data[i].mol)
+
             # Store the original model number.
             orig_model_num.append(model_num)
 
@@ -571,7 +583,7 @@ class Scientific_data(Base_struct_API):
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].data = mol
                     mol_conts[-1][-1].mol_type = 'protein'
-                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
 
             # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
@@ -580,7 +592,7 @@ class Scientific_data(Base_struct_API):
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].data = mol
                     mol_conts[-1][-1].mol_type = 'nucleic acid'
-                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
 
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
@@ -596,7 +608,7 @@ class Scientific_data(Base_struct_API):
                         mol_conts[-1][-1].data.append(mol)
 
                     # Update structures.
-                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
 
             # Increment the model counter.
