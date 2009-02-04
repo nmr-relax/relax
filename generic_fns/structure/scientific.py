@@ -528,12 +528,23 @@ class Scientific_data(Base_struct_API):
         # Load all models.
         model_flag = True
         model_num = 1
+        model_load_num = 1
         orig_model_num = []
         mol_conts = []
         while 1:
             # Only load the desired model.
-            if read_model and model_num not in read_model:
-                break
+            if read_model:
+                # No more models to read.
+                if model_num > max(read_model):
+                    break
+
+                # Skip the model if not in the list.
+                if model_num not in read_model:
+                    # Increment the model counter.
+                    model_num = model_num + 1
+
+                    # Jump to the next model.
+                    continue
 
             # Load the PDB file.
             model = Scientific.IO.PDB.Structure(file_path, model_num)
@@ -565,7 +576,7 @@ class Scientific_data(Base_struct_API):
                 # Number of structures already present for the model.
                 mol_offset = 0
                 for i in range(len(self.structural_data)):
-                    model_index = model_num - 1
+                    model_index = model_load_num - 1
                     if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == self.structural_data[i].num):
                         mol_offset = len(self.structural_data[i].mol)
 
@@ -611,8 +622,9 @@ class Scientific_data(Base_struct_API):
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
 
-            # Increment the model counter.
+            # Increment the model counters.
             model_num = model_num + 1
+            model_load_num = model_load_num + 1
 
         # Create the structural data data structures.
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])+1), set_mol_name=new_mol_name, file_name=file, file_path=path)
