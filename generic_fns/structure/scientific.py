@@ -586,6 +586,11 @@ class Scientific_data(Base_struct_API):
             # First add the peptide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'peptide_chains'):
                 for mol in model.peptide_chains:
+                    # Only read the required molecule.
+                    if read_mol and mol_index+1 not in read_mol:
+                        mol_index = mol_index + 1
+                        continue
+
                     mol.mol_type = 'protein'
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].data = mol
@@ -596,6 +601,11 @@ class Scientific_data(Base_struct_API):
             # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'nucleotide_chains'):
                 for mol in model.nucleotide_chains:
+                    # Only read the required molecule.
+                    if read_mol and mol_index+1 not in read_mol:
+                        mol_index = mol_index + 1
+                        continue
+
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].data = mol
                     mol_conts[-1][-1].mol_type = 'nucleic acid'
@@ -605,6 +615,11 @@ class Scientific_data(Base_struct_API):
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'molecules'):
                 for key in model.molecules.keys():
+                    # Only read the required molecule.
+                    if read_mol and mol_index+1 not in read_mol:
+                        mol_index = mol_index + 1
+                        continue
+
                     # Add an empty list-type container.
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].mol_type = 'other'
