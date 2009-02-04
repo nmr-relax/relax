@@ -458,3 +458,155 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
+
+
+    def test_read_pdb_scientific6(self):
+        """Load the 'lactose_MCMM4_S1_1.pdb' and 'lactose_MCMM4_S1_2.pdb' PDB files as 2 separate structures (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+
+        # Read the PDB twice.
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_2.pdb', dir=path, parser='scientific')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+
+    def test_read_pdb_scientific7(self):
+        """Load the 'lactose_MCMM4_S1_1.pdb' PDB file twice as 2 separate structures (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+
+        # Read the PDB twice.
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
+        self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+
+    def test_read_pdb_mol_2_model_scientific(self):
+        """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+
+        # Files.
+        files = ['lactose_MCMM4_S1_1.pdb',
+                 'lactose_MCMM4_S1_2.pdb',
+                 'lactose_MCMM4_S1_3.pdb']
+
+        # Read the PDBs.
+        self.relax.interpreter._Structure.read_pdb(file=files[0], dir=path, parser='scientific', set_model_num=1)
+        self.relax.interpreter._Structure.read_pdb(file=files[1], dir=path, parser='scientific', set_model_num=1)
+        self.relax.interpreter._Structure.read_pdb(file=files[2], dir=path, parser='scientific', set_model_num=1)
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
+
+        i = 0
+        for mol in cdp.structure.structural_data[0].mol:
+            self.assertEqual(mol.file_name, files[i])
+            self.assertEqual(mol.file_path, path)
+            self.assertEqual(mol.file_model, 1)
+            self.assertEqual(mol.file_mol_num, 1)
+            i = i + 1
+
+
+    def test_read_pdb_model_2_mol_scientific(self):
+        """Load the 2 models of the 'gromacs_phthalic_acid.pdb' PDB file as separate molecules of the same model (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB models.
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific', read_model=1, set_model_num=1)
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific', read_model=2, set_model_num=1)
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 2)
+
+        i = 0
+        for mol in cdp.structure.structural_data[0].mol:
+            self.assertEqual(mol.file_name, 'gromacs_phthalic_acid.pdb')
+            self.assertEqual(mol.file_path, path)
+            self.assertEqual(mol.file_model, i+1)
+            self.assertEqual(mol.file_mol_num, 1)
+            i = i + 1
+
+
+    def test_read_pdb_complex_scientific(self):
+        """Test the packing of models and molecules using 'gromacs_phthalic_acid.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the Scientific python structural object PDB reader)."""
+
+        # Path of the files.
+        path = sys.path[-1] + '/test_suite/shared_data/structures'
+
+        # Read the PDB models.
+        self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific', set_model_num=1, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_2.pdb', dir=path, parser='scientific', set_model_num=2, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_3.pdb', dir=path, parser='scientific', set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
+        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_4.pdb', dir=path, parser='scientific', set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
+
+        # Try loading a few protons.
+        self.relax.interpreter._Structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.relax.interpreter._Structure.load_spins()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 2)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
+        self.assertEqual(len(cdp.structure.structural_data[1].mol), 3)
+
+        files = [['gromacs_phthalic_acid.pdb', 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_3.pdb'],
+                 ['gromacs_phthalic_acid.pdb', 'lactose_MCMM4_S1_2.pdb', 'lactose_MCMM4_S1_4.pdb']]
+        paths = [[path, path+sep+'lactose', path+sep+'lactose'],
+                 [path, path+sep+'lactose', path+sep+'lactose']]
+        models = [[1, 1, 1], [2, 1, 1]]
+
+        for i in range(len(cdp.structure.structural_data)):
+            for j in range(len(cdp.structure.structural_data[i].mol)):
+                mol = cdp.structure.structural_data[i].mol[j]
+                self.assertEqual(mol.file_name, files[i][j])
+                self.assertEqual(mol.file_path, paths[i][j])
+                self.assertEqual(mol.file_model, models[i][j])
+                self.assertEqual(mol.file_mol_num, 1)
