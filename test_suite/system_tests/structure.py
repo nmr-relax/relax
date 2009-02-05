@@ -174,6 +174,11 @@ class Structure(TestCase):
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
 
+        # Extract a N-Ca vector.
+        self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:10@N')
+        self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
+
+
 
     def test_read_pdb_internal2(self):
         """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the internal structural object PDB reader)."""
@@ -409,6 +414,10 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
+
+        # Extract a N-Ca vector.
+        self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:10@N')
+        self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
 
 
     def test_read_pdb_scientific2(self):
