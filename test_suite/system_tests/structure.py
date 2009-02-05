@@ -28,6 +28,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.mol_res_spin import count_spins
 
 
 class Structure(TestCase):
@@ -156,6 +157,10 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='internal')
+
+        # Load a single atom and test it.
+        self.relax.interpreter._Structure.load_spins('#1F35_N_H_molmol_mol1:10@N')
+        self.assertEqual(count_spins(), 1)
 
         # Try loading a few protons.
         self.relax.interpreter._Structure.load_spins('@*H*')
@@ -388,6 +393,10 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='scientific')
+
+        # Load a single atom and test it.
+        self.relax.interpreter._Structure.load_spins('#1F35_N_H_molmol_mol1:3@N')
+        self.assertEqual(count_spins(), 1)
 
         # Try loading a few protons.
         self.relax.interpreter._Structure.load_spins('@*H*')
