@@ -378,7 +378,9 @@ class N_state_model(Common_functions):
             for i in xrange(pop_start, self.param_num()):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
-            b.append(-1.0 / scaling_matrix[i, i])
+            print i
+            print scaling_matrix
+            b.append(-1.0)
             b.append(0.0)
 
         # Convert to numpy data structures.
