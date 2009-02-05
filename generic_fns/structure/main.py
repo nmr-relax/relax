@@ -115,7 +115,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 # Rename the molecule container if the mol name is given and the sole container is unnamed.
                 if mol_cont.name == None and mol_name:
                     # Print out.
-                    print "Renaming the unnamed sole molecule to '%s'." % mol_name
+                    print "Renaming the unnamed sole molecule container to '%s'." % mol_name
 
                     # Set the name.
                     mol_cont.name = mol_name
@@ -361,7 +361,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, model_num=model, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
