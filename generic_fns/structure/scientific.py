@@ -146,10 +146,7 @@ class Scientific_data(Base_struct_API):
         # Other molecules.
         else:
             res_index = -1
-            print mol
-            print "\n"*10
             for res in mol.data:
-                print res
                 # Residue index.
                 res_index = res_index + 1
 
