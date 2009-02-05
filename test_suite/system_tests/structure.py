@@ -158,6 +158,12 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='internal')
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test the molecule name.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1F35_N_H_molmol_mol1')
+
         # Load a single atom and test it.
         self.relax.interpreter._Structure.load_spins('#1F35_N_H_molmol_mol1:10@N')
         self.assertEqual(count_spins(), 1)
