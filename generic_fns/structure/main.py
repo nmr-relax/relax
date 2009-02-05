@@ -115,7 +115,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 # Rename the molecule container if the mol name is given and the sole container is unnamed.
                 if mol_cont.name == None and mol_name:
                     # Print out.
-                    print "Renaming the unnamed sole molecule to '%s'." % mol_name
+                    print "Renaming the unnamed sole molecule container to '%s'." % mol_name
 
                     # Set the name.
                     mol_cont.name = mol_name
