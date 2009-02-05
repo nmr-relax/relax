@@ -356,28 +356,30 @@ class N_state_model(Common_functions):
         i = pop_start
         j = 0
 
-        # Loop over the prob parameters (N - 1, because the sum of pc is 1).
-        for k in xrange(cdp.N - 1):
-            # 0 <= pc <= 1.
+        # Probability parameters.
+        if cdp.model in ['2-domain', 'population']:
+            # Loop over the prob parameters (N - 1, because the sum of pc is 1).
+            for k in xrange(cdp.N - 1):
+                # 0 <= pc <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0)
+                b.append(-1.0 / scaling_matrix[i, i])
+                j = j + 2
+
+                # Increment i.
+                i = i + 1
+
+            # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            A[j][i] = 1.0
-            A[j+1][i] = -1.0
-            b.append(0.0)
+            for i in xrange(pop_start, self.param_num()):
+                A[-2][i] = -1.0
+                A[-1][i] = 1.0
             b.append(-1.0 / scaling_matrix[i, i])
-            j = j + 2
-
-            # Increment i.
-            i = i + 1
-
-        # Add the inequalities for pN.
-        A.append(zero_array * 0.0)
-        A.append(zero_array * 0.0)
-        for i in xrange(pop_start, self.param_num()):
-            A[-2][i] = -1.0
-            A[-1][i] = 1.0
-        b.append(-1.0 / scaling_matrix[i, i])
-        b.append(0.0)
+            b.append(0.0)
 
         # Convert to numpy data structures.
         A = array(A, float64)
