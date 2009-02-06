@@ -67,7 +67,7 @@ structure.load_spins()
 structure.vectors('H', spin_id='@N')
 
 # Loop over the N spins.
-rdc_file = open('rdc', 'w')
+rdc_file = open('synth_rdc', 'w')
 for spin, mol, res_num, res_name in spin_loop(selection='@N', full_info=True):
     # Skip spins without vectors.
     if not hasattr(spin, 'xh_vect'):
