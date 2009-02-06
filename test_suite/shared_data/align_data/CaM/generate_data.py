@@ -7,7 +7,7 @@ from os import sep
 import sys
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 
 
 
@@ -45,6 +45,8 @@ gh = 26.7522212e7
 kappa = -3./(8*pi**2)*gn*gh*mu0*h_bar
 dip_const = kappa / r**3
 
+# PCS constant.
+
 # Print out.
 print "Alignment tensor:\n" + `tensor`
 print "Eigenvalues: " + `eigvals(tensor)`
@@ -66,14 +68,33 @@ structure.load_spins()
 # Calculate NH bond vectors for the N spins.
 structure.vectors('H', spin_id='@N')
 
-# Loop over the N spins.
+# Get the first calcium position.
+spin = return_spin(':1000@CA')
+centre = spin.pos
+print "\n\nPCS centre: " + `centre`
+
+# Open the results files.
 rdc_file = open('synth_rdc', 'w')
-for spin, mol, res_num, res_name in spin_loop(selection='@N', full_info=True):
+pcs_file = open('synth_pcs', 'w')
+
+# Loop over the N spins.
+for spin, mol, res_num, res_name in spin_loop(full_info=True):
+    # Skip calciums.
+    if spin.name == "CA":
+        continue
+
+    pcs = 0.
+    # Write the PCS.
+    pcs_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, pcs))
+
+    # RDC time, so skip protons now.
+    if spin.name == "H":
+        continue
+
     # Skip spins without vectors.
     if not hasattr(spin, 'xh_vect'):
         continue
 
-    # Calculate the RDC.
+    # Calculate and write the RDC.
     rdc = dip_const * dot(transpose(spin.xh_vect), dot(tensor, spin.xh_vect))
-
     rdc_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, rdc))
