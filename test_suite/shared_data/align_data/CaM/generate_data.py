@@ -92,14 +92,19 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     if spin.name == "CA":
         continue
 
-    # Calculate the distance between the PCS centre and the atom.
+    # Calculate the distance between the PCS centre and the atom (in metres).
     r = spin.pos - centre
+    r = r * 10e-10
 
-    # The PCS.
-    pcs = 1.0 / (4.0 * pi * norm(r)**3) * dot(transpose(r), dot(chi_tensor, r))
+    # Unit vector.
+    r_hat = r / norm(r)
+
+    # The PCS (in ppm).
+    pcs = 1.0 / (4.0 * pi * norm(r)**3) * dot(transpose(r_hat), dot(chi_tensor, r_hat))
+    pcs = pcs * 1e6
 
     # Write the PCS.
-    pcs_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, pcs))
+    pcs_file.write("%20s%10s%10s%10s%10s%30.11g\n" % (mol, res_num, res_name, spin.num, spin.name, pcs))
 
     # RDC time, so skip protons now.
     if spin.name == "H":
