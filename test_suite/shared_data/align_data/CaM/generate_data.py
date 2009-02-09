@@ -2,7 +2,7 @@
 
 # Python module imports.
 from numpy import dot, float64, sum, transpose, zeros
-from numpy.linalg import eigvals
+from numpy.linalg import eigvals, norm
 from os import sep
 import sys
 
@@ -92,7 +92,12 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     if spin.name == "CA":
         continue
 
-    pcs = 0.
+    # Calculate the distance between the PCS centre and the atom.
+    r = spin.pos - centre
+
+    # The PCS.
+    pcs = 1.0 / (4.0 * pi * norm(r)**3) * dot(transpose(r), dot(chi_tensor, r))
+
     # Write the PCS.
     pcs_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, pcs))
 
