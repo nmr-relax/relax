@@ -54,14 +54,6 @@ pcs_const = B0**2 / (15.0 * mu0 * k * T)
 # The magnetic susceptibility tensor.
 chi_tensor = tensor / pcs_const
 
-# Print out.
-print "\nAlignment tensor:\n" + `tensor`
-print "Eigenvalues: " + `eigvals(tensor)`
-print "Eigenvalue sum: " + `sum(eigvals(tensor))`
-print "Dipolar constant: " + `dip_const`
-print "\nSusceptibility tensor:\n" + `chi_tensor`
-print "PCS constant: " + `pcs_const`
-
 # Path to files.
 path = sys.path[-1] + '/test_suite/shared_data/'
 
@@ -80,7 +72,6 @@ structure.vectors('H', spin_id='@N')
 # Get the first calcium position.
 spin = return_spin(':1000@CA')
 centre = spin.pos
-print "\n\nPCS centre: " + `centre`
 
 # Open the results files.
 rdc_file = open('synth_rdc', 'w')
@@ -117,3 +108,15 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # Calculate and write the RDC.
     rdc = dip_const * dot(transpose(spin.xh_vect), dot(tensor, spin.xh_vect))
     rdc_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, rdc))
+
+# Print outs.
+print "\nAlignment tensor (A):\n" + `tensor`
+print "Eigenvalues: " + `eigvals(tensor)`
+print "Eigenvalue sum: " + `sum(eigvals(tensor))`
+print "Dipolar constant: " + `dip_const`
+
+print "\nMagnetic susceptibility tensor (Chi):\n" + `chi_tensor`
+print "Eigenvalues: " + `eigvals(chi_tensor)`
+print "Eigenvalue sum: " + `sum(eigvals(chi_tensor))`
+print "PCS constant: " + `pcs_const`
+print "PCS centre: " + `centre`
