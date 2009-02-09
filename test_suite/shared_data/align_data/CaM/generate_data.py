@@ -36,22 +36,31 @@ tensor = convert_tensor(C)
 tensor = tensor / 1000.0
 
 # The dipolar constant.
-h = 6.62606876e-34
-h_bar = h / ( 2.0*pi )
-mu0 = 4.0 * pi * 1e-7
-r = 1.02e-10
-gn = -2.7126e7
-gh = 26.7522212e7
-kappa = -3./(8*pi**2)*gn*gh*mu0*h_bar
-dip_const = kappa / r**3
+h = 6.62606876e-34      # Planck constant.
+h_bar = h / ( 2.0*pi )  # Dirac constant.
+mu0 = 4.0 * pi * 1e-7   # Permeability of free space.
+r = 1.02e-10            # NH bond length.
+gn = -2.7126e7          # 15N gyromagnetic ratio.
+gh = 26.7522212e7       # 1H gyromagnetic ratio.
+kappa = -3. * 1.0/(2.0*pi) * mu0/(4.0*pi) * gn * gh * h_bar
+dip_const = kappa / r**3    # The dipolar constant.
 
 # PCS constant.
+T = 303.0               # Temp in Kelvin.
+B0 = 600e6 * 2*pi * gh  # Magnetic field strength.
+k = 1.3806504e10-23     # Boltzman constant.
+pcs_const = B0**2 / (15.0 * mu0 * k * T)
+
+# The magnetic susceptibility tensor.
+chi_tensor = tensor / pcs_const
 
 # Print out.
-print "Alignment tensor:\n" + `tensor`
+print "\nAlignment tensor:\n" + `tensor`
 print "Eigenvalues: " + `eigvals(tensor)`
 print "Eigenvalue sum: " + `sum(eigvals(tensor))`
 print "Dipolar constant: " + `dip_const`
+print "\nSusceptibility tensor:\n" + `chi_tensor`
+print "PCS constant: " + `pcs_const`
 
 # Path to files.
 path = sys.path[-1] + '/test_suite/shared_data/'
