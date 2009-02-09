@@ -47,8 +47,8 @@ dip_const = kappa / r**3    # The dipolar constant.
 
 # PCS constant.
 T = 303.0               # Temp in Kelvin.
-B0 = 600e6 * 2*pi * gh  # Magnetic field strength.
-k = 1.3806504e10-23     # Boltzman constant.
+B0 = 600e6 * 2*pi / gh  # Magnetic field strength (600 MHz).
+k = 1.3806504e-23     # Boltzman constant.
 pcs_const = B0**2 / (15.0 * mu0 * k * T)
 
 # The magnetic susceptibility tensor.
@@ -94,7 +94,7 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
 
     # Calculate the distance between the PCS centre and the atom (in metres).
     r = spin.pos - centre
-    r = r * 10e-10
+    r = r * 1e-10
 
     # Unit vector.
     r_hat = r / norm(r)
