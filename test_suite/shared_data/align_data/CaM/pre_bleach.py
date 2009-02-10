@@ -11,7 +11,7 @@ from generic_fns.mol_res_spin import return_spin, spin_loop
 
 
 # PRE cut-off (in Angstrom).
-PRE = 10.0
+PRE = 15.0
 
 
 # Path to files.
