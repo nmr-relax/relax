@@ -30,8 +30,11 @@ structure.load_spins()
 spin = return_spin(':1000@CA')
 centre = spin.pos
 
+# Open the unresolved file.
+file = open('unresolved', 'w')
+
 # Find the atoms within X Angstrom.
-bleached = []
+print "\n\nBleached spins:"
 for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # Skip calciums.
     if spin.name == "CA":
@@ -41,17 +44,11 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     r = spin.pos - centre
 
     # PRE.
-    if norm(r) < PRE and res_num not in bleached:
-        bleached.append(res_num)
+    if norm(r) < PRE:
+        # Print out.
+        print "\t%20s %20s %20s %20s %20s" % (mol, res_num, res_name, spin.num, spin.name)
 
-# Open the unresolved file.
-file = open('unresolved', 'w')
+        file.write("%20s %20s %20s %20s %20s\n" % (mol, res_num, res_name, spin.num, spin.name))
 
-# Dump the residue number.
-print "\n\nBleached residues:"
-for res_num in bleached:
-    print '\t' + `res_num`
-    file.write(`res_num`+'\n')
-
-# Close.
+# Close the file.
 file.close()
