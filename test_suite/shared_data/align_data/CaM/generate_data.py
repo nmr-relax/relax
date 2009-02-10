@@ -33,7 +33,7 @@ C = [-0.351261, 0.556994, -0.506392, 0.560544, -0.286367]
 tensor = convert_tensor(C)
 
 # Scale to become a realistic alignment tensor (Pr matrix elements between 0 and 1, and small tensor).
-tensor = tensor / 1000.0
+tensor = tensor / 2000.0
 
 # The dipolar constant.
 h = 6.62606876e-34      # Planck constant.
