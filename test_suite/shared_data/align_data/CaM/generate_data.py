@@ -66,6 +66,9 @@ structure.read_pdb('bax_C_1J7P_N_H_Ca.pdb', dir=path+sep+'structures')
 # Load all atoms as spins.
 structure.load_spins()
 
+# Deselect unresolved residues.
+deselect.read(file='unresolved', mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+
 # Calculate NH bond vectors for the N spins.
 structure.vectors('H', spin_id='@N')
 
@@ -79,6 +82,10 @@ pcs_file = open('synth_pcs', 'w')
 
 # Loop over the N spins.
 for spin, mol, res_num, res_name in spin_loop(full_info=True):
+    # Skip deselected spins.
+    if not spin.select:
+        continue
+
     # Skip calciums.
     if spin.name == "CA":
         continue
