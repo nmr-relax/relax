@@ -522,7 +522,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
     #####################
 
     # Loop over the PCS data.
-    print "\nPCS data:\n"
+    print "\n%-30s %-8s %-8s" % ("spin_id", "value", "error")
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -567,7 +567,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
             spin.pcs_err.append(error)
 
         # Print out.
-        print "%30s %5.3g %5.3g" % (id, value, error)
+        print "%30s %8.3g %8.3g" % (id, value, error)
 
 
 def return_data_desc(name):
