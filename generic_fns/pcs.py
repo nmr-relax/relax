@@ -483,6 +483,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         file_data = strip(file_data)
 
     # Test the validity of the PCS data.
+    missing = True
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -504,6 +505,13 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
                 float(file_data[i][error_col])
         except ValueError:
             raise RelaxError, "The PCS data in the line " + `file_data[i]` + " is invalid."
+
+        # Right, data is ok and exists.
+        missing = False
+
+    # Hmmm, no data!
+    if missing:
+        raise RelaxError, "No corresponding data could be found within the file."
 
 
     # Global (non-spin specific) data.
