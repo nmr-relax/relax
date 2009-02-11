@@ -85,6 +85,13 @@ class N_state_model(TestCase):
         self.assertAlmostEqual(cdp.gamma[4], 0.0)
 
 
+    def test_align_fit(self):
+        """Test the use of RDCs and PCSs to find the alignment tensor."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
+
+
     def test_lactose_n_state(self):
         """The 4-state model analysis of lactose using RDCs and PCSs."""
 
