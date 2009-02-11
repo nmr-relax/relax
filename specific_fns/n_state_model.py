@@ -459,6 +459,10 @@ class N_state_model(Common_functions):
         # Data setup tests.
         if not hasattr(cdp, 'paramagnetic_centre'):
             raise RelaxError, "The paramagnetic centre has not yet been specified."
+        if not hasattr(cdp, 'temperature'):
+            raise RelaxError, "The experimental temperatures have not been set."
+        if not hasattr(cdp, 'frq'):
+            raise RelaxError, "The spectrometer frequencies of the experiments have not been set."
 
         # Initialise.
         pcs = []
