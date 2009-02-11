@@ -438,28 +438,28 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         # Strip the data of all comments and empty lines.
         file_data = strip(file_data)
 
-        # Test the validity of the RDC data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= min_col_num:
-                continue
-            elif data_col != None and file_data[i][data_col] == 'None':
-                continue
-            elif error_col != None and file_data[i][error_col] == 'None':
-                continue
+    # Test the validity of the RDC data.
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= min_col_num:
+            continue
+        elif data_col != None and file_data[i][data_col] == 'None':
+            continue
+        elif error_col != None and file_data[i][error_col] == 'None':
+            continue
 
-            # Test that the data are numbers.
-            try:
-                if res_num_col != None:
-                    int(file_data[i][res_num_col])
-                if spin_num_col != None:
-                    int(file_data[i][spin_num_col])
-                if data_col != None:
-                    float(file_data[i][data_col])
-                if error_col != None:
-                    float(file_data[i][error_col])
-            except ValueError:
-                raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
+        # Test that the data are numbers.
+        try:
+            if res_num_col != None:
+                int(file_data[i][res_num_col])
+            if spin_num_col != None:
+                int(file_data[i][spin_num_col])
+            if data_col != None:
+                float(file_data[i][data_col])
+            if error_col != None:
+                float(file_data[i][error_col])
+        except ValueError:
+            raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
 
 
     # Global (non-spin specific) data.
