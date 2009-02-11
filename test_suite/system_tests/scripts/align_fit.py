@@ -42,6 +42,7 @@ frq.set(id='synth', frq=600.0 * 1e6)
 n_state_model.select_model(model='fixed')
 
 # Minimisation.
+grid_search()
 minimise('simplex', constraints=False, max_iter=5)
 
 # Write out a results file.
