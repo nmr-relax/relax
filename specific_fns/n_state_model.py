@@ -456,6 +456,10 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
+        # Data setup tests.
+        if not hasattr(cdp, 'paramagnetic_centre'):
+            raise RelaxError, "The paramagnetic centre has not yet been specified."
+
         # Initialise.
         pcs = []
         pcs_err = []
