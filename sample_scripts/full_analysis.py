@@ -628,7 +628,7 @@ class Main:
 
             # Name the spins if necessary.
             if SEQ_ARGS[6] == None:
-                spin.name(HET_NAME)
+                spin.name(name=HET_NAME)
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:
