@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -478,6 +478,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
     #####################
 
     # Loop over the RDC data.
+    print "\nRDC data:\n"
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -520,6 +521,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
 
             # Append the error.
             spin.rdc_err.append(error)
+
+        # Print out.
+        print "%30s %5.3g %5.3g" % (id, value, error)
 
 
 def return_data_desc(name):
