@@ -494,10 +494,16 @@ class N_state_model(Common_functions):
             unit_vect.append([])
             r.append([])
 
+            # The position list.
+            if type(spin.pos[0]) in [float, float64]:
+                pos = [spin.pos]
+            else:
+                pos = spin.pos
+
             # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
             for c in range(cdp.N):
                 # Calculate the electron spin to nuclear spin vector.
-                vect = spin.pos[c] - cdp.paramagnetic_centre
+                vect = pos[c] - cdp.paramagnetic_centre
 
                 # The length.
                 r[-1].append(norm(vect))
