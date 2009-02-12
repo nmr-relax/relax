@@ -263,8 +263,8 @@ class N_state_model(Common_functions):
             for i in xrange(cdp.N-1):
                 probs[i] = param_vector[i]
 
-        # The probability for state N.
-        probs[-1] = 1 - sum(probs[0:-1])
+            # The probability for state N.
+            probs[-1] = 1 - sum(probs[0:-1])
 
         # The Euler angles.
         if cdp.model == '2-domain':
