@@ -3,6 +3,9 @@
 # Python module imports.
 import sys
 
+# relax module imports.
+from generic_fns import pipes
+
 
 # Path of the alignment data and structure.
 DATA_PATH = sys.path[-1] + '/test_suite/shared_data/align_data/CaM'
@@ -10,6 +13,7 @@ STRUCT_PATH = sys.path[-1] + '/test_suite/shared_data/structures'
 
 # Create the data pipe.
 pipe.create('rdc', 'N-state')
+cdp = pipes.get_pipe()
 
 # Load the CaM structure.
 structure.read_pdb(file='bax_C_1J7P_N_H_Ca', dir=STRUCT_PATH)
@@ -41,8 +45,14 @@ frq.set(id='synth', frq=600.0 * 1e6)
 # Set up the model.
 n_state_model.select_model(model='fixed')
 
+# Set the tensor elements.
+cdp.align_tensors[0].Axx = -0.351261/2000
+cdp.align_tensors[0].Ayy = 0.556994/2000
+cdp.align_tensors[0].Axy = -0.506392/2000
+cdp.align_tensors[0].Axz = 0.560544/2000
+cdp.align_tensors[0].Ayz = -0.286367/2000
+
 # Minimisation.
-align_tensor.init(tensor='synth', params=(-0.351261/2000, 0.556994/2000, -0.506392/2000, 0.560544/2000, -0.286367/2000), param_types=2)
 #grid_search(inc=5)
 minimise('simplex', constraints=False, max_iter=500)
 
