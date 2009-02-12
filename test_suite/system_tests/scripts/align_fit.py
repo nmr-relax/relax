@@ -42,8 +42,9 @@ frq.set(id='synth', frq=600.0 * 1e6)
 n_state_model.select_model(model='fixed')
 
 # Minimisation.
-grid_search()
-minimise('simplex', constraints=False, max_iter=5)
+align_tensor.init(tensor='synth', params=(-0.351261/2000, 0.556994/2000, -0.506392/2000, 0.560544/2000, -0.286367/2000), param_types=2)
+#grid_search(inc=5)
+minimise('simplex', constraints=False, max_iter=500)
 
 # Write out a results file.
 results.write('results', force=True)
