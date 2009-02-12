@@ -1246,6 +1246,11 @@ class N_state_model(Common_functions):
             if not hasattr(cdp, 'ref_domain'):
                 raise RelaxError, "The reference domain has not been set."
 
+        # Right, constraints cannot be used for the 'fixed' model.
+        if constraints and cdp.model == 'fixed':
+            warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
+            constraints = False
+
         # Update the model parameters if necessary.
         self.__update_model()
 
