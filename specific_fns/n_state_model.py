@@ -623,7 +623,10 @@ class N_state_model(Common_functions):
 
             # Append the RDC and XH vectors to the lists.
             rdcs.append(spin.rdc)
-            xh_vectors.append(spin.xh_vect)
+            if type(spin.xh_vect[0]) == float:
+                xh_vectors.append([spin.xh_vect])
+            else:
+                xh_vectors.append(spin.xh_vect)
 
             # Append the PCS errors (or a list of None).
             if hasattr(spin, 'rdc_err'):
