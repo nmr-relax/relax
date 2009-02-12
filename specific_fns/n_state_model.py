@@ -1170,7 +1170,7 @@ class N_state_model(Common_functions):
 
             # Otherwise this must be an alignment tensor component.
             else:
-                grid_ops.append([inc[i], 0.0, 1e-3])
+                grid_ops.append([inc[i], -1e-3, 1e-3])
 
             # Lower bound (if supplied).
             if lower:
