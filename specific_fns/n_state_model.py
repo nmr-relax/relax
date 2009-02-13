@@ -263,8 +263,8 @@ class N_state_model(Common_functions):
             for i in xrange(cdp.N-1):
                 probs[i] = param_vector[i]
 
-        # The probability for state N.
-        probs[-1] = 1 - sum(probs[0:-1])
+            # The probability for state N.
+            probs[-1] = 1 - sum(probs[0:-1])
 
         # The Euler angles.
         if cdp.model == '2-domain':
@@ -356,28 +356,32 @@ class N_state_model(Common_functions):
         i = pop_start
         j = 0
 
-        # Loop over the prob parameters (N - 1, because the sum of pc is 1).
-        for k in xrange(cdp.N - 1):
-            # 0 <= pc <= 1.
+        # Probability parameters.
+        if cdp.model in ['2-domain', 'population']:
+            # Loop over the prob parameters (N - 1, because the sum of pc is 1).
+            for k in xrange(cdp.N - 1):
+                # 0 <= pc <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0)
+                b.append(-1.0 / scaling_matrix[i, i])
+                j = j + 2
+
+                # Increment i.
+                i = i + 1
+
+            # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            A[j][i] = 1.0
-            A[j+1][i] = -1.0
+            for i in xrange(pop_start, self.param_num()):
+                A[-2][i] = -1.0
+                A[-1][i] = 1.0
+            print i
+            print scaling_matrix
+            b.append(-1.0)
             b.append(0.0)
-            b.append(-1.0 / scaling_matrix[i, i])
-            j = j + 2
-
-            # Increment i.
-            i = i + 1
-
-        # Add the inequalities for pN.
-        A.append(zero_array * 0.0)
-        A.append(zero_array * 0.0)
-        for i in xrange(pop_start, self.param_num()):
-            A[-2][i] = -1.0
-            A[-1][i] = 1.0
-        b.append(-1.0 / scaling_matrix[i, i])
-        b.append(0.0)
 
         # Convert to numpy data structures.
         A = array(A, float64)
@@ -452,6 +456,14 @@ class N_state_model(Common_functions):
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
+        # Data setup tests.
+        if not hasattr(cdp, 'paramagnetic_centre'):
+            raise RelaxError, "The paramagnetic centre has not yet been specified."
+        if not hasattr(cdp, 'temperature'):
+            raise RelaxError, "The experimental temperatures have not been set."
+        if not hasattr(cdp, 'frq'):
+            raise RelaxError, "The spectrometer frequencies of the experiments have not been set."
+
         # Initialise.
         pcs = []
         pcs_err = []
@@ -482,10 +494,16 @@ class N_state_model(Common_functions):
             unit_vect.append([])
             r.append([])
 
+            # The position list.
+            if type(spin.pos[0]) in [float, float64]:
+                pos = [spin.pos]
+            else:
+                pos = spin.pos
+
             # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
             for c in range(cdp.N):
                 # Calculate the electron spin to nuclear spin vector.
-                vect = spin.pos[c] - cdp.paramagnetic_centre
+                vect = pos[c] - cdp.paramagnetic_centre
 
                 # The length.
                 r[-1].append(norm(vect))
@@ -611,7 +629,10 @@ class N_state_model(Common_functions):
 
             # Append the RDC and XH vectors to the lists.
             rdcs.append(spin.rdc)
-            xh_vectors.append(spin.xh_vect)
+            if type(spin.xh_vect[0]) == float:
+                xh_vectors.append([spin.xh_vect])
+            else:
+                xh_vectors.append(spin.xh_vect)
 
             # Append the PCS errors (or a list of None).
             if hasattr(spin, 'rdc_err'):
@@ -1144,15 +1165,21 @@ class N_state_model(Common_functions):
 
         # Set the grid search options.
         for i in xrange(n):
-            # Probabilities (default values).
-            if search('^p', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, 1.0])
+            # i is in the parameter array.
+            if i < len(cdp.params):
+                # Probabilities (default values).
+                if search('^p', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, 1.0])
 
-            # Angles (default values).
-            if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, 2*pi])
-            elif search('^beta', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, pi])
+                # Angles (default values).
+                if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, 2*pi])
+                elif search('^beta', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, pi])
+
+            # Otherwise this must be an alignment tensor component.
+            else:
+                grid_ops.append([inc[i], -1e-3, 1e-3])
 
             # Lower bound (if supplied).
             if lower:
@@ -1227,6 +1254,11 @@ class N_state_model(Common_functions):
             # The reference domain.
             if not hasattr(cdp, 'ref_domain'):
                 raise RelaxError, "The reference domain has not been set."
+
+        # Right, constraints cannot be used for the 'fixed' model.
+        if constraints and cdp.model == 'fixed':
+            warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
+            constraints = False
 
         # Update the model parameters if necessary.
         self.__update_model()
