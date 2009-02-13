@@ -4,6 +4,7 @@
 import sys
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 
 
@@ -16,8 +17,8 @@ pipe.create('rdc', 'N-state')
 cdp = pipes.get_pipe()
 
 # Set the mode, if not specified by the system test.
-if not hasattr(cdp, 'mode'):
-    cdp.mode = 'all'
+if not hasattr(ds, 'mode'):
+    ds.mode = 'all'
 
 # Load the CaM structure.
 structure.read_pdb(file='bax_C_1J7P_N_H_Ca', dir=STRUCT_PATH)
@@ -34,15 +35,15 @@ value.set('15N', 'heteronucleus', spin_id="@N")
 value.set('1H', 'proton', spin_id="@N")
 
 # RDCs.
-if cdp.mode in ['rdc', 'all']:
+if ds.mode in ['rdc', 'all']:
     rdc.read(id='synth', file='synth_rdc', dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
 
 # PCSs.
-if cdp.mode in ['pcs', 'all']:
+if ds.mode in ['pcs', 'all']:
     pcs.read(id='synth', file='synth_pcs', dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
 
     # Set the paramagnetic centre.
-    pcs.centre(atom_id=':1001@CA')
+    pcs.centre(atom_id=':1000@CA')
 
     # The temperature.
     temperature(id='synth', temp=303)
