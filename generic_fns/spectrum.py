@@ -252,10 +252,6 @@ def autodetect_format(file_data):
         if line != []:
             break
 
-    # Generic format.
-    if line[0] in ['mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name'] or line[0] in ['Num', 'Name']:
-        return 'generic'
-
     # Sparky format.
     if line[0] == 'Assignment':
         return 'sparky'
@@ -268,8 +264,8 @@ def autodetect_format(file_data):
     if line == ['No.', 'Color', 'w1', 'w2', 'ass.', 'in', 'w1', 'ass.', 'in', 'w2', 'Volume', 'Vol.', 'Err.', 'Method', 'Comment']:
         return 'xeasy'
 
-    # Unsupported format.
-    raise RelaxError, "The format of the peak list file cannot be determined.  Either the file is of a non-standard format or the format is unsupported."
+    # Assume a generic format.
+    return 'generic'
 
 
 def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
@@ -762,6 +758,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if format == 'generic':
         # Print out.
         print "Generic formatted data file.\n"
+
+        # Test that column numbers have been given.
+        if max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col) == None:
+            raise RelaxError, "No column numbers have been supplied."
 
         # Set the intensity reading function.
         intensity_fn = intensity_generic
