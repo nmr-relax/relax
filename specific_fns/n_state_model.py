@@ -400,11 +400,8 @@ class N_state_model(Common_functions):
 
         # Loop over each alignment.
         for i in xrange(model.num_align):
-            # Indices.
-            pcs_index = 0
-            rdc_index = 0
-
             # Spin loop.
+            data_index = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -414,30 +411,23 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'pcs_bc'):
-                        spin.pcs_bc = []
+                        spin.pcs_bc = [None]*model.num_align
 
                     # Append the back calculated PCS (in ppm).
-                    spin.pcs_bc.append(model.deltaij_theta[i, pcs_index]*1e6)
-
-                    # Increment the RDC index.
-                    pcs_index = pcs_index + 1
+                    spin.pcs_bc[i] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
                 if hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = []
-
-                    # No RDC.
-                    if spin.rdc[i] == None:
-                        spin.rdc_bc.append(None)
-                        continue
+                        spin.rdc_bc = [None] * model.num_align
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc.append(model.Dij_theta[i, rdc_index])
+                    spin.rdc_bc[i] = model.Dij_theta[i, data_index]
 
-                    # Increment the RDC index.
-                    rdc_index = rdc_index + 1
+                # Increment the spin index if it contains data.
+                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect')):
+                    data_index = data_index + 1
 
 
     def __minimise_setup_pcs(self):
