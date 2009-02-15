@@ -84,9 +84,9 @@ class Internal(Base_struct_API):
         # Init.
         bonded_found = False
 
-        # No bonded atoms, so go find everything within 1.2 Angstroms and say they are bonded.
+        # No bonded atoms, so go find everything within 2 Angstroms and say they are bonded.
         if not mol.bonded[index]:
-            self.__find_bonded_atoms(index, mol)
+            self.__find_bonded_atoms(index, mol, radius=2)
 
         # Loop over the bonded atoms.
         matching_list = []
