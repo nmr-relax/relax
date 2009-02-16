@@ -70,3 +70,6 @@ results.write('devnull', force=True)
 
 # Show the tensors.
 align_tensor.display()
+
+# Print the contents of the current data pipe (for debugging Q-values).
+print cdp
