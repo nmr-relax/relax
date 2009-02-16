@@ -80,6 +80,16 @@ centre = spin.pos
 rdc_file = open('synth_rdc', 'w')
 pcs_file = open('synth_pcs', 'w')
 
+# Open the Pales input file.
+pales_file = open('pales.in', 'w')
+
+# The Pales header.
+pales_file.write("DATA SEQUENCE ADQLTEEQIAEFKEAFSLFDKDGDGTITTKELGTVMRSLGQNPTEAELQDMINEVDADGNGTIDFPEFLT\n")
+pales_file.write("DATA SEQUENCE MMARKMKDTDSEEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREANIDGDGQVNYEE\n")
+pales_file.write("DATA SEQUENCE FVQMMTAK\n\n")
+pales_file.write("VARS   RESID_I RESNAME_I ATOMNAME_I RESID_J RESNAME_J ATOMNAME_J D      DD    W\n")
+pales_file.write("FORMAT %5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f\n\n")
+
 # Loop over the N spins.
 for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # Skip deselected spins.
@@ -115,6 +125,9 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # Calculate and write the RDC.
     rdc = dip_const * dot(transpose(spin.xh_vect), dot(tensor, spin.xh_vect))
     rdc_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, rdc))
+
+    # The Pales data line (equal weight, no errors).
+    pales_file.write("%5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f\n" % (res_num, res_name, spin.name, res_num, res_name, spin.attached_atom, rdc, 0.0, 1.0))
 
 # Print outs.
 print "\nAlignment tensor (A):\n" + `tensor`
