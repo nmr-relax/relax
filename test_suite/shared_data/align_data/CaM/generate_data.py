@@ -132,11 +132,12 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
 # Print outs.
 print "\nAlignment tensor (A):\n" + `tensor`
 print "Eigenvalues: " + `eigvals(tensor)`
-print "Eigenvalue sum: " + `sum(eigvals(tensor))`
 print "Dipolar constant: " + `dip_const`
+
+print "\nSaupe order matrix (S):\n" + `tensor * 1.5`
+print "Eigenvalues: " + `eigvals(tensor * 1.5)`
 
 print "\nMagnetic susceptibility tensor (Chi):\n" + `chi_tensor`
 print "Eigenvalues: " + `eigvals(chi_tensor)`
-print "Eigenvalue sum: " + `sum(eigvals(chi_tensor))`
 print "PCS constant: " + `pcs_const`
 print "PCS centre: " + `centre`
