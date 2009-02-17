@@ -527,7 +527,7 @@ class Main:
             string = string + "# Compiling the C modules #\n"
             string = string + "###########################\n\n\n"
             string = string + "Building the relaxation curve fitting module " + `str(self.compile_object[0])` + "\n"
-            string = string + "Building the relaxation dispersion module " + `str(self.compile_object[1])` + "\n"
+            string = string + "Building the relaxation dispersion module " + `str(self.compile_object[1][0])` + "\n"
             return string
 
         # Add the print out as an action to take before constructing the first object.
