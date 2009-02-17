@@ -472,7 +472,8 @@ class Main:
         dir = 'maths_fns'
 
         # File names.
-        files = ['dispersion.c',
+        files = ['c_chi2.c',
+                 'dispersion.c',
                  'relax_disp.c']
 
         # Construct the python include path (for Python.h).
