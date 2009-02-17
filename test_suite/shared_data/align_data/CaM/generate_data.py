@@ -39,7 +39,7 @@ tensor = tensor / 2000.0
 h = 6.62606876e-34      # Planck constant.
 h_bar = h / ( 2.0*pi )  # Dirac constant.
 mu0 = 4.0 * pi * 1e-7   # Permeability of free space.
-r = 1.02e-10            # NH bond length.
+r = 1.041e-10            # NH bond length.
 gn = -2.7126e7          # 15N gyromagnetic ratio.
 gh = 26.7522212e7       # 1H gyromagnetic ratio.
 kappa = -3. * 1.0/(2.0*pi) * mu0/(4.0*pi) * gn * gh * h_bar
@@ -80,6 +80,16 @@ centre = spin.pos
 rdc_file = open('synth_rdc', 'w')
 pcs_file = open('synth_pcs', 'w')
 
+# Open the Pales input file.
+pales_file = open('pales.in', 'w')
+
+# The Pales header.
+pales_file.write("DATA SEQUENCE ADQLTEEQIAEFKEAFSLFDKDGDGTITTKELGTVMRSLGQNPTEAELQDMINEVDADGNGTIDFPEFLT\n")
+pales_file.write("DATA SEQUENCE MMARKMKDTDSEEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREANIDGDGQVNYEE\n")
+pales_file.write("DATA SEQUENCE FVQMMTAK\n\n")
+pales_file.write("VARS   RESID_I RESNAME_I ATOMNAME_I RESID_J RESNAME_J ATOMNAME_J D      DD    W\n")
+pales_file.write("FORMAT %5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f\n\n")
+
 # Loop over the N spins.
 for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # Skip deselected spins.
@@ -116,14 +126,18 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     rdc = dip_const * dot(transpose(spin.xh_vect), dot(tensor, spin.xh_vect))
     rdc_file.write("%20s%10s%10s%10s%10s%30.11f\n" % (mol, res_num, res_name, spin.num, spin.name, rdc))
 
+    # The Pales data line (equal weight, no errors).
+    pales_file.write("%5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f\n" % (res_num, res_name, spin.name, res_num, res_name, spin.attached_atom, rdc, 0.0, 1.0))
+
 # Print outs.
 print "\nAlignment tensor (A):\n" + `tensor`
 print "Eigenvalues: " + `eigvals(tensor)`
-print "Eigenvalue sum: " + `sum(eigvals(tensor))`
 print "Dipolar constant: " + `dip_const`
+
+print "\nSaupe order matrix (S):\n" + `tensor * 1.5`
+print "Eigenvalues: " + `eigvals(tensor * 1.5)`
 
 print "\nMagnetic susceptibility tensor (Chi):\n" + `chi_tensor`
 print "Eigenvalues: " + `eigvals(chi_tensor)`
-print "Eigenvalue sum: " + `sum(eigvals(chi_tensor))`
 print "PCS constant: " + `pcs_const`
 print "PCS centre: " + `centre`

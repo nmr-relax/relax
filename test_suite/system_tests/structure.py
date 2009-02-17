@@ -165,7 +165,7 @@ class Structure(TestCase):
         self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1F35_N_H_molmol_mol1')
 
         # Load a single atom and test it.
-        self.relax.interpreter._Structure.load_spins('#1F35_N_H_molmol_mol1:10@N')
+        self.relax.interpreter._Structure.load_spins('#1F35_N_H_molmol_mol1:3@N')
         self.assertEqual(count_spins(), 1)
 
         # Try loading a few protons.
@@ -175,7 +175,8 @@ class Structure(TestCase):
         self.relax.interpreter._Structure.load_spins()
 
         # Extract a N-Ca vector.
-        self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:10@N')
+        self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:3@N')
+        print cdp.mol[0].res[0].spin[0]
         self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
 
 
@@ -419,7 +420,7 @@ class Structure(TestCase):
         self.relax.interpreter._Structure.load_spins()
 
         # Extract a N-Ca vector.
-        self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:10@N')
+        self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:3@N')
         self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
 
 
