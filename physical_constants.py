@@ -130,9 +130,11 @@ g13C = 6.728 * 1e7
 
 g1H = 26.7522212 * 1e7
 """The 1H gyromagnetic ratio."""
+# Pales:  2.675198e+8
 
 g15N = -2.7126 * 1e7
 """The 15N gyromagnetic ratio."""
+# Pales:  -2.7116e+7
 
 g17O = -3.628 * 1e7
 """The 17O gyromagnetic ratio."""
