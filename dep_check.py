@@ -118,29 +118,6 @@ except ImportError:
 # Compiled C modules.
 #####################
 
-# Relaxation dispersion curve fitting.
-try:    
-    from maths_fns.relax_disp import setup
-    del setup
-    C_module_exp_fn = True
-except ImportError, message:
-    # The OS.
-    system = platform.system()
-                
-    # Does the compiled file exist.
-    file = 'relax_disp.so'
-    if system == 'Windows' or system == 'Microsoft':
-        file = 'relax_disp.pyd'
-    if not access('maths_fns' + sep + file, F_OK):
-        C_module_exp_fn_mesg = "ImportError: relaxation dispersion curve fitting is unavailable, the corresponding C modules have not been compiled."
-
-    # Show the full error.
-    else:
-        C_module_exp_fn_mesg = "ImportError: " + message[0] + "\nRelaxation dispersion curve fitting is unavailable, try compiling the C modules."
-
-    # Set the flag.
-    C_module_exp_fn = False
-
 # Relaxation curve fitting.
 try:
     from maths_fns.relax_fit import setup
