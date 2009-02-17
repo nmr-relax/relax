@@ -122,7 +122,7 @@ except ImportError:
 try:
     from maths_fns.relax_fit import setup
     del setup
-    C_module_exp_fn = True
+    C_module_fit = True
 except ImportError, message:
     # The OS.
     system = platform.system()
@@ -132,20 +132,20 @@ except ImportError, message:
     if system == 'Windows' or system == 'Microsoft':
         file = 'relax_fit.pyd'
     if not access('maths_fns' + sep + file, F_OK):
-        C_module_exp_fn_mesg = "ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled."
+        C_module_fit_mesg = "ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled."
 
     # Show the full error.
     else:
-        C_module_exp_fn_mesg = "ImportError: " + message[0] + "\nRelaxation curve fitting is unavailable, try compiling the C modules."
+        C_module_fit_mesg = "ImportError: " + message[0] + "\nRelaxation curve fitting is unavailable, try compiling the C modules."
 
     # Set the flag.
-    C_module_exp_fn = False
+    C_module_fit = False
 
 # Relaxation dispersion.
 try:
     from maths_fns.relax_disp import setup
     del setup
-    C_module_exp_fn = True
+    C_module_disp = True
 except ImportError, message:
     # The OS.
     system = platform.system()
@@ -155,11 +155,11 @@ except ImportError, message:
     if system == 'Windows' or system == 'Microsoft':
         file = 'relax_disp.pyd'
     if not access('maths_fns' + sep + file, F_OK):
-        C_module_exp_fn_mesg = "ImportError: relaxation dispersion is unavailable, the corresponding C modules have not been compiled."
+        C_module_disp_mesg = "ImportError: relaxation dispersion is unavailable, the corresponding C modules have not been compiled."
 
     # Show the full error.
     else:
-        C_module_exp_fn_mesg = "ImportError: " + message[0] + "\nRelaxation dispersion is unavailable, try compiling the C modules."
+        C_module_disp_mesg = "ImportError: " + message[0] + "\nRelaxation dispersion is unavailable, try compiling the C modules."
 
     # Set the flag.
-    C_module_exp_fn = False
+    C_module_disp = False

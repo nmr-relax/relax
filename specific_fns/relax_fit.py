@@ -29,7 +29,7 @@ from numpy.linalg import inv
 from re import match, search
 
 # relax module imports.
-from dep_check import C_module_exp_fn
+from dep_check import C_module_fit
 from base_class import Common_functions
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
@@ -37,7 +37,7 @@ from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 
 # C modules.
-if C_module_exp_fn:
+if C_module_fit:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
 
