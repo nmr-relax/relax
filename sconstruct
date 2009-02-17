@@ -174,9 +174,9 @@ class Main:
         # C module compilation.
         #######################
 
-        # Setup the rules for building the relaxation curve fitting C modules (and set it as the default).
-        self.relax_fit()
-        Default(self.relax_fit_object)
+        # Setup the rules for building the C modules (and set it as the default).
+        self.compile()
+        Default(self.compile_object)
 
 
 
@@ -210,7 +210,7 @@ class Main:
         binary_dist_env = Environment(BUILDERS={'dummy' : Builder(action=self.dummy)})
         binary_dist_env.dummy(target='binary_dist', source=None)
         binary_dist_env.Depends('binary_dist', 'version_check')           # First check the program version number.
-        binary_dist_env.Depends('binary_dist', self.relax_fit_object)     # Compile the C code.
+        binary_dist_env.Depends('binary_dist', self.compile_object)     # Compile the C code.
         binary_dist_env.Depends('binary_dist', 'manual_clean_nodeps')     # Clean up the temporary manual files.
         binary_dist_env.Depends('binary_dist', 'clean')                   # Then clean up all other temporary files.
         binary_dist_env.Depends('binary_dist', 'package_bin')             # Package the binary distribution.
@@ -463,15 +463,17 @@ class Main:
         Help(string)
 
 
-    def relax_fit(self):
-        """Function for setting up scons for building the relaxation curve fitting C modules."""
+    def compile(self):
+        """Function for setting up scons for building the C modules."""
 
         # The directory.
         dir = 'maths_fns'
 
         # File names.
         files = ['c_chi2.c',
+                 'dispersion.c',
                  'exponential.c',
+                 'relax_disp.c',
                  'relax_fit.c']
 
         # Construct the python include path (for Python.h).
@@ -487,7 +489,7 @@ class Main:
         else:
             cflags = '-I' + py_include_fullpath + ' -I' + numpy_path
 
-        # Relaxation curve fitting build environment.
+        # Build environment.
         env = Environment()
 
         # Python library path.
@@ -509,13 +511,14 @@ class Main:
         if SYSTEM == 'Windows':
             suffix = '.pyd'
 
-        # Loop over the relaxation curve fitting files.
+        # Loop over the files.
         nodes = []
         for file in files:
             nodes.append(env.SharedObject(dir + path.sep + file, CCFLAGS=cflags))
 
-        # Build the relaxation curve fitting module.
-        self.relax_fit_object = env.SharedLibrary(target=dir + path.sep + 'relax_fit', source=nodes, SHLIBPREFIX=prefix, SHLIBSUFFIX=suffix)
+        # Build the C modules.
+        self.compile_object = env.SharedLibrary(target=dir + path.sep + 'relax_fit', source=nodes, SHLIBPREFIX=prefix, SHLIBSUFFIX=suffix)
+        self.compile_object.append(env.SharedLibrary(target=dir + path.sep + 'relax_disp', source=nodes, SHLIBPREFIX=prefix, SHLIBSUFFIX=suffix))
 
         # Print out string returning function.
         def print_string(target, source, env):
@@ -523,7 +526,8 @@ class Main:
             string = string + "###########################\n"
             string = string + "# Compiling the C modules #\n"
             string = string + "###########################\n\n\n"
-            string = string + "Building the relaxation curve fitting module " + `str(self.relax_fit_object[0])` + "\n"
+            string = string + "Building the relaxation curve fitting module " + `str(self.compile_object[0])` + "\n"
+            string = string + "Building the relaxation dispersion module " + `str(self.compile_object[1])` + "\n"
             return string
 
         # Add the print out as an action to take before constructing the first object.
