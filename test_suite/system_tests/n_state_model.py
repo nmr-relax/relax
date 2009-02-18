@@ -123,15 +123,15 @@ class N_state_model(TestCase):
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
-        # Test the optimised values.
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189412096996)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000271130087923)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000264898401302)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000284115871058)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.000152207413184)
+        self.assertAlmostEqual(cdp.chi2, 783.530808266)
+        self.assertAlmostEqual(cdp.q_rdc, 0.063345784112045375)
+        self.assertAlmostEqual(cdp.q_pcs, 0.15076645625705937)
 
 
     def test_align_fit_pcs(self):
@@ -171,14 +171,14 @@ class N_state_model(TestCase):
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
-        # Test the optimised values.
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189165581069)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000271897288335)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000264627388896)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000284180080857)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.00015165641132)
+        self.assertAlmostEqual(cdp.chi2, 756.268087443)
+        self.assertAlmostEqual(cdp.q_pcs, 0.063341567973121266)
 
 
     def test_align_fit_rdc(self):
@@ -218,14 +218,16 @@ class N_state_model(TestCase):
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
-        # Test the optimised values.
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.556994/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.506392/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
-        self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        # Test the optimised values (these are about ~10% different from Pales).
+        # Pales:      S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)
+        # Pales:  -9.8124e-05 -5.2533e-04 -3.4446e-04  3.7369e-04 -1.8949e-04
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.00017045)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.00024905)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.00027502)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.00029833)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.00015125)
+        self.assertAlmostEqual(cdp.chi2, 23.5877482365)                 # Pales: 23.709
+        self.assertAlmostEqual(cdp.q_rdc, 0.14049691097282743/2.)       # Pales (Q Saupe): 0.079
 
 
     def test_lactose_n_state(self):
