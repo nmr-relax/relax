@@ -1,0 +1,102 @@
+REMARK Molecular Alignment Simulation.
+
+REMARK Simulation parameters.
+
+DATA PALES_MODE DC
+
+DATA TENSOR_MODE SVD (Order Matrix Method)
+
+
+REMARK Order matrix.
+
+DATA SAUPE_MATRIX     S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)
+DATA SAUPE        -9.8124e-05 -5.2533e-04 -3.4446e-04  3.7369e-04 -1.8949e-04
+
+DATA IRREDUCIBLE_REP    A0          A1R          A1I         A2R         A2I  
+DATA IRREDUCIBLE    -1.5556e-04 -4.8371e-04 -2.4528e-04 -3.4000e-04  4.4588e-04
+DATA IRREDUCIBLE GENERAL_MAGNITUDE   1.1141e-03
+
+
+REMARK Mapping of coordinates.
+
+DATA MAPPING_COOR   Szz_d(x)  Szz_d(y)  Syy_d(x)  Syy_d(y)  Sxx_d(x)  Sxx_d(y)
+DATA MAPPING        1.93216  -0.45334   0.19464  -0.60307   0.76856   0.77189
+DATA MAPPING INV   -0.89210   0.45334  -2.39278   0.60307  -1.48268  -0.77189
+
+
+REMARK Eigensystem & Euler angles for clockwise rotation about z, y', z''.
+
+DATA EIGENVALUES (Sxx_d,Syy_d,Szz_d)   -8.5654e-05 -5.6125e-04  6.4691e-04
+DATA EIGENVECTORS          (x_coor      y_coor      z_coor)
+DATA EIGENVECTORS X_AXIS  3.4247e-01  6.2946e-01  6.9749e-01
+DATA EIGENVECTORS Y_AXIS  8.0071e-01  1.9283e-01 -5.6717e-01
+DATA EIGENVECTORS Z_AXIS -4.9151e-01  7.5273e-01 -4.3797e-01
+
+DATA Q_EULER_SOLUTIONS    ALPHA     BETA    GAMMA
+DATA Q_EULER_ANGLES  1   320.88   115.97    56.86
+DATA Q_EULER_ANGLES  2   140.88   115.97    56.86
+DATA Q_EULER_ANGLES  3   219.12    64.03   236.86
+DATA Q_EULER_ANGLES  4    39.12    64.03   236.86
+
+
+REMARK Euler angles (psi/theta/phi) for rotation about x, y, z.
+
+DATA EULER_SOLUTIONS 2
+DATA EULER_ANGLES  -59.81  150.56   66.84
+DATA EULER_ANGLES  120.19   29.44  246.84
+
+DATA Da  3.234540e-04
+DATA Dr  1.585335e-04
+
+
+DATA Aa  6.469080e-04
+DATA Ar  3.170671e-04
+
+
+DATA Da_HN       6.981819e+00
+DATA Rhombicity  4.901270e-01
+
+
+REMARK Dipolar couplings.
+
+DATA N                    29
+DATA RMS                  0.904
+DATA Chi2                 23.709
+DATA CORR R               0.989
+DATA Q SAUPE              0.079
+DATA REGRESSION OFFSET    0.073 +/- 0.178 [Hz]
+DATA REGRESSION SLOPE     0.977 +/- 0.028 [Hz]
+DATA REGRESSION BAX SLOPE 0.988 +/- 0.020 [Hz]
+
+VARS    RESID_I RESNAME_I ATOMNAME_I RESID_J RESNAME_J ATOMNAME_J DI D_OBS D D_DIFF DD W
+FORMAT  %4d %4s %4s %4d %4s %4s %9.2f %9.3f %9.3f %9.3f %.2f %.2f
+
+   83  GLU    N   83  GLU    H -25836.01    3.5000    4.8165   -1.3165  0.0000 1.00
+   84  GLU    N   84  GLU    H -25863.12   15.0590   13.3950    1.6640  0.0000 1.00
+   85  ILE    N   85  ILE    H -25831.29    6.6010    7.3066   -0.7056  0.0000 1.00
+  111  ASN    N  111  ASN    H -25755.68   -3.4270   -3.4692    0.0422  0.0000 1.00
+  112  LEU    N  112  LEU    H -25849.91   -3.1020   -2.7125   -0.3895  0.0000 1.00
+  113  GLY    N  113  GLY    H -25944.35    9.9420   10.7521   -0.8101  0.0000 1.00
+  114  GLU    N  114  GLU    H -25868.62   -8.9190   -9.0739    0.1549  0.0000 1.00
+  115  LYS    N  115  LYS    H -25823.01    2.3710    2.0000    0.3710  0.0000 1.00
+  116  LEU    N  116  LEU    H -25892.65   -6.3760   -5.7224   -0.6536  0.0000 1.00
+  117  THR    N  117  THR    H -25899.32   13.9600   13.6219    0.3381  0.0000 1.00
+  118  ASP    N  118  ASP    H -25860.63    3.6830    3.1322    0.5508  0.0000 1.00
+  119  GLU    N  119  GLU    H -25843.36   -5.2700   -3.9984   -1.2716  0.0000 1.00
+  120  GLU    N  120  GLU    H -25882.60    4.6530    5.2034   -0.5504  0.0000 1.00
+  121  VAL    N  121  VAL    H -25829.78    7.5050    6.8236    0.6814  0.0000 1.00
+  122  ASP    N  122  ASP    H -25902.83   -4.6510   -4.1385   -0.5125  0.0000 1.00
+  123  GLU    N  123  GLU    H -25859.47   -1.7250   -1.4858   -0.2392  0.0000 1.00
+  124  MET    N  124  MET    H -25558.16    5.5230    4.9354    0.5876  0.0000 1.00
+  126  ARG    N  126  ARG    H -25866.54   -2.5260   -4.8968    2.3708  0.0000 1.00
+  127  GLU    N  127  GLU    H -25909.42    1.6060    1.7499   -0.1439  0.0000 1.00
+  128  ALA    N  128  ALA    H -25878.56    2.9820    4.7898   -1.8078  0.0000 1.00
+  130  ILE    N  130  ILE    H -25825.03  -11.1080  -11.2155    0.1075  0.0000 1.00
+  131  ASP    N  131  ASP    H -25884.36   -1.1380   -1.3295    0.1915  0.0000 1.00
+  132  GLY    N  132  GLY    H -25879.72    4.5260    3.1646    1.3614  0.0000 1.00
+  143  GLN    N  143  GLN    H -25766.87    4.3900    3.7657    0.6243  0.0000 1.00
+  144  MET    N  144  MET    H -25890.42    5.6180    6.7512   -1.1332  0.0000 1.00
+  145  MET    N  145  MET    H -25879.11   -2.9380   -2.4434   -0.4946  0.0000 1.00
+  146  THR    N  146  THR    H -25829.00    1.7740    2.6130   -0.8390  0.0000 1.00
+  147  ALA    N  147  ALA    H -25826.67    7.9810    7.8172    0.1638  0.0000 1.00
+  148  LYS    N  148  LYS    H -25838.79   -2.7760   -3.3947    0.6187  0.0000 1.00
