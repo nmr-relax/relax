@@ -20,6 +20,14 @@ cdp = pipes.get_pipe()
 if not hasattr(ds, 'mode'):
     ds.mode = 'all'
 
+# The data to use.
+if hasattr(ds, 'rand') and ds.rand:
+    rdc_file = 'synth_rdc_rand'
+    pcs_file = 'synth_pcs_rand'
+else:
+    rdc_file = 'synth_rdc'
+    pcs_file = 'synth_pcs'
+
 # Load the CaM structure.
 structure.read_pdb(file='bax_C_1J7P_N_H_Ca', dir=STRUCT_PATH)
 
@@ -36,11 +44,11 @@ value.set('1H', 'proton', spin_id="@N")
 
 # RDCs.
 if ds.mode in ['rdc', 'all']:
-    rdc.read(id='synth', file='synth_rdc', dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
+    rdc.read(id='synth', file=rdc_file, dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
 
 # PCSs.
 if ds.mode in ['pcs', 'all']:
-    pcs.read(id='synth', file='synth_pcs', dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
+    pcs.read(id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
 
     # Set the paramagnetic centre.
     pcs.centre(atom_id=':1000@CA')
