@@ -161,7 +161,7 @@ def ave_rdc_tensor(dj, vect, K, A, weights=None):
     for k in xrange(K):
         # The weights.
         if weights != None:
-            if k == K-1: 
+            if K > 1 and k == K-1: 
                 c = 1.0 - sum(weights, axis=0)
             else:
                 c = weights[k]
@@ -231,7 +231,7 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     for c in xrange(N):
         # The weights.
         if weights != None:
-            if c == N-1: 
+            if N > 1 and c == N-1: 
                 pc = 1.0 - sum(weights, axis=0)
             else:
                 pc = weights[c]

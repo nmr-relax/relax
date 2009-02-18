@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -365,7 +365,7 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
     """Read the RDC data from file.
 
     @param id:              The RDC identification string.
@@ -438,28 +438,36 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         # Strip the data of all comments and empty lines.
         file_data = strip(file_data)
 
-        # Test the validity of the RDC data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= min_col_num:
-                continue
-            elif data_col != None and file_data[i][data_col] == 'None':
-                continue
-            elif error_col != None and file_data[i][error_col] == 'None':
-                continue
+    # Test the validity of the RDC data.
+    missing = True
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= min_col_num:
+            continue
+        elif data_col != None and file_data[i][data_col] == 'None':
+            continue
+        elif error_col != None and file_data[i][error_col] == 'None':
+            continue
 
-            # Test that the data are numbers.
-            try:
-                if res_num_col != None:
-                    int(file_data[i][res_num_col])
-                if spin_num_col != None:
-                    int(file_data[i][spin_num_col])
-                if data_col != None:
-                    float(file_data[i][data_col])
-                if error_col != None:
-                    float(file_data[i][error_col])
-            except ValueError:
-                raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
+        # Test that the data are numbers.
+        try:
+            if res_num_col != None:
+                int(file_data[i][res_num_col])
+            if spin_num_col != None:
+                int(file_data[i][spin_num_col])
+            if data_col != None:
+                float(file_data[i][data_col])
+            if error_col != None:
+                float(file_data[i][error_col])
+        except ValueError:
+            raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
+
+        # Right, data is ok and exists.
+        missing = False
+
+    # Hmmm, no data!
+    if missing:
+        raise RelaxError, "No corresponding data could be found within the file."
 
 
     # Global (non-spin specific) data.
@@ -478,6 +486,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
     #####################
 
     # Loop over the RDC data.
+    print "\n%-50s %-15s %-15s" % ("spin_id", "value", "error")
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -520,6 +529,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
 
             # Append the error.
             spin.rdc_err.append(error)
+
+        # Print out.
+        print "%-50s %15s %15s" % (id, value, error)
 
 
 def return_data_desc(name):

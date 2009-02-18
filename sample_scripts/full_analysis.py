@@ -159,14 +159,14 @@ DIFF_MODEL = 'local_tm'
 MF_MODELS = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
 
-# The type of heteronucleus.
-HETNUC = 'N'
-
 # The PDB file (set this to None if no structure is available).
 PDB_FILE = '1f3y.pdb'
 
 # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
 SEQ_ARGS = ['noe.600.out', None, None, 0, 1, None, None, None]
+
+# The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
+HET_NAME = 'N'
 
 # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
 RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 0, 1, None, None, 2, 3, None],
@@ -625,6 +625,10 @@ class Main:
 
             # Load the sequence.
             sequence.read(SEQ_ARGS[0], SEQ_ARGS[1], SEQ_ARGS[2], SEQ_ARGS[3], SEQ_ARGS[4], SEQ_ARGS[5], SEQ_ARGS[6], SEQ_ARGS[7])
+
+            # Name the spins if necessary.
+            if SEQ_ARGS[6] == None:
+                spin.name(name=HET_NAME)
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:

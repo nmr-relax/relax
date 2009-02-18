@@ -512,20 +512,20 @@ class Structure:
         ~~~~~~~
 
         To extract the XH vectors of the backbone amide nitrogens where in the PDB file the backbone
-        nitrogen is called 'N' and the attached proton is called 'H', assuming multiple types of
+        nitrogen is called 'N' and the attached atom is called 'H', assuming multiple types of
         spin have already been loaded, type one of:
 
         relax> structure.vectors(spin_id='@N')
         relax> structure.vectors('H', spin_id='@N')
-        relax> structure.vectors(proton='H', spin_id='@N')
+        relax> structure.vectors(attached='H', spin_id='@N')
 
-        If the attached proton is called 'HN', type:
+        If the attached atom is called 'HN', type:
 
-        relax> structure.vectors(proton='HN', spin_id='@N')
+        relax> structure.vectors(attached='HN', spin_id='@N')
 
         For the 'CA' spin bonded to the 'HA' proton, type:
 
-        relax> structure.vectors(proton='HA', spin_id='@CA')
+        relax> structure.vectors(attached='HA', spin_id='@CA')
 
 
         If you are working with RNA, you can use the residue name identifier to calculate the

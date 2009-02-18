@@ -141,6 +141,9 @@ def get_pipe(name=None):
     if name == None:
         name = cdp_name()
 
+    # Test if the data pipe exists.
+    test(name)
+
     return ds[name]
 
 
