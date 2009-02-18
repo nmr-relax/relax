@@ -57,6 +57,22 @@ N15_CSA = -172 * 1e-6
 NH_BOND_LENGTH = 1.02 * 1e-10
 """The length of the NH bond (default value)."""
 
+NH_BOND_LENGTH_RDC = 1.041 * 1e-10
+"""The length of the NH bond for RDCs (from Ottiger, M. and Bax A., J. Am. Chem. Soc. (1998), 120, 12334-12341)."""
+
+CA_HA_BOND_LENGTH_RDC = 1.118 * 1e-10
+"""The length of the C_alpha-H_alpha bond for RDCs (from Ottiger, M. and Bax A., J. Am. Chem. Soc. (1998), 120, 12334-12341)."""
+
+CA_C_BOND_LENGTH_RDC = 1.526 * 1e-10
+"""The length of the C_alpha-C_prime bond for RDCs (from Ottiger, M. and Bax A., J. Am. Chem. Soc. (1998), 120, 12334-12341)."""
+
+C_N_BOND_LENGTH_RDC = 1.329 * 1e-10
+"""The length of the C_prime-N bond for RDCs (from Ottiger, M. and Bax A., J. Am. Chem. Soc. (1998), 120, 12334-12341)."""
+
+C_HN_BOND_LENGTH_RDC = 2.067 * 1e-10
+"""The length of the C_prime-HN bond for RDCs (from Ottiger, M. and Bax A., J. Am. Chem. Soc. (1998), 120, 12334-12341)."""
+
+
 
 # The dipolar constant.
 #######################
