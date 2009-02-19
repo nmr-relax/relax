@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -93,7 +93,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
 
 
 def display(param=None):
-    """Function for displaying residue specific data values.
+    """Display spin specific data values.
 
     @param param:       The name of the parameter to display.
     @type param:        str
@@ -438,7 +438,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
 
 
 def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
-    """Function for setting spin specific parameter values.
+    """Set spin specific parameter values.
 
     @param value:   The value to change the parameter to.
     @type value:    float or str
@@ -467,7 +467,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         if value:
             # Test if the length of the value array is equal to the length of the parameter array.
             if len(value) != len(spin.params):
-                raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for residue " + `spin.num` + " " + spin.name + "."
+                raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for spin " + `spin.num` + " " + spin.name + "."
 
         # Default values.
         else:
