@@ -44,7 +44,7 @@ class NMR_STAR:
         """
 
         # Initialise the pystarlib File object.
-        self.data = File(title='relax_model_free_results', filename=file_path)
+        self.data = File(title=title, filename=file_path)
 
 
     def read(self):
