@@ -44,17 +44,18 @@ class NMR_STAR:
         """
 
         # Initialise the pystarlib File object.
-        self.file = File(title='relax_model_free_results', filename=file_path)
+        self.data = File(title='relax_model_free_results', filename=file_path)
 
 
     def read(self):
         """Read the data from a BMRB NMR-STAR formatted file."""
 
-        self.file.read()
+        # Read the contents of the STAR formatted file.
+        self.data.read()
 
 
     def write(self):
         """Write the data to a BMRB NMR-STAR formatted file."""
 
         # Write the contents to the STAR formatted file.
-        self.file.write()
+        self.data.write()
