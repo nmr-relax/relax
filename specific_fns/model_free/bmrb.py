@@ -131,7 +131,7 @@ class Bmrb:
             frame.tagtables.append(table)
 
             # Add the relaxation data save frame.
-            star.file.datanodes.append(frame)
+            star.data.datanodes.append(frame)
 
         # Write the contents to the STAR formatted file.
         star.write()
