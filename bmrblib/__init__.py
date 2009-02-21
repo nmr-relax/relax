@@ -30,10 +30,10 @@ from os import F_OK, access
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
-from specific_fns.setup import get_specific_fn
+import specific_fns
 
 
-__all__ = []
+__all__ = ['nmr_star_dict']
 
 
 
@@ -45,7 +45,7 @@ def display():
         raise RelaxNoPipeError
 
     # Specific results writing function.
-    write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
+    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
 
     # Write the results.
     write_function(sys.stdout)
@@ -70,7 +70,7 @@ def read(file=None, directory=None):
         raise RelaxFileError, file_path
 
     # Specific results reading function.
-    read_function = get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
+    read_function = specific_fns.setup.get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
 
     # Read the results.
     read_function(file_path)
@@ -88,7 +88,7 @@ def write(file=None, directory=None, force=False):
         directory = ds.current_pipe
 
     # Specific results writing function.
-    write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
+    write_function = specific_fns.setup.get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type)
 
     # Get the full file path.
     file_path = get_file_path(file, directory)

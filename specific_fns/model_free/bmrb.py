@@ -21,9 +21,9 @@
 ###############################################################################
 
 # relax module imports.
+from bmrblib.nmr_star_dict import NMR_STAR
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
-from pystarlib.File import File
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
@@ -38,11 +38,11 @@ class Bmrb:
         @type file_path:    str
         """
 
-        # Initialise the pystarlib File object.
-        file = File(title='relax_model_free_results', filename=file_path)
+        # Initialise the NMR-STAR data object.
+        star = NMR_STAR('relax_model_free_results', file_path)
 
         # Read the contents of the STAR formatted file.
-        file.read()
+        star.read()
 
 
     def bmrb_write(self, file_path):
@@ -52,8 +52,8 @@ class Bmrb:
         @type file_path:    str
         """
 
-        # Initialise the pystarlib File object.
-        file = File(title='relax_model_free_results', filename=file_path)
+        # Initialise the NMR-STAR data object.
+        star = NMR_STAR('relax_model_free_results', file_path)
 
         # Get the current data pipe.
         cdp = get_pipe()
@@ -131,7 +131,7 @@ class Bmrb:
             frame.tagtables.append(table)
 
             # Add the relaxation data save frame.
-            file.datanodes.append(frame)
+            star.file.datanodes.append(frame)
 
         # Write the contents to the STAR formatted file.
-        file.write()
+        star.write()
