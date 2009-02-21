@@ -24,8 +24,6 @@
 from bmrblib.nmr_star_dict import NMR_STAR
 from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
-from pystarlib.SaveFrame import SaveFrame
-from pystarlib.TagTable import TagTable
 
 
 class Bmrb:
@@ -84,54 +82,9 @@ class Bmrb:
                 relax_data_list[i].append(str(spin.relax_data[i]))
                 relax_error_list[i].append(str(spin.relax_error[i]))
 
-        # Relaxation data save frames.
-        r1_inc = 0
-        r2_inc = 0
-        noe_inc = 0
+        # Add the relaxation data.
         for i in range(cdp.num_ri):
-            # Data type labels.
-            if cdp.ri_labels[i] == 'R1':
-                r1_inc = r1_inc + 1
-                ri_inc = r1_inc
-                ri_label = 'T1'
-                coherence = 'Nz'
-            elif cdp.ri_labels[i] == 'R2':
-                r2_inc = r2_inc + 1
-                ri_inc = r2_inc
-                ri_label = 'T2'
-                coherence = 'Ny'
-            elif cdp.ri_labels[i] == 'NOE':
-                noe_inc = noe_inc + 1
-                ri_inc = noe_inc
-                ri_label = 'NOE'
-
-            # Initialise the save frame.
-            frame = SaveFrame(title='heteronuclear_'+ri_label+'_list_'+`ri_inc`)
-
-            # The save frame category.
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Saveframe_category'], tagvalues=[[ri_label+'_relaxation']]))
-
-            # Sample info.
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Sample_label'], tagvalues=[['$sample_1']]))
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Sample_conditions_label'], tagvalues=[['$conditions_1']]))
-
-            # NMR info.
-            frame.tagtables.append(TagTable(free=True, tagnames=['_Spectrometer_frequency_1H'], tagvalues=[[str(cdp.frq[cdp.remap_table[i]]/1e6)]]))
-            if ri_label in ['T1', 'T2']:
-                frame.tagtables.append(TagTable(free=True, tagnames=['_'+ri_label+'_coherence_type'], tagvalues=[[coherence]]))
-                frame.tagtables.append(TagTable(free=True, tagnames=['_'+ri_label+'_value_units'], tagvalues=[['1/s']]))
-
-            # The relaxation tag names.
-            tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+ri_label+'_value', '_'+ri_label+'_value_error']
-
-            # Add the data.
-            table = TagTable(tagnames=tag_names, tagvalues=[res_num_list, res_name_list, atom_name_list, relax_data_list[i], relax_error_list[i]])
-
-            # Add the tag table to the save frame.
-            frame.tagtables.append(table)
-
-            # Add the relaxation data save frame.
-            star.data.datanodes.append(frame)
+            star.relax_data.add(ri_label=cdp.ri_labels[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, data=relax_data_list[i], errors=relax_error_list[i])
 
         # Write the contents to the STAR formatted file.
         star.write()
