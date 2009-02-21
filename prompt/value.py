@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -53,15 +53,15 @@ class Value:
         self.__relax__ = relax
 
 
-    def copy(self, run1=None, run2=None, param=None):
-        """Function for copying residue specific data values from run1 to run2.
+    def copy(self, pipe_from=None, pipe_to=None, param=None):
+        """Copy spin specific data values from one data pipe to another.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        run1:  The name of the run to copy from.
+        pipe_from:  The name of the pipe to copy from.
 
-        run2:  The name of the run to copy to.
+        pipe_to:  The name of the pipe to copy to.
 
         param:  The parameter to copy.
 
@@ -71,15 +71,15 @@ class Value:
 
         Only one parameter may be selected, therefore the 'param' argument should be a string.
 
-        If this function is used to change values of previously minimised runs, then the
+        If this function is used to change values of previously minimised parameters, then the
         minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset to None.
+        and Hessian count) will be reset.
 
 
         Examples
         ~~~~~~~~
 
-        To copy the CSA values from the run 'm1' to 'm2', type:
+        To copy the CSA values from the data pipe 'm1' to 'm2', type:
 
         relax> value.copy('m1', 'm2', 'CSA')
         """
@@ -87,34 +87,32 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.copy("
-            text = text + "run1=" + `run1`
-            text = text + ", run2=" + `run2`
+            text = text + "pipe_from=" + `pipe_from`
+            text = text + ", pipe_to=" + `pipe_to`
             text = text + ", param=" + `param` + ")"
             print text
 
-        # The run1 argument.
-        if type(run1) != str:
-            raise RelaxStrError, ('run1', run1)
+        # The pipe_from argument.
+        if type(pipe_from) != str:
+            raise RelaxStrError, ('pipe_from', pipe_from)
 
-        # The run2 argument.
-        if type(run2) != str:
-            raise RelaxStrError, ('run2', run2)
+        # The pipe_to argument.
+        if type(pipe_to) != str:
+            raise RelaxStrError, ('pipe_to', pipe_to)
 
         # The parameter.
         if type(param) != str:
             raise RelaxStrError, ('parameter', param)
 
         # Execute the functional code.
-        self.__relax__.generic.value.copy(run1=run1, run2=run2, param=param)
+        self.__relax__.generic.value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
 
 
-    def display(self, run=None, param=None):
-        """Function for displaying residue specific data values.
+    def display(self, param=None):
+        """Display spin specific data values.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         param:  The parameter to display.
 
@@ -128,37 +126,30 @@ class Value:
         Examples
         ~~~~~~~~
 
-        To show all CSA values for the run 'm1', type:
+        To show all CSA values, type:
 
-        relax> value.display('m1', 'CSA')
+        relax> value.display('CSA')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.display("
-            text = text + "run=" + `run`
-            text = text + ", param=" + `param` + ")"
+            text = text + "param=" + `param` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The parameter.
         if type(param) != str:
             raise RelaxStrError, ('parameter', param)
 
         # Execute the functional code.
-        self.__relax__.generic.value.display(run=run, param=param)
+        self.__relax__.generic.value.display(param=param)
 
 
-    def read(self, run=None, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
-        """Function for reading residue specific data values from a file.
+    def read(self, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+        """Read spin specific data values from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         param:  The parameter.
 
@@ -183,7 +174,7 @@ class Value:
         Only one parameter may be selected, therefore the 'param' argument should be a string.  If
         the file only contains values and no errors, set the error column argument to None.
 
-        If this function is used to change values of previously minimised runs, then the
+        If this function is used to change values of previously minimised parameters, then the
         minimisation statistics (chi-squared value, iteration count, function count, gradient count,
         and Hessian count) will be reset to None.
 
@@ -191,20 +182,19 @@ class Value:
         Examples
         ~~~~~~~~
 
-        To load CSA values for the run 'm1' from the file 'csa_values' in the directory 'data', type
-        any of the following:
+        To load CSA values from the file 'csa_values' in the directory 'data', type one of the
+        following:
 
-        relax> value.read('m1', 'CSA', 'data/csa_value')
-        relax> value.read('m1', 'CSA', 'data/csa_value', 0, 1, 2, 3, None, 1)
-        relax> value.read(run='m1', param='CSA', file='data/csa_value', num_col=0, name_col=1,
+        relax> value.read('CSA', 'data/csa_value')
+        relax> value.read('CSA', 'data/csa_value', 0, 1, 2, 3, None, 1)
+        relax> value.read(param='CSA', file='data/csa_value', num_col=0, name_col=1,
                           data_col=2, error_col=3, sep=None)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.read("
-            text = text + "run=" + `run`
-            text = text + ", param=" + `param`
+            text = text + "param=" + `param`
             text = text + ", scaling=" + `scaling`
             text = text + ", file=" + `file`
             text = text + ", num_col=" + `num_col`
@@ -213,10 +203,6 @@ class Value:
             text = text + ", error_col=" + `error_col`
             text = text + ", sep=" + `sep` + ")"
             print text
-
-        # The run name.
-        if type(run) != str:
-            raise RelaxStrError, ('run', run)
 
         # The parameter.
         if type(param) != str:
@@ -251,11 +237,11 @@ class Value:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(run=run, param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
+        self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
     def set(self, val=None, param=None, spin_id=None):
-        """Function for setting spin specific data values.
+        """Set spin specific data values.
 
         Keyword arguments
         ~~~~~~~~~~~~~~~~~
@@ -428,12 +414,10 @@ class Value:
 
 
     def write(self, param=None, file=None, dir=None, force=False):
-        """Function for writing residue specific data values to a file.
+        """Write spin specific data values to a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        run:  The name of the run.
 
         param:  The parameter.
 
@@ -461,7 +445,7 @@ class Value:
         relax> value.write(param='CSA', file='csa.txt')
 
 
-        To write the NOE values to the file 'noe', type:
+        To write the NOE values to the file 'noe', type one of:
 
         relax> value.write('noe', 'noe.out')
         relax> value.write(param='noe', file='noe.out')
