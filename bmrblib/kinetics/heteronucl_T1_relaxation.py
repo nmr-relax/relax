@@ -74,6 +74,14 @@ class HeteronuclT1Saveframe:
         @type errors:           list of float
         """
 
+        # Place the args into the namespace.
+        self.frq = frq
+        self.res_nums = res_nums
+        self.res_names = res_names
+        self.atom_names = atom_names
+        self.data = data
+        self.errors = errors
+
         # Init.
         tag_cat = ''
 
@@ -83,11 +91,12 @@ class HeteronuclT1Saveframe:
         coherence = 'Nz'
 
         # Initialise the save frame.
-        frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
+        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
 
         # Create the tag categories.
-        self.heteronuclT1list.create(frame=frame, frq=frq)
-        self.heteronuclT1experiment.create(frame=frame)
+        self.heteronuclT1list.create()
+        self.heteronuclT1experiment.create()
+        self.heteronuclT1software.create()
 
         # The relaxation tag names.
         tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+self.label+'_value', '_'+self.label+'_value_error']
@@ -96,10 +105,10 @@ class HeteronuclT1Saveframe:
         table = TagTable(tagnames=tag_names, tagvalues=[res_nums, res_names, atom_names, data, errors])
 
         # Add the tag table to the save frame.
-        frame.tagtables.append(table)
+        self.frame.tagtables.append(table)
 
         # Add the relaxation data save frame.
-        self.datanodes.append(frame)
+        self.datanodes.append(self.frame)
 
 
 
@@ -131,14 +140,8 @@ class HeteronuclT1List:
         self.sf = sf
 
 
-    def create(self, frame=None, frq=None):
-        """Create the HeteronuclT1List tag category.
-
-        @keyword frame:         The Heteronuclear T1 data saveframe object.
-        @type frame:            HeteronuclT1Saveframe instance
-        @keyword frq:           The spectrometer proton frequency, in Hz.
-        @type frq:              float
-        """
+    def create(self):
+        """Create the HeteronuclT1List tag category."""
 
         # Tag category label.
         tag_cat = ''
@@ -146,15 +149,15 @@ class HeteronuclT1List:
             tag_cat = self.HeteronuclT1List + '.'
 
         # The save frame category.
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SfCategory], tagvalues=[[self.sf.label+'_relaxation']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SfCategory], tagvalues=[[self.sf.label+'_relaxation']]))
 
         # Sample info.
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleConditionListLabel], tagvalues=[['$conditions_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleConditionListLabel], tagvalues=[['$conditions_1']]))
 
         # NMR info.
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SpectrometerFrequency1H], tagvalues=[[str(frq/1e6)]]))
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1CoherenceType], tagvalues=[[self.coherence]]))
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1ValUnits], tagvalues=[['1/s']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SpectrometerFrequency1H], tagvalues=[[str(self.sf.frq/1e6)]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1CoherenceType], tagvalues=[[self.coherence]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1ValUnits], tagvalues=[['1/s']]))
 
 
 
@@ -180,11 +183,7 @@ class HeteronuclT1Experiment:
 
 
     def create(self, frame=None):
-        """Create the HeteronuclT1Experiment tag category.
-
-        @keyword frame:         The Heteronuclear T1 data saveframe object.
-        @type frame:            HeteronuclT1Saveframe instance
-        """
+        """Create the HeteronuclT1Experiment tag category."""
 
         # Tag category label.
         tag_cat = ''
@@ -192,7 +191,7 @@ class HeteronuclT1Experiment:
             tag_cat = self.HeteronuclT1Experiment + '.'
 
         # Sample info.
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
 
 
 
@@ -214,12 +213,8 @@ class HeteronuclT1Software:
         self.sf = sf
 
 
-    def create(self, frame=None):
-        """Create the HeteronuclT1Software tag category.
-
-        @keyword frame:         The Heteronuclear T1 data saveframe object.
-        @type frame:            HeteronuclT1Saveframe instance
-        """
+    def create(self):
+        """Create the HeteronuclT1Software tag category."""
 
         # Tag category label.
         tag_cat = ''
