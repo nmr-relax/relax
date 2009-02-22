@@ -34,13 +34,16 @@ def translate(data):
     # List data.
     if type(data) == list:
         # Loop over the data.
+        new_data = []
         for i in range(len(data)):
             if data[i] == None or data[i] == 'None':
-                data[i] = '?'
+                new_data.append('?')
+            else:
+                new_data.append(data[i])
 
     # None.
     if data == None:
-        data = '?'
+        new_data = '?'
 
     # Return the translated result.
-    return data
+    return new_data
