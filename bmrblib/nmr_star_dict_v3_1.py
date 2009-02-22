@@ -28,9 +28,9 @@ http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 """
 
 # relax module imports.
-from bmrblib.kinetics.heteronucl_NOEs_v3_1 import HeteronuclNOESaveframe_v3_1 as HeteronuclNOESaveframe
-#from bmrblib.kinetics.heteronucl_T1_relaxation_v3_1 import HeteronuclT1Saveframe_v3_1 as HeteronuclT1Saveframe
-#from bmrblib.kinetics.heteronucl_T2_relaxation_v3_1 import HeteronuclT2Saveframe_v3_1 as HeteronuclT2Saveframe
+from bmrblib.kinetics.heteronucl_NOEs_v3_1 import HeteronuclNOESaveframe
+#from bmrblib.kinetics.heteronucl_T1_relaxation_v3_1 import HeteronuclT1Saveframe
+#from bmrblib.kinetics.heteronucl_T2_relaxation_v3_1 import HeteronuclT2Saveframe
 from bmrblib.nmr_star_dict import NMR_STAR
 
 

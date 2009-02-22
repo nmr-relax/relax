@@ -21,30 +21,24 @@
 ###############################################################################
 
 # Module docstring.
-"""The Heteronuclear NOE data saveframe category.
+"""The v3.1 Heteronuclear NOE data saveframe category.
 
-For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_NOEs.
+See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_NOEs.
 """
 
 # relax module imports.
-from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe, HeteronuclNOEList, HeteronuclNOEExperiment, HeteronuclNOESoftware, HeteronuclNOE
+from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe as HeteronuclNOESaveframeBase
+from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOEList as HeteronuclNOEListBase
+from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOEExperiment as HeteronuclNOEExperimentBase
+from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESoftware as HeteronuclNOESoftwareBase
+from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOE as HeteronuclNOEBase
 
 
-class HeteronuclNOESaveframe_v3_1(HeteronuclNOESaveframe):
+class HeteronuclNOESaveframe(HeteronuclNOESaveframeBase):
     """The v3.1 Heteronuclear NOE data saveframe class."""
 
 
-    def add_tag_categories(self):
-        """Create the v3.1 tag categories."""
-
-        # The tag category objects.
-        self.heteronuclNOElist = HeteronuclNOEList_v3_1(self)
-        self.heteronuclNOEexperiment = HeteronuclNOEExperiment_v3_1(self)
-        self.heteronuclNOEsoftware = HeteronuclNOESoftware_v3_1(self)
-        self.heteronuclNOE = HeteronuclNOE_v3_1(self)
-
-
-class HeteronuclNOEList_v3_1(HeteronuclNOEList):
+class HeteronuclNOEList(HeteronuclNOEListBase):
     """v3.1 HeteronuclNOEList tag category."""
 
     # Tag names for the relaxation data.
@@ -64,17 +58,17 @@ class HeteronuclNOEList_v3_1(HeteronuclNOEList):
         TagCategory.__init__(self, sf, tag_category_label='_Heteronucl_T2_list')
 
 
-class HeteronuclNOEExperiment_v3_1(HeteronuclNOEExperiment):
+class HeteronuclNOEExperiment(HeteronuclNOEExperimentBase):
     """v3.1 HeteronuclNOEExperiment tag category."""
 
     # Tag names for experiment setup.
-    SampleLabel = '_Sample_label'
+    SampleLabel = 'Sample_label'
 
 
-class HeteronuclNOESoftware_v3_1(HeteronuclNOESoftware):
+class HeteronuclNOESoftware(HeteronuclNOESoftwareBase):
     """v3.1 HeteronuclNOESoftware tag category."""
 
 
-class HeteronuclNOE_v3_1(HeteronuclNOE):
+class HeteronuclNOE(HeteronuclNOEBase):
     """v3.1 HeteronuclNOE tag category."""
 
