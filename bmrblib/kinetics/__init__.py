@@ -27,4 +27,6 @@ This is a collection of NMR-STAR dictionary saveframes as defined at, for exampl
 http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 """
 
-__all__ = []
+__all__ = ['heteronucl_T1_relaxation',
+           'heteronucl_T2_relaxation',
+           'heteronucl_NOE_relaxation']
