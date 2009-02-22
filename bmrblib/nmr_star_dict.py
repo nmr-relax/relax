@@ -28,7 +28,7 @@ http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 """
 
 # relax module imports.
-#from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe
+from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe
 from bmrblib.kinetics.heteronucl_T1_relaxation import HeteronuclT1Saveframe
 from bmrblib.kinetics.heteronucl_T2_relaxation import HeteronuclT2Saveframe
 from pystarlib.File import File

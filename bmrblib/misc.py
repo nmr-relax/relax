@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,10 +21,26 @@
 ###############################################################################
 
 # Module docstring.
-"""Package for interfacing with the BMRB (http://www.bmrb.wisc.edu/) by handling NMR-STAR formatted files."""
+"""Functions for manipulating NMR-STAR dictionary data."""
 
 
-__all__ = ['misc',
-           'nmr_star_dict',
-           'nmr_star_dict_v3_1',
-           'tag_category']
+def translate(data):
+    """Translate all None values into the '?' string.
+
+    @param data:    The data to translate.
+    @type data:     anything
+    """
+
+    # List data.
+    if type(data) == list:
+        # Loop over the data.
+        for i in range(len(data)):
+            if data[i] == None or data[i] == 'None':
+                data[i] = '?'
+
+    # None.
+    if data == None:
+        data = '?'
+
+    # Return the translated result.
+    return data

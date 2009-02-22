@@ -27,6 +27,7 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 """
 
 # relax module imports.
+from bmrblib.misc import translate
 from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
@@ -75,11 +76,11 @@ class HeteronuclT1Saveframe:
 
         # Place the args into the namespace.
         self.frq = frq
-        self.res_nums = res_nums
-        self.res_names = res_names
-        self.atom_names = atom_names
-        self.data = data
-        self.errors = errors
+        self.res_nums = translate(res_nums)
+        self.res_names = translate(res_names)
+        self.atom_names = translate(atom_names)
+        self.data = translate(data)
+        self.errors = translate(errors)
 
         # Set up the R1 specific variables.
         self.r1_inc = self.r1_inc + 1
