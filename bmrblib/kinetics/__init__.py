@@ -28,8 +28,8 @@ http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 """
 
 __all__ = ['heteronucl_NOE_relaxation',
-           'heteronucl_NOE_relaxation_v3_1']
+           'heteronucl_NOE_relaxation_v3_1',
            'heteronucl_T1_relaxation',
            'heteronucl_T1_relaxation_v3_1',
            'heteronucl_T2_relaxation',
-           'heteronucl_T2_relaxation_v3_1',
+           'heteronucl_T2_relaxation_v3_1']
