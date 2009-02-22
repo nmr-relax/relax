@@ -31,25 +31,11 @@ from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
 
-class HeteronuclT1List:
-    """Base class for relaxation data support."""
+class HeteronuclT1Saveframe:
+    """The Heteronuclear T1 data saveframe class."""
 
-    # Tag categories.
-    HeteronuclNOEList = None
-    HeteronuclT1List = None
-    HeteronuclT2List = None
-
-    # Tag names for the relaxation data.
-    SfCategory = '_Saveframe_category'
-    SampleConditionListLabel = '_Sample_conditions_label'
-    SpectrometerFrequency1H = '_Spectrometer_frequency_1H'
-    T1CoherenceType = '_T1_coherence_type'
-    T2CoherenceType = '_T2_coherence_type'
-    T1ValUnits = '_T1_value_units'
-    T2ValUnits = '_T2_value_units'
-
-    # Tag names for experiment setup.
-    SampleLabel = '_Sample_label'
+    # Saveframe variables.
+    label = 'T1'
 
 
     def __init__(self, datanodes):
@@ -64,15 +50,14 @@ class HeteronuclT1List:
 
         # The number of relaxation data sets.
         self.r1_inc = 0
-        self.r2_inc = 0
-        self.noe_inc = 0
+
+        # The tag category objects.
+        self.heteronuclT1list = HeteronuclT1List(self)
 
 
-    def add(self, ri_label=None, frq=None, res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
+    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
-        @keyword ri_label:      The relaxation data label, one of 'R1', 'R2', or 'NOE'.
-        @type ri_label:         str
         @keyword frq:           The spectrometer proton frequency, in Hz.
         @type frq:              float
         @keyword res_nums:      The residue number list.
@@ -91,63 +76,18 @@ class HeteronuclT1List:
         tag_cat = ''
 
         # Set up the R1 specific variables.
-        if ri_label == 'R1':
-            # Misc.
-            self.r1_inc = self.r1_inc + 1
-            ri_inc = self.r1_inc
-            label = 'T1'
-            coherence = 'Nz'
-
-            # Tag categories.
-            if self.HeteronuclT1List:
-                tag_cat = self.HeteronuclT1List + '.'
-            else:
-                tag_cat = ''
-
-        # Set up the R2 specific variables.
-        elif ri_label == 'R2':
-            # Misc.
-            self.r2_inc = self.r2_inc + 1
-            ri_inc = self.r2_inc
-            label = 'T2'
-            coherence = 'Ny'
-
-            # Tag categories.
-            if self.HeteronuclT2List:
-                tag_cat = self.HeteronuclT2List + '.'
-
-        # Set up the NOE specific variables.
-        elif ri_label == 'NOE':
-            # Misc.
-            self.noe_inc = self.noe_inc + 1
-            ri_inc = self.noe_inc
-            label = 'NOE'
-
-            # Tag categories.
-            if self.HeteronuclNOEList:
-                tag_cat = self.HeteronuclNOEList + '.'
+        self.r1_inc = self.r1_inc + 1
+        ri_inc = self.r1_inc
+        coherence = 'Nz'
 
         # Initialise the save frame.
-        frame = SaveFrame(title='heteronuclear_'+label+'_list_'+`ri_inc`)
+        frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
 
-        # The save frame category.
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SfCategory], tagvalues=[[label+'_relaxation']]))
-
-        # Sample info.
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleConditionListLabel], tagvalues=[['$conditions_1']]))
-
-        # NMR info.
-        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SpectrometerFrequency1H], tagvalues=[[str(frq/1e6)]]))
-        if label == 'T1':
-            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1CoherenceType], tagvalues=[[coherence]]))
-            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1ValUnits], tagvalues=[['1/s']]))
-        elif label == 'T2':
-            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T2CoherenceType], tagvalues=[[coherence]]))
-            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T2ValUnits], tagvalues=[['1/s']]))
+        # Create the tag categories.
+        self.heteronuclT1list.create(frame=frame, frq=frq)
 
         # The relaxation tag names.
-        tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+label+'_value', '_'+label+'_value_error']
+        tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+self.label+'_value', '_'+self.label+'_value_error']
 
         # Add the data.
         table = TagTable(tagnames=tag_names, tagvalues=[res_nums, res_names, atom_names, data, errors])
@@ -157,3 +97,61 @@ class HeteronuclT1List:
 
         # Add the relaxation data save frame.
         self.datanodes.append(frame)
+
+
+class HeteronuclT1List:
+    """Base class for the HeteronuclT1List tag category."""
+
+    # Tag category label.
+    HeteronuclT1List = None
+
+    # Tag names for the relaxation data.
+    SfCategory = '_Saveframe_category'
+    SampleConditionListLabel = '_Sample_conditions_label'
+    SpectrometerFrequency1H = '_Spectrometer_frequency_1H'
+    T1CoherenceType = '_T1_coherence_type'
+    T1ValUnits = '_T1_value_units'
+
+    # Tag names for experiment setup.
+    SampleLabel = '_Sample_label'
+
+    # Class variables.
+    coherence = 'Nz'
+
+
+    def __init__(self, sf):
+        """Initialise the tag category object, placing the saveframe into its namespace.
+
+        @param sf:  The heteronuclear T1 saveframe object.
+        @type sf:   HeteronuclT1Saveframe instance
+        """
+
+        # Place the saveframe into the namespace.
+        self.sf = sf
+
+
+    def create(self, frame=None, frq=None):
+        """Create the HeteronuclT1List tag category.
+
+        @keyword frame:         The Heteronuclear T1 data saveframe object.
+        @type frame:            HeteronuclT1Saveframe instance
+        @keyword frq:           The spectrometer proton frequency, in Hz.
+        @type frq:              float
+        """
+
+        # Tag category label.
+        tag_cat = ''
+        if self.HeteronuclT1List:
+            tag_cat = self.HeteronuclT1List + '.'
+
+        # The save frame category.
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SfCategory], tagvalues=[[self.sf.label+'_relaxation']]))
+
+        # Sample info.
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleConditionListLabel], tagvalues=[['$conditions_1']]))
+
+        # NMR info.
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SpectrometerFrequency1H], tagvalues=[[str(frq/1e6)]]))
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1CoherenceType], tagvalues=[[self.coherence]]))
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1ValUnits], tagvalues=[['1/s']]))

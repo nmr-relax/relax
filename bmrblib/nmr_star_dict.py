@@ -48,7 +48,7 @@ class NMR_STAR:
         self.data = File(title=title, filename=file_path)
 
         # Initialise the objects of this class.
-        self.heteronucl_T1_relaxation = heteronucl_T1_relaxation.HeteronuclT1List(self.data.datanodes)
+        self.heteronucl_T1_relaxation = heteronucl_T1_relaxation.HeteronuclT1Saveframe(self.data.datanodes)
 
 
     def read(self):
