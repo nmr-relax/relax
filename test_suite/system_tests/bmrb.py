@@ -72,3 +72,5 @@ class Bmrb(TestCase):
         # Read the BMRB STAR formatted file.
         self.relax.interpreter._BMRB.read(file=self.tmpfile)
 
+        # Try displaying some of the relaxation data.
+        self.relax.interpreter._Relax_data.display('R1', '800')
