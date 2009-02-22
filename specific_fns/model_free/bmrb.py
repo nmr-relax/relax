@@ -84,7 +84,7 @@ class Bmrb:
 
         # Add the relaxation data.
         for i in range(cdp.num_ri):
-            star.relax_data.add(ri_label=cdp.ri_labels[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, data=relax_data_list[i], errors=relax_error_list[i])
+            star.heteronucl_T1_relaxation.add(ri_label=cdp.ri_labels[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, data=relax_data_list[i], errors=relax_error_list[i])
 
         # Write the contents to the STAR formatted file.
         star.write()
