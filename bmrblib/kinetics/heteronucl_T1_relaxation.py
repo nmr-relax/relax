@@ -190,10 +190,49 @@ class T1(TagCategory):
         """Create the T1 tag category."""
 
         # The relaxation tag names.
-        tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+self.sf.label+'_value', '_'+self.sf.label+'_value_error']
+        tag_names = []
+        missing = []
+        for key in ['SeqID', 'CompID', 'AtomID', 'Val', 'ValErr']:
+            if not self.tag_names.has_key(key):
+                missing.append(key)
+            else:
+                tag_names.append(self.create_tag_label(self.tag_names[key]))
+
+        # The tag values.
+        tag_values = []
+        if 'SeqID' not in missing:
+            tag_values.append(self.sf.res_nums)
+        if 'CompID' not in missing:
+            tag_values.append(self.sf.res_names)
+        if 'AtomID' not in missing:
+            tag_values.append(self.sf.atom_names)
+        if 'Val' not in missing:
+            tag_values.append(self.sf.data)
+        if 'ValErr' not in missing:
+            tag_values.append(self.sf.errors)
 
         # Add the data.
-        table = TagTable(tagnames=tag_names, tagvalues=[self.sf.res_nums, self.sf.res_names, self.sf.atom_names, self.sf.data, self.sf.errors])
+        table = TagTable(tagnames=tag_names, tagvalues=tag_values)
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['SeqID'] = 'Residue_seq_code'
+        self.tag_names['CompID'] = 'Residue_label'
+        self.tag_names['AtomID'] = 'Atom_name'
+        self.tag_names['Val'] = self.sf.label+'_value'
+        self.tag_names['ValErr'] = self.sf.label+'_value_error'

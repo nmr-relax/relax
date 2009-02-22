@@ -77,3 +77,10 @@ class HeteronuclNOE_v3_1(HeteronuclNOE):
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
         HeteronuclNOE.tag_setup(self, tag_category_label='Heteronucl_NOE', sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['SeqID'] = 'Seq_ID'
+        self.tag_names['CompID'] = 'Comp_ID'
+        self.tag_names['AtomID'] = 'Atom_ID'
+        self.tag_names['Val'] = 'Val'
+        self.tag_names['ValErr'] = 'Val_err'

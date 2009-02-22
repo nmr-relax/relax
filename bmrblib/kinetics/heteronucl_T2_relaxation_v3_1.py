@@ -77,3 +77,10 @@ class T2_v3_1(T2):
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
         T2.tag_setup(self, tag_category_label='T2', sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['SeqID'] = 'Seq_ID'
+        self.tag_names['CompID'] = 'Comp_ID'
+        self.tag_names['AtomID'] = 'Atom_ID'
+        self.tag_names['Val'] = 'Val'
+        self.tag_names['ValErr'] = 'Val_err'
