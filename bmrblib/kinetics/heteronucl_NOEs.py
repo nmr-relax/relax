@@ -52,6 +52,12 @@ class HeteronuclNOESaveframe:
         # The number of relaxation data sets.
         self.r1_inc = 0
 
+        self.add_tag_categories()
+
+
+    def add_tag_categories(self):
+        """Create the v3.1 tag categories."""
+
         # The tag category objects.
         self.heteronuclNOElist = HeteronuclNOEList(self)
         self.heteronuclNOEexperiment = HeteronuclNOEExperiment(self)
