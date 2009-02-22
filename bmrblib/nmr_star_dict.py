@@ -69,6 +69,24 @@ class NMR_STAR:
 class Relaxation_data:
     """Base class for relaxation data support."""
 
+    # Tag categories.
+    HeteronuclNOEList = None
+    HeteronuclT1List = None
+    HeteronuclT2List = None
+
+    # Tag names for the relaxation data.
+    SfCategory = '_Saveframe_category'
+    SampleConditionListLabel = '_Sample_conditions_label'
+    SpectrometerFrequency1H = '_Spectrometer_frequency_1H'
+    T1CoherenceType = '_T1_coherence_type'
+    T2CoherenceType = '_T2_coherence_type'
+    T1ValUnits = '_T1_value_units'
+    T2ValUnits = '_T2_value_units'
+
+    # Tag names for experiment setup.
+    SampleLabel = '_Sample_label'
+
+
     def __init__(self, datanodes):
         """Initialise the class, placing the pystarlib data nodes into the namespace.
 
@@ -104,37 +122,64 @@ class Relaxation_data:
         @type errors:           list of float
         """
 
-        # Data type label.
+        # Init.
+        tag_cat = ''
+
+        # Set up the R1 specific variables.
         if ri_label == 'R1':
+            # Misc.
             self.r1_inc = self.r1_inc + 1
             ri_inc = self.r1_inc
             label = 'T1'
             coherence = 'Nz'
+
+            # Tag categories.
+            if self.HeteronuclT1List:
+                tag_cat = self.HeteronuclT1List + '.'
+            else:
+                tag_cat = ''
+
+        # Set up the R2 specific variables.
         elif ri_label == 'R2':
+            # Misc.
             self.r2_inc = self.r2_inc + 1
             ri_inc = self.r2_inc
             label = 'T2'
             coherence = 'Ny'
+
+            # Tag categories.
+            if self.HeteronuclT2List:
+                tag_cat = self.HeteronuclT2List + '.'
+
+        # Set up the NOE specific variables.
         elif ri_label == 'NOE':
+            # Misc.
             self.noe_inc = self.noe_inc + 1
             ri_inc = self.noe_inc
             label = 'NOE'
+
+            # Tag categories.
+            if self.HeteronuclNOEList:
+                tag_cat = self.HeteronuclNOEList + '.'
 
         # Initialise the save frame.
         frame = SaveFrame(title='heteronuclear_'+label+'_list_'+`ri_inc`)
 
         # The save frame category.
-        frame.tagtables.append(TagTable(free=True, tagnames=['_Saveframe_category'], tagvalues=[[label+'_relaxation']]))
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SfCategory], tagvalues=[[label+'_relaxation']]))
 
         # Sample info.
-        frame.tagtables.append(TagTable(free=True, tagnames=['_Sample_label'], tagvalues=[['$sample_1']]))
-        frame.tagtables.append(TagTable(free=True, tagnames=['_Sample_conditions_label'], tagvalues=[['$conditions_1']]))
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleConditionListLabel], tagvalues=[['$conditions_1']]))
 
         # NMR info.
-        frame.tagtables.append(TagTable(free=True, tagnames=['_Spectrometer_frequency_1H'], tagvalues=[[str(frq/1e6)]]))
-        if label in ['T1', 'T2']:
-            frame.tagtables.append(TagTable(free=True, tagnames=['_'+label+'_coherence_type'], tagvalues=[[coherence]]))
-            frame.tagtables.append(TagTable(free=True, tagnames=['_'+label+'_value_units'], tagvalues=[['1/s']]))
+        frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SpectrometerFrequency1H], tagvalues=[[str(frq/1e6)]]))
+        if label == 'T1':
+            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1CoherenceType], tagvalues=[[coherence]]))
+            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1ValUnits], tagvalues=[['1/s']]))
+        elif label == 'T2':
+            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T2CoherenceType], tagvalues=[[coherence]]))
+            frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T2ValUnits], tagvalues=[['1/s']]))
 
         # The relaxation tag names.
         tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+label+'_value', '_'+label+'_value_error']
