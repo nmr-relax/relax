@@ -84,13 +84,9 @@ class HeteronuclT1Saveframe:
         self.data = data
         self.errors = errors
 
-        # Init.
-        tag_cat = ''
-
         # Set up the R1 specific variables.
         self.r1_inc = self.r1_inc + 1
         ri_inc = self.r1_inc
-        coherence = 'Nz'
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
@@ -109,9 +105,6 @@ class HeteronuclT1Saveframe:
 class HeteronuclT1List(TagCategory):
     """Base class for the HeteronuclT1List tag category."""
 
-    # Tag category label.
-    HeteronuclT1List = None
-
     # Tag names for the relaxation data.
     SfCategory = '_Saveframe_category'
     SampleConditionListLabel = '_Sample_conditions_label'
@@ -126,29 +119,20 @@ class HeteronuclT1List(TagCategory):
     def create(self):
         """Create the HeteronuclT1List tag category."""
 
-        # Tag category label.
-        tag_cat = ''
-        if self.HeteronuclT1List:
-            tag_cat = self.HeteronuclT1List + '.'
-
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SfCategory], tagvalues=[[self.sf.label+'_relaxation']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SfCategory)], tagvalues=[[self.sf.label+'_relaxation']]))
 
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleConditionListLabel], tagvalues=[['$conditions_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SampleConditionListLabel)], tagvalues=[['$conditions_1']]))
 
         # NMR info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SpectrometerFrequency1H], tagvalues=[[str(self.sf.frq/1e6)]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1CoherenceType], tagvalues=[[self.coherence]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.T1ValUnits], tagvalues=[['1/s']]))
-
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SpectrometerFrequency1H)], tagvalues=[[str(self.sf.frq/1e6)]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.T1CoherenceType)], tagvalues=[[self.coherence]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.T1ValUnits)], tagvalues=[['1/s']]))
 
 
 class HeteronuclT1Experiment(TagCategory):
     """Base class for the HeteronuclT1Experiment tag category."""
-
-    # Tag category label.
-    HeteronuclT1Experiment = None
 
     # Tag names for experiment setup.
     SampleLabel = '_Sample_label'
@@ -157,47 +141,22 @@ class HeteronuclT1Experiment(TagCategory):
     def create(self, frame=None):
         """Create the HeteronuclT1Experiment tag category."""
 
-        # Tag category label.
-        tag_cat = ''
-        if self.HeteronuclT1Experiment:
-            tag_cat = self.HeteronuclT1Experiment + '.'
-
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
-
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SampleLabel)], tagvalues=[['$sample_1']]))
 
 
 class HeteronuclT1Software(TagCategory):
     """Base class for the HeteronuclT1Software tag category."""
 
-    # Tag category label.
-    HeteronuclT1Software = None
-
-
     def create(self):
         """Create the HeteronuclT1Software tag category."""
-
-        # Tag category label.
-        tag_cat = ''
-        if self.HeteronuclT1Software:
-            tag_cat = self.HeteronuclT1Software + '.'
-
 
 
 class T1(TagCategory):
     """Base class for the T1 tag category."""
 
-    # Tag category label.
-    T1 = None
-
-
     def create(self):
         """Create the T1 tag category."""
-
-        # Tag category label.
-        tag_cat = ''
-        if self.T1:
-            tag_cat = self.T1 + '.'
 
         # The relaxation tag names.
         tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+self.sf.label+'_value', '_'+self.sf.label+'_value_error']

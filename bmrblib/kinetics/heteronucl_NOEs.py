@@ -84,13 +84,9 @@ class HeteronuclNOESaveframe:
         self.data = data
         self.errors = errors
 
-        # Init.
-        tag_cat = ''
-
         # Set up the R1 specific variables.
         self.r1_inc = self.r1_inc + 1
         ri_inc = self.r1_inc
-        coherence = 'Nz'
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
@@ -105,12 +101,8 @@ class HeteronuclNOESaveframe:
         self.datanodes.append(self.frame)
 
 
-
 class HeteronuclNOEList(TagCategory):
     """Base class for the HeteronuclNOEList tag category."""
-
-    # Tag category label.
-    HeteronuclNOEList = None
 
     # Tag names for the relaxation data.
     SfCategory = '_Saveframe_category'
@@ -124,27 +116,18 @@ class HeteronuclNOEList(TagCategory):
     def create(self):
         """Create the HeteronuclNOEList tag category."""
 
-        # Tag category label.
-        tag_cat = ''
-        if self.HeteronuclNOEList:
-            tag_cat = self.HeteronuclNOEList + '.'
-
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SfCategory], tagvalues=[[self.sf.label+'_relaxation']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SfCategory)], tagvalues=[[self.sf.label+'_relaxation']]))
 
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleConditionListLabel], tagvalues=[['$conditions_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SampleConditionListLabel)], tagvalues=[['$conditions_1']]))
 
         # NMR info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SpectrometerFrequency1H], tagvalues=[[str(self.sf.frq/1e6)]]))
-
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SpectrometerFrequency1H)], tagvalues=[[str(self.sf.frq/1e6)]]))
 
 
 class HeteronuclNOEExperiment(TagCategory):
     """Base class for the HeteronuclNOEExperiment tag category."""
-
-    # Tag category label.
-    HeteronuclNOEExperiment = None
 
     # Tag names for experiment setup.
     SampleLabel = '_Sample_label'
@@ -153,47 +136,22 @@ class HeteronuclNOEExperiment(TagCategory):
     def create(self, frame=None):
         """Create the HeteronuclNOEExperiment tag category."""
 
-        # Tag category label.
-        tag_cat = ''
-        if self.HeteronuclNOEExperiment:
-            tag_cat = self.HeteronuclNOEExperiment + '.'
-
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
-
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SampleLabel)], tagvalues=[['$sample_1']]))
 
 
 class HeteronuclNOESoftware(TagCategory):
     """Base class for the HeteronuclNOESoftware tag category."""
 
-    # Tag category label.
-    HeteronuclNOESoftware = None
-
-
     def create(self):
         """Create the HeteronuclNOESoftware tag category."""
-
-        # Tag category label.
-        tag_cat = ''
-        if self.HeteronuclNOESoftware:
-            tag_cat = self.HeteronuclNOESoftware + '.'
-
 
 
 class HeteronuclNOE(TagCategory):
     """Base class for the HeteronuclNOE tag category."""
 
-    # Tag category label.
-    HeteronuclNOE = None
-
-
     def create(self):
         """Create the HeteronuclNOE tag category."""
-
-        # Tag category label.
-        tag_cat = ''
-        if self.HeteronuclNOE:
-            tag_cat = self.HeteronuclNOE + '.'
 
         # The relaxation tag names.
         tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+self.sf.label+'_value', '_'+self.sf.label+'_value_error']
