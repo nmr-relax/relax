@@ -27,6 +27,7 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 """
 
 # relax module imports.
+from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
@@ -112,7 +113,7 @@ class HeteronuclT1Saveframe:
 
 
 
-class HeteronuclT1List:
+class HeteronuclT1List(TagCategory):
     """Base class for the HeteronuclT1List tag category."""
 
     # Tag category label.
@@ -127,17 +128,6 @@ class HeteronuclT1List:
 
     # Class variables.
     coherence = 'Nz'
-
-
-    def __init__(self, sf):
-        """Initialise the tag category object, placing the saveframe into its namespace.
-
-        @param sf:  The heteronuclear T1 saveframe object.
-        @type sf:   HeteronuclT1Saveframe instance
-        """
-
-        # Place the saveframe into the namespace.
-        self.sf = sf
 
 
     def create(self):
@@ -161,7 +151,7 @@ class HeteronuclT1List:
 
 
 
-class HeteronuclT1Experiment:
+class HeteronuclT1Experiment(TagCategory):
     """Base class for the HeteronuclT1Experiment tag category."""
 
     # Tag category label.
@@ -169,17 +159,6 @@ class HeteronuclT1Experiment:
 
     # Tag names for experiment setup.
     SampleLabel = '_Sample_label'
-
-
-    def __init__(self, sf):
-        """Initialise the tag category object, placing the saveframe into its namespace.
-
-        @param sf:  The heteronuclear T1 saveframe object.
-        @type sf:   HeteronuclT1Saveframe instance
-        """
-
-        # Place the saveframe into the namespace.
-        self.sf = sf
 
 
     def create(self, frame=None):
@@ -195,22 +174,11 @@ class HeteronuclT1Experiment:
 
 
 
-class HeteronuclT1Software:
+class HeteronuclT1Software(TagCategory):
     """Base class for the HeteronuclT1Software tag category."""
 
     # Tag category label.
     HeteronuclT1Software = None
-
-
-    def __init__(self, sf):
-        """Initialise the tag category object, placing the saveframe into its namespace.
-
-        @param sf:  The heteronuclear T1 saveframe object.
-        @type sf:   HeteronuclT1Saveframe instance
-        """
-
-        # Place the saveframe into the namespace.
-        self.sf = sf
 
 
     def create(self):
