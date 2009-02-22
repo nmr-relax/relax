@@ -56,6 +56,7 @@ class HeteronuclT1Saveframe:
         self.heteronuclT1list = HeteronuclT1List(self)
         self.heteronuclT1experiment = HeteronuclT1Experiment(self)
         self.heteronuclT1software = HeteronuclT1Software(self)
+        self.T1 = T1(self)
 
 
     def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
@@ -98,17 +99,9 @@ class HeteronuclT1Saveframe:
         self.heteronuclT1list.create()
         self.heteronuclT1experiment.create()
         self.heteronuclT1software.create()
+        self.T1.create()
 
-        # The relaxation tag names.
-        tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+self.label+'_value', '_'+self.label+'_value_error']
-
-        # Add the data.
-        table = TagTable(tagnames=tag_names, tagvalues=[res_nums, res_names, atom_names, data, errors])
-
-        # Add the tag table to the save frame.
-        self.frame.tagtables.append(table)
-
-        # Add the relaxation data save frame.
+        # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
 
 
@@ -188,3 +181,29 @@ class HeteronuclT1Software(TagCategory):
         tag_cat = ''
         if self.HeteronuclT1Software:
             tag_cat = self.HeteronuclT1Software + '.'
+
+
+
+class T1(TagCategory):
+    """Base class for the T1 tag category."""
+
+    # Tag category label.
+    T1 = None
+
+
+    def create(self):
+        """Create the T1 tag category."""
+
+        # Tag category label.
+        tag_cat = ''
+        if self.T1:
+            tag_cat = self.T1 + '.'
+
+        # The relaxation tag names.
+        tag_names = ['_Residue_seq_code', '_Residue_label', '_Atom_name', '_'+self.sf.label+'_value', '_'+self.sf.label+'_value_error']
+
+        # Add the data.
+        table = TagTable(tagnames=tag_names, tagvalues=[self.sf.res_nums, self.sf.res_names, self.sf.atom_names, self.sf.data, self.sf.errors])
+
+        # Add the tagtable to the save frame.
+        self.sf.frame.tagtables.append(table)
