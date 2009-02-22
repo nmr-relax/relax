@@ -28,7 +28,9 @@ http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 """
 
 # relax module imports.
-from bmrblib.kinetics import heteronucl_NOEs, heteronucl_T1_relaxation, heteronucl_T2_relaxation
+from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe
+from bmrblib.kinetics.heteronucl_T1_relaxation import HeteronuclT1Saveframe
+from bmrblib.kinetics.heteronucl_T2_relaxation import HeteronuclT2Saveframe
 from pystarlib.File import File
 
 
@@ -48,9 +50,9 @@ class NMR_STAR:
         self.data = File(title=title, filename=file_path)
 
         # Initialise the objects of this class.
-        self.heteronucl_T1_relaxation = heteronucl_T1_relaxation.HeteronuclT1Saveframe(self.data.datanodes)
-        self.heteronucl_T2_relaxation = heteronucl_T2_relaxation.HeteronuclT2Saveframe(self.data.datanodes)
-        self.heteronucl_NOEs = heteronucl_NOEs.HeteronuclNOESaveframe(self.data.datanodes)
+        self.heteronucl_T1_relaxation = HeteronuclT1Saveframe(self.data.datanodes)
+        self.heteronucl_T2_relaxation = HeteronuclT2Saveframe(self.data.datanodes)
+        self.heteronucl_NOEs = HeteronuclNOESaveframe(self.data.datanodes)
 
 
     def read(self):
