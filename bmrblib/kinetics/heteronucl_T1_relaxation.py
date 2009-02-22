@@ -52,11 +52,8 @@ class HeteronuclT1Saveframe:
         # The number of relaxation data sets.
         self.r1_inc = 0
 
-        # The tag category objects.
-        self.heteronuclT1list = HeteronuclT1List(self)
-        self.heteronuclT1experiment = HeteronuclT1Experiment(self)
-        self.heteronuclT1software = HeteronuclT1Software(self)
-        self.T1 = T1(self)
+        # Add the specific tag category objects.
+        self.add_tag_categories()
 
 
     def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
@@ -100,6 +97,15 @@ class HeteronuclT1Saveframe:
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
 
+
+    def add_tag_categories(self):
+        """Create the v3.1 tag categories."""
+
+        # The tag category objects.
+        self.heteronuclT1list = HeteronuclT1List(self)
+        self.heteronuclT1experiment = HeteronuclT1Experiment(self)
+        self.heteronuclT1software = HeteronuclT1Software(self)
+        self.T1 = T1(self)
 
 
 class HeteronuclT1List(TagCategory):
