@@ -54,6 +54,7 @@ class HeteronuclT1Saveframe:
         # The tag category objects.
         self.heteronuclT1list = HeteronuclT1List(self)
         self.heteronuclT1experiment = HeteronuclT1Experiment(self)
+        self.heteronuclT1software = HeteronuclT1Software(self)
 
 
     def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
@@ -192,3 +193,35 @@ class HeteronuclT1Experiment:
 
         # Sample info.
         frame.tagtables.append(TagTable(free=True, tagnames=[tag_cat + self.SampleLabel], tagvalues=[['$sample_1']]))
+
+
+
+class HeteronuclT1Software:
+    """Base class for the HeteronuclT1Software tag category."""
+
+    # Tag category label.
+    HeteronuclT1Software = None
+
+
+    def __init__(self, sf):
+        """Initialise the tag category object, placing the saveframe into its namespace.
+
+        @param sf:  The heteronuclear T1 saveframe object.
+        @type sf:   HeteronuclT1Saveframe instance
+        """
+
+        # Place the saveframe into the namespace.
+        self.sf = sf
+
+
+    def create(self, frame=None):
+        """Create the HeteronuclT1Software tag category.
+
+        @keyword frame:         The Heteronuclear T1 data saveframe object.
+        @type frame:            HeteronuclT1Saveframe instance
+        """
+
+        # Tag category label.
+        tag_cat = ''
+        if self.HeteronuclT1Software:
+            tag_cat = self.HeteronuclT1Software + '.'
