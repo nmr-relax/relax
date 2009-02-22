@@ -26,21 +26,18 @@
 class TagCategory:
     """The base class for tag category classes."""
 
-    def __init__(self, sf, tag_category_label=None, sep='.'):
+    def __init__(self, sf):
         """Initialise the tag category object, placing the saveframe into its namespace.
 
         @param sf:                      The saveframe object.
         @type sf:                       saveframe instance
-        @keyword tag_category_label:    The tag name prefix specific for the tag category.
-        @type tag_category_label:       None or str
-        @keyword sep:                   The string separating the tag name prefix and suffix.
-        @type sep:                      str
         """
 
         # Place the saveframe and tag info into the namespace.
         self.sf = sf
-        self.tag_category_label = tag_category_label
-        self.sep = sep
+
+        # Set up the tag information.
+        self.tag_setup()
 
 
     def create_tag_label(self, tag_name):
@@ -50,10 +47,33 @@ class TagCategory:
         @type tag_name:     str
         """
 
-        # Create the full tag label.
-        self.tag_category_label_full = ''
-        if self.tag_category_label:
-            self.tag_category_label_full = self.tag_category_label + self.sep
-
         # The full tag name.
         return self.tag_category_label_full + tag_name
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Setup the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Place the args into the class namespace.
+        self.tag_category_label = tag_category_label
+        if sep:
+            self.sep = sep
+        else:
+            self.sep = '.'
+
+        # Create the full tag label.
+        self.tag_category_label_full = '_'
+        if self.tag_category_label:
+            self.tag_category_label_full = self.tag_category_label_full + self.tag_category_label + self.sep
+
+        # The tag name dictionary.
+        self.tag_names = {}
+
+        # The specific variables dictionary.
+        self.variables = {}

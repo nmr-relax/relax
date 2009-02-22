@@ -105,44 +105,69 @@ class HeteronuclT1Saveframe:
 class HeteronuclT1List(TagCategory):
     """Base class for the HeteronuclT1List tag category."""
 
-    # Tag names for the relaxation data.
-    SfCategory = '_Saveframe_category'
-    SampleConditionListLabel = '_Sample_conditions_label'
-    SpectrometerFrequency1H = '_Spectrometer_frequency_1H'
-    T1CoherenceType = '_T1_coherence_type'
-    T1ValUnits = '_T1_value_units'
-
-    # Class variables.
-    coherence = 'Nz'
-
-
     def create(self):
         """Create the HeteronuclT1List tag category."""
 
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SfCategory)], tagvalues=[[self.sf.label+'_relaxation']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SfCategory'])], tagvalues=[[self.sf.label+'_relaxation']]))
 
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SampleConditionListLabel)], tagvalues=[['$conditions_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SampleConditionListLabel'])], tagvalues=[['$conditions_1']]))
 
         # NMR info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SpectrometerFrequency1H)], tagvalues=[[str(self.sf.frq/1e6)]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.T1CoherenceType)], tagvalues=[[self.coherence]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.T1ValUnits)], tagvalues=[['1/s']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SpectrometerFrequency1H'])], tagvalues=[[str(self.sf.frq/1e6)]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['T1CoherenceType'])], tagvalues=[[self.variables['coherence']]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['T1ValUnits'])], tagvalues=[['1/s']]))
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['SfCategory'] = 'Saveframe_category'
+        self.tag_names['SampleConditionListLabel'] = 'Sample_conditions_label'
+        self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
+        self.tag_names['T1CoherenceType'] = 'T1_coherence_type'
+        self.tag_names['T1ValUnits'] = 'T1_value_units'
+
+        # Class variables.
+        self.variables['coherence'] = 'Nz'
+
 
 
 class HeteronuclT1Experiment(TagCategory):
     """Base class for the HeteronuclT1Experiment tag category."""
 
-    # Tag names for experiment setup.
-    SampleLabel = '_Sample_label'
-
-
     def create(self, frame=None):
         """Create the HeteronuclT1Experiment tag category."""
 
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.SampleLabel)], tagvalues=[['$sample_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SampleLabel'])], tagvalues=[['$sample_1']]))
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['SampleLabel'] = 'Sample_label'
 
 
 class HeteronuclT1Software(TagCategory):
