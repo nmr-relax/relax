@@ -51,7 +51,7 @@ class HeteronuclT2Saveframe:
         self.datanodes = datanodes
 
         # The number of relaxation data sets.
-        self.r1_inc = 0
+        self.r2_inc = 0
 
         # Add the specific tag category objects.
         self.add_tag_categories()
@@ -82,9 +82,9 @@ class HeteronuclT2Saveframe:
         self.data = translate(data)
         self.errors = translate(errors)
 
-        # Set up the R1 specific variables.
-        self.r1_inc = self.r1_inc + 1
-        ri_inc = self.r1_inc
+        # Set up the R2 specific variables.
+        self.r2_inc = self.r2_inc + 1
+        ri_inc = self.r2_inc
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
