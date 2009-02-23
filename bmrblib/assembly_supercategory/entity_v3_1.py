@@ -21,66 +21,31 @@
 ###############################################################################
 
 # Module docstring.
-"""The v3.1 Heteronuclear NOE data saveframe category.
+"""The v3.1 entity saveframe category.
 
-See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_NOEs.
+See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#entity.
 """
 
 # relax module imports.
-from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe, HeteronuclNOEList, HeteronuclNOEExperiment, HeteronuclNOESoftware, HeteronuclNOE
+from bmrblib.assembly_supercategory.entity import EntitySaveframe, Entity
 
 
-class HeteronuclNOESaveframe_v3_1(HeteronuclNOESaveframe):
-    """The v3.1 Heteronuclear NOE data saveframe class."""
+class EntitySaveframe_v3_1(EntitySaveframe):
+    """The v3.1 entity saveframe class."""
 
     def add_tag_categories(self):
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclNOElist = HeteronuclNOEList_v3_1(self)
-        self.heteronuclNOEexperiment = HeteronuclNOEExperiment_v3_1(self)
-        self.heteronuclNOEsoftware = HeteronuclNOESoftware_v3_1(self)
-        self.heteronuclNOE = HeteronuclNOE_v3_1(self)
+        self.entity = Entity_v3_1(self)
 
 
-class HeteronuclNOEList_v3_1(HeteronuclNOEList):
-    """v3.1 HeteronuclNOEList tag category."""
+class Entity_v3_1(Entity):
+    """v3.1 Entity tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
-        HeteronuclNOEList.tag_setup(self, tag_category_label='Heteronucl_NOE_list', sep=sep)
+        Entity.tag_setup(self, tag_category_label='Entity', sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
-        self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
-
-
-class HeteronuclNOEExperiment_v3_1(HeteronuclNOEExperiment):
-    """v3.1 HeteronuclNOEExperiment tag category."""
-
-    def tag_setup(self, tag_category_label=None, sep=None):
-        # Execute the base class tag_setup() method.
-        HeteronuclNOEExperiment.tag_setup(self, tag_category_label='Heteronucl_NOE_experiment', sep=sep)
-
-
-class HeteronuclNOESoftware_v3_1(HeteronuclNOESoftware):
-    """v3.1 HeteronuclNOESoftware tag category."""
-
-    def tag_setup(self, tag_category_label=None, sep=None):
-        # Execute the base class tag_setup() method.
-        HeteronuclNOESoftware.tag_setup(self, tag_category_label='Heteronucl_NOE_software', sep=sep)
-
-
-class HeteronuclNOE_v3_1(HeteronuclNOE):
-    """v3.1 HeteronuclNOE tag category."""
-
-    def tag_setup(self, tag_category_label=None, sep=None):
-        # Execute the base class tag_setup() method.
-        HeteronuclNOE.tag_setup(self, tag_category_label='Heteronucl_NOE', sep=sep)
-
-        # Tag names for the relaxation data.
-        self.tag_names['SeqID'] = 'Seq_ID'
-        self.tag_names['CompID'] = 'Comp_ID'
-        self.tag_names['AtomID'] = 'Atom_ID'
-        self.tag_names['Val'] = 'Val'
-        self.tag_names['ValErr'] = 'Val_err'

@@ -57,6 +57,7 @@ class Bmrb:
         cdp = get_pipe()
 
         # Initialise the spin specific data lists.
+        mol_name_list = []
         res_num_list = []
         res_name_list = []
         atom_name_list = []
@@ -72,7 +73,7 @@ class Bmrb:
             if not spin.select:
                 continue
 
-            # The residue/spin info.
+            # The molecule/R1residue/spin info.
             res_num_list.append(str(res_num))
             res_name_list.append(str(res_name))
             atom_name_list.append(str(spin.name))
