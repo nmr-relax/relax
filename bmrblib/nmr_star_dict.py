@@ -28,6 +28,7 @@ http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 """
 
 # relax module imports.
+from bmrblib.assembly_supercategory.entity import EntitySaveframe
 from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe
 from bmrblib.kinetics.heteronucl_T1_relaxation import HeteronuclT1Saveframe
 from bmrblib.kinetics.heteronucl_T2_relaxation import HeteronuclT2Saveframe
@@ -56,7 +57,10 @@ class NMR_STAR:
     def create_saveframes(self):
         """Create all the saveframe objects."""
 
-        # Initialise the objects of this class.
+        # Initialise the assembly_supercategory saveframe supergroup.
+        self.entity = EntitySaveframe(self.data.datanodes)
+
+        # Initialise the kinetic saveframe supergroup.
         self.heteronucl_NOEs = HeteronuclNOESaveframe(self.data.datanodes)
         self.heteronucl_T1_relaxation = HeteronuclT1Saveframe(self.data.datanodes)
         self.heteronucl_T2_relaxation = HeteronuclT2Saveframe(self.data.datanodes)

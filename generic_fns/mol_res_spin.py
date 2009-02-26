@@ -501,6 +501,9 @@ def bmrb_write_entity(star):
     if count_molecules() > 1:
         raise RelaxError, "Support for multiple molecules is not yet supported."
 
+    # Add the entity.
+    star.entity.add()
+
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     """Copy the contents of a molecule container to a new molecule.
