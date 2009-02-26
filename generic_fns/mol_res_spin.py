@@ -490,6 +490,18 @@ class Selection(object):
 
 
 
+def bmrb_write_entity(star):
+    """Generate the entity saveframe records for the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Can't handle multiple molecules yet.
+    if count_molecules() > 1:
+        raise RelaxError, "Support for multiple molecules is not yet supported."
+
+
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     """Copy the contents of a molecule container to a new molecule.
 

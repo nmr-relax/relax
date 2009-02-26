@@ -22,7 +22,8 @@
 
 # relax module imports.
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
-from generic_fns.mol_res_spin import count_molecules, spin_loop
+from generic_fns import mol_res_spin
+from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
 
 
@@ -56,12 +57,10 @@ class Bmrb:
         # Get the current data pipe.
         cdp = get_pipe()
 
-        # Can't handle multiple molecules yet.
-        if count_molecules() > 1:
-            raise RelaxError, "Support for multiple molecules is not yet supported."
+        # Generate the entity saveframe.
+        mol_res_spin.bmrb_write_entity(star)
 
         # Initialise the spin specific data lists.
-        mol_name_list = []
         res_num_list = []
         res_name_list = []
         atom_name_list = []
