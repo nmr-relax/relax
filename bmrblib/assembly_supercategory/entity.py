@@ -111,10 +111,10 @@ class Entity(TagCategory):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SfCategory'])], tagvalues=[['entity']]))
 
         # The entity name.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Name'])], tagvalues=[[self.mol_name]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Name'])], tagvalues=[[self.sf.mol_name]]))
 
         # The entity type.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Type'])], tagvalues=[[self.mol_type]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Type'])], tagvalues=[[self.sf.mol_type]]))
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
