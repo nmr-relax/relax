@@ -501,8 +501,11 @@ def bmrb_write_entity(star):
     if count_molecules() > 1:
         raise RelaxError, "Support for multiple molecules is not yet supported."
 
+    # Get the molecule names.
+    mol_names = get_molecule_names()
+
     # Add the entity.
-    star.entity.add()
+    star.entity.add(mol_names[0])
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
@@ -1297,11 +1300,31 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res
     return id
 
 
+def get_molecule_names(selection=None):
+    """Return a list of the molecule names.
+
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The molecule names.
+    @rtype:             list of str
+    """
+
+    # Loop over the molecules, append the name of each within the selection.
+    mol_names = []
+    for mol in molecule_loop(selection):
+        mol_names.append(mol.name)
+
+    # Return the names.
+    return mol_names
+
+
 def last_residue_num(selection=None):
     """Determine the last residue number.
 
-    @return:    The number of the last residue.
-    @rtype:     int
+    @param selection:   The molecule selection identifier.
+    @type selection:    str
+    @return:            The number of the last residue.
+    @rtype:             int
     """
 
     # Get the molecule.
