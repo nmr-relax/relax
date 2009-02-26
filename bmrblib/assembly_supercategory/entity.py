@@ -88,7 +88,7 @@ class EntitySaveframe:
         self.frame = SaveFrame(title=mol_name)
 
         # Create the tag categories.
-        self.Entity.create()
+        self.entity.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
