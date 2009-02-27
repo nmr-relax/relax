@@ -511,7 +511,7 @@ def bmrb_write_entity(star):
             raise RelaxError, "All molecules must be named."
 
         # Add the entity.
-        star.entity.add(mol_names[i])
+        star.entity.add(mol_name=mol_names[i])
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
