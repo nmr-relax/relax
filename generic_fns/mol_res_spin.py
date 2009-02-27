@@ -504,8 +504,14 @@ def bmrb_write_entity(star):
     # Get the molecule names.
     mol_names = get_molecule_names()
 
-    # Add the entity.
-    star.entity.add(mol_names[0])
+    # Loop over the names.
+    for i in range(len(mol_names)):
+        # Test that the molecule has a name!
+        if not mol_names[i]:
+            raise RelaxError, "All molecules must be named."
+
+        # Add the entity.
+        star.entity.add(mol_names[i])
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
