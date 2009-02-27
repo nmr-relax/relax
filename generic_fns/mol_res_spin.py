@@ -510,8 +510,12 @@ def bmrb_write_entity(star):
         if not mol_names[i]:
             raise RelaxError, "All molecules must be named."
 
+        # Get the residue names and numbers.
+        res_names = get_residue_names("#" + mol_names[i])
+        res_nums = get_residue_nums("#" + mol_names[i])
+
         # Add the entity.
-        star.entity.add(mol_name=mol_names[i])
+        star.entity.add(mol_name=mol_names[i], res_nums=res_nums, res_names=res_names)
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
@@ -1322,6 +1326,42 @@ def get_molecule_names(selection=None):
 
     # Return the names.
     return mol_names
+
+
+def get_residue_names(selection=None):
+    """Return a list of the residue names.
+
+    @param selection:   The molecule and residue selection identifier.
+    @type selection:    str
+    @return:            The residue names.
+    @rtype:             list of str
+    """
+
+    # Loop over the residues, appending the name of each within the selection.
+    res_names = []
+    for res in residue_loop(selection):
+        res_names.append(res.name)
+
+    # Return the names.
+    return res_names
+
+
+def get_residue_nums(selection=None):
+    """Return a list of the residue numbers.
+
+    @param selection:   The molecule and residue selection identifier.
+    @type selection:    str
+    @return:            The residue numbers.
+    @rtype:             list of str
+    """
+
+    # Loop over the residues, appending the number of each within the selection.
+    res_nums = []
+    for res in residue_loop(selection):
+        res_nums.append(res.num)
+
+    # Return the numbers.
+    return res_nums
 
 
 def last_residue_num(selection=None):
