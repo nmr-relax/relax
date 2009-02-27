@@ -514,9 +514,10 @@ def bmrb_write_entity(star):
         res_names = get_residue_names("#" + mol_names[i])
         res_nums = get_residue_nums("#" + mol_names[i])
 
-        # Test for a polymer.
-        if not len(res_nums):
-            raise RelaxError, "Non-polymer molecules are not yet supported."
+        # Find the molecule type.
+        if len(res_nums) < 4:
+            mol_type = 'non-polymer'
+            warn(RelaxWarning("The molecule '%s' is assumed to be a non-polymer, i.e. an organic molecule, ligand, metal ion, etc.  It should not be a solvent molecule!"))
         else:
             mol_type = 'polymer'
 
