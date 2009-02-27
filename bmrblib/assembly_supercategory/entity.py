@@ -76,6 +76,7 @@ class EntitySaveframe:
         self.mol_name = mol_name
         self.mol_type = mol_type
         self.res_names = translate(res_names)
+        self.res_nums = translate(res_nums)
         self.atom_names = translate(atom_names)
 
         # Increment the number of entities.
