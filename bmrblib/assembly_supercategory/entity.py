@@ -87,6 +87,7 @@ class EntitySaveframe:
 
         # Create the tag categories.
         self.entity.create()
+        self.entity_comp_index.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
@@ -97,6 +98,7 @@ class EntitySaveframe:
 
         # The tag category objects.
         self.entity = Entity(self)
+        self.entity_comp_index = EntityCompIndex(self)
 
 
 class Entity(TagCategory):
@@ -135,3 +137,53 @@ class Entity(TagCategory):
         self.tag_names['EntityID'] = 'ID'
         self.tag_names['Name'] = 'Name'
         self.tag_names['Type'] = 'Type'
+
+
+class EntityCompIndex(TagCategory):
+    """Base class for the EntityCompIndex tag category."""
+
+    def create(self):
+        """Create the Entity tag category."""
+
+        # The tag names.
+        tag_names = []
+        missing = []
+        for key in ['EntityCompIndexID', 'AuthSeqID', 'CompID', 'CompLabel', 'SfID', 'EntryID', 'EntityID']:
+            if not self.tag_names.has_key(key):
+                missing.append(key)
+            else:
+                tag_names.append(self.create_tag_label(self.tag_names[key]))
+
+        # The tag values.
+        tag_values = []
+        if 'EntityCompIndexID' not in missing:
+            tag_values.append(self.sf.res_nums)
+        if 'CompID' not in missing:
+            tag_values.append(self.sf.res_names)
+        if 'EntityID' not in missing:
+            tag_values.append([str(self.sf.entity_num)]*len(self.sf.res_nums))
+
+        # Add the data.
+        table = TagTable(tagnames=tag_names, tagvalues=tag_values)
+
+        # Add the tagtable to the save frame.
+        self.sf.frame.tagtables.append(table)
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['EntityCompIndexID'] = 'ID'
+        self.tag_names['CompID'] = 'Comp_ID'
+        self.tag_names['EntityID'] = 'Entity_ID'
+

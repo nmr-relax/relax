@@ -27,7 +27,7 @@ See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#entity.
 """
 
 # relax module imports.
-from bmrblib.assembly_supercategory.entity import EntitySaveframe, Entity
+from bmrblib.assembly_supercategory.entity import EntitySaveframe, Entity, EntityCompIndex
 
 
 class EntitySaveframe_v3_1(EntitySaveframe):
@@ -38,6 +38,7 @@ class EntitySaveframe_v3_1(EntitySaveframe):
 
         # The tag category objects.
         self.entity = Entity_v3_1(self)
+        self.entity_comp_index = EntityCompIndex_v3_1(self)
 
 
 class Entity_v3_1(Entity):
@@ -49,3 +50,13 @@ class Entity_v3_1(Entity):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
+
+
+class EntityCompIndex_v3_1(EntityCompIndex):
+    """v3.1 EntityCompIndex tag category."""
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        # Execute the base class tag_setup() method.
+        EntityCompIndex.tag_setup(self, tag_category_label='Entity_comp_index', sep=sep)
+
+
