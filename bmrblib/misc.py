@@ -39,7 +39,7 @@ def translate(data):
             if data[i] == None or data[i] == 'None':
                 new_data.append('?')
             else:
-                new_data.append(data[i])
+                new_data.append(str(data[i]))
 
     # None.
     if data == None:
