@@ -54,11 +54,9 @@ class EntitySaveframe:
         self.add_tag_categories()
 
 
-    def add(self, frq=None, mol_name=None, mol_type='polymer', res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
+    def add(self, mol_name=None, mol_type='polymer', res_nums=None, res_names=None, atom_names=None):
         """Add relaxation data to the data nodes.
 
-        @keyword frq:           The spectrometer proton frequency, in Hz.
-        @type frq:              float
         @keyword mol_name:      The molecule name.
         @type mol_name:         str
         @keyword mol_type:      The molecule type.
@@ -69,20 +67,13 @@ class EntitySaveframe:
         @type res_names:        list of str
         @keyword atom_names:    The atom name list.
         @type atom_names:       list of str
-        @keyword data:          The relaxation data.
-        @type data:             list of float
-        @keyword errors:        The errors associated with the relaxation data.
-        @type errors:           list of float
         """
 
         # Place the args into the namespace.
-        self.frq = frq
         self.mol_name = mol_name
         self.mol_type = mol_type
         self.res_names = translate(res_names)
         self.atom_names = translate(atom_names)
-        self.data = translate(data)
-        self.errors = translate(errors)
 
         # Initialise the save frame.
         self.frame = SaveFrame(title=mol_name)
