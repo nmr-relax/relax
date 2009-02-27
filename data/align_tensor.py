@@ -24,6 +24,7 @@
 from re import search
 from math import cos, sin
 from numpy import dot, float64, identity, transpose, zeros
+from numpy.linalg import eigvals
 from types import ListType
 
 # relax module imports.
@@ -505,8 +506,8 @@ def calc_tensor_5D(Axx, Ayy, Azz, Axy, Axz, Ayz):
     return tensor
 
 
-def calc_tensor_diag(rotation, tensor):
-    """Function for calculating the diagonalised alignment tensor.
+def calc_tensor_diag(tensor):
+    """Calculate the diagonalised alignment tensor.
 
     The diagonalised alignment tensor is defined as::
 
@@ -514,10 +515,8 @@ def calc_tensor_diag(rotation, tensor):
         tensor  =  |  0   Ayy'  0  |.
                    |  0    0   Azz'|
 
-    The diagonalised alignment tensor is calculated using the tensor and the rotation matrix
-    through the equation::
+    The diagonalised alignment tensor is calculated by eigenvalue decomposition.
 
-        R^T . tensor_diag . R.
 
     @param rotation:    The rotation matrix.
     @type rotation:     numpy array ((3, 3), float64)
@@ -527,8 +526,28 @@ def calc_tensor_diag(rotation, tensor):
     @rtype:             numpy array ((3, 3), float64)
     """
 
-    # Rotation (R^T . tensor_diag . R).
-    return dot(transpose(rotation), dot(tensor_diag, rotation))
+    # The eigenvalues.
+    vals = eigvals(tensor)
+
+    # Find the x < y < z indices.
+    abs_vals = abs(vals).tolist()
+    Axx_index = abs_vals.index(min(abs_vals))
+    Azz_index = abs_vals.index(max(abs_vals))
+    last_index = range(3)
+    last_index.pop(Axx_index)
+    last_index.pop(Azz_index)
+    Ayy_index = last_index[0]
+
+    # Empty tensor.
+    tensor_diag = zeros((3, 3), float64)
+
+    # Fill the elements.
+    tensor_diag[0, 0] = vals[Axx_index]
+    tensor_diag[1, 1] = vals[Ayy_index]
+    tensor_diag[2, 2] = vals[Azz_index]
+
+    # Return the tensor.
+    return tensor_diag
 
 
 def dependency_generator():
@@ -561,10 +580,10 @@ def dependency_generator():
     yield ('Axx_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
     yield ('Ayy_unit',      ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
     yield ('Azz_unit',      ['alpha', 'beta'],                              ['alpha', 'beta'])
-    yield ('tensor_diag',   ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['tensor', 'rotation'])
     yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['Axx_unit', 'Ayy_unit', 'Azz_unit'])
     yield ('tensor',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['Axx', 'Ayy', 'Azz', 'Axy', 'Axz', 'Ayz'])
     yield ('tensor_5D',     ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['Axx', 'Ayy', 'Azz', 'Axy', 'Axz', 'Ayz'])
+    yield ('tensor_diag',   ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['tensor'])
 
 
 
