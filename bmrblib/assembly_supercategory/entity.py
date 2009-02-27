@@ -50,6 +50,9 @@ class EntitySaveframe:
         # Place the data nodes into the namespace.
         self.datanodes = datanodes
 
+        # The number of entities.
+        self.entity_num = 0
+
         # Add the specific tag category objects.
         self.add_tag_categories()
 
@@ -74,6 +77,9 @@ class EntitySaveframe:
         self.mol_type = mol_type
         self.res_names = translate(res_names)
         self.atom_names = translate(atom_names)
+
+        # Increment the number of entities.
+        self.entity_num = self.entity_num + 1
 
         # Initialise the save frame.
         self.frame = SaveFrame(title=mol_name)
@@ -101,6 +107,9 @@ class Entity(TagCategory):
         # The save frame category.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SfCategory'])], tagvalues=[['entity']]))
 
+        # The entity ID.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['EntityID'])], tagvalues=[[str(self.sf.entity_num)]]))
+
         # The entity name.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Name'])], tagvalues=[[self.sf.mol_name]]))
 
@@ -122,5 +131,6 @@ class Entity(TagCategory):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Saveframe_category'
+        self.tag_names['EntityID'] = 'ID'
         self.tag_names['Name'] = 'Name'
         self.tag_names['Type'] = 'Type'
