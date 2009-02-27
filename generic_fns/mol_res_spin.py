@@ -499,7 +499,7 @@ def bmrb_write_entity(star):
 
     # Can't handle multiple molecules yet.
     if count_molecules() > 1:
-        raise RelaxError, "Support for multiple molecules is not yet supported."
+        raise RelaxError, "Multiple molecules are not yet supported."
 
     # Get the molecule names.
     mol_names = get_molecule_names()
@@ -514,8 +514,14 @@ def bmrb_write_entity(star):
         res_names = get_residue_names("#" + mol_names[i])
         res_nums = get_residue_nums("#" + mol_names[i])
 
+        # Test for a polymer.
+        if not len(res_nums):
+            raise RelaxError, "Non-polymer molecules are not yet supported."
+        else:
+            mol_type = 'polymer'
+
         # Add the entity.
-        star.entity.add(mol_name=mol_names[i], res_nums=res_nums, res_names=res_names)
+        star.entity.add(mol_name=mol_names[i], mol_type=mol_type, res_nums=res_nums, res_names=res_names)
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
