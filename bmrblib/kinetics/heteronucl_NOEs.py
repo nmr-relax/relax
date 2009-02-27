@@ -84,10 +84,9 @@ class HeteronuclNOESaveframe:
 
         # Set up the NOE specific variables.
         self.noe_inc = self.noe_inc + 1
-        ri_inc = self.noe_inc
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
+        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.noe_inc`)
 
         # Create the tag categories.
         self.heteronuclNOElist.create()

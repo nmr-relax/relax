@@ -84,10 +84,9 @@ class HeteronuclT1Saveframe:
 
         # Set up the R1 specific variables.
         self.r1_inc = self.r1_inc + 1
-        ri_inc = self.r1_inc
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`ri_inc`)
+        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r1_inc`)
 
         # Create the tag categories.
         self.heteronuclT1list.create()
