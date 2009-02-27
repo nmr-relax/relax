@@ -52,6 +52,7 @@ class HeteronuclT2List_v3_1(HeteronuclT2List):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
+        self.tag_names['HeteronuclT2ListID'] = 'ID'
         self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
 
 

@@ -118,6 +118,10 @@ class HeteronuclT2List(TagCategory):
         # The save frame category.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SfCategory'])], tagvalues=[[self.sf.label+'_relaxation']]))
 
+        # T2 ID number.
+        if self.tag_names.has_key('HeteronuclT2ListID'):
+            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['HeteronuclT2ListID'])], tagvalues=[[str(self.sf.r2_inc)]]))
+
         # Sample info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SampleConditionListLabel'])], tagvalues=[['$conditions_1']]))
 

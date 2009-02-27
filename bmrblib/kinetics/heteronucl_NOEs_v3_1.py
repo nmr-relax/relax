@@ -52,6 +52,7 @@ class HeteronuclNOEList_v3_1(HeteronuclNOEList):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
+        self.tag_names['HeteronuclNOEListID'] = 'ID'
         self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
 
 
