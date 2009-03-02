@@ -242,7 +242,7 @@ class Molecule:
             print text
 
         # Residue identification string.
-        if mol_id and type(mol_id) != str:
+        if mol_id != None and type(mol_id) != str:
             raise RelaxNoneStrError, ('molecule identification string', mol_id)
 
         # New molecule name.
