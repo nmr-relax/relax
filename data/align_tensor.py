@@ -529,13 +529,13 @@ def calc_tensor_diag(tensor):
     # The eigenvalues.
     vals = eigvals(tensor)
 
-    # Find the x < y < z indices.
+    # Find the |x| < |y| < |z| indices.
     abs_vals = abs(vals).tolist()
     Axx_index = abs_vals.index(min(abs_vals))
     Azz_index = abs_vals.index(max(abs_vals))
     last_index = range(3)
-    last_index.pop(Axx_index)
-    last_index.pop(Azz_index)
+    last_index.pop(max(Axx_index, Azz_index))
+    last_index.pop(min(Axx_index, Azz_index))
     Ayy_index = last_index[0]
 
     # Empty tensor.
