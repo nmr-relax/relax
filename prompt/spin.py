@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns.mol_res_spin import copy_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
-from relax_errors import RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Spin:
@@ -157,8 +157,8 @@ class Spin:
             print text
 
         # Spin number.
-        if type(spin_num) != int:
-            raise RelaxIntError, ('spin number', spin_num)
+        if spin_num != None and type(spin_num) != int:
+            raise RelaxNoneIntError, ('spin number', spin_num)
 
         # Spin name.
         if spin_name != None and type(spin_name) != str:
