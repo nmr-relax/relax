@@ -730,6 +730,7 @@ class N_state_model(Common_functions):
 
         # Q-factor list.
         cdp.q_factors_rdc = []
+        cdp.q_factors_rdc_norm2 = []
 
         # Loop over the alignments.
         for i in xrange(len(cdp.align_tensors)):
@@ -779,13 +780,17 @@ class N_state_model(Common_functions):
             # The Q-factor for the alignment.
             Q = sqrt(sse / N / norm)
             cdp.q_factors_rdc.append(Q)
+            cdp.q_factors_rdc_norm2.append(sqrt(sse / D2_sum))
 
         # The total Q-factor.
         cdp.q_rdc = 0.0
+        cdp.q_rdc_norm2 = 0.0
         for Q in cdp.q_factors_rdc:
             cdp.q_rdc = cdp.q_rdc + Q**2
-        cdp.q_rdc = cdp.q_rdc / len(cdp.q_factors_rdc)
-        cdp.q_rdc = sqrt(cdp.q_rdc)
+        for Q in cdp.q_factors_rdc_norm2:
+            cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + Q**2
+        cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
+        cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
     def __q_factors_pcs(self):
