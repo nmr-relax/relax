@@ -738,6 +738,8 @@ class N_state_model(Common_functions):
             sse = 0.0
 
             # Spin loop.
+            dj = None
+            N = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -750,11 +752,32 @@ class N_state_model(Common_functions):
                 # Sum of squares.
                 sse = sse + (spin.rdc[i] - spin.rdc_bc[i])**2
 
-                # Sum the RDCs squared (for normalisation).
+                # Sum the RDCs squared (for one type of normalisation).
                 D2_sum = D2_sum + spin.rdc[i]**2
 
+                # Gyromagnetic ratios.
+                gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+                gh = return_gyromagnetic_ratio(spin.proton_type)
+
+                # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+                dj_new = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+                if dj and dj_new != dj:
+                    raise RelaxError, "All the RDCs must come from the same nucleus type."
+                else:
+                    dj = dj_new
+
+                # Increment the number of data sets.
+                N = N + 1
+
+            # Normalisation factor of 2Da^2(4 + 3R)/5.
+            D = dj * cdp.align_tensors[i].tensor_diag
+            Da = 1.0/3.0 * (D[2,2] - (D[0,0]+D[1,1])/2.0)
+            Dr = 1.0/3.0 * (D[0,0] - D[1,1])
+            R = Dr / Da
+            norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
+
             # The Q-factor for the alignment.
-            Q = sqrt(sse / D2_sum)
+            Q = sqrt(sse / N / norm)
             cdp.q_factors_rdc.append(Q)
 
         # The total Q-factor.
