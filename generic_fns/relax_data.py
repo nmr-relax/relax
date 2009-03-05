@@ -205,6 +205,52 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         update_data_structures_spin(spin, ri_label, frq_label, frq, value)
 
 
+def bmrb_write(star):
+    """Generate the relaxation data saveframes for the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Initialise the spin specific data lists.
+    res_num_list = []
+    res_name_list = []
+    atom_name_list = []
+    relax_data_list = []
+    relax_error_list = []
+    for i in range(cdp.num_ri):
+        relax_data_list.append([])
+        relax_error_list.append([])
+
+    # Store the spin specific data in lists for later use.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # The molecule/R1residue/spin info.
+        res_num_list.append(str(res_num))
+        res_name_list.append(str(res_name))
+        atom_name_list.append(str(spin.name))
+
+        # The relaxation data.
+        for i in range(cdp.num_ri):
+            relax_data_list[i].append(str(spin.relax_data[i]))
+            relax_error_list[i].append(str(spin.relax_error[i]))
+
+    # Add the relaxation data.
+    for i in range(cdp.num_ri):
+        if cdp.ri_labels[i] == 'R1':
+            star.heteronucl_T1_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, data=relax_data_list[i], errors=relax_error_list[i])
+        elif cdp.ri_labels[i] == 'R2':
+            star.heteronucl_T2_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, data=relax_data_list[i], errors=relax_error_list[i])
+        elif cdp.ri_labels[i] == 'NOE':
+            star.heteronucl_NOEs.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, data=relax_data_list[i], errors=relax_error_list[i])
+
+
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     """Copy the relaxation data from one data pipe to another.
 
