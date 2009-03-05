@@ -116,19 +116,19 @@ class HeteronuclT2List(TagCategory):
         """Create the HeteronuclT2List tag category."""
 
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SfCategory'])], tagvalues=[[self.sf.label+'_relaxation']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[[self.sf.label+'_relaxation']]))
 
         # T2 ID number.
         if self.tag_names.has_key('HeteronuclT2ListID'):
-            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['HeteronuclT2ListID'])], tagvalues=[[str(self.sf.r2_inc)]]))
+            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['HeteronuclT2ListID']], tagvalues=[[str(self.sf.r2_inc)]]))
 
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SampleConditionListLabel'])], tagvalues=[['$conditions_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
 
         # NMR info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SpectrometerFrequency1H'])], tagvalues=[[str(self.sf.frq/1e6)]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['T2CoherenceType'])], tagvalues=[[self.variables['coherence']]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['T2ValUnits'])], tagvalues=[['1/s']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['T2CoherenceType']], tagvalues=[[self.variables['coherence']]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['T2ValUnits']], tagvalues=[['1/s']]))
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -161,7 +161,7 @@ class HeteronuclT2Experiment(TagCategory):
         """Create the HeteronuclT2Experiment tag category."""
 
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SampleLabel'])], tagvalues=[['$sample_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleLabel']], tagvalues=[['$sample_1']]))
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -200,7 +200,7 @@ class T2(TagCategory):
             if not self.tag_names.has_key(key):
                 missing.append(key)
             else:
-                tag_names.append(self.create_tag_label(self.tag_names[key]))
+                tag_names.append(self.tag_names_full[key])
 
         # The tag values.
         tag_values = []

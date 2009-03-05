@@ -36,8 +36,19 @@ class TagCategory:
         # Place the saveframe and tag info into the namespace.
         self.sf = sf
 
+        # The tag name dictionary.
+        self.tag_names = {}
+        self.tag_names_full = {}
+
+        # The specific variables dictionary.
+        self.variables = {}
+
         # Set up the tag information.
         self.tag_setup()
+
+        # Generate the full names.
+        for key, name in self.tag_names.iteritems():
+            self.tag_names_full[key] = self.create_tag_label(name) 
 
 
     def create_tag_label(self, tag_name):
@@ -71,9 +82,3 @@ class TagCategory:
         self.tag_category_label_full = '_'
         if self.tag_category_label:
             self.tag_category_label_full = self.tag_category_label_full + self.tag_category_label + self.sep
-
-        # The tag name dictionary.
-        self.tag_names = {}
-
-        # The specific variables dictionary.
-        self.variables = {}

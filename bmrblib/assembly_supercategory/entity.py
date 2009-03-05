@@ -142,16 +142,16 @@ class Entity(TagCategory):
         """Create the Entity tag category."""
 
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['SfCategory'])], tagvalues=[['entity']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[['entity']]))
 
         # The entity ID.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['EntityID'])], tagvalues=[[str(self.sf.entity_num)]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['EntityID']], tagvalues=[[str(self.sf.entity_num)]]))
 
         # The entity name.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Name'])], tagvalues=[[self.sf.mol_name]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['Name']], tagvalues=[[self.sf.mol_name]]))
 
         # The entity type.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Type'])], tagvalues=[[self.sf.mol_type]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['Type']], tagvalues=[[self.sf.mol_type]]))
 
 
     def read(self, tagtable):
@@ -164,8 +164,8 @@ class Entity(TagCategory):
         """
 
         # The entity info.
-        mol_name = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['Name']))][0]
-        mol_type = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['Type']))][0]
+        mol_name = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['Name'])][0]
+        mol_type = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['Type'])][0]
 
         # Return the data.
         return mol_name, mol_type
@@ -203,7 +203,7 @@ class EntityCompIndex(TagCategory):
             if not self.tag_names.has_key(key):
                 missing.append(key)
             else:
-                tag_names.append(self.create_tag_label(self.tag_names[key]))
+                tag_names.append(self.tag_names_full[key])
 
         # The tag values.
         tag_values = []
@@ -231,8 +231,8 @@ class EntityCompIndex(TagCategory):
         """
 
         # The entity info.
-        res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['EntityCompIndexID']))]
-        res_names = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['CompID']))]
+        res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['EntityCompIndexID'])]
+        res_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['CompID'])]
 
         # Convert the residue numbers to ints.
         for i in range(len(res_nums)):
