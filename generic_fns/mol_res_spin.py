@@ -490,6 +490,23 @@ class Selection(object):
 
 
 
+def bmrb_read(star):
+    """Generate the molecule and residue spin containers from the entity saveframe records.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the entities.
+    for mol_name, mol_type, res_nums, res_names in star.entity.loop():
+        # Add the molecule.
+        create_molecule(mol_name)
+
+        # Add the residues.
+        for i in range(len(res_nums)):
+            create_residue(res_nums[i], res_names[i], mol_id='#'+mol_name)
+
+
 def bmrb_write_entity(star):
     """Generate the entity saveframe records for the NMR-STAR dictionary object.
 

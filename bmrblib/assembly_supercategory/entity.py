@@ -101,6 +101,40 @@ class EntitySaveframe:
         self.entity_comp_index = EntityCompIndex(self)
 
 
+    def loop(self):
+        """Loop over the entity saveframes, yielding the entity info.
+
+        @return:    The entity information consisting of the molecule name, molecule type, residue
+                    numbers, and residue names.
+        @rtype:     tuple of str, str, list of int, list of str
+        """
+
+        # Loop over all datanodes.
+        for datanode in self.datanodes:
+            # Find the Entity saveframes via the SfCategory tag index.
+            found = False
+            for index in range(len(datanode.tagtables[0].tagnames)):
+                # First match the tag names.
+                if datanode.tagtables[0].tagnames[index] == self.entity.create_tag_label(self.entity.tag_names['SfCategory']):
+                    # Then the tag value.
+                    if datanode.tagtables[0].tagvalues[index][0] == 'entity':
+                        found = True
+                        break
+
+            # Skip the datanode.
+            if not found:
+                continue
+
+            # Get entity info.
+            mol_name, mol_type = self.entity.read(datanode.tagtables[0])
+
+            # Get the EntityCompIndex info.
+            res_nums, res_names = self.entity_comp_index.read(datanode.tagtables[1])
+
+            # Yield the data.
+            yield mol_name, mol_type, res_nums, res_names
+
+
 class Entity(TagCategory):
     """Base class for the Entity tag category."""
 
@@ -118,6 +152,23 @@ class Entity(TagCategory):
 
         # The entity type.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.create_tag_label(self.tag_names['Type'])], tagvalues=[[self.sf.mol_type]]))
+
+
+    def read(self, tagtable):
+        """Extract the Entity tag category info.
+
+        @param tagtable:    The Entity tagtable.
+        @type tagtable:     Tagtable instance
+        @return:            The entity name and type.
+        @rtype:             tuple of str, str
+        """
+
+        # The entity info.
+        mol_name = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['Name']))][0]
+        mol_type = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['Type']))][0]
+
+        # Return the data.
+        return mol_name, mol_type
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -168,6 +219,27 @@ class EntityCompIndex(TagCategory):
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
+
+
+    def read(self, tagtable):
+        """Extract the EntityCompIndex tag category info.
+
+        @param tagtable:    The Entity tagtable.
+        @type tagtable:     Tagtable instance
+        @return:            The residue numbers and names.
+        @rtype:             tuple of list of int, list of str
+        """
+
+        # The entity info.
+        res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['EntityCompIndexID']))]
+        res_names = tagtable.tagvalues[tagtable.tagnames.index(self.create_tag_label(self.tag_names['CompID']))]
+
+        # Convert the residue numbers to ints.
+        for i in range(len(res_nums)):
+            res_nums[i] = int(res_nums[i])
+
+        # Return the data.
+        return res_nums, res_names
 
 
     def tag_setup(self, tag_category_label=None, sep=None):

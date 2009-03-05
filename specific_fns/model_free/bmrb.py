@@ -42,6 +42,9 @@ class Bmrb:
         # Read the contents of the STAR formatted file.
         star.read()
 
+        # Generate the molecule and residue containers.
+        mol_res_spin.bmrb_read(star)
+
 
     def bmrb_write(self, file_path):
         """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
