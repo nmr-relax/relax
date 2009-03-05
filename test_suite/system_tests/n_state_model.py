@@ -131,7 +131,7 @@ class N_state_model(TestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.000152207413184)
         self.assertAlmostEqual(cdp.chi2, 783.530808266)
         self.assertAlmostEqual(cdp.q_pcs, 0.063345784112045375)
-        self.assertAlmostEqual(cdp.q_rdc, 0.15076645625705937)
+        self.assertAlmostEqual(cdp.q_rdc, 0.084926009099013003)
 
 
     def test_align_fit_pcs(self):
@@ -227,7 +227,7 @@ class N_state_model(TestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.00029833)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.00015125)
         self.assertAlmostEqual(cdp.chi2, 23.5877482365)                 # Pales: 23.709
-        self.assertAlmostEqual(cdp.q_rdc, 0.14049691097282743/2.)       # Pales (Q Saupe): 0.079
+        self.assertAlmostEqual(cdp.q_rdc, 0.078460000413257444)       # Pales (Q Saupe): 0.079
 
 
     def test_lactose_n_state(self):
