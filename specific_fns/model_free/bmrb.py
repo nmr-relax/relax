@@ -24,7 +24,6 @@
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
 from generic_fns import mol_res_spin, relax_data
 from generic_fns.mol_res_spin import spin_loop
-from generic_fns.pipes import get_pipe
 
 
 class Bmrb:
@@ -53,9 +52,6 @@ class Bmrb:
 
         # Initialise the NMR-STAR data object.
         star = NMR_STAR_v3_1('relax_model_free_results', file_path)
-
-        # Get the current data pipe.
-        cdp = get_pipe()
 
         # Generate the entity saveframe.
         mol_res_spin.bmrb_write_entity(star)
