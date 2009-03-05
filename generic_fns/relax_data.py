@@ -231,6 +231,10 @@ def bmrb_write(star):
         if not spin.select:
             continue
 
+        # Skip spins with no relaxation data.
+        if not hasattr(spin, 'relax_data'):
+            continue
+
         # The molecule/R1residue/spin info.
         res_num_list.append(str(res_num))
         res_name_list.append(str(res_name))
