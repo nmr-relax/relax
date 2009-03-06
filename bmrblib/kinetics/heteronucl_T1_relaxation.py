@@ -113,6 +113,41 @@ class HeteronuclT1Saveframe:
         self.T1 = T1(self)
 
 
+    def loop(self):
+        """Loop over the T1 saveframes, yielding the relaxation data.
+
+        @return:    The relaxation data consisting of the proton frequency, residue numbers, residue
+                    names, atom names, values, and errors.
+        @rtype:     tuple of float, list of int, list of str, list of str, list of float, list of
+                    float
+        """
+
+        # Loop over all datanodes.
+        for datanode in self.datanodes:
+            # Find the Heteronuclear T1 saveframes via the SfCategory tag index.
+            found = False
+            for index in range(len(datanode.tagtables[0].tagnames)):
+                # First match the tag names.
+                if datanode.tagtables[0].tagnames[index] == self.heteronuclT1list.create_tag_label(self.heteronuclT1list.tag_names['SfCategory']):
+                    # Then the tag value.
+                    if datanode.tagtables[0].tagvalues[index][0] == self.label+'_relaxation':
+                        found = True
+                        break
+
+            # Skip the datanode.
+            if not found:
+                continue
+
+            # Get general info.
+            frq = self.heteronuclT1list.read(datanode.tagtables[0])
+
+            # Get the T1 info.
+            res_nums, res_names, atom_names, values, errors = self.T1.read(datanode.tagtables[1])
+
+            # Yield the data.
+            yield frq, res_nums, res_names, atom_names, values, errors
+
+
 class HeteronuclT1List(TagCategory):
     """Base class for the HeteronuclT1List tag category."""
 
@@ -133,6 +168,22 @@ class HeteronuclT1List(TagCategory):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['T1CoherenceType']], tagvalues=[[self.variables['coherence']]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['T1ValUnits']], tagvalues=[['1/s']]))
+
+
+    def read(self, tagtable):
+        """Extract the HeteronuclT1List tag category info.
+
+        @param tagtable:    The HeteronuclT1List tagtable.
+        @type tagtable:     Tagtable instance
+        @return:            The proton frequency in Hz.
+        @rtype:             float
+        """
+
+        # The general info.
+        frq = float(tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['SpectrometerFrequency1H'])][0]) * 1e6
+
+        # Return the data.
+        return frq
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -225,6 +276,33 @@ class T1(TagCategory):
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
+
+
+    def read(self, tagtable):
+        """Extract the T1 tag category info.
+
+        @param tagtable:    The T1 tagtable.
+        @type tagtable:     Tagtable instance
+        @return:            The residue numbers, residue names, atom names, values, and errors.
+        @rtype:             tuple of list of int, list of str, list of str, list of float, list of
+                            float
+        """
+
+        # The entity info.
+        res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['SeqID'])]
+        res_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['CompID'])]
+        atom_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['AtomID'])]
+        values = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['Val'])]
+        errors = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['ValErr'])]
+
+        # Convert the residue numbers to ints and the values and errors to floats.
+        for i in range(len(res_nums)):
+            res_nums[i] = int(res_nums[i])
+            values[i] = float(res_nums[i])
+            errors[i] = float(res_nums[i])
+
+        # Return the data.
+        return res_nums, res_names, atom_names, values, errors
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
