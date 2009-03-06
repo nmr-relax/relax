@@ -1448,13 +1448,15 @@ def molecule_loop(selection=None, pipe=None):
         yield mol
 
 
-def name_molecule(mol_id, name=None):
+def name_molecule(mol_id, name=None, force=False):
     """Name the molecules.
 
     @param mol_id:      The molecule identification string.
     @type mol_id:       str
     @param name:        The new molecule name.
     @type name:         str
+    @keyword force:     A flag which if True will cause the named molecule to be renamed.
+    @type force:        bool
     """
 
     # Get the single molecule data container.
@@ -1469,16 +1471,21 @@ def name_molecule(mol_id, name=None):
 
     # Name the molecule is there is a single match.
     if mol:
-        mol.name = name
+        if mol.name and not force:
+            warn(RelaxWarning("The molecule '%s' is already named.  Set the force flag to rename." % mol_id))
+        else:
+            mol.name = name
         
 
-def name_residue(res_id, name=None):
+def name_residue(res_id, name=None, force=False):
     """Name the residues.
 
     @param res_id:      The residue identification string.
     @type res_id:       str
     @param name:        The new residue name.
     @type name:         str
+    @keyword force:     A flag which if True will cause the named residue to be renamed.
+    @type force:        bool
     """
 
     # Disallow spin selections.
@@ -1487,31 +1494,41 @@ def name_residue(res_id, name=None):
         raise RelaxSpinSelectDisallowError
 
     # Rename the matching residues.
-    for res in residue_loop(res_id):
-        res.name = name
+    for res, mol_name in residue_loop(res_id, full_info=True):
+        if res.name and not force:
+            warn(RelaxWarning("The residue '%s' is already named.  Set the force flag to rename." % generate_spin_id(mol_name, res.num, res.name)))
+        else:
+            res.name = name
 
 
-def name_spin(spin_id=None, name=None):
+def name_spin(spin_id=None, name=None, force=False):
     """Name the spins.
 
-    @param spin_id:     The spin identification string.
+    @keyword spin_id:   The spin identification string.
     @type spin_id:      str
-    @param name:        The new spin name.
+    @keyword name:      The new spin name.
     @type name:         str
+    @keyword force:     A flag which if True will cause the named spin to be renamed.
+    @type force:        bool
     """
 
     # Rename the matching spins.
-    for spin in spin_loop(spin_id):
-        spin.name = name
+    for spin, id in spin_loop(spin_id, return_id=True):
+        if spin.name and not force:
+            warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
+        else:
+            spin.name = name
 
 
-def number_residue(res_id, number=None):
+def number_residue(res_id, number=None, force=False):
     """Number the residues.
 
     @param res_id:      The residue identification string.
     @type res_id:       str
     @param number:      The new residue number.
     @type number:       int
+    @keyword force:     A flag which if True will cause the numbered residue to be renumbered.
+    @type force:        bool
     """
 
     # Catch multiple numberings!
@@ -1529,17 +1546,22 @@ def number_residue(res_id, number=None):
         raise RelaxSpinSelectDisallowError
 
     # Rename the residue.
-    for res in residue_loop(res_id):
-        res.num = number
+    for res, mol_name in residue_loop(res_id, full_info=True):
+        if res.num and not force:
+            warn(RelaxWarning("The residue '%s' is already numbered.  Set the force flag to renumber." % generate_spin_id(mol_name, res.num, res.name)))
+        else:
+            res.num = number
 
 
-def number_spin(spin_id=None, number=None):
+def number_spin(spin_id=None, number=None, force=False):
     """Number the spins.
 
     @param spin_id:     The spin identification string.
     @type spin_id:      str
     @param number:      The new spin number.
     @type number:       int
+    @keyword force:     A flag which if True will cause the numbered spin to be renumbered.
+    @type force:        bool
     """
 
     # Catch multiple renumberings!
@@ -1552,8 +1574,11 @@ def number_spin(spin_id=None, number=None):
         raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
 
     # Rename the spin.
-    for spin in spin_loop(spin_id):
-        spin.num = number
+    for spin, id in spin_loop(spin_id, return_id=True):
+        if spin.num and not force:
+            warn(RelaxWarning("The spin '%s' is already numbered.  Set the force flag to renumber." % id))
+        else:
+            spin.num = number
 
 
 def parse_token(token, verbosity=False):

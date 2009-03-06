@@ -206,7 +206,7 @@ class Molecule:
         display_molecule(mol_id=mol_id)
 
 
-    def name(self, mol_id=None, name=None):
+    def name(self, mol_id=None, name=None, force=False):
         """Function for naming a molecule.
 
         Keyword Arguments
@@ -215,6 +215,8 @@ class Molecule:
         mol_id:  The molecule identification string corresponding to one or more molecules.
 
         name:  The new molecule name.
+
+        force:  A flag which if True will cause the molecule to be renamed.
 
 
         Description
@@ -226,10 +228,10 @@ class Molecule:
         Examples
         ~~~~~~~~
 
-        To rename the molecule 'Ap4Aase' to 'Inhib Ap4Aase', type:
+        To rename the molecule 'Ap4Aase' to 'Inhib Ap4Aase', type one of:
 
-        relax> molecule.name('#Ap4Aase', 'Inhib Ap4Aase')
-        relax> molecule.name(mol_id='#Ap4Aase', name='Inhib Ap4Aase')
+        relax> molecule.name('#Ap4Aase', 'Inhib Ap4Aase', True)
+        relax> molecule.name(mol_id='#Ap4Aase', name='Inhib Ap4Aase', force=True)
 
         This assumes the molecule 'Ap4Aase' already exists.
         """
@@ -238,7 +240,8 @@ class Molecule:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.name("
             text = text + "mol_id=" + `mol_id`
-            text = text + ", name=" + `name` + ")"
+            text = text + ", name=" + `name`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # Residue identification string.
@@ -249,8 +252,12 @@ class Molecule:
         if type(name) != str:
             raise RelaxStrError, ('new molecule name', name)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        name_molecule(mol_id=mol_id, name=name)
+        name_molecule(mol_id=mol_id, name=name, force=force)
 
 
 
