@@ -226,7 +226,7 @@ def bmrb_write(star):
         relax_error_list.append([])
 
     # Store the spin specific data in lists for later use.
-    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -235,7 +235,15 @@ def bmrb_write(star):
         if not hasattr(spin, 'relax_data'):
             continue
 
-        # The molecule/R1residue/spin info.
+        # Check the data for None (not allowed in BMRB!).
+        if res_num == None:
+            raise RelaxError, "For the BMRB, the residue of spin '%s' must be numbered." % spin_id
+        if res_name == None:
+            raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
+        if spin.name == None:
+            raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+
+        # The molecule/residue/spin info.
         res_num_list.append(str(res_num))
         res_name_list.append(str(res_name))
         atom_name_list.append(str(spin.name))
