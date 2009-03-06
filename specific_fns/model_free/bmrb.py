@@ -42,8 +42,11 @@ class Bmrb:
         # Read the contents of the STAR formatted file.
         star.read()
 
-        # Generate the molecule and residue containers.
+        # Generate the molecule and residue containers from the entity records.
         mol_res_spin.bmrb_read(star)
+
+        # Read the relaxation data saveframes.
+        relax_data.bmrb_read(star)
 
 
     def bmrb_write(self, file_path):

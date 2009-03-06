@@ -205,6 +205,25 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         update_data_structures_spin(spin, ri_label, frq_label, frq, value)
 
 
+def bmrb_read(star):
+    """Read the relaxation data from the NMR-STAR dictionary object.
+
+    @param star:    The NMR-STAR dictionary object.
+    @type star:     NMR_STAR instance
+    """
+
+    # Get the R1 relaxation data.
+    for frq, res_nums, res_names, spin_names, val, err in star.heteronucl_T1_relaxation.loop():
+        # Create the labels.
+        ri_label = 'R1'
+        frq_label = str(int(frq*1e-6))
+
+        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+        if test_labels(ri_label, frq_label):
+            raise RelaxRiError, (ri_label, frq_label)
+
+
+
 def bmrb_write(star):
     """Generate the relaxation data saveframes for the NMR-STAR dictionary object.
 
