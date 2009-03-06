@@ -27,7 +27,7 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 """
 
 # relax module imports.
-from bmrblib.misc import translate
+from bmrblib.misc import no_missing, translate
 from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
@@ -73,6 +73,11 @@ class HeteronuclT1Saveframe:
         @keyword errors:        The errors associated with the relaxation data.
         @type errors:           list of float
         """
+
+        # Check the ID info.
+        no_missing(res_nums, 'residue numbers of the ' + `int(frq*1e-6)` + ' MHz NOE data')
+        no_missing(res_names, 'residue names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
+        no_missing(atom_names, 'atom names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
 
         # Place the args into the namespace.
         self.frq = frq

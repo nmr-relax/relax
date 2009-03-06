@@ -24,6 +24,34 @@
 """Functions for manipulating NMR-STAR dictionary data."""
 
 
+def no_missing(data, name):
+    """Check that there are no None values in the data.
+
+    @param data:    The data to check.
+    @type data:     anything
+    @param name:    The name associated with the data.
+    @type name:     str
+    """
+
+    # Init.
+    missing = False
+
+    # List data.
+    if type(data) == list:
+        # Loop over the data.
+        for i in range(len(data)):
+            if data[i] == None or data[i] == 'None':
+                missing = True
+
+    # None.
+    if data == None:
+        missing = True
+
+    # Fail.
+    if missing:
+        raise NameError, "Data is missing from the " + name + '.'
+
+
 def translate(data):
     """Translate all None values into the '?' string.
 
