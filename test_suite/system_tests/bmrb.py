@@ -43,14 +43,14 @@ class Bmrb(TestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
-        # Reset the relax data storage object.
-        ds.__reset__()
-
         # Delete the temporary file.
         try:
             remove(ds.tmpfile)
         except OSError:
             pass
+
+        # Reset the relax data storage object.
+        ds.__reset__()
 
 
     def test_rw_bmrb_model_free(self):
