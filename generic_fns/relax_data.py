@@ -681,23 +681,23 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
             continue
 
         # Pack the spin ID info.
-        if mol_name_col:
+        if mol_name_col != None:
             mol_names.append(file_data[i][mol_name_col])
         else:
             mol_names.append(None)
-        if res_num_col:
+        if res_num_col != None:
             res_nums.append(file_data[i][res_num_col])
         else:
             res_nums.append(None)
-        if res_name_col:
+        if res_name_col != None:
             res_names.append(file_data[i][res_name_col])
         else:
             res_names.append(None)
-        if spin_num_col:
+        if spin_num_col != None:
             spin_nums.append(file_data[i][spin_num_col])
         else:
             spin_nums.append(None)
-        if spin_name_col:
+        if spin_name_col != None:
             spin_names.append(file_data[i][spin_name_col])
         else:
             spin_names.append(None)
