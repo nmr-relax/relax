@@ -230,7 +230,7 @@ class Residue:
         display_residue(res_id=res_id)
 
 
-    def name(self, res_id=None, name=None):
+    def name(self, res_id=None, name=None, force=False):
         """Function for naming residues.
 
         Keyword Arguments
@@ -239,6 +239,8 @@ class Residue:
         res_id:  The residue identification string corresponding to one or more residues.
 
         name:  The new name.
+
+        force:  A flag which if True will cause the residue to be renamed.
 
 
         Description
@@ -253,20 +255,21 @@ class Residue:
         The following sequence of commands will rename the sequence {1 ALA, 2 GLY, 3 LYS} to {1 XXX,
         2 XXX, 3 XXX}:
 
-        relax> residue.name(':1', 'XXX')
-        relax> residue.name(':2', 'XXX')
-        relax> residue.name(':3', 'XXX')
+        relax> residue.name(':1', 'XXX', force=True)
+        relax> residue.name(':2', 'XXX', force=True)
+        relax> residue.name(':3', 'XXX', force=True)
 
         Alternatively:
 
-        relax> residue.name(':1,2,3', 'XXX')
+        relax> residue.name(':1,2,3', 'XXX', force=True)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.name("
             text = text + "res_id=" + `res_id`
-            text = text + ", name=" + `name` + ")"
+            text = text + ", name=" + `name`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # Residue identification string.
@@ -277,11 +280,15 @@ class Residue:
         if type(name) != str:
             raise RelaxStrError, ('new residue name', name)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        name_residue(res_id=res_id, name=name)
+        name_residue(res_id=res_id, name=name, force=force)
 
 
-    def number(self, res_id=None, number=None):
+    def number(self, res_id=None, number=None, force=False):
         """Function for numbering residues.
 
         Keyword Arguments
@@ -290,6 +297,8 @@ class Residue:
         res_id:  The residue identification string corresponding to a single residue.
 
         number:  The new residue number.
+
+        force:  A flag which if True will cause the residue to be renumbered.
 
 
         Description
@@ -305,16 +314,17 @@ class Residue:
         The following sequence of commands will renumber the sequence {1 ALA, 2 GLY, 3 LYS} to
         {101 ALA, 102 GLY, 103 LYS}:
 
-        relax> residue.number(':1', 101)
-        relax> residue.number(':2', 102)
-        relax> residue.number(':3', 103)
+        relax> residue.number(':1', 101, force=True)
+        relax> residue.number(':2', 102, force=True)
+        relax> residue.number(':3', 103, force=True)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.number("
             text = text + "res_id=" + `res_id`
-            text = text + ", number=" + `number` + ")"
+            text = text + ", number=" + `number`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # Residue identification string.
@@ -325,8 +335,12 @@ class Residue:
         if type(number) != int:
             raise RelaxIntError, ('new residue number', number)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        number_residue(res_id=res_id, number=number)
+        number_residue(res_id=res_id, number=number, force=force)
 
 
 

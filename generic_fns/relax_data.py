@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,6 +31,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
+from generic_fns import value
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import extract_data, strip
 import specific_fns
@@ -162,7 +163,7 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         raise RelaxNoSequenceError
 
     # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if test_labels():
+    if test_labels(ri_label, frq_label):
         raise RelaxRiError, (ri_label, frq_label)
 
 
@@ -295,7 +296,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
 
 
 def data_init(container, global_flag=False):
-    """Function for initialising the data structures for a spin container.
+    """Initialise the data structures for a spin container.
 
     @param container:       The data pipe or spin data container (PipeContainer or SpinContainer).
     @type container:        class instance
@@ -403,12 +404,13 @@ def get_data_names(global_flag=False, sim_names=False):
 
 
 def delete(ri_label=None, frq_label=None):
-    """Function for deleting relaxation data corresponding to ri_label and frq_label."""
+    """Delete relaxation data corresponding to the Ri and frequency labels.
 
-    # Arguments.
-    self.run = run
-    self.ri_label = ri_label
-    self.frq_label = frq_label
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    """
 
     # Test if the current pipe exists.
     pipes.test()
@@ -417,67 +419,62 @@ def delete(ri_label=None, frq_label=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-    if not self.test_labels():
-        raise RelaxNoRiError, (self.ri_label, self.frq_label)
+    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
+    if not test_labels(ri_label, frq_label):
+        raise RelaxNoRiError, (ri_label, frq_label)
 
-    # Loop over the sequence.
-    for i in xrange(len(ds.res[self.run])):
-        # Remap the data structure 'ds.res[self.run][i]'.
-        data = ds.res[self.run][i]
-
+    # Loop over the spins.
+    for spin in spin_loop():
         # Global data flag.
-        self.global_flag = 0
+        global_flag = False
 
         # Find the index corresponding to 'ri_label' and 'frq_label'.
-        index = self.find_index(data, ri_label, frq_label)
+        index = find_index(spin, ri_label, frq_label)
 
         # Catch any problems.
         if index == None:
             continue
 
         # Relaxation data and errors.
-        data.relax_data.pop(index)
-        data.relax_error.pop(index)
+        spin.relax_data.pop(index)
+        spin.relax_error.pop(index)
 
         # Update the number of relaxation data points.
-        data.num_ri = data.num_ri - 1
+        spin.num_ri = spin.num_ri - 1
 
         # Delete ri_label from the data types.
-        data.ri_labels.pop(index)
+        spin.ri_labels.pop(index)
 
         # Update the remap table.
-        data.remap_table.pop(index)
+        spin.remap_table.pop(index)
 
-        # Find if there is other data corresponding to 'self.frq_label'
-        frq_index = data.frq_labels.index(self.frq_label)
-        if not frq_index in data.remap_table:
+        # Find if there is other data corresponding to 'frq_label'
+        frq_index = spin.frq_labels.index(frq_label)
+        if not frq_index in spin.remap_table:
             # Update the number of frequencies.
-            data.num_frq = data.num_frq - 1
+            spin.num_frq = spin.num_frq - 1
 
             # Update the frequency labels.
-            data.frq_labels.pop(frq_index)
+            spin.frq_labels.pop(frq_index)
 
             # Update the frequency array.
-            data.frq.pop(frq_index)
+            spin.frq.pop(frq_index)
 
         # Update the NOE R1 translation table.
-        data.noe_r1_table.pop(index)
-        for j in xrange(data.num_ri):
-            if data.noe_r1_table[j] > index:
-                data.noe_r1_table[j] = data.noe_r1_table[j] - 1
-
-    # Clean up the runs.
-    self.relax.generic.runs.eliminate_unused_runs()
+        spin.noe_r1_table.pop(index)
+        for j in xrange(spin.num_ri):
+            if spin.noe_r1_table[j] > index:
+                spin.noe_r1_table[j] = spin.noe_r1_table[j] - 1
 
 
 def display(ri_label=None, frq_label=None):
-    """Function for displaying relaxation data corresponding to ri_label and frq_label."""
+    """Display relaxation data corresponding to the Ri and frequency labels.
 
-    # Arguments.
-    self.run = run
-    self.ri_label = ri_label
-    self.frq_label = frq_label
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    """
 
     # Test if the current pipe exists.
     pipes.test()
@@ -486,16 +483,16 @@ def display(ri_label=None, frq_label=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-    if not self.test_labels():
-        raise RelaxNoRiError, (self.ri_label, self.frq_label)
+    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
+    if not test_labels(ri_label, frq_label):
+        raise RelaxNoRiError, (ri_label, frq_label)
 
     # Print the data.
-    self.relax.generic.value.write_data(run=self.run, param=(self.ri_label, self.frq_label), file=sys.stdout, return_value=self.return_value)
+    value.write_data(param=(ri_label, frq_label), file=sys.stdout, return_value=return_value)
 
 
 def find_index(data, ri_label, frq_label):
-    """Function for finding the index corresponding to ri_label and frq_label.
+    """Find the index corresponding to ri_label and frq_label.
 
     @param data:        The class instance containing the ri_label and frq_label variables.
     @type data:         PipeContainer or SpinContainer
@@ -525,7 +522,7 @@ def find_index(data, ri_label, frq_label):
 
 
 def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
-    """Function for reading R1, R2, NOE, or R2eff relaxation data.
+    """Read R1, R2, NOE, or R2eff relaxation data from a file.
 
     @param ri_label:        The relaxation data type, ie 'R1', 'R2', 'NOE', or 'R2eff'.
     @type ri_label:         str
@@ -681,26 +678,29 @@ def return_data_desc(name):
         return 'The relaxation data errors'
 
 
-def return_value(i, data_type):
-    """Function for returning the value and error corresponding to 'data_type'."""
+def return_value(spin, data_type):
+    """Return the value and error corresponding to 'data_type'.
 
-    # Arguments.
-    self.run = run
+    @param spin:        The spin container.
+    @type spin:         SpinContainer instance
+    @param data_type:   A tuple of the Ri label and the frequency label.
+    @type data_type:    tuple of str of length 2
+    """
 
     # Unpack the data_type tuple.
-    self.ri_label, self.frq_label = data_type
+    ri_label, frq_label = data_type
 
     # Initialise.
     value = None
     error = None
 
     # Find the index corresponding to 'ri_label' and 'frq_label'.
-    index = self.find_index(ds.res[self.run][i])
+    index = find_index(spin, ri_label, frq_label)
 
     # Get the data.
     if index != None:
-        value = ds.res[self.run][i].relax_data[index]
-        error = ds.res[self.run][i].relax_error[index]
+        value = spin.relax_data[index]
+        error = spin.relax_error[index]
 
     # Return the data.
     return value, error
@@ -709,9 +709,13 @@ def return_value(i, data_type):
 def test_labels(ri_label, frq_label):
     """Test if data corresponding to 'ri_label' and 'frq_label' currently exists.
 
-    @return:        The answer to the question of whether relaxation data exists corresponding to
-                    the given labels.
-    @rtype:         bool
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    @return:            The answer to the question of whether relaxation data exists corresponding
+                        to the given labels.
+    @rtype:             bool
     """
 
     # Loop over the spins.
@@ -731,7 +735,7 @@ def test_labels(ri_label, frq_label):
 
 
 def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
-    """Function for updating all relaxation data structures in the current data pipe.
+    """Update all relaxation data structures in the current data pipe.
 
     @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
     @type ri_label:         str
@@ -796,7 +800,7 @@ def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
 
 
 def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=None, value=None, error=None):
-    """Function for updating all relaxation data structures of the given spin container.
+    """Update all relaxation data structures of the given spin container.
 
     @param spin:            The SpinContainer object.
     @type spin:             class instance
@@ -909,12 +913,7 @@ def update_noe_r1_table(cont):
 
 
 def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
-    """Function for writing relaxation data."""
-
-    # Arguments.
-    self.run = run
-    self.ri_label = ri_label
-    self.frq_label = frq_label
+    """Write relaxation data to a file."""
 
     # Test if the current pipe exists.
     pipes.test()
@@ -923,13 +922,13 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
-    if not self.test_labels():
-        raise RelaxNoRiError, (self.ri_label, self.frq_label)
+    # Test if data corresponding to 'ri_label' and 'frq_label' exists.
+    if not test_labels(ri_label, frq_label):
+        raise RelaxNoRiError, (ri_label, frq_label)
 
     # Create the file name if none is given.
     if file == None:
-        file = self.ri_label + "." + self.frq_label + ".out"
+        file = ri_label + "." + frq_label + ".out"
 
     # Write the data.
-    self.relax.generic.value.write(run=self.run, param=(self.ri_label, self.frq_label), file=file, dir=dir, force=force, return_value=self.return_value)
+    value.write(param=(ri_label, frq_label), file=file, dir=dir, force=force, return_value=return_value)

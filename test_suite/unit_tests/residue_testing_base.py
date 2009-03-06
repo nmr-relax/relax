@@ -466,7 +466,7 @@ class Residue_base_class:
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue_fns.name(res_id=':-10', name='K')
+        self.residue_fns.name(res_id=':-10', name='K', force=True)
 
         # Test that the residue has been renamed.
         self.assertEqual(dp.mol[0].res[0].name, 'K')
@@ -497,7 +497,7 @@ class Residue_base_class:
         self.residue_fns.copy(res_from=':1', res_to=':4,Met')
 
         # Rename all alanines.
-        self.residue_fns.name(res_id=':Ala', name='Gln')
+        self.residue_fns.name(res_id=':Ala', name='Gln', force=True)
 
         # Test the renaming of alanines.
         self.assertEqual(dp.mol[0].res[1].name, 'Gln')
@@ -533,7 +533,7 @@ class Residue_base_class:
         self.residue_fns.create(-10, 'His')
 
         # Rename the residue.
-        self.residue_fns.number(res_id=':-10', number=10)
+        self.residue_fns.number(res_id=':-10', number=10, force=True)
 
         # Test that the residue has been renumbered.
         self.assertEqual(dp.mol[0].res[0].num, 10)

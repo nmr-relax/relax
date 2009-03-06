@@ -98,11 +98,11 @@ class Test_spin(Spin_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.spin_fns.create, spin_num=data[1], spin_name='NH')
+            self.assertRaises(RelaxNoneIntError, self.spin_fns.create, spin_num=data[1], spin_name='NH')
 
 
     def test_create_argfail_spin_name(self):

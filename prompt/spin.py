@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns.mol_res_spin import copy_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
-from relax_errors import RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Spin:
@@ -157,8 +157,8 @@ class Spin:
             print text
 
         # Spin number.
-        if type(spin_num) != int:
-            raise RelaxIntError, ('spin number', spin_num)
+        if spin_num != None and type(spin_num) != int:
+            raise RelaxNoneIntError, ('spin number', spin_num)
 
         # Spin name.
         if spin_name != None and type(spin_name) != str:
@@ -225,7 +225,7 @@ class Spin:
         display_spin(spin_id=spin_id)
 
 
-    def name(self, spin_id=None, name=None):
+    def name(self, spin_id=None, name=None, force=False):
         """Function for naming spins.
 
         Keyword Arguments
@@ -234,6 +234,8 @@ class Spin:
         spin_id:  The spin identification string corresponding to one or more spins.
 
         name:  The new name.
+
+        force:  A flag which if True will cause the spin to be renamed.
 
 
         Description
@@ -248,16 +250,17 @@ class Spin:
         The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,
         2 C12, 3 C13}:
 
-        relax> spin.name('@1', 'C11')
-        relax> spin.name('@2', 'C12')
-        relax> spin.name('@3', 'C13')
+        relax> spin.name('@1', 'C11', force=True)
+        relax> spin.name('@2', 'C12', force=True)
+        relax> spin.name('@3', 'C13', force=True)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.name("
             text = text + "spin_id=" + `spin_id`
-            text = text + ", name=" + `name` + ")"
+            text = text + ", name=" + `name`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # Spin identification string.
@@ -268,11 +271,15 @@ class Spin:
         if type(name) != str:
             raise RelaxStrError, ('new spin name', name)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        name_spin(spin_id=spin_id, name=name)
+        name_spin(spin_id=spin_id, name=name, force=force)
 
 
-    def number(self, spin_id=None, number=None):
+    def number(self, spin_id=None, number=None, force=False):
         """Function for numbering spins.
 
         Keyword Arguments
@@ -281,6 +288,8 @@ class Spin:
         spin_id:  The spin identification string corresponding to a single spin.
 
         number:  The new spin number.
+
+        force:  A flag which if True will cause the spin to be renumbered.
 
 
         Description
@@ -296,9 +305,9 @@ class Spin:
         The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to
         {-1 C1, -2 C2, -3 C3}:
 
-        relax> spin.number('@1', -1)
-        relax> spin.number('@2', -2)
-        relax> spin.number('@3', -3)
+        relax> spin.number('@1', -1, force=True)
+        relax> spin.number('@2', -2, force=True)
+        relax> spin.number('@3', -3, force=True)
 
         """
 
@@ -306,7 +315,8 @@ class Spin:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.number("
             text = text + "spin_id=" + `spin_id`
-            text = text + ", number=" + `number` + ")"
+            text = text + ", number=" + `number`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # Spin identification string.
@@ -317,8 +327,12 @@ class Spin:
         if number != None and  type(number) != int:
             raise RelaxNoneIntError, ('new spin number', number)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        number_spin(spin_id=spin_id, number=number)
+        number_spin(spin_id=spin_id, number=number, force=force)
 
 
 

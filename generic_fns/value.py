@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_
 from generic_fns.sequence import write_header, write_line
 from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
-from specific_fns.setup import get_specific_fn
+import specific_fns
 
 
 def copy(pipe_from=None, pipe_to=None, param=None):
@@ -66,7 +66,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         raise RelaxNoSequenceError, pipe_to
 
     # Specific value and error returning function.
-    return_value = get_specific_fn('return_value', pipes.get_type(pipe_from))
+    return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type(pipe_from))
 
     # Test if the data exists for pipe_to.
     for spin in spin_loop(pipe_to):
@@ -93,7 +93,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
 
 
 def display(param=None):
-    """Function for displaying residue specific data values.
+    """Display spin specific data values.
 
     @param param:       The name of the parameter to display.
     @type param:        str
@@ -126,7 +126,7 @@ def partition_params(val, param):
     """
 
     # Specific functions.
-    is_spin_param = get_specific_fn('is_spin_param', pipes.get_type())
+    is_spin_param = specific_fns.setup.get_specific_fn('is_spin_param', pipes.get_type())
 
     # Initialise.
     spin_params = []
@@ -245,7 +245,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         min_stat = False
 
         # Specific v
-        return_value = get_specific_fn('return_value', pipes.get_type())
+        return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
 
         # Specific set function.
         set = set_spin_params
@@ -364,8 +364,8 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
     pipes.test()
 
     # Specific functions.
-    return_value = get_specific_fn('return_value', pipes.get_type())
-    set_non_spin_params = get_specific_fn('set_non_spin_params', pipes.get_type())
+    return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
+    set_non_spin_params = specific_fns.setup.get_specific_fn('set_non_spin_params', pipes.get_type())
 
     # The parameters have been specified.
     if param:
@@ -438,7 +438,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
 
 
 def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
-    """Function for setting spin specific parameter values.
+    """Set spin specific parameter values.
 
     @param value:   The value to change the parameter to.
     @type value:    float or str
@@ -453,10 +453,10 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
     """
 
     # Specific functions.
-    data_init = get_specific_fn('data_init', pipes.get_type())
-    default_value = get_specific_fn('default_value', pipes.get_type())
-    return_data_name = get_specific_fn('return_data_name', pipes.get_type())
-    set_update = get_specific_fn('set_update', pipes.get_type())
+    data_init = specific_fns.setup.get_specific_fn('data_init', pipes.get_type())
+    default_value = specific_fns.setup.get_specific_fn('default_value', pipes.get_type())
+    return_data_name = specific_fns.setup.get_specific_fn('return_data_name', pipes.get_type())
+    set_update = specific_fns.setup.get_specific_fn('set_update', pipes.get_type())
 
 
     # Setting the model parameters prior to minimisation.
@@ -467,7 +467,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         if value:
             # Test if the length of the value array is equal to the length of the parameter array.
             if len(value) != len(spin.params):
-                raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for residue " + `spin.num` + " " + spin.name + "."
+                raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for spin " + `spin.num` + " " + spin.name + "."
 
         # Default values.
         else:
@@ -601,7 +601,7 @@ def write_data(param=None, file=None, return_value=None):
 
     # Get the value and error returning function if required.
     if not return_value:
-        return_value = get_specific_fn('return_value', pipes.get_type())
+        return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
 
     # Format string.
     format = "%-30s%-30s"
