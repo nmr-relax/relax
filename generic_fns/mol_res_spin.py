@@ -737,7 +737,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         res_to_cont = pipe.mol[0].res[0]
 
     # Copy the data.
-    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
+    if len(res_to_cont.spin) == 1 and res_to_cont.spin[0].is_empty():
         res_to_cont.spin[0] = spin_from_cont.__clone__()
     else:
         res_to_cont.spin.append(spin_from_cont.__clone__())

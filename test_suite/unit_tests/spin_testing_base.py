@@ -101,11 +101,45 @@ class Spin_base_class:
         cdp.mol[1].res[1].spin.add_item(None, 1433)
         cdp.mol[1].res[1].spin.add_item('NH', 3239)
 
+        # Create a third molecule.
+        cdp.mol.add_item('3rd')
+
+        # Create the first residue of the 3rd molecule and add some data to its spin container.
+        cdp.mol[2].res[0].num = 13
+        cdp.mol[2].res[0].name = 'Gly'
+        cdp.mol[2].res[0].spin[0].x = 'hello'
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
         ds.__reset__()
+
+
+    def test_copy_spin(self):
+        """Test the copying of the spin data within the same residue.
+
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
+        """
+
+        # Copy the spin from the 3rd molecule.
+        self.spin_fns.copy(spin_from='#3rd:13', spin_to='#3rd:13@NE')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Test the original spin.
+        self.assertEqual(dp.mol[2].res[0].num, 13)
+        self.assertEqual(dp.mol[2].res[0].name, 'Gly')
+        self.assertEqual(dp.mol[2].res[0].spin[0].num, None)
+        self.assertEqual(dp.mol[2].res[0].spin[0].name, None)
+        self.assertEqual(dp.mol[2].res[0].spin[0].x, 'hello')
+
+        # Test the new spin.
+        self.assertEqual(dp.mol[2].res[0].spin[1].num, None)
+        self.assertEqual(dp.mol[2].res[0].spin[1].name, 'NE')
+        self.assertEqual(dp.mol[2].res[0].spin[1].x, 'hello')
 
 
     def test_copy_spin_between_molecules(self):
