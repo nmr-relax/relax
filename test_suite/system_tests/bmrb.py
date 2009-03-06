@@ -37,7 +37,7 @@ class Bmrb(TestCase):
         """Common set up for these system tests."""
 
         # Create a temporary file name.
-        self.tmpfile = mktemp()
+        ds.tmpfile = mktemp()
 
 
     def tearDown(self):
@@ -48,7 +48,7 @@ class Bmrb(TestCase):
 
         # Delete the temporary file.
         try:
-            remove(self.tmpfile)
+            remove(ds.tmpfile)
         except OSError:
             pass
 
@@ -56,21 +56,5 @@ class Bmrb(TestCase):
     def test_rw_bmrb_model_free(self):
         """Write and then read a BRMB STAR formatted file containing model-free results."""
 
-        # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
-
-        # Read the relax results file.
-        self.relax.interpreter._Pipe.create('results', 'mf')
-        self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=path)
-
-        # Write the BMRB STAR formatted file.
-        self.relax.interpreter._BMRB.write(file=self.tmpfile, dir=None, force=True)
-
-        # Create a new data pipe for reading the data back in.
-        self.relax.interpreter._Pipe.create('bmrb', 'mf')
-
-        # Read the BMRB STAR formatted file.
-        self.relax.interpreter._BMRB.read(file=self.tmpfile)
-
-        # Try displaying some of the relaxation data.
-        self.relax.interpreter._Relax_data.display('R1', '800')
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bmrb_rw.py')
