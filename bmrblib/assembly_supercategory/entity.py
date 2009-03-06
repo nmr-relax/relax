@@ -224,7 +224,7 @@ class EntityCompIndex(TagCategory):
     def read(self, tagtable):
         """Extract the EntityCompIndex tag category info.
 
-        @param tagtable:    The Entity tagtable.
+        @param tagtable:    The EntityCompIndex tagtable.
         @type tagtable:     Tagtable instance
         @return:            The residue numbers and names.
         @rtype:             tuple of list of int, list of str
