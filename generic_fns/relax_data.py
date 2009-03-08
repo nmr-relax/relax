@@ -682,6 +682,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
                 raise RelaxNoSpinError, id
             else:
                 create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
+                spin = return_spin(id)
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
