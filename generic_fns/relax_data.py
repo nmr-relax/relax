@@ -628,6 +628,35 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
     @type gen_seq:          bool
     """
 
+    # The number of spins.
+    N = len(values)
+
+    # Convert None args.
+    if not mol_names:
+        mol_names = [None]*N
+    if not res_nums:
+        res_nums = [None]*N
+    if not res_names:
+        res_names = [None]*N
+    if not spin_nums:
+        spin_nums = [None]*N
+    if not spin_names:
+        spin_names = [None]*N
+
+    # Test the data.
+    if len(errors) != N:
+        raise RelaxError, "The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N)
+    if len(mol_names) != N:
+        raise RelaxError, "The length of the mol_names arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N)
+    if len(res_nums) != N:
+        raise RelaxError, "The length of the res_nums arg (%s) does not match that of the value arg (%s)." % (len(res_nums), N)
+    if len(res_names) != N:
+        raise RelaxError, "The length of the res_names arg (%s) does not match that of the value arg (%s)." % (len(res_names), N)
+    if len(spin_nums) != N:
+        raise RelaxError, "The length of the spin_nums arg (%s) does not match that of the value arg (%s)." % (len(spin_nums), N)
+    if len(spin_names) != N:
+        raise RelaxError, "The length of the spin_names arg (%s) does not match that of the value arg (%s)." % (len(spin_names), N)
+
     # Get the current data pipe.
     cdp = pipes.get_pipe()
 
