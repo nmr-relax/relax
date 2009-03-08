@@ -118,8 +118,21 @@ class Test_spin(Spin_base_class, TestCase):
             self.assertRaises(RelaxNoneStrError, self.spin_fns.create, spin_name=data[1], spin_num=1)
 
 
-    def test_create_argfail_res_id(self):
-        """Test the proper failure of the spin.create() user function for the res_id argument."""
+    def test_create_argfail_res_num(self):
+        """Test the proper failure of the spin.create() user function for the res_num argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the int and bin arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneIntError, self.spin_fns.create, res_num=data[1], spin_name='NH')
+
+
+    def test_create_argfail_res_name(self):
+        """Test the proper failure of the spin.create() user function for the res_name argument."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -128,7 +141,20 @@ class Test_spin(Spin_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, res_id=data[1], spin_num=1, spin_name='NH')
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, res_name=data[1], spin_num=1, spin_name='NH')
+
+
+    def test_create_argfail_mol_name(self):
+        """Test the proper failure of the spin.create() user function for the mol_name argument."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the None and str arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxNoneStrError, self.spin_fns.create, mol_name=data[1], spin_num=1, spin_name='NH')
 
 
     def test_delete_argfail_spin_id(self):
