@@ -118,7 +118,7 @@ class Spin:
         copy_spin(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
-    def create(self, spin_num=None, spin_name=None, res_id=None):
+    def create(self, spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
         """Function for creating a new spin.
 
         Keyword Arguments
@@ -128,7 +128,11 @@ class Spin:
 
         spin_name:  The name of the spin.
 
-        res_id:  The residue ID string identifying the residue to add the spin to.
+        res_num:  The number of the residue to add the spin to.
+
+        res_name:  The name of the residue to add the spin to.
+
+        mol_name:  The name of the molecule to add the spin to.
 
 
         Description
@@ -153,7 +157,9 @@ class Spin:
             text = sys.ps3 + "spin.create("
             text = text + "spin_num=" + `spin_num`
             text = text + ", spin_name=" + `spin_name`
-            text = text + ", res_id=" + `res_id` + ")"
+            text = text + ", res_num=" + `res_num`
+            text = text + ", res_name=" + `res_name`
+            text = text + ", mol_name=" + `mol_name` + ")"
             print text
 
         # Spin number.
@@ -164,12 +170,20 @@ class Spin:
         if spin_name != None and type(spin_name) != str:
             raise RelaxNoneStrError, ('spin name', spin_name)
 
-        # The residue ID.
-        if res_id != None and type(res_id) != str:
-            raise RelaxNoneStrError, ('residue identification string', res_id)
+        # The residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
+
+        # The residue name.
+        if res_name != None and type(res_name) != str:
+            raise RelaxNoneStrError, ('residue name', res_name)
+
+        # The molecule name.
+        if mol_name != None and type(mol_name) != str:
+            raise RelaxNoneStrError, ('molecule name', mol_name)
 
         # Execute the functional code.
-        create_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
+        create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
 
 
     def delete(self, spin_id=None):

@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
@@ -681,9 +681,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
             if not gen_seq:
                 raise RelaxNoSpinError, id
             else:
-                create_molecule(mol_name)
-                create_residue(res_num, res_name, mol_id=generate_spin_id(mol_name=mol_name))
-                create_spin(spin_num, spin_name, res_id=generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
+                create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
