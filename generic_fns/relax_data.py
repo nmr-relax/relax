@@ -222,6 +222,9 @@ def bmrb_read(star):
         if test_labels(ri_label, frq_label):
             raise RelaxRiError, (ri_label, frq_label)
 
+        # Pack the data.
+        pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names)
+
 
 
 def bmrb_write(star):
