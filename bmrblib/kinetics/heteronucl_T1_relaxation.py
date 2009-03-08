@@ -298,8 +298,8 @@ class T1(TagCategory):
         # Convert the residue numbers to ints and the values and errors to floats.
         for i in range(len(res_nums)):
             res_nums[i] = int(res_nums[i])
-            values[i] = float(res_nums[i])
-            errors[i] = float(res_nums[i])
+            values[i] = float(values[i])
+            errors[i] = float(errors[i])
 
         # Return the data.
         return res_nums, res_names, atom_names, values, errors
