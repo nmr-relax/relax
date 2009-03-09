@@ -50,7 +50,7 @@ class OrderParameterSaveframe:
         self.add_tag_categories()
 
 
-    def add(self, res_nums=None, res_names=None, atom_names=None):
+    def add(self, res_nums=None, res_names=None, atom_names=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None):
         """Add relaxation data to the data nodes.
 
         @keyword res_nums:      The residue number list.
@@ -59,6 +59,30 @@ class OrderParameterSaveframe:
         @type res_names:        list of str
         @keyword atom_names:    The atom name list.
         @type atom_names:       list of str
+        @keyword s2:            The S2 values.
+        @type s2:               list of float
+        @keyword s2_err:        The S2 errors.
+        @type s2_err:           list of float
+        @keyword s2f:           The S2f values.
+        @type s2f:              list of float
+        @keyword s2f_err:       The S2f errors.
+        @type s2f_err:          list of float
+        @keyword s2s:           The S2s values.
+        @type s2s:              list of float
+        @keyword s2s_err:       The S2s errors.
+        @type s2s_err:          list of float
+        @keyword te:            The te values.
+        @type te:               list of float
+        @keyword te_err:        The te errors.
+        @type te_err:           list of float
+        @keyword tf:            The tf values.
+        @type tf:               list of float
+        @keyword tf_err:        The tf errors.
+        @type tf_err:           list of float
+        @keyword ts:            The ts values.
+        @type ts:               list of float
+        @keyword ts_err:        The ts errors.
+        @type ts_err:           list of float
         """
 
         # Check the ID info.
@@ -66,10 +90,27 @@ class OrderParameterSaveframe:
         no_missing(res_names, 'residue names of the model-free data')
         no_missing(atom_names, 'atom names of the model-free data')
 
-        # Place the args into the namespace.
-        self.res_nums = translate(res_nums)
-        self.res_names = translate(res_names)
-        self.atom_names = translate(atom_names)
+        # Object names.
+        names = ['res_nums', 'res_names', 'atom_names', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err']
+
+        # Number of elements.
+        N = len(res_nums)
+
+        # Loop over the objects.
+        for name in names:
+            # Get the object.
+            obj = locals()[name]
+
+            # None objects.
+            if obj == None:
+                obj = [None] * N
+
+            # Check the length.
+            if len(obj) != N:
+                raise NameError, "The number of elements in the '%s' arg does not match that of 'res_nums'." % name
+
+            # Place the args into the namespace, translating for BMRB.
+            setattr(self, name, translate(obj))
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='order_parameters')
@@ -168,26 +209,29 @@ class OrderParameter(TagCategory):
     def create(self):
         """Create the OrderParameter tag category."""
 
-        # The relaxation tag names.
-        tag_names = []
-        missing = []
-        for key in ['SeqID', 'CompID', 'AtomID']:
-            if not self.tag_names.has_key(key):
-                missing.append(key)
-            else:
-                tag_names.append(self.tag_names_full[key])
+        # Keys and objects.
+        info = [
+            ['SeqID',               'res_nums'],
+            ['CompID',              'res_names'],
+            ['AtomID',              'atom_names'],
+            ['OrderParamVal',       's2'],
+            ['OrderParamValErr',    's2_err'],
+            ['TauEVal',             'te'],
+            ['TauEValErr',          'te_err'],
+            ['TauFVal',             'tf'],
+            ['TauFValErr',          'tf_err'],
+            ['TauSVal',             'ts'],
+            ['TauSValErr',          'ts_err'],
+            ['RexVal',              'rex'],
+            ['RexValErr',           'rex_err'],
+            ['Sf2Val',              's2f'],
+            ['Sf2ValErr',           's2f_err'],
+            ['Ss2Val',              's2s'],
+            ['Ss2ValErr',           's2s_err']
+        ]
 
-        # The tag values.
-        tag_values = []
-        if 'SeqID' not in missing:
-            tag_values.append(self.sf.res_nums)
-        if 'CompID' not in missing:
-            tag_values.append(self.sf.res_names)
-        if 'AtomID' not in missing:
-            tag_values.append(self.sf.atom_names)
-
-        # Add the data.
-        table = TagTable(tagnames=tag_names, tagvalues=tag_values)
+        # Get the TabTable.
+        table = self.create_tag_table(info)
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
@@ -209,3 +253,17 @@ class OrderParameter(TagCategory):
         self.tag_names['SeqID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
+        self.tag_names['OrderParamVal'] = 'S2_value'
+        self.tag_names['OrderParamValErr'] = 'S2_value_fit_error'
+        self.tag_names['TauEVal'] = 'Tau_e_value'
+        self.tag_names['TauEValErr'] = 'Tau_e_value_fit_error'
+        self.tag_names['TauFVal'] = 'Tau_f_value'
+        self.tag_names['TauFValErr'] = 'Tau_f_value_fit_error'
+        self.tag_names['TauSVal'] = 'Tau_s_value'
+        self.tag_names['TauSValErr'] = 'Tau_s_value_fit_error'
+        self.tag_names['RexVal'] = None
+        self.tag_names['RexValErr'] = None
+        self.tag_names['Sf2Val'] = 'S2f_value'
+        self.tag_names['Sf2ValErr'] = 'S2f_value_fit_error'
+        self.tag_names['Ss2Val'] = 'S2s_value'
+        self.tag_names['Ss2ValErr'] = 'S2s_value_fit_error'

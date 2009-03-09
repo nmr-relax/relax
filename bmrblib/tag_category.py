@@ -23,6 +23,10 @@
 # Module docstring.
 """The TagCategory base class."""
 
+# relax module imports.
+from pystarlib.TagTable import TagTable
+
+
 class TagCategory:
     """The base class for tag category classes."""
 
@@ -60,6 +64,38 @@ class TagCategory:
 
         # The full tag name.
         return self.tag_category_label_full + tag_name
+
+
+    def create_tag_table(self, info):
+        """Create and return a tag table based on the info structure.
+
+        @param info:    The key and object pair list.  This consists of the keys of
+                        self.tag_names being the first element and the names of the objects being
+                        the second element, both of the second dimension.  The fist dimension are
+                        the different pairs.
+        @type info:     list of list of str
+        @return:        The tag table.
+        @rtype:         TagTable instance
+        """
+
+        # Init.
+        keys = self.tag_names.keys()
+        tag_names = []
+        tag_values = []
+
+        # Loop over the keys and object names of the info structure.
+        for key, name in info:
+            # Key check.
+            if key not in keys:
+                raise NameError, "The key '%s' is not located in the self.tag_names structure." % key
+
+            # The tag names and values (skipping empty entries in self.tag_names).
+            if self.tag_names[key] != None:
+                tag_names.append(self.tag_names_full[key])
+                tag_values.append(getattr(self.sf, name))
+
+        # Add the data and return the table.
+        return TagTable(tagnames=tag_names, tagvalues=tag_values)
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
