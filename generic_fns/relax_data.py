@@ -212,18 +212,24 @@ def bmrb_read(star):
     @type star:     NMR_STAR instance
     """
 
-    # Get the R1 relaxation data.
-    for frq, res_nums, res_names, spin_names, val, err in star.heteronucl_T1_relaxation.loop():
-        # Create the labels.
-        ri_label = 'R1'
-        frq_label = str(int(frq*1e-6))
+    # R1, R2, and NOE.
+    labels = ['R1', 'R2', 'NOE']
+    objects = [star.heteronucl_T1_relaxation, star.heteronucl_T2_relaxation, star.heteronucl_NOEs]
 
-        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-        if test_labels(ri_label, frq_label):
-            raise RelaxRiError, (ri_label, frq_label)
+    # Loop over the data types.
+    for i in range(3):
+        # Get the relaxation data.
+        for frq, res_nums, res_names, spin_names, val, err in objects[i].loop():
+            # Create the labels.
+            ri_label = labels[i]
+            frq_label = str(int(frq*1e-6))
 
-        # Pack the data.
-        pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
+            # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+            if test_labels(ri_label, frq_label):
+                raise RelaxRiError, (ri_label, frq_label)
+
+            # Pack the data.
+            pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
 
 
 
