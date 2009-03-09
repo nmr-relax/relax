@@ -28,18 +28,13 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 
 # relax module imports.
 from bmrblib.misc import no_missing, translate
-from bmrblib.kinetics.relax_base import HeteronuclRxList, RelaxSaveframe, Rx
 from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
 
-class HeteronuclNOESaveframe(RelaxSaveframe):
-    """The Heteronuclear NOE data saveframe class."""
-
-    # Saveframe variables.
-    label = 'NOE'
-
+class OrderParameterSaveframe:
+    """The Order parameters data saveframe class."""
 
     def __init__(self, datanodes):
         """Initialise the class, placing the pystarlib data nodes into the namespace.
@@ -51,54 +46,39 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         # Place the data nodes into the namespace.
         self.datanodes = datanodes
 
-        # The number of relaxation data sets.
-        self.noe_inc = 0
-
         # Add the specific tag category objects.
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
+    def add(self, res_nums=None, res_names=None, atom_names=None):
         """Add relaxation data to the data nodes.
 
-        @keyword frq:           The spectrometer proton frequency, in Hz.
-        @type frq:              float
         @keyword res_nums:      The residue number list.
         @type res_nums:         list of int
         @keyword res_names:     The residue name list.
         @type res_names:        list of str
         @keyword atom_names:    The atom name list.
         @type atom_names:       list of str
-        @keyword data:          The relaxation data.
-        @type data:             list of float
-        @keyword errors:        The errors associated with the relaxation data.
-        @type errors:           list of float
         """
 
         # Check the ID info.
-        no_missing(res_nums, 'residue numbers of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(res_names, 'residue names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(atom_names, 'atom names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
+        no_missing(res_nums, 'residue numbers of the model-free data')
+        no_missing(res_names, 'residue names of the model-free data')
+        no_missing(atom_names, 'atom names of the model-free data')
 
         # Place the args into the namespace.
-        self.frq = frq
         self.res_nums = translate(res_nums)
         self.res_names = translate(res_names)
         self.atom_names = translate(atom_names)
-        self.data = translate(data)
-        self.errors = translate(errors)
-
-        # Set up the NOE specific variables.
-        self.noe_inc = self.noe_inc + 1
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.noe_inc`)
+        self.frame = SaveFrame(title='order_parameters')
 
         # Create the tag categories.
-        self.heteronuclRxlist.create()
-        self.heteronuclRxexperiment.create()
-        self.heteronuclRxsoftware.create()
-        self.Rx.create()
+        self.order_parameter_list.create()
+        self.order_parameter_experiment.create()
+        self.order_parameter_software.create()
+        self.order_parameter.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
@@ -108,30 +88,27 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclRxlist = HeteronuclNOEList(self)
-        self.heteronuclRxexperiment = HeteronuclNOEExperiment(self)
-        self.heteronuclRxsoftware = HeteronuclNOESoftware(self)
-        self.Rx = HeteronuclNOE(self)
+        self.order_parameter_list = OrderParameterList(self)
+        self.order_parameter_experiment = OrderParameterExperiment(self)
+        self.order_parameter_software = OrderParameterSoftware(self)
+        self.order_parameter = OrderParameter(self)
 
 
-class HeteronuclNOEList(HeteronuclRxList):
-    """Base class for the HeteronuclNOEList tag category."""
+class OrderParameterList(TagCategory):
+    """Base class for the OrderParameterList tag category."""
 
     def create(self):
-        """Create the HeteronuclNOEList tag category."""
+        """Create the OrderParameterList tag category."""
 
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[[self.sf.label+'_relaxation']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[['S2_parameters']]))
 
         # NOE ID number.
-        if self.tag_names.has_key('HeteronuclNOEListID'):
-            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['HeteronuclNOEListID']], tagvalues=[[str(self.sf.noe_inc)]]))
+        if self.tag_names.has_key('OrderParameterListID'):
+            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['OrderParameterListID']], tagvalues=[['1']]))
 
         # Sample info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
-
-        # NMR info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -152,11 +129,11 @@ class HeteronuclNOEList(HeteronuclRxList):
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
 
 
-class HeteronuclNOEExperiment(TagCategory):
-    """Base class for the HeteronuclNOEExperiment tag category."""
+class OrderParameterExperiment(TagCategory):
+    """Base class for the OrderParameterExperiment tag category."""
 
     def create(self):
-        """Create the HeteronuclNOEExperiment tag category."""
+        """Create the OrderParameterExperiment tag category."""
 
         # Sample info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleLabel']], tagvalues=[['$sample_1']]))
@@ -178,23 +155,23 @@ class HeteronuclNOEExperiment(TagCategory):
         self.tag_names['SampleLabel'] = 'Sample_label'
 
 
-class HeteronuclNOESoftware(TagCategory):
-    """Base class for the HeteronuclNOESoftware tag category."""
+class OrderParameterSoftware(TagCategory):
+    """Base class for the OrderParameterSoftware tag category."""
 
     def create(self):
-        """Create the HeteronuclNOESoftware tag category."""
+        """Create the OrderParameterSoftware tag category."""
 
 
-class HeteronuclNOE(Rx):
-    """Base class for the HeteronuclNOE tag category."""
+class OrderParameter(TagCategory):
+    """Base class for the OrderParameter tag category."""
 
     def create(self):
-        """Create the HeteronuclNOE tag category."""
+        """Create the OrderParameter tag category."""
 
         # The relaxation tag names.
         tag_names = []
         missing = []
-        for key in ['SeqID', 'CompID', 'AtomID', 'Val', 'ValErr']:
+        for key in ['SeqID', 'CompID', 'AtomID']:
             if not self.tag_names.has_key(key):
                 missing.append(key)
             else:
@@ -208,10 +185,6 @@ class HeteronuclNOE(Rx):
             tag_values.append(self.sf.res_names)
         if 'AtomID' not in missing:
             tag_values.append(self.sf.atom_names)
-        if 'Val' not in missing:
-            tag_values.append(self.sf.data)
-        if 'ValErr' not in missing:
-            tag_values.append(self.sf.errors)
 
         # Add the data.
         table = TagTable(tagnames=tag_names, tagvalues=tag_values)
@@ -236,5 +209,3 @@ class HeteronuclNOE(Rx):
         self.tag_names['SeqID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
-        self.tag_names['Val'] = self.sf.label+'_value'
-        self.tag_names['ValErr'] = self.sf.label+'_value_error'

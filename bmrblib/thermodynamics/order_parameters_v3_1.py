@@ -27,61 +27,59 @@ See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_NO
 """
 
 # relax module imports.
-from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe, HeteronuclNOEList, HeteronuclNOEExperiment, HeteronuclNOESoftware, HeteronuclNOE
+from bmrblib.thermodynamics.order_parameters import OrderParameterSaveframe, OrderParameterList, OrderParameterExperiment, OrderParameterSoftware, OrderParameter
 
 
-class HeteronuclNOESaveframe_v3_1(HeteronuclNOESaveframe):
-    """The v3.1 Heteronuclear NOE data saveframe class."""
+class OrderParameterSaveframe_v3_1(OrderParameterSaveframe):
+    """The v3.1 Order parameters data saveframe class."""
 
     def add_tag_categories(self):
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclRxlist = HeteronuclNOEList_v3_1(self)
-        self.heteronuclRxexperiment = HeteronuclNOEExperiment_v3_1(self)
-        self.heteronuclRxsoftware = HeteronuclNOESoftware_v3_1(self)
-        self.Rx = HeteronuclNOE_v3_1(self)
+        self.order_parameter_list = OrderParameterList_v3_1(self)
+        self.order_parameter_experiment = OrderParameterExperiment_v3_1(self)
+        self.order_parameter_software = OrderParameterSoftware_v3_1(self)
+        self.order_parameter = OrderParameter_v3_1(self)
 
 
-class HeteronuclNOEList_v3_1(HeteronuclNOEList):
-    """v3.1 HeteronuclNOEList tag category."""
+class OrderParameterList_v3_1(OrderParameterList):
+    """v3.1 OrderParameterList tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
-        HeteronuclNOEList.tag_setup(self, tag_category_label='Heteronucl_NOE_list', sep=sep)
+        OrderParameterList.tag_setup(self, tag_category_label='Order_parameter_list', sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
-        self.tag_names['HeteronuclNOEListID'] = 'ID'
+        self.tag_names['OrderParameterListID'] = 'ID'
         self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
 
 
-class HeteronuclNOEExperiment_v3_1(HeteronuclNOEExperiment):
-    """v3.1 HeteronuclNOEExperiment tag category."""
+class OrderParameterExperiment_v3_1(OrderParameterExperiment):
+    """v3.1 OrderParameterExperiment tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
-        HeteronuclNOEExperiment.tag_setup(self, tag_category_label='Heteronucl_NOE_experiment', sep=sep)
+        OrderParameterExperiment.tag_setup(self, tag_category_label='Order_parameter_experiment', sep=sep)
 
 
-class HeteronuclNOESoftware_v3_1(HeteronuclNOESoftware):
-    """v3.1 HeteronuclNOESoftware tag category."""
-
-    def tag_setup(self, tag_category_label=None, sep=None):
-        # Execute the base class tag_setup() method.
-        HeteronuclNOESoftware.tag_setup(self, tag_category_label='Heteronucl_NOE_software', sep=sep)
-
-
-class HeteronuclNOE_v3_1(HeteronuclNOE):
-    """v3.1 HeteronuclNOE tag category."""
+class OrderParameterSoftware_v3_1(OrderParameterSoftware):
+    """v3.1 OrderParameterSoftware tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
-        HeteronuclNOE.tag_setup(self, tag_category_label='Heteronucl_NOE', sep=sep)
+        OrderParameterSoftware.tag_setup(self, tag_category_label='Order_parameter_software', sep=sep)
+
+
+class OrderParameter_v3_1(OrderParameter):
+    """v3.1 OrderParameter tag category."""
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        # Execute the base class tag_setup() method.
+        OrderParameter.tag_setup(self, tag_category_label='Order_param', sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['SeqID'] = 'Seq_ID'
         self.tag_names['CompID'] = 'Comp_ID'
         self.tag_names['AtomID'] = 'Atom_ID'
-        self.tag_names['Val'] = 'Val'
-        self.tag_names['ValErr'] = 'Val_err'

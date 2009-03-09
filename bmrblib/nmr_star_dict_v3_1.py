@@ -32,6 +32,7 @@ from bmrblib.assembly_supercategory.entity_v3_1 import EntitySaveframe_v3_1
 from bmrblib.kinetics.heteronucl_NOEs_v3_1 import HeteronuclNOESaveframe_v3_1
 from bmrblib.kinetics.heteronucl_T1_relaxation_v3_1 import HeteronuclT1Saveframe_v3_1
 from bmrblib.kinetics.heteronucl_T2_relaxation_v3_1 import HeteronuclT2Saveframe_v3_1
+from bmrblib.thermodynamics.order_parameters_v3_1 import OrderParameterSaveframe_v3_1
 from bmrblib.nmr_star_dict import NMR_STAR
 
 
@@ -48,3 +49,6 @@ class NMR_STAR_v3_1(NMR_STAR):
         self.heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(self.data.datanodes)
         self.heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_1(self.data.datanodes)
         self.heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_1(self.data.datanodes)
+
+        # Initialise the thermodynamics saveframe supergroup.
+        self.order_parameters = OrderParameterSaveframe_v3_1(self.data.datanodes)
