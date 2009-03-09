@@ -65,5 +65,66 @@ class Bmrb:
         # Generate the relaxation data saveframes.
         relax_data.bmrb_write(star)
 
+        # Initialise the spin specific data lists.
+        res_num_list = []
+        res_name_list = []
+        atom_name_list = []
+
+        s2_list = []
+        s2f_list = []
+        s2s_list = []
+        te_list = []
+        tf_list = []
+        ts_list = []
+        rex_list = []
+
+        s2_err_list = []
+        s2f_err_list = []
+        s2s_err_list = []
+        te_err_list = []
+        tf_err_list = []
+        ts_err_list = []
+        rex_err_list = []
+
+        # Store the spin specific data in lists for later use.
+        for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Check the data for None (not allowed in BMRB!).
+            if res_num == None:
+                raise RelaxError, "For the BMRB, the residue of spin '%s' must be numbered." % spin_id
+            if res_name == None:
+                raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
+            if spin.name == None:
+                raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+
+            # The molecule/residue/spin info.
+            res_num_list.append(res_num)
+            res_name_list.append(res_name)
+            atom_name_list.append(spin.name)
+
+            # Model-free data.
+            s2_list.append(spin.s2)
+            s2f_list.append(spin.s2f)
+            s2s_list.append(spin.s2s)
+            te_list.append(spin.te)
+            tf_list.append(spin.tf)
+            ts_list.append(spin.ts)
+            rex_list.append(spin.rex)
+
+            s2_err_list.append(spin.s2_err)
+            s2f_err_list.append(spin.s2f_err)
+            s2s_err_list.append(spin.s2s_err)
+            te_err_list.append(spin.te_err)
+            tf_err_list.append(spin.tf_err)
+            ts_err_list.append(spin.ts_err)
+            rex_err_list.append(spin.rex_err)
+
+
+        # Generate the model-free data saveframe.
+        star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list)
+
         # Write the contents to the STAR formatted file.
         star.write()
