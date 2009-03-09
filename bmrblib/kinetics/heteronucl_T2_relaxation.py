@@ -28,12 +28,13 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 
 # relax module imports.
 from bmrblib.misc import no_missing, translate
+from bmrblib.kinetics.relax_base import HeteronuclRxList, RelaxSaveframe, Rx
 from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
 
-class HeteronuclT2Saveframe:
+class HeteronuclT2Saveframe(RelaxSaveframe):
     """The Heteronuclear T2 data saveframe class."""
 
     # Saveframe variables.
@@ -94,10 +95,10 @@ class HeteronuclT2Saveframe:
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r2_inc`)
 
         # Create the tag categories.
-        self.heteronuclT2list.create()
-        self.heteronuclT2experiment.create()
-        self.heteronuclT2software.create()
-        self.T2.create()
+        self.heteronuclRxlist.create()
+        self.heteronuclRxexperiment.create()
+        self.heteronuclRxsoftware.create()
+        self.Rx.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
@@ -107,13 +108,14 @@ class HeteronuclT2Saveframe:
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclT2list = HeteronuclT2List(self)
-        self.heteronuclT2experiment = HeteronuclT2Experiment(self)
-        self.heteronuclT2software = HeteronuclT2Software(self)
-        self.T2 = T2(self)
+        self.heteronuclRxlist = HeteronuclT2List(self)
+        self.heteronuclRxexperiment = HeteronuclT2Experiment(self)
+        self.heteronuclRxsoftware = HeteronuclT2Software(self)
+        self.Rx = T2(self)
 
 
-class HeteronuclT2List(TagCategory):
+
+class HeteronuclT2List(HeteronuclRxList):
     """Base class for the HeteronuclT2List tag category."""
 
 
@@ -192,7 +194,7 @@ class HeteronuclT2Software(TagCategory):
         """Create the HeteronuclT2Software tag category."""
 
 
-class T2(TagCategory):
+class T2(Rx):
     """Base class for the T2 tag category."""
 
     def create(self):

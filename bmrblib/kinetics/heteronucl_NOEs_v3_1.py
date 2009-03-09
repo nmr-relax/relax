@@ -37,10 +37,10 @@ class HeteronuclNOESaveframe_v3_1(HeteronuclNOESaveframe):
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclNOElist = HeteronuclNOEList_v3_1(self)
-        self.heteronuclNOEexperiment = HeteronuclNOEExperiment_v3_1(self)
-        self.heteronuclNOEsoftware = HeteronuclNOESoftware_v3_1(self)
-        self.heteronuclNOE = HeteronuclNOE_v3_1(self)
+        self.heteronuclRxlist = HeteronuclNOEList_v3_1(self)
+        self.heteronuclRxexperiment = HeteronuclNOEExperiment_v3_1(self)
+        self.heteronuclRxsoftware = HeteronuclNOESoftware_v3_1(self)
+        self.Rx = HeteronuclNOE_v3_1(self)
 
 
 class HeteronuclNOEList_v3_1(HeteronuclNOEList):

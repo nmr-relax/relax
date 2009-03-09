@@ -28,12 +28,13 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 
 # relax module imports.
 from bmrblib.misc import no_missing, translate
+from bmrblib.kinetics.relax_base import HeteronuclRxList, RelaxSaveframe, Rx
 from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
 
-class HeteronuclT1Saveframe:
+class HeteronuclT1Saveframe(RelaxSaveframe):
     """The Heteronuclear T1 data saveframe class."""
 
     # Saveframe variables.
@@ -94,10 +95,10 @@ class HeteronuclT1Saveframe:
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r1_inc`)
 
         # Create the tag categories.
-        self.heteronuclT1list.create()
-        self.heteronuclT1experiment.create()
-        self.heteronuclT1software.create()
-        self.T1.create()
+        self.heteronuclRxlist.create()
+        self.heteronuclRxexperiment.create()
+        self.heteronuclRxsoftware.create()
+        self.Rx.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
@@ -107,48 +108,14 @@ class HeteronuclT1Saveframe:
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclT1list = HeteronuclT1List(self)
-        self.heteronuclT1experiment = HeteronuclT1Experiment(self)
-        self.heteronuclT1software = HeteronuclT1Software(self)
-        self.T1 = T1(self)
+        self.heteronuclRxlist = HeteronuclT1List(self)
+        self.heteronuclRxexperiment = HeteronuclT1Experiment(self)
+        self.heteronuclRxsoftware = HeteronuclT1Software(self)
+        self.Rx = T1(self)
 
 
-    def loop(self):
-        """Loop over the T1 saveframes, yielding the relaxation data.
 
-        @return:    The relaxation data consisting of the proton frequency, residue numbers, residue
-                    names, atom names, values, and errors.
-        @rtype:     tuple of float, list of int, list of str, list of str, list of float, list of
-                    float
-        """
-
-        # Loop over all datanodes.
-        for datanode in self.datanodes:
-            # Find the Heteronuclear T1 saveframes via the SfCategory tag index.
-            found = False
-            for index in range(len(datanode.tagtables[0].tagnames)):
-                # First match the tag names.
-                if datanode.tagtables[0].tagnames[index] == self.heteronuclT1list.create_tag_label(self.heteronuclT1list.tag_names['SfCategory']):
-                    # Then the tag value.
-                    if datanode.tagtables[0].tagvalues[index][0] == self.label+'_relaxation':
-                        found = True
-                        break
-
-            # Skip the datanode.
-            if not found:
-                continue
-
-            # Get general info.
-            frq = self.heteronuclT1list.read(datanode.tagtables[0])
-
-            # Get the T1 info.
-            res_nums, res_names, atom_names, values, errors = self.T1.read(datanode.tagtables[1])
-
-            # Yield the data.
-            yield frq, res_nums, res_names, atom_names, values, errors
-
-
-class HeteronuclT1List(TagCategory):
+class HeteronuclT1List(HeteronuclRxList):
     """Base class for the HeteronuclT1List tag category."""
 
     def create(self):
@@ -168,22 +135,6 @@ class HeteronuclT1List(TagCategory):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['T1CoherenceType']], tagvalues=[[self.variables['coherence']]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['T1ValUnits']], tagvalues=[['1/s']]))
-
-
-    def read(self, tagtable):
-        """Extract the HeteronuclT1List tag category info.
-
-        @param tagtable:    The HeteronuclT1List tagtable.
-        @type tagtable:     Tagtable instance
-        @return:            The proton frequency in Hz.
-        @rtype:             float
-        """
-
-        # The general info.
-        frq = float(tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['SpectrometerFrequency1H'])][0]) * 1e6
-
-        # Return the data.
-        return frq
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -243,7 +194,7 @@ class HeteronuclT1Software(TagCategory):
         """Create the HeteronuclT1Software tag category."""
 
 
-class T1(TagCategory):
+class T1(Rx):
     """Base class for the T1 tag category."""
 
     def create(self):
@@ -276,33 +227,6 @@ class T1(TagCategory):
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
-
-
-    def read(self, tagtable):
-        """Extract the T1 tag category info.
-
-        @param tagtable:    The T1 tagtable.
-        @type tagtable:     Tagtable instance
-        @return:            The residue numbers, residue names, atom names, values, and errors.
-        @rtype:             tuple of list of int, list of str, list of str, list of float, list of
-                            float
-        """
-
-        # The entity info.
-        res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['SeqID'])]
-        res_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['CompID'])]
-        atom_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['AtomID'])]
-        values = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['Val'])]
-        errors = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['ValErr'])]
-
-        # Convert the residue numbers to ints and the values and errors to floats.
-        for i in range(len(res_nums)):
-            res_nums[i] = int(res_nums[i])
-            values[i] = float(values[i])
-            errors[i] = float(errors[i])
-
-        # Return the data.
-        return res_nums, res_names, atom_names, values, errors
 
 
     def tag_setup(self, tag_category_label=None, sep=None):

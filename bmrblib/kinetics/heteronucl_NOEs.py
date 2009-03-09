@@ -28,12 +28,13 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 
 # relax module imports.
 from bmrblib.misc import no_missing, translate
+from bmrblib.kinetics.relax_base import HeteronuclRxList, RelaxSaveframe, Rx
 from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
 
-class HeteronuclNOESaveframe:
+class HeteronuclNOESaveframe(RelaxSaveframe):
     """The Heteronuclear NOE data saveframe class."""
 
     # Saveframe variables.
@@ -94,10 +95,10 @@ class HeteronuclNOESaveframe:
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.noe_inc`)
 
         # Create the tag categories.
-        self.heteronuclNOElist.create()
-        self.heteronuclNOEexperiment.create()
-        self.heteronuclNOEsoftware.create()
-        self.heteronuclNOE.create()
+        self.heteronuclRxlist.create()
+        self.heteronuclRxexperiment.create()
+        self.heteronuclRxsoftware.create()
+        self.Rx.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
@@ -107,13 +108,13 @@ class HeteronuclNOESaveframe:
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclNOElist = HeteronuclNOEList(self)
-        self.heteronuclNOEexperiment = HeteronuclNOEExperiment(self)
-        self.heteronuclNOEsoftware = HeteronuclNOESoftware(self)
-        self.heteronuclNOE = HeteronuclNOE(self)
+        self.heteronuclRxlist = HeteronuclNOEList(self)
+        self.heteronuclRxexperiment = HeteronuclNOEExperiment(self)
+        self.heteronuclRxsoftware = HeteronuclNOESoftware(self)
+        self.Rx = HeteronuclNOE(self)
 
 
-class HeteronuclNOEList(TagCategory):
+class HeteronuclNOEList(HeteronuclRxList):
     """Base class for the HeteronuclNOEList tag category."""
 
     def create(self):
@@ -184,7 +185,7 @@ class HeteronuclNOESoftware(TagCategory):
         """Create the HeteronuclNOESoftware tag category."""
 
 
-class HeteronuclNOE(TagCategory):
+class HeteronuclNOE(Rx):
     """Base class for the HeteronuclNOE tag category."""
 
     def create(self):

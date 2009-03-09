@@ -37,10 +37,10 @@ class HeteronuclT2Saveframe_v3_1(HeteronuclT2Saveframe):
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.heteronuclT2list = HeteronuclT2List_v3_1(self)
-        self.heteronuclT2experiment = HeteronuclT2Experiment_v3_1(self)
-        self.heteronuclT2software = HeteronuclT2Software_v3_1(self)
-        self.T2 = T2_v3_1(self)
+        self.heteronuclRxlist = HeteronuclT2List_v3_1(self)
+        self.heteronuclRxexperiment = HeteronuclT2Experiment_v3_1(self)
+        self.heteronuclRxsoftware = HeteronuclT2Software_v3_1(self)
+        self.Rx = T2_v3_1(self)
 
 
 class HeteronuclT2List_v3_1(HeteronuclT2List):
