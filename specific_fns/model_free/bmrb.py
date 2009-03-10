@@ -20,6 +20,9 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+import string
+
 # relax module imports.
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
 from generic_fns import mol_res_spin, relax_data
@@ -72,6 +75,7 @@ class Bmrb:
 
         csa_list = []
         r_list = []
+        isotope_list = []
 
         s2_list = []
         s2f_list = []
@@ -102,6 +106,8 @@ class Bmrb:
                 raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
             if spin.name == None:
                 raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+            if spin.heteronuc_type == None:
+                raise RelaxError, "For the BMRB, the spin isotope type of '%s' must be specified." % spin_id
 
             # The molecule/residue/spin info.
             res_num_list.append(res_num)
@@ -111,6 +117,8 @@ class Bmrb:
             # Values.
             csa_list.append(spin.csa)
             r_list.append(spin.r)
+            isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+
 
             # Model-free data.
             s2_list.append(spin.s2)
@@ -130,7 +138,7 @@ class Bmrb:
             rex_err_list.append(spin.rex_err)
 
         # Generate the CSA saveframe.
-        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, csa=csa_list)
+        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, csa=csa_list)
 
         # Generate the model-free data saveframe.
         star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list)
