@@ -42,6 +42,11 @@ class OrderParameterSaveframe_v3_1(OrderParameterSaveframe):
         self.order_parameter_software = OrderParameterSoftware_v3_1(self)
         self.order_parameter = OrderParameter_v3_1(self)
 
+    def specific_setup(self):
+        """Method called by self.add() to set up any version specific data."""
+
+        self.cat_name = ['order_parameters']
+
 
 class OrderParameterList_v3_1(OrderParameterList):
     """v3.1 OrderParameterList tag category."""

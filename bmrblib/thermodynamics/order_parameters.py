@@ -85,6 +85,9 @@ class OrderParameterSaveframe:
         @type ts_err:           list of float
         """
 
+        # Set up the version specific variables.
+        self.specific_setup()
+
         # Check the ID info.
         no_missing(res_nums, 'residue numbers of the model-free data')
         no_missing(res_names, 'residue names of the model-free data')
@@ -135,6 +138,12 @@ class OrderParameterSaveframe:
         self.order_parameter = OrderParameter(self)
 
 
+    def specific_setup(self):
+        """Method called by self.add() to set up any version specific data."""
+
+        self.cat_name = ['S2_parameters']
+
+
 class OrderParameterList(TagCategory):
     """Base class for the OrderParameterList tag category."""
 
@@ -142,7 +151,7 @@ class OrderParameterList(TagCategory):
         """Create the OrderParameterList tag category."""
 
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[['S2_parameters']]))
+        self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # NOE ID number.
         if self.tag_names.has_key('OrderParameterListID'):
