@@ -116,7 +116,7 @@ class HeteronuclT2Saveframe(RelaxSaveframe):
 
 
     def add_tag_categories(self):
-        """Create the v3.1 tag categories."""
+        """Create the tag categories."""
 
         # The tag category objects.
         self.heteronuclRxlist = HeteronuclT2List(self)
