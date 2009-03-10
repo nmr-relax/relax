@@ -82,6 +82,9 @@ class HeteronuclT1Saveframe(RelaxSaveframe):
         no_missing(res_names, 'residue names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
         no_missing(atom_names, 'atom names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
 
+        # The number of elements.
+        self.N = len(res_nums)
+
         # Place the args into the namespace.
         self.frq = frq
         self.res_nums = translate(res_nums)
@@ -93,6 +96,7 @@ class HeteronuclT1Saveframe(RelaxSaveframe):
 
         # Set up the R1 specific variables.
         self.r1_inc = self.r1_inc + 1
+        self.rx_inc_list = translate([self.r1_inc] * self.N)
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r1_inc`)

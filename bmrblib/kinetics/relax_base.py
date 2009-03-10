@@ -98,7 +98,8 @@ class Rx(TagCategory):
             ['AtomID',              'atom_names'],
             ['AtomIsotopeNumber',   'isotope'],
             ['Val',                 'data'],
-            ['ValErr',              'errors']
+            ['ValErr',              'errors'],
+            ['HeteronuclRxListID',  'rx_inc_list']
         ]
 
         # Get the TabTable.
@@ -154,3 +155,4 @@ class Rx(TagCategory):
         self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number'
         self.tag_names['Val'] = self.sf.label+'_value'
         self.tag_names['ValErr'] = self.sf.label+'_value_error'
+        self.tag_names['HeteronuclRxListID'] = 'Heteronucl_'+self.sf.label+'_list_ID'
