@@ -27,8 +27,8 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#
 """
 
 # relax module imports.
+from bmrblib.base_classes import TagCategory
 from bmrblib.misc import no_missing, translate
-from bmrblib.tag_category import TagCategory
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 

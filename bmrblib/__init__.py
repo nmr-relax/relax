@@ -24,7 +24,7 @@
 """Package for interfacing with the BMRB (http://www.bmrb.wisc.edu/) by handling NMR-STAR formatted files."""
 
 
-__all__ = ['misc',
+__all__ = ['base_classes',
+           'misc',
            'nmr_star_dict',
-           'nmr_star_dict_v3_1',
-           'tag_category']
+           'nmr_star_dict_v3_1']

@@ -24,7 +24,7 @@
 """Base classes for the relaxation data."""
 
 # relax module imports.
-from bmrblib.tag_category import BaseSaveframe, TagCategory
+from bmrblib.base_classes import BaseSaveframe, TagCategory
 
 
 class RelaxSaveframe(BaseSaveframe):
