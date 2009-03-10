@@ -80,7 +80,7 @@ class T2_v3_1(T2):
         T2.tag_setup(self, tag_category_label='T2', sep=sep)
 
         # Tag names for the relaxation data.
-        self.tag_names['SeqID'] = 'Seq_ID'
+        self.tag_names['CompIndexID'] = 'Comp_index_ID'
         self.tag_names['CompID'] = 'Comp_ID'
         self.tag_names['AtomID'] = 'Atom_ID'
         self.tag_names['Val'] = 'Val'

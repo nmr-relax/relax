@@ -203,7 +203,7 @@ class T1(Rx):
         # The relaxation tag names.
         tag_names = []
         missing = []
-        for key in ['SeqID', 'CompID', 'AtomID', 'Val', 'ValErr']:
+        for key in ['CompIndexID', 'CompID', 'AtomID', 'Val', 'ValErr']:
             if not self.tag_names.has_key(key):
                 missing.append(key)
             else:
@@ -211,7 +211,7 @@ class T1(Rx):
 
         # The tag values.
         tag_values = []
-        if 'SeqID' not in missing:
+        if 'CompIndexID' not in missing:
             tag_values.append(self.sf.res_nums)
         if 'CompID' not in missing:
             tag_values.append(self.sf.res_names)
@@ -242,7 +242,7 @@ class T1(Rx):
         TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
-        self.tag_names['SeqID'] = 'Residue_seq_code'
+        self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
         self.tag_names['Val'] = self.sf.label+'_value'

@@ -99,7 +99,7 @@ class Rx(TagCategory):
         """
 
         # The entity info.
-        res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['SeqID'])]
+        res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['CompIndexID'])]
         res_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['CompID'])]
         atom_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['AtomID'])]
         values = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['Val'])]

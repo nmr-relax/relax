@@ -211,7 +211,7 @@ class OrderParameter(TagCategory):
 
         # Keys and objects.
         info = [
-            ['SeqID',               'res_nums'],
+            ['CompIndexID',         'res_nums'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
             ['OrderParamVal',       's2'],
@@ -250,7 +250,7 @@ class OrderParameter(TagCategory):
         TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
-        self.tag_names['SeqID'] = 'Residue_seq_code'
+        self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
         self.tag_names['OrderParamVal'] = 'S2_value'
