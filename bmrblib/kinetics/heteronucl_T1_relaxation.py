@@ -98,6 +98,9 @@ class HeteronuclT1Saveframe(RelaxSaveframe):
         self.r1_inc = self.r1_inc + 1
         self.rx_inc_list = translate([self.r1_inc] * self.N)
 
+        # Set up the version specific variables.
+        self.specific_setup()
+
         # Initialise the save frame.
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r1_inc`)
 
@@ -121,7 +124,6 @@ class HeteronuclT1Saveframe(RelaxSaveframe):
         self.Rx = T1(self)
 
 
-
 class HeteronuclT1List(HeteronuclRxList):
     """Base class for the HeteronuclT1List tag category."""
 
@@ -129,7 +131,7 @@ class HeteronuclT1List(HeteronuclRxList):
         """Create the HeteronuclT1List tag category."""
 
         # The save frame category.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[[self.sf.label+'_relaxation']]))
+        self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # T1 ID number.
         if self.tag_names.has_key('HeteronuclT1ListID'):

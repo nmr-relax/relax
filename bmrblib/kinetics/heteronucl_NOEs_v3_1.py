@@ -43,6 +43,12 @@ class HeteronuclNOESaveframe_v3_1(HeteronuclNOESaveframe):
         self.Rx = HeteronuclNOE_v3_1(self)
 
 
+    def specific_setup(self):
+        """Method called by self.add() to set up any version specific data."""
+
+        self.cat_name = ['heteronucl_NOEs']
+
+
 class HeteronuclNOEList_v3_1(HeteronuclNOEList):
     """v3.1 HeteronuclNOEList tag category."""
 

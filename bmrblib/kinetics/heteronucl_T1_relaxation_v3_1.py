@@ -43,6 +43,12 @@ class HeteronuclT1Saveframe_v3_1(HeteronuclT1Saveframe):
         self.Rx = T1_v3_1(self)
 
 
+    def specific_setup(self):
+        """Method called by self.add() to set up any version specific data."""
+
+        self.cat_name = ['heteronucl_T1_relaxation']
+
+
 class HeteronuclT1List_v3_1(HeteronuclT1List):
     """v3.1 HeteronuclT1List tag category."""
 

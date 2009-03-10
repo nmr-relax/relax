@@ -65,6 +65,12 @@ class RelaxSaveframe:
             yield frq, res_nums, res_names, atom_names, values, errors
 
 
+    def specific_setup(self):
+        """Method called by self.add() to set up any version specific data."""
+
+        self.cat_name = [self.label+'_relaxation']
+
+
 
 class HeteronuclRxList(TagCategory):
     """Base class for the HeteronuclRxList tag categories."""
