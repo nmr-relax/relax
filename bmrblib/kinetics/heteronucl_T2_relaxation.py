@@ -69,8 +69,8 @@ class HeteronuclT2Saveframe(RelaxSaveframe):
         @type res_names:        list of str
         @keyword atom_names:    The atom name list.
         @type atom_names:       list of str
-        @keyword isotope:       The isotope type list, ie '15N', '1H', '13C', '2H', etc.
-        @type isotope:          list of str
+        @keyword isotope:       The isotope type list, ie 15 for '15N'.
+        @type isotope:          list of int
         @keyword data:          The relaxation data.
         @type data:             list of float
         @keyword errors:        The errors associated with the relaxation data.
