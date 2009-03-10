@@ -24,10 +24,10 @@
 """Base classes for the relaxation data."""
 
 # relax module imports.
-from bmrblib.tag_category import TagCategory
+from bmrblib.tag_category import BaseSaveframe, TagCategory
 
 
-class RelaxSaveframe:
+class RelaxSaveframe(BaseSaveframe):
     """The heteronuclear Rx data saveframe baseclass."""
 
     def loop(self):
@@ -105,7 +105,7 @@ class Rx(TagCategory):
 
         # Keys and objects.
         info = [
-            ['RxID',                'id'],
+            ['RxID',                'data_ids'],
             ['CompIndexID',         'res_nums'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],

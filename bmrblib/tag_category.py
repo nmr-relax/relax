@@ -24,7 +24,23 @@
 """The TagCategory base class."""
 
 # relax module imports.
+from bmrblib.misc import translate
 from pystarlib.TagTable import TagTable
+
+
+class BaseSaveframe:
+    """The base class for the saveframe classes."""
+
+    def generate_data_ids(self, N):
+        """Generate the data ID structure.
+
+        @keyword N: The number of data points.
+        @type N:    int
+        """
+
+        # The data ID values.
+        self.data_ids = translate(range(1,N+1))
+
 
 
 class TagCategory:

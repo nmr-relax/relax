@@ -97,9 +97,10 @@ class HeteronuclT2Saveframe(RelaxSaveframe):
         # Set up the R2 specific variables.
         self.r2_inc = self.r2_inc + 1
         self.rx_inc_list = translate([self.r2_inc] * self.N)
+        self.generate_data_ids(self.N)
 
         # Set up the version specific variables.
-        self.specific_setup(N=self.N)
+        self.specific_setup()
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r2_inc`)

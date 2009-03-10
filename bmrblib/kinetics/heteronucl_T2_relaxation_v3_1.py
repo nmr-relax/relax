@@ -27,7 +27,6 @@ See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_T2
 """
 
 # relax module imports.
-from bmrblib.misc import translate
 from bmrblib.kinetics.heteronucl_T2_relaxation import HeteronuclT2Saveframe, HeteronuclT2List, HeteronuclT2Experiment, HeteronuclT2Software, T2
 
 
@@ -44,19 +43,11 @@ class HeteronuclT2Saveframe_v3_1(HeteronuclT2Saveframe):
         self.Rx = T2_v3_1(self)
 
 
-    def specific_setup(self, N=0):
-        """Method called by self.add() to set up any version specific data.
-
-        @keyword N: The number of data points, if relevant.
-        @type N:    None or int
-        """
+    def specific_setup(self):
+        """Method called by self.add() to set up any version specific data."""
 
         # The category name.
         self.cat_name = ['heteronucl_T2_relaxation']
-
-        # The data ID values.
-        if N != None:
-            self.id = translate(range(1,N+1))
 
 
 class HeteronuclT2List_v3_1(HeteronuclT2List):

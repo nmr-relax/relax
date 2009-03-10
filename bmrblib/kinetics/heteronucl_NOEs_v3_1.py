@@ -44,19 +44,11 @@ class HeteronuclNOESaveframe_v3_1(HeteronuclNOESaveframe):
         self.Rx = HeteronuclNOE_v3_1(self)
 
 
-    def specific_setup(self, N=0):
-        """Method called by self.add() to set up any version specific data.
-
-        @keyword N: The number of data points, if relevant.
-        @type N:    None or int
-        """
+    def specific_setup(self):
+        """Method called by self.add() to set up any version specific data."""
 
         # The category name.
         self.cat_name = ['heteronucl_NOEs']
-
-        # The data ID values.
-        if N != None:
-            self.id = translate(range(1,N+1))
 
 
 class HeteronuclNOEList_v3_1(HeteronuclNOEList):
