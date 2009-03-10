@@ -105,6 +105,7 @@ class Rx(TagCategory):
 
         # Keys and objects.
         info = [
+            ['RxID',                'id'],
             ['CompIndexID',         'res_nums'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
@@ -161,6 +162,7 @@ class Rx(TagCategory):
         TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
+        self.tag_names['RxID'] = None
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'

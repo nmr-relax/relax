@@ -63,7 +63,8 @@ class TagCategory:
         """
 
         # The full tag name.
-        return self.tag_category_label_full + tag_name
+        if tag_name:
+            return self.tag_category_label_full + tag_name
 
 
     def create_tag_table(self, info, free=False):

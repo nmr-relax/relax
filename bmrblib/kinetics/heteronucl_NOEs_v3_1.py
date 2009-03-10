@@ -27,6 +27,7 @@ See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_NO
 """
 
 # relax module imports.
+from bmrblib.misc import translate
 from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe, HeteronuclNOEList, HeteronuclNOEExperiment, HeteronuclNOESoftware, HeteronuclNOE
 
 
@@ -43,10 +44,19 @@ class HeteronuclNOESaveframe_v3_1(HeteronuclNOESaveframe):
         self.Rx = HeteronuclNOE_v3_1(self)
 
 
-    def specific_setup(self):
-        """Method called by self.add() to set up any version specific data."""
+    def specific_setup(self, N=0):
+        """Method called by self.add() to set up any version specific data.
 
+        @keyword N: The number of data points, if relevant.
+        @type N:    None or int
+        """
+
+        # The category name.
         self.cat_name = ['heteronucl_NOEs']
+
+        # The data ID values.
+        if N != None:
+            self.id = translate(range(1,N+1))
 
 
 class HeteronuclNOEList_v3_1(HeteronuclNOEList):
@@ -86,6 +96,7 @@ class HeteronuclNOE_v3_1(HeteronuclNOE):
         HeteronuclNOE.tag_setup(self, tag_category_label='Heteronucl_NOE', sep=sep)
 
         # Tag names for the relaxation data.
+        self.tag_names['RxID'] = 'ID'
         self.tag_names['CompIndexID'] = 'Comp_index_ID'
         self.tag_names['CompID'] = 'Comp_ID'
         self.tag_names['AtomID'] = 'Atom_ID'

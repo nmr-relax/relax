@@ -99,7 +99,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.rx_inc_list = translate([self.noe_inc] * self.N)
 
         # Set up the version specific variables.
-        self.specific_setup()
+        self.specific_setup(N=self.N)
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.noe_inc`)
