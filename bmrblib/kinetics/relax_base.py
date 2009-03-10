@@ -39,6 +39,12 @@ class RelaxSaveframe:
                     float
         """
 
+        # Set up the version specific variables.
+        self.specific_setup()
+
+        # Get the saveframe name.
+        sf_name = getattr(self, 'cat_name')[0]
+
         # Loop over all datanodes.
         for datanode in self.datanodes:
             # Find the Heteronuclear Rx saveframes via the SfCategory tag index.
@@ -47,7 +53,7 @@ class RelaxSaveframe:
                 # First match the tag names.
                 if datanode.tagtables[0].tagnames[index] == self.heteronuclRxlist.create_tag_label(self.heteronuclRxlist.tag_names['SfCategory']):
                     # Then the tag value.
-                    if datanode.tagtables[0].tagvalues[index][0] == self.label+'_relaxation':
+                    if datanode.tagtables[0].tagvalues[index][0] == sf_name:
                         found = True
                         break
 
