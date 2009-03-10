@@ -32,12 +32,17 @@ from bmrblib.assembly_supercategory.entity import EntitySaveframe
 from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe
 from bmrblib.kinetics.heteronucl_T1_relaxation import HeteronuclT1Saveframe
 from bmrblib.kinetics.heteronucl_T2_relaxation import HeteronuclT2Saveframe
+from bmrblib.NMR_parameters.chem_shift_anisotropy import ChemShiftAnisotropy
 from bmrblib.thermodynamics.order_parameters import OrderParameterSaveframe
 from pystarlib.File import File
 
 
 class NMR_STAR:
     """The base object for the NMR-STAR dictionary."""
+
+    # Class extension string.
+    ext = ''
+
 
     def __init__(self, title, file_path):
         """Initialise the NMR-STAR dictionary object.
@@ -60,6 +65,9 @@ class NMR_STAR:
 
         # Initialise the assembly_supercategory saveframe supergroup.
         self.entity = EntitySaveframe(self.data.datanodes)
+
+        # Initialise the NMR parameters saveframe supergroup.
+        self.chem_shift_anisotropy = ChemShiftAnisotropy(self.data.datanodes)
 
         # Initialise the kinetic saveframe supergroup.
         self.heteronucl_NOEs = HeteronuclNOESaveframe(self.data.datanodes)
