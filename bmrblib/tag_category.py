@@ -66,7 +66,7 @@ class TagCategory:
         return self.tag_category_label_full + tag_name
 
 
-    def create_tag_table(self, info):
+    def create_tag_table(self, info, free=False):
         """Create and return a tag table based on the info structure.
 
         @param info:    The key and object pair list.  This consists of the keys of
@@ -74,6 +74,8 @@ class TagCategory:
                         the second element, both of the second dimension.  The fist dimension are
                         the different pairs.
         @type info:     list of list of str
+        @keyword free:  Flag to create a free STAR table.
+        @type free:     bool
         @return:        The tag table.
         @rtype:         TagTable instance
         """
@@ -95,7 +97,7 @@ class TagCategory:
                 tag_values.append(getattr(self.sf, name))
 
         # Add the data and return the table.
-        return TagTable(tagnames=tag_names, tagvalues=tag_values)
+        return TagTable(free=free, tagnames=tag_names, tagvalues=tag_values)
 
 
     def tag_setup(self, tag_category_label=None, sep=None):

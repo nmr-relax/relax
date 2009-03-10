@@ -197,38 +197,6 @@ class HeteronuclT1Software(TagCategory):
 class T1(Rx):
     """Base class for the T1 tag category."""
 
-    def create(self):
-        """Create the T1 tag category."""
-
-        # The relaxation tag names.
-        tag_names = []
-        missing = []
-        for key in ['CompIndexID', 'CompID', 'AtomID', 'Val', 'ValErr']:
-            if not self.tag_names.has_key(key):
-                missing.append(key)
-            else:
-                tag_names.append(self.tag_names_full[key])
-
-        # The tag values.
-        tag_values = []
-        if 'CompIndexID' not in missing:
-            tag_values.append(self.sf.res_nums)
-        if 'CompID' not in missing:
-            tag_values.append(self.sf.res_names)
-        if 'AtomID' not in missing:
-            tag_values.append(self.sf.atom_names)
-        if 'Val' not in missing:
-            tag_values.append(self.sf.data)
-        if 'ValErr' not in missing:
-            tag_values.append(self.sf.errors)
-
-        # Add the data.
-        table = TagTable(tagnames=tag_names, tagvalues=tag_values)
-
-        # Add the tagtable to the save frame.
-        self.sf.frame.tagtables.append(table)
-
-
     def tag_setup(self, tag_category_label=None, sep=None):
         """Replacement method for setting up the tag names.
 

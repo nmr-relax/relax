@@ -88,6 +88,25 @@ class HeteronuclRxList(TagCategory):
 class Rx(TagCategory):
     """Base class for the Rx tag categories."""
 
+    def create(self):
+        """Create the Rx tag category."""
+
+        # Keys and objects.
+        info = [
+            ['CompIndexID', 'res_nums'],
+            ['CompID',      'res_names'],
+            ['AtomID',      'atom_names'],
+            ['Val',         'data'],
+            ['ValErr',      'errors']
+        ]
+
+        # Get the TabTable.
+        table = self.create_tag_table(info)
+
+        # Add the tagtable to the save frame.
+        self.sf.frame.tagtables.append(table)
+
+
     def read(self, tagtable):
         """Extract the Rx tag category info.
 

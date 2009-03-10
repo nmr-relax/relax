@@ -82,6 +82,9 @@ class EntitySaveframe:
         # Increment the number of entities.
         self.entity_num = self.entity_num + 1
 
+        # The entity ID list.
+        self.entity_ids = [str(self.entity_num)]*len(self.res_nums)
+
         # Initialise the save frame.
         self.frame = SaveFrame(title=mol_name)
 
@@ -196,26 +199,15 @@ class EntityCompIndex(TagCategory):
     def create(self):
         """Create the Entity tag category."""
 
-        # The tag names.
-        tag_names = []
-        missing = []
-        for key in ['EntityCompIndexID', 'AuthSeqID', 'CompID', 'CompLabel', 'SfID', 'EntryID', 'EntityID']:
-            if not self.tag_names.has_key(key):
-                missing.append(key)
-            else:
-                tag_names.append(self.tag_names_full[key])
+        # Keys and objects.
+        info = [
+            ['EntityCompIndexID',   'res_nums'],
+            ['CompID',              'res_names'],
+            ['EntityID',            'entity_ids']
+        ]
 
-        # The tag values.
-        tag_values = []
-        if 'EntityCompIndexID' not in missing:
-            tag_values.append(self.sf.res_nums)
-        if 'CompID' not in missing:
-            tag_values.append(self.sf.res_names)
-        if 'EntityID' not in missing:
-            tag_values.append([str(self.sf.entity_num)]*len(self.sf.res_nums))
-
-        # Add the data.
-        table = TagTable(tagnames=tag_names, tagvalues=tag_values)
+        # Get the TabTable.
+        table = self.create_tag_table(info)
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
