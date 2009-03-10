@@ -58,7 +58,7 @@ class HeteronuclT1Saveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, data=None, errors=None):
+    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
         @keyword frq:           The spectrometer proton frequency, in Hz.
@@ -69,6 +69,8 @@ class HeteronuclT1Saveframe(RelaxSaveframe):
         @type res_names:        list of str
         @keyword atom_names:    The atom name list.
         @type atom_names:       list of str
+        @keyword isotope:       The isotope type list, ie '15N', '1H', '13C', '2H', etc.
+        @type isotope:          list of str
         @keyword data:          The relaxation data.
         @type data:             list of float
         @keyword errors:        The errors associated with the relaxation data.
@@ -85,6 +87,7 @@ class HeteronuclT1Saveframe(RelaxSaveframe):
         self.res_nums = translate(res_nums)
         self.res_names = translate(res_names)
         self.atom_names = translate(atom_names)
+        self.isotope = translate(isotope)
         self.data = translate(data)
         self.errors = translate(errors)
 
@@ -197,21 +200,3 @@ class HeteronuclT1Software(TagCategory):
 class T1(Rx):
     """Base class for the T1 tag category."""
 
-    def tag_setup(self, tag_category_label=None, sep=None):
-        """Replacement method for setting up the tag names.
-
-        @keyword tag_category_label:    The tag name prefix specific for the tag category.
-        @type tag_category_label:       None or str
-        @keyword sep:                   The string separating the tag name prefix and suffix.
-        @type sep:                      str
-        """
-
-        # Execute the base class tag_setup() method.
-        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
-
-        # Tag names for the relaxation data.
-        self.tag_names['CompIndexID'] = 'Residue_seq_code'
-        self.tag_names['CompID'] = 'Residue_label'
-        self.tag_names['AtomID'] = 'Atom_name'
-        self.tag_names['Val'] = self.sf.label+'_value'
-        self.tag_names['ValErr'] = self.sf.label+'_value_error'

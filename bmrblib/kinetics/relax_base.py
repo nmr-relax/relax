@@ -93,11 +93,12 @@ class Rx(TagCategory):
 
         # Keys and objects.
         info = [
-            ['CompIndexID', 'res_nums'],
-            ['CompID',      'res_names'],
-            ['AtomID',      'atom_names'],
-            ['Val',         'data'],
-            ['ValErr',      'errors']
+            ['CompIndexID',         'res_nums'],
+            ['CompID',              'res_names'],
+            ['AtomID',              'atom_names'],
+            ['AtomIsotopeNumber',   'isotope'],
+            ['Val',                 'data'],
+            ['ValErr',              'errors']
         ]
 
         # Get the TabTable.
@@ -132,3 +133,24 @@ class Rx(TagCategory):
 
         # Return the data.
         return res_nums, res_names, atom_names, values, errors
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['CompIndexID'] = 'Residue_seq_code'
+        self.tag_names['CompID'] = 'Residue_label'
+        self.tag_names['AtomID'] = 'Atom_name'
+        self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number'
+        self.tag_names['Val'] = self.sf.label+'_value'
+        self.tag_names['ValErr'] = self.sf.label+'_value_error'
