@@ -70,6 +70,9 @@ class Bmrb:
         res_name_list = []
         atom_name_list = []
 
+        csa_list = []
+        r_list = []
+
         s2_list = []
         s2f_list = []
         s2s_list = []
@@ -105,6 +108,10 @@ class Bmrb:
             res_name_list.append(res_name)
             atom_name_list.append(spin.name)
 
+            # Values.
+            csa_list.append(spin.csa)
+            r_list.append(spin.r)
+
             # Model-free data.
             s2_list.append(spin.s2)
             s2f_list.append(spin.s2f)
@@ -122,6 +129,8 @@ class Bmrb:
             ts_err_list.append(spin.ts_err)
             rex_err_list.append(spin.rex_err)
 
+        # Generate the CSA saveframe.
+        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, csa=csa_list)
 
         # Generate the model-free data saveframe.
         star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list)
