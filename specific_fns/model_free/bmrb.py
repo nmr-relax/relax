@@ -21,11 +21,12 @@
 ###############################################################################
 
 # Python module imports.
+from math import pi
 import string
 
 # relax module imports.
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
-from generic_fns import mol_res_spin, relax_data
+from generic_fns import mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import spin_loop
 
 
@@ -59,6 +60,9 @@ class Bmrb:
         @type file_path:    str
         """
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Initialise the NMR-STAR data object.
         star = NMR_STAR_v3_1('relax_model_free_results', file_path)
 
@@ -67,6 +71,9 @@ class Bmrb:
 
         # Generate the relaxation data saveframes.
         relax_data.bmrb_write(star)
+
+        # Rex frq.
+        rex_frq = cdp.frq[0]
 
         # Initialise the spin specific data lists.
         res_num_list = []
@@ -92,6 +99,8 @@ class Bmrb:
         tf_err_list = []
         ts_err_list = []
         rex_err_list = []
+
+        chi2_list = []
 
         # Store the spin specific data in lists for later use.
         for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
@@ -119,7 +128,6 @@ class Bmrb:
             r_list.append(spin.r)
             isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
 
-
             # Model-free data.
             s2_list.append(spin.s2)
             s2f_list.append(spin.s2f)
@@ -127,7 +135,10 @@ class Bmrb:
             te_list.append(spin.te)
             tf_list.append(spin.tf)
             ts_list.append(spin.ts)
-            rex_list.append(spin.rex)
+            if spin.rex == None:
+                rex_list.append(None)
+            else:
+                rex_list.append(spin.rex / (2.0*pi*rex_frq**2))
 
             s2_err_list.append(spin.s2_err)
             s2f_err_list.append(spin.s2f_err)
@@ -135,13 +146,19 @@ class Bmrb:
             te_err_list.append(spin.te_err)
             tf_err_list.append(spin.tf_err)
             ts_err_list.append(spin.ts_err)
-            rex_err_list.append(spin.rex_err)
+            if spin.rex_err == None:
+                rex_err_list.append(None)
+            else:
+                rex_err_list.append(spin.rex_err / (2.0*pi*rex_frq**2))
+
+            # Opt stats.
+            chi2_list.append(spin.chi2)
 
         # Generate the CSA saveframe.
         star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, csa=csa_list)
 
         # Generate the model-free data saveframe.
-        star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list)
+        star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list)
 
         # Write the contents to the STAR formatted file.
         star.write()

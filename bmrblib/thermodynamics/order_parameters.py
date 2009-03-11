@@ -252,25 +252,25 @@ class OrderParameter(TagCategory):
 
         # Keys and objects.
         info = [
-            ['OrderParamID',        'data_ids'],
-            ['CompIndexID',         'res_nums'],
-            ['CompID',              'res_names'],
-            ['AtomID',              'atom_names'],
-            ['OrderParamVal',       's2'],
-            ['OrderParamValErr',    's2_err'],
-            ['TauEVal',             'te'],
-            ['TauEValErr',          'te_err'],
-            ['TauFVal',             'tf'],
-            ['TauFValErr',          'tf_err'],
-            ['TauSVal',             'ts'],
-            ['TauSValErr',          'ts_err'],
-            ['RexVal',              'rex'],
-            ['RexValErr',           'rex_err'],
-            ['Sf2Val',              's2f'],
-            ['Sf2ValErr',           's2f_err'],
-            ['Ss2Val',              's2s'],
-            ['Ss2ValErr',           's2s_err'],
-            ['ChiSquaredVal',       'chi2']
+            ['OrderParamID',    'data_ids'],
+            ['CompIndexID',     'res_nums'],
+            ['CompID',          'res_names'],
+            ['AtomID',          'atom_names'],
+            ['S2Val',           's2'],
+            ['S2ValErr',        's2_err'],
+            ['S2fVal',          's2f'],
+            ['S2fValErr',       's2f_err'],
+            ['S2sVal',          's2s'],
+            ['S2sValErr',       's2s_err'],
+            ['TauEVal',         'te'],
+            ['TauEValErr',      'te_err'],
+            ['TauFVal',         'tf'],
+            ['TauFValErr',      'tf_err'],
+            ['TauSVal',         'ts'],
+            ['TauSValErr',      'ts_err'],
+            ['RexVal',          'rex'],
+            ['RexValErr',       'rex_err'],
+            ['ChiSquaredVal',   'chi2']
         ]
 
         # Get the TabTable.
@@ -297,8 +297,8 @@ class OrderParameter(TagCategory):
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
-        self.tag_names['OrderParamVal'] = 'S2_value'
-        self.tag_names['OrderParamValErr'] = 'S2_value_fit_error'
+        self.tag_names['S2Val'] = 'S2_value'
+        self.tag_names['S2ValErr'] = 'S2_value_fit_error'
         self.tag_names['TauEVal'] = 'Tau_e_value'
         self.tag_names['TauEValErr'] = 'Tau_e_value_fit_error'
         self.tag_names['TauFVal'] = 'Tau_f_value'
@@ -307,7 +307,7 @@ class OrderParameter(TagCategory):
         self.tag_names['TauSValErr'] = 'Tau_s_value_fit_error'
         self.tag_names['RexVal'] = None
         self.tag_names['RexValErr'] = None
-        self.tag_names['Sf2Val'] = 'S2f_value'
-        self.tag_names['Sf2ValErr'] = 'S2f_value_fit_error'
-        self.tag_names['Ss2Val'] = 'S2s_value'
-        self.tag_names['Ss2ValErr'] = 'S2s_value_fit_error'
+        self.tag_names['S2fVal'] = 'S2f_value'
+        self.tag_names['S2fValErr'] = 'S2f_value_fit_error'
+        self.tag_names['S2sVal'] = 'S2s_value'
+        self.tag_names['S2sValErr'] = 'S2s_value_fit_error'
