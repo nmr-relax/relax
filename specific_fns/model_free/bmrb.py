@@ -115,7 +115,7 @@ class Bmrb:
             atom_name_list.append(spin.name)
 
             # Values.
-            csa_list.append(spin.csa)
+            csa_list.append(spin.csa * 1e6)    # In ppm.
             r_list.append(spin.r)
             isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
 
