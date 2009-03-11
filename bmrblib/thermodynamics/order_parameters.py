@@ -27,13 +27,13 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html_frame/frame_SaveFra
 """
 
 # relax module imports.
-from bmrblib.base_classes import TagCategory
+from bmrblib.base_classes import BaseSaveframe, TagCategory
 from bmrblib.misc import no_missing, translate
 from pystarlib.SaveFrame import SaveFrame
 from pystarlib.TagTable import TagTable
 
 
-class OrderParameterSaveframe:
+class OrderParameterSaveframe(BaseSaveframe):
     """The Order parameters data saveframe class."""
 
     def __init__(self, datanodes):
@@ -114,6 +114,9 @@ class OrderParameterSaveframe:
 
             # Place the args into the namespace, translating for BMRB.
             setattr(self, name, translate(obj))
+
+        # The ID numbers.
+        self.generate_data_ids(N)
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='order_parameters')
@@ -220,6 +223,7 @@ class OrderParameter(TagCategory):
 
         # Keys and objects.
         info = [
+            ['OrderParamID',        'data_ids'],
             ['CompIndexID',         'res_nums'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
@@ -259,6 +263,7 @@ class OrderParameter(TagCategory):
         TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
+        self.tag_names['OrderParamID'] = None
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
