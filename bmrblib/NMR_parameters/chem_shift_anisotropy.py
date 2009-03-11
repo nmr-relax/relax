@@ -63,7 +63,7 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         @type atom_names:       list of str
         @keyword isotope:       The isotope type list, ie 15 for '15N'.
         @type isotope:          list of int
-        @keyword csa:           The CSA values.
+        @keyword csa:           The CSA values in ppm.
         @type csa:              list of float
         """
 
