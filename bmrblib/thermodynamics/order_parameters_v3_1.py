@@ -103,3 +103,4 @@ class OrderParameter_v3_1(OrderParameter):
         self.tag_names['Sf2ValErr'] = 'S2f_val_fit_err'
         self.tag_names['Ss2Val'] = 'S2s_val'
         self.tag_names['Ss2ValErr'] = 'S2s_val_fit_err'
+        self.tag_names['ChiSquaredVal'] = 'Chi_squared_val'

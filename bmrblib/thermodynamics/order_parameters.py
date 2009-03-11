@@ -50,7 +50,7 @@ class OrderParameterSaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, res_nums=None, res_names=None, atom_names=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None, rex_frq=None):
+    def add(self, res_nums=None, res_names=None, atom_names=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None, rex_frq=None, chi2=None):
         """Add relaxation data to the data nodes.
 
         Note that units of 1/s are actually rad/s in NMR.  This is the hidden radian unit, which if
@@ -97,6 +97,8 @@ class OrderParameterSaveframe(BaseSaveframe):
         @keyword rex_frq:       The 1H spectrometer frequency in Hz that the Rex values are reported
                                 in.
         @type rex_frq:          float
+        @keyword chi2:          The optimised chi-squared value.
+        @type chi2:             float
         """
 
         # Set up the version specific variables.
@@ -106,9 +108,6 @@ class OrderParameterSaveframe(BaseSaveframe):
         no_missing(res_nums, 'residue numbers of the model-free data')
         no_missing(res_names, 'residue names of the model-free data')
         no_missing(atom_names, 'atom names of the model-free data')
-
-        # Object names.
-        names = ['res_nums', 'res_names', 'atom_names', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err']
 
         # The Rex frequency in MHz.
         if rex:
@@ -125,6 +124,9 @@ class OrderParameterSaveframe(BaseSaveframe):
 
         # Number of elements.
         N = len(res_nums)
+
+        # Object names.
+        names = ['res_nums', 'res_names', 'atom_names', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err', 'chi2']
 
         # Loop over the objects.
         for name in names:
@@ -267,7 +269,8 @@ class OrderParameter(TagCategory):
             ['Sf2Val',              's2f'],
             ['Sf2ValErr',           's2f_err'],
             ['Ss2Val',              's2s'],
-            ['Ss2ValErr',           's2s_err']
+            ['Ss2ValErr',           's2s_err'],
+            ['ChiSquaredVal',       'chi2']
         ]
 
         # Get the TabTable.
