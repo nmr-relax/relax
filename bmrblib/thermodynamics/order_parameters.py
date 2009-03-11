@@ -34,7 +34,7 @@ from pystarlib.TagTable import TagTable
 
 
 class OrderParameterSaveframe(BaseSaveframe):
-    """The Order parameters data saveframe class."""
+    """The Order parameters saveframe class."""
 
     def __init__(self, datanodes):
         """Initialise the class, placing the pystarlib data nodes into the namespace.
@@ -50,8 +50,13 @@ class OrderParameterSaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, res_nums=None, res_names=None, atom_names=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None):
+    def add(self, res_nums=None, res_names=None, atom_names=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None, rex_frq=None):
         """Add relaxation data to the data nodes.
+
+        Note that units of 1/s are actually rad/s in NMR.  This is the hidden radian unit, which if
+        not present would mean that the units would be Hz.  For more details, see
+        https://mail.gna.org/public/relax-users/2009-01/msg00000.html.
+
 
         @keyword res_nums:      The residue number list.
         @type res_nums:         list of int
@@ -71,18 +76,27 @@ class OrderParameterSaveframe(BaseSaveframe):
         @type s2s:              list of float
         @keyword s2s_err:       The S2s errors.
         @type s2s_err:          list of float
-        @keyword te:            The te values.
+        @keyword te:            The te values (in rad/s units).
         @type te:               list of float
-        @keyword te_err:        The te errors.
+        @keyword te_err:        The te errors (in rad/s units).
         @type te_err:           list of float
-        @keyword tf:            The tf values.
+        @keyword tf:            The tf values (in rad/s units).
         @type tf:               list of float
-        @keyword tf_err:        The tf errors.
+        @keyword tf_err:        The tf errors (in rad/s units).
         @type tf_err:           list of float
-        @keyword ts:            The ts values.
+        @keyword ts:            The ts values (in rad/s units).
         @type ts:               list of float
-        @keyword ts_err:        The ts errors.
+        @keyword ts_err:        The ts errors (in rad/s units).
         @type ts_err:           list of float
+        @keyword rex:           The Rex values (in rad/s units for the field strength specified in
+                                rex_frq).
+        @type rex:              list of float
+        @keyword rex_err:       The Rex errors (in rad/s units for the field strength specified in
+                                rex_frq).
+        @type rex_err:          list of float
+        @keyword rex_frq:       The 1H spectrometer frequency in Hz that the Rex values are reported
+                                in.
+        @type rex_frq:          float
         """
 
         # Set up the version specific variables.
@@ -95,6 +109,19 @@ class OrderParameterSaveframe(BaseSaveframe):
 
         # Object names.
         names = ['res_nums', 'res_names', 'atom_names', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err']
+
+        # The Rex frequency in MHz.
+        if rex:
+            # Check.
+            if not rex_frq:
+                raise NameError, "The rex_frq arg must be supplied if the rex values are supplied."
+
+            # Convert to MHz.
+            self.rex_frq = str(rex_frq / 1e6)
+
+        # No Rex.
+        else:
+            self.rex_frq = None
 
         # Number of elements.
         N = len(res_nums)
