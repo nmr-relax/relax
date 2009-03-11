@@ -21,9 +21,9 @@
 ###############################################################################
 
 # Module docstring.
-"""The Heteronuclear NOE data saveframe category.
+"""The order parameter saveframe category.
 
-For example, see http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_NOEs.
+For example, see http://www.bmrb.wisc.edu/dictionary/3.1html_frame/frame_SaveFramePage.html#order_parameters
 """
 
 # relax module imports.
@@ -153,7 +153,7 @@ class OrderParameterList(TagCategory):
         # The save frame category.
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
-        # NOE ID number.
+        # Model-free analysis ID number.
         if self.tag_names.has_key('OrderParameterListID'):
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['OrderParameterListID']], tagvalues=[['1']]))
 
