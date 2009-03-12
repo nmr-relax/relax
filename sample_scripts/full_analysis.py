@@ -196,10 +196,10 @@ GRID_INC = 11
 MIN_ALGOR = 'newton'
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-MC_NUM = 200
+MC_NUM = 500
 
 # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
-CONV_LOOP = False
+CONV_LOOP = True
 
 
 class Main:
