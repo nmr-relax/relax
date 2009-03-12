@@ -288,14 +288,25 @@ def bmrb_write(star):
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
 
-    # Add the relaxation data.
+    # The operators of the relaxation superoperator.
+    operator_pair = []
     for i in range(cdp.num_ri):
         if cdp.ri_labels[i] == 'R1':
-            star.heteronucl_T1_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+            operator_pair.append(['Iz', 'Iz'])
         elif cdp.ri_labels[i] == 'R2':
-            star.heteronucl_T2_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+            operator_pair.append(['I+', 'I+'])
         elif cdp.ri_labels[i] == 'NOE':
-            star.heteronucl_NOEs.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+            operator_pair.append(['Iz', 'Sz'])
+
+    # Add the relaxation data.
+    for i in range(cdp.num_ri):
+        star.relaxation.add(operator_pair=operator_pair[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+        #if cdp.ri_labels[i] == 'R1':
+        #    star.heteronucl_T1_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+        #elif cdp.ri_labels[i] == 'R2':
+        #    star.heteronucl_T2_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+        #elif cdp.ri_labels[i] == 'NOE':
+        #    star.heteronucl_NOEs.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
