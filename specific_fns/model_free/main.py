@@ -2370,25 +2370,25 @@ class Model_free_main:
             if not spin:
                 spin = return_spin(spin_id)
 
-        # tm (nanoseconds).
+        # tm (seconds).
         if object_name == 'tm' or object_name == 'local_tm':
-            return 'ns'
+            return 's'
 
-        # te, tf, and ts (picoseconds).
+        # te, tf, and ts (seconds).
         elif object_name in ['te', 'tf', 'ts']:
-            return 'ps'
+            return 's'
 
-        # Rex (value at 1st field strength).
+        # Rex (field independant value).
         elif object_name == 'rex' and hasattr(spin, 'frq_labels') and spin.frq_labels != None and len(spin.frq_labels):
-            return spin.frq_labels[0] + ' MHz'
+            return 'sigma_ex = Rex / omega**2'
 
-        # Bond length (Angstrom).
+        # Bond length (meters).
         elif object_name == 'r':
-            return 'Angstrom'
+            return 'm'
 
-        # CSA (ppm).
+        # CSA (unitless).
         elif object_name == 'csa':
-            return 'ppm'
+            return 'unitless'
 
 
     def select_model(self, model=None, spin_id=None):
