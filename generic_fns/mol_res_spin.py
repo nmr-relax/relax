@@ -777,7 +777,11 @@ def count_spins(selection=None, skip_desel=True):
 
 
 def create_molecule(mol_name=None):
-    """Function for adding a molecule into the relax data store."""
+    """Add a molecule into the relax data store.
+
+    @keyword mol_name:  The name of the molecule.
+    @type mol_name:     str
+    """
 
     # Test if the current data pipe exists.
     pipes.test()
@@ -790,83 +794,74 @@ def create_molecule(mol_name=None):
         if cdp.mol[i].name == mol_name:
             raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the relax data store."
 
-
     # Append the molecule.
     cdp.mol.add_item(mol_name=mol_name)
 
 
-def create_residue(res_num=None, res_name=None, mol_id=None):
-    """Function for adding a residue into the relax data store.
+def create_residue(res_num=None, res_name=None, mol_name=None):
+    """Add a residue into the relax data store (and molecule if necessary).
 
-    @param res_num:     The identification number of the new residue.
+    @keyword res_num:   The number of the new residue.
     @type res_num:      int
-    @param res_name:    The name of the new residue.
+    @keyword res_name:  The name of the new residue.
     @type res_name:     str
-    @param mol_id:      The molecule identification string.
-    @type mol_id:       str
+    @keyword mol_name:  The name of the molecule to add the residue to.
+    @type mol_name:     str
     """
+
+    # Test if the current data pipe exists.
+    pipes.test()
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
 
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(mol_id)
-
-    # Disallowed selections.
-    if res_token != None:
-        raise RelaxResSelectDisallowError
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
-
-    # Test if the current data pipe exists.
-    pipes.test()
+    # Create the molecule if it does not exist.
+    if not return_molecule(generate_spin_id(mol_name=mol_name)):
+        create_molecule(mol_name=mol_name)
 
     # Get the molecule container to add the residue to.
-    if mol_id:
-        mol_to_cont = return_molecule(mol_id)
-        if mol_to_cont == None:
-            raise RelaxError, "The molecule in " + `mol_id` + " does not exist in the current data pipe."
-    else:
-        mol_to_cont = cdp.mol[0]
+    mol_cont = return_molecule(generate_spin_id(mol_name=mol_name))
+    if not mol_cont:
+        mol_cont = cdp.mol[0]
 
     # Add the residue.
-    mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
+    mol_cont.res.add_item(res_num=res_num, res_name=res_name)
 
 
-def create_spin(spin_num=None, spin_name=None, res_id=None):
-    """Function for adding a spin into the relax data store.
+def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
+    """Add a spin into the relax data store (and molecule and residue if necessary).
     
-    @param spin_num:    The identification number of the new spin.
+    @keyword spin_num:  The number of the new spin.
     @type spin_num:     int
-    @param spin_name:   The name of the new spin.
+    @keyword spin_name: The name of the new spin.
     @type spin_name:    str
-    @param res_id:      The molecule and residue identification string.
-    @type res_id:       str
+    @keyword res_num:   The number of the residue to add the spin to.
+    @type res_num:      int
+    @keyword res_name:  The name of the residue to add the spin to.
+    @type res_name:     str
+    @keyword mol_name:  The name of the molecule to add the spin to.
+    @type mol_name:     str
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(res_id)
-
-    # Disallow spin selections.
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
     pipes.test()
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Create the molecule and residue if they do not exist.
+    if not return_molecule(generate_spin_id(mol_name=mol_name)):
+        create_molecule(mol_name=mol_name)
+    if not return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)):
+        create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
+
     # Get the residue container to add the spin to.
-    if res_id:
-        res_to_cont = return_residue(res_id)
-        if res_to_cont == None:
-            raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
-    else:
-        res_to_cont = cdp.mol[0].res[0]
+    res_cont = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
+    if not res_cont:
+        res_cont = cdp.mol[0].res[0]
 
     # Add the spin.
-    res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+    res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
 def convert_from_global_index(global_index=None, pipe=None):

@@ -293,9 +293,9 @@ class Spin_base_class:
         """
 
         # Create a few new spins.
-        self.spin_fns.create(1, 'C3')
-        self.spin_fns.create(2, 'C17')
-        self.spin_fns.create(-3, 'N7', res_id='#New mol:6')
+        self.spin_fns.create(1, 'C3', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(2, 'C17', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(-3, 'N7', res_num=6, mol_name='New mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -319,10 +319,10 @@ class Spin_base_class:
         """
 
         # Create the first spin.
-        self.spin_fns.create(1, 'P1')
+        self.spin_fns.create(1, 'P1', res_num=1, mol_name='Old mol')
 
         # Assert that a RelaxError occurs when the next added spin has the same number as the first.
-        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3')
+        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3', res_num=1, mol_name='Old mol')
 
 
     def test_delete_spin_name(self):
