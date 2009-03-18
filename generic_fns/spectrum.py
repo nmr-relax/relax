@@ -552,23 +552,30 @@ def intensity_sparky(line, int_col):
     intensity = ''
     if line[0]!='?-?':
         assignment = split('([A-Z]+)', line[0])
-        assignment = assignment[1:-1]
-
-    # The residue number.
+        if assignment[0] == '':
+            assignment = assignment[1:]
+        if assignment[-1] == '':
+            assignment = assignment[:-1]
         try:
-            res_num = int(assignment[1])
+            int(assignment[0])
+        except ValueError:
+            assignment = assignment[1:]
+
+        # The residue number.
+        try:
+            res_num = int(assignment[0])
         except:
             raise RelaxError, "Improperly formatted Sparky file."
 
-    # Nuclei names.
-        x_name = assignment[2]
-        h_name = assignment[4]
+        # Nuclei names.
+        x_name = assignment[1]
+        h_name = assignment[3]
 
-    # The peak intensity column.
+        # The peak intensity column.
         if int_col == None:
             int_col = 3
 
-    # Intensity.
+        # Intensity.
         try:
             intensity = float(line[int_col])
         except ValueError:
