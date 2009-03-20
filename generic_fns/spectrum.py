@@ -701,7 +701,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
         return header_lines
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, ncproc=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -720,18 +720,20 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type int_col:          int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
     @type int_method:       str
-    @param mol_name_col:    The column containing the molecule name information.
+    @keyword mol_name_col:  The column containing the molecule name information.
     @type mol_name_col:     int or None
-    @param res_name_col:    The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information.
     @type res_name_col:     int or None
-    @param res_num_col:     The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information.
     @type res_num_col:      int or None
-    @param spin_name_col:   The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information.
     @type spin_name_col:    int or None
-    @param spin_num_col:    The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information.
     @type spin_num_col:     int or None
-    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
+    @type ncproc:           int or None
     """
 
     # Test if the current data pipe exists.
@@ -814,13 +816,17 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if format == 'xeasy':
         det_dimensions(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
 
-    # Add the spectrum id to the relax data store.
+    # Add the spectrum id (and ncproc) to the relax data store.
     if not hasattr(cdp, 'spectrum_ids'):
         cdp.spectrum_ids = []
+        if ncproc != None:
+            cdp.ncproc = {}
     if spectrum_id in cdp.spectrum_ids:
         raise RelaxError, "The spectrum identification string '%s' already exists." % spectrum_id
     else:
         cdp.spectrum_ids.append(spectrum_id)
+        if ncproc != None:
+            cdp.ncproc[spectrum_id] = ncproc
 
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
@@ -845,6 +851,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Initialise.
         if not hasattr(spin, 'intensities'):
             spin.intensities = []
+
+        # Intensity scaling.
+        if ncproc != None:
+            intensity = intensity / float(2**ncproc)
 
         # Add the data.
         if format == 'generic':
