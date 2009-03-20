@@ -297,6 +297,12 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     # The spectrum id index.
     spect_index = cdp.spectrum_ids.index(spectrum_id)
 
+    # The scaling by NC_proc.
+    if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
+        scale = 1.0 / 2**cdp.ncproc[spectrum_id]
+    else:
+        scale = 1.0
+
     # Loop over the spins.
     for spin in spin_loop(spin_id):
         # Skip deselected spins.
@@ -310,7 +316,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
             spin.baseplane_rmsd.append([None] * (len(cdp.spectrum_ids) - len(spin.baseplane_rmsd)))
 
         # Set the error.
-        spin.baseplane_rmsd[spect_index] = float(error)
+        spin.baseplane_rmsd[spect_index] = float(error) * scale
 
 
 def det_dimensions(file_data, proton, heteronuc, int_col):
