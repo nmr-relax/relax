@@ -77,8 +77,8 @@ static PyObject *
 func(PyObject *self, PyObject *args) {
     /* Function for calculating and returning the chi-squared value.
      *
-     * Firstly the back calculated intensities are generated, then the chi-squared statistic is
-     * calculated
+     * Firstly the back calculated effective transversal relaxation rates are generated, then the
+     * chi-squared statistic is calculated
      */
 
     /* Declarations */
@@ -97,7 +97,7 @@ func(PyObject *self, PyObject *args) {
     /* Pointers to the numpy arrays */
     params = (double *) numpy_params->data;
 
-    /* Back calculated the peak intensities */
+    /* Back calculated the effective transversal relaxation rates */
     dispersion(params, cpmg_frqs, back_calc, num_times);
 
     Py_DECREF(numpy_params);
@@ -131,7 +131,7 @@ dfunc(PyObject *self, PyObject *args) {
     /* Pointers to the numpy arrays */
     params = (double *) numpy_params->data;
 
-    /* Back calculated the peak intensities */
+    /* Back calculated the effective transversal relaxation rates */
     dispersion(params, cpmg_frqs, back_calc, num_times);
 
 
@@ -158,7 +158,8 @@ d2func(PyObject *self, PyObject *args) {
 
 static PyObject *
 back_calc_I(PyObject *self, PyObject *args) {
-    /* Function for returning as a numpy array the back calculated peak intensities */
+    /* Function for returning as a numpy array the back calculated effective transversal relaxation
+     * rates */
 
     /* Declarations */
     extern double back_calc[];
