@@ -22,6 +22,6 @@
 #ifndef RELAX_DISPERSION 
 #define RELAX_DISPERSION
 
-void dispersion(double *params, double *relax_times, double *back_calc, int num_times);
+void dispersion(double *params, double *cpmg_frqs, double *back_calc, int num_times);
 
 #endif

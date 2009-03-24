@@ -31,7 +31,7 @@
 
 
 
-void dispersion(double *params, double *relax_times, double *back_calc, int num_times) {
+void dispersion(double *params, double *cpmg_frqs, double *back_calc, int num_times) {
 	/* Function to back calculate the effective transversal relaxation rate (R2eff).
 	*/
 
@@ -49,7 +49,7 @@ void dispersion(double *params, double *relax_times, double *back_calc, int num_
 
         /* Back calculate */
         else
-            back_calc[i] = params[1] * exp(-relax_times[i] * params[0]);
+            back_calc[i] = params[1] * exp(-cpmg_frqs[i] * params[0]);
 
     }
 }

@@ -35,36 +35,36 @@
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Python declarations */
-    PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
-    extern PyArrayObject *numpy_values, *numpy_sd, *numpy_relax_times, *numpy_scaling_matrix;
+    PyObject *values_arg, *sd_arg, *cpmg_frqs_arg, *scaling_matrix_arg;
+    extern PyArrayObject *numpy_values, *numpy_sd, *numpy_cpmg_frqs, *numpy_scaling_matrix;
 
     /* Normal declarations */
-    extern double *values, *sd, *relax_times, *scaling_matrix;
+    extern double *values, *sd, *cpmg_frqs, *scaling_matrix;
     extern double relax_time_array;
     extern int num_params, num_times;
 
     /* The keyword list */
-    static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
+    static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "cpmg_frqs", "scaling_matrix", NULL};
 
     /* Parse the function arguments */
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &cpmg_frqs_arg, &scaling_matrix_arg))
         return NULL;
 
     Py_XDECREF(numpy_values);
     Py_XDECREF(numpy_sd);
-    Py_XDECREF(numpy_relax_times);
+    Py_XDECREF(numpy_cpmg_frqs);
     Py_XDECREF(numpy_scaling_matrix);
 
     /* Make the numpy arrays contiguous */
     numpy_values = (PyArrayObject *) PyArray_ContiguousFromObject(values_arg, PyArray_DOUBLE, 1, 1);
     numpy_sd = (PyArrayObject *) PyArray_ContiguousFromObject(sd_arg, PyArray_DOUBLE, 1, 1);
-    numpy_relax_times = (PyArrayObject *) PyArray_ContiguousFromObject(relax_times_arg, PyArray_DOUBLE, 1, 1);
+    numpy_cpmg_frqs = (PyArrayObject *) PyArray_ContiguousFromObject(cpmg_frqs_arg, PyArray_DOUBLE, 1, 1);
     numpy_scaling_matrix = (PyArrayObject *) PyArray_ContiguousFromObject(scaling_matrix_arg, PyArray_DOUBLE, 2, 2);
 
     /* Pointers to the numpy arrays */
     values = (double *) numpy_values->data;
     sd = (double *) numpy_sd->data;
-    relax_times = (double *) numpy_relax_times->data;
+    cpmg_frqs = (double *) numpy_cpmg_frqs->data;
     scaling_matrix = (double *) numpy_scaling_matrix->data;
 
     /* Return nothing */
@@ -98,7 +98,7 @@ func(PyObject *self, PyObject *args) {
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
-    dispersion(params, relax_times, back_calc, num_times);
+    dispersion(params, cpmg_frqs, back_calc, num_times);
 
     Py_DECREF(numpy_params);
     /* Calculate and return the chi-squared value */
@@ -132,7 +132,7 @@ dfunc(PyObject *self, PyObject *args) {
     params = (double *) numpy_params->data;
 
     /* Back calculated the peak intensities */
-    dispersion(params, relax_times, back_calc, num_times);
+    dispersion(params, cpmg_frqs, back_calc, num_times);
 
 
     /* Test code (convert aaa to a numpy array */
