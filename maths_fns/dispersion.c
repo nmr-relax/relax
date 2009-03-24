@@ -36,20 +36,14 @@ void dispersion(double *params, double *cpmg_frqs, double *back_calc, int num_ti
 	*/
 
     /* Declarations */
-    double Rx, I0;
+    double R2, Rex, kex;
     int i;
 
 
     /* Loop over the time points */
-    /* for (i = 0; i < num_times; i++) { */
     for (i = 0; i < num_times; i++) {
-        /* Zero Rx value */
-        if (params[0] == 0.0)
-            back_calc[i] = 0.0;
-
         /* Back calculate */
-        else
-            back_calc[i] = params[1] * exp(-cpmg_frqs[i] * params[0]);
+        back_calc[i] = params[0] + params[1] * (1 - 2 * tanh(params[2] / (2 * 4 * cpmg_frqs[i])) * ((4 * cpmg_frqs[i] ) / params[2]));
 
     }
 }
