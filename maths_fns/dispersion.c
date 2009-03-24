@@ -33,6 +33,13 @@
 
 void dispersion(double *params, double *cpmg_frqs, double *back_calc, int num_times) {
 	/* Function to back calculate the effective transversal relaxation rate (R2eff).
+        The currently supported equation is that for CPMG relaxation dispersion in the fast
+        exchange limit.
+            Millet et al., JACS, 2000, 122 : 2867 - 2877 (equation 19)
+            Kovrigin et al., JMagRes, 2006, 180 : 93 - 104 (equation 1)
+        In the future, back-calculation should be available for CPMG relaxation dispersion in the
+        slow exchange limit.
+            Tollinger et al., JACS, 2001, 123: 11341-11352 (equation 2)
 	*/
 
     /* Declarations */
