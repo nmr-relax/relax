@@ -345,8 +345,8 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         if not spin.select:
             continue
 
-        # The spin identification string.  The residue name is not included to allow molecules with point mutations to be used as different models.
-        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_num=spin.num, spin_name=spin.name)
+        # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
+        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=spin.name)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
@@ -361,7 +361,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, res_num=res_num, spin_name=spin.name, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
