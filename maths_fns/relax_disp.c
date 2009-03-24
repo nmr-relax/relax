@@ -40,7 +40,7 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
 
     /* Normal declarations */
     extern double *values, *sd, *cpmg_frqs, *scaling_matrix;
-    extern double relax_time_array;
+    extern double cpmg_frq_array;
     extern int num_params, num_times;
 
     /* The keyword list */
