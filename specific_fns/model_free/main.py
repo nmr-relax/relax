@@ -2849,6 +2849,10 @@ class Model_free_main:
             # Get the spin container.
             spin = return_spin_from_index(model_index)
 
+            # Skip if deselected.
+            if not spin.select:
+                return
+
             # Set the simulation flags.
             spin.select_sim = deepcopy(select_sim)
 
@@ -3218,6 +3222,10 @@ class Model_free_main:
         else:
             # Get the spin container.
             spin = return_spin_from_index(model_index)
+
+            # Skip if deselected.
+            if not spin.select:
+                return
 
             # Return the list.
             return spin.select_sim
