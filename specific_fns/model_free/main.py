@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -993,10 +993,6 @@ class Model_free_main:
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
         for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
             # Test the fixed flag.
             if not hasattr(spin, 'fixed'):
                 mf_all_fixed = False
@@ -1786,10 +1782,6 @@ class Model_free_main:
             for spin in spin_loop():
                 # Increment the global spin index.
                 global_index = global_index + 1
-
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
 
                 # Yield the spin index.
                 yield global_index
