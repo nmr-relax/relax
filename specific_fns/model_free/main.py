@@ -992,7 +992,15 @@ class Model_free_main:
 
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
+        mf_all_deselected = True
         for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # At least one spin is selected.
+            mf_all_deselected = False
+
             # Test the fixed flag.
             if not hasattr(spin, 'fixed'):
                 mf_all_fixed = False
@@ -1000,6 +1008,14 @@ class Model_free_main:
             if not spin.fixed:
                 mf_all_fixed = False
                 break
+
+        # No spins selected?!?
+        if mf_all_deselected:
+            # All parameters fixed!
+            if cdp.diff_tensor.fixed:
+                raise RelaxError, "All parameters are fixed."
+
+            return 'diff'
 
         # Local tm.
         if local_tm:
