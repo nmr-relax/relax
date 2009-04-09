@@ -71,21 +71,15 @@ class Noe_restraints(TestCase):
             # Create the molecule.
             create_molecule(mol_names[i])
 
-            # The molecule id string.
-            mol_id = '#' + mol_names[i]
-
             # Loop over the residues.
             for j in range(len(res_nums[i])):
                 # Create the residue.
-                create_residue(res_nums[i][j], mol_id=mol_id)
-
-                # The residue id string.
-                res_id = mol_id + ':' + `res_nums[i][j]`
+                create_residue(res_nums[i][j], mol_name=mol_names[i])
 
                 # Loop over the atoms.
                 for k in range(len(spin_names[i][j])):
                     # Create the spin.
-                    create_spin(spin_names[i][j][k], res_id=res_id)
+                    create_spin(spin_names[i][j][k], res_num=res_nums[i][j], mol_name=mol_names[i])
 
         # Display the sequence for debugging.
         self.relax.interpreter._Sequence.display()
