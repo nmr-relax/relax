@@ -296,9 +296,9 @@ class Spin_base_class:
         """
 
         # Create a few new protons.
-        self.spin_fns.create(100, 'H13', res_id='#Old mol:1')
-        self.spin_fns.create(101, 'H14', res_id='#Old mol:1')
-        self.spin_fns.create(102, 'H15', res_id='#Old mol:1')
+        self.spin_fns.create(100, 'H13', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(101, 'H14', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(102, 'H15', res_num=1, mol_name='Old mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -348,8 +348,8 @@ class Spin_base_class:
         """
 
         # Create a few new protons.
-        self.spin_fns.create(100, 'H93', res_id='#Old mol:1')
-        self.spin_fns.create(101, 'H94', res_id='#Old mol:1')
+        self.spin_fns.create(100, 'H93', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(101, 'H94', res_num=1, mol_name='Old mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
