@@ -118,7 +118,7 @@ class Spin:
         copy_spin(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
 
 
-    def create(self, spin_num=None, spin_name=None, res_id=None):
+    def create(self, spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
         """Function for creating a new spin.
 
         Keyword Arguments
@@ -128,7 +128,11 @@ class Spin:
 
         spin_name:  The name of the spin.
 
-        res_id:  The molecule and residue ID string identifying the residue to add the spin to.
+        res_num:  The number of the residue to add the spin to.
+
+        res_name:  The name of the residue to add the spin to.
+
+        mol_name:  The name of the molecule to add the spin to.
 
 
         Description
@@ -153,23 +157,33 @@ class Spin:
             text = sys.ps3 + "spin.create("
             text = text + "spin_num=" + `spin_num`
             text = text + ", spin_name=" + `spin_name`
-            text = text + ", res_id=" + `res_id` + ")"
+            text = text + ", res_num=" + `res_num`
+            text = text + ", res_name=" + `res_name`
+            text = text + ", mol_name=" + `mol_name` + ")"
             print text
 
         # Spin number.
-        if type(spin_num) != int:
-            raise RelaxIntError, ('spin number', spin_num)
+        if spin_num != None and type(spin_num) != int:
+            raise RelaxNoneIntError, ('spin number', spin_num)
 
         # Spin name.
         if spin_name != None and type(spin_name) != str:
             raise RelaxNoneStrError, ('spin name', spin_name)
 
-        # The residue ID.
-        if res_id != None and type(res_id) != str:
-            raise RelaxNoneStrError, ('residue identification string', res_id)
+        # The residue number.
+        if res_num != None and type(res_num) != int:
+            raise RelaxNoneIntError, ('residue number', res_num)
+
+        # The residue name.
+        if res_name != None and type(res_name) != str:
+            raise RelaxNoneStrError, ('residue name', res_name)
+
+        # The molecule name.
+        if mol_name != None and type(mol_name) != str:
+            raise RelaxNoneStrError, ('molecule name', mol_name)
 
         # Execute the functional code.
-        create_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id)
+        create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
 
 
     def create_pseudo(self, spin_name=None, spin_num=None, res_id=None, members=None, averaging='linear'):
@@ -304,7 +318,7 @@ class Spin:
         display_spin(spin_id=spin_id)
 
 
-    def name(self, spin_id=None, name=None):
+    def name(self, spin_id=None, name=None, force=False):
         """Function for naming spins.
 
         Keyword Arguments
@@ -313,6 +327,8 @@ class Spin:
         spin_id:  The spin identification string corresponding to one or more spins.
 
         name:  The new name.
+
+        force:  A flag which if True will cause the spin to be renamed.
 
 
         Description
@@ -327,16 +343,17 @@ class Spin:
         The following sequence of commands will rename the sequence {1 C1, 2 C2, 3 C3} to {1 C11,
         2 C12, 3 C13}:
 
-        relax> spin.name('@1', 'C11')
-        relax> spin.name('@2', 'C12')
-        relax> spin.name('@3', 'C13')
+        relax> spin.name('@1', 'C11', force=True)
+        relax> spin.name('@2', 'C12', force=True)
+        relax> spin.name('@3', 'C13', force=True)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.name("
             text = text + "spin_id=" + `spin_id`
-            text = text + ", name=" + `name` + ")"
+            text = text + ", name=" + `name`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # Spin identification string.
@@ -347,11 +364,15 @@ class Spin:
         if type(name) != str:
             raise RelaxStrError, ('new spin name', name)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        name_spin(spin_id=spin_id, name=name)
+        name_spin(spin_id=spin_id, name=name, force=force)
 
 
-    def number(self, spin_id=None, number=None):
+    def number(self, spin_id=None, number=None, force=False):
         """Function for numbering spins.
 
         Keyword Arguments
@@ -360,6 +381,8 @@ class Spin:
         spin_id:  The spin identification string corresponding to a single spin.
 
         number:  The new spin number.
+
+        force:  A flag which if True will cause the spin to be renumbered.
 
 
         Description
@@ -375,9 +398,9 @@ class Spin:
         The following sequence of commands will renumber the sequence {1 C1, 2 C2, 3 C3} to
         {-1 C1, -2 C2, -3 C3}:
 
-        relax> spin.number('@1', -1)
-        relax> spin.number('@2', -2)
-        relax> spin.number('@3', -3)
+        relax> spin.number('@1', -1, force=True)
+        relax> spin.number('@2', -2, force=True)
+        relax> spin.number('@3', -3, force=True)
 
         """
 
@@ -385,7 +408,8 @@ class Spin:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.number("
             text = text + "spin_id=" + `spin_id`
-            text = text + ", number=" + `number` + ")"
+            text = text + ", number=" + `number`
+            text = text + ", force=" + `force` + ")"
             print text
 
         # Spin identification string.
@@ -396,8 +420,12 @@ class Spin:
         if number != None and  type(number) != int:
             raise RelaxNoneIntError, ('new spin number', number)
 
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
         # Execute the functional code.
-        number_spin(spin_id=spin_id, number=number)
+        number_spin(spin_id=spin_id, number=number, force=force)
 
 
 

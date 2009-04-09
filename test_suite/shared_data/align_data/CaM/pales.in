@@ -1,0 +1,36 @@
+DATA SEQUENCE ADQLTEEQIAEFKEAFSLFDKDGDGTITTKELGTVMRSLGQNPTEAELQDMINEVDADGNGTIDFPEFLT
+DATA SEQUENCE MMARKMKDTDSEEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREANIDGDGQVNYEE
+DATA SEQUENCE FVQMMTAK
+
+VARS   RESID_I RESNAME_I ATOMNAME_I RESID_J RESNAME_J ATOMNAME_J D      DD    W
+FORMAT %5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f
+
+   83        GLU            N           83        GLU            H        5.596       0.000 1.00
+   84        GLU            N           84        GLU            H       13.314       0.000 1.00
+   85        ILE            N           85        ILE            H        7.038       0.000 1.00
+  111        ASN            N          111        ASN            H       -3.393       0.000 1.00
+  112        LEU            N          112        LEU            H       -2.091       0.000 1.00
+  113        GLY            N          113        GLY            H       11.443       0.000 1.00
+  114        GLU            N          114        GLU            H       -9.064       0.000 1.00
+  115        LYS            N          115        LYS            H        2.337       0.000 1.00
+  116        LEU            N          116        LEU            H       -5.814       0.000 1.00
+  117        THR            N          117        THR            H       13.102       0.000 1.00
+  118        ASP            N          118        ASP            H        2.528       0.000 1.00
+  119        GLU            N          119        GLU            H       -4.705       0.000 1.00
+  120        GLU            N          120        GLU            H        4.080       0.000 1.00
+  121        VAL            N          121        VAL            H        6.280       0.000 1.00
+  122        ASP            N          122        ASP            H       -4.692       0.000 1.00
+  123        GLU            N          123        GLU            H       -2.342       0.000 1.00
+  124        MET            N          124        MET            H        3.896       0.000 1.00
+  126        ARG            N          126        ARG            H       -5.514       0.000 1.00
+  127        GLU            N          127        GLU            H        0.722       0.000 1.00
+  128        ALA            N          128        ALA            H        3.815       0.000 1.00
+  130        ILE            N          130        ILE            H      -10.884       0.000 1.00
+  131        ASP            N          131        ASP            H       -1.662       0.000 1.00
+  132        GLY            N          132        GLY            H        4.299       0.000 1.00
+  143        GLN            N          143        GLN            H        4.470       0.000 1.00
+  144        MET            N          144        MET            H        6.997       0.000 1.00
+  145        MET            N          145        MET            H       -2.279       0.000 1.00
+  146        THR            N          146        THR            H        3.643       0.000 1.00
+  147        ALA            N          147        ALA            H        6.839       0.000 1.00
+  148        LYS            N          148        LYS            H       -3.196       0.000 1.00

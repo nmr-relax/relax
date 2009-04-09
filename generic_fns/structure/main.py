@@ -115,7 +115,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 # Rename the molecule container if the mol name is given and the sole container is unnamed.
                 if mol_cont.name == None and mol_name:
                     # Print out.
-                    print "Renaming the unnamed sole molecule to '%s'." % mol_name
+                    print "Renaming the unnamed sole molecule container to '%s'." % mol_name
 
                     # Set the name.
                     mol_cont.name = mol_name
@@ -340,13 +340,14 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         object_name = 'bond_vect'
 
     # Loop over the spins.
+    no_vectors = True
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
         # Skip deselected spins.
         if not spin.select:
             continue
 
-        # The spin identification string.  The residue name is not included to allow molecules with point mutations to be used as different models.
-        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_num=spin.num, spin_name=spin.name)
+        # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
+        id = generate_spin_id(res_num=res_num, res_name=None, spin_name=spin.name)
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
@@ -361,7 +362,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                 continue
 
         # Get the bond info.
-        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(atom_id=id, attached_atom=attached, model_num=model, return_name=True, return_warnings=True)
+        bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, res_num=res_num, spin_name=spin.name, return_name=True, return_warnings=True)
 
         # No attached atom.
         if not bond_vectors:
@@ -410,9 +411,16 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         # Set the vector.
         setattr(spin, object_name, vector)
 
+        # We have a vector!
+        no_vectors = False
+
         # Print out of modified spins.
         if verbosity:
             print "Extracted " + spin.name + "-" + attached_name + " vectors for " + `id` + '.'
+
+    # Right, catch the problem of missing vectors to prevent massive user confusion!
+    if no_vectors:
+        raise RelaxError, "No vectors could be extracted."
 
 
 def write_pdb(file=None, dir=None, model_num=None, force=False):

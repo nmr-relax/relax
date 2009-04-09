@@ -273,8 +273,8 @@ class N_state_model(Common_functions):
             for i in xrange(cdp.N-1):
                 probs[i] = param_vector[i]
 
-        # The probability for state N.
-        probs[-1] = 1 - sum(probs[0:-1])
+            # The probability for state N.
+            probs[-1] = 1 - sum(probs[0:-1])
 
         # The Euler angles.
         if cdp.model == '2-domain':
@@ -366,28 +366,30 @@ class N_state_model(Common_functions):
         i = pop_start
         j = 0
 
-        # Loop over the prob parameters (N - 1, because the sum of pc is 1).
-        for k in xrange(cdp.N - 1):
-            # 0 <= pc <= 1.
+        # Probability parameters.
+        if cdp.model in ['2-domain', 'population']:
+            # Loop over the prob parameters (N - 1, because the sum of pc is 1).
+            for k in xrange(cdp.N - 1):
+                # 0 <= pc <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0)
+                b.append(-1.0 / scaling_matrix[i, i])
+                j = j + 2
+
+                # Increment i.
+                i = i + 1
+
+            # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            A[j][i] = 1.0
-            A[j+1][i] = -1.0
+            for i in xrange(pop_start, self.param_num()):
+                A[-2][i] = -1.0
+                A[-1][i] = 1.0
+            b.append(-1.0)
             b.append(0.0)
-            b.append(-1.0 / scaling_matrix[i, i])
-            j = j + 2
-
-            # Increment i.
-            i = i + 1
-
-        # Add the inequalities for pN.
-        A.append(zero_array * 0.0)
-        A.append(zero_array * 0.0)
-        for i in xrange(pop_start, self.param_num()):
-            A[-2][i] = -1.0
-            A[-1][i] = 1.0
-        b.append(-1.0 / scaling_matrix[i, i])
-        b.append(0.0)
 
         # Convert to numpy data structures.
         A = array(A, float64)
@@ -406,11 +408,8 @@ class N_state_model(Common_functions):
 
         # Loop over each alignment.
         for i in xrange(model.num_align):
-            # Indices.
-            pcs_index = 0
-            rdc_index = 0
-
             # Spin loop.
+            data_index = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -420,30 +419,23 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'pcs_bc'):
-                        spin.pcs_bc = []
+                        spin.pcs_bc = [None]*model.num_align
 
                     # Append the back calculated PCS (in ppm).
-                    spin.pcs_bc.append(model.deltaij_theta[i, pcs_index]*1e6)
-
-                    # Increment the RDC index.
-                    pcs_index = pcs_index + 1
+                    spin.pcs_bc[i] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
                 if hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = []
-
-                    # No RDC.
-                    if spin.rdc[i] == None:
-                        spin.rdc_bc.append(None)
-                        continue
+                        spin.rdc_bc = [None] * model.num_align
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc.append(model.Dij_theta[i, rdc_index])
+                    spin.rdc_bc[i] = model.Dij_theta[i, data_index]
 
-                    # Increment the RDC index.
-                    rdc_index = rdc_index + 1
+                # Increment the spin index if it contains data.
+                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect')):
+                    data_index = data_index + 1
 
 
     def __minimise_setup_pcs(self):
@@ -461,6 +453,14 @@ class N_state_model(Common_functions):
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
+
+        # Data setup tests.
+        if not hasattr(cdp, 'paramagnetic_centre'):
+            raise RelaxError, "The paramagnetic centre has not yet been specified."
+        if not hasattr(cdp, 'temperature'):
+            raise RelaxError, "The experimental temperatures have not been set."
+        if not hasattr(cdp, 'frq'):
+            raise RelaxError, "The spectrometer frequencies of the experiments have not been set."
 
         # Initialise.
         pcs = []
@@ -492,10 +492,16 @@ class N_state_model(Common_functions):
             unit_vect.append([])
             r.append([])
 
+            # The position list.
+            if type(spin.pos[0]) in [float, float64]:
+                pos = [spin.pos]
+            else:
+                pos = spin.pos
+
             # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
             for c in range(cdp.N):
                 # Calculate the electron spin to nuclear spin vector.
-                vect = spin.pos[c] - cdp.paramagnetic_centre
+                vect = pos[c] - cdp.paramagnetic_centre
 
                 # The length.
                 r[-1].append(norm(vect))
@@ -621,7 +627,10 @@ class N_state_model(Common_functions):
 
             # Append the RDC and XH vectors to the lists.
             rdcs.append(spin.rdc)
-            xh_vectors.append(spin.xh_vect)
+            if type(spin.xh_vect[0]) == float:
+                xh_vectors.append([spin.xh_vect])
+            else:
+                xh_vectors.append(spin.xh_vect)
 
             # Append the PCS errors (or a list of None).
             if hasattr(spin, 'rdc_err'):
@@ -731,6 +740,7 @@ class N_state_model(Common_functions):
 
         # Q-factor list.
         cdp.q_factors_rdc = []
+        cdp.q_factors_rdc_norm2 = []
 
         # Loop over the alignments.
         for i in xrange(len(cdp.align_tensors)):
@@ -739,6 +749,8 @@ class N_state_model(Common_functions):
             sse = 0.0
 
             # Spin loop.
+            dj = None
+            N = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -751,19 +763,44 @@ class N_state_model(Common_functions):
                 # Sum of squares.
                 sse = sse + (spin.rdc[i] - spin.rdc_bc[i])**2
 
-                # Sum the RDCs squared (for normalisation).
+                # Sum the RDCs squared (for one type of normalisation).
                 D2_sum = D2_sum + spin.rdc[i]**2
 
+                # Gyromagnetic ratios.
+                gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+                gh = return_gyromagnetic_ratio(spin.proton_type)
+
+                # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+                dj_new = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+                if dj and dj_new != dj:
+                    raise RelaxError, "All the RDCs must come from the same nucleus type."
+                else:
+                    dj = dj_new
+
+                # Increment the number of data sets.
+                N = N + 1
+
+            # Normalisation factor of 2Da^2(4 + 3R)/5.
+            D = dj * cdp.align_tensors[i].tensor_diag
+            Da = 1.0/3.0 * (D[2,2] - (D[0,0]+D[1,1])/2.0)
+            Dr = 1.0/3.0 * (D[0,0] - D[1,1])
+            R = Dr / Da
+            norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
+
             # The Q-factor for the alignment.
-            Q = sqrt(sse / D2_sum)
+            Q = sqrt(sse / N / norm)
             cdp.q_factors_rdc.append(Q)
+            cdp.q_factors_rdc_norm2.append(sqrt(sse / D2_sum))
 
         # The total Q-factor.
         cdp.q_rdc = 0.0
+        cdp.q_rdc_norm2 = 0.0
         for Q in cdp.q_factors_rdc:
             cdp.q_rdc = cdp.q_rdc + Q**2
-        cdp.q_rdc = cdp.q_rdc / len(cdp.q_factors_rdc)
-        cdp.q_rdc = sqrt(cdp.q_rdc)
+        for Q in cdp.q_factors_rdc_norm2:
+            cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + Q**2
+        cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
+        cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
     def __q_factors_pcs(self):
@@ -1174,15 +1211,21 @@ class N_state_model(Common_functions):
 
         # Set the grid search options.
         for i in xrange(n):
-            # Probabilities (default values).
-            if search('^p', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, 1.0])
+            # i is in the parameter array.
+            if i < len(cdp.params):
+                # Probabilities (default values).
+                if search('^p', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, 1.0])
 
-            # Angles (default values).
-            if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, 2*pi])
-            elif search('^beta', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, pi])
+                # Angles (default values).
+                if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, 2*pi])
+                elif search('^beta', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, pi])
+
+            # Otherwise this must be an alignment tensor component.
+            else:
+                grid_ops.append([inc[i], -1e-3, 1e-3])
 
             # Lower bound (if supplied).
             if lower:
@@ -1257,6 +1300,11 @@ class N_state_model(Common_functions):
             # The reference domain.
             if not hasattr(cdp, 'ref_domain'):
                 raise RelaxError, "The reference domain has not been set."
+
+        # Right, constraints cannot be used for the 'fixed' model.
+        if constraints and cdp.model == 'fixed':
+            warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
+            constraints = False
 
         # Update the model parameters if necessary.
         self.__update_model()

@@ -252,10 +252,6 @@ def autodetect_format(file_data):
         if line != []:
             break
 
-    # Generic format.
-    if line[0] in ['mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name'] or line[0] in ['Num', 'Name']:
-        return 'generic'
-
     # Sparky format.
     if line[0] == 'Assignment':
         return 'sparky'
@@ -268,8 +264,8 @@ def autodetect_format(file_data):
     if line == ['No.', 'Color', 'w1', 'w2', 'ass.', 'in', 'w1', 'ass.', 'in', 'w2', 'Volume', 'Vol.', 'Err.', 'Method', 'Comment']:
         return 'xeasy'
 
-    # Unsupported format.
-    raise RelaxError, "The format of the peak list file cannot be determined.  Either the file is of a non-standard format or the format is unsupported."
+    # Assume a generic format.
+    return 'generic'
 
 
 def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
@@ -301,6 +297,12 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     # The spectrum id index.
     spect_index = cdp.spectrum_ids.index(spectrum_id)
 
+    # The scaling by NC_proc.
+    if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
+        scale = 1.0 / 2**cdp.ncproc[spectrum_id]
+    else:
+        scale = 1.0
+
     # Loop over the spins.
     for spin in spin_loop(spin_id):
         # Skip deselected spins.
@@ -314,7 +316,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
             spin.baseplane_rmsd.append([None] * (len(cdp.spectrum_ids) - len(spin.baseplane_rmsd)))
 
         # Set the error.
-        spin.baseplane_rmsd[spect_index] = float(error)
+        spin.baseplane_rmsd[spect_index] = float(error) * scale
 
 
 def det_dimensions(file_data, proton, heteronuc, int_col):
@@ -556,23 +558,30 @@ def intensity_sparky(line, int_col):
     intensity = ''
     if line[0]!='?-?':
         assignment = split('([A-Z]+)', line[0])
-        assignment = assignment[1:-1]
-
-    # The residue number.
+        if assignment[0] == '':
+            assignment = assignment[1:]
+        if assignment[-1] == '':
+            assignment = assignment[:-1]
         try:
-            res_num = int(assignment[1])
+            int(assignment[0])
+        except ValueError:
+            assignment = assignment[1:]
+
+        # The residue number.
+        try:
+            res_num = int(assignment[0])
         except:
             raise RelaxError, "Improperly formatted Sparky file."
 
-    # Nuclei names.
-        x_name = assignment[2]
-        h_name = assignment[4]
+        # Nuclei names.
+        x_name = assignment[1]
+        h_name = assignment[3]
 
-    # The peak intensity column.
+        # The peak intensity column.
         if int_col == None:
             int_col = 3
 
-    # Intensity.
+        # Intensity.
         try:
             intensity = float(line[int_col])
         except ValueError:
@@ -698,7 +707,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
         return header_lines
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, ncproc=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -717,18 +726,20 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type int_col:          int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
     @type int_method:       str
-    @param mol_name_col:    The column containing the molecule name information.
+    @keyword mol_name_col:  The column containing the molecule name information.
     @type mol_name_col:     int or None
-    @param res_name_col:    The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information.
     @type res_name_col:     int or None
-    @param res_num_col:     The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information.
     @type res_num_col:      int or None
-    @param spin_name_col:   The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information.
     @type spin_name_col:    int or None
-    @param spin_num_col:    The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information.
     @type spin_num_col:     int or None
-    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
+    @type ncproc:           int or None
     """
 
     # Test if the current data pipe exists.
@@ -762,6 +773,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if format == 'generic':
         # Print out.
         print "Generic formatted data file.\n"
+
+        # Test that column numbers have been given.
+        if max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col) == None:
+            raise RelaxError, "No column numbers have been supplied."
 
         # Set the intensity reading function.
         intensity_fn = intensity_generic
@@ -807,13 +822,17 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if format == 'xeasy':
         det_dimensions(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
 
-    # Add the spectrum id to the relax data store.
+    # Add the spectrum id (and ncproc) to the relax data store.
     if not hasattr(cdp, 'spectrum_ids'):
         cdp.spectrum_ids = []
+        if ncproc != None:
+            cdp.ncproc = {}
     if spectrum_id in cdp.spectrum_ids:
         raise RelaxError, "The spectrum identification string '%s' already exists." % spectrum_id
     else:
         cdp.spectrum_ids.append(spectrum_id)
+        if ncproc != None:
+            cdp.ncproc[spectrum_id] = ncproc
 
     # Loop over the peak intensity data.
     for i in xrange(len(file_data)):
@@ -838,6 +857,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Initialise.
         if not hasattr(spin, 'intensities'):
             spin.intensities = []
+
+        # Intensity scaling.
+        if ncproc != None:
+            intensity = intensity / float(2**ncproc)
 
         # Add the data.
         if format == 'generic':

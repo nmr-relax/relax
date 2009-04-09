@@ -39,8 +39,9 @@ from warnings import warn
 from api_base import Base_struct_API
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
-from generic_fns.mol_res_spin import Selection, parse_token, tokenise
+from generic_fns.mol_res_spin import Selection, generate_spin_id, parse_token, tokenise
 from relax_errors import RelaxError, RelaxPdbLoadError
+from relax_io import file_root
 from relax_warnings import RelaxWarning, RelaxNoAtomWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 
@@ -145,10 +146,7 @@ class Scientific_data(Base_struct_API):
         # Other molecules.
         else:
             res_index = -1
-            print mol
-            print "\n"*10
             for res in mol.data:
-                print res
                 # Residue index.
                 res_index = res_index + 1
 
@@ -388,18 +386,25 @@ class Scientific_data(Base_struct_API):
         return pos
 
 
-    def bond_vectors(self, atom_id=None, attached_atom=None, model_num=None, return_name=False, return_warnings=False):
+    def bond_vectors(self, attached_atom=None, model_num=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, return_name=False, return_warnings=False):
         """Find the bond vectors between the atoms of 'attached_atom' and 'atom_id'.
 
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  This must
-                                    correspond to a single atom in the system.
-        @type atom_id:              str
         @keyword attached_atom:     The name of the bonded atom.
         @type attached_atom:        str
         @keyword model_num:         The model of which to return the vectors from.  If not supplied
                                     and multiple models exist, then vectors from all models will be
                                     returned.
         @type model_num:            None or int
+        @keyword mol_name:          The name of the molecule that attached_atom belongs to.
+        @type mol_name:             str
+        @keyword res_num:           The number of the residue that attached_atom belongs to.
+        @type res_num:              str
+        @keyword res_name:          The name of the residue that attached_atom belongs to.
+        @type res_name:             str
+        @keyword spin_num:          The number of the spin that attached_atom is attached to.
+        @type spin_num:             str
+        @keyword spin_name:         The name of the spin that attached_atom is attached to.
+        @type spin_name:            str
         @keyword return_name:       A flag which if True will cause the name of the attached atom to
                                     be returned together with the bond vectors.
         @type return_name:          bool
@@ -410,7 +415,7 @@ class Scientific_data(Base_struct_API):
         """
 
         # Generate the selection object.
-        sel_obj = Selection(atom_id)
+        sel_obj = Selection(generate_spin_id(mol_name, res_num, res_name, spin_num, spin_name))
 
         # Initialise some objects.
         vectors = []
@@ -527,12 +532,23 @@ class Scientific_data(Base_struct_API):
         # Load all models.
         model_flag = True
         model_num = 1
+        model_load_num = 1
         orig_model_num = []
         mol_conts = []
         while 1:
             # Only load the desired model.
-            if read_model and model_num not in read_model:
-                break
+            if read_model:
+                # No more models to read.
+                if model_num > max(read_model):
+                    break
+
+                # Skip the model if not in the list.
+                if model_num not in read_model:
+                    # Increment the model counter.
+                    model_num = model_num + 1
+
+                    # Jump to the next model.
+                    continue
 
             # Load the PDB file.
             model = Scientific.IO.PDB.Structure(file_path, model_num)
@@ -557,6 +573,13 @@ class Scientific_data(Base_struct_API):
             mol_index = 0
             new_mol_name = []
 
+            # Set the target molecule number offset (if molecules already exist).
+            mol_offset = 0
+            for i in range(len(self.structural_data)):
+                model_index = model_load_num - 1
+                if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == self.structural_data[i].num):
+                    mol_offset = len(self.structural_data[i].mol)
+
             # Store the original model number.
             orig_model_num.append(model_num)
 
@@ -567,25 +590,40 @@ class Scientific_data(Base_struct_API):
             # First add the peptide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'peptide_chains'):
                 for mol in model.peptide_chains:
+                    # Only read the required molecule.
+                    if read_mol and mol_index+1 not in read_mol:
+                        mol_index = mol_index + 1
+                        continue
+
                     mol.mol_type = 'protein'
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].data = mol
                     mol_conts[-1][-1].mol_type = 'protein'
-                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
 
             # Then the nucleotide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'nucleotide_chains'):
                 for mol in model.nucleotide_chains:
+                    # Only read the required molecule.
+                    if read_mol and mol_index+1 not in read_mol:
+                        mol_index = mol_index + 1
+                        continue
+
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].data = mol
                     mol_conts[-1][-1].mol_type = 'nucleic acid'
-                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
 
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'molecules'):
                 for key in model.molecules.keys():
+                    # Only read the required molecule.
+                    if read_mol and mol_index+1 not in read_mol:
+                        mol_index = mol_index + 1
+                        continue
+
                     # Add an empty list-type container.
                     mol_conts[-1].append(MolContainer())
                     mol_conts[-1][-1].mol_type = 'other'
@@ -595,12 +633,17 @@ class Scientific_data(Base_struct_API):
                     for mol in model.molecules[key]:
                         mol_conts[-1][-1].data.append(mol)
 
+                    # Check.
+                    if set_mol_name and mol_index >= len(set_mol_name):
+                        raise RelaxError, "The %s molecules read exceeds the number of molecule names supplied in %s." % (mol_index+1, set_mol_name)
+
                     # Update structures.
-                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1, file=file)
+                    self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
                     mol_index = mol_index + 1
 
-            # Increment the model counter.
+            # Increment the model counters.
             model_num = model_num + 1
+            model_load_num = model_load_num + 1
 
         # Create the structural data data structures.
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=range(1, len(mol_conts[0])+1), set_mol_name=new_mol_name, file_name=file, file_path=path)

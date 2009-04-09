@@ -104,11 +104,45 @@ class Spin_base_class:
         cdp.mol[1].res[1].spin.add_item(None, 1433)
         cdp.mol[1].res[1].spin.add_item('NH', 3239)
 
+        # Create a third molecule.
+        cdp.mol.add_item('3rd')
+
+        # Create the first residue of the 3rd molecule and add some data to its spin container.
+        cdp.mol[2].res[0].num = 13
+        cdp.mol[2].res[0].name = 'Gly'
+        cdp.mol[2].res[0].spin[0].x = 'hello'
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
         ds.__reset__()
+
+
+    def test_copy_spin(self):
+        """Test the copying of the spin data within the same residue.
+
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
+        """
+
+        # Copy the spin from the 3rd molecule.
+        self.spin_fns.copy(spin_from='#3rd:13', spin_to='#3rd:13@NE')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Test the original spin.
+        self.assertEqual(dp.mol[2].res[0].num, 13)
+        self.assertEqual(dp.mol[2].res[0].name, 'Gly')
+        self.assertEqual(dp.mol[2].res[0].spin[0].num, None)
+        self.assertEqual(dp.mol[2].res[0].spin[0].name, None)
+        self.assertEqual(dp.mol[2].res[0].spin[0].x, 'hello')
+
+        # Test the new spin.
+        self.assertEqual(dp.mol[2].res[0].spin[1].num, None)
+        self.assertEqual(dp.mol[2].res[0].spin[1].name, 'NE')
+        self.assertEqual(dp.mol[2].res[0].spin[1].x, 'hello')
 
 
     def test_copy_spin_between_molecules(self):
@@ -363,9 +397,9 @@ class Spin_base_class:
         """
 
         # Create a few new spins.
-        self.spin_fns.create(1, 'C3')
-        self.spin_fns.create(2, 'C17')
-        self.spin_fns.create(-3, 'N7', res_id='#New mol:6')
+        self.spin_fns.create(1, 'C3', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(2, 'C17', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(-3, 'N7', res_num=6, mol_name='New mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -389,10 +423,10 @@ class Spin_base_class:
         """
 
         # Create the first spin.
-        self.spin_fns.create(1, 'P1')
+        self.spin_fns.create(1, 'P1', res_num=1, mol_name='Old mol')
 
         # Assert that a RelaxError occurs when the next added spin has the same number as the first.
-        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3')
+        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3', res_num=1, mol_name='Old mol')
 
 
     def test_delete_spin_name(self):
@@ -496,9 +530,9 @@ class Spin_base_class:
         """
 
         # Rename some spins.
-        self.spin_fns.name(spin_id='@C26', name='C25')
-        self.spin_fns.name(spin_id=':2@78', name='Ca')
-        self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe')
+        self.spin_fns.name(spin_id='@C26', name='C25', force=True)
+        self.spin_fns.name(spin_id=':2@78', name='Ca', force=True)
+        self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe', force=True)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -523,7 +557,7 @@ class Spin_base_class:
         """
 
         # Rename all NHs.
-        self.spin_fns.name(spin_id='@NH', name='N')
+        self.spin_fns.name(spin_id='@NH', name='N', force=True)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -548,14 +582,14 @@ class Spin_base_class:
         """
 
         # Rename a few spins.
-        self.spin_fns.number(spin_id='@111', number=1)
-        self.spin_fns.number(spin_id='@6', number=2)
-        self.spin_fns.number(spin_id='@7', number=3)
-        self.spin_fns.number(spin_id='@8', number=4)
-        self.spin_fns.number(spin_id='@9', number=5)
-        self.spin_fns.number(spin_id='@78', number=6)
-        self.spin_fns.number(spin_id='@239', number=7)
-        self.spin_fns.number(spin_id='@3239', number=9)
+        self.spin_fns.number(spin_id='@111', number=1, force=True)
+        self.spin_fns.number(spin_id='@6', number=2, force=True)
+        self.spin_fns.number(spin_id='@7', number=3, force=True)
+        self.spin_fns.number(spin_id='@8', number=4, force=True)
+        self.spin_fns.number(spin_id='@9', number=5, force=True)
+        self.spin_fns.number(spin_id='@78', number=6, force=True)
+        self.spin_fns.number(spin_id='@239', number=7, force=True)
+        self.spin_fns.number(spin_id='@3239', number=9, force=True)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')

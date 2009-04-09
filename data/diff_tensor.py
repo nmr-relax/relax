@@ -541,7 +541,7 @@ def dependency_generator(diff_type):
         yield ('Dz',            ['tm', 'Da'],                                   ['Diso', 'Da'])
         yield ('Dx_unit',       ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
         yield ('Dy_unit',       ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
-        yield ('Dz_unit',       ['alpha', 'beta'],                              ['alpha', 'beta'])
+        yield ('Dz_unit',       ['beta', 'gamma'],                              ['beta', 'gamma'])
         yield ('tensor_diag',   ['tm', 'Da', 'Dr'],                             ['type', 'Dx', 'Dy', 'Dz'])
         yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['type', 'Dx_unit', 'Dy_unit', 'Dz_unit'])
         yield ('tensor',        ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'],   ['rotation', 'tensor_diag'])
