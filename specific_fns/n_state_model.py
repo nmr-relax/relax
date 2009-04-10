@@ -919,6 +919,50 @@ class N_state_model(Common_functions):
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
+    def calc_ave_dist(self, exp=1):
+        """Calculate the average distances.
+
+        The formula used is:
+
+                      _N_
+                  / 1 \                  \ 1/exp
+            <r> = | -  > |p1i - p2i|^exp |
+                  \ N /__                /
+                       i
+
+        where i are the members of the ensemble.
+
+
+        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
+                        r^-6 averaging.
+        @type exp:      int
+        """
+
+        # Loop over the NOE and non-NOEs:
+        for noe in self.noes + self.non_noes:
+            # Append the atom names with zero distance.
+            self.ave_dist.append([noe[0], noe[1], 0.0])
+
+            # Loop over each model.
+            for i in xrange(NUM_MODELS):
+                # Switch to the data pipe containing the model.
+                pipe.switch(`i`)
+
+                # Get the corresonding spins.
+                spin0 = return_spin('@'+noe[0])
+                spin1 = return_spin('@'+noe[1])
+
+                # Distance to the minus sixth power.
+                dist = norm(spin0.pos - spin1.pos)
+                self.ave_dist[-1][2] = self.ave_dist[-1][2] + dist**(-EXP)
+
+            # Average.
+            self.ave_dist[-1][2] = self.ave_dist[-1][2] / NUM_MODELS
+
+            # The exponent.
+            self.ave_dist[-1][2] = self.ave_dist[-1][2]**(-1.0/EXP)
+
+
     def calculate(self, verbosity=1):
         """Calculation function.
 
@@ -937,6 +981,8 @@ class N_state_model(Common_functions):
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError, 'N-state'
 
+        # Calculate the average distances, using -6 power averaging.
+        self.calc_ave_dist(exp=-6)
         
 
     def CoM(self, pivot_point=None, centre=None):
