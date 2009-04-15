@@ -200,14 +200,20 @@ class Structure(TestCase):
     def test_read_pdb_internal3(self):
         """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the internal structural object PDB reader)."""
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Path of the files.
         path = sys.path[-1] + '/test_suite/shared_data/structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal')
 
-        # Try loading a few protons.
-        self.relax.interpreter._Structure.load_spins('@*H*')
+        # Try loading a few protons, without positions averaging across models.
+        self.relax.interpreter._Structure.load_spins('@*H*', ave_pos=False)
+
+        # A test.
+        self.assertEqual(len(cdp.mol[0].res[0].spin[0].pos), 2)
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
@@ -443,6 +449,9 @@ class Structure(TestCase):
     def test_read_pdb_scientific3(self):
         """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Path of the files.
         path = sys.path[-1] + '/test_suite/shared_data/structures'
 
@@ -450,7 +459,10 @@ class Structure(TestCase):
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific')
 
         # Try loading a few protons.
-        self.relax.interpreter._Structure.load_spins('@*H*')
+        self.relax.interpreter._Structure.load_spins('@*H*', ave_pos=False)
+
+        # A test.
+        self.assertEqual(len(cdp.mol[0].res[0].spin[0].pos), 2)
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()

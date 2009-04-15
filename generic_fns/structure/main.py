@@ -81,10 +81,6 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
             model_index = model_index + 1
             last_model = model_num
 
-        # Only load one set of spins if combine_models is set.
-        if combine_models and model_index >= 1:
-            break
-
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
             mol_name = replace(mol_name, '+', '')
