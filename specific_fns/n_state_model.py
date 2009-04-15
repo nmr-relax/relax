@@ -956,13 +956,13 @@ class N_state_model(Common_functions):
         for i in range(num_models):
             # Distance to the minus sixth power.
             dist = norm(spin1.pos[i] - spin2.pos[i])
-            ave_dist = ave_dist + dist**(-exp)
+            ave_dist = ave_dist + dist**(exp)
 
         # Average.
         ave_dist = ave_dist / num_models
 
         # The exponent.
-        ave_dist = ave_dist**(-1.0/exp)
+        ave_dist = ave_dist**(1.0/exp)
 
         # Return the average distance.
         return ave_dist
