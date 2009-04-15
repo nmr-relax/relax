@@ -34,12 +34,13 @@ from warnings import warn
 # relax module imports.
 from float import isNaN, isInf
 import generic_fns
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 import generic_fns.structure.geometric
 from generic_fns.structure.internal import Internal
 import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
+from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
@@ -919,7 +920,7 @@ class N_state_model(Common_functions):
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
-    def calc_ave_dist(self, exp=1):
+    def calc_ave_dist(self, atom1, atom2, exp=1):
         """Calculate the average distances.
 
         The formula used is:
@@ -930,37 +931,40 @@ class N_state_model(Common_functions):
                   \ N /__                /
                        i
 
-        where i are the members of the ensemble.
+        where i are the members of the ensemble, N is the total number of structural models, and p1
+        and p2 at the two atom positions.
 
 
+        @param atom1:   The atom identification string of the first atom.
+        @type atom1:    str
+        @param atom2:   The atom identification string of the second atom.
+        @type atom2:    str
         @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
-                        r^-6 averaging.
+                        r^-6 NOE averaging.
         @type exp:      int
+        @return:        The average distance between the two atoms.
+        @rtype:         float
         """
 
-        # Loop over the NOE and non-NOEs:
-        for noe in self.noes + self.non_noes:
-            # Append the atom names with zero distance.
-            self.ave_dist.append([noe[0], noe[1], 0.0])
+        # Get the spin containers.
+        spin1 = return_spin(atom1)
+        spin2 = return_spin(atom2)
 
-            # Loop over each model.
-            for i in xrange(NUM_MODELS):
-                # Switch to the data pipe containing the model.
-                pipe.switch(`i`)
+        # Loop over each model.
+        num_models = len(spin1.pos)
+        for i in range(num_models):
+            # Distance to the minus sixth power.
+            dist = norm(spin1.pos[i] - spin2.pos[i])
+            ave_dist = dist**(-exp)
 
-                # Get the corresonding spins.
-                spin0 = return_spin('@'+noe[0])
-                spin1 = return_spin('@'+noe[1])
+        # Average.
+        ave_dist = ave_dist / num_models
 
-                # Distance to the minus sixth power.
-                dist = norm(spin0.pos - spin1.pos)
-                self.ave_dist[-1][2] = self.ave_dist[-1][2] + dist**(-EXP)
+        # The exponent.
+        ave_dist = ave_dist**(-1.0/exp)
 
-            # Average.
-            self.ave_dist[-1][2] = self.ave_dist[-1][2] / NUM_MODELS
-
-            # The exponent.
-            self.ave_dist[-1][2] = self.ave_dist[-1][2]**(-1.0/EXP)
+        # Return the average distance.
+        return ave_dist
 
 
     def calculate(self, verbosity=1):
@@ -981,9 +985,32 @@ class N_state_model(Common_functions):
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError, 'N-state'
 
-        # Calculate the average distances, using -6 power averaging.
-        self.calc_ave_dist(exp=-6)
-        
+        # Init some numpy arrays.
+        num_restraints = len(cdp.noe_restraints)
+        dist = zeros(num_restraints, float64)
+        pot = zeros(num_restraints, float64)
+        lower = zeros(num_restraints, float64)
+        upper = zeros(num_restraints, float64)
+
+        # Loop over the NOEs.
+        for i in range(num_restraints):
+            # Create arrays of the NOEs.
+            lower[i] = cdp.noe_restraints[i][2]
+            upper[i] = cdp.noe_restraints[i][3]
+
+            # Calculate the average distances, using -6 power averaging.
+            dist[i] = self.calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+
+        # Calculate the quadratic potential.
+        quad_pot(dist, pot, lower, upper) 
+
+        # Store the distance and potential information.
+        cdp.ave_dist = []
+        cdp.quad_pot = []
+        for i in range(num_restraints):
+            cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
+            cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
+
 
     def CoM(self, pivot_point=None, centre=None):
         """Centre of mass analysis.
