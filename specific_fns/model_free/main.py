@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -992,10 +992,14 @@ class Model_free_main:
 
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
+        mf_all_deselected = True
         for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
                 continue
+
+            # At least one spin is selected.
+            mf_all_deselected = False
 
             # Test the fixed flag.
             if not hasattr(spin, 'fixed'):
@@ -1004,6 +1008,14 @@ class Model_free_main:
             if not spin.fixed:
                 mf_all_fixed = False
                 break
+
+        # No spins selected?!?
+        if mf_all_deselected:
+            # All parameters fixed!
+            if cdp.diff_tensor.fixed:
+                raise RelaxError, "All parameters are fixed."
+
+            return 'diff'
 
         # Local tm.
         if local_tm:
@@ -1254,17 +1266,17 @@ class Model_free_main:
         # Local tm.
         if name == 'local_tm' and value >= c1:
             if sim == None:
-                print "The local tm parameter of %.5g is greater than %.5g, eliminating spin system '%s'." % (value, c1, spin_id)
+                print "Data pipe '%s':  The local tm parameter of %.5g is greater than %.5g, eliminating spin system '%s'." % (pipes.cdp_name(), value, c1, spin_id)
             else:
-                print "The local tm parameter of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (value, c1, sim, spin_id)
+                print "Data pipe '%s':  The local tm parameter of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (pipes.cdp_name(), value, c1, sim, spin_id)
             return True
 
         # Internal correlation times.
         if match('t[efs]', name) and value >= c2 * tm:
             if sim == None:
-                print "The %s value of %.5g is greater than %.5g, eliminating spin system '%s'." % (name, value, c2*tm, spin_id)
+                print "Data pipe '%s':  The %s value of %.5g is greater than %.5g, eliminating spin system '%s'." % (pipes.cdp_name(), name, value, c2*tm, spin_id)
             else:
-                print "The %s value of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (name, value, c2*tm, sim, spin_id)
+                print "Data pipe '%s':  The %s value of %.5g is greater than %.5g, eliminating simulation %i of spin system '%s'." % (pipes.cdp_name(), name, value, c2*tm, sim, spin_id)
             return True
 
         # Accept model.
@@ -1786,10 +1798,6 @@ class Model_free_main:
             for spin in spin_loop():
                 # Increment the global spin index.
                 global_index = global_index + 1
-
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
 
                 # Yield the spin index.
                 yield global_index
@@ -2857,6 +2865,10 @@ class Model_free_main:
             # Get the spin container.
             spin = return_spin_from_index(model_index)
 
+            # Skip if deselected.
+            if not spin.select:
+                return
+
             # Set the simulation flags.
             spin.select_sim = deepcopy(select_sim)
 
@@ -3226,6 +3238,10 @@ class Model_free_main:
         else:
             # Get the spin container.
             spin = return_spin_from_index(model_index)
+
+            # Skip if deselected.
+            if not spin.select:
+                return
 
             # Return the list.
             return spin.select_sim

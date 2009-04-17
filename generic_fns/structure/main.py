@@ -81,10 +81,6 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
             model_index = model_index + 1
             last_model = model_num
 
-        # Only load one set of spins if combine_models is set.
-        if combine_models and model_index >= 1:
-            break
-
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
             mol_name = replace(mol_name, '+', '')
@@ -340,6 +336,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         object_name = 'bond_vect'
 
     # Loop over the spins.
+    no_vectors = True
     for spin, mol_name, res_num, res_name in spin_loop(selection=spin_id, full_info=True):
         # Skip deselected spins.
         if not spin.select:
@@ -410,9 +407,16 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         # Set the vector.
         setattr(spin, object_name, vector)
 
+        # We have a vector!
+        no_vectors = False
+
         # Print out of modified spins.
         if verbosity:
             print "Extracted " + spin.name + "-" + attached_name + " vectors for " + `id` + '.'
+
+    # Right, catch the problem of missing vectors to prevent massive user confusion!
+    if no_vectors:
+        raise RelaxError, "No vectors could be extracted."
 
 
 def write_pdb(file=None, dir=None, model_num=None, force=False):

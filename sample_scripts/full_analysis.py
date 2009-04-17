@@ -297,7 +297,7 @@ class Main:
                     self.multi_model()
 
                     # Model selection.
-                    self.model_selection(modsel_pipe='final', dir=self.base_dir + 'aic')
+                    self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
                     fix('all', fixed=False)
