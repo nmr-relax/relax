@@ -1381,6 +1381,10 @@ class N_state_model(Common_functions):
             warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
             constraints = False
 
+            # Pop out the Method of Multipliers algorithm.
+            min_algor = min_options[0]
+            min_options = min_options[1:]
+
         # Update the model parameters if necessary.
         self.__update_model()
 
