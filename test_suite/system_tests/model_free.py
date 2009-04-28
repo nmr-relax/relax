@@ -109,6 +109,18 @@ class Mf(TestCase):
         return string
 
 
+    def monte_carlo(self):
+        """Run Monte Carlo simulations for the optimised model-free model."""
+
+        # Monte Carlo simulations.
+        self.relax.interpreter._Monte_carlo.setup(number=3)
+        self.relax.interpreter._Monte_carlo.create_data()
+        self.relax.interpreter._Monte_carlo.initial_values()
+        self.relax.interpreter._Minimise('newton')
+        self.relax.interpreter._Eliminate()
+        self.relax.interpreter._Monte_carlo.error_analysis()
+
+
     def object_comparison(self, obj1=None, obj2=None, skip=None):
         """Check if the contents of 2 objects are the same."""
 
@@ -559,6 +571,9 @@ class Mf(TestCase):
 
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt')
+
+        # Monte Carlo simulations.
+        self.monte_carlo()
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
