@@ -751,10 +751,6 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-    if test_labels(ri_label, frq_label):
-        raise RelaxRiError, (ri_label, frq_label)
-
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
 

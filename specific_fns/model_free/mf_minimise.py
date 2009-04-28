@@ -782,7 +782,8 @@ class Mf_minimise:
                 raise RelaxProtonTypeError
 
         # Reset the minimisation statistics.
-        self.reset_min_stats()
+        if sim_index == None and min_algor != 'back_calc':
+            self.reset_min_stats()
 
         # Determine the model type.
         model_type = self.determine_model_type()

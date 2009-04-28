@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -118,6 +118,9 @@ def calc(verbosity=1):
     @type verbosity:    int
     """
 
+    # Test if the current data pipe exists.
+    pipes.test()
+
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
@@ -161,6 +164,9 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
                         the verbosity.
     @type verbosity:    int
     """
+
+    # Test if the current data pipe exists.
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
@@ -212,6 +218,9 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
                             optimisation is desired.
     @type sim_index:        None or int
     """
+
+    # Test if the current data pipe exists.
+    pipes.test()
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

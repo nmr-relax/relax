@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,16 +21,46 @@
 ###############################################################################
 
 # Module docstring.
-"""Dummy spin module used for renaming the generic_fns.mol_res_spin fns."""
-
-# relax module imports.
-from generic_fns import mol_res_spin
+"""Functions for calculating various optimisation potentials."""
 
 
-copy = mol_res_spin.copy_spin
-create = mol_res_spin.create_spin
-create_pseudo = mol_res_spin.create_pseudo_spin
-delete = mol_res_spin.delete_spin
-display = mol_res_spin.display_spin
-name = mol_res_spin.name_spin
-number = mol_res_spin.number_spin
+def quad_pot(values, pot, lower, upper):
+    """Calculate the flat-bottom quadratic energy potential.
+
+    The formula used is::
+
+                            / (x - x+)^2    if x > x+,
+                            |                         
+        V_pQuad(x;x+,x-) = <  (x - x-)^2    if x < x-,
+                            |                         
+                            \ 0             otherwise.
+
+    Where x+ and x- are the absolute bounds.
+
+
+    @param values:  An array of values of x.
+    @type values:   numpy float array
+    @param pot:     The array to place the potential values (V_pQuad) into.  This should have the
+                    same dimensions as the values array.
+    @type pot:      numpy float array
+    @param lower:   The array of lower bounds.  This should have the same dimensions as the values
+                    array.
+    @type lower:    numpy float array
+    @param upper:   The array of upper bounds.  This should have the same dimensions as the values
+                    array.
+    @type upper:    numpy float array
+    """
+
+    # Loop over the x values.
+    for i in xrange(len(values)):
+        # First condition.
+        if values[i] > upper[i]:
+            pot[i] = (values[i] - upper[i])**2
+
+        # Second contition.
+        elif values[i] < lower[i]:
+            pot[i] = (values[i] - lower[i])**2
+
+        # Otherwise clear the array element.
+        else:
+            pot[i] = 0.0

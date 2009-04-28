@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -19,6 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
 #                                                                             #
 ###############################################################################
+
+# Python module imports.
+from numpy import array
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -283,6 +286,107 @@ class Spin_base_class:
 
         # Copy a spin to a number which already exists.
         self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':1', spin_to=':2@78')
+
+
+    def test_create_pseudo_spin(self):
+        """Test the creation of a pseudo-atom.
+
+        The function tested is both generic_fns.mol_res_spin.create_pseudo_spin() and
+        prompt.spin.create_pseudo().
+        """
+
+        # Create a few new protons.
+        self.spin_fns.create(100, 'H13', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(101, 'H14', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(102, 'H15', res_num=1, mol_name='Old mol')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Set some atomic positions.
+        dp.mol[0].res[0].spin[5].pos = [array([3.0, 0.0, 0.0])]
+        dp.mol[0].res[0].spin[6].pos = [array([0.0, 3.0, 0.0])]
+        dp.mol[0].res[0].spin[7].pos = [array([0.0, 0.0, 3.0])]
+
+        # Create a pseudo-spin.
+        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
+
+        # Test that the spin numbers are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
+        self.assertEqual(dp.mol[0].res[0].spin[6].num, 101)
+        self.assertEqual(dp.mol[0].res[0].spin[7].num, 102)
+        self.assertEqual(dp.mol[0].res[0].spin[8].num, 105)
+
+        # Test that the spin names are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].name, 'H13')
+        self.assertEqual(dp.mol[0].res[0].spin[6].name, 'H14')
+        self.assertEqual(dp.mol[0].res[0].spin[7].name, 'H15')
+        self.assertEqual(dp.mol[0].res[0].spin[8].name, 'Q3')
+
+        # Test the averaged position.
+        self.assertEqual(len(dp.mol[0].res[0].spin[8].pos), 1)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][0], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][1], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][2], 1.0)
+
+        # Test the pseudo-spin info.
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, '@Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_name, '@Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[8].members, ['@H13', '@H14', '@H15'])
+        self.assertEqual(dp.mol[0].res[0].spin[8].averaging, 'linear')
+
+
+    def test_create_pseudo_spin2(self):
+        """Test the creation of a pseudo-atom (test 2).
+
+        The function tested is both generic_fns.mol_res_spin.create_pseudo_spin() and
+        prompt.spin.create_pseudo().
+        """
+
+        # Create a few new protons.
+        self.spin_fns.create(100, 'H93', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(101, 'H94', res_num=1, mol_name='Old mol')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Set some atomic positions.
+        dp.mol[0].res[0].spin[5].pos = [array([2.0, 0.0, 0.0]), array([-2.0, 0.0, 0.0])]
+        dp.mol[0].res[0].spin[6].pos = [array([0.0, 2.0, 0.0]), array([0.0, -2.0, 0.0])]
+
+        # Create a pseudo-spin.
+        self.spin_fns.create_pseudo('Q10', spin_num=105, members=['@H93', '@H94'], averaging='linear')
+
+        # Test that the spin numbers are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
+        self.assertEqual(dp.mol[0].res[0].spin[6].num, 101)
+        self.assertEqual(dp.mol[0].res[0].spin[7].num, 105)
+
+        # Test that the spin names are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].name, 'H93')
+        self.assertEqual(dp.mol[0].res[0].spin[6].name, 'H94')
+        self.assertEqual(dp.mol[0].res[0].spin[7].name, 'Q10')
+
+        # Test the averaged position.
+        self.assertEqual(len(dp.mol[0].res[0].spin[7].pos), 2)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[0][0], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[0][1], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[0][2], 0.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[1][0], -1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[1][1], -1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[1][2], 0.0)
+
+        # Test the pseudo-spin info.
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, '@Q10')
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q10')
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[7].members, ['@H93', '@H94'])
+        self.assertEqual(dp.mol[0].res[0].spin[7].averaging, 'linear')
 
 
     def test_create_spin(self):

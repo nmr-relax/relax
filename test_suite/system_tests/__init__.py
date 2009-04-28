@@ -44,6 +44,7 @@ from model_free import Mf
 from model_selection import Modsel
 from n_state_model import N_state_model
 from noe import Noe
+from noe_restraints import Noe_restraints
 from palmer import Palmer
 from peak_lists import Peak_lists
 from pipe_create import Pipe_create
@@ -68,6 +69,7 @@ __all__ = ['angles',
            'model_selection',
            'n_state_model',
            'noe',
+           'noe_restraints',
            'palmer',
            'peak_lists'
            'pipe_create',
@@ -110,6 +112,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
         suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
         suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
         suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
         suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
         suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))

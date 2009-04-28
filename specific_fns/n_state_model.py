@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -34,12 +34,13 @@ from warnings import warn
 # relax module imports.
 from float import isNaN, isInf
 import generic_fns
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 import generic_fns.structure.geometric
 from generic_fns.structure.internal import Internal
 import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
+from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
@@ -163,7 +164,13 @@ class N_state_model(Common_functions):
     def __base_data_types(self):
         """Determine all the base data types.
 
-        @return:    A list of all the base data types.  This can include 'rdc', 'pcs', and 'tensor'.
+        The base data types can include::
+            - 'rdc', residual dipolar couplings.
+            - 'pcs', pseudo-contact shifts.
+            - 'noesy', NOE restraints.
+            - 'tensor', alignment tensors.
+
+        @return:    A list of all the base data types.
         @rtype:     list of str
         """
 
@@ -189,9 +196,13 @@ class N_state_model(Common_functions):
         if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
             list.append('tensor')
 
+        # NOESY data search.
+        if hasattr(cdp, 'noe_restraints'):
+            list.append('noesy')
+
         # No data is present.
         if not list:
-            raise RelaxError, "Neither RDC, PCS, nor alignment tensor data is present."
+            raise RelaxError, "Neither RDC, PCS, NOESY nor alignment tensor data is present."
 
         # Return the list.
         return list
@@ -907,6 +918,99 @@ class N_state_model(Common_functions):
             # Initialise the tensor.
             if not exists:
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+
+
+    def calc_ave_dist(self, atom1, atom2, exp=1):
+        """Calculate the average distances.
+
+        The formula used is:
+
+                      _N_
+                  / 1 \                  \ 1/exp
+            <r> = | -  > |p1i - p2i|^exp |
+                  \ N /__                /
+                       i
+
+        where i are the members of the ensemble, N is the total number of structural models, and p1
+        and p2 at the two atom positions.
+
+
+        @param atom1:   The atom identification string of the first atom.
+        @type atom1:    str
+        @param atom2:   The atom identification string of the second atom.
+        @type atom2:    str
+        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
+                        r^-6 NOE averaging.
+        @type exp:      int
+        @return:        The average distance between the two atoms.
+        @rtype:         float
+        """
+
+        # Get the spin containers.
+        spin1 = return_spin(atom1)
+        spin2 = return_spin(atom2)
+
+        # Loop over each model.
+        num_models = len(spin1.pos)
+        ave_dist = 0.0
+        for i in range(num_models):
+            # Distance to the minus sixth power.
+            dist = norm(spin1.pos[i] - spin2.pos[i])
+            ave_dist = ave_dist + dist**(exp)
+
+        # Average.
+        ave_dist = ave_dist / num_models
+
+        # The exponent.
+        ave_dist = ave_dist**(1.0/exp)
+
+        # Return the average distance.
+        return ave_dist
+
+
+    def calculate(self, verbosity=1):
+        """Calculation function.
+
+        Currently this function simply calculates the NOESY flat-bottom quadratic energy potential,
+        if NOE restraints are available.
+
+        @param verbosity:       A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type verbosity:        int
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the N-state model has been set up.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError, 'N-state'
+
+        # Init some numpy arrays.
+        num_restraints = len(cdp.noe_restraints)
+        dist = zeros(num_restraints, float64)
+        pot = zeros(num_restraints, float64)
+        lower = zeros(num_restraints, float64)
+        upper = zeros(num_restraints, float64)
+
+        # Loop over the NOEs.
+        for i in range(num_restraints):
+            # Create arrays of the NOEs.
+            lower[i] = cdp.noe_restraints[i][2]
+            upper[i] = cdp.noe_restraints[i][3]
+
+            # Calculate the average distances, using -6 power averaging.
+            dist[i] = self.calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+
+        # Calculate the quadratic potential.
+        quad_pot(dist, pot, lower, upper) 
+
+        # Store the distance and potential information.
+        cdp.ave_dist = []
+        cdp.quad_pot = []
+        for i in range(num_restraints):
+            cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
+            cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
 
 
     def CoM(self, pivot_point=None, centre=None):
