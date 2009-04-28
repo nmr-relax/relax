@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,11 +28,11 @@
 import warnings
 import inspect
 
+# relax module imports.
 from relax_errors import BaseError
 
 
 # Global variables.
-relax = None
 Debug = False
 Pedantic = False
 

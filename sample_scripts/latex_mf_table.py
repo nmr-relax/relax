@@ -180,10 +180,15 @@ class Latex:
 
             # The spin is not selected.
             if not spin.select:
-                self.file.write("\\\n")
+                self.file.write("\\multicolumn{11}{c}{} \\\\\n")
+                continue
 
             # The model-free model.
-            self.file.write("$%s$ & " % spin.model)
+            if hasattr(spin, 'model'):
+                self.file.write("$%s$ & " % spin.model)
+            else:
+                self.file.write("\\multicolumn{11}{c}{} \\\\\n")
+                continue
 
             # S2.
             if spin.s2 == None:

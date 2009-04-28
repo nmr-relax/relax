@@ -290,7 +290,7 @@ class Spectrum:
         spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method='height', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method='height', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, ncproc=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
@@ -322,6 +322,8 @@ class Spectrum:
 
         sep:  The column separator used by the generic intensity format (defaults to white space).
 
+        ncproc:  The Bruker specific FID intensity scaling factor.
+
 
         Description
         ~~~~~~~~~~~
@@ -343,6 +345,15 @@ class Spectrum:
         summation, with no deconvolution algorithms or other methods affecting peak heights, then
         the argument should be set to 'point sum'.  All other volume integration methods, e.g. line
         shape fitting, the argument should be set to 'other'.
+
+        If a series of intensities extracted from Bruker FID files processed in Topspin or XWinNMR
+        are to be compared, the ncproc parameter may need to be supplied.  This is because this FID
+        is stored using integer representation and is scaled using ncproc to avoid numerical
+        truncation artifacts.  If two spectra have significantly different maximal intensities, then
+        ncproc will be different for both.  The intensity scaling is binary, i.e. 2**ncproc.
+        Therefore if spectrum A has an ncproc of 6 and and spectrum B a value of 7, then a reference
+        intensity in B will be double that of A.  Internally, relax stores the intensities scaled by
+        2**ncproc.
 
 
         File formats
@@ -474,8 +485,12 @@ class Spectrum:
         if sep != None and type(sep) != str:
             raise RelaxNoneStrError, ('column separator', sep)
 
+        # Bruker ncproc parameter.
+        if ncproc != None and type(ncproc) != int:
+            raise RelaxNoneIntError, ('Bruker ncproc parameter', ncproc)
+
         # Execute the functional code.
-        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, ncproc=ncproc)
 
 
     def replicated(self, spectrum_ids=None):

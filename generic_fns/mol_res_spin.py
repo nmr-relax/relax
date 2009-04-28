@@ -36,6 +36,7 @@ The functionality of this module is diverse:
 """
 
 # Python module imports.
+from numpy import array
 from re import split
 from string import strip
 from textwrap import fill
@@ -45,7 +46,7 @@ from warnings import warn
 from data.mol_res_spin import MoleculeContainer, ResidueContainer, SpinContainer
 from generic_fns import pipes
 from generic_fns import relax_re
-from relax_errors import RelaxError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
+from relax_errors import RelaxError, RelaxNoSpinError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from relax_warnings import RelaxWarning
 
 
@@ -490,6 +491,36 @@ class Selection(object):
 
 
 
+def __linear_ave(positions):
+    """Perform linear averaging of the atomic positions.
+
+    @param positions:   The atomic positions.  The first index is that of the positions to be
+                        averaged over.  The second index is over the different models.  The last
+                        index is over the x, y, and z coordinates.
+    @type positions:    list of lists of numpy float arrays
+    @return:            The averaged positions as a list of vectors.
+    @rtype:             list of numpy float arrays
+    """
+
+    # Loop over the multiple models.
+    ave = []
+    for model_index in range(len(positions[0])):
+        # Append an empty vector.
+        ave.append(array([0.0, 0.0, 0.0]))
+
+        # Loop over the x, y, and z coordinates.
+        for coord_index in range(3):
+            # Loop over the atomic positions.
+            for atom_index in range(len(positions)):
+                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
+
+            # Average.
+            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
+
+    # Return the averaged positions.
+    return ave
+
+
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     """Copy the contents of a molecule container to a new molecule.
 
@@ -685,7 +716,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         res_to_cont = pipe.mol[0].res[0]
 
     # Copy the data.
-    if res_to_cont.spin[0].num == None and res_to_cont.spin[0].name == None and len(res_to_cont.spin) == 1:
+    if len(res_to_cont.spin) == 1 and res_to_cont.spin[0].is_empty():
         res_to_cont.spin[0] = spin_from_cont.__clone__()
     else:
         res_to_cont.spin.append(spin_from_cont.__clone__())
@@ -777,7 +808,11 @@ def count_spins(selection=None, skip_desel=True):
 
 
 def create_molecule(mol_name=None):
-    """Function for adding a molecule into the relax data store."""
+    """Add a molecule into the relax data store.
+
+    @keyword mol_name:  The name of the molecule.
+    @type mol_name:     str
+    """
 
     # Test if the current data pipe exists.
     pipes.test()
@@ -790,59 +825,53 @@ def create_molecule(mol_name=None):
         if cdp.mol[i].name == mol_name:
             raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the relax data store."
 
-
     # Append the molecule.
     cdp.mol.add_item(mol_name=mol_name)
 
 
-def create_residue(res_num=None, res_name=None, mol_id=None):
-    """Function for adding a residue into the relax data store.
+def create_residue(res_num=None, res_name=None, mol_name=None):
+    """Add a residue into the relax data store (and molecule if necessary).
 
-    @param res_num:     The identification number of the new residue.
+    @keyword res_num:   The number of the new residue.
     @type res_num:      int
-    @param res_name:    The name of the new residue.
+    @keyword res_name:  The name of the new residue.
     @type res_name:     str
-    @param mol_id:      The molecule identification string.
-    @type mol_id:       str
+    @keyword mol_name:  The name of the molecule to add the residue to.
+    @type mol_name:     str
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
-    # Split up the selection string.
-    mol_token, res_token, spin_token = tokenise(mol_id)
-
-    # Disallowed selections.
-    if res_token != None:
-        raise RelaxResSelectDisallowError
-    if spin_token != None:
-        raise RelaxSpinSelectDisallowError
 
     # Test if the current data pipe exists.
     pipes.test()
 
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Create the molecule if it does not exist.
+    if not return_molecule(generate_spin_id(mol_name=mol_name)):
+        create_molecule(mol_name=mol_name)
+
     # Get the molecule container to add the residue to.
-    if mol_id:
-        mol_to_cont = return_molecule(mol_id)
-        if mol_to_cont == None:
-            raise RelaxError, "The molecule in " + `mol_id` + " does not exist in the current data pipe."
-    else:
-        mol_to_cont = cdp.mol[0]
+    mol_cont = return_molecule(generate_spin_id(mol_name=mol_name))
+    if not mol_cont:
+        mol_cont = cdp.mol[0]
 
     # Add the residue.
-    mol_to_cont.res.add_item(res_num=res_num, res_name=res_name)
+    mol_cont.res.add_item(res_num=res_num, res_name=res_name)
 
 
-def create_spin(spin_num=None, spin_name=None, res_id=None):
-    """Function for adding a spin into the relax data store.
+def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None):
+    """Add a pseudo-atom spin container into the relax data store.
     
+    @param spin_name:   The name of the new pseudo-spin.
+    @type spin_name:    str
     @param spin_num:    The identification number of the new spin.
     @type spin_num:     int
-    @param spin_name:   The name of the new spin.
-    @type spin_name:    str
     @param res_id:      The molecule and residue identification string.
     @type res_id:       str
     """
+
+    # Test if the current data pipe exists.
+    pipes.test()
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
@@ -854,9 +883,6 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
     if spin_token != None:
         raise RelaxSpinSelectDisallowError
 
-    # Test if the current data pipe exists.
-    pipes.test()
-
     # Get the residue container to add the spin to.
     if res_id:
         res_to_cont = return_residue(res_id)
@@ -865,8 +891,86 @@ def create_spin(spin_num=None, spin_name=None, res_id=None):
     else:
         res_to_cont = cdp.mol[0].res[0]
 
+    # Check the averaging technique.
+    if averaging not in ['linear']:
+        raise RelaxError, "The '%s' averaging technique is unknown." % averaging
+
+    # Get the spin positions.
+    positions = []
+    for atom in members:
+        # Get the spin container.
+        spin = return_spin(atom)
+
+        # Test that the spin exists.
+        if spin == None:
+            raise RelaxNoSpinError, atom
+
+        # Test the position.
+        if not hasattr(spin, 'pos') or not spin.pos:
+            raise RelaxError, "Positional information is not available for the atom '%s'." % atom
+
+        # Store the position.
+        positions.append([])
+        for i in range(len(spin.pos)):
+            positions[-1].append(spin.pos[i].tolist())
+
+    # Now add the pseudo-spin name to the spins belonging to it (after the tests).
+    for atom in members:
+        # Get the spin container.
+        spin = return_spin(atom)
+
+        # Add the pseudo-spin number and name.
+        if res_id:
+            spin.pseudo_name = res_id + '@' + spin_name
+        else:
+            spin.pseudo_name = '@' + spin_name
+        spin.pseudo_num = spin_num
+
     # Add the spin.
     res_to_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
+    spin = res_to_cont.spin[-1]
+
+    # Set the pseudo-atom spin container attributes.
+    spin.averaging = averaging
+    spin.members = members
+    if averaging == 'linear':
+        spin.pos = __linear_ave(positions)
+
+
+def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
+    """Add a spin into the relax data store (and molecule and residue if necessary).
+    
+    @keyword spin_num:  The number of the new spin.
+    @type spin_num:     int
+    @keyword spin_name: The name of the new spin.
+    @type spin_name:    str
+    @keyword res_num:   The number of the residue to add the spin to.
+    @type res_num:      int
+    @keyword res_name:  The name of the residue to add the spin to.
+    @type res_name:     str
+    @keyword mol_name:  The name of the molecule to add the spin to.
+    @type mol_name:     str
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Get the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Create the molecule and residue if they do not exist.
+    if not return_molecule(generate_spin_id(mol_name=mol_name)):
+        create_molecule(mol_name=mol_name)
+    if not return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name)):
+        create_residue(mol_name=mol_name, res_num=res_num, res_name=res_name)
+
+    # Get the residue container to add the spin to.
+    res_cont = return_residue(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name))
+    if not res_cont:
+        res_cont = cdp.mol[0].res[0]
+
+    # Add the spin.
+    res_cont.spin.add_item(spin_num=spin_num, spin_name=spin_name)
 
 
 def convert_from_global_index(global_index=None, pipe=None):
@@ -1340,13 +1444,15 @@ def molecule_loop(selection=None, pipe=None):
         yield mol
 
 
-def name_molecule(mol_id, name=None):
+def name_molecule(mol_id, name=None, force=False):
     """Name the molecules.
 
     @param mol_id:      The molecule identification string.
     @type mol_id:       str
     @param name:        The new molecule name.
     @type name:         str
+    @keyword force:     A flag which if True will cause the named molecule to be renamed.
+    @type force:        bool
     """
 
     # Get the single molecule data container.
@@ -1361,16 +1467,21 @@ def name_molecule(mol_id, name=None):
 
     # Name the molecule is there is a single match.
     if mol:
-        mol.name = name
+        if mol.name and not force:
+            warn(RelaxWarning("The molecule '%s' is already named.  Set the force flag to rename." % mol_id))
+        else:
+            mol.name = name
         
 
-def name_residue(res_id, name=None):
+def name_residue(res_id, name=None, force=False):
     """Name the residues.
 
     @param res_id:      The residue identification string.
     @type res_id:       str
     @param name:        The new residue name.
     @type name:         str
+    @keyword force:     A flag which if True will cause the named residue to be renamed.
+    @type force:        bool
     """
 
     # Disallow spin selections.
@@ -1379,31 +1490,41 @@ def name_residue(res_id, name=None):
         raise RelaxSpinSelectDisallowError
 
     # Rename the matching residues.
-    for res in residue_loop(res_id):
-        res.name = name
+    for res, mol_name in residue_loop(res_id, full_info=True):
+        if res.name and not force:
+            warn(RelaxWarning("The residue '%s' is already named.  Set the force flag to rename." % generate_spin_id(mol_name, res.num, res.name)))
+        else:
+            res.name = name
 
 
-def name_spin(spin_id=None, name=None):
+def name_spin(spin_id=None, name=None, force=False):
     """Name the spins.
 
-    @param spin_id:     The spin identification string.
+    @keyword spin_id:   The spin identification string.
     @type spin_id:      str
-    @param name:        The new spin name.
+    @keyword name:      The new spin name.
     @type name:         str
+    @keyword force:     A flag which if True will cause the named spin to be renamed.
+    @type force:        bool
     """
 
     # Rename the matching spins.
-    for spin in spin_loop(spin_id):
-        spin.name = name
+    for spin, id in spin_loop(spin_id, return_id=True):
+        if spin.name and not force:
+            warn(RelaxWarning("The spin '%s' is already named.  Set the force flag to rename." % id))
+        else:
+            spin.name = name
 
 
-def number_residue(res_id, number=None):
+def number_residue(res_id, number=None, force=False):
     """Number the residues.
 
     @param res_id:      The residue identification string.
     @type res_id:       str
     @param number:      The new residue number.
     @type number:       int
+    @keyword force:     A flag which if True will cause the numbered residue to be renumbered.
+    @type force:        bool
     """
 
     # Catch multiple numberings!
@@ -1421,17 +1542,22 @@ def number_residue(res_id, number=None):
         raise RelaxSpinSelectDisallowError
 
     # Rename the residue.
-    for res in residue_loop(res_id):
-        res.num = number
+    for res, mol_name in residue_loop(res_id, full_info=True):
+        if res.num and not force:
+            warn(RelaxWarning("The residue '%s' is already numbered.  Set the force flag to renumber." % generate_spin_id(mol_name, res.num, res.name)))
+        else:
+            res.num = number
 
 
-def number_spin(spin_id=None, number=None):
+def number_spin(spin_id=None, number=None, force=False):
     """Number the spins.
 
     @param spin_id:     The spin identification string.
     @type spin_id:      str
     @param number:      The new spin number.
     @type number:       int
+    @keyword force:     A flag which if True will cause the numbered spin to be renumbered.
+    @type force:        bool
     """
 
     # Catch multiple renumberings!
@@ -1444,8 +1570,11 @@ def number_spin(spin_id=None, number=None):
         raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
 
     # Rename the spin.
-    for spin in spin_loop(spin_id):
-        spin.num = number
+    for spin, id in spin_loop(spin_id, return_id=True):
+        if spin.num and not force:
+            warn(RelaxWarning("The spin '%s' is already numbered.  Set the force flag to renumber." % id))
+        else:
+            spin.num = number
 
 
 def parse_token(token, verbosity=False):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,7 +28,7 @@ from copy import deepcopy
 from numpy import float64, zeros
 
 # relax module imports.
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
 from relax_io import extract_data, strip
@@ -164,21 +164,31 @@ def centre(atom_id=None, pipe=None):
         raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `dp.paramagnetic_centre` + "."
 
     # Get the positions.
-    pos = zeros(3, float64)
-    i = 0
-    for R in dp.structure.atom_loop(atom_id=atom_id, pos_flag=True):
-        pos = pos + R
-        i = i + 1
+    centre = zeros(3, float64)
+    num_pos = 0
+    for spin in spin_loop(atom_id):
+        # No atomic positions.
+        if not hasattr(spin, 'pos'):
+            continue
+
+        # Loop over the model positions.
+        for pos in spin.pos:
+            centre = centre + pos
+            num_pos = num_pos + 1
+
+    # No positional information!
+    if not num_pos:
+        raise RelaxError, "No positional information could be found for the spin '%s'." % atom_id
 
     # Averaging.
-    pos = pos / float(i)
+    centre = centre / float(num_pos)
 
     # Print out.
-    print "Paramagnetic centre located at: " + `pos`
+    print "Paramagnetic centre located at: " + `centre`
 
     # Set the centre (place it into the current data pipe).
     cdp = pipes.get_pipe()
-    cdp.paramagnetic_centre = pos
+    cdp.paramagnetic_centre = centre
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
@@ -409,7 +419,7 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
     """Read the PCS data from file.
 
     @param id:              The alignment identification string.
@@ -482,28 +492,36 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
         # Strip the data of all comments and empty lines.
         file_data = strip(file_data)
 
-        # Test the validity of the PCS data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= min_col_num:
-                continue
-            elif data_col != None and file_data[i][data_col] == 'None':
-                continue
-            elif error_col != None and file_data[i][error_col] == 'None':
-                continue
+    # Test the validity of the PCS data.
+    missing = True
+    for i in xrange(len(file_data)):
+        # Skip missing data.
+        if len(file_data[i]) <= min_col_num:
+            continue
+        elif data_col != None and file_data[i][data_col] == 'None':
+            continue
+        elif error_col != None and file_data[i][error_col] == 'None':
+            continue
 
-            # Test that the data are numbers.
-            try:
-                if res_num_col != None:
-                    int(file_data[i][res_num_col])
-                if spin_num_col != None:
-                    int(file_data[i][spin_num_col])
-                if data_col != None:
-                    float(file_data[i][data_col])
-                if error_col != None:
-                    float(file_data[i][error_col])
-            except ValueError:
-                raise RelaxError, "The PCS data in the line " + `file_data[i]` + " is invalid."
+        # Test that the data are numbers.
+        try:
+            if res_num_col != None:
+                int(file_data[i][res_num_col])
+            if spin_num_col != None:
+                int(file_data[i][spin_num_col])
+            if data_col != None:
+                float(file_data[i][data_col])
+            if error_col != None:
+                float(file_data[i][error_col])
+        except ValueError:
+            raise RelaxError, "The PCS data in the line " + `file_data[i]` + " is invalid."
+
+        # Right, data is ok and exists.
+        missing = False
+
+    # Hmmm, no data!
+    if missing:
+        raise RelaxError, "No corresponding data could be found within the file."
 
 
     # Global (non-spin specific) data.
@@ -522,6 +540,7 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
     #####################
 
     # Loop over the PCS data.
+    print "\n%-50s %-15s %-15s" % ("spin_id", "value", "error")
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -564,6 +583,9 @@ def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_nu
 
             # Append the error.
             spin.pcs_err.append(error)
+
+        # Print out.
+        print "%-50s %15s %15s" % (id, value, error)
 
 
 def return_data_desc(name):

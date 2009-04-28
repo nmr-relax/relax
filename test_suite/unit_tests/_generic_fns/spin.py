@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ from generic_fns import mol_res_spin
 
 copy = mol_res_spin.copy_spin
 create = mol_res_spin.create_spin
+create_pseudo = mol_res_spin.create_pseudo_spin
 delete = mol_res_spin.delete_spin
 display = mol_res_spin.display_spin
 name = mol_res_spin.name_spin

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -19,6 +19,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA   #
 #                                                                             #
 ###############################################################################
+
+# Python module imports.
+from numpy import array
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -101,11 +104,45 @@ class Spin_base_class:
         cdp.mol[1].res[1].spin.add_item(None, 1433)
         cdp.mol[1].res[1].spin.add_item('NH', 3239)
 
+        # Create a third molecule.
+        cdp.mol.add_item('3rd')
+
+        # Create the first residue of the 3rd molecule and add some data to its spin container.
+        cdp.mol[2].res[0].num = 13
+        cdp.mol[2].res[0].name = 'Gly'
+        cdp.mol[2].res[0].spin[0].x = 'hello'
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
         ds.__reset__()
+
+
+    def test_copy_spin(self):
+        """Test the copying of the spin data within the same residue.
+
+        The function tested is both generic_fns.mol_res_spin.copy_spin() and
+        prompt.spin.copy().
+        """
+
+        # Copy the spin from the 3rd molecule.
+        self.spin_fns.copy(spin_from='#3rd:13', spin_to='#3rd:13@NE')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Test the original spin.
+        self.assertEqual(dp.mol[2].res[0].num, 13)
+        self.assertEqual(dp.mol[2].res[0].name, 'Gly')
+        self.assertEqual(dp.mol[2].res[0].spin[0].num, None)
+        self.assertEqual(dp.mol[2].res[0].spin[0].name, None)
+        self.assertEqual(dp.mol[2].res[0].spin[0].x, 'hello')
+
+        # Test the new spin.
+        self.assertEqual(dp.mol[2].res[0].spin[1].num, None)
+        self.assertEqual(dp.mol[2].res[0].spin[1].name, 'NE')
+        self.assertEqual(dp.mol[2].res[0].spin[1].x, 'hello')
 
 
     def test_copy_spin_between_molecules(self):
@@ -251,6 +288,107 @@ class Spin_base_class:
         self.assertRaises(RelaxError, self.spin_fns.copy, spin_from=':1', spin_to=':2@78')
 
 
+    def test_create_pseudo_spin(self):
+        """Test the creation of a pseudo-atom.
+
+        The function tested is both generic_fns.mol_res_spin.create_pseudo_spin() and
+        prompt.spin.create_pseudo().
+        """
+
+        # Create a few new protons.
+        self.spin_fns.create(100, 'H13', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(101, 'H14', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(102, 'H15', res_num=1, mol_name='Old mol')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Set some atomic positions.
+        dp.mol[0].res[0].spin[5].pos = [array([3.0, 0.0, 0.0])]
+        dp.mol[0].res[0].spin[6].pos = [array([0.0, 3.0, 0.0])]
+        dp.mol[0].res[0].spin[7].pos = [array([0.0, 0.0, 3.0])]
+
+        # Create a pseudo-spin.
+        self.spin_fns.create_pseudo('Q3', spin_num=105, members=['@H13', '@H14', '@H15'], averaging='linear')
+
+        # Test that the spin numbers are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
+        self.assertEqual(dp.mol[0].res[0].spin[6].num, 101)
+        self.assertEqual(dp.mol[0].res[0].spin[7].num, 102)
+        self.assertEqual(dp.mol[0].res[0].spin[8].num, 105)
+
+        # Test that the spin names are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].name, 'H13')
+        self.assertEqual(dp.mol[0].res[0].spin[6].name, 'H14')
+        self.assertEqual(dp.mol[0].res[0].spin[7].name, 'H15')
+        self.assertEqual(dp.mol[0].res[0].spin[8].name, 'Q3')
+
+        # Test the averaged position.
+        self.assertEqual(len(dp.mol[0].res[0].spin[8].pos), 1)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][0], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][1], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[8].pos[0][2], 1.0)
+
+        # Test the pseudo-spin info.
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, '@Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_name, '@Q3')
+        self.assertEqual(dp.mol[0].res[0].spin[7].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[8].members, ['@H13', '@H14', '@H15'])
+        self.assertEqual(dp.mol[0].res[0].spin[8].averaging, 'linear')
+
+
+    def test_create_pseudo_spin2(self):
+        """Test the creation of a pseudo-atom (test 2).
+
+        The function tested is both generic_fns.mol_res_spin.create_pseudo_spin() and
+        prompt.spin.create_pseudo().
+        """
+
+        # Create a few new protons.
+        self.spin_fns.create(100, 'H93', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(101, 'H94', res_num=1, mol_name='Old mol')
+
+        # Get the data pipe.
+        dp = pipes.get_pipe('orig')
+
+        # Set some atomic positions.
+        dp.mol[0].res[0].spin[5].pos = [array([2.0, 0.0, 0.0]), array([-2.0, 0.0, 0.0])]
+        dp.mol[0].res[0].spin[6].pos = [array([0.0, 2.0, 0.0]), array([0.0, -2.0, 0.0])]
+
+        # Create a pseudo-spin.
+        self.spin_fns.create_pseudo('Q10', spin_num=105, members=['@H93', '@H94'], averaging='linear')
+
+        # Test that the spin numbers are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].num, 100)
+        self.assertEqual(dp.mol[0].res[0].spin[6].num, 101)
+        self.assertEqual(dp.mol[0].res[0].spin[7].num, 105)
+
+        # Test that the spin names are correct.
+        self.assertEqual(dp.mol[0].res[0].spin[5].name, 'H93')
+        self.assertEqual(dp.mol[0].res[0].spin[6].name, 'H94')
+        self.assertEqual(dp.mol[0].res[0].spin[7].name, 'Q10')
+
+        # Test the averaged position.
+        self.assertEqual(len(dp.mol[0].res[0].spin[7].pos), 2)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[0][0], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[0][1], 1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[0][2], 0.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[1][0], -1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[1][1], -1.0)
+        self.assertEqual(dp.mol[0].res[0].spin[7].pos[1][2], 0.0)
+
+        # Test the pseudo-spin info.
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_name, '@Q10')
+        self.assertEqual(dp.mol[0].res[0].spin[5].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_name, '@Q10')
+        self.assertEqual(dp.mol[0].res[0].spin[6].pseudo_num, 105)
+        self.assertEqual(dp.mol[0].res[0].spin[7].members, ['@H93', '@H94'])
+        self.assertEqual(dp.mol[0].res[0].spin[7].averaging, 'linear')
+
+
     def test_create_spin(self):
         """Test the creation of a spin.
 
@@ -259,9 +397,9 @@ class Spin_base_class:
         """
 
         # Create a few new spins.
-        self.spin_fns.create(1, 'C3')
-        self.spin_fns.create(2, 'C17')
-        self.spin_fns.create(-3, 'N7', res_id='#New mol:6')
+        self.spin_fns.create(1, 'C3', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(2, 'C17', res_num=1, mol_name='Old mol')
+        self.spin_fns.create(-3, 'N7', res_num=6, mol_name='New mol')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -285,10 +423,10 @@ class Spin_base_class:
         """
 
         # Create the first spin.
-        self.spin_fns.create(1, 'P1')
+        self.spin_fns.create(1, 'P1', res_num=1, mol_name='Old mol')
 
         # Assert that a RelaxError occurs when the next added spin has the same number as the first.
-        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3')
+        self.assertRaises(RelaxError, self.spin_fns.create, 1, 'P3', res_num=1, mol_name='Old mol')
 
 
     def test_delete_spin_name(self):
@@ -392,9 +530,9 @@ class Spin_base_class:
         """
 
         # Rename some spins.
-        self.spin_fns.name(spin_id='@C26', name='C25')
-        self.spin_fns.name(spin_id=':2@78', name='Ca')
-        self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe')
+        self.spin_fns.name(spin_id='@C26', name='C25', force=True)
+        self.spin_fns.name(spin_id=':2@78', name='Ca', force=True)
+        self.spin_fns.name(spin_id='#New mol:6@3239', name='NHe', force=True)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -419,7 +557,7 @@ class Spin_base_class:
         """
 
         # Rename all NHs.
-        self.spin_fns.name(spin_id='@NH', name='N')
+        self.spin_fns.name(spin_id='@NH', name='N', force=True)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -444,14 +582,14 @@ class Spin_base_class:
         """
 
         # Rename a few spins.
-        self.spin_fns.number(spin_id='@111', number=1)
-        self.spin_fns.number(spin_id='@6', number=2)
-        self.spin_fns.number(spin_id='@7', number=3)
-        self.spin_fns.number(spin_id='@8', number=4)
-        self.spin_fns.number(spin_id='@9', number=5)
-        self.spin_fns.number(spin_id='@78', number=6)
-        self.spin_fns.number(spin_id='@239', number=7)
-        self.spin_fns.number(spin_id='@3239', number=9)
+        self.spin_fns.number(spin_id='@111', number=1, force=True)
+        self.spin_fns.number(spin_id='@6', number=2, force=True)
+        self.spin_fns.number(spin_id='@7', number=3, force=True)
+        self.spin_fns.number(spin_id='@8', number=4, force=True)
+        self.spin_fns.number(spin_id='@9', number=5, force=True)
+        self.spin_fns.number(spin_id='@78', number=6, force=True)
+        self.spin_fns.number(spin_id='@239', number=7, force=True)
+        self.spin_fns.number(spin_id='@3239', number=9, force=True)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
