@@ -116,8 +116,8 @@ class Mf(TestCase):
         self.relax.interpreter._Monte_carlo.setup(number=3)
         self.relax.interpreter._Monte_carlo.create_data()
         self.relax.interpreter._Monte_carlo.initial_values()
-        self.relax.interpreter._Minimise('newton')
-        self.relax.interpreter._Eliminate()
+        self.relax.interpreter._Minimisation.minimise('newton')
+        #self.relax.interpreter._Eliminate.eliminate()
         self.relax.interpreter._Monte_carlo.error_analysis()
 
 
