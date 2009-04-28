@@ -153,9 +153,10 @@ class N_state_model(Common_functions):
             pop_start = pop_start + 5*len(cdp.align_tensors)
 
         # Loop over the populations, and set the scaling factor.
-        factor = 100.0
-        for i in xrange(pop_start, pop_start + (cdp.N-1)):
-            scaling_matrix[i, i] = factor
+        if cdp.model in ['2-domain', 'population']:
+            factor = 100.0
+            for i in xrange(pop_start, pop_start + (cdp.N-1)):
+                scaling_matrix[i, i] = factor
 
         # Return the matrix.
         return scaling_matrix
