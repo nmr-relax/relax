@@ -28,7 +28,7 @@ from copy import deepcopy
 from numpy import float64, zeros
 
 # relax module imports.
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
 from relax_io import extract_data, strip
@@ -164,21 +164,31 @@ def centre(atom_id=None, pipe=None):
         raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `dp.paramagnetic_centre` + "."
 
     # Get the positions.
-    pos = zeros(3, float64)
-    i = 0
-    for R in dp.structure.atom_loop(atom_id=atom_id, pos_flag=True):
-        pos = pos + R
-        i = i + 1
+    centre = zeros(3, float64)
+    num_pos = 0
+    for spin in spin_loop(atom_id):
+        # No atomic positions.
+        if not hasattr(spin, 'pos'):
+            continue
+
+        # Loop over the model positions.
+        for pos in spin.pos:
+            centre = centre + pos
+            num_pos = num_pos + 1
+
+    # No positional information!
+    if not num_pos:
+        raise RelaxError, "No positional information could be found for the spin '%s'." % atom_id
 
     # Averaging.
-    pos = pos / float(i)
+    centre = centre / float(num_pos)
 
     # Print out.
-    print "Paramagnetic centre located at: " + `pos`
+    print "Paramagnetic centre located at: " + `centre`
 
     # Set the centre (place it into the current data pipe).
     cdp = pipes.get_pipe()
-    cdp.paramagnetic_centre = pos
+    cdp.paramagnetic_centre = centre
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
