@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import float64, ndarray, zeros
+from numpy import array, float64, zeros
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
@@ -152,27 +152,28 @@ def centre(atom_id=None, pipe=None):
     # Test the data pipe.
     pipes.test(pipe)
 
-    # Get the data pipe.
-    dp = pipes.get_pipe(pipe)
+    # Get the data pipes.
+    source_dp = pipes.get_pipe(pipe)
+    cdp = pipes.get_pipe()
 
     # Test if the structure has been loaded.
-    if not hasattr(dp, 'structure'):
+    if not hasattr(source_dp, 'structure'):
         raise RelaxNoPdbError
 
     # Test the centre has already been set.
-    if hasattr(dp, 'paramagnetic_centre'):
-        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `dp.paramagnetic_centre` + "."
+    if hasattr(cdp, 'paramagnetic_centre'):
+        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `cdp.paramagnetic_centre` + "."
 
     # Get the positions.
     centre = zeros(3, float64)
     num_pos = 0
-    for spin, spin_id in spin_loop(atom_id, return_id=True):
+    for spin, spin_id in spin_loop(atom_id, pipe=pipe, return_id=True):
         # No atomic positions.
         if not hasattr(spin, 'pos'):
             continue
 
         # Spin position list.
-        if type(spin.pos) == list or type(spin.pos) == ndarray:
+        if type(spin.pos[0]) == float or type(spin.pos[0]) == float64:
             pos_list = [spin.pos]
         else:
             pos_list = spin.pos
@@ -193,7 +194,6 @@ def centre(atom_id=None, pipe=None):
     print "Paramagnetic centre located at: " + `centre`
 
     # Set the centre (place it into the current data pipe).
-    cdp = pipes.get_pipe()
     cdp.paramagnetic_centre = centre
 
 
