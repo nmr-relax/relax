@@ -138,11 +138,16 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
         spin.relax_sim_data.append(values)
 
 
-def centre(atom_id=None, pipe=None):
+def centre(atom_id=None, pipe=None, ave_pos=False):
     """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
 
     @keyword atom_id:   The atom identification string.
     @type atom_id:      str
+    @keyword pipe:      An alternative data pipe to extract the paramagnetic centre from.
+    @type pipe:         None or str
+    @keyword ave_pos:   A flag which if True causes the atomic positions from multiple models to be
+                        averaged.
+    @type ave_pos:      bool
     """
 
     # The data pipe.
@@ -166,6 +171,7 @@ def centre(atom_id=None, pipe=None):
 
     # Get the positions.
     centre = zeros(3, float64)
+    full_pos_list = []
     num_pos = 0
     for spin, spin_id in spin_loop(atom_id, pipe=pipe, return_id=True):
         # No atomic positions.
@@ -180,6 +186,7 @@ def centre(atom_id=None, pipe=None):
 
         # Loop over the model positions.
         for pos in pos_list:
+            full_pos_list.append(pos)
             centre = centre + array(pos)
             num_pos = num_pos + 1
 
@@ -191,10 +198,19 @@ def centre(atom_id=None, pipe=None):
     centre = centre / float(num_pos)
 
     # Print out.
-    print "Paramagnetic centre located at: " + `centre`
+    print "Paramagnetic centres located at:"
+    for pos in full_pos_list:
+        print "    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])
+    print "\nAverage paramagnetic centre located at:"
+    print "    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])
 
     # Set the centre (place it into the current data pipe).
-    cdp.paramagnetic_centre = centre
+    if ave_pos:
+        print "\nUsing the average paramagnetic position."
+        cdp.paramagnetic_centre = centre
+    else:
+        print "\nUsing all paramagnetic positions."
+        cdp.paramagnetic_centre = full_pos_list
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
