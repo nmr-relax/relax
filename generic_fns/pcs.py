@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import float64, zeros
+from numpy import float64, ndarray, zeros
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
@@ -166,14 +166,20 @@ def centre(atom_id=None, pipe=None):
     # Get the positions.
     centre = zeros(3, float64)
     num_pos = 0
-    for spin in spin_loop(atom_id):
+    for spin, spin_id in spin_loop(atom_id, return_id=True):
         # No atomic positions.
         if not hasattr(spin, 'pos'):
             continue
 
+        # Spin position list.
+        if type(spin.pos) == list or type(spin.pos) == ndarray:
+            pos_list = [spin.pos]
+        else:
+            pos_list = spin.pos
+
         # Loop over the model positions.
-        for pos in spin.pos:
-            centre = centre + pos
+        for pos in pos_list:
+            centre = centre + array(pos)
             num_pos = num_pos + 1
 
     # No positional information!
