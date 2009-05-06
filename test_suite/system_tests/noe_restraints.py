@@ -159,6 +159,32 @@ class Noe_restraints(TestCase):
             self.assertEqual(cdp.noe_restraints[i][3], restraints[i][3])
 
 
+    def test_read_xplor_methyl(self):
+        """Test the reading of an Xplor NOE restraints file fragment with a methyl group."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
+
+        # The restraint data.
+        restraints = [
+            ['@H28', '@H9',  3.0, 5.0],
+            ['@H28', '@Q9',  3.0, 6.0]
+        ]
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test that the restraints are properly set.
+        for i in range(len(restraints)):
+            # Atom ids.
+            self.assertEqual(cdp.noe_restraints[i][0], restraints[i][0])
+            self.assertEqual(cdp.noe_restraints[i][1], restraints[i][1])
+
+            # Lower and upper bound.
+            self.assertEqual(cdp.noe_restraints[i][2], restraints[i][2])
+            self.assertEqual(cdp.noe_restraints[i][3], restraints[i][3])
+
+
     def test_read_xplor_rna(self):
         """Test the reading of RNA H-bond restraints in Xplor format."""
 
