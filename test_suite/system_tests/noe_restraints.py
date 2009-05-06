@@ -88,6 +88,9 @@ class Noe_restraints(TestCase):
     def test_read_generic_phthalic_acid(self):
         """Test the reading of phthalic acid NOE restraints in generic format."""
 
+        # Set the file name.
+        ds.file_name = 'phthalic_acid'
+
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
 
@@ -161,6 +164,9 @@ class Noe_restraints(TestCase):
 
     def test_read_xplor_methyl(self):
         """Test the reading of an Xplor NOE restraints file fragment with a methyl group."""
+
+        # Set the file name.
+        ds.file_name = 'pseudo_atoms.dat'
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
