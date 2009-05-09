@@ -74,59 +74,84 @@ def parse_noe_restraints(lines):
 
     @param lines:   The Xplor formatted file, or file fragment, split into lines.
     @type lines:    list of str
-    @return:        The NOE restraint list in the format of two atom identification strings and the
-                    lower and upper restraints.
-    @rtype:         list of lists of [str, str, float, float]
+    @return:        The NOE restraint list in the format of two atom identification strings (or list
+                    of str for pseudoatoms) and the lower and upper restraints.
+    @rtype:         list of lists of str, str, float, float
     """
 
     # Strip all comments from the data.
     lines = strip_comments(lines)
 
-    # Extract the data.
+    # Init.
     data = []
+
+    # First level pass (assign statements).
+    for id1, id2, noe, lower, upper in first_parse(lines):
+        # Second parse (pseudoatoms).
+        id1 = second_parse(id1)
+        id2 = second_parse(id2)
+
+        # Convert to relax spin IDs.
+        if type(id1) == list:
+            relax_id1 = []
+            for i in range(len(id1)):
+                relax_id1.append(__convert_to_id(id1[i]))
+        else:
+            relax_id1 = __convert_to_id(id1)
+
+        if type(id2) == list:
+            relax_id2 = []
+            for i in range(len(id2)):
+                relax_id2.append(__convert_to_id(id2[i]))
+        else:
+            relax_id2 = __convert_to_id(id2)
+
+        # Convert to upper and lower bounds.
+        lower_bound = noe - lower
+        upper_bound = noe + upper
+
+        # Add the data to the list.
+        data.append([relax_id1, relax_id2, lower_bound, upper_bound])
+
+    # Return the data.
+    return data
+
+
+def first_parse(lines):
+    """Generator function to parse and extract the 2 atom IDs and NOE info from the lines.
+
+    The first parse loops over and returns the data from assign statements, returning pseudo atoms
+    as single strings.  The second parse splits the pseudoatoms.
+
+    @param lines:   The Xplor formatted file, or file fragment, split into lines.
+    @type lines:    list of str
+    @return:        The 2 atom IDs, and NOE info (NOE, upper, and lower bounds).
+    @rtype:         str, str, float, float, float
+    """
+
+    # Extract the data.
     line_index = 0
     while 1:
         # Break out!
         if line_index >= len(lines):
             break
 
-        # Find the starting assign.
+        # Find the assign statements.
         if search('^assign', lines[line_index]):
-            # Add a new data line.
-            data.append([None, None, None, None])
-
             # Init.
             char_index = -1
 
-            # Extract the first atom string.
-            atom = ''
-            inside = False
+            # Extract the atom ID strings.
+            id = ['', '']
+            id_index = 0
+            inside = 0
             while 1:
                 # Inc the character index.
                 char_index = char_index + 1
 
-                # Start.
-                if not inside:
-                    if lines[line_index][char_index] == '(':
-                        inside = True
-                    continue
-
-                # End.
-                if inside and lines[line_index][char_index] == ')':
+                # Break out!
+                if line_index >= len(lines):
                     break
-
-                # Append the character.
-                atom = atom + lines[line_index][char_index]
-
-            # Convert the atom data to a relax atom id.
-            data[-1][0] = __convert_to_id(atom)
-
-            # Extract the second atom string.
-            atom = ''
-            inside = False
-            while 1:
-                # Inc the character index.
-                char_index = char_index + 1
 
                 # Check if we need to go to the next line.
                 if char_index >= len(lines[line_index]):
@@ -134,21 +159,36 @@ def parse_noe_restraints(lines):
                     char_index = -1
                     continue
 
-                # Start.
+                # A starting bracket, so increment the inside counter.
+                if lines[line_index][char_index] == '(':
+                    inside = inside + 1
+
+                    # Don't include the first bracket in the ID string.
+                    if inside == 1:
+                        continue
+
+                # Not inside, so jump to the next character.
                 if not inside:
-                    if lines[line_index][char_index] == '(':
-                        inside = True
                     continue
 
-                # End.
-                if inside and lines[line_index][char_index] == ')':
-                    break
+                # An ending bracket.
+                elif lines[line_index][char_index] == ')':
+                    inside = inside - 1
+
+                # A logical test (debugging).
+                if inside < 0:
+                    raise RelaxError, "Improperly formatted Xplor file, unmatched ')'."
 
                 # Append the character.
-                atom = atom + lines[line_index][char_index]
+                if inside:
+                    id[id_index] = id[id_index] + lines[line_index][char_index]
 
-            # Convert the atom data to a relax atom id.
-            data[-1][1] = __convert_to_id(atom)
+                # Go to the second id_index, or break.
+                if inside == 0:
+                    if id_index == 1:
+                        break
+                    else:
+                        id_index = 1
 
             # The rest of the data (NOE restraint info).
             info = split(lines[line_index][char_index+1:])
@@ -158,15 +198,73 @@ def parse_noe_restraints(lines):
             lower = float(info[1])
             upper = float(info[2])
 
-            # Convert to upper and lower bounds.
-            data[-1][2] = noe - lower
-            data[-1][3] = noe + upper
-
         # Line index.
         line_index = line_index + 1
 
+        # Return the data.
+        yield id[0], id[1], noe, lower, upper
+
+
+def second_parse(id):
+    """Split up pseudoatoms.
+
+    @param id:  The Xplor atom id without outer brackets, i.e. a single atom or a list of atoms in
+                the case of pseudoatoms.
+    @type id:   str
+    @return:    For normal atoms, the id string is returned unmodified.  For pseudoatoms, a list of
+                strings, with brackets removed, is returned.
+    @rtype:     str or list of str
+    """
+
+    # Loop over the characters.
+    atoms = ['']
+    index = -1
+    inside = False
+    while 1:
+        # Inc the character index.
+        index = index + 1
+
+        # Break out.
+        if index >= len(id):
+            break
+
+        # A starting bracket, so flip the inside flag.
+        if id[index] == '(':
+            # 2 brackets?!?
+            if inside:
+                raise RelaxError, "The Xplor pseudoatom ID string '%s' is invalid." % id
+
+            # The flag.
+            inside = True
+
+            # Don't include the first bracket in the ID string.
+            continue
+
+        # Not inside, so jump to the next character.
+        if not inside:
+            continue
+
+        # An ending bracket.
+        if id[index] == ')':
+            inside = False
+
+        # Append the character.
+        if inside:
+            atoms[-1] = atoms[-1] + id[index]
+
+        # Add another atom.
+        if not inside:
+            atoms.append('')
+
+    # Remove the last empty atom string.
+    if atoms[0] and atoms[-1] == '':
+        atoms = atoms[:-1]
+
     # Return the data.
-    return data
+    if not atoms[0]:
+        return id
+    else:
+        return atoms
 
 
 def strip_comments(lines):

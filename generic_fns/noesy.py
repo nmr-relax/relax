@@ -156,9 +156,40 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
 
     # Parse and extract the NOE restraints.
     if format == 'xplor':
-        cdp.noe_restraints = xplor.parse_noe_restraints(lines)
+        noe_restraints = xplor.parse_noe_restraints(lines)
     elif format == 'generic':
-        cdp.noe_restraints = parse_noe_restraints(lines, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+        noe_restraints = parse_noe_restraints(lines, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+
+    # Pseudoatom conversion.
+    for i in range(len(noe_restraints)):
+        # Loop over atom IDs.
+        for j in range(2):
+            # Skip normal atoms.
+            if type(noe_restraints[i][j]) == str:
+                continue
+
+            # Loop over the pseudoatoms.
+            pseudo_name = None
+            for k in range(len(noe_restraints[i][j])):
+                # Get the spin.
+                spin = return_spin(noe_restraints[i][j][k])
+
+                # Check the pseudoatom consistency.
+                if pseudo_name and pseudo_name != spin.pseudo_name:
+                    raise RelaxError, "The pseudoatom names '%s' and '%s' do not match." % (pseudo_name, spin.pseudo_name)
+
+                # Set the name.
+                pseudo_name = spin.pseudo_name
+
+            # No pseudoatom.
+            if not pseudo_name:
+                raise RelaxError, "Cannot find the pseudoatom corresponding to the atoms in %s." % noe_restraints[i][j]
+
+            # Otherwise, place the pseudoatom name into the NOE restraint list.
+            noe_restraints[i][j] = pseudo_name
+
+    # Place the restraints into the current data pipe.
+    cdp.noe_restraints = noe_restraints
 
     # Check for the presence of the spin containers corresponding to the atom ids.
     for restraint in cdp.noe_restraints:
