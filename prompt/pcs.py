@@ -69,7 +69,7 @@ class PCS:
         pcs.back_calc(id=id)
 
 
-    def centre(self, atom_id=None, pipe=None):
+    def centre(self, atom_id=None, pipe=None, ave_pos=True):
         """Specify which atom is the paramagnetic centre.
 
         Keyword Arguments
@@ -78,6 +78,8 @@ class PCS:
         atom_id:  The atom identification string.
 
         pipe:  The data pipe containing the structures to extract the centre from.
+
+        ave_pos:  A flag specifying if the position of the atom is to be averaged across all models.
 
 
         Description
@@ -90,6 +92,12 @@ class PCS:
         A different set of structures than those loaded into the current data pipe can also be used
         to determine the position, or its average.  This can be achieved by loading the alternative
         structures into another data pipe, and then specifying that pipe through the pipe argument.
+
+        If the ave_pos flag is set to True, the average position from all models will be used as the
+        position of the paramagnetic centre.  If False, then the positions from all structures will
+        be used.  If multiple positions are used, then a fast PCS centre motion will be assumed so
+        that PCSs for a single tensor will be calculated for each position, and the PCS values
+        linearly averaged.
 
 
         Examples
@@ -111,7 +119,8 @@ class PCS:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.centre("
             text = text + "atom_id=" + `atom_id`
-            text = text + ", pipe=" + `pipe` + ")"
+            text = text + ", pipe=" + `pipe`
+            text = text + ", ave_pos=" + `ave_pos` + ")"
             print text
 
         # The atom identifier argument.
@@ -122,8 +131,12 @@ class PCS:
         if pipe != None and type(pipe) != str:
             raise RelaxNoneStrError, ('data pipe', pipe)
 
+        # The average position flag.
+        if type(ave_pos) != bool:
+            raise RelaxBoolError, ('average position flag', ave_pos)
+
         # Execute the functional code.
-        pcs.centre(atom_id=atom_id, pipe=pipe)
+        pcs.centre(atom_id=atom_id, pipe=pipe, ave_pos=ave_pos)
 
 
     def copy(self, pipe_from=None, pipe_to=None, id=None):
@@ -252,7 +265,7 @@ class PCS:
         pcs.display(id=id)
 
 
-    def read(self, id=None, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+    def read(self, id=None, file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
         """Read the PCS data from file.
 
         Keyword Arguments
