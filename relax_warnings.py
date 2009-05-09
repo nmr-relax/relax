@@ -38,7 +38,7 @@ Pedantic = False
 
 
 # The warning formatting function.
-def format(message, category, filename, lineno):
+def format(message, category, filename, lineno, line=None):
     """ Replacement for warnings.formatwarning to customise output format."""
 
     # Add the text 'RelaxWarning: ' to the start of the warning message.
