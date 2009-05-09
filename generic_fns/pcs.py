@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import float64, zeros
+from numpy import array, float64, zeros
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
@@ -138,11 +138,16 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
         spin.relax_sim_data.append(values)
 
 
-def centre(atom_id=None, pipe=None):
+def centre(atom_id=None, pipe=None, ave_pos=False):
     """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
 
     @keyword atom_id:   The atom identification string.
     @type atom_id:      str
+    @keyword pipe:      An alternative data pipe to extract the paramagnetic centre from.
+    @type pipe:         None or str
+    @keyword ave_pos:   A flag which if True causes the atomic positions from multiple models to be
+                        averaged.
+    @type ave_pos:      bool
     """
 
     # The data pipe.
@@ -152,28 +157,37 @@ def centre(atom_id=None, pipe=None):
     # Test the data pipe.
     pipes.test(pipe)
 
-    # Get the data pipe.
-    dp = pipes.get_pipe(pipe)
+    # Get the data pipes.
+    source_dp = pipes.get_pipe(pipe)
+    cdp = pipes.get_pipe()
 
     # Test if the structure has been loaded.
-    if not hasattr(dp, 'structure'):
+    if not hasattr(source_dp, 'structure'):
         raise RelaxNoPdbError
 
     # Test the centre has already been set.
-    if hasattr(dp, 'paramagnetic_centre'):
-        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `dp.paramagnetic_centre` + "."
+    if hasattr(cdp, 'paramagnetic_centre'):
+        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `cdp.paramagnetic_centre` + "."
 
     # Get the positions.
     centre = zeros(3, float64)
+    full_pos_list = []
     num_pos = 0
-    for spin in spin_loop(atom_id):
+    for spin, spin_id in spin_loop(atom_id, pipe=pipe, return_id=True):
         # No atomic positions.
         if not hasattr(spin, 'pos'):
             continue
 
+        # Spin position list.
+        if type(spin.pos[0]) == float or type(spin.pos[0]) == float64:
+            pos_list = [spin.pos]
+        else:
+            pos_list = spin.pos
+
         # Loop over the model positions.
-        for pos in spin.pos:
-            centre = centre + pos
+        for pos in pos_list:
+            full_pos_list.append(pos)
+            centre = centre + array(pos)
             num_pos = num_pos + 1
 
     # No positional information!
@@ -184,11 +198,19 @@ def centre(atom_id=None, pipe=None):
     centre = centre / float(num_pos)
 
     # Print out.
-    print "Paramagnetic centre located at: " + `centre`
+    print "Paramagnetic centres located at:"
+    for pos in full_pos_list:
+        print "    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])
+    print "\nAverage paramagnetic centre located at:"
+    print "    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])
 
     # Set the centre (place it into the current data pipe).
-    cdp = pipes.get_pipe()
-    cdp.paramagnetic_centre = centre
+    if ave_pos:
+        print "\nUsing the average paramagnetic position."
+        cdp.paramagnetic_centre = centre
+    else:
+        print "\nUsing all paramagnetic positions."
+        cdp.paramagnetic_centre = full_pos_list
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
