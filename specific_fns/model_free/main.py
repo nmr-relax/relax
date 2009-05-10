@@ -2971,6 +2971,10 @@ class Model_free_main:
 
         # Loop over the global minimisation stats objects.
         for object_name in min_names:
+            # Skip non-existent objects.
+            if not hasattr(cdp, object_name):
+                continue
+
             # Name for the simulation object.
             sim_object_name = object_name + '_sim'
 

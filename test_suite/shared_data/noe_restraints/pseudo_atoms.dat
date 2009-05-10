@@ -1,0 +1,2 @@
+assign ( name H28 )  ( name H9 ) 4.0 1.0 1.0
+assign ( name H28 )  (( name H20 ) or ( name H21 ) or ( name H22 )) 4.0 1.0 2.0

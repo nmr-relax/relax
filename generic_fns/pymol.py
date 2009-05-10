@@ -71,14 +71,23 @@ class Pymol:
         self.pipe_write("reinitialize")
 
         # Open the PDB files.
-        for i in xrange(cdp.structure.num):
-            # The file path.
-            file = cdp.structure.file[i]
-            if cdp.structure.path[i]:
-                file = cdp.structure.path[i] + sep + file
+        open_files = []
+        for model in cdp.structure.structural_data:
+            for mol in model.mol:
+                # The file path.
+                file = mol.file_name
+                if mol.file_path:
+                    file = mol.file_path + sep + file
 
-            # Open the file in PyMOL.
-            self.pipe_write("load " + file)
+                # Already loaded.
+                if file in open_files:
+                    continue
+
+                # Open the file in PyMOL.
+                self.pipe_write("load " + file)
+
+                # Add to the open file list.
+                open_files.append(file)
 
 
     def pipe_open(self):
@@ -155,21 +164,30 @@ def cartoon():
     cdp = pipes.get_pipe()
 
     # Loop over the PDB files.
-    for i in xrange(cdp.structure.num):
-        # Identifier.
-        pdb_file = cdp.structure.file[i]
-        if cdp.structure.path[i]:
-            pdb_file = cdp.structure.path[i] + sep + pdb_file
-        id = file_root(pdb_file)
+    open_files = []
+    for model in cdp.structure.structural_data:
+        for mol in model.mol:
+            # Identifier.
+            pdb_file = mol.file_name
+            if mol.file_path:
+                pdb_file = mol.file_path + sep + pdb_file
+            id = file_root(pdb_file)
 
-        # Hide everything.
-        pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
+            # Already loaded.
+            if file in open_files:
+                continue
 
-        # Show the cartoon style.
-        pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
+            # Add to the open file list.
+            open_files.append(file)
 
-        # Colour by secondary structure.
-        pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+            # Hide everything.
+            pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
+
+            # Show the cartoon style.
+            pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
+
+            # Colour by secondary structure.
+            pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
 
 
 def command(command):
