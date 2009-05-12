@@ -64,13 +64,18 @@ class Hybrid:
         if hybrid in pipes.pipe_names():
             raise RelaxPipeError, hybrid
 
-        # Loop over the pipes to be hybridised.
+        # Loop over the pipes to be hybridised and check them.
+        pipe_type = pipes.get_type(pipe_list[0])
         for pipe in pipe_list:
             # Switch to the data pipe.
             pipes.switch(pipe)
 
             # Test if the pipe exists.
             pipes.test()
+
+            # Check that the pipe types match.
+            if pipes.get_type() != pipe_type:
+                raise RelaxError, "The data pipe types do not match."
 
             # Test if sequence data is loaded.
             if not exists_mol_res_spin_data():
