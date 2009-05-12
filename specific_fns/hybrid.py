@@ -21,11 +21,11 @@
 ###############################################################################
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns.sequence import compare_sequence
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
+import setup
 
 
 class Hybrid:
@@ -102,16 +102,65 @@ class Hybrid:
         cdp.hybrid_pipes = pipe_list
 
 
-    def model_statistics(self, run=None, instance=None, global_stats=None):
-        """Function for returning the values k, n, and chi2 of the hybrid.
+    def model_desc(self, model_index):
+        """Return a description of the model.
+
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).  This originates from the model_loop().
+        @type model_index:  int
+        @return:            The model description.
+        @rtype:             str
+        """
+
+        return "hybrid model"
+
+
+    def model_loop(self):
+        """Dummy generator method - this should be a global model!"""
+
+        yield 0
+
+
+    def model_type(self):
+        """Method stating that this is a global model."""
+
+        return 'global'
+
+
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
+        """Return the k, n, and chi2 model statistics of the hybrid.
 
         k - number of parameters.
         n - number of data points.
         chi2 - the chi-squared value.
+
+
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indices).  This originates from the model_loop().
+        @type model_index:      int
+        @keyword spin_id:       The spin identification string.  Either this or the instance keyword
+                                argument must be supplied.
+        @type spin_id:          None or str
+        @keyword global_stats:  A parameter which determines if global or local statistics are
+                                returned.  If None, then the appropriateness of global or local
+                                statistics is automatically determined.
+        @type global_stats:     None or bool
+        @return:                The optimisation statistics, in tuple format, of the number of
+                                parameters (k), the number of data points (n), and the chi-squared
+                                value (chi2).
+        @rtype:                 tuple of int, int, float
         """
 
-        # Arguments.
-        self.run = run
+        # Bad argument combination.
+        if model_info == None and spin_id == None:
+            raise RelaxError, "Either the model_info or spin_id argument must be supplied."
+        elif model_info != None and spin_id != None:
+            raise RelaxError, "The model_info arg " + `model_info` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Initialise.
         k_total = 0
@@ -119,38 +168,42 @@ class Hybrid:
         chi2_total = 0.0
 
         # Specific setup.
-        for run in ds.hybrid_pipes[self.run]:
-            # Function type.
-            function_type = ds.run_types[ds.run_names.index(run)]
+        for pipe in cdp.hybrid_pipes:
+            # Switch to the data pipe.
+            pipes.switch(pipe)
 
             # Specific model statistics and number of instances functions.
-            model_statistics = self.relax.specific_setup.setup('model_stats', function_type)
+            model_statistics = setup.get_specific_fn('model_stats', pipes.get_type(pipe))
 
             # Loop over the instances.
-            for i in xrange(num):
-                # Get the statistics.
-                k, n, chi2 = model_statistics(run, instance=i, global_stats=global_stats)
+            #for i in xrange(num):
+            # Get the statistics.
+            k, n, chi2 = model_statistics(model_info=model_info, spin_id=spin_id, global_stats=global_stats)
 
-                # Bad stats.
-                if k == None or n == None or chi2 == None:
-                    continue
+            # Bad stats.
+            if k == None or n == None or chi2 == None:
+                continue
 
-                # Sum the stats.
-                k_total = k_total + k
-                n_total = n_total + n
-                chi2_total = chi2_total + chi2
+            # Sum the stats.
+            k_total = k_total + k
+            n_total = n_total + n
+            chi2_total = chi2_total + chi2
 
         # Return the totals.
         return k_total, n_total, chi2_total
 
 
-    def num_instances(self, run=None):
-        """Function for returning the number of instances, which for hybrids is always 1."""
+    def num_instances(self):
+        """Return the number of instances, which for hybrids is always 1.
+
+        @return:    The number of instances.
+        @rtype:     int
+        """
 
         return 1
 
 
-    def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):
+    def skip_function(self, model_index=None):
         """Dummy function."""
 
         return
