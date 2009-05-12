@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,6 +31,7 @@ import sys
 import help
 from generic_fns import pipes
 from relax_errors import RelaxListStrError, RelaxNoneListError, RelaxNoneStrError, RelaxStrError
+from specific_fns.setup import hybrid_obj
 
 
 class Pipe:
@@ -251,7 +252,7 @@ class Pipe:
                     raise RelaxListStrError, ('data pipes', pipes)
 
         # Execute the functional code.
-        self.__relax__.specific.hybrid.hybridise(hybrid=hybrid, pipes=pipes)
+        hybrid_obj.hybridise(hybrid=hybrid, pipes=pipes)
 
 
     def list(self):
