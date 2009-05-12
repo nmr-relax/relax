@@ -252,7 +252,7 @@ class Pipe:
                     raise RelaxListStrError, ('data pipes', pipes)
 
         # Execute the functional code.
-        hybrid_obj.hybridise(hybrid=hybrid, pipes=pipes)
+        hybrid_obj.hybridise(hybrid=hybrid, pipe_list=pipes)
 
 
     def list(self):
