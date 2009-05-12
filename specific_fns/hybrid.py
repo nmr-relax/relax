@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,6 +23,8 @@
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns.sequence import compare_sequence
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 
 
@@ -49,42 +51,43 @@ class Hybrid:
         ds.hybrid_pipes[new_run] = ds.hybrid_pipes[old_run]
 
 
-    def hybridise(self, hybrid=None, runs=None):
-        """Function for creating the hybrid run."""
+    def hybridise(self, hybrid=None, pipe_list=None):
+        """Create the hybrid data pipe.
 
-        # Test if the hybrid run already exists.
-        if hybrid in ds.run_names:
+        @keyword hybrid:    The name of the new hybrid data pipe.
+        @type hybrid:       str
+        @keyword pipe_list: The list of data pipes that the hybrid is composed of.
+        @type pipe_list:    list of str
+        """
+
+        # Test if the hybrid data pipe already exists.
+        if hybrid in pipes.pipe_names():
             raise RelaxPipeError, hybrid
 
-        # Loop over the runs to be hybridised.
-        for run in runs:
-            # Test if the current pipe exists.
+        # Loop over the pipes to be hybridised.
+        for pipe in pipe_list:
+            # Switch to the data pipe.
+            pipes.switch(pipe)
+
+            # Test if the pipe exists.
             pipes.test()
 
             # Test if sequence data is loaded.
-            if not ds.res.has_key(run):
-                raise RelaxNoSequenceError, run
+            if not exists_mol_res_spin_data():
+                raise RelaxNoSequenceError
 
-        # Check the sequence.
-        for i in xrange(len(ds.res[runs[0]])):
-            # Reassign the data structure.
-            data1 = ds.res[runs[0]][i]
+        # Check that the sequence data matches in all pipes.
+        for i in range(1, len(pipe_list)):
+            compare_sequence(pipe_list[0], pipe_list[1])
 
-            # Loop over the rest of the runs.
-            for run in runs[1:]:
-                # Reassign the data structure.
-                data2 = ds.res[run][i]
+        # Create the data pipe.
+        pipes.create(pipe_name=hybrid, pipe_type='hybrid')
 
-                # Test if the sequence is the same.
-                if data1.name != data2.name or data1.num != data2.num:
-                    raise RelaxError, "The residues '" + data1.name + " " + `data1.num` + "' of the run " + `runs[0]` + " and '" + data2.name + " " + `data2.num` + "' of the run " + `run` + " are not the same."
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
 
-        # Add the run and type to the runs list.
-        ds.run_names.append(hybrid)
-        ds.run_types.append('hybrid')
-
-        # Create the data structure of the runs which form the hybrid.
-        ds.hybrid_pipes[hybrid] = runs
+        # Store the pipe list forming the hybrid.
+        cdp.hybrid_pipes = pipe_list
 
 
     def model_statistics(self, run=None, instance=None, global_stats=None):
