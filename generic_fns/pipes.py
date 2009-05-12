@@ -71,6 +71,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     @keyword pipe_type: The new data pipe type which can be one of the following:
         'ct':  Consistency testing,
         'jw':  Reduced spectral density mapping,
+        'hybrid':  The hybridised data pipe.
         'mf':  Model-free analysis,
         'N-state':  N-state model of domain dynamics,
         'noe':  Steady state NOE calculation,
@@ -84,7 +85,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     """
 
     # List of valid data pipe types.
-    valid = ['ct', 'jw', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
+    valid = ['ct', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
 
     # Test if pipe_type is valid.
     if not pipe_type in valid:
