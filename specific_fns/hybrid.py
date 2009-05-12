@@ -33,22 +33,29 @@ class Hybrid:
         """Class containing function specific to hybrid models."""
 
 
-    def duplicate_data(self, new_run=None, old_run=None, instance=None):
-        """Function for duplicating data."""
+    def duplicate_data(self, pipe_from=None, pipe_to=None):
+        """Duplicate the data specific to a single hybrid data pipe.
 
-        # Test that the data pipes exist.
-        pipes.test(new_run)
-        pipes.test(old_run)
+        @keyword pipe_from:     The data pipe to copy the data from.
+        @type pipe_from:        str
+        @keyword pipe_to:       The data pipe to copy the data to.
+        @type pipe_to:          str
+        """
 
-        # Test that the new run has no sequence loaded.
-        if ds.res.has_key(new_run):
-            raise RelaxSequenceError, new_run
+        # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
+        if not pipes.has_pipe(pipe_to):
+            pipes.create(pipe_to, pipe_type='hybrid', switch=False)
 
-        # Reset the new run type to hybrid!
-        ds.run_types[ds.run_names.index(new_run)] = 'hybrid'
+        # Get the data pipes.
+        dp_from = pipes.get_pipe(pipe_from)
+        dp_to = pipes.get_pipe(pipe_to)
 
-        # Duplicate the hybrid run data structure.
-        ds.hybrid_pipes[new_run] = ds.hybrid_pipes[old_run]
+        # Test that the target data pipe has no sequence loaded.
+        if not exists_mol_res_spin_data(pipe_to):
+            raise RelaxSequenceError, pipe_to
+
+        # Duplicate the hybrid pipe list data structure.
+        dp_to.hybrid_pipes = dp_from.hybrid_pipes
 
 
     def hybridise(self, hybrid=None, pipe_list=None):
