@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2008 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2008-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,9 +21,10 @@
 ###############################################################################
 
 # Python module imports.
+from math import acos, cos, pi, sin
 from numpy import cross, dot
 from numpy.linalg import norm
-from math import acos, cos, sin
+from random import uniform
 
 
 def R_2vect(R, vector_orig, vector_fin):
@@ -201,3 +202,42 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
     matrix[0,2] = -sin_b * cos_g
     matrix[1,2] =  sin_b * sin_g
     matrix[2,2] =  cos_b
+
+
+def random_rot_axis(axis):
+    """Generate a random rotation axis.
+
+    Uniform point sampling on a unit sphere is used to generate a random axis orientation.
+
+    @param axis:    The 3D rotation axis.
+    @type axis:     numpy array, len 3
+    """
+
+    # Random azimuthal angle.
+    u = uniform(0, 1)
+    theta = 2*pi*u
+
+    # Random polar angle.
+    v = uniform(0, 1)
+    phi = acos(2.0*v - 1)
+
+    # Random rotation axis.
+    axis[0] = cos(theta) * sin(phi)
+    axis[1] = sin(theta) * sin(phi)
+    axis[2] = cos(phi)
+
+
+def random_R(matrix, angle=0.0):
+    """Generate a random rotation matrix of fixed angle via the axis-angle notation.
+
+    Uniform point sampling on a unit sphere is used to generate a random axis orientation.  This,
+    together with the fixed rotation angle, is used to generate the random rotation matrix.
+
+    """
+
+    # Random rotation axis.
+    rot_axis = zeros(3, float64)
+    random_rot_axis(rot_axis)
+
+    # Generate the rotation matrix.
+    R_axis_angle(matrix, rot_axis, angle)
