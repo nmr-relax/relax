@@ -1102,7 +1102,7 @@ class Mf(TestCase):
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
         self.assertAlmostEqual(spin.s2, s2, msg=mesg)
-        self.assertAlmostEqual(spin.te / 1e-12, te, msg=mesg)
+        self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
         self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
         self.assertEqual(spin.iter, iter, msg=mesg)
