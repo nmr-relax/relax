@@ -46,21 +46,18 @@ def quaternion_to_R(quat, matrix):
     q34 = quat[2] * quat[3]
 
     # The diagonal.
-    matrix[0, 0] = (quat[0]**2 + q4_2) - 0.5
-    matrix[1, 1] = (quat[1]**2 + q4_2) - 0.5
-    matrix[2, 2] = (quat[2]**2 + q4_2) - 0.5
+    matrix[0, 0] = 2.0 * (quat[0]**2 + q4_2) - 1.0
+    matrix[1, 1] = 2.0 * (quat[1]**2 + q4_2) - 1.0
+    matrix[2, 2] = 2.0 * (quat[2]**2 + q4_2) - 1.0
 
     # Off-diagonal.
-    matrix[0, 1] = q12 - q34
-    matrix[0, 2] = q13 + q24
-    matrix[1, 2] = q23 - q14
+    matrix[0, 1] = 2.0 * (q12 - q34)
+    matrix[0, 2] = 2.0 * (q13 + q24)
+    matrix[1, 2] = 2.0 * (q23 - q14)
 
-    matrix[1, 0] = q12 + q34
-    matrix[2, 0] = q13 - q24
-    matrix[2, 1] = q23 + q14
-
-    # Double.
-    matrix = 2.0 * matrix
+    matrix[1, 0] = 2.0 * (q12 + q34)
+    matrix[2, 0] = 2.0 * (q13 - q24)
+    matrix[2, 1] = 2.0 * (q23 + q14)
 
 
 def R_2vect(R, vector_orig, vector_fin):
