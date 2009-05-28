@@ -204,6 +204,21 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
     matrix[2,2] =  cos_b
 
 
+def R_random_axis(matrix, angle=0.0):
+    """Generate a random rotation matrix of fixed angle via the axis-angle notation.
+
+    Uniform point sampling on a unit sphere is used to generate a random axis orientation.  This,
+    together with the fixed rotation angle, is used to generate the random rotation matrix.
+    """
+
+    # Random rotation axis.
+    rot_axis = zeros(3, float64)
+    random_rot_axis(rot_axis)
+
+    # Generate the rotation matrix.
+    R_axis_angle(matrix, rot_axis, angle)
+
+
 def random_rot_axis(axis):
     """Generate a random rotation axis.
 
@@ -225,19 +240,3 @@ def random_rot_axis(axis):
     axis[0] = cos(theta) * sin(phi)
     axis[1] = sin(theta) * sin(phi)
     axis[2] = cos(phi)
-
-
-def random_R(matrix, angle=0.0):
-    """Generate a random rotation matrix of fixed angle via the axis-angle notation.
-
-    Uniform point sampling on a unit sphere is used to generate a random axis orientation.  This,
-    together with the fixed rotation angle, is used to generate the random rotation matrix.
-
-    """
-
-    # Random rotation axis.
-    rot_axis = zeros(3, float64)
-    random_rot_axis(rot_axis)
-
-    # Generate the rotation matrix.
-    R_axis_angle(matrix, rot_axis, angle)
