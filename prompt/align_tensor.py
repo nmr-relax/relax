@@ -234,14 +234,10 @@ class Align_tensor:
 
         To set a rhombic tensor to the run 'CaM', type one of:
 
-        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04),
-                                 param_types=1)
-        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04),
-                                 param_types=1)
-        relax> align_tensor.init(params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
+        relax> align_tensor.init('super media', (-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
                                  2.8599e-04), param_types=1)
-        relax> align_tensor.init(params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
-                                 2.8599e-04), param_types=1)
+        relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04,
+                                 -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)
         """
 
         # Function intro text.
