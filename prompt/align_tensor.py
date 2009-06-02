@@ -365,13 +365,13 @@ class Align_tensor:
         parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.
         The matrix is:
 
-        | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
-        | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
-        | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
-        |  .     .     .    .    .   |
-        |  .     .     .    .    .   |
-        |  .     .     .    .    .   |
-        | SzzN SxxyyN SxyN SxzN SyzN |
+            | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
+            | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
+            | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
+            |  .     .     .    .    .   |
+            |  .     .     .    .    .   |
+            |  .     .     .    .    .   |
+            | SzzN SxxyyN SxyN SxzN SyzN |
 
         The relationships between the geometric and unitary basis sets are:
 
