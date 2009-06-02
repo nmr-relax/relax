@@ -234,14 +234,10 @@ class Align_tensor:
 
         To set a rhombic tensor to the run 'CaM', type one of:
 
-        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04),
-                                 param_types=1)
-        relax> align_tensor.init((-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05, 2.8599e-04),
-                                 param_types=1)
-        relax> align_tensor.init(params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
+        relax> align_tensor.init('super media', (-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
                                  2.8599e-04), param_types=1)
-        relax> align_tensor.init(params=(-8.6322e-05, -5.5786e-04, -3.1732e-05, 2.2927e-05,
-                                 2.8599e-04), param_types=1)
+        relax> align_tensor.init(tensor='super media', params=(-8.6322e-05, -5.5786e-04,
+                                 -3.1732e-05, 2.2927e-05, 2.8599e-04), param_types=1)
         """
 
         # Function intro text.
@@ -369,13 +365,13 @@ class Align_tensor:
         parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.
         The matrix is:
 
-        | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
-        | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
-        | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
-        |  .     .     .    .    .   |
-        |  .     .     .    .    .   |
-        |  .     .     .    .    .   |
-        | SzzN SxxyyN SxyN SxzN SyzN |
+            | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
+            | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
+            | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
+            |  .     .     .    .    .   |
+            |  .     .     .    .    .   |
+            |  .     .     .    .    .   |
+            | SzzN SxxyyN SxyN SxzN SyzN |
 
         The relationships between the geometric and unitary basis sets are:
 
