@@ -23,6 +23,9 @@
 # Module docstring.
 """Module containing functions related to the Frame Order theories."""
 
+# Python module imports.
+from sys import stdout
+
 
 def print_frame_order_2nd_degree(matrix, name=None):
     """Nicely print out the Frame Order matrix of the 2nd degree.
