@@ -23,4 +23,68 @@
 # Module docstring.
 """Module for the handling of Frame Order."""
 
+# Python module imports.
+from math import cos
+
+
+def populate_1st_eigenframe_iso_cone(matrix, angle):
+    """Populate the 1st degree Frame Order matrix in the eigenframe for an isotropic cone.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
+
+    @param matrix:  The Frame Order matrix, 1st degree.
+    @type matrix:   numpy 3D, rank-2 array
+    @param angle:   The cone angle.
+    @type angle:    float
+    """
+
+    # Zeros.
+    for i in range(3):
+        for j in range(3):
+            matrix[i, j] = 0.0
+
+    # The c33 element.
+    matrix[2, 2] = (cos(angle) + 1.0) / 2.0
+
+
+def populate_2nd_eigenframe_iso_cone(matrix, angle):
+    """Populate the 2nd degree Frame Order matrix in the eigenframe for an isotropic cone.
+
+    The cone axis is assumed to be parallel to the z-axis in the eigenframe.
+
+    @param matrix:  The Frame Order matrix, 2nd degree.
+    @type matrix:   numpy 9D, rank-2 array
+    @param angle:   The cone angle.
+    @type angle:    float
+    """
+
+    # Zeros.
+    for i in range(9):
+        for j in range(9):
+            matrix[i, j] = 0.0
+
+    # Trigonometric terms.
+    cos_theta = cos(angle)
+    cos2_theta = cos_theta**2
+
+    # The c11^2, c22^2, c12^2, and c21^2 elements.
+    matrix[0, 0] = (4.0 + cos_theta + cos2_theta) / 12.0
+    matrix[4, 4] = matrix[0, 0]
+    matrix[1, 1] = matrix[0, 0]
+    matrix[3, 3] = matrix[0, 0]
+
+    # The c33^2 element.
+    matrix[8, 8] = (1.0 + cos_theta + cos2_theta) / 3.0
+
+    # The c13^2, c31^2, c23^2, c32^2 elements.
+    matrix[2, 2] = (2.0 + cos_theta)*(1.0 - cos_theta) / 6.0
+    matrix[6, 6] = matrix[2, 2]
+    matrix[5, 5] = matrix[2, 2]
+    matrix[7, 7] = matrix[2, 2]
+
+    # The c11.c22 and c12.c21 elements.
+    matrix[0, 4] = matrix[4, 0] = (cos_theta + 1.0) / 4.0
+    matrix[1, 3] = matrix[3, 1] = -(cos_theta + 1.0) / 4.0
+
+
 
