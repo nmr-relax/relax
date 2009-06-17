@@ -21,6 +21,46 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for the handling of Frame Order."""
+"""Module containing functions related to the Frame Order theories."""
 
 
+def print_frame_order_2nd_degree(matrix, name=None):
+    """Nicely print out the Frame Order matrix of the 2nd degree.
+
+    @param matrix:  The 3D, rank-4 Frame Order matrix.
+    @type name:     numpy 3D, rank-4 array
+    @keyword name:  The name of the matrix.
+    @type name:     None or str
+    """
+
+    # Default name.
+    if not name:
+        name = 'Frame Order matrix, 2nd degree'
+
+    # Header and first row start.
+    stdout.write("\n%s:\n" % name)
+    stdout.write('[[')
+
+    # Loop over the rows.
+    for i in range(len(matrix)):
+        # 2nd to last row start.
+        if i != 0:
+            stdout.write(' [')
+
+        # Row end character.
+        char2 = ','
+        if i == len(matrix) - 1:
+            char2 = ']'
+
+        # Loop over the columns.
+        for j in range(len(matrix[i])):
+            # Column end character.
+            char1 = ','
+            if j == len(matrix[i]) - 1:
+                char1 = ']%s\n' % char2
+
+            # Write out the elements.
+            if matrix[i, j]:
+                stdout.write("%10.4f%s" % (matrix[i, j], char1))
+            else:
+                stdout.write("%10s%s" % (0, char1))
