@@ -60,6 +60,9 @@ class Frame_order:
             self.frame_order_1st = zeros((3, 3), float64)
             self.frame_order_2nd = zeros((9, 9), float64)
 
+            # Alias the target function.
+            self.func = self.func_iso_cone_elements
+
 
     def func_iso_cone_elements(self, params):
         """Target function for isotropic cone model optimisation using the Frame Order matrix.
