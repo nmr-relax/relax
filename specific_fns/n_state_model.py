@@ -1903,28 +1903,3 @@ class N_state_model(Common_functions):
 
                 # Set the parameter value.
                 object[index] = value[i]
-
-
-    def set_type(self, tensor=None, red=None):
-        """Set the whether the given tensor is the full or reduced tensor.
-
-        @param tensor:  The alignment tensor label.
-        @type tensor:   str
-        @param red:     The flag specifying whether the given tensor is the full or reduced tensor.
-        @type red:      bool
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Loop over the tensors.
-        match = False
-        for tensor_cont in cdp.align_tensors:
-            # Find the matching tensor and then store the tensor type.
-            if tensor_cont.name == tensor:
-                tensor_cont.red = red
-                match = True
-
-        # The tensor label doesn't exist.
-        if not match:
-            raise RelaxNoTensorError, ('alignment', tensor)
