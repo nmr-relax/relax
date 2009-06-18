@@ -36,13 +36,19 @@ from maths_fns.rotation_matrix import R_euler_zyz
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, frame_order_matrix=None):
-        """Set up the target functions for the Frame Order theories."""
+    def __init__(self, frame_order_2nd=None):
+        """Set up the target functions for the Frame Order theories.
+        
+        @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
+                                    supplied, the target functions will optimise directly to these
+                                    values.
+        @type frame_order_2nd:      None or numpy 9D, rank-2 array
+        """
 
         # Optimisation to the 2nd degree Frame Order matrix components directly.
-        if frame_order_matrix:
+        if frame_order_2nd != None:
             # Store the real matrix components.
-            self.data = data
+            self.data = frame_order_2nd
 
             # The errors.
             self.errors = ones((9, 9), float64)
@@ -62,7 +68,9 @@ class Frame_order:
         super matrix.  The Frame Order eigenframe via the alpha, beta, and gamma Euler angles, and
         the cone angle theta are the 4 parameters optimised in this model.
 
-        @param params:  The vector of parameter values.
+        @param params:  The vector of parameter values {alpha, beta, gamma, theta} where the first
+                        three are the Euler angles for the Frame Order eigenframe and theta is the
+                        isotropic cone angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
