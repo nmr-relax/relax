@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -332,6 +332,52 @@ class Align_tensor:
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
+
+
+    def reduction(self, from_tensor=None, to_tensor=None):
+        """Specify that one tensor is a reduction of another.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        from_tensor:  The full alignment tensor.
+
+        to_tensor:  The reduce alignment tensor.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation of the N-state model and Frame Order theories using alignment tensors,
+        which tensor is a reduction of which other tensor must be specified through this user
+        function.
+
+
+        Examples
+        ~~~~~~~~
+
+        To state that the alignment tensor loaded as 'chi3 C-dom' is a reduction of 'chi3 N-dom', type:
+
+        relax> align_tensor.reduction(from_tensor='chi3 N-dom', to_tensor='chi3 C-dom')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.reduction("
+            text = text + "from_tensor=" + `from_tensor`
+            text = text + ", to_tensor=" + `to_tensor` + ")"
+            print text
+
+        # From tensor argument.
+        if type(from_tensor) != str:
+            raise RelaxStrError, ('from tensor', from_tensor)
+
+        # To tensor argument.
+        if type(to_tensor) != str:
+            raise RelaxStrError, ('to tensor', to_tensor)
+
+        # Execute the functional code.
+        align_tensor.reduction(from_tensor=from_tensor, to_tensor=to_tensor)
 
 
     def svd(self, basis_set=0, tensors=None):
