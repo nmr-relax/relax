@@ -112,6 +112,7 @@ class Frame_order:
         self.full_tensors = full_tensors
         self.red_tensors = red_tensors
         self.red_errors = red_errors
+        self.red_tensors_bc = zeros(self.num_tensors, float64)
 
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
@@ -169,9 +170,12 @@ class Frame_order:
         # Generate the 2nd degree Frame Order super matrix.
         self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
 
+        # Back calculate the reduced tensors.
+        for i in range(self.num_tensors):
+            reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[i*5, i*5+5], self.red_tensors_bc[i*5, i*5+5])
+
         # Get the chi-squared value.
-        #print_frame_order_2nd_degree(self.frame_order_2nd, name=`params`)
-        val = chi2(self.red_tensors, self.red_tensors, self.red_errors)
+        val = chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
 
         # Return the chi2 value.
         return val
