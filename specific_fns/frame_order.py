@@ -66,7 +66,6 @@ class Frame_order(Common_functions):
         # Loop over the reduction list.
         for i in range(n):
             # The full tensor.
-            print 
             full_tensors[5*i + 0] = data[list[i][0]].Axx
             full_tensors[5*i + 1] = data[list[i][0]].Ayy
             full_tensors[5*i + 2] = data[list[i][0]].Axy
