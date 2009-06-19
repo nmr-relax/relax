@@ -26,7 +26,7 @@
 # Python module imports.
 from math import pi
 from minfx.generic import generic_minimise
-from numpy import array, float64
+from numpy import array, float64, ones, zeros
 
 # relax module imports.
 from float import isNaN, isInf
@@ -38,6 +38,58 @@ from specific_fns.base_class import Common_functions
 
 class Frame_order(Common_functions):
     """Class containing the specific methods of the Frame Order theories."""
+
+    def __minimise_setup_tensors(self):
+        """Set up the data structures for optimisation using alignment tensors as base data sets.
+
+        @return:    The assembled data structures for using alignment tensors as the base data for
+                    optimisation.  These include:
+                        - full_tensors, the data of the full alignment tensors.
+                        - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
+                        - red_tensor_err, the tensor errors as concatenated rank-1 5D arrays.
+        @rtype:     tuple of (list, numpy rank-1 array, numpy rank-1 array)
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Number of tensor pairs.
+        n = len(cdp.align_tensors.reduction)
+
+        # Initialise.
+        full_tensors = zeros(n*5, float64)
+        red_tensors  = zeros(n*5, float64)
+        red_tensor_err = ones((n*5), float64)
+        data = cdp.align_tensors
+        list = data.reduction
+
+        # Loop over the reduction list.
+        for i in range(n):
+            # The full tensor.
+            full_tensors[5*i + 0] = data[list[i, 0]].Axx
+            full_tensors[5*i + 1] = data[list[i, 0]].Ayy
+            full_tensors[5*i + 2] = data[list[i, 0]].Axy
+            full_tensors[5*i + 3] = data[list[i, 0]].Axz
+            full_tensors[5*i + 4] = data[list[i, 0]].Ayz
+
+            # The reduced tensor.
+            red_tensors[5*i + 0] = data[list[i, 1]].Axx
+            red_tensors[5*i + 1] = data[list[i, 1]].Ayy
+            red_tensors[5*i + 2] = data[list[i, 1]].Axy
+            red_tensors[5*i + 3] = data[list[i, 1]].Axz
+            red_tensors[5*i + 4] = data[list[i, 1]].Ayz
+
+            # The reduced tensor errors.
+            if hasattr(data[list[i, 1]], 'Axx_err'):
+                red_tensor_err[5*i + 0] = data[list[i, 1]].Axx_err
+                red_tensor_err[5*i + 1] = data[list[i, 1]].Ayy_err
+                red_tensor_err[5*i + 2] = data[list[i, 1]].Axy_err
+                red_tensor_err[5*i + 3] = data[list[i, 1]].Axz_err
+                red_tensor_err[5*i + 4] = data[list[i, 1]].Ayz_err
+
+        # Return the data structures.
+        return full_tensors, red_tensor_elem, red_tensor_err
+
 
     def __update_model(self):
         """Update the model parameters as necessary."""
@@ -231,8 +283,11 @@ class Frame_order(Common_functions):
             # The initial parameter vector (the Euler angles and the cone angle).
             param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta], float64)
 
+            # Get the data structures for optimisation using the tensors as base data sets.
+            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+
             # Set up the optimisation function.
-            target = frame_order_models.Frame_order(model=cdp.model)
+            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_error=red_tensor_err)
 
         # Minimisation.
         results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
