@@ -117,18 +117,21 @@ class Frame_order(Common_functions):
             cdp.theta = None
 
 
-    def __unpack_opt_results(self, results):
+    def __unpack_opt_results(self, results, sim_index=None):
         """Unpack and store the Frame Order optimisation results.
 
-        @param results: The results tuple returned by the minfx generic_minimise() function.
-        @type results:  tuple
-        """
+        @param results:     The results tuple returned by the minfx generic_minimise() function.
+        @type results:      tuple
+        @param sim_index:   The index of the simulation to optimise.  This should be None for normal
+                            optimisation.
+        @type sim_index:    None or int
+         """
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
         # Disassemble the results.
-        param_vector, chi2[i], iter_count, f_count, g_count, h_count, warning = results
+        param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
         # Catch infinite chi-squared values.
         if isInf(func):
@@ -293,7 +296,7 @@ class Frame_order(Common_functions):
         results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
 
         # Unpack the results.
-        self.__unpack_opt_results(results)
+        self.__unpack_opt_results(results, sim_index)
 
 
     def select_model(self, model=None):
