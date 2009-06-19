@@ -36,7 +36,7 @@ from maths_fns.rotation_matrix import R_euler_zyz
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, frame_order_2nd=None):
+    def __init__(self, model=None, frame_order_2nd=None):
         """Set up the target functions for the Frame Order theories.
         
         @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
@@ -45,23 +45,40 @@ class Frame_order:
         @type frame_order_2nd:      None or numpy 9D, rank-2 array
         """
 
-        # Optimisation to the 2nd degree Frame Order matrix components directly.
-        if frame_order_2nd != None:
-            # Store the real matrix components.
-            self.data = frame_order_2nd
+        # Model test.
+        if not model:
+            raise RelaxError, "The type of Frame Order model must be specified."
 
-            # The errors.
-            self.errors = ones((9, 9), float64)
+        # Isotropic cone model.
+        if model == 'iso cone':
+            # Optimisation to the 2nd degree Frame Order matrix components directly.
+            if frame_order_2nd != None:
+                self.__init_iso_cone_elements(frame_order_2nd)
 
-            # The rotation.
-            self.rot = zeros((3, 3), float64)
 
-            # Initialise the Frame Order matrices.
-            self.frame_order_1st = zeros((3, 3), float64)
-            self.frame_order_2nd = zeros((9, 9), float64)
+    def __init_iso_cone_elements(self, frame_order_2nd):
+        """Set up isotropic cone optimisation against the 2nd degree Frame Order matrix elements.
+        
+        @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
+                                    supplied, the target functions will optimise directly to these
+                                    values.
+        @type frame_order_2nd:      numpy 9D, rank-2 array
+        """
 
-            # Alias the target function.
-            self.func = self.func_iso_cone_elements
+        # Store the real matrix components.
+        self.data = frame_order_2nd
+
+        # The errors.
+        self.errors = ones((9, 9), float64)
+
+        # The rotation.
+        self.rot = zeros((3, 3), float64)
+
+        # Initialise the Frame Order matrices.
+        self.frame_order_2nd = zeros((9, 9), float64)
+
+        # Alias the target function.
+        self.func = self.func_iso_cone_elements
 
 
     def func_iso_cone_elements(self, params):
