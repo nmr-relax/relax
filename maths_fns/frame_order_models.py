@@ -43,15 +43,16 @@ class Frame_order:
         @type model:                str
         @keyword init_params:       The initial parameter values.
         @type init_params:          numpy float64 array
-        @keyword full_tensors:      A list of the full alignment tensors in 5D, rank-1 form of {Sxx,
-                                    Syy, Sxy, Sxz, Syz} values.
-        @type full_tensors:         list of 5D, rank-1 arrays
+        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
+                                    alignment tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1,
+                                    Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn,
+                                    Syzn].
+        @type full_tensors:         numpy nx5D, rank-1 float64 array
         @keyword red_tensors:       An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
-                                    tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2,
-                                    Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
+                                    tensors.  The array format is the same as for full_tensors.
         @type red_tensors:          numpy nx5D, rank-1 float64 array
         @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                    tensors.  The array format is the same as for red_tensors.
+                                    tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy nx5D, rank-1 float64 array
         @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
                                     supplied, the target functions will optimise directly to these
@@ -88,25 +89,26 @@ class Frame_order:
     def __init_iso_cone(self, full_tensors, red_tensors, red_errors):
         """Set up isotropic cone optimisation against the alignment tensor data.
 
-        @keyword full_tensors:      A list of the full alignment tensors in 5D, rank-1 form of {Sxx,
-                                    Syy, Sxy, Sxz, Syz} values.
-        @type full_tensors:         list of 5D, rank-1 arrays
+        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
+                                    alignment tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1,
+                                    Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn,
+                                    Syzn].
+        @type full_tensors:         numpy nx5D, rank-1 float64 array
         @keyword red_tensors:       An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
-                                    tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2,
-                                    Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
+                                    tensors.  The array format is the same as for full_tensors.
         @type red_tensors:          numpy nx5D, rank-1 float64 array
         @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                    tensors.  The array format is the same as for red_tensors.
+                                    tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy nx5D, rank-1 float64 array
         """
 
         # Checks.
-        if red_tensors != None:
+        if red_tensors == None:
             raise RelaxError, "The reduced tensors have not been supplied."
 
         # Tensor set up.
-        self.full_tensors = array(full_tensors, float64)
-        self.num_tensors = len(self.full_tensors)
+        self.num_tensors = len(full_tensors) / 5
+        self.full_tensors = full_tensors
         self.red_tensors = red_tensors
         self.red_errors = red_errors
 
