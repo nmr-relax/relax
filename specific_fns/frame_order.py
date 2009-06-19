@@ -91,3 +91,34 @@ class Frame_order(Common_functions):
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def select_model(self, model=None):
+        """Select the Frame Order model.
+
+        @param model:   The Frame Order model.  As of yet, this can only be 'iso cone'.
+        @type model:    str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the model is already setup.
+        if hasattr(cdp, 'model'):
+            raise RelaxModelError, 'Frame Order'
+
+        # Test if the model name exists.
+        if not model in ['iso cone']:
+            raise RelaxError, "The model name " + `model` + " is invalid."
+
+        # Set the model
+        cdp.model = model
+
+        # Initialise the list of model parameters.
+        cdp.params = []
+
+        # Update the model.
+        self.__update_model()
