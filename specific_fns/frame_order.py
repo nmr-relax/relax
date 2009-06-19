@@ -32,6 +32,26 @@ from specific_fns.base_class import Common_functions
 class Frame_order(Common_functions):
     """Class containing the specific methods of the Frame Order theories."""
 
+    def __update_model(self):
+        """Update the model parameters as necessary."""
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Initialise the list of model parameters.
+        if not hasattr(cdp, 'params'):
+            cdp.params = []
+
+        # Set up the parameter arrays.
+        if not len(cdp.params):
+            # Isotropic cone parameters.
+            if cdp.model == 'iso cone':
+                cdp.params.append('alpha')
+                cdp.params.append('beta')
+                cdp.params.append('gamma')
+                cdp.params.append('theta')
+
+
     def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
         """Perform a grid search.
 
