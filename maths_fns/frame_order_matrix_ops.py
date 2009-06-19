@@ -144,7 +144,7 @@ def reduce_alignment_tensor(D, A, red_tensor):
     """
 
     # Azz.
-    Azz = -full_tensor[0] - full_tensor[1]
+    Azz = -A[0] - A[1]
 
     # The reduced tensor elements.
     red_tensor[0] = D[0,0]*A[0] + D[3,3]*A[1] + D[6,6]*Azz + 2.0*D[0,3]*A[2] + 2.0*D[0,6]*A[3] + 2.0*D[3,6]*A[4]
