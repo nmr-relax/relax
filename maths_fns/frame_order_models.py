@@ -39,6 +39,8 @@ class Frame_order:
     def __init__(self, model=None, frame_order_2nd=None):
         """Set up the target functions for the Frame Order theories.
         
+        @keyword model:             The name of the Frame Order model.
+        @type model:                str
         @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
                                     supplied, the target functions will optimise directly to these
                                     values.
