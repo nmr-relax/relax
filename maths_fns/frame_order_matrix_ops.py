@@ -25,6 +25,7 @@
 
 # Python module imports.
 from math import cos
+from numpy import dot, transpose
 
 # relax module imports.
 from maths_fns.kronecker_product import kron_prod, transpose_14
