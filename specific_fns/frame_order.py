@@ -45,14 +45,20 @@ class Frame_order(Common_functions):
         if not hasattr(cdp, 'params'):
             cdp.params = []
 
-        # Set up the parameter arrays.
-        if not len(cdp.params):
-            # Isotropic cone parameters.
-            if cdp.model == 'iso cone':
+        # Isotropic cone model.
+        if cdp.model == 'iso cone':
+            # Set up the parameter arrays.
+            if not len(cdp.params):
                 cdp.params.append('alpha')
                 cdp.params.append('beta')
                 cdp.params.append('gamma')
                 cdp.params.append('theta')
+
+            # Initialise the Euler angle and cone angle values.
+            cdp.alpha = None
+            cdp.beta = None
+            cdp.gamma = None
+            cdp.theta = None
 
 
     def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
