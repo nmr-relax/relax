@@ -75,7 +75,7 @@ class Frame_order:
 
             # Tensor optimisation.
             elif full_tensors != None:
-                self.__init_iso_cone_elements(full_tensors, red_tensors, red_errors)
+                self.__init_iso_cone(full_tensors, red_tensors, red_errors)
 
             # Optimisation to the 2nd degree Frame Order matrix components directly.
             elif frame_order_2nd != None:
