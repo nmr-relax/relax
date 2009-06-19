@@ -131,4 +131,24 @@ def populate_2nd_eigenframe_iso_cone(matrix, angle):
     matrix[1, 3] = matrix[3, 1] = -(cos_theta + 1.0) / 4.0
 
 
+def reduce_alignment_tensor(D, A, red_tensor)
+    """Calculate the reduction in the alignment tensor caused by the Frame Order matrix.
 
+    @param D:           The Frame Order matrix, 2nd degree to be populated.
+    @type D:            numpy 9D, rank-2 array
+    @param A:           The full alignment tensor in {Axx, Ayy, Axy, Axz, Ayz} notation.
+    @type A:            numpy 5D, rank-1 array
+    @param red_tensor:  The structure in {Axx, Ayy, Axy, Axz, Ayz} notation to place the reduced
+                        alignment tensor.
+    @type red_tensor:   numpy 5D, rank-1 array
+    """
+
+    # Azz.
+    Azz = -full_tensor[0] - full_tensor[1]
+
+    # The reduced tensor elements.
+    red_tensor[0] = D[0,0]*A[0] + D[3,3]*A[1] + D[6,6]*Azz + 2.0*D[0,3]*A[2] + 2.0*D[0,6]*A[3] + 2.0*D[3,6]*A[4]
+    red_tensor[0] = D[1,1]*A[0] + D[4,4]*A[1] + D[7,7]*Azz + 2.0*D[1,4]*A[2] + 2.0*D[1,7]*A[3] + 2.0*D[4,7]*A[4]
+    red_tensor[0] = D[0,1]*A[0] + D[3,4]*A[1] + D[6,7]*Azz + 2.0*D[0,4]*A[2] + 2.0*D[0,7]*A[3] + 2.0*D[3,7]*A[4]
+    red_tensor[0] = D[0,2]*A[0] + D[3,5]*A[1] + D[6,8]*Azz + 2.0*D[0,5]*A[2] + 2.0*D[0,8]*A[3] + 2.0*D[3,8]*A[4]
+    red_tensor[0] = D[1,2]*A[0] + D[4,5]*A[1] + D[7,8]*Azz + 2.0*D[1,5]*A[2] + 2.0*D[1,8]*A[3] + 2.0*D[4,8]*A[4]
