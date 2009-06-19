@@ -112,7 +112,7 @@ class Frame_order:
         self.full_tensors = full_tensors
         self.red_tensors = red_tensors
         self.red_errors = red_errors
-        self.red_tensors_bc = zeros(self.num_tensors, float64)
+        self.red_tensors_bc = zeros(self.num_tensors*5, float64)
 
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
