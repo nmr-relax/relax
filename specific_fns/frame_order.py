@@ -232,10 +232,10 @@ class Frame_order(Common_functions):
             param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta], float64)
 
             # Set up the optimisation function.
-            model = frame_order_models.Frame_order()
+            target = frame_order_models.Frame_order(model=cdp.model)
 
         # Minimisation.
-        results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=MIN_ALGOR, full_output=1, print_flag=1)
+        results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
 
         # Unpack the results.
         self.__unpack_opt_results(results)
