@@ -59,7 +59,7 @@ class Frame_order(Common_functions):
         # Initialise.
         full_tensors = zeros(n*5, float64)
         red_tensors  = zeros(n*5, float64)
-        red_err = ones(n*5, float64)
+        red_err = ones(n*5, float64) * 1e-7
         data = cdp.align_tensors
         list = data.reduction
 
