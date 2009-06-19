@@ -28,6 +28,7 @@ from copy import deepcopy
 from numpy import float64, ones, zeros
 
 # relax module imports.
+from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.chi2 import chi2
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone
 from relax_errors import RelaxError
@@ -166,9 +167,10 @@ class Frame_order:
         alpha, beta, gamma, theta = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
 
         # Get the chi-squared value.
+        #print_frame_order_2nd_degree(self.frame_order_2nd, name=`params`)
         val = chi2(self.red_tensors, self.red_tensors, self.red_errors)
 
         # Return the chi2 value.
@@ -194,7 +196,7 @@ class Frame_order:
         alpha, beta, gamma, theta = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
 
         # Make the Frame Order matrix contiguous.
         self.frame_order_2nd = self.frame_order_2nd.copy()

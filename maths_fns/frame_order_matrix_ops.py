@@ -67,6 +67,9 @@ def compile_2nd_matrix_iso_cone(matrix, R, alpha, beta, gamma, theta):
     # Perform T14 again to return back.
     matrix = transpose_14(matrix)
 
+    # Return the matrix.
+    return matrix
+
 
 def populate_1st_eigenframe_iso_cone(matrix, angle):
     """Populate the 1st degree Frame Order matrix in the eigenframe for an isotropic cone.
