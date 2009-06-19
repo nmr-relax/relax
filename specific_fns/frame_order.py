@@ -288,7 +288,7 @@ class Frame_order(Common_functions):
             full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
 
             # Set up the optimisation function.
-            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_error=red_tensor_err)
+            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err)
 
         # Minimisation.
         results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
