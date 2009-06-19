@@ -73,12 +73,16 @@ class Frame_order:
                 raise RelaxError, "Tensors and Frame Order matrices cannot be supplied together."
 
             # Tensor optimisation.
-            if full_tensors != None:
+            elif full_tensors != None:
                 self.__init_iso_cone_elements(full_tensors, red_tensors, red_errors)
 
             # Optimisation to the 2nd degree Frame Order matrix components directly.
-            if frame_order_2nd != None:
+            elif frame_order_2nd != None:
                 self.__init_iso_cone_elements(frame_order_2nd)
+
+            # Badly supplied arguments.
+            else:
+                raise RelaxError, "The arguments have been incorrectly supplied, cannot determine the optimisation mode."
 
 
     def __init_iso_cone(self, full_tensors, red_tensors, red_errors):
