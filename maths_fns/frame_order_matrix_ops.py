@@ -31,13 +31,19 @@ from maths_fns.kronecker_product import kron_prod, transpose_14
 from maths_fns.rotation_matrix import R_euler_zyz
 
 
-def compile_2nd_matrix_iso_cone(matrix, R, theta):
+def compile_2nd_matrix_iso_cone(matrix, R, alpha, beta, gamma, theta):
     """Generate the rotated 2nd degree Frame Order matrix.
 
     @param matrix:  The Frame Order matrix, 2nd degree to be populated.
     @type matrix:   numpy 9D, rank-2 array
     @param R:       The rotation matrix to be populated.
     @type R:        numpy 3D, rank-2 array
+    @param alpha:   The alpha Euler angle in radians.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in radians.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in radians.
+    @type gamma:    float
     @param theta:   The cone angle in radians.
     @type theta:    float
     """
