@@ -172,7 +172,7 @@ class Frame_order:
 
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):
-            reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[i*5, i*5+5], self.red_tensors_bc[i*5, i*5+5])
+            reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[i*5:i*5+5], self.red_tensors_bc[i*5:i*5+5])
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
