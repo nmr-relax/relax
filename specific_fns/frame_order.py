@@ -23,6 +23,9 @@
 # Module docstring.
 """Module for the specific methods of the Frame Order theories."""
 
+# Python module imports.
+from math import pi
+
 # relax module imports.
 from generic_fns import pipes
 from relax_errors import RelaxNoModelError
@@ -64,7 +67,7 @@ class Frame_order(Common_functions):
         @param inc:         The increments for each dimension of the space for the grid search.  The
                             number of elements in the array must equal to the number of parameters
                             in the model.
-        @type inc:          array of int
+        @type inc:          int or array of int
         @param constraints: If True, constraints are applied during the grid search (eliminating
                             parts of the grid).  If False, no constraints are used.
         @type constraints:  bool
@@ -82,6 +85,10 @@ class Frame_order(Common_functions):
 
         # The number of parameters.
         n = len(cdp.params)
+
+        # If inc is an int, convert it into an array of that value.
+        if type(inc) == int:
+            inc = [inc]*n
 
         # Initialise the grid_ops structure.
         grid_ops = []
