@@ -169,7 +169,7 @@ class Frame_order:
         compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
 
         # Get the chi-squared value.
-        val = chi2(self.data, self.frame_order_2nd, self.errors)
+        val = chi2(self.red_tensors, self.red_tensors, self.red_errors)
 
         # Return the chi2 value.
         return val
