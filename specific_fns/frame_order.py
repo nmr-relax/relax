@@ -59,36 +59,37 @@ class Frame_order(Common_functions):
         # Initialise.
         full_tensors = zeros(n*5, float64)
         red_tensors  = zeros(n*5, float64)
-        red_tensor_err = ones((n*5), float64)
+        red_tensor_err = ones(n*5, float64)
         data = cdp.align_tensors
         list = data.reduction
 
         # Loop over the reduction list.
         for i in range(n):
             # The full tensor.
-            full_tensors[5*i + 0] = data[list[i, 0]].Axx
-            full_tensors[5*i + 1] = data[list[i, 0]].Ayy
-            full_tensors[5*i + 2] = data[list[i, 0]].Axy
-            full_tensors[5*i + 3] = data[list[i, 0]].Axz
-            full_tensors[5*i + 4] = data[list[i, 0]].Ayz
+            print 
+            full_tensors[5*i + 0] = data[list[i][0]].Axx
+            full_tensors[5*i + 1] = data[list[i][0]].Ayy
+            full_tensors[5*i + 2] = data[list[i][0]].Axy
+            full_tensors[5*i + 3] = data[list[i][0]].Axz
+            full_tensors[5*i + 4] = data[list[i][0]].Ayz
 
             # The reduced tensor.
-            red_tensors[5*i + 0] = data[list[i, 1]].Axx
-            red_tensors[5*i + 1] = data[list[i, 1]].Ayy
-            red_tensors[5*i + 2] = data[list[i, 1]].Axy
-            red_tensors[5*i + 3] = data[list[i, 1]].Axz
-            red_tensors[5*i + 4] = data[list[i, 1]].Ayz
+            red_tensors[5*i + 0] = data[list[i][1]].Axx
+            red_tensors[5*i + 1] = data[list[i][1]].Ayy
+            red_tensors[5*i + 2] = data[list[i][1]].Axy
+            red_tensors[5*i + 3] = data[list[i][1]].Axz
+            red_tensors[5*i + 4] = data[list[i][1]].Ayz
 
             # The reduced tensor errors.
-            if hasattr(data[list[i, 1]], 'Axx_err'):
-                red_tensor_err[5*i + 0] = data[list[i, 1]].Axx_err
-                red_tensor_err[5*i + 1] = data[list[i, 1]].Ayy_err
-                red_tensor_err[5*i + 2] = data[list[i, 1]].Axy_err
-                red_tensor_err[5*i + 3] = data[list[i, 1]].Axz_err
-                red_tensor_err[5*i + 4] = data[list[i, 1]].Ayz_err
+            if hasattr(data[list[i][1]], 'Axx_err'):
+                red_tensor_err[5*i + 0] = data[list[i][1]].Axx_err
+                red_tensor_err[5*i + 1] = data[list[i][1]].Ayy_err
+                red_tensor_err[5*i + 2] = data[list[i][1]].Axy_err
+                red_tensor_err[5*i + 3] = data[list[i][1]].Axz_err
+                red_tensor_err[5*i + 4] = data[list[i][1]].Ayz_err
 
         # Return the data structures.
-        return full_tensors, red_tensor_elem, red_tensor_err
+        return full_tensors, red_tensors, red_tensor_err
 
 
     def __update_model(self):
