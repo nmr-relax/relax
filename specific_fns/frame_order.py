@@ -44,10 +44,10 @@ class Frame_order(Common_functions):
 
         @return:    The assembled data structures for using alignment tensors as the base data for
                     optimisation.  These include:
-                        - full_tensors, the data of the full alignment tensors.
-                        - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
-                        - red_tensor_err, the tensor errors as concatenated rank-1 5D arrays.
-        @rtype:     tuple of (list, numpy rank-1 array, numpy rank-1 array)
+                        - full_tensors, the full tensors as concatenated 5D, rank-1 arrays.
+                        - red_tensors, the reduced tensors as concatenated 5D, rank-1 arrays.
+                        - red_err, the reduced tensor errors as concatenated 5D, rank-1 arrays.
+        @rtype:     tuple of 3 numpy nx5D, rank-1 arrays
         """
 
         # Alias the current data pipe.
@@ -59,7 +59,7 @@ class Frame_order(Common_functions):
         # Initialise.
         full_tensors = zeros(n*5, float64)
         red_tensors  = zeros(n*5, float64)
-        red_tensor_err = ones(n*5, float64)
+        red_err = ones(n*5, float64)
         data = cdp.align_tensors
         list = data.reduction
 
@@ -81,14 +81,14 @@ class Frame_order(Common_functions):
 
             # The reduced tensor errors.
             if hasattr(data[list[i][1]], 'Axx_err'):
-                red_tensor_err[5*i + 0] = data[list[i][1]].Axx_err
-                red_tensor_err[5*i + 1] = data[list[i][1]].Ayy_err
-                red_tensor_err[5*i + 2] = data[list[i][1]].Axy_err
-                red_tensor_err[5*i + 3] = data[list[i][1]].Axz_err
-                red_tensor_err[5*i + 4] = data[list[i][1]].Ayz_err
+                red_err[5*i + 0] = data[list[i][1]].Axx_err
+                red_err[5*i + 1] = data[list[i][1]].Ayy_err
+                red_err[5*i + 2] = data[list[i][1]].Axy_err
+                red_err[5*i + 3] = data[list[i][1]].Axz_err
+                red_err[5*i + 4] = data[list[i][1]].Ayz_err
 
         # Return the data structures.
-        return full_tensors, red_tensors, red_tensor_err
+        return full_tensors, red_tensors, red_err
 
 
     def __update_model(self):
