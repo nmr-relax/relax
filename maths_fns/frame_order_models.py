@@ -31,6 +31,7 @@ from maths_fns.chi2 import chi2
 from maths_fns.frame_order_matrix_ops import populate_2nd_eigenframe_iso_cone
 from maths_fns.kronecker_product import kron_prod, transpose_14
 from maths_fns.rotation_matrix import R_euler_zyz
+from relax_errors import RelaxError
 
 
 class Frame_order:
