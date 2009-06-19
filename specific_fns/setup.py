@@ -298,6 +298,10 @@ def get_string(function_type):
     if function_type == 'ct':
         return "consistency testing"
 
+    # The Frame Order theories.
+    if function_type == 'frame order':
+        return "Frame Order theories"
+
     # NOE calculation.
     if function_type == 'noe':
         return "NOE calculations"
