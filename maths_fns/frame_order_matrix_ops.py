@@ -131,7 +131,7 @@ def populate_2nd_eigenframe_iso_cone(matrix, angle):
     matrix[1, 3] = matrix[3, 1] = -(cos_theta + 1.0) / 4.0
 
 
-def reduce_alignment_tensor(D, A, red_tensor)
+def reduce_alignment_tensor(D, A, red_tensor):
     """Calculate the reduction in the alignment tensor caused by the Frame Order matrix.
 
     @param D:           The Frame Order matrix, 2nd degree to be populated.
