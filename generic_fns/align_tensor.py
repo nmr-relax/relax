@@ -834,14 +834,21 @@ def reduction(from_tensor=None, to_tensor=None):
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
-    # Test the tensor names.
+    # Tensor information.
     match_from = False
     match_to = False
+    i = 0
     for tensor_cont in cdp.align_tensors:
+        # Test the tensor names.
         if tensor_cont.name == from_tensor:
             match_from = True
+            index_from = i
         if tensor_cont.name == to_tensor:
             match_to = True
+            index_to = i
+
+        # Increment.
+        i = i + 1
 
     # No match.
     if not match_from:
@@ -852,7 +859,7 @@ def reduction(from_tensor=None, to_tensor=None):
     # Store.
     if not hasattr(cdp.align_tensors, 'reduction'):
         cdp.align_tensors.reduction = []
-    cdp.align_tensors.reduction.append([from_tensor, to_tensor])
+    cdp.align_tensors.reduction.append([index_from, index_to])
 
 
 def return_conversion_factor(param):
