@@ -111,10 +111,14 @@ class Frame_order(Common_functions):
                 cdp.params.append('theta')
 
             # Initialise the Euler angle and cone angle values.
-            cdp.alpha = None
-            cdp.beta = None
-            cdp.gamma = None
-            cdp.theta = None
+            if not hasattr(cdp, 'alpha'):
+                cdp.alpha = 0.0
+            if not hasattr(cdp, 'beta'):
+                cdp.beta = 0.0
+            if not hasattr(cdp, 'gamma'):
+                cdp.gamma = 0.0
+            if not hasattr(cdp, 'theta'):
+                cdp.theta = 0.0
 
 
     def __unpack_opt_results(self, results, sim_index=None):
