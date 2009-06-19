@@ -27,6 +27,31 @@
 from math import cos
 
 
+
+def compile_2nd_matrix_iso_cone(matrix, R_kron, theta):
+    """Generate the rotated 2nd degree Frame Order matrix.
+
+    @param matrix:  The Frame Order matrix, 2nd degree.
+    @type matrix:   numpy 9D, rank-2 array
+    @param R_kron:  The 2nd degree Kronecker product of the rotation.
+    @type R_kron:   numpy 9D, rank-2 array
+    @param theta:   The cone angle in radians.
+    @type theta:    float
+    """
+
+    # Populate the Frame Order matrix in the eigenframe.
+    populate_2nd_eigenframe_iso_cone(matrix, theta)
+
+    # Perform the T14 transpose to obtain the Kronecker product matrix!
+    matrix = transpose_14(matrix)
+
+    # Rotate.
+    matrix = dot(R_kron, dot(matrix, transpose(R_kron)))
+
+    # Perform T14 again to return back.
+    matrix = transpose_14(matrix)
+
+
 def populate_1st_eigenframe_iso_cone(matrix, angle):
     """Populate the 1st degree Frame Order matrix in the eigenframe for an isotropic cone.
 
