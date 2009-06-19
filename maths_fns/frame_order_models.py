@@ -30,7 +30,7 @@ from numpy import float64, ones, zeros
 # relax module imports.
 from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.chi2 import chi2
-from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone
+from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, reduce_alignment_tensor
 from relax_errors import RelaxError
 
 
