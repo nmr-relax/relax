@@ -174,11 +174,8 @@ class Frame_order:
         for i in range(self.num_tensors):
             reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[i*5, i*5+5], self.red_tensors_bc[i*5, i*5+5])
 
-        # Get the chi-squared value.
-        val = chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
-
-        # Return the chi2 value.
-        return val
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
 
 
     def func_iso_cone_elements(self, params):
