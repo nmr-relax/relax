@@ -425,23 +425,23 @@ def get_tensor_object(tensor, pipe=None):
     return data
 
 
-def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=0):
+def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=False):
     """Function for initialising the alignment tensor.
 
-    @param tensor:          The alignment tensor identification string.
+    @keyword tensor:        The alignment tensor identification string.
     @type tensor:           str
-    @param params:          The alignment tensor parameters.
+    @keyword params:        The alignment tensor parameters.
     @type params:           float
-    @param scale:           The alignment tensor eigenvalue scaling value.
+    @keyword scale:         The alignment tensor eigenvalue scaling value.
     @type scale:            float
-    @param angle_units:     The units for the angle parameters (either 'deg' or 'rad').
+    @keyword angle_units:   The units for the angle parameters (either 'deg' or 'rad').
     @type angle_units:      str
-    @param param_types:     The type of parameters supplied.  The flag values correspond to, 0:
+    @keyword param_types:   The type of parameters supplied.  The flag values correspond to, 0:
                             {Axx, Ayy, Axy, Axz, Ayz}, and 1: {Azz, Axx-yy, Axy, Axz, Ayz}.
     @type param_types:      int
-    @param errors:          A flag which determines if the alignment tensor data or its errors are
+    @keyword errors:        A flag which determines if the alignment tensor data or its errors are
                             being input.
-    @type errors:           bin
+    @type errors:           bool
     """
 
     # Test if the current data pipe exists.
@@ -451,7 +451,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     cdp = pipes.get_pipe()
 
     # Test if alignment tensor data already exists.
-    if align_data_exists(tensor):
+    if not errors and align_data_exists(tensor):
         raise RelaxTensorError, 'alignment'
 
     # Check the validity of the angle_units argument.
@@ -477,7 +477,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Syz = Syz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'])
+        set(tensor=cdp.align_tensors[-1], value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
 
     # {Szz, Sxx-yy, Sxy, Sxz, Syz}.
     elif param_types == 1:
@@ -1081,7 +1081,7 @@ def return_units(param):
         return 'deg'
 
 
-def set(tensor=None, value=None, param=None):
+def set(tensor=None, value=None, param=None, errors=False):
     """Set the tensor.
 
     @keyword tensor:    The alignment tensor object.
@@ -1090,6 +1090,9 @@ def set(tensor=None, value=None, param=None):
     @type value:        list of float
     @keyword param:     The list of parameter names.
     @type param:        list of str
+    @keyword errors:    A flag which determines if the alignment tensor data or its errors are being
+                        input.
+    @type errors:       bool
     """
 
     # Alias the current data pipe.
@@ -1217,11 +1220,18 @@ def set(tensor=None, value=None, param=None):
             Syz = geo_values[geo_params.index('Syz')]
 
             # Set the internal parameter values.
-            tensor.Axx = 2.0/3.0 * Sxx
-            tensor.Ayy = 2.0/3.0 * Syy
-            tensor.Axy = 2.0/3.0 * Sxy
-            tensor.Axz = 2.0/3.0 * Sxz
-            tensor.Ayz = 2.0/3.0 * Syz
+            if errors:
+                tensor.Axx_err = 2.0/3.0 * Sxx
+                tensor.Ayy_err = 2.0/3.0 * Syy
+                tensor.Axy_err = 2.0/3.0 * Sxy
+                tensor.Axz_err = 2.0/3.0 * Sxz
+                tensor.Ayz_err = 2.0/3.0 * Syz
+            else:
+                tensor.Axx = 2.0/3.0 * Sxx
+                tensor.Ayy = 2.0/3.0 * Syy
+                tensor.Axy = 2.0/3.0 * Sxy
+                tensor.Axz = 2.0/3.0 * Sxz
+                tensor.Ayz = 2.0/3.0 * Syz
 
         # The geometric parameter set {Szz, Sxxyy, Sxy, Sxz, Syz}.
         elif geo_params.count('Szz') == 1 and geo_params.count('Sxxyy') == 1 and geo_params.count('Sxy') == 1 and geo_params.count('Sxz') == 1 and geo_params.count('Syz') == 1:
@@ -1233,11 +1243,18 @@ def set(tensor=None, value=None, param=None):
             Syz = geo_values[geo_params.index('Syz')]
 
             # Set the internal parameter values.
-            tensor.Axx = 2.0/3.0 * -0.5*(Szz-Sxxyy)
-            tensor.Ayy = 2.0/3.0 * -0.5*(Szz+Sxxyy)
-            tensor.Axy = 2.0/3.0 * Sxy
-            tensor.Axz = 2.0/3.0 * Sxz
-            tensor.Ayz = 2.0/3.0 * Syz
+            if errors:
+                tensor.Axx_err = 2.0/3.0 * -0.5*(Szz-Sxxyy)
+                tensor.Ayy_err = 2.0/3.0 * -0.5*(Szz+Sxxyy)
+                tensor.Axy_err = 2.0/3.0 * Sxy
+                tensor.Axz_err = 2.0/3.0 * Sxz
+                tensor.Ayz_err = 2.0/3.0 * Syz
+            else:
+                tensor.Axx = 2.0/3.0 * -0.5*(Szz-Sxxyy)
+                tensor.Ayy = 2.0/3.0 * -0.5*(Szz+Sxxyy)
+                tensor.Axy = 2.0/3.0 * Sxy
+                tensor.Axz = 2.0/3.0 * Sxz
+                tensor.Ayz = 2.0/3.0 * Syz
 
         # The geometric parameter set {Axx, Ayy, Axy, Axz, Ayz}.
         elif geo_params.count('Axx') == 1 and geo_params.count('Ayy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
@@ -1249,11 +1266,18 @@ def set(tensor=None, value=None, param=None):
             Ayz = geo_values[geo_params.index('Ayz')]
 
             # Set the internal parameter values.
-            tensor.Axx = Axx
-            tensor.Ayy = Ayy
-            tensor.Axy = Axy
-            tensor.Axz = Axz
-            tensor.Ayz = Ayz
+            if errors:
+                tensor.Axx_err = Axx
+                tensor.Ayy_err = Ayy
+                tensor.Axy_err = Axy
+                tensor.Axz_err = Axz
+                tensor.Ayz_err = Ayz
+            else:
+                tensor.Axx = Axx
+                tensor.Ayy = Ayy
+                tensor.Axy = Axy
+                tensor.Axz = Axz
+                tensor.Ayz = Ayz
 
         # The geometric parameter set {Azz, Axxyy, Axy, Axz, Ayz}.
         elif geo_params.count('Azz') == 1 and geo_params.count('Axxyy') == 1 and geo_params.count('Axy') == 1 and geo_params.count('Axz') == 1 and geo_params.count('Ayz') == 1:
@@ -1265,11 +1289,18 @@ def set(tensor=None, value=None, param=None):
             Ayz = geo_values[geo_params.index('Ayz')]
 
             # Set the internal parameter values.
-            tensor.Axx = -0.5*(Azz-Axxyy)
-            tensor.Ayy = -0.5*(Azz+Axxyy)
-            tensor.Axy = Axy
-            tensor.Axz = Axz
-            tensor.Ayz = Ayz
+            if errors:
+                tensor.Axx_err = -0.5*(Azz-Axxyy)
+                tensor.Ayy_err = -0.5*(Azz+Axxyy)
+                tensor.Axy_err = Axy
+                tensor.Axz_err = Axz
+                tensor.Ayz_err = Ayz
+            else:
+                tensor.Axx = -0.5*(Azz-Axxyy)
+                tensor.Ayy = -0.5*(Azz+Axxyy)
+                tensor.Axy = Axy
+                tensor.Axz = Axz
+                tensor.Ayz = Ayz
 
         # The geometric parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
         elif geo_params.count('Pxx') == 1 and geo_params.count('Pyy') == 1 and geo_params.count('Pxy') == 1 and geo_params.count('Pxz') == 1 and geo_params.count('Pyz') == 1:
@@ -1281,11 +1312,18 @@ def set(tensor=None, value=None, param=None):
             Pyz = geo_values[geo_params.index('Pyz')]
 
             # Set the internal parameter values.
-            tensor.Axx = Pxx - 1.0/3.0
-            tensor.Ayy = Pyy - 1.0/3.0
-            tensor.Axy = Pxy
-            tensor.Axz = Pxz
-            tensor.Ayz = Pyz
+            if errors:
+                tensor.Axx_err = Pxx - 1.0/3.0
+                tensor.Ayy_err = Pyy - 1.0/3.0
+                tensor.Axy_err = Pxy
+                tensor.Axz_err = Pxz
+                tensor.Ayz_err = Pyz
+            else:
+                tensor.Axx = Pxx - 1.0/3.0
+                tensor.Ayy = Pyy - 1.0/3.0
+                tensor.Axy = Pxy
+                tensor.Axz = Pxz
+                tensor.Ayz = Pyz
 
         # The geometric parameter set {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
         elif geo_params.count('Pzz') == 1 and geo_params.count('Pxxyy') == 1 and geo_params.count('Pxy') == 1 and geo_params.count('Pxz') == 1 and geo_params.count('Pyz') == 1:
@@ -1297,11 +1335,18 @@ def set(tensor=None, value=None, param=None):
             Pyz = geo_values[geo_params.index('Pyz')]
 
             # Set the internal parameter values.
-            tensor.Axx = -0.5*(Pzz-Pxxyy) - 1.0/3.0
-            tensor.Ayy = -0.5*(Pzz+Pxxyy) - 1.0/3.0
-            tensor.Axy = Pxy
-            tensor.Axz = Pxz
-            tensor.Ayz = Pyz
+            if errors:
+                tensor.Axx_err = -0.5*(Pzz-Pxxyy) - 1.0/3.0
+                tensor.Ayy_err = -0.5*(Pzz+Pxxyy) - 1.0/3.0
+                tensor.Axy_err = Pxy
+                tensor.Axz_err = Pxz
+                tensor.Ayz_err = Pyz
+            else:
+                tensor.Axx = -0.5*(Pzz-Pxxyy) - 1.0/3.0
+                tensor.Ayy = -0.5*(Pzz+Pxxyy) - 1.0/3.0
+                tensor.Axy = Pxy
+                tensor.Axz = Pxz
+                tensor.Ayz = Pyz
 
         # Unknown parameter combination.
         else:
