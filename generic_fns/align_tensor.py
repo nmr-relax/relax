@@ -453,6 +453,8 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     # Test if alignment tensor data already exists.
     if not errors and align_data_exists(tensor):
         raise RelaxTensorError, 'alignment'
+    if errors and not align_data_exists(tensor):
+        raise RelaxNoTensorError, 'alignment'
 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
@@ -460,9 +462,16 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         raise RelaxError, "The alignment tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
 
     # Add the align_tensors object to the data pipe.
-    if not hasattr(cdp, 'align_tensors'):
-        cdp.align_tensors = AlignTensorList()
-    cdp.align_tensors.add_item(tensor)
+    if not errors:
+        # Initialise the super structure.
+        if not hasattr(cdp, 'align_tensors'):
+            cdp.align_tensors = AlignTensorList()
+
+        # Add the tensor.
+        cdp.align_tensors.add_item(tensor)
+
+    # Get the tensor.
+    tensor_obj = get_tensor_object(tensor)
 
     # {Sxx, Syy, Sxy, Sxz, Syz}.
     if param_types == 0:
@@ -477,7 +486,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Syz = Syz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
+        set(tensor=tensor_obj, value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
 
     # {Szz, Sxx-yy, Sxy, Sxz, Syz}.
     elif param_types == 1:
@@ -492,7 +501,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Syz = Syz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'])
+        set(tensor=tensor_obj, value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'])
 
     # {Axx, Ayy, Axy, Axz, Ayz}.
     elif param_types == 2:
@@ -507,7 +516,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
 
     # {Azz, Axx-yy, Axy, Axz, Ayz}.
     elif param_types == 3:
@@ -522,7 +531,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
 
     # {Axx, Ayy, Axy, Axz, Ayz}.
     elif param_types == 4:
@@ -549,7 +558,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
 
     # {Azz, Axx-yy, Axy, Axz, Ayz}.
     elif param_types == 5:
@@ -576,7 +585,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
 
     # {Pxx, Pyy, Pxy, Pxz, Pyz}.
     elif param_types == 6:
@@ -591,7 +600,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Pyz = Pyz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'])
+        set(tensor=tensor_obj, value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'])
 
     # {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
     elif param_types == 7:
@@ -606,7 +615,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Pyz = Pyz * scale
 
         # Set the parameters.
-        set(tensor=cdp.align_tensors[-1], value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'])
+        set(tensor=tensor_obj, value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'])
 
     # Unknown parameter combination.
     else:
