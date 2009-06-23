@@ -1138,23 +1138,38 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # The single parameter Sxx.
         if geo_params[0] == 'Sxx':
-            tensor.Sxx = geo_values[0]
+            if errors:
+                tensor.Sxx_err = geo_values[0]
+            else:
+                tensor.Sxx = geo_values[0]
 
         # The single parameter Syy.
         elif geo_params[0] == 'Syy':
-            tensor.Syy = geo_values[0]
+            if errors:
+                tensor.Syy_err = geo_values[0]
+            else:
+                tensor.Syy = geo_values[0]
 
         # The single parameter Sxy.
         elif geo_params[0] == 'Sxy':
-            tensor.Sxy = geo_values[0]
+            if errors:
+                tensor.Sxy_err = geo_values[0]
+            else:
+                tensor.Sxy = geo_values[0]
 
         # The single parameter Sxz.
         elif geo_params[0] == 'Sxz':
-            tensor.Sxz = geo_values[0]
+            if errors:
+                tensor.Sxz_err = geo_values[0]
+            else:
+                tensor.Sxz = geo_values[0]
 
         # The single parameter Syz.
         elif geo_params[0] == 'Syz':
-            tensor.Syz = geo_values[0]
+            if errors:
+                tensor.Syz_err = geo_values[0]
+            else:
+                tensor.Syz = geo_values[0]
 
 
         # Alignment tensor.
@@ -1162,23 +1177,38 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # The single parameter Axx.
         elif geo_params[0] == 'Axx':
-            tensor.Sxx = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Sxx_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Sxx = 3.0/2.0 * geo_values[0]
 
         # The single parameter Ayy.
         elif geo_params[0] == 'Ayy':
-            tensor.Syy = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Syy_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Syy = 3.0/2.0 * geo_values[0]
 
         # The single parameter Axy.
         elif geo_params[0] == 'Axy':
-            tensor.Sxy = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Sxy_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Sxy = 3.0/2.0 * geo_values[0]
 
         # The single parameter Axz.
         elif geo_params[0] == 'Axz':
-            tensor.Sxz = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Sxz_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Sxz = 3.0/2.0 * geo_values[0]
 
         # The single parameter Ayz.
         elif geo_params[0] == 'Ayz':
-            tensor.Syz = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Syz_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Syz = 3.0/2.0 * geo_values[0]
 
 
         # Probability tensor.
@@ -1186,23 +1216,38 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # The single parameter Pxx.
         elif geo_params[0] == 'Pxx':
-            tensor.Sxx = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+            if errors:
+                tensor.Sxx_err = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+            else:
+                tensor.Sxx = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
 
         # The single parameter Pyy.
         elif geo_params[0] == 'Pyy':
-            tensor.Syy = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+            if errors:
+                tensor.Syy_err = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
+            else:
+                tensor.Syy = 3.0/2.0 * (geo_values[0] - 1.0/3.0)
 
         # The single parameter Pxy.
         elif geo_params[0] == 'Pxy':
-            tensor.Sxy = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Sxy_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Sxy = 3.0/2.0 * geo_values[0]
 
         # The single parameter Pxz.
         elif geo_params[0] == 'Pxz':
-            tensor.Sxz = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Sxz_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Sxz = 3.0/2.0 * geo_values[0]
 
         # The single parameter Pyz.
         elif geo_params[0] == 'Pyz':
-            tensor.Syz = 3.0/2.0 * geo_values[0]
+            if errors:
+                tensor.Syz_err = 3.0/2.0 * geo_values[0]
+            else:
+                tensor.Syz = 3.0/2.0 * geo_values[0]
 
         # Cannot set the single parameter.
         else:
@@ -1365,32 +1410,53 @@ def set(tensor=None, value=None, param=None, errors=False):
     if len(orient_params) == 1:
         # The single parameter alpha.
         if orient_params[0] == 'alpha':
-            tensor.alpha = orient_values[orient_params.index('alpha')]
+            if errors:
+                tensor.alpha_err = orient_values[orient_params.index('alpha')]
+            else:
+                tensor.alpha = orient_values[orient_params.index('alpha')]
 
         # The single parameter beta.
         elif orient_params[0] == 'beta':
-            tensor.beta = orient_values[orient_params.index('beta')]
+            if errors:
+                tensor.beta_err = orient_values[orient_params.index('beta')]
+            else:
+                tensor.beta = orient_values[orient_params.index('beta')]
 
         # The single parameter gamma.
         elif orient_params[0] == 'gamma':
-            tensor.gamma = orient_values[orient_params.index('gamma')]
+            if errors:
+                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+            else:
+                tensor.gamma = orient_values[orient_params.index('gamma')]
 
     # Two orientational parameters.
     elif len(orient_params) == 2:
         # The orientational parameter set {alpha, beta}.
         if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-            tensor.alpha = orient_values[orient_params.index('alpha')]
-            tensor.beta = orient_values[orient_params.index('beta')]
+            if errors:
+                tensor.alpha_err = orient_values[orient_params.index('alpha')]
+                tensor.beta_err = orient_values[orient_params.index('beta')]
+            else:
+                tensor.alpha = orient_values[orient_params.index('alpha')]
+                tensor.beta = orient_values[orient_params.index('beta')]
 
         # The orientational parameter set {alpha, gamma}.
         if orient_params.count('alpha') == 1 and orient_params.count('gamma') == 1:
-            tensor.alpha = orient_values[orient_params.index('alpha')]
-            tensor.gamma = orient_values[orient_params.index('gamma')]
+            if errors:
+                tensor.alpha_err = orient_values[orient_params.index('alpha')]
+                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+            else:
+                tensor.alpha = orient_values[orient_params.index('alpha')]
+                tensor.gamma = orient_values[orient_params.index('gamma')]
 
         # The orientational parameter set {beta, gamma}.
         if orient_params.count('beta') == 1 and orient_params.count('gamma') == 1:
-            tensor.beta = orient_values[orient_params.index('beta')]
-            tensor.gamma = orient_values[orient_params.index('gamma')]
+            if errors:
+                tensor.beta_err = orient_values[orient_params.index('beta')]
+                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+            else:
+                tensor.beta = orient_values[orient_params.index('beta')]
+                tensor.gamma = orient_values[orient_params.index('gamma')]
 
         # Unknown parameter combination.
         else:
@@ -1400,9 +1466,14 @@ def set(tensor=None, value=None, param=None, errors=False):
     elif len(orient_params) == 3:
         # The orientational parameter set {alpha, beta, gamma}.
         if orient_params.count('alpha') == 1 and orient_params.count('beta') == 1:
-            tensor.alpha = orient_values[orient_params.index('alpha')]
-            tensor.beta = orient_values[orient_params.index('beta')]
-            tensor.gamma = orient_values[orient_params.index('gamma')]
+            if errors:
+                tensor.alpha_err = orient_values[orient_params.index('alpha')]
+                tensor.beta_err = orient_values[orient_params.index('beta')]
+                tensor.gamma_err = orient_values[orient_params.index('gamma')]
+            else:
+                tensor.alpha = orient_values[orient_params.index('alpha')]
+                tensor.beta = orient_values[orient_params.index('beta')]
+                tensor.gamma = orient_values[orient_params.index('gamma')]
 
         # Unknown parameter combination.
         else:
