@@ -501,7 +501,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Syz = Syz * scale
 
         # Set the parameters.
-        set(tensor=tensor_obj, value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'])
+        set(tensor=tensor_obj, value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
 
     # {Axx, Ayy, Axy, Axz, Ayz}.
     elif param_types == 2:
@@ -516,7 +516,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
     # {Azz, Axx-yy, Axy, Axz, Ayz}.
     elif param_types == 3:
@@ -531,7 +531,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
     # {Axx, Ayy, Axy, Axz, Ayz}.
     elif param_types == 4:
@@ -558,7 +558,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
     # {Azz, Axx-yy, Axy, Axz, Ayz}.
     elif param_types == 5:
@@ -585,7 +585,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Ayz = Ayz * scale
 
         # Set the parameters.
-        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'])
+        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
     # {Pxx, Pyy, Pxy, Pxz, Pyz}.
     elif param_types == 6:
@@ -600,7 +600,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Pyz = Pyz * scale
 
         # Set the parameters.
-        set(tensor=tensor_obj, value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'])
+        set(tensor=tensor_obj, value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'], errors=errors)
 
     # {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
     elif param_types == 7:
@@ -615,7 +615,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         Pyz = Pyz * scale
 
         # Set the parameters.
-        set(tensor=tensor_obj, value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'])
+        set(tensor=tensor_obj, value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'], errors=errors)
 
     # Unknown parameter combination.
     else:
