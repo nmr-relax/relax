@@ -24,39 +24,50 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos
-from numpy import dot, transpose
+from math import cos, sin
+from numpy import cross, dot, transpose
 
 # relax module imports.
 from maths_fns.kronecker_product import kron_prod, transpose_14
-from maths_fns.rotation_matrix import R_euler_zyz
+from maths_fns.rotation_matrix import R_axis_angle
 
 
-def compile_2nd_matrix_iso_cone(matrix, R, alpha, beta, gamma, theta):
+def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, theta_cone):
     """Generate the rotated 2nd degree Frame Order matrix.
 
-    @param matrix:  The Frame Order matrix, 2nd degree to be populated.
-    @type matrix:   numpy 9D, rank-2 array
-    @param R:       The rotation matrix to be populated.
-    @type R:        numpy 3D, rank-2 array
-    @param alpha:   The alpha Euler angle in radians.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in radians.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in radians.
-    @type gamma:    float
-    @param theta:   The cone angle in radians.
-    @type theta:    float
+    @param matrix:      The Frame Order matrix, 2nd degree to be populated.
+    @type matrix:       numpy 9D, rank-2 array
+    @param R:           The rotation matrix to be populated.
+    @type R:            numpy 3D, rank-2 array
+    @param z_axis:      The molecular frame z-axis from which the cone axis is rotated from.
+    @type z_axis:       numpy 3D, rank-1 array
+    @param cone_axis:   The storage structure for the cone axis.
+    @type cone_axis:    numpy 3D, rank-1 array
+    @param theta_axis:  The cone axis polar angle.
+    @type theta_axis:   float
+    @param phi_axis:    The cone axis azimuthal angle.
+    @type phi_axis:     float
+    @param theta_cone:  The cone angle in radians.
+    @type theta_cone:   float
     """
 
+    # Generate the cone axis from the spherical angles.
+    sin_theta = sin(theta_axis)
+    cone_axis[0] = cos(phi_axis) * sin_theta
+    cone_axis[1] = sin(phi_axis) * sin_theta
+    cone_axis[2] = cos(theta_axis)
+
+    # The axis of rotation (cross product of the z-axis and cone axis).
+    mu_rot = cross(z_axis, cone_axis)
+
     # Generate the rotation matrix.
-    R_euler_zyz(R, alpha, beta, gamma)
+    R_axis_angle(R, mu_rot, theta_cone)
 
     # The outer product of R.
     R_kron = kron_prod(R, R)
 
     # Populate the Frame Order matrix in the eigenframe.
-    populate_2nd_eigenframe_iso_cone(matrix, theta)
+    populate_2nd_eigenframe_iso_cone(matrix, theta_cone)
 
     # Perform the T14 transpose to obtain the Kronecker product matrix!
     matrix = transpose_14(matrix)
