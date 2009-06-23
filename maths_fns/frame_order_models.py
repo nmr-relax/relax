@@ -114,7 +114,8 @@ class Frame_order:
         self.red_errors = red_errors
         self.red_tensors_bc = zeros(self.num_tensors*5, float64)
 
-        # The molecular frame z-axis.
+        # The cone axis storage and molecular frame z-axis.
+        self.cone_axis = zeros(3, float64)
         self.z_axis = array([0, 0, 1], float64)
 
         # The rotation to the Frame Order eigenframe.
@@ -142,7 +143,8 @@ class Frame_order:
         # The errors.
         self.errors = ones((9, 9), float64)
 
-        # The molecular frame z-axis.
+        # The cone axis storage and molecular frame z-axis.
+        self.cone_axis = zeros(3, float64)
         self.z_axis = array([0, 0, 1], float64)
 
         # The rotation.
@@ -173,7 +175,7 @@ class Frame_order:
         theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
 
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):
@@ -202,7 +204,7 @@ class Frame_order:
         theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
 
         # Make the Frame Order matrix contiguous.
         self.frame_order_2nd = self.frame_order_2nd.copy()
