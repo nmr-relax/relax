@@ -24,9 +24,10 @@
 """Module for the specific methods of the Frame Order theories."""
 
 # Python module imports.
+from copy import deepcopy
 from math import pi
 from minfx.generic import generic_minimise
-from numpy import array, float64, ones, zeros
+from numpy import array, float64, ones, transpose, zeros
 
 # relax module imports.
 from float import isNaN, isInf
@@ -39,15 +40,76 @@ from specific_fns.base_class import Common_functions
 class Frame_order(Common_functions):
     """Class containing the specific methods of the Frame Order theories."""
 
-    def __minimise_setup_tensors(self):
+    def __minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
-        @return:    The assembled data structures for using alignment tensors as the base data for
-                    optimisation.  These include:
-                        - full_tensors, the full tensors as concatenated 5D, rank-1 arrays.
-                        - red_tensors, the reduced tensors as concatenated 5D, rank-1 arrays.
-                        - red_err, the reduced tensor errors as concatenated 5D, rank-1 arrays.
-        @rtype:     tuple of 3 numpy nx5D, rank-1 arrays
+        @keyword sim_index: The simulation index.  This should be None if normal optimisation is
+                            desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using alignment tensors as the base
+                            data for optimisation.  These include:
+                                - full_tensors, the full tensors as concatenated arrays.
+                                - red_tensors, the reduced tensors as concatenated arrays.
+                                - red_err, the reduced tensor errors as concatenated arrays.
+        @rtype:             tuple of 3 numpy nx5D, rank-1 arrays
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Initialise.
+        n = len(cdp.align_tensors.reduction)
+        full_tensors = zeros(n*5, float64)
+        red_tensors  = zeros(n*5, float64)
+        red_err = ones(n*5, float64) * 1e-5
+
+        # Loop over the full tensors.
+        for i, tensor in self.__tensor_loop(red=False):
+            # The full tensor.
+            full_tensors[5*i + 0] = tensor.Axx
+            full_tensors[5*i + 1] = tensor.Ayy
+            full_tensors[5*i + 2] = tensor.Axy
+            full_tensors[5*i + 3] = tensor.Axz
+            full_tensors[5*i + 4] = tensor.Ayz
+
+        # Loop over the reduced tensors.
+        for i, tensor in self.__tensor_loop(red=True):
+            # The reduced tensor (simulation data).
+            if sim_index != None:
+                red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
+                red_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
+                red_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
+                red_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
+                red_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
+
+            # The reduced tensor.
+            else:
+                red_tensors[5*i + 0] = tensor.Axx
+                red_tensors[5*i + 1] = tensor.Ayy
+                red_tensors[5*i + 2] = tensor.Axy
+                red_tensors[5*i + 3] = tensor.Axz
+                red_tensors[5*i + 4] = tensor.Ayz
+
+            # The reduced tensor errors.
+            if hasattr(tensor, 'Axx_err'):
+                red_err[5*i + 0] = tensor.Axx_err
+                red_err[5*i + 1] = tensor.Ayy_err
+                red_err[5*i + 2] = tensor.Axy_err
+                red_err[5*i + 3] = tensor.Axz_err
+                red_err[5*i + 4] = tensor.Ayz_err
+
+        # Return the data structures.
+        return full_tensors, red_tensors, red_err
+
+
+    def __tensor_loop(self, red=False):
+        """Generator method for looping over the full or reduced tensors.
+
+        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
+                        the full tensors are returned.
+        @type red:      bool
+        @return:        The tensor index and the tensor.
+        @rtype:         (int, AlignTensorData instance)
         """
 
         # Alias the current data pipe.
@@ -56,39 +118,19 @@ class Frame_order(Common_functions):
         # Number of tensor pairs.
         n = len(cdp.align_tensors.reduction)
 
-        # Initialise.
-        full_tensors = zeros(n*5, float64)
-        red_tensors  = zeros(n*5, float64)
-        red_err = ones(n*5, float64) * 1e-7
+        # Alias.
         data = cdp.align_tensors
         list = data.reduction
 
+        # Full or reduced index.
+        if red:
+            index = 1
+        else:
+            index = 0
+
         # Loop over the reduction list.
         for i in range(n):
-            # The full tensor.
-            full_tensors[5*i + 0] = data[list[i][0]].Axx
-            full_tensors[5*i + 1] = data[list[i][0]].Ayy
-            full_tensors[5*i + 2] = data[list[i][0]].Axy
-            full_tensors[5*i + 3] = data[list[i][0]].Axz
-            full_tensors[5*i + 4] = data[list[i][0]].Ayz
-
-            # The reduced tensor.
-            red_tensors[5*i + 0] = data[list[i][1]].Axx
-            red_tensors[5*i + 1] = data[list[i][1]].Ayy
-            red_tensors[5*i + 2] = data[list[i][1]].Axy
-            red_tensors[5*i + 3] = data[list[i][1]].Axz
-            red_tensors[5*i + 4] = data[list[i][1]].Ayz
-
-            # The reduced tensor errors.
-            if hasattr(data[list[i][1]], 'Axx_err'):
-                red_err[5*i + 0] = data[list[i][1]].Axx_err
-                red_err[5*i + 1] = data[list[i][1]].Ayy_err
-                red_err[5*i + 2] = data[list[i][1]].Axy_err
-                red_err[5*i + 3] = data[list[i][1]].Axz_err
-                red_err[5*i + 4] = data[list[i][1]].Ayz_err
-
-        # Return the data structures.
-        return full_tensors, red_tensors, red_err
+            yield i, data[list[i][index]]
 
 
     def __update_model(self):
@@ -182,6 +224,134 @@ class Frame_order(Common_functions):
                 cdp.g_count = g_count
                 cdp.h_count = h_count
                 cdp.warning = warning
+
+
+    def back_calc(self):
+        """Back-calculation of the reduced alignment tensor.
+
+        @return:                    The peak intensity for the desired relaxation time.
+        @rtype:                     float
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Isotropic cone model.
+        if cdp.model == 'iso cone':
+            # The initial parameter vector (the cone axis angles and the cone angle).
+            param_vector = array([cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+
+            # Get the data structures for optimisation using the tensors as base data sets.
+            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+
+            # Set up the optimisation function.
+            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err)
+
+            # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
+            target.func(param_vector)
+
+        # Return the reduced tensors.
+        return target.red_tensors_bc
+
+
+    def base_data_loop(self):
+        """Generator method for looping nothing.
+
+        The loop essentially consists of a single element.
+
+        @return:    Nothing.
+        @rtype:     None
+        """
+
+        yield None
+
+
+    def create_mc_data(self, index):
+        """Create the Monte Carlo data by back calculating the reduced tensor data.
+
+        @keyword index: Not used.
+        @type index:    None
+        @return:        The Monte Carlo simulation data.
+        @rtype:         list of floats
+        """
+
+        # Back calculate the tensors.
+        red_tensors_bc = self.back_calc()
+
+        # Return the data.
+        return red_tensors_bc
+
+
+    def data_names(self, set='all', error_names=False, sim_names=False):
+        """Function for returning a list of names of data structures.
+
+        Description
+        ===========
+
+        The names are as follows:
+
+            - 'params', an array of the parameter names associated with the model.
+            - 'theta_axis', the cone axis polar angle (for the isotropic cone model).
+            - 'phi_axis', the cone axis azimuthal angle (for the isotropic cone model).
+            - 'theta_cone', the isotropic cone angle.
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
+
+
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all
+                                names, to 'generic' for generic object names, 'params' for the
+                                Frame Order parameter names, or to 'min' for minimisation specific
+                                object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
+                                names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
+        """
+
+        # Initialise.
+        names = []
+
+        # Generic.
+        if set == 'all' or set == 'generic':
+            names.append('params')
+
+        # Parameters.
+        if set == 'all' or set == 'params':
+            names.append('theta_axis')
+            names.append('phi_axis')
+            names.append('theta_cone')
+
+        # Minimisation statistics.
+        if set == 'all' or set == 'min':
+            names.append('chi2')
+            names.append('iter')
+            names.append('f_count')
+            names.append('g_count')
+            names.append('h_count')
+            names.append('warning')
+
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            names.append('theta_axis_err')
+            names.append('phi_axis_err')
+            names.append('theta_cone_err')
+
+        # Parameter simulation values.
+        if sim_names and (set == 'all' or set == 'params'):
+            names.append('theta_axis_sim')
+            names.append('phi_axis_sim')
+            names.append('theta_cone_sim')
+
+        # Return the names.
+        return names
 
 
     def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
@@ -284,7 +454,7 @@ class Frame_order(Common_functions):
             param_vector = array([cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
-            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors(sim_index)
 
             # Set up the optimisation function.
             target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err)
@@ -294,6 +464,37 @@ class Frame_order(Common_functions):
 
         # Unpack the results.
         self.__unpack_opt_results(results, sim_index)
+
+
+    def model_loop(self):
+        """Dummy generator method.
+
+        In this case only a single model per spin system is assumed.  Hence the yielded data is the
+        spin container object.
+
+
+        @return:    Information about the model which for this analysis is the spin container.
+        @rtype:     SpinContainer instance
+        """
+
+        # Don't return anything, just loop once.
+        yield None
+
+
+    def return_error(self, index):
+        """Return the alignment tensor error structure.
+
+        @param index:   Not used.
+        @type index:    None
+        @return:        The array of relaxation data error values.
+        @rtype:         list of float
+        """
+
+        # Get the tensor data structures.
+        full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+
+        # Return the errors.
+        return red_tensor_err
 
 
     def select_model(self, model=None):
@@ -325,3 +526,171 @@ class Frame_order(Common_functions):
 
         # Update the model.
         self.__update_model()
+
+
+    def set_error(self, nothing, index, error):
+        """Set the parameter errors.
+
+        @param nothing: Not used.
+        @type nothing:  None
+        @param index:   The index of the parameter to set the errors for.
+        @type index:    int
+        @param error:   The error value.
+        @type error:    float
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Parameter increment counter.
+        inc = 0
+
+        # Loop over the residue specific parameters.
+        for param in self.data_names(set='params'):
+            # Return the parameter array.
+            if index == inc:
+                setattr(cdp, param + "_err", error)
+
+            # Increment.
+            inc = inc + 1
+
+
+    def set_selected_sim(self, index, select_sim):
+        """Set the simulation selection flag for the spin.
+
+        @param index:       Not used.
+        @type index:        None
+        @param select_sim:  The selection flag for the simulations.
+        @type select_sim:   bool
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Set the array.
+        cdp.select_sim = deepcopy(select_sim)
+
+
+    def sim_init_values(self):
+        """Initialise the Monte Carlo parameter values."""
+
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
+        # Get the minimisation statistic object names.
+        min_names = self.data_names(set='min')
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+
+        # Test if Monte Carlo parameter values have already been set.
+        #############################################################
+
+        # Loop over all the parameter names.
+        for object_name in param_names:
+            # Name for the simulation object.
+            sim_object_name = object_name + '_sim'
+
+            # Test if the simulation object already exists.
+            if hasattr(cdp, sim_object_name):
+                raise RelaxError, "Monte Carlo parameter values have already been set."
+
+
+        # Set the Monte Carlo parameter values.
+        #######################################
+
+        # Loop over all the data names.
+        for object_name in param_names:
+            # Name for the simulation object.
+            sim_object_name = object_name + '_sim'
+
+            # Create the simulation object.
+            setattr(cdp, sim_object_name, [])
+
+            # Get the simulation object.
+            sim_object = getattr(cdp, sim_object_name)
+
+            # Loop over the simulations.
+            for j in xrange(cdp.sim_number):
+                # Copy and append the data.
+                sim_object.append(deepcopy(getattr(cdp, object_name)))
+
+        # Loop over all the minimisation object names.
+        for object_name in min_names:
+            # Name for the simulation object.
+            sim_object_name = object_name + '_sim'
+
+            # Create the simulation object.
+            setattr(cdp, sim_object_name, [])
+
+            # Get the simulation object.
+            sim_object = getattr(cdp, sim_object_name)
+
+            # Loop over the simulations.
+            for j in xrange(cdp.sim_number):
+                # Copy and append the data.
+                sim_object.append(deepcopy(getattr(cdp, object_name)))
+
+
+    def sim_pack_data(self, index, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param index:       Not used.
+        @type index:        None
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Transpose the data.
+        sim_data = transpose(sim_data)
+
+        # Loop over the reduced tensors.
+        for i, tensor in self.__tensor_loop(red=True):
+            # Set the reduced tensor simulation data.
+            tensor.Axx_sim = sim_data[5*i + 0]
+            tensor.Ayy_sim = sim_data[5*i + 1]
+            tensor.Axy_sim = sim_data[5*i + 2]
+            tensor.Axz_sim = sim_data[5*i + 3]
+            tensor.Ayz_sim = sim_data[5*i + 4]
+
+
+    def sim_return_param(self, nothing, index):
+        """Return the array of simulation parameter values.
+
+        @param nothing:     Not used.
+        @type nothing:      None
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Parameter increment counter.
+        inc = 0
+
+        # Loop over the parameters.
+        for param in self.data_names(set='params'):
+            # Return the parameter array.
+            if index == inc:
+                return getattr(cdp, param + "_sim")
+
+            # Increment.
+            inc = inc + 1
+
+
+    def sim_return_selected(self, nothing):
+        """Return the array of selected simulation flags for the spin.
+
+        @param nothing:     Not used.
+        @type nothing:      None
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Return the array.
+        return cdp.select_sim
