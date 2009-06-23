@@ -152,12 +152,11 @@ class Frame_order:
     def func_iso_cone(self, params):
         """Target function for isotropic cone model optimisation using the alignment tensors.
 
-        This function optimises against alignment tensors.  The Frame Order eigenframe via the
-        alpha, beta, and gamma Euler angles, and the cone angle theta are the 4 parameters optimised
-        in this model.
+        This function optimises against alignment tensors.  The cone axis spherical angles theta and
+        phi and the cone angle theta are the 3 parameters optimised in this model.
 
-        @param params:  The vector of parameter values {alpha, beta, gamma, theta} where the first
-                        three are the Euler angles for the Frame Order eigenframe and theta is the
+        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two
+                        are the polar and azimuthal angles of the cone axis theta_cone is the
                         isotropic cone angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
@@ -165,10 +164,10 @@ class Frame_order:
         """
 
         # Break up the parameters.
-        alpha, beta, gamma, theta = params
+        theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, theta, phi, theta_cone)
 
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):
@@ -182,11 +181,11 @@ class Frame_order:
         """Target function for isotropic cone model optimisation using the Frame Order matrix.
 
         This function optimises by directly matching the elements of the 2nd degree Frame Order
-        super matrix.  The Frame Order eigenframe via the alpha, beta, and gamma Euler angles, and
-        the cone angle theta are the 4 parameters optimised in this model.
+        super matrix.  The cone axis spherical angles theta and phi and the cone angle theta are the
+        3 parameters optimised in this model.
 
-        @param params:  The vector of parameter values {alpha, beta, gamma, theta} where the first
-                        three are the Euler angles for the Frame Order eigenframe and theta is the
+        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two
+                        are the polar and azimuthal angles of the cone axis theta_cone is the
                         isotropic cone angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
@@ -194,10 +193,10 @@ class Frame_order:
         """
 
         # Break up the parameters.
-        alpha, beta, gamma, theta = params
+        theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, theta, phi, theta_cone)
 
         # Make the Frame Order matrix contiguous.
         self.frame_order_2nd = self.frame_order_2nd.copy()
