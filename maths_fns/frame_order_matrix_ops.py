@@ -61,7 +61,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     mu_rot = cross(z_axis, cone_axis)
 
     # Generate the rotation matrix.
-    R_axis_angle(R, mu_rot, theta_cone)
+    R_axis_angle(R, mu_rot, theta_axis)
 
     # The outer product of R.
     R_kron = kron_prod(R, R)
