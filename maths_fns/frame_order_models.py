@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import float64, ones, zeros
+from numpy import array, float64, ones, zeros
 
 # relax module imports.
 from generic_fns.frame_order import print_frame_order_2nd_degree
@@ -114,6 +114,9 @@ class Frame_order:
         self.red_errors = red_errors
         self.red_tensors_bc = zeros(self.num_tensors*5, float64)
 
+        # The molecular frame z-axis.
+        self.z_axis = array([0, 0, 1], float64)
+
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
 
@@ -138,6 +141,9 @@ class Frame_order:
 
         # The errors.
         self.errors = ones((9, 9), float64)
+
+        # The molecular frame z-axis.
+        self.z_axis = array([0, 0, 1], float64)
 
         # The rotation.
         self.rot = zeros((3, 3), float64)
