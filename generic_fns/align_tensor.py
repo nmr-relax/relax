@@ -831,44 +831,44 @@ def matrix_angles(basis_set=0, tensors=None):
         sys.stdout.write("\n")
 
 
-def reduction(from_tensor=None, to_tensor=None):
+def reduction(full_tensor=None, red_tensor=None):
     """Specify which tensor is a reduction of which other tensor.
 
-    @param from_tensor: The full alignment tensor.
-    @type from_tensor:  str
-    @param to_tensor:   The reduced alignment tensor.
-    @type to_tensor:    str
+    @param full_tensor: The full alignment tensor.
+    @type full_tensor:  str
+    @param red_tensor:  The reduced alignment tensor.
+    @type red_tensor:   str
     """
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     # Tensor information.
-    match_from = False
-    match_to = False
+    match_full = False
+    match_red = False
     i = 0
     for tensor_cont in cdp.align_tensors:
         # Test the tensor names.
-        if tensor_cont.name == from_tensor:
-            match_from = True
-            index_from = i
-        if tensor_cont.name == to_tensor:
-            match_to = True
-            index_to = i
+        if tensor_cont.name == full_tensor:
+            match_full = True
+            index_full = i
+        if tensor_cont.name == red_tensor:
+            match_red = True
+            index_red = i
 
         # Increment.
         i = i + 1
 
     # No match.
-    if not match_from:
-        raise RelaxNoTensorError, ('alignment', from_tensor)
-    if not match_to:
-        raise RelaxNoTensorError, ('alignment', to_tensor)
+    if not match_full:
+        raise RelaxNoTensorError, ('alignment', full_tensor)
+    if not match_red:
+        raise RelaxNoTensorError, ('alignment', red_tensor)
 
     # Store.
     if not hasattr(cdp.align_tensors, 'reduction'):
         cdp.align_tensors.reduction = []
-    cdp.align_tensors.reduction.append([index_from, index_to])
+    cdp.align_tensors.reduction.append([index_full, index_red])
 
 
 def return_conversion_factor(param):

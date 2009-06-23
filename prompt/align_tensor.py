@@ -334,15 +334,15 @@ class Align_tensor:
         align_tensor.matrix_angles(basis_set, tensors)
 
 
-    def reduction(self, from_tensor=None, to_tensor=None):
+    def reduction(self, full_tensor=None, red_tensor=None):
         """Specify that one tensor is a reduction of another.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        from_tensor:  The full alignment tensor.
+        full_tensor:  The full alignment tensor.
 
-        to_tensor:  The reduce alignment tensor.
+        red_tensor:  The reduce alignment tensor.
 
 
         Description
@@ -358,26 +358,26 @@ class Align_tensor:
 
         To state that the alignment tensor loaded as 'chi3 C-dom' is a reduction of 'chi3 N-dom', type:
 
-        relax> align_tensor.reduction(from_tensor='chi3 N-dom', to_tensor='chi3 C-dom')
+        relax> align_tensor.reduction(full_tensor='chi3 N-dom', red_tensor='chi3 C-dom')
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.reduction("
-            text = text + "from_tensor=" + `from_tensor`
-            text = text + ", to_tensor=" + `to_tensor` + ")"
+            text = text + "full_tensor=" + `full_tensor`
+            text = text + ", red_tensor=" + `red_tensor` + ")"
             print text
 
         # From tensor argument.
-        if type(from_tensor) != str:
-            raise RelaxStrError, ('from tensor', from_tensor)
+        if type(full_tensor) != str:
+            raise RelaxStrError, ('from tensor', full_tensor)
 
         # To tensor argument.
-        if type(to_tensor) != str:
-            raise RelaxStrError, ('to tensor', to_tensor)
+        if type(red_tensor) != str:
+            raise RelaxStrError, ('to tensor', red_tensor)
 
         # Execute the functional code.
-        align_tensor.reduction(from_tensor=from_tensor, to_tensor=to_tensor)
+        align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
 
 
     def svd(self, basis_set=0, tensors=None):
