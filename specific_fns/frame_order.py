@@ -32,12 +32,13 @@ from numpy import array, float64, ones, transpose, zeros
 # relax module imports.
 from float import isNaN, isInf
 from generic_fns import pipes
-from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cap_to_cone
+from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order_models
 from maths_fns.frame_order_matrix_ops import generate_vector
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxInfError, RelaxNaNError, RelaxNoModelError
+from relax_io import open_write_file
 from specific_fns.base_class import Common_functions
 
 
@@ -298,8 +299,11 @@ class Frame_order(Common_functions):
         generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
 
         # Cone axis from simulations.
-        cone_axis_sim = zeros((cdp.sim_number, 3), float64)
-        for i in range(cdp.sim_number):
+        num_sim = 0
+        if hasattr(cdp, 'sim_number'):
+            num_sim = cdp.sim_number
+            cone_axis_sim = zeros((num_sim, 3), float64)
+        for i in range(num_sim):
             generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
 
         # The rotation matrix (rotation from the z-axis to the cone axis).
@@ -324,14 +328,14 @@ class Frame_order(Common_functions):
 
         # Generate the cone outer edge.
         print "\nGenerating the cone outer edge."
-        cap_start_atom = mol.atom_num[-1]+1
-        cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=10, inc=inc)
+        edge_start_atom = mol.atom_num[-1]+1
+        cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=10, inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         print "\nGenerating the cone cap."
         cone_start_atom = mol.atom_num[-1]+1
-        generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=10, inc=inc)
-        stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
+        generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=10, inc=inc)
+        stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
 
         # Create the PDB file.
         print "\nGenerating the PDB file."
