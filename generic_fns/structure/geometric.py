@@ -632,15 +632,15 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     return res_num
 
 
-def stitch_cap_to_cone(mol=None, cone_start=None, cap_start=None, max_angle=None, inc=None):
-    """Function for stitching the cap of a cone to the cone edge, in the PDB representations.
+def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=None, inc=None):
+    """Function for stitching the cone dome to its edge, in the PDB representations.
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
-    @keyword cone_start:    The starting atom number of the cone residue.
+    @keyword cone_start:    The starting atom number of the cone dome residue.
     @type cone_start:       int
-    @keyword cap_start:     The starting atom number of the cap residue.
-    @type cap_start:        int
+    @keyword edge_start:    The starting atom number of the cone edge residue.
+    @type edge_start:       int
     @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
     @type max_angle:        float
     @keyword inc:           The number of increments or number of vectors used to generate the outer
@@ -663,16 +663,19 @@ def stitch_cap_to_cone(mol=None, cone_start=None, cap_start=None, max_angle=None
         if phi[j_min] < max_angle:
             break
 
+    # The number of j increments.
+    num_j = inc/2+2 - j_min
+
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
-        # Cap atom.
-        cap_atom = cap_start + i
+        # Cone edge atom.
+        edge_atom = edge_start + i
 
         # Dome edge atom.
-        dome_edge = cone_start + i + i*(j_min+1)
+        dome_edge = cone_start + i*num_j
 
         # Connect the two atoms (to stitch up the 2 objects).
-        mol.atom_connect(index1=dome_edge-1, index2=cap_atom-1)
+        mol.atom_connect(index1=dome_edge-1, index2=edge_atom-1)
 
 
 def uniform_vect_dist_spherical_angles(inc=20):
