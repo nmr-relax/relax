@@ -89,8 +89,13 @@ def R_2vect(R, vector_orig, vector_fin):
     vector_orig = vector_orig / norm(vector_orig)
     vector_fin = vector_fin / norm(vector_fin)
 
-    # The rotation axis.
+    # The rotation axis (normalised).
     axis = cross(vector_orig, vector_fin)
+    axis_len = norm(axis)
+    if axis_len != 0.0:
+        axis = axis / axis_len
+
+    # Alias the axis coordinates.
     x = axis[0]
     y = axis[1]
     z = axis[2]
