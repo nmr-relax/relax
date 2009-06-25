@@ -610,7 +610,7 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     print "    Creating the MC simulation vectors."
 
     # Monte Carlo simulations.
-    if sim_vectors:
+    if sim_vectors != None:
         for i in xrange(sim_vectors):
             # Increment the residue number, so each simulation is a new residue.
             res_num = res_num + 1
