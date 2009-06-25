@@ -225,8 +225,8 @@ def cone_pdb(file=None):
     # Average CoM-pivot point vector.
     #################################
 
-    # Select the AVE residue.
-    pymol.pipe_write("select resn AVE")
+    # Select the AVE and AXE residues.
+    pymol.pipe_write("select resn AVE,AXE")
 
     # Show the vector as a stick.
     pymol.pipe_write("show stick, 'sele'")
@@ -235,7 +235,7 @@ def cone_pdb(file=None):
     pymol.pipe_write("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol.pipe_write("select (resn AVE and symbol N)")
+    pymol.pipe_write("select (resn AVE,AXE and symbol N)")
 
     # Hide the atom.
     pymol.pipe_write("hide ('sele')")
