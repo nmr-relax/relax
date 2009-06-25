@@ -54,10 +54,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     """
 
     # Generate the cone axis from the spherical angles.
-    sin_theta = sin(theta_axis)
-    cone_axis[0] = cos(phi_axis) * sin_theta
-    cone_axis[1] = sin(phi_axis) * sin_theta
-    cone_axis[2] = cos(theta_axis)
+    generate_vector(cone_axis, theta_axis, phi_axis)
 
     # The axis of rotation (cross product of the z-axis and cone axis).
     mu_rot = cross(z_axis, cone_axis)
@@ -85,6 +82,26 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
 
     # Return the matrix.
     return matrix
+
+
+def generate_vector(vector, theta, phi):
+    """Generate a unit vector from the polar angle theta and azimuthal angle phi.
+
+    @param vector:  The storage structure for the vector.
+    @type vector:   numpy 3D, rank-1 array
+    @param theta:   The polar angle.
+    @type theta:    float
+    @param phi:     The azimuthal angle.
+    @type phi:      float
+    """
+
+    # Trig alias.
+    sin_theta = sin(theta)
+
+    # The vector.
+    vector[0] = cos(phi) * sin_theta
+    vector[1] = sin(phi) * sin_theta
+    vector[2] = cos(theta)
 
 
 def populate_1st_eigenframe_iso_cone(matrix, angle):
