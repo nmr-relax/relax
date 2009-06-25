@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,7 +29,7 @@ from os import popen, sep
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import file_root, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 
@@ -162,6 +162,10 @@ def cartoon():
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
+
+    # Test for the structure.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxNoPdbError
 
     # Loop over the PDB files.
     open_files = []
