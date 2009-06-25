@@ -209,7 +209,7 @@ def command(command):
 
 
 def cone_pdb(file=None):
-    """Display the N-state model cone geometric object.
+    """Display the cone geometric object.
 
     @keyword file:  The name of the file containing the cone geometric object.
     @type file:     str
@@ -222,11 +222,11 @@ def cone_pdb(file=None):
     pymol.pipe_write("load " + file)
 
 
-    # Average CoM-pivot point vector.
-    #################################
+    # The cone axis.
+    ################
 
-    # Select the AVE and AXE residues.
-    pymol.pipe_write("select resn AVE,AXE")
+    # Select the AVE, AXE, and SIM residues.
+    pymol.pipe_write("select (resn AVE,AXE,SIM)")
 
     # Show the vector as a stick.
     pymol.pipe_write("show stick, 'sele'")
@@ -235,7 +235,7 @@ def cone_pdb(file=None):
     pymol.pipe_write("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol.pipe_write("select (resn AVE,AXE and symbol N)")
+    pymol.pipe_write("select (resn AVE,AXE,SIM and symbol N)")
 
     # Hide the atom.
     pymol.pipe_write("hide ('sele')")
