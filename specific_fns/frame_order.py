@@ -32,7 +32,11 @@ from numpy import array, float64, ones, transpose, zeros
 # relax module imports.
 from float import isNaN, isInf
 from generic_fns import pipes
+from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cap_to_cone
+from generic_fns.structure.internal import Internal
 from maths_fns import frame_order_models
+from maths_fns.frame_order_matrix_ops import generate_vector
+from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxInfError, RelaxNaNError, RelaxNoModelError
 from specific_fns.base_class import Common_functions
 
@@ -266,6 +270,76 @@ class Frame_order(Common_functions):
         yield None
 
 
+    def cone_pdb(self, scale=1.0, file=None, dir=None, inc=20, force=False):
+        """Create a PDB file containing a geometric object representing the Frame Order cone models.
+
+        @param scale:       The size of the geometric object is equal to 10 Angstroms multiplied by
+                            this scaling factor.
+        @type scale:        float
+        @param inc:         The number of increments for the filling of the cone objects.
+        @type inc:          int
+        @param file:        The name of the PDB file to create.
+        @type file:         str
+        @param dir:         The name of the directory to place the PDB file into.
+        @type dir:          str
+        @param force:       Flag which if set to True will cause any pre-existing file to be
+                            overwritten.
+        @type force:        bool
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # The cone axis. 
+        cone_axis = zeros(3, float64)
+        generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
+
+        # Cone axis from simulations.
+        cone_axis_sim = zeros((cdp.sim_number, 3), float64)
+        for i in range(cdp.sim_number):
+            generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
+
+        # The rotation matrix (rotation from the z-axis to the cone axis).
+        R = zeros((3,3), float64)
+        R_2vect(R, array([0,0,1], float64), cone_axis)
+
+        # Create the structural object.
+        structure = Internal()
+
+        # Add a molecule.
+        structure.add_molecule(name='iso cone')
+
+        # Alias the single molecule from the single model.
+        mol = structure.structural_data[0].mol[0]
+
+        # Add the pivot point.
+        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
+
+        # Generate the axis vectors.
+        print "\nGenerating the axis vectors."
+        res_num = generate_vector_residues(mol=mol, vector=cone_axis, atom_name='Axe', res_name_vect='AXE', sim_vectors=cone_axis_sim, res_num=2, origin=cdp.pivot, scale=scale)
+
+        # Generate the cone outer edge.
+        print "\nGenerating the cone outer edge."
+        cap_start_atom = mol.atom_num[-1]+1
+        cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=10, inc=inc)
+
+        # Generate the cone cap, and stitch it to the cone edge.
+        print "\nGenerating the cone cap."
+        cone_start_atom = mol.atom_num[-1]+1
+        generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=10, inc=inc)
+        stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
+
+        # Create the PDB file.
+        print "\nGenerating the PDB file."
+        pdb_file = open_write_file(file, dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
+
+
     def create_mc_data(self, index):
         """Create the Monte Carlo data by back calculating the reduced tensor data.
 
@@ -479,6 +553,28 @@ class Frame_order(Common_functions):
 
         # Don't return anything, just loop once.
         yield None
+
+
+    def pivot(self, pivot=None):
+        """Set the pivot point for the 2 body motion.
+
+        @param pivot:   The pivot point of the two bodies (domains, etc.) in the structural
+                        coordinate system.
+        @type pivot:    list of num
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Set the pivot point.
+        cdp.pivot = pivot
+
+        # Convert to floats.
+        for i in range(3):
+            cdp.pivot[i] = float(cdp.pivot[i])
 
 
     def return_error(self, index):
