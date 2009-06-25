@@ -46,14 +46,11 @@ class Frame_order:
         self.__relax__ = relax
 
 
-    def cone_pdb(self, pivot=None, scale=1.0, file='cone.pdb', dir=None, force=False):
+    def cone_pdb(self, scale=1.0, file='cone.pdb', dir=None, force=False):
         """Create a PDB file representing the Frame Order cone models.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
-
-        pivot:  The pivot point for the motion (e.g. the position between the 2 domains in PDB
-            coordinates).
 
         scale:  Value for scaling the cone, which defaults to 10 Angstrom.
 
@@ -91,21 +88,11 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.cone_pdb("
-            text = text + "pivot=" + `pivot`
-            text = text + ", scale=" + `scale`
+            text = text + "scale=" + `scale`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
-
-        # Pivot point argument.
-        if type(pivot) != list:
-            raise RelaxListError, ('pivot point', pivot)
-        if len(pivot) != 3:
-            raise RelaxLenError, ('pivot point', 3)
-        for i in xrange(len(pivot)):
-            if type(pivot[i]) != int and type(pivot[i]) != float:
-                raise RelaxListNumError, ('pivot point', pivot)
 
         # Scaling.
         if type(scale) != float and type(scale) != int:
@@ -124,7 +111,45 @@ class Frame_order:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        frame_order_obj.cone_pdb(pivot=pivot, scale=scale, file=file, dir=dir, force=force)
+        frame_order_obj.cone_pdb(scale=scale, file=file, dir=dir, force=force)
+
+
+    def pivot(self, pivot=None):
+        """Set the pivot point for the two body motion in the structural coordinate system.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        pivot:  The pivot point for the motion (e.g. the position between the 2 domains in PDB
+            coordinates).
+
+
+        Examples
+        ~~~~~~~~
+
+        To set the pivot point, type one of:
+
+        relax> frame_order.pivot([12.067, 14.313, -3.2675])
+        relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "frame_order.pivot("
+            text = text + "pivot=" + `pivot` + ")"
+            print text
+
+        # Pivot point argument.
+        if type(pivot) != list:
+            raise RelaxListError, ('pivot point', pivot)
+        if len(pivot) != 3:
+            raise RelaxLenError, ('pivot point', 3)
+        for i in xrange(len(pivot)):
+            if type(pivot[i]) != int and type(pivot[i]) != float:
+                raise RelaxListNumError, ('pivot point', pivot)
+
+        # Execute the functional code.
+        frame_order_obj.pivot(pivot=pivot)
 
 
     def select_model(self, model=None):
