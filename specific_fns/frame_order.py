@@ -323,7 +323,7 @@ class Frame_order(Common_functions):
 
         # Generate the axis vectors.
         print "\nGenerating the axis vectors."
-        res_num = generate_vector_residues(mol=mol, vector=cone_axis, atom_name='Axe', res_name_vect='AXE', sim_vectors=cone_axis_sim, res_num=2, origin=cdp.pivot, scale=size)
+        res_num = generate_vector_residues(mol=mol, vector=cone_axis, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim, res_num=2, origin=cdp.pivot, scale=size)
 
         # Generate the cone outer edge.
         print "\nGenerating the cone outer edge."
