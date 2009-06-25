@@ -504,6 +504,9 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
             if phi[j_min] < max_angle:
                 break
 
+    # The number of j increments.
+    num_j = inc/2+2 - j_min
+
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
         # Loop over the vectors of the radial array (change in latitude).
@@ -536,11 +539,11 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
 
             # Connect across the radial arrays (to generate the latitudinal lines).
             if i != 0:
-                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-j_min-2)
+                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-num_j)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
             if i == inc-1:
-                mol.atom_connect(index1=atom_num-1, index2=origin_num-1+j+2)
+                mol.atom_connect(index1=atom_num-1, index2=origin_num-1+(j-j_min))
 
             # Increment the atom number.
             atom_num = atom_num + 1
