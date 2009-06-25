@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 import help
 from specific_fns.setup import frame_order_obj
-from relax_errors import RelaxStrError
+from relax_errors import RelaxBoolError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 
 class Frame_order:
@@ -44,6 +44,87 @@ class Frame_order:
 
         # Place relax in the class namespace.
         self.__relax__ = relax
+
+
+    def cone_pdb(self, pivot=None, scale=1.0, file='cone.pdb', dir=None, force=False):
+        """Create a PDB file representing the Frame Order cone models.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        pivot:  The pivot point for the motion (e.g. the position between the 2 domains in PDB
+            coordinates).
+
+        scale:  Value for scaling the cone, which defaults to 10 Angstrom.
+
+        file:  The name of the PDB file to create.
+
+        dir:  The directory where the file is to be located.
+
+        force:  A flag which, if set to True, will overwrite the any pre-existing file.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function creates a PDB file containing an artificial geometric structure representing
+        the Frame Order cone models.
+
+        There are four different types of residue within the PDB.  The pivot point is represented as
+        as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the
+        residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom
+        positioned at the pivot and the other 10 Angstrom away on the cone axis (modified by the
+        scale argument).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC'
+        residues representing the cone for each simulation, and multiple 'MCA' residues representing
+        the multiple cone axes.
+
+        To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a
+        sphere is generated using spherical coordinates with the polar angle defined by the cone
+        axis.  By incrementing the polar angle using an arccos distribution, a radial array of
+        vectors representing latitude are created while incrementing the azimuthal angle evenly
+        creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are
+        all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on
+        the both the longitude and latitude.  This creates a geometric PDB object with longitudinal
+        and latitudinal lines representing the filled cone.
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "frame_order.cone_pdb("
+            text = text + "pivot=" + `pivot`
+            text = text + ", scale=" + `scale`
+            text = text + ", file=" + `file`
+            text = text + ", dir=" + `dir`
+            text = text + ", force=" + `force` + ")"
+            print text
+
+        # Pivot point argument.
+        if type(pivot) != list:
+            raise RelaxListError, ('pivot point', pivot)
+        if len(pivot) != 3:
+            raise RelaxLenError, ('pivot point', 3)
+        for i in xrange(len(pivot)):
+            if type(pivot[i]) != int and type(pivot[i]) != float:
+                raise RelaxListNumError, ('pivot point', pivot)
+
+        # Scaling.
+        if type(scale) != float and type(scale) != int:
+            raise RelaxNumError, ('scaling factor', scale)
+
+        # File name.
+        if type(file) != str:
+            raise RelaxStrError, ('file name', file)
+
+        # Directory.
+        if dir != None and type(dir) != str:
+            raise RelaxNoneStrError, ('directory name', dir)
+
+        # The force flag.
+        if type(force) != bool:
+            raise RelaxBoolError, ('force flag', force)
+
+        # Execute the functional code.
+        frame_order_obj.cone_pdb(pivot=pivot, scale=scale, file=file, dir=dir, force=force)
 
 
     def select_model(self, model=None):
