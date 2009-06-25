@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 import help
 from specific_fns.setup import frame_order_obj
-from relax_errors import RelaxBoolError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 
 class Frame_order:
@@ -46,13 +46,15 @@ class Frame_order:
         self.__relax__ = relax
 
 
-    def cone_pdb(self, size=30.0, file='cone.pdb', dir=None, force=False):
+    def cone_pdb(self, size=30.0, inc=40, file='cone.pdb', dir=None, force=False):
         """Create a PDB file representing the Frame Order cone models.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
         size:  The size of the geometric object in Angstroms.
+
+        inc:  The number of increments used to create the geometric object.
 
         file:  The name of the PDB file to create.
 
@@ -89,6 +91,7 @@ class Frame_order:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.cone_pdb("
             text = text + "size=" + `size`
+            text = text + ", inc=" + `inc`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
@@ -97,6 +100,10 @@ class Frame_order:
         # Object size.
         if type(size) != float and type(size) != int:
             raise RelaxNumError, ('geometric object size', size)
+
+        # Increment number.
+        if type(inc) != int:
+            raise RelaxIntError, ('increment number', inc)
 
         # File name.
         if type(file) != str:
@@ -111,7 +118,7 @@ class Frame_order:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        frame_order_obj.cone_pdb(size=size, file=file, dir=dir, force=force)
+        frame_order_obj.cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
 
 
     def pivot(self, pivot=None):
