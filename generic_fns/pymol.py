@@ -178,11 +178,11 @@ def cartoon():
             id = file_root(pdb_file)
 
             # Already loaded.
-            if file in open_files:
+            if pdb_file in open_files:
                 continue
 
             # Add to the open file list.
-            open_files.append(file)
+            open_files.append(pdb_file)
 
             # Hide everything.
             pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
