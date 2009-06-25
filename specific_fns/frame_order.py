@@ -271,12 +271,11 @@ class Frame_order(Common_functions):
         yield None
 
 
-    def cone_pdb(self, scale=1.0, file=None, dir=None, inc=20, force=False):
+    def cone_pdb(self, size=30.0, file=None, dir=None, inc=20, force=False):
         """Create a PDB file containing a geometric object representing the Frame Order cone models.
 
-        @param scale:       The size of the geometric object is equal to 10 Angstroms multiplied by
-                            this scaling factor.
-        @type scale:        float
+        @param size:        The size of the geometric object in Angstroms.
+        @type size:         float
         @param inc:         The number of increments for the filling of the cone objects.
         @type inc:          int
         @param file:        The name of the PDB file to create.
@@ -324,17 +323,17 @@ class Frame_order(Common_functions):
 
         # Generate the axis vectors.
         print "\nGenerating the axis vectors."
-        res_num = generate_vector_residues(mol=mol, vector=cone_axis, atom_name='Axe', res_name_vect='AXE', sim_vectors=cone_axis_sim, res_num=2, origin=cdp.pivot, scale=scale)
+        res_num = generate_vector_residues(mol=mol, vector=cone_axis, atom_name='Axe', res_name_vect='AXE', sim_vectors=cone_axis_sim, res_num=2, origin=cdp.pivot, scale=size)
 
         # Generate the cone outer edge.
         print "\nGenerating the cone outer edge."
         edge_start_atom = mol.atom_num[-1]+1
-        cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=10, inc=inc)
+        cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         print "\nGenerating the cone cap."
         cone_start_atom = mol.atom_num[-1]+1
-        generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=10, inc=inc)
+        generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
         stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
 
         # Create the PDB file.

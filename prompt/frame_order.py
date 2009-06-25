@@ -46,13 +46,13 @@ class Frame_order:
         self.__relax__ = relax
 
 
-    def cone_pdb(self, scale=1.0, file='cone.pdb', dir=None, force=False):
+    def cone_pdb(self, size=30.0, file='cone.pdb', dir=None, force=False):
         """Create a PDB file representing the Frame Order cone models.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        scale:  Value for scaling the cone, which defaults to 10 Angstrom.
+        size:  The size of the geometric object in Angstroms.
 
         file:  The name of the PDB file to create.
 
@@ -70,8 +70,8 @@ class Frame_order:
         There are four different types of residue within the PDB.  The pivot point is represented as
         as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the
         residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom
-        positioned at the pivot and the other 10 Angstrom away on the cone axis (modified by the
-        scale argument).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC'
+        positioned at the pivot and the other x Angstroms away on the cone axis (set by the size
+        argument).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC'
         residues representing the cone for each simulation, and multiple 'MCA' residues representing
         the multiple cone axes.
 
@@ -88,15 +88,15 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.cone_pdb("
-            text = text + "scale=" + `scale`
+            text = text + "size=" + `size`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", force=" + `force` + ")"
             print text
 
-        # Scaling.
-        if type(scale) != float and type(scale) != int:
-            raise RelaxNumError, ('scaling factor', scale)
+        # Object size.
+        if type(size) != float and type(size) != int:
+            raise RelaxNumError, ('geometric object size', size)
 
         # File name.
         if type(file) != str:
@@ -111,7 +111,7 @@ class Frame_order:
             raise RelaxBoolError, ('force flag', force)
 
         # Execute the functional code.
-        frame_order_obj.cone_pdb(scale=scale, file=file, dir=dir, force=force)
+        frame_order_obj.cone_pdb(size=size, file=file, dir=dir, force=force)
 
 
     def pivot(self, pivot=None):
