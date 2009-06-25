@@ -596,14 +596,16 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     # Create the PDB residue representing the vector.
     mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C')
     mol.atom_connect(index1=atom_num-1, index2=origin_num-1)
+    num = 1
     if neg:
         mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C')
         mol.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
+        num = 2
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    mol.atom_add(pdb_record='HETATM', atom_num=atom_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N')
+    mol.atom_add(pdb_record='HETATM', atom_num=atom_num+num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N')
     if neg:
-        mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N')
+        mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N')
 
     # Print out.
     print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
