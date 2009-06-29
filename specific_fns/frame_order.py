@@ -271,6 +271,30 @@ class Frame_order(Common_functions):
         yield None
 
 
+    def calculate(self, verbosity=None):
+        """Calculate the chi-squared value for the current parameter values."""
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Isotropic cone model.
+        if cdp.model == 'iso cone':
+            # The initial parameter vector (the cone axis angles and the cone angle).
+            param_vector = array([cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+
+            # Get the data structures for optimisation using the tensors as base data sets.
+            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+
+            # Set up the optimisation function.
+            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err)
+
+            # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
+            chi2 = target.func(param_vector)
+
+        # Set the chi2.
+        cdp.chi2 = chi2
+
+
     def cone_pdb(self, size=30.0, file=None, dir=None, inc=40, force=False):
         """Create a PDB file containing a geometric object representing the Frame Order cone models.
 
