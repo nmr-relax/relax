@@ -37,7 +37,7 @@ from generic_fns.structure.internal import Internal
 from maths_fns import frame_order_models
 from maths_fns.frame_order_matrix_ops import generate_vector
 from maths_fns.rotation_matrix import R_2vect
-from relax_errors import RelaxInfError, RelaxNaNError, RelaxNoModelError
+from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from specific_fns.base_class import Common_functions
 
@@ -316,6 +316,16 @@ class Frame_order(Common_functions):
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
+
+        # Test for the data structures.
+        if not hasattr(cdp, 'theta_cone'):
+            raise RelaxError, "The cone angle theta_cone does not exist."
+        if not hasattr(cdp, 'theta_axis'):
+            raise RelaxError, "The cone polar angle theta_axis does not exist."
+        if not hasattr(cdp, 'phi_axis'):
+            raise RelaxError, "The cone azimuthal angle phi_axis does not exist."
+        if not hasattr(cdp, 'pivot'):
+            raise RelaxError, "The pivot point for the cone motion has not been set."
 
         # The cone axis. 
         cone_axis = zeros(3, float64)
