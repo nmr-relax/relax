@@ -134,7 +134,7 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
         pos = apex+vector*length
 
         # Add the vector as a H atom of the cone residue.
-        mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H')
+        mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H')
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
@@ -531,7 +531,7 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
             pos = centre + vector
 
             # Add the vector as a H atom of the TNS residue.
-            mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
+            mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
 
             # Connect to the previous atom (to generate the longitudinal lines).
             if j > j_min:
@@ -633,6 +633,26 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
 
     # Return the new residue number.
     return res_num
+
+
+def get_proton_name(atom_num):
+    """Return a valid PDB atom name of <4 characters.
+
+    @param atom_num:    The number of the atom.
+    @type atom_num:     int
+    @return:            The atom name to use in the PDB.
+    @rtype:             str
+    """
+
+    # Init the proton first letters and the atom number folding limits.
+    names = ['H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q']
+    lims = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+
+    # Loop over the proton names.
+    for i in range(len(names)):
+        # In the bounds.
+        if atom_num >= lims[i] and atom_num < lims[i+1]:
+            return names[i] + `atom_num - lims[i]`
 
 
 def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=None, inc=None):
