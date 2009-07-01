@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import array, float64, ones, zeros
+from numpy import float64, ones, zeros
 
 # relax module imports.
 from generic_fns.frame_order import print_frame_order_2nd_degree
@@ -114,10 +114,6 @@ class Frame_order:
         self.red_errors = red_errors
         self.red_tensors_bc = zeros(self.num_tensors*5, float64)
 
-        # The cone axis storage and molecular frame z-axis.
-        self.cone_axis = zeros(3, float64)
-        self.z_axis = array([0, 0, 1], float64)
-
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
 
@@ -143,10 +139,6 @@ class Frame_order:
         # The errors.
         self.errors = ones((9, 9), float64)
 
-        # The cone axis storage and molecular frame z-axis.
-        self.cone_axis = zeros(3, float64)
-        self.z_axis = array([0, 0, 1], float64)
-
         # The rotation.
         self.rot = zeros((3, 3), float64)
 
@@ -160,11 +152,12 @@ class Frame_order:
     def func_iso_cone(self, params):
         """Target function for isotropic cone model optimisation using the alignment tensors.
 
-        This function optimises against alignment tensors.  The cone axis spherical angles theta and
-        phi and the cone angle theta are the 3 parameters optimised in this model.
+        This function optimises against alignment tensors.  The Frame Order eigenframe via the
+        alpha, beta, and gamma Euler angles, and the cone angle theta are the 4 parameters optimised
+        in this model.
 
-        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two
-                        are the polar and azimuthal angles of the cone axis theta_cone is the
+        @param params:  The vector of parameter values {alpha, beta, gamma, theta} where the first
+                        three are the Euler angles for the Frame Order eigenframe and theta is the
                         isotropic cone angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
@@ -172,10 +165,10 @@ class Frame_order:
         """
 
         # Break up the parameters.
-        theta, phi, theta_cone = params
+        alpha, beta, gamma, theta = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
 
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):
@@ -189,11 +182,11 @@ class Frame_order:
         """Target function for isotropic cone model optimisation using the Frame Order matrix.
 
         This function optimises by directly matching the elements of the 2nd degree Frame Order
-        super matrix.  The cone axis spherical angles theta and phi and the cone angle theta are the
-        3 parameters optimised in this model.
+        super matrix.  The Frame Order eigenframe via the alpha, beta, and gamma Euler angles, and
+        the cone angle theta are the 4 parameters optimised in this model.
 
-        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two
-                        are the polar and azimuthal angles of the cone axis theta_cone is the
+        @param params:  The vector of parameter values {alpha, beta, gamma, theta} where the first
+                        three are the Euler angles for the Frame Order eigenframe and theta is the
                         isotropic cone angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
@@ -201,10 +194,10 @@ class Frame_order:
         """
 
         # Break up the parameters.
-        theta, phi, theta_cone = params
+        alpha, beta, gamma, theta = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
 
         # Make the Frame Order matrix contiguous.
         self.frame_order_2nd = self.frame_order_2nd.copy()

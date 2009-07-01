@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2004-2005, 2007-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -51,6 +51,10 @@ def create_data(method=None):
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
         raise RelaxError, "Monte Carlo simulations have not been set up."
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
 
     # Test the method argument.
     valid_methods = ['back_calc', 'direct']
