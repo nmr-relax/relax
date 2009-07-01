@@ -155,7 +155,7 @@ class Frame_order(Common_functions):
                 cdp.params.append('alpha')
                 cdp.params.append('beta')
                 cdp.params.append('gamma')
-                cdp.params.append('theta')
+                cdp.params.append('theta_cone')
 
             # Initialise the Euler angle and cone angle values.
             if not hasattr(cdp, 'alpha'):
@@ -164,8 +164,8 @@ class Frame_order(Common_functions):
                 cdp.beta = 0.0
             if not hasattr(cdp, 'gamma'):
                 cdp.gamma = 0.0
-            if not hasattr(cdp, 'theta'):
-                cdp.theta = 0.0
+            if not hasattr(cdp, 'theta_cone'):
+                cdp.theta_cone = 0.0
 
 
     def __unpack_opt_results(self, results, sim_index=None):
@@ -195,13 +195,13 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # Disassemble the parameter vector.
-            alpha, beta, gamma, theta = param_vector
+            alpha, beta, gamma, theta_cone = param_vector
 
             # Wrap the cone angle to be between 0 and pi.
-            if theta < 0.0:
-                theta = -theta
-            if theta > pi:
-                theta = 2.0*pi - theta
+            if theta_cone < 0.0:
+                theta_cone = -theta_cone
+            if theta_cone > pi:
+                theta_cone = 2.0*pi - theta_cone
 
             # Monte Carlo simulation data structures.
             if sim_index != None:
@@ -209,7 +209,7 @@ class Frame_order(Common_functions):
                 cdp.alpha_sim[sim_index] = alpha
                 cdp.beta_sim[sim_index] = beta
                 cdp.gamma_sim[sim_index] = gamma
-                cdp.theta_sim[sim_index] = theta
+                cdp.theta_cone_sim[sim_index] = theta_cone
 
                 # Optimisation info.
                 cdp.chi2_sim[sim_index] = func
@@ -225,7 +225,7 @@ class Frame_order(Common_functions):
                 cdp.alpha = alpha
                 cdp.beta = beta
                 cdp.gamma = gamma
-                cdp.theta = theta
+                cdp.theta_cone = theta_cone
 
                 # Optimisation info.
                 cdp.chi2 = func
@@ -249,7 +249,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # The initial parameter vector (the cone axis angles and the cone angle).
-            param_vector = array([cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
             full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
@@ -285,7 +285,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # The initial parameter vector (the cone axis angles and the cone angle).
-            param_vector = array([cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
             full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
@@ -521,7 +521,7 @@ class Frame_order(Common_functions):
                 grid_ops.append([inc[i], 0.0, pi])
 
             # The cone angle.
-            if cdp.params[i] == 'theta':
+            if cdp.params[i] == 'theta_cone':
                 grid_ops.append([inc[i], 0.0, pi])
 
             # Lower bound (if supplied).
@@ -570,7 +570,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # The initial parameter vector (the Euler angles and the cone angle).
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta], float64)
+            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
             full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors(sim_index)
