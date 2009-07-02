@@ -380,6 +380,51 @@ class Align_tensor:
         align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
 
 
+    def set_domain(self, tensor=None, domain=None):
+        """Set the domain label for the alignment tensor.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        tensor:  The alignment tensor to assign the domain label to.
+
+        domain:  The domain label.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation of the N-state model or Frame Order theories, the domain to which each
+        alignment tensor belongs must be specified.
+
+
+        Examples
+        ~~~~~~~~
+
+        To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:
+
+        relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.set_domain("
+            text = text + "tensor=" + `tensor`
+            text = text + ", domain=" + `domain` + ")"
+            print text
+
+        # Tensor argument.
+        if type(tensor) != str:
+            raise RelaxStrError, ('tensor', tensor)
+
+        # Domain argument.
+        if type(domain) != str:
+            raise RelaxStrError, ('domain', domain)
+
+        # Execute the functional code.
+        align_tensor.set_domain(tensor=tensor, domain=domain)
+
+
     def svd(self, basis_set=0, tensors=None):
         """Function for calculating the singular values for all tensors and the condition number.
 
