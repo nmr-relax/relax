@@ -351,6 +351,8 @@ class Frame_order(Common_functions):
         # The cone axis. 
         cone_axis = zeros(3, float64)
         generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
+        print "Cone axis: %s." % cone_axis
+        print "Cone angle: %s." % cdp.theta_cone
 
         # Cone axis from simulations.
         num_sim = 0
@@ -361,42 +363,55 @@ class Frame_order(Common_functions):
         for i in range(num_sim):
             generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
 
-        # The rotation matrix (rotation from the z-axis to the cone axis).
-        R = zeros((3,3), float64)
-        R_2vect(R, array([0,0,1], float64), cone_axis)
+        # Create a positive and negative cone.
+        for factor in [-1, 1]:
+            # Negative prefix.
+            prefix = ''
+            if factor == -1:
+                prefix = 'neg_'
 
-        # Create the structural object.
-        structure = Internal()
+            # Mirroring.
+            cone_axis_new = factor*cone_axis
+            print cone_axis
+            if cone_axis_sim != None:
+                cone_axis_sim_new = factor*cone_axis_sim
 
-        # Add a molecule.
-        structure.add_molecule(name='iso cone')
+            # The rotation matrix (rotation from the z-axis to the cone axis).
+            R = zeros((3,3), float64)
+            R_2vect(R, array([0,0,1], float64), cone_axis)
 
-        # Alias the single molecule from the single model.
-        mol = structure.structural_data[0].mol[0]
+            # Create the structural object.
+            structure = Internal()
 
-        # Add the pivot point.
-        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
+            # Add a molecule.
+            structure.add_molecule(name='iso cone')
 
-        # Generate the axis vectors.
-        print "\nGenerating the axis vectors."
-        res_num = generate_vector_residues(mol=mol, vector=cone_axis, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim, res_num=2, origin=cdp.pivot, scale=size)
+            # Alias the single molecule from the single model.
+            mol = structure.structural_data[0].mol[0]
 
-        # Generate the cone outer edge.
-        print "\nGenerating the cone outer edge."
-        edge_start_atom = mol.atom_num[-1]+1
-        cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
+            # Add the pivot point.
+            mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
 
-        # Generate the cone cap, and stitch it to the cone edge.
-        print "\nGenerating the cone cap."
-        cone_start_atom = mol.atom_num[-1]+1
-        generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
-        stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
+            # Generate the axis vectors.
+            print "\nGenerating the axis vectors."
+            res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
 
-        # Create the PDB file.
-        print "\nGenerating the PDB file."
-        pdb_file = open_write_file(file, dir, force=force)
-        structure.write_pdb(pdb_file)
-        pdb_file.close()
+            # Generate the cone outer edge.
+            print "\nGenerating the cone outer edge."
+            edge_start_atom = mol.atom_num[-1]+1
+            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
+
+            # Generate the cone cap, and stitch it to the cone edge.
+            print "\nGenerating the cone cap."
+            cone_start_atom = mol.atom_num[-1]+1
+            generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
+            stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
+
+            # Create the PDB file.
+            print "\nGenerating the PDB file."
+            pdb_file = open_write_file(prefix+file, dir, force=force)
+            structure.write_pdb(pdb_file)
+            pdb_file.close()
 
 
     def create_mc_data(self, index):
