@@ -155,15 +155,21 @@ class Frame_order(Common_functions):
                 cdp.params.append('alpha')
                 cdp.params.append('beta')
                 cdp.params.append('gamma')
+                cdp.params.append('theta_axis')
+                cdp.params.append('phi_axis')
                 cdp.params.append('theta_cone')
 
-            # Initialise the Euler angle and cone angle values.
+            # Initialise the cone axis angles and cone angle values.
             if not hasattr(cdp, 'alpha'):
                 cdp.alpha = 0.0
             if not hasattr(cdp, 'beta'):
                 cdp.beta = 0.0
             if not hasattr(cdp, 'gamma'):
                 cdp.gamma = 0.0
+            if not hasattr(cdp, 'theta_axis'):
+                cdp.theta_axis = 0.0
+            if not hasattr(cdp, 'phi_axis'):
+                cdp.phi_axis = 0.0
             if not hasattr(cdp, 'theta_cone'):
                 cdp.theta_cone = 0.0
 
@@ -195,7 +201,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # Disassemble the parameter vector.
-            alpha, beta, gamma, theta_cone = param_vector
+            alpha, beta, gamma, theta_axis, phi_axis, theta_cone = param_vector
 
             # Wrap the cone angle to be between 0 and pi.
             if theta_cone < 0.0:
@@ -209,6 +215,8 @@ class Frame_order(Common_functions):
                 cdp.alpha_sim[sim_index] = alpha
                 cdp.beta_sim[sim_index] = beta
                 cdp.gamma_sim[sim_index] = gamma
+                cdp.theta_axis_sim[sim_index] = theta_axis
+                cdp.phi_axis_sim[sim_index] = phi_axis
                 cdp.theta_cone_sim[sim_index] = theta_cone
 
                 # Optimisation info.
@@ -225,6 +233,8 @@ class Frame_order(Common_functions):
                 cdp.alpha = alpha
                 cdp.beta = beta
                 cdp.gamma = gamma
+                cdp.theta_axis = theta_axis
+                cdp.phi_axis = phi_axis
                 cdp.theta_cone = theta_cone
 
                 # Optimisation info.
@@ -249,7 +259,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # The initial parameter vector (the cone axis angles and the cone angle).
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_cone], float64)
+            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
             full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
@@ -285,7 +295,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # The initial parameter vector (the cone axis angles and the cone angle).
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_cone], float64)
+            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
             full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
@@ -442,6 +452,9 @@ class Frame_order(Common_functions):
 
         # Parameters.
         if set == 'all' or set == 'params':
+            names.append('alpha')
+            names.append('beta')
+            names.append('gamma')
             names.append('theta_axis')
             names.append('phi_axis')
             names.append('theta_cone')
@@ -457,12 +470,18 @@ class Frame_order(Common_functions):
 
         # Parameter errors.
         if error_names and (set == 'all' or set == 'params'):
+            names.append('alpha_err')
+            names.append('beta_err')
+            names.append('gamma_err')
             names.append('theta_axis_err')
             names.append('phi_axis_err')
             names.append('theta_cone_err')
 
         # Parameter simulation values.
         if sim_names and (set == 'all' or set == 'params'):
+            names.append('alpha_sim')
+            names.append('beta_sim')
+            names.append('gamma_sim')
             names.append('theta_axis_sim')
             names.append('phi_axis_sim')
             names.append('theta_cone_sim')
@@ -515,10 +534,18 @@ class Frame_order(Common_functions):
         # Set the grid search options.
         for i in xrange(n):
             # Euler angles.
-            if cdp.params[i] in ['alpha', 'gamma']:
+            if cdp.params[i] == 'alpha':
                 grid_ops.append([inc[i], 0.0, 2*pi])
             if cdp.params[i] == 'beta':
                 grid_ops.append([inc[i], 0.0, pi])
+            if cdp.params[i] == 'gamma':
+                grid_ops.append([inc[i], 0.0, 2*pi])
+
+            # Cone axis angles and cone angle.
+            if cdp.params[i] == 'theta_axis':
+                grid_ops.append([inc[i], 0.0, pi])
+            if cdp.params[i] == 'phi_axis':
+                grid_ops.append([inc[i], 0.0, 2*pi])
 
             # The cone angle.
             if cdp.params[i] == 'theta_cone':
@@ -569,8 +596,8 @@ class Frame_order(Common_functions):
 
         # Isotropic cone model.
         if cdp.model == 'iso cone':
-            # The initial parameter vector (the Euler angles and the cone angle).
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_cone], float64)
+            # The initial parameter vector (the cone axis angles and the cone angle).
+            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
             full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors(sim_index)
