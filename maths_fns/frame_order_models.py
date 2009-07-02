@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import dot, float64, ones, transpose, zeros
+from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
 from generic_fns.frame_order import print_frame_order_2nd_degree
