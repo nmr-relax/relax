@@ -159,6 +159,46 @@ class Frame_order:
         frame_order_obj.pivot(pivot=pivot)
 
 
+    def ref_domain(self, ref=None):
+        """Set the reference domain for the '2-domain' Frame Order theories.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        ref:  The domain which will act as the frame of reference.  This is only valid for the
+        '2-domain' Frame Order theories.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation of the '2-domain' Frame Order theories, which of the two domains will
+        act as the frame of reference must be specified.  This is important for the attachment of
+        cones to domains, etc.
+
+
+        Examples
+        ~~~~~~~~
+
+        To set up the isotropic cone frame order model with 'centre' domain being the frame of reference, type:
+
+        relax> frame_order.ref_domain(ref='centre')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "frame_order.ref_domain("
+            text = text + "ref=" + `ref` + ")"
+            print text
+
+        # Ref frame argument.
+        if type(ref) != str:
+            raise RelaxStrError, ('reference frame', ref)
+
+        # Execute the functional code.
+        frame_order.ref_domain(ref=ref)
+
+
     def select_model(self, model=None):
         """Select and set up the Frame Order model.
 
