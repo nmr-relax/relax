@@ -24,7 +24,7 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos
+from math import cos, sin
 from numpy import dot, transpose
 
 # relax module imports.
