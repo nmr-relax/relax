@@ -68,6 +68,7 @@ class Frame_order(Common_functions):
         full_tensors = zeros(n*5, float64)
         red_tensors  = zeros(n*5, float64)
         red_err = ones(n*5, float64) * 1e-5
+        full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
         for i, tensor in self.__tensor_loop(red=False):
@@ -77,6 +78,10 @@ class Frame_order(Common_functions):
             full_tensors[5*i + 2] = tensor.Axy
             full_tensors[5*i + 3] = tensor.Axz
             full_tensors[5*i + 4] = tensor.Ayz
+
+            # The full tensor corresponds to the frame of reference.
+            if cdp.ref_domain == tensor.domain:
+                full_in_ref_frame[i] = 1
 
         # Loop over the reduced tensors.
         for i, tensor in self.__tensor_loop(red=True):
@@ -105,7 +110,7 @@ class Frame_order(Common_functions):
                 red_err[5*i + 4] = tensor.Ayz_err
 
         # Return the data structures.
-        return full_tensors, red_tensors, red_err
+        return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
     def __tensor_loop(self, red=False):
@@ -268,10 +273,10 @@ class Frame_order(Common_functions):
             param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
-            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+            full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
             # Set up the optimisation function.
-            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err)
+            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
             # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
             target.func(param_vector)
@@ -304,10 +309,10 @@ class Frame_order(Common_functions):
             param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
-            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+            full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
             # Set up the optimisation function.
-            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err)
+            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
             # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
             chi2 = target.func(param_vector)
@@ -623,10 +628,10 @@ class Frame_order(Common_functions):
             param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
             # Get the data structures for optimisation using the tensors as base data sets.
-            full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors(sim_index)
+            full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index)
 
             # Set up the optimisation function.
-            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err)
+            target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
         # Minimisation.
         results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
@@ -682,7 +687,7 @@ class Frame_order(Common_functions):
         """
 
         # Get the tensor data structures.
-        full_tensors, red_tensors, red_tensor_err = self.__minimise_setup_tensors()
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
         # Return the errors.
         return red_tensor_err

@@ -39,7 +39,7 @@ from relax_errors import RelaxError
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, red_tensors=None, red_errors=None, frame_order_2nd=None):
+    def __init__(self, model=None, init_params=None, full_tensors=None, red_tensors=None, red_errors=None, full_in_ref_frame=None, frame_order_2nd=None):
         """Set up the target functions for the Frame Order theories.
         
         @keyword model:             The name of the Frame Order model.
@@ -57,6 +57,9 @@ class Frame_order:
         @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
                                     tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy nx5D, rank-1 float64 array
+        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference
+                                    frame is the full or reduced tensor.
+        @type full_in_ref_frame:    numpy rank-1 array
         @keyword frame_order_2nd:   The numerical values of the 2nd degree Frame Order matrix.  If
                                     supplied, the target functions will optimise directly to these
                                     values.
@@ -72,13 +75,21 @@ class Frame_order:
 
         # Isotropic cone model.
         if model == 'iso cone':
+            # Some checks.
+            if red_tensors == None or not len(red_tensors):
+                raise RelaxError, "The red_tensors argument " + `red_tensors` + " must be supplied."
+            if red_errors == None or not len(red_errors):
+                raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
+            if full_in_ref_frame == None or not len(full_in_ref_frame):
+                raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
+
             # Mix up.
             if full_tensors != None and frame_order_2nd != None:
                 raise RelaxError, "Tensors and Frame Order matrices cannot be supplied together."
 
             # Tensor optimisation.
             elif full_tensors != None:
-                self.__init_iso_cone(full_tensors, red_tensors, red_errors)
+                self.__init_iso_cone(full_tensors, red_tensors, red_errors, full_in_ref_frame)
 
             # Optimisation to the 2nd degree Frame Order matrix components directly.
             elif frame_order_2nd != None:
@@ -115,6 +126,7 @@ class Frame_order:
         self.red_tensors = red_tensors
         self.red_errors = red_errors
         self.red_tensors_bc = zeros(self.num_tensors*5, float64)
+        self.full_in_ref_frame = full_in_ref_frame
 
         # The cone axis storage and molecular frame z-axis.
         self.cone_axis = zeros(3, float64)
@@ -192,9 +204,19 @@ class Frame_order:
             # Reduce the tensor.
             reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
 
-            # Rotate the tensor.
+            # Convert the tensor to 3D, rank-2 form.
             to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
-            to_5D(self.red_tensors_bc[index1:index2], dot(self.rot, dot(self.tensor_3D, transpose(self.rot))))
+
+            # Rotate the tensor (normal R.X.RT rotation).
+            if self.full_in_ref_frame[i]:
+                self.tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+
+            # Rotate the tensor (inverse RT.X.R rotation).
+            else:
+                self.tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+
+            # Convert the tensor back to 5D, rank-1 form.
+            to_5D(self.red_tensors_bc[index1:index2], self.tensor_3D)
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
