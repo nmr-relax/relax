@@ -207,6 +207,9 @@ def R_to_axis_angle(matrix):
     t = matrix[0,0] + matrix[1,1] + matrix[2,2]
     theta = atan2(r, t-1)
 
+    # Normalise the axis.
+    axis = axis / r
+
     # Return the data.
     return axis, theta
 
