@@ -370,15 +370,16 @@ class Frame_order(Common_functions):
             if factor == -1:
                 prefix = 'neg_'
 
-            # Mirroring.
-            cone_axis_new = factor*cone_axis
-            print cone_axis
-            if cone_axis_sim != None:
-                cone_axis_sim_new = factor*cone_axis_sim
-
             # The rotation matrix (rotation from the z-axis to the cone axis).
             R = zeros((3,3), float64)
             R_2vect(R, array([0,0,1], float64), cone_axis)
+
+            # Mirroring.
+            cone_axis_new = factor*cone_axis
+            if cone_axis_sim != None:
+                cone_axis_sim_new = factor*cone_axis_sim
+            if factor == -1:
+                R = -R
 
             # Create the structural object.
             structure = Internal()
