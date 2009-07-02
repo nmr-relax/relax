@@ -167,11 +167,11 @@ class N_state_opt:
         # The 2-domain N-state model.
         if model == '2-domain':
             # Some checks.
-            if red_data == None and not len(red_data):
+            if red_data == None or not len(red_data):
                 raise RelaxError, "The red_data argument " + `red_data` + " must be supplied."
-            if red_errors == None and not len(red_errors):
+            if red_errors == None or not len(red_errors):
                 raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
-            if full_in_ref_frame == None and not len(full_in_ref_frame):
+            if full_in_ref_frame == None or not len(full_in_ref_frame):
                 raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
 
             # Tensor set up.
