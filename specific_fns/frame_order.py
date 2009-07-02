@@ -357,6 +357,7 @@ class Frame_order(Common_functions):
         # Cone axis from simulations.
         num_sim = 0
         cone_axis_sim = None
+        cone_axis_sim_new = None
         if hasattr(cdp, 'sim_number'):
             num_sim = cdp.sim_number
             cone_axis_sim = zeros((num_sim, 3), float64)
