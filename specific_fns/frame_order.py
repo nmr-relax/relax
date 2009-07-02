@@ -63,6 +63,10 @@ class Frame_order(Common_functions):
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
+        # Checks.
+        if not hasattr(cdp, 'ref_domain'):
+            raise RelaxError, "The reference domain has not been set up."
+
         # Initialise.
         n = len(cdp.align_tensors.reduction)
         full_tensors = zeros(n*5, float64)
