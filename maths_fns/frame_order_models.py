@@ -25,12 +25,14 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import float64, ones, zeros
+from numpy import dot, float64, ones, transpose, zeros
 
 # relax module imports.
 from generic_fns.frame_order import print_frame_order_2nd_degree
+from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, reduce_alignment_tensor
+from maths_fns.rotation_matrix import R_euler_zyz
 from relax_errors import RelaxError
 
 
@@ -116,6 +118,7 @@ class Frame_order:
 
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
+        self.tensor_3D = zeros((3, 3), float64)
 
         # Initialise the Frame Order matrices.
         self.frame_order_2nd = zeros((9, 9), float64)
@@ -165,14 +168,26 @@ class Frame_order:
         """
 
         # Break up the parameters.
-        alpha, beta, gamma, theta = params
+        alpha, beta, gamma, theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
         self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, alpha, beta, gamma, theta)
 
+        # Reduced alignment tensor rotation into the eigenframe.
+        R_euler_zyz(self.rot, alpha, beta, gamma)
+
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):
-            reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[i*5:i*5+5], self.red_tensors_bc[i*5:i*5+5])
+            # Tensor indices.
+            index1 = i*5
+            index2 = i*5+5
+
+            # Reduce the tensor.
+            reduce_alignment_tensor(self.frame_order_2nd, self.full_tensors[index1:index2], self.red_tensors_bc[index1:index2])
+
+            # Rotate the tensor.
+            to_tensor(self.tensor_3D, self.red_tensors_bc[index1:index2])
+            to_5D(self.red_tensors_bc[index1:index2], dot(self.rot, dot(self.tensor_3D, transpose(self.rot))))
 
         # Return the chi-squared value.
         return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
