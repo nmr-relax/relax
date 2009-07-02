@@ -32,6 +32,7 @@ from numpy import array, float64, ones, transpose, zeros
 # relax module imports.
 from float import isNaN, isInf
 from generic_fns import pipes
+from generic_fns.angles import wrap_angles
 from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order_models
@@ -208,6 +209,11 @@ class Frame_order(Common_functions):
                 theta_cone = -theta_cone
             if theta_cone > pi:
                 theta_cone = 2.0*pi - theta_cone
+
+            # Wrap the Euler angles.
+            alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+            beta  = wrap_angles(beta, 0.0, 2.0*pi)
+            gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
             # Monte Carlo simulation data structures.
             if sim_index != None:
