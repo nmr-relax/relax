@@ -1830,31 +1830,6 @@ class N_state_model(Common_functions):
         __docformat__ = "plaintext"
 
 
-    def set_domain(self, tensor=None, domain=None):
-        """Set the domain label for the given tensor.
-
-        @param tensor:  The alignment tensor label.
-        @type tensor:   str
-        @param domain:  The domain label.
-        @type domain:   str
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Loop over the tensors.
-        match = False
-        for tensor_cont in cdp.align_tensors:
-            # Find the matching tensor and then store the domain label.
-            if tensor_cont.name == tensor:
-                tensor_cont.domain = domain
-                match = True
-
-        # The tensor label doesn't exist.
-        if not match:
-            raise RelaxNoTensorError, ('alignment', tensor)
-
-
     def set_non_spin_params(self, value=None, param=None):
         """Function for setting all the N-state model parameter values.
 

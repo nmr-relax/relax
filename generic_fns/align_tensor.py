@@ -1529,6 +1529,31 @@ __set_prompt_doc__ = """
 """
 
 
+def set_domain(tensor=None, domain=None):
+    """Set the domain label for the given tensor.
+
+    @param tensor:  The alignment tensor label.
+    @type tensor:   str
+    @param domain:  The domain label.
+    @type domain:   str
+    """
+
+    # Alias the current data pipe.
+    cdp = pipes.get_pipe()
+
+    # Loop over the tensors.
+    match = False
+    for tensor_cont in cdp.align_tensors:
+        # Find the matching tensor and then store the domain label.
+        if tensor_cont.name == tensor:
+            tensor_cont.domain = domain
+            match = True
+
+    # The tensor label doesn't exist.
+    if not match:
+        raise RelaxNoTensorError, ('alignment', tensor)
+
+
 def svd(basis_set=0, tensors=None):
     """Function for calculating the singular values of all the loaded tensors.
 
