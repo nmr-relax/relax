@@ -68,6 +68,10 @@ class Common_functions:
         """
 
 
+    def eliminate(self):
+        """Dummy method for model elimination."""
+
+
     def has_errors(self):
         """Function for testing if errors exist for the run.
 

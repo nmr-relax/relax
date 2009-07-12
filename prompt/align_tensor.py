@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -332,6 +332,97 @@ class Align_tensor:
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
+
+
+    def reduction(self, full_tensor=None, red_tensor=None):
+        """Specify that one tensor is a reduction of another.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        full_tensor:  The full alignment tensor.
+
+        red_tensor:  The reduce alignment tensor.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation of the N-state model and Frame Order theories using alignment tensors,
+        which tensor is a reduction of which other tensor must be specified through this user
+        function.
+
+
+        Examples
+        ~~~~~~~~
+
+        To state that the alignment tensor loaded as 'chi3 C-dom' is a reduction of 'chi3 N-dom', type:
+
+        relax> align_tensor.reduction(full_tensor='chi3 N-dom', red_tensor='chi3 C-dom')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.reduction("
+            text = text + "full_tensor=" + `full_tensor`
+            text = text + ", red_tensor=" + `red_tensor` + ")"
+            print text
+
+        # From tensor argument.
+        if type(full_tensor) != str:
+            raise RelaxStrError, ('from tensor', full_tensor)
+
+        # To tensor argument.
+        if type(red_tensor) != str:
+            raise RelaxStrError, ('to tensor', red_tensor)
+
+        # Execute the functional code.
+        align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
+
+
+    def set_domain(self, tensor=None, domain=None):
+        """Set the domain label for the alignment tensor.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        tensor:  The alignment tensor to assign the domain label to.
+
+        domain:  The domain label.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation of the N-state model or Frame Order theories, the domain to which each
+        alignment tensor belongs must be specified.
+
+
+        Examples
+        ~~~~~~~~
+
+        To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:
+
+        relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.set_domain("
+            text = text + "tensor=" + `tensor`
+            text = text + ", domain=" + `domain` + ")"
+            print text
+
+        # Tensor argument.
+        if type(tensor) != str:
+            raise RelaxStrError, ('tensor', tensor)
+
+        # Domain argument.
+        if type(domain) != str:
+            raise RelaxStrError, ('domain', domain)
+
+        # Execute the functional code.
+        align_tensor.set_domain(tensor=tensor, domain=domain)
 
 
     def svd(self, basis_set=0, tensors=None):

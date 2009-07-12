@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -167,16 +167,16 @@ class N_state_opt:
         # The 2-domain N-state model.
         if model == '2-domain':
             # Some checks.
-            if red_data == None and not len(red_data):
+            if red_data == None or not len(red_data):
                 raise RelaxError, "The red_data argument " + `red_data` + " must be supplied."
-            if red_errors == None and not len(red_errors):
+            if red_errors == None or not len(red_errors):
                 raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
-            if full_in_ref_frame == None and not len(full_in_ref_frame):
+            if full_in_ref_frame == None or not len(full_in_ref_frame):
                 raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
 
             # Tensor set up.
             self.full_tensors = array(full_tensors, float64)
-            self.num_tensors = len(self.full_tensors)
+            self.num_tensors = len(self.full_tensors) / 5
             self.red_data = red_data
             self.red_errors = red_errors
             self.full_in_ref_frame = full_in_ref_frame

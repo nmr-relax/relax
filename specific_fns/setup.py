@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,6 +22,7 @@
 
 # relax module imports.
 from specific_fns.consistency_tests import Consistency_tests
+from specific_fns.frame_order import Frame_order
 from specific_fns.hybrid import Hybrid
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
@@ -33,6 +34,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError
 
 # Instantiate all classes.
 consistency_tests_obj = Consistency_tests()
+frame_order_obj = Frame_order()
 hybrid_obj = Hybrid()
 jw_mapping_obj = Jw_mapping()
 model_free_obj = Model_free()
@@ -257,6 +259,10 @@ def get_instance(function_type):
     if function_type == 'ct':
         return consistency_tests_obj
 
+    # The Frame Order theories.
+    if function_type == 'frame order':
+        return frame_order_obj
+
     # NOE calculation.
     if function_type == 'noe':
         return noe_obj
@@ -291,6 +297,10 @@ def get_string(function_type):
     # Consistency testing.
     if function_type == 'ct':
         return "consistency testing"
+
+    # The Frame Order theories.
+    if function_type == 'frame order':
+        return "Frame Order theories"
 
     # NOE calculation.
     if function_type == 'noe':

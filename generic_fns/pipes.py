@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -70,6 +70,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     @type pipe_name:    str
     @keyword pipe_type: The new data pipe type which can be one of the following:
         'ct':  Consistency testing,
+        'frame order':  The Frame Order theories.
         'jw':  Reduced spectral density mapping,
         'hybrid':  The hybridised data pipe.
         'mf':  Model-free analysis,
@@ -85,7 +86,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     """
 
     # List of valid data pipe types.
-    valid = ['ct', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
+    valid = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
 
     # Test if pipe_type is valid.
     if not pipe_type in valid:

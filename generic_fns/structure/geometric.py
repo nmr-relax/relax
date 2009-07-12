@@ -134,7 +134,7 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
         pos = apex+vector*length
 
         # Add the vector as a H atom of the cone residue.
-        mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H')
+        mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H')
 
         # Connect across the radial array (to generate the circular cone edge).
         if i != 0:
@@ -504,6 +504,9 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
             if phi[j_min] < max_angle:
                 break
 
+    # The number of j increments.
+    num_j = inc/2+2 - j_min
+
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
         # Loop over the vectors of the radial array (change in latitude).
@@ -528,7 +531,7 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
             pos = centre + vector
 
             # Add the vector as a H atom of the TNS residue.
-            mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='H'+`atom_num`, res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
+            mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
 
             # Connect to the previous atom (to generate the longitudinal lines).
             if j > j_min:
@@ -536,11 +539,11 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
 
             # Connect across the radial arrays (to generate the latitudinal lines).
             if i != 0:
-                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-j_min-2)
+                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-num_j)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
             if i == inc-1:
-                mol.atom_connect(index1=atom_num-1, index2=origin_num-1+j+2)
+                mol.atom_connect(index1=atom_num-1, index2=origin_num-1+(j-j_min))
 
             # Increment the atom number.
             atom_num = atom_num + 1
@@ -596,22 +599,24 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     # Create the PDB residue representing the vector.
     mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C')
     mol.atom_connect(index1=atom_num-1, index2=origin_num-1)
+    num = 1
     if neg:
         mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C')
         mol.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
+        num = 2
 
     # Add another atom to allow the axis labels to be shifted just outside of the vector itself.
-    mol.atom_add(pdb_record='HETATM', atom_num=atom_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N')
+    mol.atom_add(pdb_record='HETATM', atom_num=atom_num+num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+label_placement*vector*scale, segment_id=None, element='N')
     if neg:
-        mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+2, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N')
+        mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N')
 
     # Print out.
     print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
     print "    Creating the MC simulation vectors."
 
     # Monte Carlo simulations.
-    if sim_vectors:
-        for i in xrange(sim_vectors):
+    if sim_vectors != None:
+        for i in range(len(sim_vectors)):
             # Increment the residue number, so each simulation is a new residue.
             res_num = res_num + 1
     
@@ -630,15 +635,35 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     return res_num
 
 
-def stitch_cap_to_cone(mol=None, cone_start=None, cap_start=None, max_angle=None, inc=None):
-    """Function for stitching the cap of a cone to the cone edge, in the PDB representations.
+def get_proton_name(atom_num):
+    """Return a valid PDB atom name of <4 characters.
+
+    @param atom_num:    The number of the atom.
+    @type atom_num:     int
+    @return:            The atom name to use in the PDB.
+    @rtype:             str
+    """
+
+    # Init the proton first letters and the atom number folding limits.
+    names = ['H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q']
+    lims = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+
+    # Loop over the proton names.
+    for i in range(len(names)):
+        # In the bounds.
+        if atom_num >= lims[i] and atom_num < lims[i+1]:
+            return names[i] + `atom_num - lims[i]`
+
+
+def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=None, inc=None):
+    """Function for stitching the cone dome to its edge, in the PDB representations.
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
-    @keyword cone_start:    The starting atom number of the cone residue.
+    @keyword cone_start:    The starting atom number of the cone dome residue.
     @type cone_start:       int
-    @keyword cap_start:     The starting atom number of the cap residue.
-    @type cap_start:        int
+    @keyword edge_start:    The starting atom number of the cone edge residue.
+    @type edge_start:       int
     @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
     @type max_angle:        float
     @keyword inc:           The number of increments or number of vectors used to generate the outer
@@ -661,16 +686,19 @@ def stitch_cap_to_cone(mol=None, cone_start=None, cap_start=None, max_angle=None
         if phi[j_min] < max_angle:
             break
 
+    # The number of j increments.
+    num_j = inc/2+2 - j_min
+
     # Loop over the radial array of vectors (change in longitude).
     for i in range(inc):
-        # Cap atom.
-        cap_atom = cap_start + i
+        # Cone edge atom.
+        edge_atom = edge_start + i
 
         # Dome edge atom.
-        dome_edge = cone_start + i + i*(j_min+1)
+        dome_edge = cone_start + i*num_j
 
         # Connect the two atoms (to stitch up the 2 objects).
-        mol.atom_connect(index1=dome_edge-1, index2=cap_atom-1)
+        mol.atom_connect(index1=dome_edge-1, index2=edge_atom-1)
 
 
 def uniform_vect_dist_spherical_angles(inc=20):
