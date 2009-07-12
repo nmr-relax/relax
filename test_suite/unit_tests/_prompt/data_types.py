@@ -99,7 +99,7 @@ DATA_TYPES.append(['list', [None, None]])
 
 # List of integers.
 DATA_TYPES.append(['int list', [-1, 0, 1]])
-#DATA_TYPES.append(['int list', [zeros(2, int32)[0]]])
+DATA_TYPES.append(['int list', [zeros(2, int32)[0]]])
 
 # List of floats.
 DATA_TYPES.append(['float list', [-1., 0., 1.]])
