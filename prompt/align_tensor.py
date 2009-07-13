@@ -30,6 +30,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import align_tensor
+from num_types import int_list, float_list
 from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
@@ -262,11 +263,12 @@ class Align_tensor:
             if len(params) != 5:
                 raise RelaxError, "The alignment tensor parameters argument must be a tuple of numbers of length 5."
             for i in xrange(len(params)):
-                if type(params[i]) != float and type(params[i]) != int:
+                if type(params[i]) not in float_list and type(params[i]) not in int_list:
+                    print type(params[i])
                     raise RelaxNumTupleError, ('alignment tensor parameters', params)
 
         # Scale argument.
-        if type(scale) != float:
+        if type(scale) not in float_list:
             raise RelaxFloatError, ('scale', scale)
 
         # Angle units argument.
@@ -274,7 +276,7 @@ class Align_tensor:
             raise RelaxStrError, ('angle units', angle_units)
 
         # Parameter types argument.
-        if type(param_types) != int:
+        if type(param_types) not in int_list:
             raise RelaxIntError, ('parameter types', param_types)
 
         # The errors flag.
