@@ -607,6 +607,11 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
     @type norm:                     bool
     """
 
+    # Spin id.
+    spin_id = None
+    if spin_ids:
+        spin_id = spin_ids[0]
+
     # Graph G0.
     file.write("@with g0\n")
 
