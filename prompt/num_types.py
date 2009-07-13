@@ -24,9 +24,9 @@
 """Module containing number type lists for argument checks."""
 
 # Python module imports.
-from numpy import int8, int16, int32, int64, float32, float64, float128
+from numpy import int8, int16, int32, int64, float32, float64
 
 
 # The lists.
 int_list = [int, int8, int16, int32]
-float_list = [float, float32, float64, float128]
+float_list = [float, float32, float64]

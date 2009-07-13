@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import int8, int16, int32, int64, float32, float64, float128, zeros
+from numpy import int8, int16, int32, int64, float32, float64, zeros
 from os import tmpfile
 
 
@@ -87,7 +87,6 @@ DATA_TYPES.append(['float', 1000000.0])
 # Numpy floats.
 DATA_TYPES.append(['float', zeros(2, float32)[0]])
 DATA_TYPES.append(['float', zeros(2, float64)[0]])
-DATA_TYPES.append(['float', zeros(2, float128)[0]])
 
 # Functions.
 DATA_TYPES.append(['function', dummy_fn])
