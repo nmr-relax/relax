@@ -133,7 +133,7 @@ def get_specific_fn(eqi, function_type, raise_error=True):
 
         # Molmol macro creation.
         if eqi == 'molmol_macro':
-            function = inst.molmol.macro
+            function = inst.molmol_macro
 
         # Number of instances.
         if eqi == 'num_instances':
@@ -240,7 +240,7 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         #    function = inst.write_xml_results
 
     # Catch if the function is missing.
-    except AttributeError:
+    except NameError:
         function = None
 
     # Raise an error if the function doesn't exist.
