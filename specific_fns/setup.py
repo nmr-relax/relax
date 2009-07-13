@@ -240,7 +240,7 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         #    function = inst.write_xml_results
 
     # Catch if the function is missing.
-    except NameError:
+    except AttributeError:
         function = None
 
     # Raise an error if the function doesn't exist.
