@@ -54,11 +54,11 @@ align_tensor.set_domain(tensor='chi4 N-dom', domain='N')
 align_tensor.set_domain(tensor='chi5 N-dom', domain='N')
 
 # Specify the tensor reductions.
-align_tensor.reduction(full_tensor='chi1 N-dom', red_tensor='chi1 C-dom')
-align_tensor.reduction(full_tensor='chi2 N-dom', red_tensor='chi2 C-dom')
-align_tensor.reduction(full_tensor='chi3 N-dom', red_tensor='chi3 C-dom')
-align_tensor.reduction(full_tensor='chi4 N-dom', red_tensor='chi4 C-dom')
-align_tensor.reduction(full_tensor='chi5 N-dom', red_tensor='chi5 C-dom')
+align_tensor.reduction(full_tensor='chi1 C-dom', red_tensor='chi1 N-dom')
+align_tensor.reduction(full_tensor='chi2 C-dom', red_tensor='chi2 N-dom')
+align_tensor.reduction(full_tensor='chi3 C-dom', red_tensor='chi3 N-dom')
+align_tensor.reduction(full_tensor='chi4 C-dom', red_tensor='chi4 N-dom')
+align_tensor.reduction(full_tensor='chi5 C-dom', red_tensor='chi5 N-dom')
 
 # Calculate the singular values.
 align_tensor.svd(basis_set=0, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
