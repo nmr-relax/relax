@@ -662,11 +662,11 @@ class AlignTensorData(Element):
 
     # List of modifiable attributes.
     __mod_attr__ = ['name',
-                    'Axx',
-                    'Ayy',
-                    'Axy',
-                    'Axz',
-                    'Ayz',
+                    'Axx',  'Axx_sim',  'Axx_err',
+                    'Ayy',  'Ayy_sim',  'Ayy_err',
+                    'Axy',  'Axy_sim',  'Axy_err',
+                    'Axz',  'Axz_sim',  'Axz_err',
+                    'Ayz',  'Ayz_sim',  'Ayz_err',
                     'domain',
                     'red']
 
