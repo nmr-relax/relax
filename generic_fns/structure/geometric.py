@@ -498,10 +498,10 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
 
     # Loop over the angles and find the minimum latitudinal index.
     if max_angle == None:
-        j_min = -1
+        j_min = 0
     else:
         for j_min in xrange(len(phi)):
-            if phi[j_min] < max_angle:
+            if phi[j_min] <= max_angle:
                 break
 
     # The number of j increments.
