@@ -98,14 +98,15 @@ class N_state_opt:
         @keyword init_params:       The initial parameter values.  Optimisation must start at some
                                     point!
         @type init_params:          numpy float64 array
-        @keyword full_tensors:      A list of the full alignment tensors in matrix form.
-        @type full_tensors:         list of rank-2, 3D numpy arrays
-        @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
+        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
                                     tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2,
                                     Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
+        @type full_tensors:         list of rank-2, 3D numpy arrays
+        @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
+                                    tensors.  The format is the same as for full_tensors.
         @type red_data:             numpy float64 array
         @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                    tensors.  The array format is the same as for red_data.
+                                    tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy float64 array
         @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference
                                     frame is the full or reduced tensor.
@@ -176,10 +177,16 @@ class N_state_opt:
 
             # Tensor set up.
             self.full_tensors = array(full_tensors, float64)
+            print full_tensors
             self.num_tensors = len(self.full_tensors) / 5
             self.red_data = red_data
             self.red_errors = red_errors
             self.full_in_ref_frame = full_in_ref_frame
+
+            # Alignment tensor in rank-2, 3D form.
+            self.A = zeros((self.num_tensors, 3, 3), float64)
+            for i in range(self.num_tensors):
+                to_tensor(self.A[i], self.full_tensors[5*i:5*i+5])
 
             # Initialise some empty numpy objects for storage of:
             # R:  the transient rotation matricies.
@@ -364,11 +371,11 @@ class N_state_opt:
             for i in xrange(self.num_tensors):
                 # Normal RT.X.R rotation.
                 if self.full_in_ref_frame[i]:
-                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.full_tensors[i], self.R[c]))
+                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.A[i], self.R[c]))
 
                 # Inverse R.X.RT rotation.
                 else:
-                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.R[c], dot(self.full_tensors[i], self.RT[c]))
+                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.R[c], dot(self.A[i], self.RT[c]))
 
         # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
         for i in xrange(self.num_tensors):
