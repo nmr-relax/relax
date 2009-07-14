@@ -177,7 +177,6 @@ class N_state_opt:
 
             # Tensor set up.
             self.full_tensors = array(full_tensors, float64)
-            print full_tensors
             self.num_tensors = len(self.full_tensors) / 5
             self.red_data = red_data
             self.red_errors = red_errors
