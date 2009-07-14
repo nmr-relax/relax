@@ -601,7 +601,7 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     mol.atom_connect(index1=atom_num-1, index2=origin_num-1)
     num = 1
     if neg:
-        mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin+vector*scale, segment_id=None, element='C')
+        mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-vector*scale, segment_id=None, element='C')
         mol.atom_connect(index1=atom_neg_num-1, index2=origin_num-1)
         num = 2
 
