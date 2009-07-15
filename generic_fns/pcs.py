@@ -481,10 +481,6 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
-    # Test if PCS data corresponding to 'id' already exists.
-    if data_col != None and hasattr(cdp, 'pcs_ids') and id in cdp.pcs_ids:
-        raise RelaxPCSError, id
-
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:
         raise RelaxError, "One of either the data or error column must be supplied."
