@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,9 +24,9 @@
 """Module for handling the molecule, residue, and spin sequence."""
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
 import pipes
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
+from relax_errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
 from relax_io import extract_data, open_write_file, strip
 import sys
 
@@ -78,6 +78,59 @@ def copy(pipe_from=None, pipe_to=None, preserve_select=False, verbose=True):
 
         # Generate the new sequence.
         generate(mol_name, res_num, res_name, spin.num, spin.name, pipe_to, select=select, verbose=verbose)
+
+
+def compare_sequence(pipe1=None, pipe2=None, fail=True):
+    """Compare the sequence in two data pipes.
+
+    @keyword pipe1:     The name of the first data pipe.
+    @type pipe1:        str
+    @keyword pipe2:     The name of the second data pipe.
+    @type pipe2:        str
+    @keyword fail:      A flag which if True causes a RelaxError to be raised.
+    @type fail:         bool
+    @return:            1 if the sequence is the same, 0 if different.
+    @rtype:             int
+    @raises:            RelaxError if the sequence is different and the fail flag is True.
+    """
+
+    # Failure status.
+    status = 1
+
+    # Molecule number.
+    if count_molecules(pipe=pipe1) != count_molecules(pipe=pipe2):
+        status = 0
+        if fail:
+            raise RelaxDiffMolNumError, (pipe1, pipe2)
+
+    # Residue number.
+    if count_residues(pipe=pipe1) != count_residues(pipe=pipe2):
+        status = 0
+        if fail:
+            raise RelaxDiffResNumError, (pipe1, pipe2)
+
+    # Spin number.
+    if count_spins(pipe=pipe1) != count_spins(pipe=pipe2):
+        status = 0
+        if fail:
+            raise RelaxDiffSpinNumError, (pipe1, pipe2)
+
+    # Create a string representation of the 2 sequences.
+    seq1 = ''
+    seq2 = ''
+    for spin, spin_id in spin_loop(return_id=True, pipe=pipe1):
+        seq1 = seq1 + spin_id + '\n'
+    for spin, spin_id in spin_loop(return_id=True, pipe=pipe2):
+        seq2 = seq2 + spin_id + '\n'
+
+    # Sequence check.
+    if seq1 != seq2:
+        status = 0
+        if fail:
+            raise RelaxDiffSeqError, (pipe1, pipe2)
+
+    # Return the status.
+    return status
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):

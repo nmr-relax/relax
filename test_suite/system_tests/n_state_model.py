@@ -84,6 +84,9 @@ class N_state_model(TestCase):
         self.assertAlmostEqual(cdp.gamma[3], 0.0)
         self.assertAlmostEqual(cdp.gamma[4], 0.0)
 
+        # Test the chi-squared.
+        self.assertAlmostEqual(cdp.chi2, 3.15009916529e-32)
+
 
     def test_align_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""

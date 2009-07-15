@@ -216,14 +216,14 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
 
             # X-axis conversion factors.
             if x_data_type != 'spin':
-                spin_data[-4] = array(spin_data[-4]) / x_return_conversion_factor(x_data_type)
+                spin_data[-4] = array(spin_data[-4]) / x_return_conversion_factor(x_data_type, spin)
                 if spin_data[-3]:
-                    spin_data[-3] = array(spin_data[-3]) / x_return_conversion_factor(x_data_type)
+                    spin_data[-3] = array(spin_data[-3]) / x_return_conversion_factor(x_data_type, spin)
 
             # Y-axis conversion factors.
-            spin_data[-2] = array(spin_data[-2]) / y_return_conversion_factor(y_data_type)
+            spin_data[-2] = array(spin_data[-2]) / y_return_conversion_factor(y_data_type, spin)
             if spin_data[-1]:
-                spin_data[-1] = array(spin_data[-1]) / y_return_conversion_factor(y_data_type)
+                spin_data[-1] = array(spin_data[-1]) / y_return_conversion_factor(y_data_type, spin)
 
             # Append the array to the full data structure.
             data.append(spin_data)
@@ -469,7 +469,7 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
 
     else:
         # Get the units.
-        units = x_return_units(x_data_type)
+        units = x_return_units(x_data_type, spin_id=spin_id)
 
         # Label.
         if units:
@@ -486,7 +486,7 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
     file.write("@    xaxis  ticklabel char size 1.00\n")
 
     # Y-axis label.
-    units = y_return_units(y_data_type)
+    units = y_return_units(y_data_type, spin_id=spin_id)
     if units:
         file.write("@    yaxis  label \"" + y_return_grace_string(y_data_type) + "\\N (" + units + ")\"\n")
     else:
@@ -607,6 +607,11 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
     @type norm:                     bool
     """
 
+    # Spin id.
+    spin_id = None
+    if spin_ids:
+        spin_id = spin_ids[0]
+
     # Graph G0.
     file.write("@with g0\n")
 
@@ -640,7 +645,7 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
 
     else:
         # Get the units.
-        units = x_return_units(x_data_type)
+        units = x_return_units(x_data_type, spin_id=spin_id)
 
         # Label.
         if units:
@@ -657,7 +662,7 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
     file.write("@    xaxis  ticklabel char size 1.00\n")
 
     # Y-axis label.
-    units = y_return_units(y_data_type)
+    units = y_return_units(y_data_type, spin_id=spin_id)
     string = "@    yaxis  label \"" + y_return_grace_string(y_data_type)
     if units:
         string = string + "\\N (" + units + ")"

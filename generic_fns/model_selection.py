@@ -196,9 +196,6 @@ def select(method=None, modsel_pipe=None, pipes=None):
             model_statistics[pipes[i]] = get_specific_fn('model_stats', get_type(pipes[i]))
             skip_function[pipes[i]] = get_specific_fn('skip_function', get_type(pipes[i]))
 
-            # The model loop should be the same for all data pipes!
-            if model_loop[pipes[0]] != model_loop[pipes[i]]:
-                raise RelaxError, "Bug:  The model loop for each data pipes should be the same!"
         model_loop = model_loop[pipes[0]]
 
         # The model description.

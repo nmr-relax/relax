@@ -248,11 +248,13 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
 
-def return_conversion_factor(stat_type):
+def return_conversion_factor(stat_type, spin):
     """Dummy function for returning 1.0.
 
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
+    @param spin:        Spin container (not used).
+    @type spin:         SpinContainer instance
     @return:            A conversion factor of 1.0.
     @rtype:             float
     """
@@ -341,11 +343,13 @@ def return_grace_string(stat_type):
     return grace_string
 
 
-def return_units(stat_type):
+def return_units(stat_type, spin_id=None):
     """Dummy function which returns None as the stats have no units.
 
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
+    @keyword spin_id:   Not used.
+    @type spin_id:      None
     @return:            Nothing.
     @rtype:             None
     """

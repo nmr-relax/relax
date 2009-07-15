@@ -558,14 +558,14 @@ class DiffTensorData(Element):
     __mod_attr__ = ['type',
                     'fixed',
                     'spheroid_type',
-                    'tm',
-                    'Da',
-                    'Dr',
-                    'theta',
-                    'phi',
-                    'alpha',
-                    'beta',
-                    'gamma']
+                    'tm',       'tm_sim',       'tm_err',
+                    'Da',       'Da_sim',       'Da_err',
+                    'Dr',       'Dr_sim',       'Dr_err',
+                    'theta',    'theta_sim',    'theta_err',
+                    'phi',      'phi_sim',      'phi_err',
+                    'alpha',    'alpha_sim',    'alpha_err',
+                    'beta',     'beta_sim',     'beta_err',
+                    'gamma',    'gamma_sim',    'gamma_err']
 
     def __init__(self):
         """Initialise a few instance variables."""

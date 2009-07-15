@@ -229,8 +229,16 @@ class Noe(Common_functions):
         return data_type
 
 
-    def return_units(self, stat_type):
-        """Dummy function which returns None as the stats have no units."""
+    def return_units(self, stat_type, spin_id=None):
+        """Dummy function which returns None as the stats have no units.
+
+        @param stat_type:   Not used.
+        @type stat_type:    None
+        @keyword spin_id:   Not used.
+        @type spin_id:      None
+        @return:            Nothing.
+        @rtype:             None
+        """
 
         return None
 

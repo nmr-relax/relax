@@ -9,6 +9,7 @@ DATA_PATH = sys.path[-1] + '/test_suite/shared_data/'
 # A set of user functions executed by the full_analysis.py script.
 pipe.create(pipe_name='ellipsoid', pipe_type='mf') 
 results.read(file='tylers_peptide_trunc', dir=DATA_PATH+'results_files')
+spin.name(name='N')
 model_free.remove_tm(spin_id=None)
 sequence.display()
 structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=DATA_PATH+'structures', parser='scientific')

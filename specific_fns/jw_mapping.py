@@ -375,12 +375,22 @@ class Jw_mapping(Common_functions):
             return '\\qCSA\\Q'
 
 
-    def return_units(self, data_type):
+    def return_units(self, data_type, spin=None, spin_id=None):
         """Function for returning a string representing the parameters units.
 
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return the string
         'picoseconds' for te.
+
+        @param data_type:   The name of the parameter to return the units string for.
+        @type data_type:    str
+        @param spin:        The spin container.
+        @type spin:         SpinContainer instance
+        @param spin_id:     The spin identification string (ignored if the spin container is
+                            supplied).
+        @type spin_id:      str
+        @return:            The string representation of the units.
+        @rtype:             str
         """
 
         # Get the object name.

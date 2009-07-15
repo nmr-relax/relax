@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,7 +29,7 @@ from os import popen, sep
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import file_root, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 
@@ -163,6 +163,10 @@ def cartoon():
     # Get the current data pipe.
     cdp = pipes.get_pipe()
 
+    # Test for the structure.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxNoPdbError
+
     # Loop over the PDB files.
     open_files = []
     for model in cdp.structure.structural_data:
@@ -174,11 +178,11 @@ def cartoon():
             id = file_root(pdb_file)
 
             # Already loaded.
-            if file in open_files:
+            if pdb_file in open_files:
                 continue
 
             # Add to the open file list.
-            open_files.append(file)
+            open_files.append(pdb_file)
 
             # Hide everything.
             pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
@@ -205,7 +209,7 @@ def command(command):
 
 
 def cone_pdb(file=None):
-    """Display the N-state model cone geometric object.
+    """Display the cone geometric object.
 
     @keyword file:  The name of the file containing the cone geometric object.
     @type file:     str
@@ -218,11 +222,11 @@ def cone_pdb(file=None):
     pymol.pipe_write("load " + file)
 
 
-    # Average CoM-pivot point vector.
-    #################################
+    # The cone axis.
+    ################
 
-    # Select the AVE residue.
-    pymol.pipe_write("select resn AVE")
+    # Select the AVE, AXE, and SIM residues.
+    pymol.pipe_write("select (resn AVE,AXE,SIM)")
 
     # Show the vector as a stick.
     pymol.pipe_write("show stick, 'sele'")
@@ -231,7 +235,7 @@ def cone_pdb(file=None):
     pymol.pipe_write("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol.pipe_write("select (resn AVE and symbol N)")
+    pymol.pipe_write("select (resn AVE,AXE,SIM and symbol N)")
 
     # Hide the atom.
     pymol.pipe_write("hide ('sele')")

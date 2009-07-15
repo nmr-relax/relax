@@ -900,7 +900,7 @@ class Mf_minimise:
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
-                param_vector = self.assemble_param_vector(spin=spin)
+                param_vector = self.assemble_param_vector(spin=spin, model_type=model_type)
 
                 # Diagonal scaling.
                 scaling_matrix = None

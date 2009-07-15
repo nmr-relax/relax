@@ -26,7 +26,7 @@
 # Python module imports.
 from math import acos, cos, pi, sqrt
 from minfx.generic import generic_minimise
-from numpy import array, dot, float64, identity, zeros
+from numpy import array, dot, float64, identity, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
 from warnings import warn
@@ -669,69 +669,106 @@ class N_state_model(Common_functions):
         return rdcs_numpy, rdc_err_numpy, xh_vect_numpy, array(dj, float64)
 
 
-    def __minimise_setup_tensors(self):
+    def __minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
-        @return:    The assembled data structures for using alignment tensors as the base data for
-                    optimisation.  These include:
-                        - full_tensors, the data of the full alignment tensors.
-                        - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
-                        - red_tensor_err, the tensor errors as concatenated rank-1 5D arrays.
-                        - full_in_ref_frame, flags specifying if the tensor in the reference frame
-                        is the full or reduced tensor.
-        @rtype:     tuple of (list, numpy rank-1 array, numpy rank-1 array, numpy rank-1 array)
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if
+                            normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using alignment tensors as the base
+                            data for optimisation.  These include:
+                                - full_tensors, the data of the full alignment tensors.
+                                - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
+                                - red_tensor_err, the tensor errors as concatenated rank-1 5D
+                                arrays.
+                                - full_in_ref_frame, flags specifying if the tensor in the reference
+                                frame is the full or reduced tensor.
+        @rtype:             tuple of (list, numpy rank-1 array, numpy rank-1 array, numpy rank-1
+                            array)
         """
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
         # Initialise.
-        full_tensors = []
-        red_tensor_elem = []
-        red_tensor_err = []
-        full_in_ref_frame = []
+        n = len(cdp.align_tensors.reduction)
+        full_tensors = zeros(n*5, float64)
+        red_tensors  = zeros(n*5, float64)
+        red_err = ones(n*5, float64) * 1e-5
+        full_in_ref_frame = zeros(n, float64)
 
-        # Loop over all tensors.
-        for tensor in cdp.align_tensors:
+        # Loop over the full tensors.
+        for i, tensor in self.__tensor_loop(red=False):
             # The full tensor.
-            if not tensor.red:
-                # The full tensor corresponds to the frame of reference.
-                if cdp.ref_domain == tensor.domain:
-                    full_in_ref_frame.append(1)
-                else:
-                    full_in_ref_frame.append(0)
+            full_tensors[5*i + 0] = tensor.Axx
+            full_tensors[5*i + 1] = tensor.Ayy
+            full_tensors[5*i + 2] = tensor.Axy
+            full_tensors[5*i + 3] = tensor.Axz
+            full_tensors[5*i + 4] = tensor.Ayz
 
-                # Create a list of matrices consisting of all the full alignment tensors.
-                full_tensors.append(tensor.tensor)
+            # The full tensor corresponds to the frame of reference.
+            if cdp.ref_domain == tensor.domain:
+                full_in_ref_frame[i] = 1
 
-            # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
-            elif tensor.red:
-                # Append the 5 unique elements.
-                red_tensor_elem.append(tensor.Axx)
-                red_tensor_elem.append(tensor.Ayy)
-                red_tensor_elem.append(tensor.Axy)
-                red_tensor_elem.append(tensor.Axz)
-                red_tensor_elem.append(tensor.Ayz)
+        # Loop over the reduced tensors.
+        for i, tensor in self.__tensor_loop(red=True):
+            # The reduced tensor (simulation data).
+            if sim_index != None:
+                red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
+                red_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
+                red_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
+                red_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
+                red_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
 
-                # Append the 5 unique error elements (if they exist).
-                if hasattr(tensor, 'Axx_err'):
-                    red_tensor_err.append(tensor.Axx_err)
-                    red_tensor_err.append(tensor.Ayy_err)
-                    red_tensor_err.append(tensor.Axy_err)
-                    red_tensor_err.append(tensor.Axz_err)
-                    red_tensor_err.append(tensor.Ayz_err)
+            # The reduced tensor.
+            else:
+                red_tensors[5*i + 0] = tensor.Axx
+                red_tensors[5*i + 1] = tensor.Ayy
+                red_tensors[5*i + 2] = tensor.Axy
+                red_tensors[5*i + 3] = tensor.Axz
+                red_tensors[5*i + 4] = tensor.Ayz
 
-                # Otherwise append errors of 1.0 to convert the chi-squared equation to the ASE equation (for the tensors without errors).
-                else:
-                    red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
-
-        # Convert the reduced alignment tensor element lists into numpy arrays (for the chi-squared function maths).
-        red_tensor_elem = array(red_tensor_elem, float64)
-        red_tensor_err = array(red_tensor_err, float64)
-        full_in_ref_frame = array(full_in_ref_frame, float64)
+            # The reduced tensor errors.
+            if hasattr(tensor, 'Axx_err'):
+                red_err[5*i + 0] = tensor.Axx_err
+                red_err[5*i + 1] = tensor.Ayy_err
+                red_err[5*i + 2] = tensor.Axy_err
+                red_err[5*i + 3] = tensor.Axz_err
+                red_err[5*i + 4] = tensor.Ayz_err
 
         # Return the data structures.
-        return full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame
+        return full_tensors, red_tensors, red_err, full_in_ref_frame
+
+
+    def __tensor_loop(self, red=False):
+        """Generator method for looping over the full or reduced tensors.
+
+        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
+                        the full tensors are returned.
+        @type red:      bool
+        @return:        The tensor index and the tensor.
+        @rtype:         (int, AlignTensorData instance)
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Number of tensor pairs.
+        n = len(cdp.align_tensors.reduction)
+
+        # Alias.
+        data = cdp.align_tensors
+        list = data.reduction
+
+        # Full or reduced index.
+        if red:
+            index = 1
+        else:
+            index = 0
+
+        # Loop over the reduction list.
+        for i in range(n):
+            yield i, data[list[i][index]]
 
 
     def __q_factors_rdc(self):
@@ -1406,7 +1443,7 @@ class N_state_model(Common_functions):
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
         if 'tensor' in data_types:
-            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
+            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
@@ -1830,31 +1867,6 @@ class N_state_model(Common_functions):
         __docformat__ = "plaintext"
 
 
-    def set_domain(self, tensor=None, domain=None):
-        """Set the domain label for the given tensor.
-
-        @param tensor:  The alignment tensor label.
-        @type tensor:   str
-        @param domain:  The domain label.
-        @type domain:   str
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Loop over the tensors.
-        match = False
-        for tensor_cont in cdp.align_tensors:
-            # Find the matching tensor and then store the domain label.
-            if tensor_cont.name == tensor:
-                tensor_cont.domain = domain
-                match = True
-
-        # The tensor label doesn't exist.
-        if not match:
-            raise RelaxNoTensorError, ('alignment', tensor)
-
-
     def set_non_spin_params(self, value=None, param=None):
         """Function for setting all the N-state model parameter values.
 
@@ -1903,28 +1915,3 @@ class N_state_model(Common_functions):
 
                 # Set the parameter value.
                 object[index] = value[i]
-
-
-    def set_type(self, tensor=None, red=None):
-        """Set the whether the given tensor is the full or reduced tensor.
-
-        @param tensor:  The alignment tensor label.
-        @type tensor:   str
-        @param red:     The flag specifying whether the given tensor is the full or reduced tensor.
-        @type red:      bool
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Loop over the tensors.
-        match = False
-        for tensor_cont in cdp.align_tensors:
-            # Find the matching tensor and then store the tensor type.
-            if tensor_cont.name == tensor:
-                tensor_cont.red = red
-                match = True
-
-        # The tensor label doesn't exist.
-        if not match:
-            raise RelaxNoTensorError, ('alignment', tensor)
