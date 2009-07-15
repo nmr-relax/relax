@@ -288,6 +288,12 @@ def display(tensor):
         print "%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1,1])
         print "%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2,2])
 
+        # Eigenvalues.
+        print "\nEigenvalues {Sxx, Syy, Szz}."
+        print "%-15s%15.8f" % ("Sxx:  ", 3.0/2.0 * data.tensor_diag[0,0])
+        print "%-15s%15.8f" % ("Syy:  ", 3.0/2.0 * data.tensor_diag[1,1])
+        print "%-15s%15.8f" % ("Szz:  ", 3.0/2.0 * data.tensor_diag[2,2])
+
         # Some white space.
         print "\n\n\n"
 
