@@ -824,10 +824,15 @@ def matrix_angles(basis_set=0, tensors=None):
 
         # Second loop.
         for j in xrange(tensor_num):
-            # Skip the diagonal and arccos problems.
-            if i != j:
-                # The angle (in rad).
-                cdp.align_tensors.angles[i, j] = arccos(dot(matrix[i], matrix[j]))
+            # Dot product.
+            delta = dot(matrix[i], matrix[j])
+
+            # Check.
+            if delta > 1:
+                delta = 1
+
+            # The angle (in rad).
+            cdp.align_tensors.angles[i, j] = arccos(delta)
 
             # Print out the angles in degrees.
             sys.stdout.write("%8.1f" % (cdp.align_tensors.angles[i, j]*180.0/pi))
