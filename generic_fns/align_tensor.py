@@ -465,8 +465,9 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
         if not hasattr(cdp, 'align_tensors'):
             cdp.align_tensors = AlignTensorList()
 
-        # Add the tensor.
-        cdp.align_tensors.add_item(tensor)
+        # Add the tensor, if it doesn't already exist.
+        if tensor not in cdp.align_tensors.names():
+            cdp.align_tensors.add_item(tensor)
 
     # Get the tensor.
     tensor_obj = get_tensor_object(tensor)
