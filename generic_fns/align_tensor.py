@@ -451,8 +451,6 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     cdp = pipes.get_pipe()
 
     # Test if alignment tensor data already exists.
-    if not errors and align_data_exists(tensor):
-        raise RelaxTensorError, 'alignment'
     if errors and not align_data_exists(tensor):
         raise RelaxNoTensorError, 'alignment'
 
