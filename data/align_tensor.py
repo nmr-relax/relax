@@ -629,6 +629,18 @@ class AlignTensorList(ListType):
             xml_to_object(align_tensor_node, self[-1])
 
 
+    def names(self):
+        """Return a list of the alignment tensor names."""
+
+        # Loop over the tensors.
+        names = []
+        for i in xrange(len(self)):
+            names.append(self[i].name)
+
+        # Return the list.
+        return names
+
+
     def to_xml(self, doc, element):
         """Create an XML element for the alignment tensors.
 

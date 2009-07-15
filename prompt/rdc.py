@@ -195,7 +195,7 @@ class RDC:
         rdc.display(id=id)
 
 
-    def read(self, id=None, file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+    def read(self, id=None, file=None, dir=None, spin_id=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
         """Read the RDC data from file.
 
         Keyword Arguments
@@ -206,6 +206,8 @@ class RDC:
         file:  The name of the file containing the RDC data.
 
         dir:  The directory where the file is located.
+
+        spin_id:  The spin identification string.
 
         mol_name_col:  The molecule name column (this defaults to no column).
 
@@ -238,6 +240,11 @@ class RDC:
 
         relax> rdc.read('phage', 'rdc_err.txt', error_col=4)
         relax> rdc.read(id='phage', file='rdc_err.txt', error_col=4)
+
+
+        If the RDCs correspond to the 'N' spin and other spins are loaded into relax, then type:
+
+        relax> rdc.read('Tb', 'Tb.txt', spin_id='@N')
         """
 
         # Function intro text.
@@ -246,6 +253,7 @@ class RDC:
             text = text + "id=" + `id`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
+            text = text + ", spin_id=" + `spin_id`
             text = text + ", mol_name_col=" + `mol_name_col`
             text = text + ", res_num_col=" + `res_num_col`
             text = text + ", res_name_col=" + `res_name_col`
@@ -267,6 +275,10 @@ class RDC:
         # Directory.
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
+
+        # Spin identifier.
+        if spin_id != None and type(spin_id) != str:
+            raise RelaxNoneStrError, ('spin identifier', spin_id)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
@@ -301,7 +313,7 @@ class RDC:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        rdc.read(id=id, file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
+        rdc.read(id=id, file=file, dir=dir, spin_id=spin_id, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
     def write(self, id=None, file=None, dir=None, force=False):
