@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -194,57 +194,3 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxStrError, self.n_state_model_fns.select_model, model=data[1])
-
-
-    def test_set_domain_argfail_tensor(self):
-        """Failure of the tensor arg of the n_state_model.set_domain() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.n_state_model_fns.set_domain, tensor=data[1])
-
-
-    def test_set_domain_argfail_domain(self):
-        """Failure of the domain arg of the n_state_model.set_domain() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.n_state_model_fns.set_domain, domain=data[1])
-
-
-    def test_set_type_argfail_tensor(self):
-        """Failure of the tensor arg of the n_state_model.set_type() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.n_state_model_fns.set_type, tensor=data[1])
-
-
-    def test_set_type_argfail_red(self):
-        """Failure of the red arg of the n_state_model.set_type() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the bool argument, and skip it.
-            if data[0] == 'bool':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxBoolError, self.n_state_model_fns.set_type, tensor='test', red=data[1])
-
-

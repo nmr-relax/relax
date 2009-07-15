@@ -369,7 +369,7 @@ class Molecule_base_class:
         dp = pipes.get_pipe('orig')
 
         # Rename the molecule.
-        self.molecule_fns.name(mol_id='#New mol', name='K')
+        self.molecule_fns.name(mol_id='#New mol', name='K', force=True)
 
         # Test that the molecule has been renamed.
         self.assertEqual(dp.mol[1].name, 'K')

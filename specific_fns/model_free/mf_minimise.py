@@ -919,7 +919,8 @@ class Mf_minimise:
                 raise RelaxProtonTypeError
 
         # Reset the minimisation statistics.
-        self.reset_min_stats()
+        if sim_index == None and min_algor != 'back_calc':
+            self.reset_min_stats()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -1026,7 +1027,7 @@ class Mf_minimise:
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
-                param_vector = self.assemble_param_vector(spin=spin)
+                param_vector = self.assemble_param_vector(spin=spin, model_type=model_type)
 
                 # Diagonal scaling.
                 scaling_matrix = None

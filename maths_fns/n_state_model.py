@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -98,14 +98,15 @@ class N_state_opt:
         @keyword init_params:       The initial parameter values.  Optimisation must start at some
                                     point!
         @type init_params:          numpy float64 array
-        @keyword full_tensors:      A list of the full alignment tensors in matrix form.
-        @type full_tensors:         list of rank-2, 3D numpy arrays
-        @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
+        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
                                     tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2,
                                     Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
+        @type full_tensors:         list of rank-2, 3D numpy arrays
+        @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
+                                    tensors.  The format is the same as for full_tensors.
         @type red_data:             numpy float64 array
         @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                    tensors.  The array format is the same as for red_data.
+                                    tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy float64 array
         @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference
                                     frame is the full or reduced tensor.
@@ -167,19 +168,24 @@ class N_state_opt:
         # The 2-domain N-state model.
         if model == '2-domain':
             # Some checks.
-            if red_data == None and not len(red_data):
+            if red_data == None or not len(red_data):
                 raise RelaxError, "The red_data argument " + `red_data` + " must be supplied."
-            if red_errors == None and not len(red_errors):
+            if red_errors == None or not len(red_errors):
                 raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
-            if full_in_ref_frame == None and not len(full_in_ref_frame):
+            if full_in_ref_frame == None or not len(full_in_ref_frame):
                 raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
 
             # Tensor set up.
             self.full_tensors = array(full_tensors, float64)
-            self.num_tensors = len(self.full_tensors)
+            self.num_tensors = len(self.full_tensors) / 5
             self.red_data = red_data
             self.red_errors = red_errors
             self.full_in_ref_frame = full_in_ref_frame
+
+            # Alignment tensor in rank-2, 3D form.
+            self.A = zeros((self.num_tensors, 3, 3), float64)
+            for i in range(self.num_tensors):
+                to_tensor(self.A[i], self.full_tensors[5*i:5*i+5])
 
             # Initialise some empty numpy objects for storage of:
             # R:  the transient rotation matricies.
@@ -196,8 +202,8 @@ class N_state_opt:
             self.dfunc = None
             self.d2func = None
 
-        # The flexible population N-state model.
-        elif model == 'population':
+        # The flexible population or equal probability N-state models.
+        elif model in ['population', 'fixed']:
             # Set the RDC and PCS flags (indicating the presence of data).
             self.rdc_flag = True
             self.pcs_flag = True
@@ -311,6 +317,14 @@ class N_state_opt:
             self.dfunc = self.dfunc_population
             self.d2func = self.d2func_population
 
+        # Pure tensor optimisation overrides.
+        if model == 'fixed':
+            # The probability array (all structures have equal probability).
+            self.probs = ones(self.N, float64) / self.N
+
+            # The probs are unpacked by self.func in the population model, so just override that function.
+            self.func = self.func_tensor_opt
+
 
     def func_2domain(self, params):
         """The target function for optimisation of the 2-domain N-state model.
@@ -356,11 +370,11 @@ class N_state_opt:
             for i in xrange(self.num_tensors):
                 # Normal RT.X.R rotation.
                 if self.full_in_ref_frame[i]:
-                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.full_tensors[i], self.R[c]))
+                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.RT[c], dot(self.A[i], self.R[c]))
 
                 # Inverse R.X.RT rotation.
                 else:
-                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.R[c], dot(self.full_tensors[i], self.RT[c]))
+                    self.red_bc[i] = self.red_bc[i]  +  pc * dot(self.R[c], dot(self.A[i], self.RT[c]))
 
         # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
         for i in xrange(self.num_tensors):
@@ -541,6 +555,201 @@ class N_state_opt:
 
         # Unpack the probabilities (located at the end of the parameter array).
         self.probs = params[-(self.N-1):]
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Create tensor i from the parameters.
+            to_tensor(self.A[i], params[5*i:5*i + 5])
+
+            # Loop over the spin systems j.
+            for j in xrange(self.num_spins):
+                # The back calculated RDC.
+                if self.rdc_flag:
+                    # Calculate the average RDC.
+                    if not self.missing_Dij[i, j]:
+                        self.Dij_theta[i, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[i], weights=self.probs)
+
+                # The back calculated PCS.
+                if self.pcs_flag:
+                    # Calculate the average PCS.
+                    if not self.missing_deltaij[i, j]:
+                        self.deltaij_theta[i, j] = ave_pcs_tensor(self.pcs_const[i, j], self.pcs_vect[j], self.N, self.A[i], weights=self.probs)
+
+            # Calculate and sum the single alignment chi-squared value (for the RDC).
+            if self.rdc_flag:
+                chi2_sum = chi2_sum + chi2(self.Dij[i], self.Dij_theta[i], self.rdc_sigma_ij[i])
+
+            # Calculate and sum the single alignment chi-squared value (for the PCS).
+            if self.pcs_flag:
+                chi2_sum = chi2_sum + chi2(self.deltaij[i], self.deltaij_theta[i], self.pcs_sigma_ij[i])
+
+        # Return the chi-squared value.
+        return chi2_sum
+
+
+    def func_tensor_opt(self, params):
+        """The target function for optimisation of the alignment tensor from RDC and/or PCS data.
+
+        Description
+        ===========
+
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
+        vector of parameter values and, using these, returns the single chi-squared value
+        corresponding to that coordinate in the parameter space.  If no RDC or PCS errors are
+        supplied, then the SSE (the sum of squares error) value is returned instead.  The
+        chi-squared is simply the SSE normalised to unit variance (the SSE divided by the error
+        squared).
+
+
+        Indices
+        =======
+
+        For this calculation, five indices are looped over and used in the various data structures.
+        These include:
+            - i, the index over alignments,
+            - j, the index over spin systems,
+            - c, the index over the N-states (or over the structures),
+            - n, the index over the first dimension of the alignment tensor n = {x, y, z},
+            - m, the index over the second dimension of the alignment tensor m = {x, y, z}.
+
+
+        Equations
+        =========
+
+        To calculate the function value, a chain of equations are used.  This includes the
+        chi-squared equation and the RDC and PCS equations.
+
+
+        The chi-squared equation
+        ------------------------
+
+        The equations are::
+
+                         ___
+                         \    (Dij - Dij(theta)) ** 2
+         chi^2(theta)  =  >   ----------------------- ,
+                         /__       sigma_ij ** 2
+                          ij
+
+                         ___
+                         \    (delta_ij - delta_ij(theta)) ** 2
+         chi^2(theta)  =  >   --------------------------------- ,
+                         /__             sigma_ij ** 2
+                          ij
+
+        where:
+            - theta is the parameter vector,
+            - Dij are the measured RDCs for alignment i, spin j,
+            - Dij(theta) are the back calculated RDCs for alignment i, spin j,
+            - delta_ij are the measured PCSs for alignment i, spin j,
+            - delta_ij(theta) are the back calculated PCSs for alignment i, spin j,
+            - sigma_ij are the RDC or PCS errors.
+
+        Both chi-squared values sum.
+
+
+        The RDC equation
+        ----------------
+
+        The RDC equation is::
+
+                           _N_
+                        dj \         T
+         Dij(theta)  =  --  >   mu_jc . Ai . mu_jc,
+                        N  /__
+                           c=1
+
+        where:
+            - dj is the dipolar constant for spin j,
+            - N is the total number of states or structures,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - Ai is the alignment tensor.
+
+        The dipolar constant is henceforth defined as::
+
+            dj = 3 / (2pi) d',
+
+        where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is
+        associated with the alignment tensor and the pure dipolar constant in SI units is::
+
+                   mu0 gI.gS.h_bar
+            d' = - --- ----------- ,
+                   4pi    r**3
+
+        where:
+            - mu0 is the permeability of free space,
+            - gI and gS are the gyromagnetic ratios of the I and S spins,
+            - h_bar is Dirac's constant which is equal to Planck's constant divided by 2pi,
+            - r is the distance between the two spins.
+
+
+        The PCS equation
+        ----------------
+
+        The PCS equation is::
+
+                                 _N_
+                               1 \               T
+            delta_ij(theta)  = -  >  dijc . mu_jc . Ai . mu_jc,
+                               N /__
+                                 c=1
+
+        where:
+            - djci is the PCS constant for spin j, state c and experiment or alignment i,
+            - N is the total number of states or structures,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - Ai is the alignment tensor.
+
+        The PCS constant is defined as::
+
+                   mu0 15kT   1
+            dijc = --- ----- ---- ,
+                   4pi Bo**2 r**3
+
+        where:
+            - mu0 is the permeability of free space,
+            - k is Boltzmann's constant,
+            - T is the absolute temperature (different for each experiment),
+            - Bo is the magnetic field strength (different for each experiment),
+            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin
+            (different for each spin and state).
+
+
+        Stored data structures
+        ======================
+
+        There are a number of data structures calculated by this function and stored for subsequent
+        use in the gradient and Hessian functions.  This include the back calculated RDCs and the
+        alignment tensors.
+
+        Dij(theta)
+        ----------
+
+        The back calculated RDCs.  This is a rank-2 tensor with indices {i, j}.
+
+        delta_ij(theta)
+        ---------------
+
+        The back calculated PCS.  This is a rank-2 tensor with indices {i, j}.
+
+        Ai
+        --
+
+        The alignment tensors.  This is a rank-3 tensor with indices {i, n, m}.
+
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 array
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
 
         # Loop over each alignment.
         for i in xrange(self.num_align):

@@ -109,6 +109,18 @@ class Mf(TestCase):
         return string
 
 
+    def monte_carlo(self):
+        """Run Monte Carlo simulations for the optimised model-free model."""
+
+        # Monte Carlo simulations.
+        self.relax.interpreter._Monte_carlo.setup(number=3)
+        self.relax.interpreter._Monte_carlo.create_data()
+        self.relax.interpreter._Monte_carlo.initial_values()
+        self.relax.interpreter._Minimisation.minimise('newton')
+        #self.relax.interpreter._Eliminate.eliminate()
+        self.relax.interpreter._Monte_carlo.error_analysis()
+
+
     def object_comparison(self, obj1=None, obj2=None, skip=None):
         """Check if the contents of 2 objects are the same."""
 
@@ -184,7 +196,7 @@ class Mf(TestCase):
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/omp_model_free.py')
 
         # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        cdp = pipes.get_pipe('final')
 
         # Some checks.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim, [True, False, True])
@@ -560,6 +572,9 @@ class Mf(TestCase):
         # Minimise.
         self.relax.interpreter._Minimisation.minimise('newton', 'gmw', 'mt')
 
+        # Monte Carlo simulations.
+        self.monte_carlo()
+
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
@@ -579,6 +594,9 @@ class Mf(TestCase):
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
             f_count = 91
             g_count = 91
+            if search('^2.6', PY_VER):
+                f_count = 153
+                g_count = 153
         elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
             f_count = 165
             g_count = 165
@@ -1084,7 +1102,7 @@ class Mf(TestCase):
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
         self.assertAlmostEqual(spin.s2, s2, msg=mesg)
-        self.assertAlmostEqual(spin.te / 1e-12, te, msg=mesg)
+        self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
         self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
         self.assertEqual(spin.iter, iter, msg=mesg)

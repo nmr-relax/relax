@@ -61,6 +61,7 @@ from align_tensor import Align_tensor
 from consistency_tests import Consistency_tests
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
+from frame_order import Frame_order
 from frq import Frq
 from grace import Grace
 from jw_mapping import Jw_mapping
@@ -145,6 +146,7 @@ class Interpreter:
         self._Consistency_tests = Consistency_tests(relax)
         self._Dasha = Dasha(relax)
         self._Diffusion_tensor = Diffusion_tensor(relax)
+        self._Frame_order = Frame_order(relax)
         self._OpenDX = OpenDX(relax)
         self._Frq = Frq(relax)
         self._Grace = Grace(relax)
@@ -215,6 +217,7 @@ class Interpreter:
         consistency_tests = self._Consistency_tests
         dasha = self._Dasha
         diffusion_tensor = self._Diffusion_tensor
+        frame_order = self._Frame_order
         dx = self._OpenDX
         frq = self._Frq
         grace = self._Grace

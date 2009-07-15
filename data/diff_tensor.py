@@ -541,7 +541,7 @@ def dependency_generator(diff_type):
         yield ('Dz',            ['tm', 'Da'],                                   ['Diso', 'Da'])
         yield ('Dx_unit',       ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
         yield ('Dy_unit',       ['alpha', 'beta', 'gamma'],                     ['alpha', 'beta', 'gamma'])
-        yield ('Dz_unit',       ['alpha', 'beta'],                              ['alpha', 'beta'])
+        yield ('Dz_unit',       ['beta', 'gamma'],                              ['beta', 'gamma'])
         yield ('tensor_diag',   ['tm', 'Da', 'Dr'],                             ['type', 'Dx', 'Dy', 'Dz'])
         yield ('rotation',      ['alpha', 'beta', 'gamma'],                     ['type', 'Dx_unit', 'Dy_unit', 'Dz_unit'])
         yield ('tensor',        ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma'],   ['rotation', 'tensor_diag'])
@@ -558,14 +558,14 @@ class DiffTensorData(Element):
     __mod_attr__ = ['type',
                     'fixed',
                     'spheroid_type',
-                    'tm',
-                    'Da',
-                    'Dr',
-                    'theta',
-                    'phi',
-                    'alpha',
-                    'beta',
-                    'gamma']
+                    'tm',       'tm_sim',       'tm_err',
+                    'Da',       'Da_sim',       'Da_err',
+                    'Dr',       'Dr_sim',       'Dr_err',
+                    'theta',    'theta_sim',    'theta_err',
+                    'phi',      'phi_sim',      'phi_err',
+                    'alpha',    'alpha_sim',    'alpha_err',
+                    'beta',     'beta_sim',     'beta_err',
+                    'gamma',    'gamma_sim',    'gamma_err']
 
     def __init__(self):
         """Initialise a few instance variables."""

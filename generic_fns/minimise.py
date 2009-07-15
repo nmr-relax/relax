@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,7 +31,7 @@ from generic_fns.mol_res_spin import spin_loop
 from generic_fns import pipes
 from multi.processor import Processor_box
 from relax_errors import RelaxError
-from specific_fns.setup import get_specific_fn
+import specific_fns
 
 
 def reset_min_stats(data_pipe=None, spin=None):
@@ -119,12 +119,15 @@ def calc(verbosity=1):
     @type verbosity:    int
     """
 
+    # Test if the current data pipe exists.
+    pipes.test()
+
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     # Specific calculate function setup.
-    calculate = get_specific_fn('calculate', cdp.pipe_type)
-    overfit_deselect = get_specific_fn('overfit_deselect', cdp.pipe_type)
+    calculate = specific_fns.setup.get_specific_fn('calculate', cdp.pipe_type)
+    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
     # Deselect residues lacking data:
     overfit_deselect()
@@ -164,12 +167,15 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     @type verbosity:    int
     """
 
+    # Test if the current data pipe exists.
+    pipes.test()
+
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     # Specific grid search function.
-    grid_search = get_specific_fn('grid_search', cdp.pipe_type)
-    overfit_deselect = get_specific_fn('overfit_deselect', cdp.pipe_type)
+    grid_search = specific_fns.setup.get_specific_fn('grid_search', cdp.pipe_type)
+    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
     # Deselect residues lacking data:
     overfit_deselect()
@@ -221,12 +227,15 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     @type sim_index:        None or int
     """
 
+    # Test if the current data pipe exists.
+    pipes.test()
+
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
 
     # Specific minimisation function.
-    minimise = get_specific_fn('minimise', cdp.pipe_type)
-    overfit_deselect = get_specific_fn('overfit_deselect', cdp.pipe_type)
+    minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)
+    overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
     # Deselect residues lacking data:
     overfit_deselect()
@@ -253,11 +262,13 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     processor_box.processor.run_queue()
 
 
-def return_conversion_factor(stat_type):
+def return_conversion_factor(stat_type, spin):
     """Dummy function for returning 1.0.
 
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
+    @param spin:        Spin container (not used).
+    @type spin:         SpinContainer instance
     @return:            A conversion factor of 1.0.
     @rtype:             float
     """
@@ -346,11 +357,13 @@ def return_grace_string(stat_type):
     return grace_string
 
 
-def return_units(stat_type):
+def return_units(stat_type, spin_id=None):
     """Dummy function which returns None as the stats have no units.
 
     @param stat_type:   The name of the statistic.  This is unused!
     @type stat_type:    str
+    @keyword spin_id:   Not used.
+    @type spin_id:      None
     @return:            Nothing.
     @rtype:             None
     """

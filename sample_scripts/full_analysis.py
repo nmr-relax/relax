@@ -24,6 +24,8 @@
 
 This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
 
+If you have obtained this script without the program relax, please visit http://nmr-relax.com.
+
 
 References
 ==========
@@ -34,19 +36,19 @@ The model-free optimisation methodology herein is that of:
 
 Other references for features of this script include model-free model selection using Akaike's Information Criterion:
 
-    d’Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39.
+    d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39.
 
 The elimination of failed model-free models and Monte Carlo simulations:
 
-    d’Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135.
+    d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135.
 
 Significant model-free optimisation improvements:
 
-    d’Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109.
+    d'Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109.
 
 Rather than searching for the lowest chi-squared value, this script searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional search is formulated using set theory as the universal solution:
 
-    d’Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494.
+    d'Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494.
 
 The basic three references for the original and extended model-free theories are:
 
@@ -159,16 +161,16 @@ DIFF_MODEL = 'local_tm'
 MF_MODELS = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
 
-# The type of heteronucleus.
-HETNUC = 'N'
-
 # The PDB file (set this to None if no structure is available).
 PDB_FILE = '1f3y.pdb'
 
 # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
 SEQ_ARGS = ['noe.600.out', None, None, 0, 1, None, None, None]
 
-# The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
+# The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
+HET_NAME = 'N'
+
+# The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
 RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 0, 1, None, None, 2, 3, None],
               ['R2',  '600', 599.719 * 1e6, 'r2.600.out',  None, None, 0, 1, None, None, 2, 3, None],
               ['NOE', '600', 599.719 * 1e6, 'noe.600.out', None, None, 0, 1, None, None, 2, 3, None],
@@ -196,10 +198,10 @@ GRID_INC = 11
 MIN_ALGOR = 'newton'
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-MC_NUM = 200
+MC_NUM = 500
 
 # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
-CONV_LOOP = False
+CONV_LOOP = True
 
 
 class Main:
@@ -295,7 +297,7 @@ class Main:
                     self.multi_model()
 
                     # Model selection.
-                    self.model_selection(modsel_pipe='final', dir=self.base_dir + 'aic')
+                    self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
                     fix('all', fixed=False)
@@ -625,6 +627,10 @@ class Main:
 
             # Load the sequence.
             sequence.read(SEQ_ARGS[0], SEQ_ARGS[1], SEQ_ARGS[2], SEQ_ARGS[3], SEQ_ARGS[4], SEQ_ARGS[5], SEQ_ARGS[6], SEQ_ARGS[7])
+
+            # Name the spins if necessary.
+            if SEQ_ARGS[6] == None:
+                spin.name(name=HET_NAME)
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and PDB_FILE:

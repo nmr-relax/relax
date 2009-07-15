@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@
 # Python module imports.
 from math import acos, cos, pi, sqrt
 from minfx.generic import generic_minimise
-from numpy import array, dot, float64, identity, zeros
+from numpy import array, dot, float64, identity, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
 from warnings import warn
@@ -34,12 +34,13 @@ from warnings import warn
 # relax module imports.
 from float import isNaN, isInf
 import generic_fns
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 import generic_fns.structure.geometric
 from generic_fns.structure.internal import Internal
 import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
+from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
@@ -152,9 +153,10 @@ class N_state_model(Common_functions):
             pop_start = pop_start + 5*len(cdp.align_tensors)
 
         # Loop over the populations, and set the scaling factor.
-        factor = 100.0
-        for i in xrange(pop_start, pop_start + (cdp.N-1)):
-            scaling_matrix[i, i] = factor
+        if cdp.model in ['2-domain', 'population']:
+            factor = 100.0
+            for i in xrange(pop_start, pop_start + (cdp.N-1)):
+                scaling_matrix[i, i] = factor
 
         # Return the matrix.
         return scaling_matrix
@@ -163,7 +165,13 @@ class N_state_model(Common_functions):
     def __base_data_types(self):
         """Determine all the base data types.
 
-        @return:    A list of all the base data types.  This can include 'rdc', 'pcs', and 'tensor'.
+        The base data types can include::
+            - 'rdc', residual dipolar couplings.
+            - 'pcs', pseudo-contact shifts.
+            - 'noesy', NOE restraints.
+            - 'tensor', alignment tensors.
+
+        @return:    A list of all the base data types.
         @rtype:     list of str
         """
 
@@ -189,9 +197,13 @@ class N_state_model(Common_functions):
         if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
             list.append('tensor')
 
+        # NOESY data search.
+        if hasattr(cdp, 'noe_restraints'):
+            list.append('noesy')
+
         # No data is present.
         if not list:
-            raise RelaxError, "Neither RDC, PCS, nor alignment tensor data is present."
+            raise RelaxError, "Neither RDC, PCS, NOESY nor alignment tensor data is present."
 
         # Return the list.
         return list
@@ -263,8 +275,8 @@ class N_state_model(Common_functions):
             for i in xrange(cdp.N-1):
                 probs[i] = param_vector[i]
 
-        # The probability for state N.
-        probs[-1] = 1 - sum(probs[0:-1])
+            # The probability for state N.
+            probs[-1] = 1 - sum(probs[0:-1])
 
         # The Euler angles.
         if cdp.model == '2-domain':
@@ -356,28 +368,30 @@ class N_state_model(Common_functions):
         i = pop_start
         j = 0
 
-        # Loop over the prob parameters (N - 1, because the sum of pc is 1).
-        for k in xrange(cdp.N - 1):
-            # 0 <= pc <= 1.
+        # Probability parameters.
+        if cdp.model in ['2-domain', 'population']:
+            # Loop over the prob parameters (N - 1, because the sum of pc is 1).
+            for k in xrange(cdp.N - 1):
+                # 0 <= pc <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0)
+                b.append(-1.0 / scaling_matrix[i, i])
+                j = j + 2
+
+                # Increment i.
+                i = i + 1
+
+            # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            A[j][i] = 1.0
-            A[j+1][i] = -1.0
+            for i in xrange(pop_start, self.param_num()):
+                A[-2][i] = -1.0
+                A[-1][i] = 1.0
+            b.append(-1.0)
             b.append(0.0)
-            b.append(-1.0 / scaling_matrix[i, i])
-            j = j + 2
-
-            # Increment i.
-            i = i + 1
-
-        # Add the inequalities for pN.
-        A.append(zero_array * 0.0)
-        A.append(zero_array * 0.0)
-        for i in xrange(pop_start, self.param_num()):
-            A[-2][i] = -1.0
-            A[-1][i] = 1.0
-        b.append(-1.0 / scaling_matrix[i, i])
-        b.append(0.0)
 
         # Convert to numpy data structures.
         A = array(A, float64)
@@ -396,11 +410,8 @@ class N_state_model(Common_functions):
 
         # Loop over each alignment.
         for i in xrange(model.num_align):
-            # Indices.
-            pcs_index = 0
-            rdc_index = 0
-
             # Spin loop.
+            data_index = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -410,30 +421,23 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'pcs_bc'):
-                        spin.pcs_bc = []
+                        spin.pcs_bc = [None]*model.num_align
 
                     # Append the back calculated PCS (in ppm).
-                    spin.pcs_bc.append(model.deltaij_theta[i, pcs_index]*1e6)
-
-                    # Increment the RDC index.
-                    pcs_index = pcs_index + 1
+                    spin.pcs_bc[i] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
                 if hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = []
-
-                    # No RDC.
-                    if spin.rdc[i] == None:
-                        spin.rdc_bc.append(None)
-                        continue
+                        spin.rdc_bc = [None] * model.num_align
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc.append(model.Dij_theta[i, rdc_index])
+                    spin.rdc_bc[i] = model.Dij_theta[i, data_index]
 
-                    # Increment the RDC index.
-                    rdc_index = rdc_index + 1
+                # Increment the spin index if it contains data.
+                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect')):
+                    data_index = data_index + 1
 
 
     def __minimise_setup_pcs(self):
@@ -451,6 +455,14 @@ class N_state_model(Common_functions):
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
+
+        # Data setup tests.
+        if not hasattr(cdp, 'paramagnetic_centre'):
+            raise RelaxError, "The paramagnetic centre has not yet been specified."
+        if not hasattr(cdp, 'temperature'):
+            raise RelaxError, "The experimental temperatures have not been set."
+        if not hasattr(cdp, 'frq'):
+            raise RelaxError, "The spectrometer frequencies of the experiments have not been set."
 
         # Initialise.
         pcs = []
@@ -482,10 +494,16 @@ class N_state_model(Common_functions):
             unit_vect.append([])
             r.append([])
 
+            # The position list.
+            if type(spin.pos[0]) in [float, float64]:
+                pos = [spin.pos]
+            else:
+                pos = spin.pos
+
             # Loop over the states, and calculate the paramagnetic centre to nucleus unit vectors.
             for c in range(cdp.N):
                 # Calculate the electron spin to nuclear spin vector.
-                vect = spin.pos[c] - cdp.paramagnetic_centre
+                vect = pos[c] - cdp.paramagnetic_centre
 
                 # The length.
                 r[-1].append(norm(vect))
@@ -611,7 +629,10 @@ class N_state_model(Common_functions):
 
             # Append the RDC and XH vectors to the lists.
             rdcs.append(spin.rdc)
-            xh_vectors.append(spin.xh_vect)
+            if type(spin.xh_vect[0]) == float:
+                xh_vectors.append([spin.xh_vect])
+            else:
+                xh_vectors.append(spin.xh_vect)
 
             # Append the PCS errors (or a list of None).
             if hasattr(spin, 'rdc_err'):
@@ -648,69 +669,106 @@ class N_state_model(Common_functions):
         return rdcs_numpy, rdc_err_numpy, xh_vect_numpy, array(dj, float64)
 
 
-    def __minimise_setup_tensors(self):
+    def __minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
-        @return:    The assembled data structures for using alignment tensors as the base data for
-                    optimisation.  These include:
-                        - full_tensors, the data of the full alignment tensors.
-                        - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
-                        - red_tensor_err, the tensor errors as concatenated rank-1 5D arrays.
-                        - full_in_ref_frame, flags specifying if the tensor in the reference frame
-                        is the full or reduced tensor.
-        @rtype:     tuple of (list, numpy rank-1 array, numpy rank-1 array, numpy rank-1 array)
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if
+                            normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for using alignment tensors as the base
+                            data for optimisation.  These include:
+                                - full_tensors, the data of the full alignment tensors.
+                                - red_tensor_elem, the tensors as concatenated rank-1 5D arrays.
+                                - red_tensor_err, the tensor errors as concatenated rank-1 5D
+                                arrays.
+                                - full_in_ref_frame, flags specifying if the tensor in the reference
+                                frame is the full or reduced tensor.
+        @rtype:             tuple of (list, numpy rank-1 array, numpy rank-1 array, numpy rank-1
+                            array)
         """
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
         # Initialise.
-        full_tensors = []
-        red_tensor_elem = []
-        red_tensor_err = []
-        full_in_ref_frame = []
+        n = len(cdp.align_tensors.reduction)
+        full_tensors = zeros(n*5, float64)
+        red_tensors  = zeros(n*5, float64)
+        red_err = ones(n*5, float64) * 1e-5
+        full_in_ref_frame = zeros(n, float64)
 
-        # Loop over all tensors.
-        for tensor in cdp.align_tensors:
+        # Loop over the full tensors.
+        for i, tensor in self.__tensor_loop(red=False):
             # The full tensor.
-            if not tensor.red:
-                # The full tensor corresponds to the frame of reference.
-                if cdp.ref_domain == tensor.domain:
-                    full_in_ref_frame.append(1)
-                else:
-                    full_in_ref_frame.append(0)
+            full_tensors[5*i + 0] = tensor.Axx
+            full_tensors[5*i + 1] = tensor.Ayy
+            full_tensors[5*i + 2] = tensor.Axy
+            full_tensors[5*i + 3] = tensor.Axz
+            full_tensors[5*i + 4] = tensor.Ayz
 
-                # Create a list of matrices consisting of all the full alignment tensors.
-                full_tensors.append(tensor.tensor)
+            # The full tensor corresponds to the frame of reference.
+            if cdp.ref_domain == tensor.domain:
+                full_in_ref_frame[i] = 1
 
-            # Create a list of all the reduced alignment tensor elements and their errors (for the chi-squared function).
-            elif tensor.red:
-                # Append the 5 unique elements.
-                red_tensor_elem.append(tensor.Axx)
-                red_tensor_elem.append(tensor.Ayy)
-                red_tensor_elem.append(tensor.Axy)
-                red_tensor_elem.append(tensor.Axz)
-                red_tensor_elem.append(tensor.Ayz)
+        # Loop over the reduced tensors.
+        for i, tensor in self.__tensor_loop(red=True):
+            # The reduced tensor (simulation data).
+            if sim_index != None:
+                red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
+                red_tensors[5*i + 1] = tensor.Ayy_sim[sim_index]
+                red_tensors[5*i + 2] = tensor.Axy_sim[sim_index]
+                red_tensors[5*i + 3] = tensor.Axz_sim[sim_index]
+                red_tensors[5*i + 4] = tensor.Ayz_sim[sim_index]
 
-                # Append the 5 unique error elements (if they exist).
-                if hasattr(tensor, 'Axx_err'):
-                    red_tensor_err.append(tensor.Axx_err)
-                    red_tensor_err.append(tensor.Ayy_err)
-                    red_tensor_err.append(tensor.Axy_err)
-                    red_tensor_err.append(tensor.Axz_err)
-                    red_tensor_err.append(tensor.Ayz_err)
+            # The reduced tensor.
+            else:
+                red_tensors[5*i + 0] = tensor.Axx
+                red_tensors[5*i + 1] = tensor.Ayy
+                red_tensors[5*i + 2] = tensor.Axy
+                red_tensors[5*i + 3] = tensor.Axz
+                red_tensors[5*i + 4] = tensor.Ayz
 
-                # Otherwise append errors of 1.0 to convert the chi-squared equation to the ASE equation (for the tensors without errors).
-                else:
-                    red_tensor_err = red_tensor_err + [1.0, 1.0, 1.0, 1.0, 1.0]
-
-        # Convert the reduced alignment tensor element lists into numpy arrays (for the chi-squared function maths).
-        red_tensor_elem = array(red_tensor_elem, float64)
-        red_tensor_err = array(red_tensor_err, float64)
-        full_in_ref_frame = array(full_in_ref_frame, float64)
+            # The reduced tensor errors.
+            if hasattr(tensor, 'Axx_err'):
+                red_err[5*i + 0] = tensor.Axx_err
+                red_err[5*i + 1] = tensor.Ayy_err
+                red_err[5*i + 2] = tensor.Axy_err
+                red_err[5*i + 3] = tensor.Axz_err
+                red_err[5*i + 4] = tensor.Ayz_err
 
         # Return the data structures.
-        return full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame
+        return full_tensors, red_tensors, red_err, full_in_ref_frame
+
+
+    def __tensor_loop(self, red=False):
+        """Generator method for looping over the full or reduced tensors.
+
+        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
+                        the full tensors are returned.
+        @type red:      bool
+        @return:        The tensor index and the tensor.
+        @rtype:         (int, AlignTensorData instance)
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Number of tensor pairs.
+        n = len(cdp.align_tensors.reduction)
+
+        # Alias.
+        data = cdp.align_tensors
+        list = data.reduction
+
+        # Full or reduced index.
+        if red:
+            index = 1
+        else:
+            index = 0
+
+        # Loop over the reduction list.
+        for i in range(n):
+            yield i, data[list[i][index]]
 
 
     def __q_factors_rdc(self):
@@ -721,6 +779,7 @@ class N_state_model(Common_functions):
 
         # Q-factor list.
         cdp.q_factors_rdc = []
+        cdp.q_factors_rdc_norm2 = []
 
         # Loop over the alignments.
         for i in xrange(len(cdp.align_tensors)):
@@ -729,6 +788,8 @@ class N_state_model(Common_functions):
             sse = 0.0
 
             # Spin loop.
+            dj = None
+            N = 0
             for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
@@ -741,19 +802,44 @@ class N_state_model(Common_functions):
                 # Sum of squares.
                 sse = sse + (spin.rdc[i] - spin.rdc_bc[i])**2
 
-                # Sum the RDCs squared (for normalisation).
+                # Sum the RDCs squared (for one type of normalisation).
                 D2_sum = D2_sum + spin.rdc[i]**2
 
+                # Gyromagnetic ratios.
+                gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+                gh = return_gyromagnetic_ratio(spin.proton_type)
+
+                # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+                dj_new = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+                if dj and dj_new != dj:
+                    raise RelaxError, "All the RDCs must come from the same nucleus type."
+                else:
+                    dj = dj_new
+
+                # Increment the number of data sets.
+                N = N + 1
+
+            # Normalisation factor of 2Da^2(4 + 3R)/5.
+            D = dj * cdp.align_tensors[i].tensor_diag
+            Da = 1.0/3.0 * (D[2,2] - (D[0,0]+D[1,1])/2.0)
+            Dr = 1.0/3.0 * (D[0,0] - D[1,1])
+            R = Dr / Da
+            norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
+
             # The Q-factor for the alignment.
-            Q = sqrt(sse / D2_sum)
+            Q = sqrt(sse / N / norm)
             cdp.q_factors_rdc.append(Q)
+            cdp.q_factors_rdc_norm2.append(sqrt(sse / D2_sum))
 
         # The total Q-factor.
         cdp.q_rdc = 0.0
+        cdp.q_rdc_norm2 = 0.0
         for Q in cdp.q_factors_rdc:
             cdp.q_rdc = cdp.q_rdc + Q**2
-        cdp.q_rdc = cdp.q_rdc / len(cdp.q_factors_rdc)
-        cdp.q_rdc = sqrt(cdp.q_rdc)
+        for Q in cdp.q_factors_rdc_norm2:
+            cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + Q**2
+        cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
+        cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
     def __q_factors_pcs(self):
@@ -870,6 +956,99 @@ class N_state_model(Common_functions):
             # Initialise the tensor.
             if not exists:
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+
+
+    def calc_ave_dist(self, atom1, atom2, exp=1):
+        """Calculate the average distances.
+
+        The formula used is:
+
+                      _N_
+                  / 1 \                  \ 1/exp
+            <r> = | -  > |p1i - p2i|^exp |
+                  \ N /__                /
+                       i
+
+        where i are the members of the ensemble, N is the total number of structural models, and p1
+        and p2 at the two atom positions.
+
+
+        @param atom1:   The atom identification string of the first atom.
+        @type atom1:    str
+        @param atom2:   The atom identification string of the second atom.
+        @type atom2:    str
+        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
+                        r^-6 NOE averaging.
+        @type exp:      int
+        @return:        The average distance between the two atoms.
+        @rtype:         float
+        """
+
+        # Get the spin containers.
+        spin1 = return_spin(atom1)
+        spin2 = return_spin(atom2)
+
+        # Loop over each model.
+        num_models = len(spin1.pos)
+        ave_dist = 0.0
+        for i in range(num_models):
+            # Distance to the minus sixth power.
+            dist = norm(spin1.pos[i] - spin2.pos[i])
+            ave_dist = ave_dist + dist**(exp)
+
+        # Average.
+        ave_dist = ave_dist / num_models
+
+        # The exponent.
+        ave_dist = ave_dist**(1.0/exp)
+
+        # Return the average distance.
+        return ave_dist
+
+
+    def calculate(self, verbosity=1):
+        """Calculation function.
+
+        Currently this function simply calculates the NOESY flat-bottom quadratic energy potential,
+        if NOE restraints are available.
+
+        @param verbosity:       A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type verbosity:        int
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the N-state model has been set up.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError, 'N-state'
+
+        # Init some numpy arrays.
+        num_restraints = len(cdp.noe_restraints)
+        dist = zeros(num_restraints, float64)
+        pot = zeros(num_restraints, float64)
+        lower = zeros(num_restraints, float64)
+        upper = zeros(num_restraints, float64)
+
+        # Loop over the NOEs.
+        for i in range(num_restraints):
+            # Create arrays of the NOEs.
+            lower[i] = cdp.noe_restraints[i][2]
+            upper[i] = cdp.noe_restraints[i][3]
+
+            # Calculate the average distances, using -6 power averaging.
+            dist[i] = self.calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+
+        # Calculate the quadratic potential.
+        quad_pot(dist, pot, lower, upper) 
+
+        # Store the distance and potential information.
+        cdp.ave_dist = []
+        cdp.quad_pot = []
+        for i in range(num_restraints):
+            cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
+            cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
 
 
     def CoM(self, pivot_point=None, centre=None):
@@ -1144,15 +1323,21 @@ class N_state_model(Common_functions):
 
         # Set the grid search options.
         for i in xrange(n):
-            # Probabilities (default values).
-            if search('^p', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, 1.0])
+            # i is in the parameter array.
+            if i < len(cdp.params):
+                # Probabilities (default values).
+                if search('^p', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, 1.0])
 
-            # Angles (default values).
-            if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, 2*pi])
-            elif search('^beta', cdp.params[i]):
-                grid_ops.append([inc[i], 0.0, pi])
+                # Angles (default values).
+                if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, 2*pi])
+                elif search('^beta', cdp.params[i]):
+                    grid_ops.append([inc[i], 0.0, pi])
+
+            # Otherwise this must be an alignment tensor component.
+            else:
+                grid_ops.append([inc[i], -1e-3, 1e-3])
 
             # Lower bound (if supplied).
             if lower:
@@ -1228,6 +1413,16 @@ class N_state_model(Common_functions):
             if not hasattr(cdp, 'ref_domain'):
                 raise RelaxError, "The reference domain has not been set."
 
+        # Right, constraints cannot be used for the 'fixed' model.
+        if constraints and cdp.model == 'fixed':
+            warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
+            constraints = False
+
+            # Pop out the Method of Multipliers algorithm.
+            if min_algor == 'Method of Multipliers':
+                min_algor = min_options[0]
+                min_options = min_options[1:]
+
         # Update the model parameters if necessary.
         self.__update_model()
 
@@ -1248,7 +1443,7 @@ class N_state_model(Common_functions):
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
         if 'tensor' in data_types:
-            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
+            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
@@ -1672,31 +1867,6 @@ class N_state_model(Common_functions):
         __docformat__ = "plaintext"
 
 
-    def set_domain(self, tensor=None, domain=None):
-        """Set the domain label for the given tensor.
-
-        @param tensor:  The alignment tensor label.
-        @type tensor:   str
-        @param domain:  The domain label.
-        @type domain:   str
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Loop over the tensors.
-        match = False
-        for tensor_cont in cdp.align_tensors:
-            # Find the matching tensor and then store the domain label.
-            if tensor_cont.name == tensor:
-                tensor_cont.domain = domain
-                match = True
-
-        # The tensor label doesn't exist.
-        if not match:
-            raise RelaxNoTensorError, ('alignment', tensor)
-
-
     def set_non_spin_params(self, value=None, param=None):
         """Function for setting all the N-state model parameter values.
 
@@ -1745,28 +1915,3 @@ class N_state_model(Common_functions):
 
                 # Set the parameter value.
                 object[index] = value[i]
-
-
-    def set_type(self, tensor=None, red=None):
-        """Set the whether the given tensor is the full or reduced tensor.
-
-        @param tensor:  The alignment tensor label.
-        @type tensor:   str
-        @param red:     The flag specifying whether the given tensor is the full or reduced tensor.
-        @type red:      bool
-        """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Loop over the tensors.
-        match = False
-        for tensor_cont in cdp.align_tensors:
-            # Find the matching tensor and then store the tensor type.
-            if tensor_cont.name == tensor:
-                tensor_cont.red = red
-                match = True
-
-        # The tensor label doesn't exist.
-        if not match:
-            raise RelaxNoTensorError, ('alignment', tensor)

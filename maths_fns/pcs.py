@@ -97,7 +97,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
     for c in xrange(N):
         # The weights.
         if weights != None:
-            if c == N-1: 
+            if N > 1 and c == N-1: 
                 pc = 1.0 - sum(weights, axis=0)
             else:
                 pc = weights[c]
@@ -169,7 +169,7 @@ def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     for c in xrange(N):
         # The weights.
         if weights != None:
-            if c == N-1: 
+            if N > 1 and c == N-1: 
                 pc = 1.0 - sum(weights, axis=0)
             else:
                 pc = weights[c]

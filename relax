@@ -94,17 +94,13 @@ class Relax:
         # Setup the object containing the generic functions.
         self.generic = generic_fns
 
-        # Place the debugging flag in a number of modules which don't have access to the 'self.relax' namespace.
+        # Place the debugging flag in a number of modules which don't have access to this class's namespace.
         relax_errors.Debug = self.Debug
         relax_warnings.Debug = self.Debug
         interpreter.Debug = self.Debug
 
         # Set up the pedantic flag.
         relax_warnings.Pedantic = self.Pedantic
-
-        # Place the class instance into the RelaxError and RelaxWarning modules as global variables.
-        relax_errors.relax = self
-        relax_warnings.relax = self
 
 
     def run(self):

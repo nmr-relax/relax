@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,7 +29,7 @@ from os import popen, sep
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import file_root, open_write_file, test_binary
 from specific_fns.setup import get_specific_fn
 
@@ -71,14 +71,23 @@ class Pymol:
         self.pipe_write("reinitialize")
 
         # Open the PDB files.
-        for i in xrange(cdp.structure.num):
-            # The file path.
-            file = cdp.structure.file[i]
-            if cdp.structure.path[i]:
-                file = cdp.structure.path[i] + sep + file
+        open_files = []
+        for model in cdp.structure.structural_data:
+            for mol in model.mol:
+                # The file path.
+                file = mol.file_name
+                if mol.file_path:
+                    file = mol.file_path + sep + file
 
-            # Open the file in PyMOL.
-            self.pipe_write("load " + file)
+                # Already loaded.
+                if file in open_files:
+                    continue
+
+                # Open the file in PyMOL.
+                self.pipe_write("load " + file)
+
+                # Add to the open file list.
+                open_files.append(file)
 
 
     def pipe_open(self):
@@ -154,22 +163,35 @@ def cartoon():
     # Get the current data pipe.
     cdp = pipes.get_pipe()
 
+    # Test for the structure.
+    if not hasattr(cdp, 'structure'):
+        raise RelaxNoPdbError
+
     # Loop over the PDB files.
-    for i in xrange(cdp.structure.num):
-        # Identifier.
-        pdb_file = cdp.structure.file[i]
-        if cdp.structure.path[i]:
-            pdb_file = cdp.structure.path[i] + sep + pdb_file
-        id = file_root(pdb_file)
+    open_files = []
+    for model in cdp.structure.structural_data:
+        for mol in model.mol:
+            # Identifier.
+            pdb_file = mol.file_name
+            if mol.file_path:
+                pdb_file = mol.file_path + sep + pdb_file
+            id = file_root(pdb_file)
 
-        # Hide everything.
-        pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
+            # Already loaded.
+            if pdb_file in open_files:
+                continue
 
-        # Show the cartoon style.
-        pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
+            # Add to the open file list.
+            open_files.append(pdb_file)
 
-        # Colour by secondary structure.
-        pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+            # Hide everything.
+            pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
+
+            # Show the cartoon style.
+            pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
+
+            # Colour by secondary structure.
+            pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
 
 
 def command(command):
@@ -187,7 +209,7 @@ def command(command):
 
 
 def cone_pdb(file=None):
-    """Display the N-state model cone geometric object.
+    """Display the cone geometric object.
 
     @keyword file:  The name of the file containing the cone geometric object.
     @type file:     str
@@ -200,11 +222,11 @@ def cone_pdb(file=None):
     pymol.pipe_write("load " + file)
 
 
-    # Average CoM-pivot point vector.
-    #################################
+    # The cone axis.
+    ################
 
-    # Select the AVE residue.
-    pymol.pipe_write("select resn AVE")
+    # Select the AVE, AXE, and SIM residues.
+    pymol.pipe_write("select (resn AVE,AXE,SIM)")
 
     # Show the vector as a stick.
     pymol.pipe_write("show stick, 'sele'")
@@ -213,7 +235,7 @@ def cone_pdb(file=None):
     pymol.pipe_write("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol.pipe_write("select (resn AVE and symbol N)")
+    pymol.pipe_write("select (resn AVE,AXE,SIM and symbol N)")
 
     # Hide the atom.
     pymol.pipe_write("hide ('sele')")

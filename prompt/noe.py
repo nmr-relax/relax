@@ -29,6 +29,7 @@ import sys
 
 # relax module imports.
 import help
+from generic_fns import noesy
 from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from specific_fns.setup import noe_obj
 
@@ -46,8 +47,8 @@ class Noe:
         self.__relax__ = relax
 
 
-    def read_constraints(self, file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
-        """Read NOESY or ROESY constraints from a file.
+    def read_restraints(self, file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
+        """Read NOESY or ROESY restraints from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -71,28 +72,29 @@ class Noe:
         ~~~~~~~~~~~
 
         This function can automatically determine the format of the file, for example Xplor
-        formatted constraint files.  A generically formatted file is also supported if it contains
+        formatted restraint files.  A generically formatted file is also supported if it contains
         minimally four columns with the two proton names and the upper and lower bounds, as
-        specified by the *_col arguments.
+        specified by the *_col arguments.  The proton names need to be in the spin identification
+        string format.
 
 
         Examples
         ~~~~~~~~
 
-        To read the Xplor formatted constraint file 'NOE.xpl', type one of:
+        To read the Xplor formatted restraint file 'NOE.xpl', type one of:
 
-        relax> noe.read_constraints('NOE.xpl')
-        relax> noe.read_constraints(file='NOE.xpl')
+        relax> noe.read_restraints('NOE.xpl')
+        relax> noe.read_restraints(file='NOE.xpl')
 
 
         To read the generic formatted file 'noes', type one of:
 
-        relax> noe.read_constraints(file='NOE.xpl', proton1_col=0, proton2_col=1, lower_col=2, upper_col=3)
+        relax> noe.read_restraints(file='NOE.xpl', proton1_col=0, proton2_col=1, lower_col=2, upper_col=3)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.read_constraints("
+            text = sys.ps3 + "noe.read_restraints("
             text = text + "file=" + `file`
             text = text + ", dir=" + `dir`
             text = text + ", proton1_col=" + `proton1_col`
@@ -131,7 +133,7 @@ class Noe:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        noe.read_constraints(frq=frq, file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
+        noesy.read_restraints(file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
 
 
     def spectrum_type(self, spectrum_type=None, spectrum_id=None):
