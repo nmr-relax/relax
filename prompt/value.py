@@ -32,6 +32,7 @@ from doc_string import regexp_doc
 import help
 from generic_fns import diffusion_tensor
 from generic_fns import value
+from num_types import int_list, float_list
 from relax_errors import RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneIntError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
@@ -209,7 +210,7 @@ class Value:
             raise RelaxStrError, ('parameter', param)
 
         # The scaling factor.
-        if type(scaling) != float:
+        if type(scaling) not in float_list:
             raise RelaxFloatError, ('scaling', scaling)
 
         # The file name.
@@ -217,19 +218,19 @@ class Value:
             raise RelaxStrError, ('file', file)
 
         # The number column.
-        if type(num_col) != int:
+        if type(num_col) not in int_list:
             raise RelaxIntError, ('residue number column', num_col)
 
         # The name column.
-        if name_col != None and type(name_col) != int:
+        if name_col != None and type(name_col) not in int_list:
             raise RelaxNoneIntError, ('residue name column', name_col)
 
         # The data column.
-        if type(data_col) != int:
+        if type(data_col) not in int_list:
             raise RelaxIntError, ('data column', data_col)
 
         # The error column.
-        if error_col != None and type(error_col) != int:
+        if error_col != None and type(error_col) not in int_list:
             raise RelaxNoneIntError, ('error column', error_col)
 
         # Column separator.
@@ -368,7 +369,7 @@ class Value:
             print text
 
         # The value.
-        if val != None and type(val) != float and type(val) != int and type(val) != str and type(val) != list:
+        if val != None and type(val) not in float_list and type(val) not in int_list and type(val) != str and type(val) != list:
             raise RelaxNoneFloatStrListError, ('value', val)
         if type(val) == list:
             # Empty list.
@@ -377,7 +378,8 @@ class Value:
 
             # Check for values.
             for i in xrange(len(val)):
-                if type(val[i]) != float and type(val[i]) != int:
+                if type(val[i]) not in float_list and type(val[i]) not in int_list:
+                    print type(val[i])
                     raise RelaxListFloatStrError, ('value', val)
 
         # The parameter.

@@ -196,7 +196,7 @@ class Mf(TestCase):
         self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/omp_model_free.py')
 
         # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        cdp = pipes.get_pipe('final')
 
         # Some checks.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim, [True, False, True])

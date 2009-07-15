@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,6 +30,7 @@ import sys
 # relax module imports.
 import help
 from generic_fns import align_tensor
+from num_types import int_list, float_list
 from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
@@ -262,11 +263,12 @@ class Align_tensor:
             if len(params) != 5:
                 raise RelaxError, "The alignment tensor parameters argument must be a tuple of numbers of length 5."
             for i in xrange(len(params)):
-                if type(params[i]) != float and type(params[i]) != int:
+                if type(params[i]) not in float_list and type(params[i]) not in int_list:
+                    print type(params[i])
                     raise RelaxNumTupleError, ('alignment tensor parameters', params)
 
         # Scale argument.
-        if type(scale) != float:
+        if type(scale) not in float_list:
             raise RelaxFloatError, ('scale', scale)
 
         # Angle units argument.
@@ -274,7 +276,7 @@ class Align_tensor:
             raise RelaxStrError, ('angle units', angle_units)
 
         # Parameter types argument.
-        if type(param_types) != int:
+        if type(param_types) not in int_list:
             raise RelaxIntError, ('parameter types', param_types)
 
         # The errors flag.
@@ -332,6 +334,97 @@ class Align_tensor:
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
+
+
+    def reduction(self, full_tensor=None, red_tensor=None):
+        """Specify that one tensor is a reduction of another.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        full_tensor:  The full alignment tensor.
+
+        red_tensor:  The reduce alignment tensor.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation of the N-state model and Frame Order theories using alignment tensors,
+        which tensor is a reduction of which other tensor must be specified through this user
+        function.
+
+
+        Examples
+        ~~~~~~~~
+
+        To state that the alignment tensor loaded as 'chi3 C-dom' is a reduction of 'chi3 N-dom', type:
+
+        relax> align_tensor.reduction(full_tensor='chi3 N-dom', red_tensor='chi3 C-dom')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.reduction("
+            text = text + "full_tensor=" + `full_tensor`
+            text = text + ", red_tensor=" + `red_tensor` + ")"
+            print text
+
+        # From tensor argument.
+        if type(full_tensor) != str:
+            raise RelaxStrError, ('from tensor', full_tensor)
+
+        # To tensor argument.
+        if type(red_tensor) != str:
+            raise RelaxStrError, ('to tensor', red_tensor)
+
+        # Execute the functional code.
+        align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
+
+
+    def set_domain(self, tensor=None, domain=None):
+        """Set the domain label for the alignment tensor.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        tensor:  The alignment tensor to assign the domain label to.
+
+        domain:  The domain label.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Prior to optimisation of the N-state model or Frame Order theories, the domain to which each
+        alignment tensor belongs must be specified.
+
+
+        Examples
+        ~~~~~~~~
+
+        To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:
+
+        relax> align_tensor.set_domain(tensor='chi3 C-dom', domain='C')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "align_tensor.set_domain("
+            text = text + "tensor=" + `tensor`
+            text = text + ", domain=" + `domain` + ")"
+            print text
+
+        # Tensor argument.
+        if type(tensor) != str:
+            raise RelaxStrError, ('tensor', tensor)
+
+        # Domain argument.
+        if type(domain) != str:
+            raise RelaxStrError, ('domain', domain)
+
+        # Execute the functional code.
+        align_tensor.set_domain(tensor=tensor, domain=domain)
 
 
     def svd(self, basis_set=0, tensors=None):

@@ -115,6 +115,7 @@ class Pipe:
         The data pipe name can be any string however the data pipe type can only be one of the
         following:
 
+            'frame order':  The Frame Order theories,
             'jw':  Reduced spectral density mapping,
             'mf':  Model-free analysis,
             'N-state':  N-state model of domain motions,

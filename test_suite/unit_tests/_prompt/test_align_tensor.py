@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -241,6 +241,57 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
 
             # The argument test.
             self.assertRaises(RelaxNoneListstrError, self.align_tensor_fns.matrix_angles, tensors=data[1])
+
+
+    def test_reduction_argfail_full_tensor(self):
+        """Failure of the full_tensor arg of the align_tensor.reduction() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.reduction, full_tensor=data[1])
+
+
+    def test_reduction_argfail_red_tensor(self):
+        """Failure of the red_tensor arg of the align_tensor.reduction() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.reduction, full_tensor='test', red_tensor=data[1])
+
+    def test_set_domain_argfail_tensor(self):
+        """Failure of the tensor arg of the align_tensor.set_domain() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.set_domain, tensor=data[1])
+
+
+    def test_set_domain_argfail_domain(self):
+        """Failure of the domain arg of the align_tensor.set_domain() user function."""
+
+        # Loop over the data types.
+        for data in DATA_TYPES:
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
+                continue
+
+            # The argument test.
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.set_domain, domain=data[1])
 
 
     def test_svd_argfail_basis_set(self):
