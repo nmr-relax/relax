@@ -214,82 +214,82 @@ def display(tensor):
     # Get the current data pipe.
     cdp = pipes.get_pipe()
 
-    # All tensors.
-    if tensor == None:
-        # Loop over the tensors.
-        for tensor in cdp.align_tensors:
-            # Header.
-            print "Tensor: " + tensor.name + "\n"
+    # Construct the tensor list.
+    tensor_list = []
+    if not tensor:
+        for tensor_cont in cdp.align_tensors:
+            tensor_list.append(tensor_cont.name)
+    else:
+        tensor_list.append(tensor)
 
-            # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
-            print "Parameters {Axx, Ayy, Axy, Axz, Ayz}."
-            print "%-15s%15.8f" % ("Axx:  ", tensor.Axx)
-            print "%-15s%15.8f" % ("Ayy:  ", tensor.Ayy)
-            print "%-15s%15.8f" % ("Axy:  ", tensor.Axy)
-            print "%-15s%15.8f" % ("Axz:  ", tensor.Axz)
-            print "%-15s%15.8f" % ("Ayz:  ", tensor.Ayz)
+    # Loop over the tensors.
+    for tensor in tensor_list:
+        # Test if alignment tensor data exists.
+        if not align_data_exists(tensor):
+            raise RelaxNoTensorError, 'alignment'
 
-        # Leave this function.
-        return
+        # Pull out the tensor.
+        data = get_tensor_object(tensor)
 
-    # Test if alignment tensor data exists.
-    if not align_data_exists(tensor):
-        raise RelaxNoTensorError, 'alignment'
+        # Header.
+        print "Tensor: " + tensor + "\n"
 
-    # Pull out the tensor.
-    data = get_tensor_object(tensor)
+        # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
+        print "Parameters {Sxx, Syy, Sxy, Sxz, Syz}."
+        print "%-15s%15.8f" % ("Sxx:  ", data.Sxx)
+        print "%-15s%15.8f" % ("Syy:  ", data.Syy)
+        print "%-15s%15.8f" % ("Sxy:  ", data.Sxy)
+        print "%-15s%15.8f" % ("Sxz:  ", data.Sxz)
+        print "%-15s%15.8f" % ("Syz:  ", data.Syz)
 
-    # Header.
-    print "Tensor: " + tensor + "\n"
+        # The parameter set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
+        print "\nParameters {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format)."
+        print "%-15s%15.8f" % ("Szz:  ", data.Szz)
+        print "%-15s%15.8f" % ("Sxx-yy:  ", data.Sxxyy)
+        print "%-15s%15.8f" % ("Sxy:  ", data.Sxy)
+        print "%-15s%15.8f" % ("Sxz:  ", data.Sxz)
+        print "%-15s%15.8f" % ("Syz:  ", data.Syz)
 
-    # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
-    print "Parameters {Sxx, Syy, Sxy, Sxz, Syz}."
-    print "%-15s%15.8f" % ("Sxx:  ", data.Sxx)
-    print "%-15s%15.8f" % ("Syy:  ", data.Syy)
-    print "%-15s%15.8f" % ("Sxy:  ", data.Sxy)
-    print "%-15s%15.8f" % ("Sxz:  ", data.Sxz)
-    print "%-15s%15.8f" % ("Syz:  ", data.Syz)
+        # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
+        print "\nParameters {Axx, Ayy, Axy, Axz, Ayz}."
+        print "%-15s%15.8f" % ("Axx:  ", data.Axx)
+        print "%-15s%15.8f" % ("Ayy:  ", data.Ayy)
+        print "%-15s%15.8f" % ("Axy:  ", data.Axy)
+        print "%-15s%15.8f" % ("Axz:  ", data.Axz)
+        print "%-15s%15.8f" % ("Ayz:  ", data.Ayz)
 
-    # The parameter set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
-    print "\nParameters {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format)."
-    print "%-15s%15.8f" % ("Szz:  ", data.Szz)
-    print "%-15s%15.8f" % ("Sxx-yy:  ", data.Sxxyy)
-    print "%-15s%15.8f" % ("Sxy:  ", data.Sxy)
-    print "%-15s%15.8f" % ("Sxz:  ", data.Sxz)
-    print "%-15s%15.8f" % ("Syz:  ", data.Syz)
+        # The parameter set {Azz, Axx-yy, Axy, Axz, Ayz}.
+        print "\nParameters {Azz, Axx-yy, Axy, Axz, Ayz}."
+        print "%-15s%15.8f" % ("Azz:  ", data.Azz)
+        print "%-15s%15.8f" % ("Axx-yy:  ", data.Axxyy)
+        print "%-15s%15.8f" % ("Axy:  ", data.Axy)
+        print "%-15s%15.8f" % ("Axz:  ", data.Axz)
+        print "%-15s%15.8f" % ("Ayz:  ", data.Ayz)
 
-    # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
-    print "Parameters {Axx, Ayy, Axy, Axz, Ayz}."
-    print "%-15s%15.8f" % ("Axx:  ", data.Axx)
-    print "%-15s%15.8f" % ("Ayy:  ", data.Ayy)
-    print "%-15s%15.8f" % ("Axy:  ", data.Axy)
-    print "%-15s%15.8f" % ("Axz:  ", data.Axz)
-    print "%-15s%15.8f" % ("Ayz:  ", data.Ayz)
+        # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
+        print "\nParameters {Pxx, Pyy, Pxy, Pxz, Pyz}."
+        print "%-15s%15.8f" % ("Pxx:  ", data.Pxx)
+        print "%-15s%15.8f" % ("Pyy:  ", data.Pyy)
+        print "%-15s%15.8f" % ("Pxy:  ", data.Pxy)
+        print "%-15s%15.8f" % ("Pxz:  ", data.Pxz)
+        print "%-15s%15.8f" % ("Pyz:  ", data.Pyz)
 
-    # The parameter set {Azz, Axx-yy, Axy, Axz, Ayz}.
-    print "\nParameters {Azz, Axx-yy, Axy, Axz, Ayz}."
-    print "%-15s%15.8f" % ("Azz:  ", data.Azz)
-    print "%-15s%15.8f" % ("Axx-yy:  ", data.Axxyy)
-    print "%-15s%15.8f" % ("Axy:  ", data.Axy)
-    print "%-15s%15.8f" % ("Axz:  ", data.Axz)
-    print "%-15s%15.8f" % ("Ayz:  ", data.Ayz)
+        # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
+        print "\nParameters {Pzz, Pxx-yy, Pxy, Pxz, Pyz}."
+        print "%-15s%15.8f" % ("Pzz:  ", data.Pzz)
+        print "%-15s%15.8f" % ("Pxx-yy:  ", data.Pxxyy)
+        print "%-15s%15.8f" % ("Pxy:  ", data.Pxy)
+        print "%-15s%15.8f" % ("Pxz:  ", data.Pxz)
+        print "%-15s%15.8f" % ("Pyz:  ", data.Pyz)
 
-    # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
-    print "Parameters {Pxx, Pyy, Pxy, Pxz, Pyz}."
-    print "%-15s%15.8f" % ("Pxx:  ", data.Pxx)
-    print "%-15s%15.8f" % ("Pyy:  ", data.Pyy)
-    print "%-15s%15.8f" % ("Pxy:  ", data.Pxy)
-    print "%-15s%15.8f" % ("Pxz:  ", data.Pxz)
-    print "%-15s%15.8f" % ("Pyz:  ", data.Pyz)
+        # Eigenvalues.
+        print "\nEigenvalues {Axx, Ayy, Azz}."
+        print "%-15s%15.8f" % ("Axx:  ", data.tensor_diag[0,0])
+        print "%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1,1])
+        print "%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2,2])
 
-    # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
-    print "\nParameters {Pzz, Pxx-yy, Pxy, Pxz, Pyz}."
-    print "%-15s%15.8f" % ("Pzz:  ", data.Pzz)
-    print "%-15s%15.8f" % ("Pxx-yy:  ", data.Pxxyy)
-    print "%-15s%15.8f" % ("Pxy:  ", data.Pxy)
-    print "%-15s%15.8f" % ("Pxz:  ", data.Pxz)
-    print "%-15s%15.8f" % ("Pyz:  ", data.Pyz)
-
+        # Some white space.
+        print "\n\n\n"
 
 
 def fold_angles(sim_index=None):
