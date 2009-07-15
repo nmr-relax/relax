@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2008 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2008-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,9 +21,43 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import cross, dot
+from math import acos, atan2, cos, pi, sin
+from numpy import array, cross, dot, float64, hypot, zeros
 from numpy.linalg import norm
-from math import acos, cos, sin
+from random import gauss, uniform
+
+
+def quaternion_to_R(quat, matrix):
+    """Convert a quaternion into rotation matrix form.
+
+    @param quat:    The quaternion.
+    @type quat:     numpy 4D, rank-1 array
+    @param matrix:  A 3D matrix to convert to a rotation matrix.
+    @type matrix:   numpy 3D, rank-2 array
+    """
+
+    # Repetitive calculations.
+    q4_2 = quat[3]**2
+    q12 = quat[0] * quat[1]
+    q13 = quat[0] * quat[2]
+    q14 = quat[0] * quat[3]
+    q23 = quat[1] * quat[2]
+    q24 = quat[1] * quat[3]
+    q34 = quat[2] * quat[3]
+
+    # The diagonal.
+    matrix[0, 0] = 2.0 * (quat[0]**2 + q4_2) - 1.0
+    matrix[1, 1] = 2.0 * (quat[1]**2 + q4_2) - 1.0
+    matrix[2, 2] = 2.0 * (quat[2]**2 + q4_2) - 1.0
+
+    # Off-diagonal.
+    matrix[0, 1] = 2.0 * (q12 - q34)
+    matrix[0, 2] = 2.0 * (q13 + q24)
+    matrix[1, 2] = 2.0 * (q23 - q14)
+
+    matrix[1, 0] = 2.0 * (q12 + q34)
+    matrix[2, 0] = 2.0 * (q13 - q24)
+    matrix[2, 1] = 2.0 * (q23 + q14)
 
 
 def R_2vect(R, vector_orig, vector_fin):
@@ -55,8 +89,13 @@ def R_2vect(R, vector_orig, vector_fin):
     vector_orig = vector_orig / norm(vector_orig)
     vector_fin = vector_fin / norm(vector_fin)
 
-    # The rotation axis.
+    # The rotation axis (normalised).
     axis = cross(vector_orig, vector_fin)
+    axis_len = norm(axis)
+    if axis_len != 0.0:
+        axis = axis / axis_len
+
+    # Alias the axis coordinates.
     x = axis[0]
     y = axis[1]
     z = axis[2]
@@ -78,6 +117,101 @@ def R_2vect(R, vector_orig, vector_fin):
     R[2,0] = -y*sa+(1.0 - ca)*x*z
     R[2,1] = x*sa+(1.0 - ca)*y*z
     R[2,2] = 1.0 + (1.0 - ca)*(z**2 - 1.0)
+
+
+def R_axis_angle(matrix, axis, angle):
+    """Generate the rotation matrix from the axis-angle notation.
+
+    Conversion equations
+    ====================
+
+    From Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix), the conversion is given by::
+
+        c = cos(angle); s = sin(angle); C = 1-c
+        xs = x*s;   ys = y*s;   zs = z*s
+        xC = x*C;   yC = y*C;   zC = z*C
+        xyC = x*yC; yzC = y*zC; zxC = z*xC
+        [ x*xC+c   xyC-zs   zxC+ys ]
+        [ xyC+zs   y*yC+c   yzC-xs ]
+        [ zxC-ys   yzC+xs   z*zC+c ]
+
+
+    @param matrix:  The 3x3 rotation matrix to update.
+    @type matrix:   3x3 numpy array
+    @param axis:    The 3D rotation axis.
+    @type axis:     numpy array, len 3
+    @param angle:   The rotation angle.
+    @type angle:    float
+    """
+
+    # Trig factors.
+    ca = cos(angle)
+    sa = sin(angle)
+    C = 1 - ca
+
+    # Depack the axis.
+    x, y, z = axis
+
+    # Multiplications (to remove duplicate calculations).
+    xs = x*sa
+    ys = y*sa
+    zs = z*sa
+    xC = x*C
+    yC = y*C
+    zC = z*C
+    xyC = x*yC
+    yzC = y*zC
+    zxC = z*xC
+
+    # Update the rotation matrix.
+    matrix[0, 0] = x*xC + ca
+    matrix[0, 1] = xyC - zs
+    matrix[0, 2] = zxC + ys
+    matrix[1, 0] = xyC + zs
+    matrix[1, 1] = y*yC + ca
+    matrix[1, 2] = yzC - xs
+    matrix[2, 0] = zxC - ys
+    matrix[2, 1] = yzC + xs
+    matrix[2, 2] = z*zC + ca
+
+
+def R_to_axis_angle(matrix):
+    """Convert the rotation matrix into the axis-angle notation.
+
+    Conversion equations
+    ====================
+
+    From Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix), the conversion is given by::
+
+        x = Qzy-Qyz
+        y = Qxz-Qzx
+        z = Qyx-Qxy
+        r = hypot(x,hypot(y,z))
+        t = Qxx+Qyy+Qzz
+        theta = atan2(r,t-1)
+
+    @param matrix:  The 3x3 rotation matrix to update.
+    @type matrix:   3x3 numpy array
+    @return:    The 3D rotation axis and angle.
+    @rtype:     numpy 3D rank-1 array, float
+    """
+
+    # Axes.
+    axis = zeros(3, float64)
+    axis[0] = matrix[2,1] - matrix[1,2]
+    axis[1] = matrix[0,2] - matrix[2,0]
+    axis[2] = matrix[1,0] - matrix[0,1]
+
+    # Angle.
+    r = hypot(axis[0], hypot(axis[1], axis[2]))
+    t = matrix[0,0] + matrix[1,1] + matrix[2,2]
+    theta = atan2(r, t-1)
+
+    # Normalise the axis.
+    axis = axis / r
+
+    # Return the data.
+    return axis, theta
 
 
 def R_euler_zyz(matrix, alpha, beta, gamma):
@@ -145,3 +279,64 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
     matrix[0,2] = -sin_b * cos_g
     matrix[1,2] =  sin_b * sin_g
     matrix[2,2] =  cos_b
+
+
+def R_random_axis(matrix, angle=0.0):
+    """Generate a random rotation matrix of fixed angle via the axis-angle notation.
+
+    Uniform point sampling on a unit sphere is used to generate a random axis orientation.  This,
+    together with the fixed rotation angle, is used to generate the random rotation matrix.
+
+    @param matrix:  A 3D matrix to convert to a rotation matrix.
+    @type matrix:   numpy 3D, rank-2 array
+    @keyword angle: The fixed rotation angle.
+    @type angle:    float
+    """
+
+    # Random rotation axis.
+    rot_axis = zeros(3, float64)
+    random_rot_axis(rot_axis)
+
+    # Generate the rotation matrix.
+    R_axis_angle(matrix, rot_axis, angle)
+
+
+def R_random_hypersphere(matrix):
+    """Generate a random rotation matrix using 4D hypersphere point picking.
+
+    A quaternion is generated by creating a 4D vector with each value randomly selected from a
+    Gaussian distribution, and then normalising.
+
+    @param matrix:  A 3D matrix to convert to a rotation matrix.
+    @type matrix:   numpy 3D, rank-2 array
+    """
+
+    # The quaternion.
+    quat = array([gauss(0, 1), gauss(0, 1), gauss(0, 1), gauss(0, 1)], float64)
+    quat = quat / norm(quat)
+
+    # Convert the quaternion to a rotation matrix.
+    quaternion_to_R(quat, matrix)
+
+
+def random_rot_axis(axis):
+    """Generate a random rotation axis.
+
+    Uniform point sampling on a unit sphere is used to generate a random axis orientation.
+
+    @param axis:    The 3D rotation axis.
+    @type axis:     numpy array, len 3
+    """
+
+    # Random azimuthal angle.
+    u = uniform(0, 1)
+    theta = 2*pi*u
+
+    # Random polar angle.
+    v = uniform(0, 1)
+    phi = acos(2.0*v - 1)
+
+    # Random rotation axis.
+    axis[0] = cos(theta) * sin(phi)
+    axis[1] = sin(theta) * sin(phi)
+    axis[2] = cos(phi)

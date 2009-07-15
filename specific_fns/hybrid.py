@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,9 +21,11 @@
 ###############################################################################
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from generic_fns.mol_res_spin import exists_mol_res_spin_data
+from generic_fns.sequence import compare_sequence
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
+import setup
 
 
 class Hybrid:
@@ -31,72 +33,134 @@ class Hybrid:
         """Class containing function specific to hybrid models."""
 
 
-    def duplicate_data(self, new_run=None, old_run=None, instance=None):
-        """Function for duplicating data."""
+    def duplicate_data(self, pipe_from=None, pipe_to=None):
+        """Duplicate the data specific to a single hybrid data pipe.
 
-        # Test that the data pipes exist.
-        pipes.test(new_run)
-        pipes.test(old_run)
+        @keyword pipe_from:     The data pipe to copy the data from.
+        @type pipe_from:        str
+        @keyword pipe_to:       The data pipe to copy the data to.
+        @type pipe_to:          str
+        """
 
-        # Test that the new run has no sequence loaded.
-        if ds.res.has_key(new_run):
-            raise RelaxSequenceError, new_run
+        # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
+        if not pipes.has_pipe(pipe_to):
+            pipes.create(pipe_to, pipe_type='hybrid', switch=False)
 
-        # Reset the new run type to hybrid!
-        ds.run_types[ds.run_names.index(new_run)] = 'hybrid'
+        # Get the data pipes.
+        dp_from = pipes.get_pipe(pipe_from)
+        dp_to = pipes.get_pipe(pipe_to)
 
-        # Duplicate the hybrid run data structure.
-        ds.hybrid_pipes[new_run] = ds.hybrid_pipes[old_run]
+        # Test that the target data pipe has no sequence loaded.
+        if not exists_mol_res_spin_data(pipe_to):
+            raise RelaxSequenceError, pipe_to
+
+        # Duplicate the hybrid pipe list data structure.
+        dp_to.hybrid_pipes = dp_from.hybrid_pipes
 
 
-    def hybridise(self, hybrid=None, runs=None):
-        """Function for creating the hybrid run."""
+    def hybridise(self, hybrid=None, pipe_list=None):
+        """Create the hybrid data pipe.
 
-        # Test if the hybrid run already exists.
-        if hybrid in ds.run_names:
+        @keyword hybrid:    The name of the new hybrid data pipe.
+        @type hybrid:       str
+        @keyword pipe_list: The list of data pipes that the hybrid is composed of.
+        @type pipe_list:    list of str
+        """
+
+        # Test if the hybrid data pipe already exists.
+        if hybrid in pipes.pipe_names():
             raise RelaxPipeError, hybrid
 
-        # Loop over the runs to be hybridised.
-        for run in runs:
-            # Test if the current pipe exists.
+        # Loop over the pipes to be hybridised and check them.
+        pipe_type = pipes.get_type(pipe_list[0])
+        for pipe in pipe_list:
+            # Switch to the data pipe.
+            pipes.switch(pipe)
+
+            # Test if the pipe exists.
             pipes.test()
 
+            # Check that the pipe types match.
+            if pipes.get_type() != pipe_type:
+                raise RelaxError, "The data pipe types do not match."
+
             # Test if sequence data is loaded.
-            if not ds.res.has_key(run):
-                raise RelaxNoSequenceError, run
+            if not exists_mol_res_spin_data():
+                raise RelaxNoSequenceError
 
-        # Check the sequence.
-        for i in xrange(len(ds.res[runs[0]])):
-            # Reassign the data structure.
-            data1 = ds.res[runs[0]][i]
+        # Check that the sequence data matches in all pipes.
+        for i in range(1, len(pipe_list)):
+            compare_sequence(pipe_list[0], pipe_list[1])
 
-            # Loop over the rest of the runs.
-            for run in runs[1:]:
-                # Reassign the data structure.
-                data2 = ds.res[run][i]
+        # Create the data pipe.
+        pipes.create(pipe_name=hybrid, pipe_type='hybrid')
 
-                # Test if the sequence is the same.
-                if data1.name != data2.name or data1.num != data2.num:
-                    raise RelaxError, "The residues '" + data1.name + " " + `data1.num` + "' of the run " + `runs[0]` + " and '" + data2.name + " " + `data2.num` + "' of the run " + `run` + " are not the same."
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
 
-        # Add the run and type to the runs list.
-        ds.run_names.append(hybrid)
-        ds.run_types.append('hybrid')
-
-        # Create the data structure of the runs which form the hybrid.
-        ds.hybrid_pipes[hybrid] = runs
+        # Store the pipe list forming the hybrid.
+        cdp.hybrid_pipes = pipe_list
 
 
-    def model_statistics(self, run=None, instance=None, global_stats=None):
-        """Function for returning the values k, n, and chi2 of the hybrid.
+    def model_desc(self, model_index):
+        """Return a description of the model.
+
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).  This originates from the model_loop().
+        @type model_index:  int
+        @return:            The model description.
+        @rtype:             str
+        """
+
+        return "hybrid model"
+
+
+    def model_loop(self):
+        """Dummy generator method - this should be a global model!"""
+
+        yield 0
+
+
+    def model_type(self):
+        """Method stating that this is a global model."""
+
+        return 'global'
+
+
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
+        """Return the k, n, and chi2 model statistics of the hybrid.
 
         k - number of parameters.
         n - number of data points.
         chi2 - the chi-squared value.
+
+
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the
+                                global spin index (which covers the molecule, residue, and spin
+                                indices).  This originates from the model_loop().
+        @type model_index:      int
+        @keyword spin_id:       The spin identification string.  Either this or the instance keyword
+                                argument must be supplied.
+        @type spin_id:          None or str
+        @keyword global_stats:  A parameter which determines if global or local statistics are
+                                returned.  If None, then the appropriateness of global or local
+                                statistics is automatically determined.
+        @type global_stats:     None or bool
+        @return:                The optimisation statistics, in tuple format, of the number of
+                                parameters (k), the number of data points (n), and the chi-squared
+                                value (chi2).
+        @rtype:                 tuple of int, int, float
         """
 
-        # Arguments.
-        self.run = run
+        # Bad argument combination.
+        if model_info == None and spin_id == None:
+            raise RelaxError, "Either the model_info or spin_id argument must be supplied."
+        elif model_info != None and spin_id != None:
+            raise RelaxError, "The model_info arg " + `model_info` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
+
+        # Get the current data pipe.
+        cdp = pipes.get_pipe()
 
         # Initialise.
         k_total = 0
@@ -104,38 +168,42 @@ class Hybrid:
         chi2_total = 0.0
 
         # Specific setup.
-        for run in ds.hybrid_pipes[self.run]:
-            # Function type.
-            function_type = ds.run_types[ds.run_names.index(run)]
+        for pipe in cdp.hybrid_pipes:
+            # Switch to the data pipe.
+            pipes.switch(pipe)
 
             # Specific model statistics and number of instances functions.
-            model_statistics = self.relax.specific_setup.setup('model_stats', function_type)
+            model_statistics = setup.get_specific_fn('model_stats', pipes.get_type(pipe))
 
             # Loop over the instances.
-            for i in xrange(num):
-                # Get the statistics.
-                k, n, chi2 = model_statistics(run, instance=i, global_stats=global_stats)
+            #for i in xrange(num):
+            # Get the statistics.
+            k, n, chi2 = model_statistics(model_info=model_info, spin_id=spin_id, global_stats=global_stats)
 
-                # Bad stats.
-                if k == None or n == None or chi2 == None:
-                    continue
+            # Bad stats.
+            if k == None or n == None or chi2 == None:
+                continue
 
-                # Sum the stats.
-                k_total = k_total + k
-                n_total = n_total + n
-                chi2_total = chi2_total + chi2
+            # Sum the stats.
+            k_total = k_total + k
+            n_total = n_total + n
+            chi2_total = chi2_total + chi2
 
         # Return the totals.
         return k_total, n_total, chi2_total
 
 
-    def num_instances(self, run=None):
-        """Function for returning the number of instances, which for hybrids is always 1."""
+    def num_instances(self):
+        """Return the number of instances, which for hybrids is always 1.
+
+        @return:    The number of instances.
+        @rtype:     int
+        """
 
         return 1
 
 
-    def skip_function(self, run=None, instance=None, min_instances=None, num_instances=None):
+    def skip_function(self, model_index=None):
         """Dummy function."""
 
         return

@@ -418,7 +418,7 @@ if __name__ == "__main__":
         Relax()
     else:
         def print_stats(stats, status=0):
-            pstats.Stats(stats).sort_stats('time', 'name').print_stats()
+            pstats.Stats(stats).sort_stats('cumulative', 'name').print_stats()
 
         profile.Profile.print_stats = print_stats
         profile.run('Relax()')

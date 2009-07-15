@@ -751,16 +751,16 @@ class Internal(Base_struct_API):
                         found = True
 
                         # The checks.
-                        if het_data_coll[i][1] != het_data[index][i][1]:
+                        if het_data_coll[j][1] != het_data[index][i][1]:
                             raise RelaxError, "The " + `het_data[index][i][1]` + " residue name of hetrogen " + `het_data[index][i][0]` + " " + het_data[index][i][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][1]` + " name of the previous structures."
 
-                        elif het_data_coll[i][2] != het_data[index][i][2]:
+                        elif het_data_coll[j][2] != het_data[index][i][2]:
                             raise RelaxError, "The hetrogen chain id " + `het_data[index][i][2]` + " does not match " + `het_data_coll[j][2]` + " of residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of the previous structures."
 
-                        elif het_data_coll[i][3] != het_data[index][i][3]:
+                        elif het_data_coll[j][3] != het_data[index][i][3]:
                             raise RelaxError, "The " + `het_data[index][i][3]` + " atoms of hetrogen " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][3]` + " of the previous structures."
 
-                        elif het_data_coll[i][4] != het_data[index][i][4]:
+                        elif het_data_coll[j][4] != het_data[index][i][4]:
                             raise RelaxError, "The atom counts " + `het_data[index][i][4]` +  " for the hetrogen residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " do not match the counts " + `het_data_coll[j][4]` + " of the previous structures."
 
                 # If there is no match, add the new residue to the collective.
