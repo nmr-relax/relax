@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -332,94 +332,3 @@ class N_state_model:
 
         # Execute the functional code.
         n_state_model_obj.select_model(model=model)
-
-
-    def set_domain(self, tensor=None, domain=None):
-        """Set the domain label for the alignment tensor.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        tensor:  The alignment tensor to assign the domain label to.
-
-        domain:  The domain label.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Prior to optimisation of the N-state model, the domain to which each alignment tensor
-        belongs must be specified.
-
-
-        Examples
-        ~~~~~~~~
-
-        To link the alignment tensor loaded as 'chi3 C-dom' to the C-terminal domain 'C', type:
-
-        relax> n_state_model.set_domain(tensor='chi3 C-dom', domain='C')
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.set_domain("
-            text = text + "tensor=" + `tensor`
-            text = text + ", domain=" + `domain` + ")"
-            print text
-
-        # Tensor argument.
-        if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
-
-        # Domain argument.
-        if type(domain) != str:
-            raise RelaxStrError, ('domain', domain)
-
-        # Execute the functional code.
-        n_state_model_obj.set_domain(tensor=tensor, domain=domain)
-
-
-    def set_type(self, tensor=None, red=False):
-        """Set whether the alignment tensor is the full or reduced tensor.
-
-        Keyword Arguments
-        ~~~~~~~~~~~~~~~~~
-
-        tensor:  The alignment tensor identification string.
-
-        red:  The state of the alignment tensor.  If True, then it is labelled as the full tensor.
-        If False, then it is labelled as the tensor reduced because of domain motions.
-
-
-        Description
-        ~~~~~~~~~~~
-
-        Prior to optimisation of the N-state model the state of alignment tensor, whether it is the
-        full or reduced tensor, must be set using this user function.
-
-
-        Examples
-        ~~~~~~~~
-
-        To state that the alignment tensor loaded as 'chi3 C-dom' is the reduced tensor, type:
-
-        relax> n_state_model.set_type(tensor='chi3 C-dom', red=True)
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.set_type("
-            text = text + "tensor=" + `tensor`
-            text = text + ", red=" + `red` + ")"
-            print text
-
-        # Tensor argument.
-        if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
-
-        # Red argument.
-        if type(red) != bool:
-            raise RelaxBoolError, ('red', red)
-
-        # Execute the functional code.
-        n_state_model_obj.set_type(tensor=tensor, red=red)

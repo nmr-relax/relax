@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from numpy import int8, int16, int32, int64, float32, float64, zeros
 from os import tmpfile
 
 
@@ -69,6 +70,12 @@ DATA_TYPES.append(['int', 2])
 DATA_TYPES.append(['int', 10])
 DATA_TYPES.append(['int', -10])
 
+# Numpy ints.
+DATA_TYPES.append(['int', zeros(2, int8)[0]])
+DATA_TYPES.append(['int', zeros(2, int16)[0]])
+DATA_TYPES.append(['int', zeros(2, int32)[0]])
+DATA_TYPES.append(['int', zeros(2, int64)[0]])
+
 # File descriptor.
 DATA_TYPES.append(['file', tmpfile()])
 
@@ -76,6 +83,10 @@ DATA_TYPES.append(['file', tmpfile()])
 DATA_TYPES.append(['float', 0.0])
 DATA_TYPES.append(['float', 1e-7])
 DATA_TYPES.append(['float', 1000000.0])
+
+# Numpy floats.
+DATA_TYPES.append(['float', zeros(2, float32)[0]])
+DATA_TYPES.append(['float', zeros(2, float64)[0]])
 
 # Functions.
 DATA_TYPES.append(['function', dummy_fn])
@@ -87,9 +98,11 @@ DATA_TYPES.append(['list', [None, None]])
 
 # List of integers.
 DATA_TYPES.append(['int list', [-1, 0, 1]])
+DATA_TYPES.append(['int list', [zeros(2, int32)[0]]])
 
 # List of floats.
 DATA_TYPES.append(['float list', [-1., 0., 1.]])
+DATA_TYPES.append(['float list', [zeros(2, float64)[0]]])
 
 # List of numbers.
 DATA_TYPES.append(['number list', [-1., 0, 1.]])

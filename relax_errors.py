@@ -413,6 +413,21 @@ class RelaxDiffSeqError(BaseError):
     def __init__(self, pipe1, pipe2):
         self.text = "The sequences for the data pipes " + `pipe1` + " and " + `pipe2` + " are not the same."
 
+# The number of molecules are different.
+class RelaxDiffMolNumError(BaseError):
+    def __init__(self, pipe1, pipe2):
+        self.text = "The number of molecules do not match between pipes '%s' and '%s'." % (pipe1, pipe2)
+
+# The number of residues are different.
+class RelaxDiffResNumError(BaseError):
+    def __init__(self, pipe1, pipe2):
+        self.text = "The number of residues do not match between pipes '%s' and '%s'." % (pipe1, pipe2)
+
+# The number of spins are different.
+class RelaxDiffSpinNumError(BaseError):
+    def __init__(self, pipe1, pipe2):
+        self.text = "The number of spins do not match between pipes '%s' and '%s'." % (pipe1, pipe2)
+
 # Cannot find the residue in the sequence.
 class RelaxNoResError(BaseError):
     def __init__(self, number, name=None):

@@ -97,6 +97,12 @@ class Main:
         # Final stage.
         ##############
 
+        # Print out.
+        print "\n\n\n"
+        print "Final stage"
+        print "==========="
+        print "\n"
+
         # Unfix all parameters (to switch to the global models).
         fix('all', fixed=False)
 
@@ -125,11 +131,41 @@ class Main:
         results.write(file='devnull', force=True)
 
 
+        # Another test - MC sims of the diffusion tensor.
+        #################################################
+
+        # Print out.
+        print "\n\n\n"
+        print "MC simulations of the diffusion tensor"
+        print "======================================"
+        print "\n"
+
+        # Unfix all parameters (to switch to the global models).
+        fix('all', fixed=False)
+
+        # Model selection between 'local_tm' and 'sphere'.
+        self.pipes = ['local_tm', 'sphere']
+        self.model_selection(pipe='final2')
+
+        # Fix the spin parameters.
+        fix('all_spins')
+
+        # Monte Carlo simulations.
+        monte_carlo.setup(number=MC_NUM)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise(MIN_ALGOR)
+        monte_carlo.error_analysis()
+
+        # Write the final results.
+        results.write(file='devnull', force=True)
+
+
     def model_selection(self, pipe=None):
         """Model selection function."""
 
         # Model elimination.
-        if pipe != 'final':
+        if pipe not in ['final', 'final2']:
             eliminate()
 
         # Model selection.

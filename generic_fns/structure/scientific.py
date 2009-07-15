@@ -33,6 +33,7 @@ import os
 from os import F_OK, access, sep
 if dep_check.scientific_pdb_module:
     import Scientific.IO.PDB
+import sys
 from warnings import warn
 
 # relax module imports.
@@ -681,8 +682,20 @@ class MolContainer:
 
         # Test if the file exists.
         if not access(file_path, F_OK):
-            warn(RelaxNoPDBFileWarning(file_path))
-            return
+            found = False
+
+            # Try finding the file in the path.
+            for dir in sys.path:
+                if access(dir + sep + file_path, F_OK):
+                    # Prepend the file path, and break out.
+                    file_path = dir + sep + file_path
+                    found = True
+                    break
+
+            # Throw a warning, then exit the function.
+            if not found:
+                warn(RelaxNoPDBFileWarning(file_path))
+                return
 
         # Load the PDB file.
         model = Scientific.IO.PDB.Structure(file_path, self.file_model)

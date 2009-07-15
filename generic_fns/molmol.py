@@ -75,7 +75,7 @@ def create_macro(data_type=None, style=None, colour_start=None, colour_end=None,
     """
 
     # Specific Molmol macro creation function.
-    molmol_macro = get_specific_fn('molmol_macro', pipes.get_pipe())
+    molmol_macro = get_specific_fn('molmol_macro', pipes.get_type())
 
     # Get the macro.
     commands = molmol_macro(data_type, style, colour_start, colour_end, colour_list)

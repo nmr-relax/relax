@@ -780,14 +780,23 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         res_to_cont.spin[-1].name = spin_name_to
 
 
-def count_molecules(selection=None):
+def count_molecules(selection=None, pipe=None):
     """Count the number of molecules for which there is data.
 
-    @param selection:   The selection string.
+    @keyword selection: The selection string.
     @type selection:    str
+    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
     @return:            The number of non-empty molecules.
     @rtype:             int
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # No data, hence no molecules.
     if not exists_mol_res_spin_data():
@@ -804,14 +813,23 @@ def count_molecules(selection=None):
     return mol_num
 
 
-def count_residues(selection=None):
+def count_residues(selection=None, pipe=None):
     """Count the number of residues for which there is data.
 
-    @param selection:   The selection string.
+    @keyword selection: The selection string.
     @type selection:    str
+    @keyword pipe:      The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:         str
     @return:            The number of non-empty residues.
     @rtype:             int
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # No data, hence no residues.
     if not exists_mol_res_spin_data():
@@ -828,14 +846,26 @@ def count_residues(selection=None):
     return res_num
 
 
-def count_spins(selection=None, skip_desel=True):
+def count_spins(selection=None, pipe=None, skip_desel=True):
     """Function for counting the number of spins for which there is data.
 
-    @param selection:   The selection string.
-    @type selection:    str
-    @return:            The number of non-empty spins.
-    @rtype:             int
+    @keyword selection:     The selection string.
+    @type selection:        str
+    @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
+    @type pipe:             str
+    @keyword skip_desel:    A flag which if true will cause deselected spins to be skipped in the
+                            count.
+    @type skip_desel:       bool
+    @return:                The number of non-empty spins.
+    @rtype:                 int
     """
+
+    # The data pipe.
+    if pipe == None:
+        pipe = pipes.cdp_name()
+
+    # Test the data pipe.
+    pipes.test(pipe)
 
     # No data, hence no spins.
     if not exists_mol_res_spin_data():
