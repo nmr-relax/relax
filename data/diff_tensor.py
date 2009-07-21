@@ -851,8 +851,6 @@ class DiffTensorData(Element):
                     # Set the attribute.
                     self.__dict__[target+'_sim'][i] = value
 
-                print "New struct '%s': %s" % (target+'_sim', self.__dict__[target+'_sim'])
-
 
     def from_xml(self, diff_tensor_node):
         """Recreate the diffusion tensor data structure from the XML diffusion tensor node.
