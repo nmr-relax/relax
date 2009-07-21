@@ -69,7 +69,10 @@ class Diffusion_tensor(TestCase):
         self.relax.interpreter._Pipe.switch('sphere')
         cdp = get_pipe()
         cdp.diff_tensor.tm_err = 10e-11
-        cdp.diff_tensor.tm_sim = [8.98e-8, 8.99e-8, 9.00e-8, 9.01e-8, 9.02e-8]
+        cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
+        tm_sim = [8.98e-8, 8.99e-8, 9.00e-8, 9.01e-8, 9.02e-8]
+        for i in range(5):
+            cdp.diff_tensor.tm_sim[i] = tm_sim[i]
 
 
         # Some fake MC simulations (for the spheroid).
