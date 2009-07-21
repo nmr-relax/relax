@@ -261,7 +261,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
-                sim_vectors = None
+                sim_vectors = []
                 for i in range(len(pipe.diff_tensor.tm_sim)):
                     sim_vectors.append(pipe.diff_tensor.Dpar_sim[i] * pipe.diff_tensor.Dpar_unit_sim[i])
             else:
