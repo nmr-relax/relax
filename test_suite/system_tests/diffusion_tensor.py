@@ -168,9 +168,9 @@ class Diffusion_tensor(TestCase):
         sphere2_pipe = get_pipe('sphere2')
 
         # Check that this is indeed a copy.
-        self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[1], 9.02e-8)
+        self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[4], 9.02e-8)
         sphere_pipe.diff_tensor.tm_sim[4] = 8.88e-8
-        self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[1], 9.02e-8)
+        self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[4], 9.02e-8)
 
 
     def test_delete(self):
