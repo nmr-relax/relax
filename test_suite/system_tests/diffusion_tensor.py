@@ -87,11 +87,13 @@ class Diffusion_tensor(TestCase):
         self.relax.interpreter._Pipe.switch('ellipsoid')
         cdp = get_pipe()
         cdp.diff_tensor.Dr_sim = [0.28, 0.29, 0.3, 0.31, 0.32]
-        cdp.diff_tensor.tm_sim = [8.98e-8, 8.99e-8, 9.00e-8, 9.01e-8, 9.02e-8]
+        cdp.diff_tensor.tm_sim = [8.97e-8, 8.99e-8, 9.00e-8, 9.01e-8, 9.02e-8]
         cdp.diff_tensor.Da_sim = [5.02e6, 5.01e6, 5.00e6, 4.99e6, 4.98e6]
+        cdp.diff_tensor.tm_sim[1] = 8.98e-8
         cdp.diff_tensor.alpha_sim = [60.2, 60.1, 60.0, 59.9, 59.8]
         cdp.diff_tensor.beta_sim = [290.2, 290.1, 290.0, 289.9, 289.8]
-        cdp.diff_tensor.gamma_sim = [100.2, 100.1, 100.0, 99.9, 99.8]
+        cdp.diff_tensor.gamma_sim = [100.2, 100.1, 0.0, 99.9, 99.8]
+        cdp.diff_tensor.gamma_sim[2] = 100.0
 
 
     def tearDown(self):
