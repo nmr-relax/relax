@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import pi
 from os import remove
 from unittest import TestCase
 import sys
@@ -90,10 +91,10 @@ class Diffusion_tensor(TestCase):
         cdp.diff_tensor.tm_sim = [8.97e-8, 8.99e-8, 9.00e-8, 9.01e-8, 9.02e-8]
         cdp.diff_tensor.Da_sim = [5.02e6, 5.01e6, 5.00e6, 4.99e6, 4.98e6]
         cdp.diff_tensor.tm_sim[1] = 8.98e-8
-        cdp.diff_tensor.alpha_sim = [60.2, 60.1, 60.0, 59.9, 59.8]
-        cdp.diff_tensor.beta_sim = [290.2, 290.1, 290.0, 289.9, 289.8]
-        cdp.diff_tensor.gamma_sim = [100.2, 100.1, 0.0, 99.9, 99.8]
-        cdp.diff_tensor.gamma_sim[2] = 100.0
+        cdp.diff_tensor.alpha_sim = [80.0/360*2*pi, 70.0/360*2*pi, 60.0/360*2*pi, 50.0/360*2*pi, 40.0/360*2*pi]
+        cdp.diff_tensor.beta_sim = [295.0/360*2*pi, 292.5/360*2*pi, 290.0/360*2*pi, 289.5/360*2*pi, 288.0/360*2*pi]
+        cdp.diff_tensor.gamma_sim = [102.0/360*2*pi, 101.0/360*2*pi, 0.0, 99.0/360*2*pi, 98.0/360*2*pi]
+        cdp.diff_tensor.gamma_sim[2] = 100.0/360*2*pi
 
 
     def tearDown(self):
@@ -176,7 +177,24 @@ class Diffusion_tensor(TestCase):
 
         # Create the diffusion tensor objects.
         self.relax.interpreter._Pipe.switch('ellipsoid')
-        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_ellipsoid)
+        self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_ellipsoid, scale=1e-05)
 
-        # Open the temp files.
-        file_ellipsoid = open(self.tmpfile_ellipsoid)
+        # Open the temp file.
+        file = open(self.tmpfile_ellipsoid)
+        new_data = file.readlines()
+        file.close()
+
+        # Open the real file.
+        file = open(sys.path[-1] + '/test_suite/shared_data/structures/diff_tensors/ellipsoid.pdb')
+        real_data = file.readlines()
+        file.close()
+
+        # Check the data.
+        self.assertEqual(len(real_data), len(new_data))
+        for i in range(len(real_data)):
+            # Print the PDB line, for debugging.
+            print real_data[i][0:-1]
+
+            # Check the line.
+            self.assertEqual(real_data[i], new_data[i])
+
