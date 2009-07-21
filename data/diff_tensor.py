@@ -717,8 +717,15 @@ class DiffTensorData(Element):
                 # Get the target object.
                 target_obj = getattr(self, target+'_sim')
 
+                # Missing data.
+                skip = False
+                for i in range(len(deps)):
+                    if deps[i] == None:
+                        skip = True
+
                 # Calculate and set the value.
-                target_obj.set_untouchable_item(index, fn(*deps))
+                if not skip:
+                    target_obj.set_untouchable_item(index, fn(*deps))
 
 
     def __update_object(self, param_name, target, update_if_set, depends, category):
@@ -829,27 +836,36 @@ class DiffTensorData(Element):
 
                 # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
                 if not target+'_sim' in self.__dict__:
-                    if param_name == 'Dr':
-                        "Initialising dict"
                     self.__dict__[target+'_sim'] = DiffTensorSimList(target, self, elements=num_sim)
 
                 # Repackage the deps structure.
                 args = []
+                skip = False
                 for i in range(num_sim):
                     args.append(())
+
+                    # Loop over the dependent structures.
                     for j in range(len(deps)):
+                        # None, so skip.
+                        if deps[j] == None or deps[j][i] == None:
+                            skip = True
+
+                        # String data type.
                         if type(deps[j]) == str:
                             args[-1] = args[-1] + (deps[j],)
+
+                        # List data type.
                         else:
                             args[-1] = args[-1] + (deps[j][i],)
 
-                # Loop over the sims.
-                for i in range(num_sim):
-                    # Calculate the value.
-                    value = fn(*args[i])
+                # Loop over the sims and set the values.
+                if not skip:
+                    for i in range(num_sim):
+                        # Calculate the value.
+                        value = fn(*args[i])
 
-                    # Set the attribute.
-                    self.__dict__[target+'_sim'][i] = value
+                        # Set the attribute.
+                        self.__dict__[target+'_sim'][i] = value
 
 
     def from_xml(self, diff_tensor_node):
