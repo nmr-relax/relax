@@ -658,6 +658,10 @@ class DiffTensorData(Element):
 
             # Only update the MC simulation object if its dependencies exist.
             if not missing_dep:
+                # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
+                if not target+'_sim' in self.__dict__:
+                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
+
                 # Get the target object.
                 target_obj = getattr(self, target+'_sim')
 
