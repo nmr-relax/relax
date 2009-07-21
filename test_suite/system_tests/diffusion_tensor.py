@@ -147,18 +147,34 @@ class Diffusion_tensor(TestCase):
         self.relax.interpreter._Diffusion_tensor.display()
 
 
-    def test_createDiffTensor(self):
-        """The user function structure.create_diff_tensor_pdb()."""
+    def test_create_diff_tensor_pdb_sphere(self):
+        """Test the user function structure.create_diff_tensor_pdb() for the sphere."""
 
         # Create the diffusion tensor objects.
         self.relax.interpreter._Pipe.switch('sphere')
         self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_sphere)
+
+        # Open the temp files.
+        file_sphere = open(self.tmpfile_sphere)
+
+
+    def test_create_diff_tensor_pdb_spheroid(self):
+        """Test the user function structure.create_diff_tensor_pdb() for the spheroid."""
+
+        # Create the diffusion tensor objects.
         self.relax.interpreter._Pipe.switch('spheroid')
         self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_spheroid)
+
+        # Open the temp files.
+        file_spheroid = open(self.tmpfile_spheroid)
+
+
+    def test_create_diff_tensor_pdb_ellipsoid(self):
+        """Test the user function structure.create_diff_tensor_pdb() for the ellipsoid."""
+
+        # Create the diffusion tensor objects.
         self.relax.interpreter._Pipe.switch('ellipsoid')
         self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_ellipsoid)
 
         # Open the temp files.
-        file_sphere = open(self.tmpfile_sphere)
-        file_spheroid = open(self.tmpfile_spheroid)
         file_ellipsoid = open(self.tmpfile_ellipsoid)
