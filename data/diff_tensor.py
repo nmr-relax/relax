@@ -819,11 +819,39 @@ class DiffTensorData(Element):
                     missing_dep = 1
                     break
 
+                # Get the object and place it into the 'deps' tuple.
+                deps.append(getattr(self, dep_name))
+
             # Only create the MC simulation object if its dependencies exist.
             if not missing_dep:
+                # The number of simulations.
+                num_sim = len(self.__dict__[update_if_set[0]+'_sim'])
+
                 # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
                 if not target+'_sim' in self.__dict__:
-                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
+                    if param_name == 'Dr':
+                        "Initialising dict"
+                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self, elements=num_sim)
+
+                # Repackage the deps structure.
+                args = []
+                for i in range(num_sim):
+                    args.append(())
+                    for j in range(len(deps)):
+                        if type(deps[j]) == str:
+                            args[-1] = args[-1] + (deps[j],)
+                        else:
+                            args[-1] = args[-1] + (deps[j][i],)
+
+                # Loop over the sims.
+                for i in range(num_sim):
+                    # Calculate the value.
+                    value = fn(*args[i])
+
+                    # Set the attribute.
+                    self.__dict__[target+'_sim'][i] = value
+
+                print "New struct '%s': %s" % (target+'_sim', self.__dict__[target+'_sim'])
 
 
     def from_xml(self, diff_tensor_node):
@@ -865,15 +893,29 @@ class DiffTensorData(Element):
 class DiffTensorSimList(ListType):
     """Empty data container for Monte Carlo simulation diffusion tensor data."""
 
-    def __init__(self, param_name, diff_element):
+    def __init__(self, param_name, diff_element, elements=None):
         """Initialise the Monte Carlo simulation parameter list.
 
         This function makes the parameter name and parent object accessible to the functions of this
         list object.
+
+        @param param_name:      The name of the parameter.
+        @type param_name:       str
+        @param diff_element:    The parent class.
+        @type diff_element:     DiffTensorData element
+        @keyword elements:      The optional number of elements to initialise the length of the list
+                                to.
+        @type elements:         None or int
         """
 
+        # Initialise.
         self.param_name = param_name
         self.diff_element = diff_element
+
+        # Initialise a length.
+        if elements:
+            for i in range(elements):
+                self.append(None)
 
 
     def __setitem__(self, index, value):
