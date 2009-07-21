@@ -65,7 +65,7 @@ class Diffusion_tensor(TestCase):
         self.relax.interpreter._Diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
         self.tmpfile_ellipsoid = mktemp()
 
-        # Some fake MC simulations (for the spheroid).
+        # Some fake MC simulations (for the sphere).
         self.relax.interpreter._Pipe.switch('sphere')
         cdp = get_pipe()
         cdp.diff_tensor.tm_err = 10e-11
@@ -158,10 +158,19 @@ class Diffusion_tensor(TestCase):
         self.relax.interpreter._Pipe.create('spheroid2', 'mf')
         self.relax.interpreter._Pipe.create('ellipsoid2', 'mf')
 
-        # Delete the data.
+        # Copy the data.
         self.relax.interpreter._Diffusion_tensor.copy('sphere', 'sphere2')
         self.relax.interpreter._Diffusion_tensor.copy('spheroid', 'spheroid2')
         self.relax.interpreter._Diffusion_tensor.copy('ellipsoid', 'ellipsoid2')
+
+        # Get the data pipes.
+        sphere_pipe = get_pipe('sphere')
+        sphere2_pipe = get_pipe('sphere2')
+
+        # Check that this is indeed a copy.
+        self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[1], 9.02e-8)
+        sphere_pipe.diff_tensor.tm_sim[4] = 8.88e-8
+        self.assertEqual(sphere2_pipe.diff_tensor.tm_sim[1], 9.02e-8)
 
 
     def test_delete(self):
