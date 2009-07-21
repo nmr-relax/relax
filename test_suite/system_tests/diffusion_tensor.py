@@ -73,12 +73,12 @@ class Diffusion_tensor(TestCase):
         # Some fake MC simulations (for the spheroid).
         self.relax.interpreter._Pipe.switch('spheroid')
         cdp = get_pipe()
-        cdp.diff_tensor.tm_err = 1.7695846045376088e-11
-        cdp.diff_tensor.tm_sim = [3.5314969337e-09, 3.56919594167e-09, 3.52348845053e-09, 3.54505145128e-09, 3.5502948504e-09]
         cdp.diff_tensor.Da_err = 765986.42128728074
         cdp.diff_tensor.Da_sim = [-10090112.175, -9922709.9518, -10118143.631, -10016815.789, -10009684.028]
         cdp.diff_tensor.theta_err = 0.00068021155978203692
         cdp.diff_tensor.theta_sim = [1.67256128318, 1.67099947873, 1.67255937685, 1.67210656881, 1.6715284024]
+        cdp.diff_tensor.tm_err = 1.7695846045376088e-11
+        cdp.diff_tensor.tm_sim = [3.5314969337e-09, 3.56919594167e-09, 3.52348845053e-09, 3.54505145128e-09, 3.5502948504e-09]
         cdp.diff_tensor.phi_err = 0.00078453847526795194
         cdp.diff_tensor.phi_sim = [2.71811219172, 2.7177223339, 2.71817620501, 2.71783544462, 2.71625856632]
 
@@ -86,9 +86,9 @@ class Diffusion_tensor(TestCase):
         # Some fake MC simulations (for the ellipsoid).
         self.relax.interpreter._Pipe.switch('ellipsoid')
         cdp = get_pipe()
+        cdp.diff_tensor.Dr_sim = [0.28, 0.29, 0.3, 0.31, 0.32]
         cdp.diff_tensor.tm_sim = [8.98e-8, 8.99e-8, 9.00e-8, 9.01e-8, 9.02e-8]
         cdp.diff_tensor.Da_sim = [5.02e6, 5.01e6, 5.00e6, 4.99e6, 4.98e6]
-        cdp.diff_tensor.Dr_sim = [0.28, 0.29, 0.3, 0.31, 0.32]
         cdp.diff_tensor.alpha_sim = [60.2, 60.1, 60.0, 59.9, 59.8]
         cdp.diff_tensor.beta_sim = [290.2, 290.1, 290.0, 289.9, 289.8]
         cdp.diff_tensor.gamma_sim = [100.2, 100.1, 100.0, 99.9, 99.8]
