@@ -222,8 +222,13 @@ class Diffusion_tensor(TestCase):
     def test_create_diff_tensor_pdb_ellipsoid(self):
         """Test the user function structure.create_diff_tensor_pdb() for the ellipsoid."""
 
+        # First copy the data (a more vigorous copy test!).
+        self.relax.interpreter._Pipe.copy('ellipsoid', 'ellipsoid2')
+        self.relax.interpreter._Pipe.switch('ellipsoid2')
+        self.relax.interpreter._Diffusion_tensor.delete()
+        self.relax.interpreter._Diffusion_tensor.copy('ellipsoid', 'ellipsoid2')
+
         # Create the diffusion tensor objects.
-        self.relax.interpreter._Pipe.switch('ellipsoid')
         self.relax.interpreter._Structure.create_diff_tensor_pdb(file=self.tmpfile_ellipsoid, scale=1e-05)
 
         # Open the temp file.
