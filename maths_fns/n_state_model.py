@@ -302,6 +302,9 @@ class N_state_opt:
                             # Change the error to one (to avoid zero division).
                             self.pcs_sigma_ij[i, j] = 1.0
 
+            # The probability array (all structures have initial equal probability).
+            self.probs = ones(self.N, float64) / self.N
+
             # PCS function, gradient, and Hessian matrices.
             self.deltaij_theta = zeros((self.num_align, self.num_spins), float64)
             self.ddeltaij_theta = zeros((self.total_num_params, self.num_align, self.num_spins), float64)
@@ -319,9 +322,6 @@ class N_state_opt:
 
         # Pure tensor optimisation overrides.
         if model == 'fixed':
-            # The probability array (all structures have equal probability).
-            self.probs = ones(self.N, float64) / self.N
-
             # The probs are unpacked by self.func in the population model, so just override that function.
             self.func = self.func_tensor_opt
 
@@ -554,7 +554,8 @@ class N_state_opt:
         chi2_sum = 0.0
 
         # Unpack the probabilities (located at the end of the parameter array).
-        self.probs = params[-(self.N-1):]
+        if self.N > 1:
+            self.probs = params[-(self.N-1):]
 
         # Loop over each alignment.
         for i in xrange(self.num_align):
