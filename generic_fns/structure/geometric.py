@@ -261,10 +261,12 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
-                sim_vectors = pipe.diff_tensor.Dpar_sim * pipe.diff_tensor.Dpar_unit_sim
+                sim_vectors = []
+                for i in range(len(pipe.diff_tensor.tm_sim)):
+                    sim_vectors.append(pipe.diff_tensor.Dpar_sim[i] * pipe.diff_tensor.Dpar_unit_sim[i])
             else:
                 sim_vectors = None
-                
+
             # Generate the axes representation.
             res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dpar*pipe.diff_tensor.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
 
@@ -277,18 +279,22 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
-                sim_Dx_vectors = pipe.diff_tensor.Dx_sim * pipe.diff_tensor.Dx_unit_sim
-                sim_Dy_vectors = pipe.diff_tensor.Dy_sim * pipe.diff_tensor.Dy_unit_sim
-                sim_Dz_vectors = pipe.diff_tensor.Dz_sim * pipe.diff_tensor.Dz_unit_sim
+                sim_Dx_vectors = []
+                sim_Dy_vectors = []
+                sim_Dz_vectors = []
+                for i in range(len(pipe.diff_tensor.tm_sim)):
+                    sim_Dx_vectors.append(pipe.diff_tensor.Dx_sim[i] * pipe.diff_tensor.Dx_unit_sim[i])
+                    sim_Dy_vectors.append(pipe.diff_tensor.Dy_sim[i] * pipe.diff_tensor.Dy_unit_sim[i])
+                    sim_Dz_vectors.append(pipe.diff_tensor.Dz_sim[i] * pipe.diff_tensor.Dz_unit_sim[i])
             else:
                 sim_Dx_vectors = None
                 sim_Dy_vectors = None
                 sim_Dz_vectors = None
-                
+
             # Generate the axes representation.
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dx*pipe.diff_tensor.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dy*pipe.diff_tensor.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dx*pipe.diff_tensor.Dx_unit, atom_name='Dx', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dy*pipe.diff_tensor.Dy_unit, atom_name='Dy', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dz', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
 
 
     # Create the PDB file.
@@ -619,7 +625,7 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
         for i in range(len(sim_vectors)):
             # Increment the residue number, so each simulation is a new residue.
             res_num = res_num + 1
-    
+
             # The atom numbers (and indices).
             atom_num = mol.atom_num[-1]+1
             atom_neg_num = mol.atom_num[-1]+2
