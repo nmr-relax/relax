@@ -1950,11 +1950,8 @@ def return_residue(selection=None, pipe=None):
 def return_spin(selection=None, pipe=None, full_info=False):
     """Function for returning the spin data container of the given selection.
 
-    If more than one selection is given, then the boolean AND operation will be used to pull out the
-    spin.
-
-    @param selection:   The spin selection identifier(s).
-    @type selection:    str or list of str
+    @param selection:   The spin selection identifier.
+    @type selection:    str
     @param pipe:        The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:         str
     @param full_info:   A flag specifying if the amount of information to be returned.  If false,
@@ -1978,11 +1975,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
     dp = pipes.get_pipe(pipe)
 
     # Parse the selection string.
-    if type(selection) == str:
-        selection = [selection]
-    select_obj = []
-    for i in range(len(selection)):
-        select_obj.append(Selection(selection[i]))
+    select_obj = Selection(selection)
 
     # Loop over the molecules.
     spin = None
@@ -1994,11 +1987,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
             # Loop over the spins.
             for spin in res.spin:
                 # Skip the spin if there is no match to the selection.
-                skip = False
-                for i in range(len(selection)):
-                    if (mol, res, spin) not in select_obj[i]:
-                        skip = True
-                if skip:
+                if (mol, res, spin) not in select_obj:
                     continue
 
                 # Store all containers.

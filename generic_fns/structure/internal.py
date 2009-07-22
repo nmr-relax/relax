@@ -686,9 +686,8 @@ class Internal(Base_struct_API):
 
         # Determine if model records will be created.
         model_records = False
-        for model in self.structural_data:
-            if hasattr(model, 'num') and model.num != None:
-                model_records = True
+        if model_num == None and self.num_models() > 1:
+            model_records = True
 
 
         ####################

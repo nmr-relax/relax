@@ -441,7 +441,7 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+def read(id=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
     """Read the PCS data from file.
 
     @param id:              The alignment identification string.
@@ -455,8 +455,6 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
                             correct format.  The format is a list of lists where the first index
                             corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword spin_id:       The spin identification string.
-    @type spin_id:          None or str
     @param mol_name_col:    The column containing the molecule name information.
     @type mol_name_col:     int or None
     @param res_name_col:    The column containing the residue name information.
@@ -480,6 +478,10 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()
+
+    # Test if PCS data corresponding to 'id' already exists.
+    if data_col != None and hasattr(cdp, 'pcs_ids') and id in cdp.pcs_ids:
+        raise RelaxPCSError, id
 
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:
@@ -582,7 +584,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             raise RelaxError, "An invalid error value of zero has been encountered."
 
         # Get the corresponding spin container.
-        spin = return_spin([id, spin_id])
+        spin = return_spin(id)
         if spin == None:
             raise RelaxNoSpinError, id
 

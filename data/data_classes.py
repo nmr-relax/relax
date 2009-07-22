@@ -27,7 +27,7 @@ from re import search
 # Empty data container.
 #######################
 
-class Element(object):
+class Element:
     """Empty data container."""
 
     def __repr__(self):

@@ -265,7 +265,7 @@ class PCS:
         pcs.display(id=id)
 
 
-    def read(self, id=None, file=None, dir=None, spin_id=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+    def read(self, id=None, file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
         """Read the PCS data from file.
 
         Keyword Arguments
@@ -276,8 +276,6 @@ class PCS:
         file:  The name of the file containing the PCS data.
 
         dir:  The directory where the file is located.
-
-        spin_id:  The spin identification string.
 
         mol_name_col:  The molecule name column (this defaults to no column).
 
@@ -303,13 +301,6 @@ class PCS:
         separated by the symbol ',', and store the PCSs under the identifier 'Tb'.
 
         relax> pcs.read('Tb', 'Tb.txt', sep=',')
-
-
-        To read the 15N and 1H PCSs from the file 'Eu.txt', where the 15N values are in the 4th
-        column and the 1H in the 9th, type both the following:
-
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@N', res_num_col=0, data_col=3)
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@H', res_num_col=0, data_col=8)
         """
 
         # Function intro text.
@@ -318,7 +309,6 @@ class PCS:
             text = text + "id=" + `id`
             text = text + ", file=" + `file`
             text = text + ", dir=" + `dir`
-            text = text + ", spin_id=" + `spin_id`
             text = text + ", mol_name_col=" + `mol_name_col`
             text = text + ", res_num_col=" + `res_num_col`
             text = text + ", res_name_col=" + `res_name_col`
@@ -340,10 +330,6 @@ class PCS:
         # Directory.
         if dir != None and type(dir) != str:
             raise RelaxNoneStrError, ('directory name', dir)
-
-        # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
@@ -378,7 +364,7 @@ class PCS:
             raise RelaxNoneStrError, ('column separator', sep)
 
         # Execute the functional code.
-        pcs.read(id=id, file=file, dir=dir, spin_id=spin_id, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
+        pcs.read(id=id, file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
 
 
     def write(self, id=None, file=None, dir=None, force=False):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-from copy import deepcopy
 from re import search
 from math import cos, sin
 from numpy import float64, dot, identity, transpose, zeros
@@ -568,41 +567,6 @@ class DiffTensorData(Element):
                     'beta',     'beta_sim',     'beta_err',
                     'gamma',    'gamma_sim',    'gamma_err']
 
-    def __deepcopy__(self, memo):
-        """Replacement deepcopy method."""
-
-        # Make a new object.
-        new_obj = self.__class__.__new__(self.__class__)
-
-        # Loop over all modifiable objects in self and make deepcopies of them.
-        for name in self.__mod_attr__:
-            # Skip if missing from the object.
-            if not hasattr(self, name):
-                continue
-
-            # Get the object.
-            value = getattr(self, name)
-
-
-            # Replace the object with a deepcopy of it.
-            setattr(new_obj, name, deepcopy(value, memo))
-
-            # Place the new class object into the namespace of DiffTensorSimList objects.
-            if type(value) == DiffTensorSimList:
-                # Get the new list.
-                new_value = getattr(new_obj, name)
-
-                # Place the new class object into the namespace of DiffTensorSimList objects.
-                new_value.diff_element = new_obj
-
-                # Recreate the list elements.
-                for i in range(len(value)):
-                    new_value.append(value[i])
-
-        # Return the new object.
-        return new_obj
-
-
     def __init__(self):
         """Initialise a few instance variables."""
 
@@ -694,10 +658,6 @@ class DiffTensorData(Element):
 
             # Only update the MC simulation object if its dependencies exist.
             if not missing_dep:
-                # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
-                if not target+'_sim' in self.__dict__:
-                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
-
                 # Get the target object.
                 target_obj = getattr(self, target+'_sim')
 
@@ -757,15 +717,8 @@ class DiffTensorData(Element):
                 # Get the target object.
                 target_obj = getattr(self, target+'_sim')
 
-                # Missing data.
-                skip = False
-                for i in range(len(deps)):
-                    if deps[i] == None:
-                        skip = True
-
                 # Calculate and set the value.
-                if not skip:
-                    target_obj.set_untouchable_item(index, fn(*deps))
+                target_obj.set_untouchable_item(index, fn(*deps))
 
 
     def __update_object(self, param_name, target, update_if_set, depends, category):
@@ -862,50 +815,15 @@ class DiffTensorData(Element):
                     dep_name = dep_name+'_sim'
 
                 # Test if the MC sim object exists.
-                if not hasattr(self, dep_name) or getattr(self, dep_name) == None or not len(getattr(self, dep_name)):
+                if not hasattr(self, dep_name):
                     missing_dep = 1
                     break
 
-                # Get the object and place it into the 'deps' tuple.
-                deps.append(getattr(self, dep_name))
-
             # Only create the MC simulation object if its dependencies exist.
             if not missing_dep:
-                # The number of simulations.
-                num_sim = len(self.__dict__[update_if_set[0]+'_sim'])
-
                 # Initialise an empty array to store the MC simulation object elements (if it doesn't already exist).
                 if not target+'_sim' in self.__dict__:
-                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self, elements=num_sim)
-
-                # Repackage the deps structure.
-                args = []
-                skip = False
-                for i in range(num_sim):
-                    args.append(())
-
-                    # Loop over the dependent structures.
-                    for j in range(len(deps)):
-                        # None, so skip.
-                        if deps[j] == None or deps[j][i] == None:
-                            skip = True
-
-                        # String data type.
-                        if type(deps[j]) == str:
-                            args[-1] = args[-1] + (deps[j],)
-
-                        # List data type.
-                        else:
-                            args[-1] = args[-1] + (deps[j][i],)
-
-                # Loop over the sims and set the values.
-                if not skip:
-                    for i in range(num_sim):
-                        # Calculate the value.
-                        value = fn(*args[i])
-
-                        # Set the attribute.
-                        self.__dict__[target+'_sim'][i] = value
+                    self.__dict__[target+'_sim'] = DiffTensorSimList(target, self)
 
 
     def from_xml(self, diff_tensor_node):
@@ -947,59 +865,15 @@ class DiffTensorData(Element):
 class DiffTensorSimList(ListType):
     """Empty data container for Monte Carlo simulation diffusion tensor data."""
 
-    def __deepcopy__(self, memo):
-        """Replacement deepcopy method."""
-
-        # Make a new object.
-        new_obj = self.__class__.__new__(self.__class__)
-
-        # Loop over all objects in self and make deepcopies of them.
-        for name in dir(self):
-            # Skip all names begining with '_'.
-            if search('^_', name):
-                continue
-
-            # Skip the class methods.
-            if name in self.__class__.__dict__.keys() or name in dir(ListType):
-                continue
-
-            # Skip the diff_element object.
-            if name == 'diff_element':
-                continue
-
-            # Get the object.
-            value = getattr(self, name)
-
-            # Replace the object with a deepcopy of it.
-            setattr(new_obj, name, deepcopy(value, memo))
-
-        # Return the new object.
-        return new_obj
-
-
-    def __init__(self, param_name, diff_element, elements=None):
+    def __init__(self, param_name, diff_element):
         """Initialise the Monte Carlo simulation parameter list.
 
         This function makes the parameter name and parent object accessible to the functions of this
         list object.
-
-        @param param_name:      The name of the parameter.
-        @type param_name:       str
-        @param diff_element:    The parent class.
-        @type diff_element:     DiffTensorData element
-        @keyword elements:      The optional number of elements to initialise the length of the list
-                                to.
-        @type elements:         None or int
         """
 
-        # Initialise.
         self.param_name = param_name
         self.diff_element = diff_element
-
-        # Initialise a length.
-        if elements:
-            for i in range(elements):
-                self.append(None)
 
 
     def __setitem__(self, index, value):
