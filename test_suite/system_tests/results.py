@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -48,7 +49,7 @@ class Results(TestCase):
         """Test the reading of an empty results file."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(file='empty', dir=sys.path[-1] + '/test_suite/shared_data/results_files/')
+        self.relax.interpreter._Results.read(file='empty', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'results_files'+sep)
 
 
     def test_write_empty_results(self):

@@ -22,6 +22,7 @@
 
 # Python module imports.
 from math import pi, sqrt
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -51,7 +52,7 @@ class N_state_model(TestCase):
         """
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/5_state_xz.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'5_state_xz.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -95,7 +96,7 @@ class N_state_model(TestCase):
         ds.mode = 'all'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -121,7 +122,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -144,7 +145,7 @@ class N_state_model(TestCase):
         ds.mode = 'pcs'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -169,7 +170,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -191,7 +192,7 @@ class N_state_model(TestCase):
         ds.mode = 'rdc'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -216,7 +217,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -237,4 +238,4 @@ class N_state_model(TestCase):
         """The 4-state model analysis of lactose using RDCs and PCSs."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/lactose_n_state.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'lactose_n_state.py')

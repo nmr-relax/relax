@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -49,7 +50,7 @@ class Modelim(TestCase):
         """Test the elimination of a model-free model with te = 200 ns."""
 
         # Read a results file.
-        self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=sys.path[-1] + '/test_suite/shared_data/model_free/OMP')
+        self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Set the te value for residue 11 Leu to 200 ns.
         self.relax.interpreter._Value.set(200*1e-9, 'te', spin_id=":11")
@@ -68,7 +69,7 @@ class Modelim(TestCase):
         """Test the elimination of a model-free model with the local tm = 51 ns."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/local_tm_model_elimination.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
 
         # Checks.
         self.assert_(return_spin(':13').select)
