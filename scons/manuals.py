@@ -96,17 +96,17 @@ def compile_api_manual_html(target, source, env):
     #   The list of objects to document.
     modules = ['relax',
                '*.py',
-               'docs/*.py',
-               'docs/latex/*.py',
-               'dx/*.py',
-               'generic_fns/*.py',
-               'generic_fns/structure/*.py',
-               'maths_fns/*.py',
-               'prompt/*.py',
-               'specific_fns/*.py',
-               'test_suite/[a-z]*.py',
-               'test_suite/unit_tests/unit_test_runner.py',
-               'scons/*.py']
+               'docs'+sep+'*.py',
+               'docs'+sep+'latex'+sep+'*.py',
+               'dx'+sep+'*.py',
+               'generic_fns'+sep+'*.py',
+               'generic_fns'+sep+'structure'+sep+'*.py',
+               'maths_fns'+sep+'*.py',
+               'prompt'+sep+'*.py',
+               'specific_fns'+sep+'*.py',
+               'test_suite'+sep+'[a-z]*.py',
+               'test_suite'+sep+'unit_tests'+sep+'unit_test_runner.py',
+               'scons'+sep+'*.py']
 
     # exclude
     #   The list of objects to exclude.
@@ -119,7 +119,7 @@ def compile_api_manual_html(target, source, env):
 
     # target
     #   The path to the output directory.  May be relative or absolute.
-    target = 'docs/api'
+    target = 'docs'+sep+'api'
 
     # docformat
     #   The default markup language for docstrings, for modules that do
@@ -283,7 +283,7 @@ def compile_api_manual_html(target, source, env):
     ######################
 
     # Open the file.
-    css_file = open(target + '/epydoc.css', 'a')
+    css_file = open(target + sep+'epydoc.css', 'a')
 
     # Header.
     css_file.write("\n\n\n\n/* Edward */\n\n")

@@ -20,6 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from os import sep
+
+
 # Script for creating a PDB representation of the distribution of XH bond vectors.
 ##################################################################################
 
@@ -34,7 +38,7 @@ structure.read_pdb('test.pdb', parser='scientific')
 structure.load_spins(spin_id='@N')
 
 # Select solely the NH vectors used in the analysis.
-select.read(file='../rates.txt', change_all=True, res_num_col=1)
+select.read(file='..'+sep+'rates.txt', change_all=True, res_num_col=1)
 
 # Extract the XH vectors.
 structure.vectors()

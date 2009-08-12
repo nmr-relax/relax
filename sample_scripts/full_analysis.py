@@ -248,7 +248,7 @@ class Main:
                     pipe.create(name, 'mf')
 
                     # Load the local tm diffusion model MI results.
-                    results.read(file='results', dir='local_tm/aic')
+                    results.read(file='results', dir='local_tm'+sep+'aic')
 
                     # Remove the tm parameter.
                     model_free.remove_tm()
@@ -331,7 +331,7 @@ class Main:
             pipe.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
-            results.read(file='results', dir='local_tm/aic')
+            results.read(file='results', dir='local_tm'+sep+'aic')
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
