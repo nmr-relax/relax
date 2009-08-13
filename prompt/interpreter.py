@@ -289,15 +289,15 @@ class Interpreter:
     def _off(self):
         """Function for turning the function introductions off."""
 
-        self.intro = 0
-        print "Function intros have been disabled."
+        self.intro = False
+        print "Echoing of user function calls has been disabled."
 
 
     def _on(self):
         """Function for turning the function introductions on."""
 
-        self.intro = 1
-        print "Function intros have been enabled."
+        self.intro = True
+        print "Echoing of user function calls has been enabled."
 
 
     def script(self, file=None, quit=0):
