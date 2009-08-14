@@ -812,8 +812,7 @@ class Model_free_main:
         return names
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         Model-free default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -844,7 +843,15 @@ class Model_free_main:
         |_______________________________________|____________________|________________________|
 
         """
-        __docformat__ = "plaintext"
+
+    def default_value(self, param):
+        """The default model-free parameter values.
+
+        @param param:   The model-free parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
 
         # Local tm.
         if param == 'local_tm':
@@ -1193,8 +1200,7 @@ class Model_free_main:
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    def eliminate(self, name, value, model_index, args, sim=None):
-        """
+    eliminate_doc = """
         Local tm model elimination rule
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1230,7 +1236,25 @@ class Model_free_main:
         example, to eliminate models which have a local tm value greater than 25 ns and models with
         internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).
         """
-        __docformat__ = "plaintext"
+
+    def eliminate(self, name, value, model_index, args, sim=None):
+        """Model-free model elimination, parameter by parameter.
+
+        @param name:        The parameter name.
+        @type name:         str
+        @param value:       The parameter value.
+        @type value:        float
+        @param model_index: The model index.  This is zero for the global models or equal to the
+                            global spin index (which covers the molecule, residue, and spin
+                            indices).  This originates from the model_loop().
+        @type model_index:  int
+        @param args:        The c1 and c2 elimination constant overrides.
+        @type args:         None or tuple of float
+        @keyword sim:       The Monte Carlo simulation index.
+        @type sim:          int
+        @return:            True if the model is to be eliminated, False otherwise.
+        @rtype:             bool
+        """
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -2209,8 +2233,7 @@ class Model_free_main:
         return relax_data.return_data_desc(name)
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc = """
         Model-free data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2245,7 +2268,15 @@ class Model_free_main:
         |________________________|__________________|______________________________________________|
 
         """
-        __docformat__ = "plaintext"
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the model-free parameter.
+
+        @param name:    The model-free parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
 
         # Local tm.
         if search('[Ll]ocal[ -_]tm', name):
@@ -2688,8 +2719,7 @@ class Model_free_main:
         self.model_setup(model, equation, params, spin_id)
 
 
-    def set_doc(self):
-        """
+    set_doc = """
         Model-free set details
         ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2708,7 +2738,6 @@ class Model_free_main:
             pi is in the namespace of relax, ie just type 'pi'.
             frequency is the proton frequency corresponding to the data.
         """
-        __docformat__ = "plaintext"
 
 
     def set_error(self, model_index, index, error):

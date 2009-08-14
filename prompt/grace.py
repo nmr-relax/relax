@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from relax_errors import RelaxBinError, RelaxBoolError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxStrError
-from doc_string import regexp_doc
+from doc_string import docs
 import help
 from generic_fns import grace, minimise
 from specific_fns.model_free import Model_free
@@ -250,9 +250,9 @@ class Grace:
     #########################
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
-    write.__doc__ = write.__doc__ + minimise.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    write.__doc__ = write.__doc__ + minimise.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Noe.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Model_free.return_data_name_doc + "\n\n"

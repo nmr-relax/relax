@@ -244,8 +244,7 @@ class Consistency_tests(Common_functions):
         return names
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         Consistency testing default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         These default values are found in the file 'physical_constants.py'.
@@ -269,7 +268,15 @@ class Consistency_tests(Common_functions):
         |_______________________________________|____________________|_________________________|
 
         """
-        __docformat__ = "plaintext"
+
+    def default_value(self, param):
+        """The default consistency test parameter values.
+
+        @param param:   The consistency test parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
 
         # Bond length.
         if param == 'r':
@@ -317,8 +324,7 @@ class Consistency_tests(Common_functions):
                 continue
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc = """
         Consistency testing data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -346,7 +352,15 @@ class Consistency_tests(Common_functions):
         | Correlation time      | 'tc'             | '^[Tt]c$'                                     |
         |_______________________|__________________|_______________________________________________|
         """
-        __docformat__ = "plaintext"
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the consistency test parameter.
+
+        @param name:    The consistency test parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
 
         # J(0).
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
@@ -458,8 +472,7 @@ class Consistency_tests(Common_functions):
             return 'ns'
 
 
-    def set_doc(self, value=None, error=None, param=None, spin=None):
-        """
+    set_doc = """
         Consistency testing set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -468,7 +481,6 @@ class Consistency_tests(Common_functions):
         calculation of consistency functions.
 
         """
-        __docformat__ = "plaintext"
 
 
     def set_frq(self, frq=None):

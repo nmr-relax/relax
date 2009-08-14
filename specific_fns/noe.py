@@ -175,8 +175,7 @@ class Noe(Common_functions):
         intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function, spectrum_type=spectrum_type)
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc = """
         NOE calculation data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -192,6 +191,15 @@ class Noe(Common_functions):
         | NOE                    | 'noe'        | '^[Nn][Oo][Ee]$'                                 |
         |________________________|______________|__________________________________________________|
 
+        """
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the steady-state NOE parameter.
+
+        @param name:    The steady-state NOE parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
         """
 
         # Reference intensity.

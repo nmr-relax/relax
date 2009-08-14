@@ -28,14 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-from doc_string import regexp_doc
+from doc_string import docs
 import help
 from generic_fns import diffusion_tensor
 from generic_fns import value
 from num_types import int_list, float_list
 from relax_errors import RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneIntError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
-from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
+from specific_fns.model_free import Model_free
 from specific_fns.relax_fit import Relax_fit
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
@@ -488,56 +488,56 @@ class Value:
     #########################
 
     # Copy function.
-    copy.__doc__ = copy.__doc__ + "\n\n" + regexp_doc() + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
-    copy.__doc__ = copy.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + N_state_model.set_doc.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    copy.__doc__ = copy.__doc__ + Model_free.set_doc + "\n\n"
+    copy.__doc__ = copy.__doc__ + Model_free.return_data_name_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.set_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Relax_fit.set_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    copy.__doc__ = copy.__doc__ + N_state_model.set_doc + "\n"
+    copy.__doc__ = copy.__doc__ + N_state_model.return_data_name_doc + "\n"
 
     # Display function.
-    display.__doc__ = display.__doc__ + "\n\n" + regexp_doc() + "\n"
-    display.__doc__ = display.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
-    display.__doc__ = display.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    display.__doc__ = display.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    display.__doc__ = display.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    display.__doc__ = display.__doc__ + Model_free.return_data_name_doc + "\n\n"
+    display.__doc__ = display.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    display.__doc__ = display.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    display.__doc__ = display.__doc__ + N_state_model.return_data_name_doc + "\n"
 
     # Read function.
-    read.__doc__ = read.__doc__ + "\n\n" + regexp_doc() + "\n"
-    read.__doc__ = read.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
-    read.__doc__ = read.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + N_state_model.set_doc.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    read.__doc__ = read.__doc__ + Model_free.set_doc + "\n\n"
+    read.__doc__ = read.__doc__ + Model_free.return_data_name_doc + "\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.set_doc + "\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    read.__doc__ = read.__doc__ + Relax_fit.set_doc + "\n"
+    read.__doc__ = read.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    read.__doc__ = read.__doc__ + N_state_model.set_doc + "\n"
+    read.__doc__ = read.__doc__ + N_state_model.return_data_name_doc + "\n"
 
     # Set function.
-    set.__doc__ = set.__doc__ + "\n\n" + regexp_doc() + "\n"
-    set.__doc__ = set.__doc__ + Model_free.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    set.__doc__ = set.__doc__ + Model_free.set_doc + "\n"
+    set.__doc__ = set.__doc__ + Model_free.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + Model_free.default_value_doc + "\n\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.set_doc + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.default_value_doc + "\n"
     set.__doc__ = set.__doc__ + diffusion_tensor.__set_prompt_doc__ + "\n"
     set.__doc__ = set.__doc__ + diffusion_tensor.__return_data_name_prompt_doc__ + "\n"
     set.__doc__ = set.__doc__ + diffusion_tensor.__default_value_prompt_doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + N_state_model.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + N_state_model.default_value.__doc__ + "\n\n"
+    set.__doc__ = set.__doc__ + Relax_fit.set_doc + "\n"
+    set.__doc__ = set.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + Relax_fit.default_value_doc + "\n\n"
+    set.__doc__ = set.__doc__ + N_state_model.set_doc + "\n"
+    set.__doc__ = set.__doc__ + N_state_model.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + N_state_model.default_value_doc + "\n\n"
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
-    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    write.__doc__ = write.__doc__ + Model_free.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Noe.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + N_state_model.return_data_name_doc + "\n"

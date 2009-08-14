@@ -305,8 +305,7 @@ class Relax_fit(Common_functions):
         return names
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         Relaxation curve fitting default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -325,6 +324,15 @@ class Relax_fit(Common_functions):
         |                        |               |                        |
         |________________________|_______________|________________________|
 
+        """
+
+    def default_value(self, param):
+        """The default relaxation curve-fitting parameter values.
+
+        @param param:   The relaxation curve-fitting parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
         """
 
         # Relaxation rate.
@@ -888,8 +896,7 @@ class Relax_fit(Common_functions):
         return spin.intensity_err
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc = """
         Relaxation curve fitting data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -909,6 +916,15 @@ class Relax_fit(Common_functions):
         | Relaxation period times (series)  | 'relax_times'        | '^[Rr]elax[ -_][Tt]imes$'   |
         |___________________________________|______________________|_____________________________|
 
+        """
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the relaxation curve-fitting parameter.
+
+        @param name:    The relaxation curve-fitting parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
         """
 
         # Relaxation rate.
@@ -1016,8 +1032,7 @@ class Relax_fit(Common_functions):
         self.model_setup(model, params)
 
 
-    def set_doc(self):
-        """
+    set_doc = """
         Relaxation curve fitting set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -262,8 +262,7 @@ def return_conversion_factor(stat_type, spin):
     return 1.0
 
 
-def return_data_name(name):
-    """
+return_data_name_doc = """
         Minimisation statistic data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -283,8 +282,16 @@ def return_data_name(name):
         | Hessian call count     | 'h_count'    | '^[Hh].*[ -_][Cc]ount'                           |
         |________________________|______________|__________________________________________________|
 
+"""
+
+def return_data_name(name):
+    """Return a unique identifying string for the minimisation parameter.
+
+    @param name:    The minimisation parameter.
+    @type name:     str
+    @return:        The unique parameter identifying string.
+    @rtype:         str
     """
-    __docformat__ = "plaintext"
 
     # Chi-squared.
     if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
@@ -418,12 +425,24 @@ def return_value(spin=None, stat_type=None, sim=None):
     return stat, None
 
 
-def set(value=None, error=None, param=None, scaling=None, spin=None):
-    """
+set_doc = """
         Minimisation statistic set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         This shouldn't really be executed by a user.
+"""
+
+def set(value=None, error=None, param=None, scaling=None, spin=None):
+    """Set global or spin specific minimisation parameters.
+
+    @keyword val:       The parameter values.
+    @type val:          number
+    @keyword param:     The parameter names.
+    @type param:        str
+    @keyword scaling:   Unused.
+    @type scaling:      float
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
     """
 
     # Alias the current data pipe.

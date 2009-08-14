@@ -29,7 +29,7 @@ import sys
 from types import FunctionType
 
 # relax module imports.
-from doc_string import regexp_doc
+from doc_string import docs
 import help
 from generic_fns import diffusion_tensor
 import opendx.main
@@ -282,6 +282,6 @@ class OpenDX:
     #########################
 
     # Write function.
-    map.__doc__ = map.__doc__ + "\n\n" + regexp_doc() + "\n"
+    map.__doc__ = map.__doc__ + "\n\n" + docs.regexp.doc + "\n"
     map.__doc__ = map.__doc__ + diffusion_tensor.__return_data_name_prompt_doc__ + "\n\n"
-    map.__doc__ = map.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
+    map.__doc__ = map.__doc__ + Model_free.return_data_name_doc + "\n\n"

@@ -231,8 +231,7 @@ class Jw_mapping(Common_functions):
         return names
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         Reduced spectral density mapping default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         These default values are found in the file 'physical_constants.py'.
@@ -252,7 +251,15 @@ class Jw_mapping(Common_functions):
         |_______________________________________|____________________|________________________|
 
         """
-        __docformat__ = "plaintext"
+
+    def default_value(self, param):
+        """The default J(w) mapping parameter values.
+
+        @param param:   The J(w) mapping parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
 
         # Bond length.
         if param == 'r':
@@ -291,8 +298,7 @@ class Jw_mapping(Common_functions):
                 continue
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc = """
         Reduced spectral density mapping data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -317,7 +323,15 @@ class Jw_mapping(Common_functions):
         |________________________|__________________|______________________________________________|
 
         """
-        __docformat__ = "plaintext"
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the J(w) mapping parameter.
+
+        @param name:    The J(w) mapping parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
 
         # J(0).
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
@@ -405,15 +419,13 @@ class Jw_mapping(Common_functions):
             return 'ppm'
 
 
-    def set_doc(self, value=None, error=None, param=None, spin=None):
-        """
+    set_doc = """
         Reduced spectral density mapping set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         In reduced spectral density mapping, three values must be set prior to the calculation of
         spectral density values:  the bond length, CSA, and heteronucleus type.
         """
-        __docformat__ = "plaintext"
 
 
     def set_frq(self, frq=None):

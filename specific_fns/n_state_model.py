@@ -1224,8 +1224,7 @@ class N_state_model(Common_functions):
         pdb_file.close()
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         N-state model default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1251,7 +1250,14 @@ class N_state_model(Common_functions):
         all the other probabilities.
         """
 
-        __docformat__ = "plaintext"
+    def default_value(self, param):
+        """The default N-state model parameter values.
+
+        @param param:   The N-state model parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()
@@ -1707,8 +1713,7 @@ class N_state_model(Common_functions):
         return num
 
 
-    def return_data_name(self, name, index=False):
-        """
+    return_data_name_doc = """
         N-state model data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1736,7 +1741,14 @@ class N_state_model(Common_functions):
         corrsponding to each state.
         """
 
-        __docformat__ = "plaintext"
+    def return_data_name(self, name):
+        """Return a unique identifying string for the N-state model parameter.
+
+        @param name:    The N-state model parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
 
         # Probability.
         if search('^p[0-9]*$', name):
@@ -1854,8 +1866,7 @@ class N_state_model(Common_functions):
         self.__update_model()
 
 
-    def set_doc(self):
-        """
+    set_doc = """
         N-state model set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1866,7 +1877,6 @@ class N_state_model(Common_functions):
         gamma of the third state is specified using the string 'gamma2'.
 
         """
-        __docformat__ = "plaintext"
 
 
     def set_non_spin_params(self, value=None, param=None):

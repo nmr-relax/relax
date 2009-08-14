@@ -97,4 +97,4 @@ class Eliminate:
     # Docstring modification.
     #########################
 
-    eliminate.__doc__ = eliminate.__doc__ + "\n\n" + Model_free.eliminate.__doc__ + "\n"
+    eliminate.__doc__ = eliminate.__doc__ + "\n\n" + Model_free.eliminate_doc + "\n"
