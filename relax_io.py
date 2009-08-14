@@ -547,25 +547,25 @@ class IO:
         """Class containing the file operations.
 
         IO streams
-        ~~~~~~~~~~
+        ==========
 
         Standard python IO streams:
 
-        sys.stdin  = self.python_stdin
-        sys.stdout = self.python_stdout
-        sys.stderr = self.python_stderr
+            - sys.stdin  = self.python_stdin
+            - sys.stdout = self.python_stdout
+            - sys.stderr = self.python_stderr
 
         Logging IO streams:
 
-        sys.stdin  = self.log_stdin  = self.python_stdin
-        sys.stdout = self.log_stdout = self.log_file
-        sys.stderr = self.log_stdout = (self.python_stderr, self.log_file)
+            - sys.stdin  = self.log_stdin  = self.python_stdin
+            - sys.stdout = self.log_stdout = self.log_file
+            - sys.stderr = self.log_stdout = (self.python_stderr, self.log_file)
 
         Tee IO streams:
 
-        sys.stdin  = self.tee_stdin  = self.python_stdin
-        sys.stdout = self.tee_stdout = (self.python_stdout, self.tee_file)
-        sys.stderr = self.tee_stdout = (self.python_stderr, self.tee_file)
+            - sys.stdin  = self.tee_stdin  = self.python_stdin
+            - sys.stdout = self.tee_stdout = (self.python_stdout, self.tee_file)
+            - sys.stderr = self.tee_stdout = (self.python_stderr, self.tee_file)
         """
 
         self.relax = relax
