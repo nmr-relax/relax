@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -595,7 +595,7 @@ class Mf(TestCase):
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
             f_count = 91
             g_count = 91
-            if search('^2.6', PY_VER):
+            if search('^2.5', PY_VER) or search('^2.6', PY_VER):
                 f_count = 153
                 g_count = 153
         elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
