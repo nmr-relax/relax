@@ -22,6 +22,7 @@
 
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -50,7 +51,7 @@ class Load_spins(TestCase):
         """Test the loading of spins from a small molecule using the Scientific Python PDB data object."""
 
         # Execute a relax script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/load_spins_from_small_molecule.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()

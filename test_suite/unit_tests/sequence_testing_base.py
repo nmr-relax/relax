@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove
+from os import remove, sep
 import sys
 from tempfile import mktemp
 try:
@@ -147,7 +147,7 @@ class Sequence_base_class:
             path = sys.path[-1]
 
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+'/test_suite/shared_data/relaxation_data')
+        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')

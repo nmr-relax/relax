@@ -15,7 +15,7 @@ PRE = 15.0
 
 
 # Path to files.
-path = sys.path[-1] + '/test_suite/shared_data/'
+path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep
 
 # Create a data pipe.
 pipe.create('pre', 'N-state')

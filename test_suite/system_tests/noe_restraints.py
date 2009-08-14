@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -92,7 +93,7 @@ class Noe_restraints(TestCase):
         ds.file_name = 'phthalic_acid'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -169,7 +170,7 @@ class Noe_restraints(TestCase):
         ds.file_name = 'pseudo_atoms.dat'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -198,7 +199,7 @@ class Noe_restraints(TestCase):
         self.rna_seq()
 
         # Read the Xplor input file.
-        self.relax.interpreter._Noe.read_restraints(file='noe_rna_hbond.dat', dir=sys.path[-1] + '/test_suite/shared_data/noe_restraints')
+        self.relax.interpreter._Noe.read_restraints(file='noe_rna_hbond.dat', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'noe_restraints')
 
         # The restraint data.
         restraints = [

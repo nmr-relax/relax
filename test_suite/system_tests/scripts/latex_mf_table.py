@@ -36,6 +36,7 @@ with the command:
 """
 
 # Python module imports.
+from os import sep
 from string import replace
 import sys
 
@@ -45,7 +46,7 @@ from generic_fns import pipes
 from relax_io import open_write_file
 
 # Path to the files.
-DATA_PATH = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
 
 class Latex:

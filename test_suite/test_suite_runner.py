@@ -84,7 +84,7 @@ class Test_suite_runner:
         heading('Unit tests')
 
         # Run the tests.
-        unit_runner = Unit_test_runner(root_path=sys.path[-1] + os.sep + 'test_suite/unit_tests')
+        unit_runner = Unit_test_runner(root_path=sys.path[-1]+os.sep+'test_suite'+os.sep+'unit_tests')
         self.unit_result = unit_runner.run(runner=RelaxTestRunner())
 
 
