@@ -1741,11 +1741,13 @@ class N_state_model(Common_functions):
         corrsponding to each state.
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, name, index=None):
         """Return a unique identifying string for the N-state model parameter.
 
         @param name:    The N-state model parameter.
         @type name:     str
+        @keyword index: The probability parameter index.
+        @type index:    None or int
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
