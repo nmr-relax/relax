@@ -593,11 +593,8 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            f_count = 91
-            g_count = 91
-            if search('^2.5', PY_VER) or search('^2.6', PY_VER):
-                f_count = 153
-                g_count = 153
+            f_count = 153
+            g_count = 153
         elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
             f_count = 165
             g_count = 165
