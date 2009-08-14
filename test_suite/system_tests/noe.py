@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -48,4 +49,4 @@ class Noe(TestCase):
         """Test the NOE analysis."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/noe.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')

@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -42,7 +43,7 @@ class Angles(TestCase):
         """The user function angles()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/angles.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()

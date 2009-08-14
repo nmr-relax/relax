@@ -22,6 +22,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -51,7 +52,7 @@ class Jw(TestCase):
         """The spectral density calculation test."""
 
         # Data directory.
-        dir = sys.path[-1] + '/test_suite/shared_data/jw_mapping/'
+        dir = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep
 
         # Data paths.
         dataPaths = [dir + 'noe.dat',
@@ -69,7 +70,7 @@ class Jw(TestCase):
         jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/shared_data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -107,7 +108,7 @@ class Jw(TestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + '/test_suite/shared_data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH
@@ -125,4 +126,4 @@ class Jw(TestCase):
         """Test a complete jw mapping run using a script."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/jw_mapping.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping.py')

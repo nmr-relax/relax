@@ -1,6 +1,7 @@
 # Script for model-free analysis using the program Dasha.
 
 # Python module imports.
+from os import sep
 import sys
 
 # relax module imports.
@@ -20,15 +21,15 @@ for name in pipes:
     pipe.create(name, 'mf')
 
     # Load the sequence.
-    sequence.read(sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
+    sequence.read(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat')
 
     # Load a PDB file.
     #structure.read_pdb('example.pdb')
 
     # Load the relaxation data.
-    relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R1.dat')
-    relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R2.dat')
-    relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
+    relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat')
+    relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R2.dat')
+    relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat')
 
     # Setup other values.
     diffusion_tensor.init(1e-8, fixed=True)
@@ -49,4 +50,4 @@ for name in pipes:
     dasha.extract(dir=ds.tmpdir)
 
     # Write the results.
-    results.write(file=ds.tmpdir + '/' + 'results_dasha', dir=None, force=True)
+    results.write(file=ds.tmpdir + sep + 'results_dasha', dir=None, force=True)
