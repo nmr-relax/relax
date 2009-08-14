@@ -204,7 +204,7 @@ class Base_struct_API:
         @param model:   The model number.
         @type model:    int or None
         @return:        The ModelContainer corresponding to the model number or that newly created.
-        @rteyp:         ModelContainer instance
+        @rtype:         ModelContainer instance
         """
 
         # Check if the target is a single model.

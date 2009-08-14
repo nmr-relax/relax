@@ -963,7 +963,7 @@ class N_state_model(Common_functions):
     def calc_ave_dist(self, atom1, atom2, exp=1):
         """Calculate the average distances.
 
-        The formula used is:
+        The formula used is::
 
                       _N_
                   / 1 \                  \ 1/exp

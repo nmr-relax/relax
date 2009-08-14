@@ -91,7 +91,7 @@ def compare_sequence(pipe1=None, pipe2=None, fail=True):
     @type fail:         bool
     @return:            1 if the sequence is the same, 0 if different.
     @rtype:             int
-    @raises:            RelaxError if the sequence is different and the fail flag is True.
+    @raises RelaxError: If the sequence is different and the fail flag is True.
     """
 
     # Failure status.
