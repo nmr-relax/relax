@@ -55,7 +55,7 @@ pcs_const = B0**2 / (15.0 * mu0 * k * T)
 chi_tensor = tensor / pcs_const
 
 # Path to files.
-path = sys.path[-1] + '/test_suite/shared_data/'
+path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep
 
 # Create a data pipe.
 pipe.create('synth', 'N-state')

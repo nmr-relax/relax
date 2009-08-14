@@ -140,7 +140,7 @@ The final black-box model-free results will be placed in the file 'final/results
 """
 
 # Python module imports.
-from os import getcwd, listdir
+from os import getcwd, listdir, sep
 from re import search
 from string import lower
 
@@ -217,7 +217,7 @@ class Main:
 
         if DIFF_MODEL == 'local_tm':
             # Base directory to place files into.
-            self.base_dir = 'local_tm/'
+            self.base_dir = 'local_tm'+sep
 
             # Sequential optimisation of all model-free models (function must be modified to suit).
             self.multi_model(local_tm=True)
@@ -239,7 +239,7 @@ class Main:
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
                     # Base directory to place files into.
-                    self.base_dir = DIFF_MODEL + '/init/'
+                    self.base_dir = DIFF_MODEL + sep+'init'+sep
 
                     # Run name.
                     name = DIFF_MODEL
@@ -248,7 +248,7 @@ class Main:
                     pipe.create(name, 'mf')
 
                     # Load the local tm diffusion model MI results.
-                    results.read(file='results', dir='local_tm/aic')
+                    results.read(file='results', dir='local_tm'+sep+'aic')
 
                     # Remove the tm parameter.
                     model_free.remove_tm()
@@ -288,7 +288,7 @@ class Main:
                 # Normal round of optimisation for diffusion models MII to MV.
                 else:
                     # Base directory to place files into.
-                    self.base_dir = DIFF_MODEL + '/round_' + `self.round` + '/'
+                    self.base_dir = DIFF_MODEL + sep+'round_'+`self.round`+sep
 
                     # Load the optimised diffusion tensor from either the previous round.
                     self.load_tensor()
@@ -331,7 +331,7 @@ class Main:
             pipe.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
-            results.read(file='results', dir='local_tm/aic')
+            results.read(file='results', dir='local_tm'+sep+'aic')
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -352,7 +352,7 @@ class Main:
                 pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
-                results.read(file='results', dir=model + '/round_' + `self.round` + '/opt')
+                results.read(file='results', dir=model + sep+'round_'+`self.round`+sep+'opt')
 
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
@@ -544,7 +544,7 @@ class Main:
 
         # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
         try:
-            dir_list = listdir(getcwd() + '/' + model)
+            dir_list = listdir(getcwd()+sep+model)
         except:
             return 0
 
@@ -585,11 +585,11 @@ class Main:
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            results.read('results', DIFF_MODEL + '/init')
+            results.read('results', DIFF_MODEL + sep+'init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
+            results.read('results', DIFF_MODEL + sep+'round_'+`self.round-1`+sep+'opt')
 
 
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):

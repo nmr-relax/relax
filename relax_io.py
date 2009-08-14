@@ -160,7 +160,7 @@ def get_file_path(file_name=None, dir=None):
 
     # Add the directory.
     if dir:
-        file_path = dir + '/' + file_path
+        file_path = dir + sep + file_path
 
     # Expand any ~ characters.
     if file_path:    # Catch a file path of None, as expanduser can't handle this.
@@ -224,7 +224,7 @@ def mkdir_nofail(dir=None, verbosity=1):
         makedirs(dir)
     except OSError:
         if verbosity:
-            print "Directory ./" + dir + " already exists.\n"
+            print "Directory ." + sep + dir + " already exists.\n"
 
 
 def open_read_file(file_name=None, dir=None, verbosity=1):

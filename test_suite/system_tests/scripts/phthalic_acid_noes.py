@@ -1,6 +1,7 @@
 """Script for testing the loading of phthalic acid NOEs from a generically formatted file."""
 
 # Python module imports.
+from os import sep
 import sys
 
 # relax module imports.
@@ -8,7 +9,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 
 # Path of the relaxation data.
-DATA_PATH = sys.path[-1] + '/test_suite/shared_data/'
+DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep
 
 # Pseudo-atoms.
 PSEUDO = [
@@ -18,7 +19,7 @@ PSEUDO = [
 ]
 
 # Read the structure.
-structure.read_pdb('gromacs_phthalic_acid.pdb', dir=DATA_PATH+'/structures')
+structure.read_pdb('gromacs_phthalic_acid.pdb', dir=DATA_PATH+sep+'structures')
 
 # Load all protons as the sequence.
 structure.load_spins('@*H*', ave_pos=False)

@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import path
+from os import path, sep
 import sys
 from unittest import TestCase
 
@@ -43,7 +43,7 @@ class Test_internal(TestCase):
             self.path = sys.path[-1]
 
         # The path to a PDB file.
-        self.test_pdb_path = self.path+'/test_suite/shared_data/structures/Ap4Aase_res1-12.pdb'
+        self.test_pdb_path = self.path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]
