@@ -825,6 +825,8 @@ class N_state_model(Common_functions):
             Dr = 1.0/3.0 * (D[0,0] - D[1,1])
             R = Dr / Da
             norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
+            if Da == 0.0:
+                norm = 1e-15
 
             # The Q-factor for the alignment.
             Q = sqrt(sse / N / norm)

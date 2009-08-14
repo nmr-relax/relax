@@ -62,7 +62,7 @@ class Relax_fit(TestCase):
         """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/1UBQ_relax_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
 
         # Open the intensities.agr file.
         file = open(ds.tmpdir + sep + 'intensities.agr')
@@ -83,26 +83,26 @@ class Relax_fit(TestCase):
         """Test the relaxation curve fitting C modules."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/relax_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
 
 
     def test_read_sparky(self):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir_name=sys.path[-1] + '/test_suite/shared_data/saved_states')
+        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir_name=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Create a new data pipe for the new data.
         self.relax.interpreter._Pipe.create('new', 'relax_fit')
 
         # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/shared_data")
+        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
 
         # Name the spins so they can be matched to the assignments.
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak heights.
-        self.relax.interpreter._Spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", spectrum_id='0.0176')
+        self.relax.interpreter._Spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', spectrum_id='0.0176')
 
 
         # Test the integrity of the data.

@@ -7,11 +7,12 @@ The bugs include:
 """
 
 # Python module imports.
+from os import sep
 import sys
 
 
 # Path of the files.
-path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
 # Loop over the models.
 for name in ['tm0', 'tm1']:

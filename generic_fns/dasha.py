@@ -25,7 +25,7 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, chdir, getcwd, popen3
+from os import F_OK, access, chdir, getcwd, popen3, sep
 from string import lower
 import sys
 
@@ -456,7 +456,7 @@ def extract(dir):
     # Loop over the parameters.
     for param in ['S2', 'S2f', 'S2s', 'te', 'tf', 'ts', 'Rex']:
         # The file name.
-        file_name = dir + '/' + param + '.out'
+        file_name = dir + sep + param + '.out'
 
         # Test if the file exists.
         if not access(file_name, F_OK):
@@ -487,7 +487,7 @@ def extract(dir):
             setattr(spin, lower(param), None)
 
     # Extract the chi-squared values.
-    file_name = dir + '/chi2.out'
+    file_name = dir + sep+'chi2.out'
 
     # Test if the file exists.
     if not access(file_name, F_OK):

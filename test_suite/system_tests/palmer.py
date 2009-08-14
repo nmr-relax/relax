@@ -22,6 +22,7 @@
 
 # Python module imports.
 from math import pi
+from os import sep
 import sys
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -68,7 +69,7 @@ class Palmer(TestCase):
             return
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
         spin = return_spin(':0', pipe='m2')
@@ -164,7 +165,7 @@ class Palmer(TestCase):
             return
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/palmer_omp.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
 
         # Catch a the old, buggy modelfree4 versions and complain loudly!
         spin = return_spin(':9', pipe='m2')

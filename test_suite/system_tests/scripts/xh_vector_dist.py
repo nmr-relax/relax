@@ -1,10 +1,12 @@
 # System test for creating a PDB representation of the distribution of XH bond vectors.
 
+# Python module imports.
+from os import sep
 import sys
 
 
 # The paths to the data files.
-path = sys.path[-1] + '/test_suite/shared_data/'
+path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep
 
 # Create the data pipe.
 pipe.create('vectors', 'mf')

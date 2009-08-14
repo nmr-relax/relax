@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 from unittest import TestCase
 
 # relax module imports.
@@ -36,8 +37,8 @@ class Test_relax_io(TestCase):
 
         # Some file paths that shouldn't change.
         file1 = 'test'
-        file2 = 'test/aaa'
-        file3 = '/home/test/aaa'
+        file2 = 'test'+sep+'aaa'
+        file3 = sep+'home'+sep+'test'+sep+'aaa'
 
         # Check that nothing changes.
         self.assertEqual(relax_io.get_file_path(file1), file1)
@@ -50,26 +51,26 @@ class Test_relax_io(TestCase):
 
         # Some file paths.
         file1 = 'test'
-        file2 = 'test/aaa'
-        file3 = '/home/test/aaa'
+        file2 = 'test'+sep+'aaa'
+        file3 = sep+'home'+sep+'test'+sep+'aaa'
 
         # Some directories.
-        dir1 = '/usr'
+        dir1 = sep+'usr'
         dir2 = 'usr'
-        dir3 = '/usr'
+        dir3 = sep+'usr'
 
         # Check that nothing changes.
-        self.assertEqual(relax_io.get_file_path(file1, dir1), dir1+'/'+file1)
-        self.assertEqual(relax_io.get_file_path(file2, dir2), dir2+'/'+file2)
-        self.assertEqual(relax_io.get_file_path(file3, dir=dir3), dir3+'/'+file3)
+        self.assertEqual(relax_io.get_file_path(file1, dir1), dir1+sep+file1)
+        self.assertEqual(relax_io.get_file_path(file2, dir2), dir2+sep+file2)
+        self.assertEqual(relax_io.get_file_path(file3, dir=dir3), dir3+sep+file3)
 
 
     def test_get_file_path_with_homedir(self):
         """The modification of file paths with '~', by relax_io.get_file_path."""
 
         # Some file paths.
-        file1 = '~/test'
-        file2 = '~/test/aaa'
+        file1 = '~'+sep+'test'
+        file2 = '~'+sep+'test'+sep+'aaa'
 
         # Check that nothing changes.
         self.assertNotEqual(relax_io.get_file_path(file1), file1)

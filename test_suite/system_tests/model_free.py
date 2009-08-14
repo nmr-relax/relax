@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@ from math import pi
 import platform
 import numpy
 from re import search
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -159,7 +160,7 @@ class Mf(TestCase):
         """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bugs_12582_12591_12607.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bugs_12582_12591_12607.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -172,7 +173,7 @@ class Mf(TestCase):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/create_m4.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'create_m4.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -186,14 +187,14 @@ class Mf(TestCase):
         """Test the creation of a LaTeX table of model-free results, mimicking the latex_mf_table.py sample script."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/latex_mf_table.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'latex_mf_table.py')
 
 
     def test_omp_analysis(self):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/omp_model_free.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'omp_model_free.py')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe('final')
@@ -209,14 +210,14 @@ class Mf(TestCase):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opendx_s2_te_rex.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opendx_s2_te_rex.py')
 
 
     def test_opendx_theta_phi_da(self):
         """Mapping the {theta, phi, Da} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -252,7 +253,7 @@ class Mf(TestCase):
         """Mapping the {local_tm, S2, te} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -295,7 +296,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -355,7 +356,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -412,7 +413,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -458,7 +459,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -513,7 +514,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -564,7 +565,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -592,11 +593,8 @@ class Mf(TestCase):
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            f_count = 91
-            g_count = 91
-            if search('^2.6', PY_VER):
-                f_count = 153
-                g_count = 153
+            f_count = 153
+            g_count = 153
         elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
             f_count = 165
             g_count = 165
@@ -627,7 +625,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -673,7 +671,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -717,7 +715,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Grid search.
         self.relax.interpreter._Minimisation.grid_search(inc=11)
@@ -746,7 +744,7 @@ class Mf(TestCase):
         """Reading of relaxation data using the user function relax_data.read()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -766,7 +764,7 @@ class Mf(TestCase):
         """Read a relax 1.2 model-free results file using the user function results.read()."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + '/test_suite/shared_data/model_free')
+        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
@@ -904,7 +902,7 @@ class Mf(TestCase):
         """Read a relax 1.3 model-free results file using the user function results.read()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
         self.relax.interpreter._Pipe.create('1.3', 'mf')
@@ -963,7 +961,7 @@ class Mf(TestCase):
         """Selecting model m4 with parameters {S2, te, Rex} using model_free.select_model()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -983,7 +981,7 @@ class Mf(TestCase):
         """Setting the bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -1002,7 +1000,7 @@ class Mf(TestCase):
         """Setting the CSA value through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -1021,7 +1019,7 @@ class Mf(TestCase):
         """Setting both the CSA value and bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
         self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
@@ -1041,14 +1039,14 @@ class Mf(TestCase):
         """Try a component of model-free analysis on Tyler Reddy's peptide data (truncated)."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/tylers_peptide.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'tylers_peptide.py')
 
 
     def test_write_results(self):
         """Writing of model-free results using the user function results.write()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
         self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)

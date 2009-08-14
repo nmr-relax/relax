@@ -1,5 +1,7 @@
 # Script for relaxation curve fitting.
 
+# Python module imports.
+from os import sep
 import sys
 
 
@@ -7,10 +9,10 @@ import sys
 pipe.create('rx', 'relax_fit')
 
 # The path to the data files.
-data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting'
+data_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'
 
 # Load the sequence.
-sequence.read('Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
+sequence.read('Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')

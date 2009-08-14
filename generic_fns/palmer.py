@@ -155,7 +155,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     run = open_write_file('run.sh', dir, force)
     create_run(run, binary=binary, dir=dir)
     run.close()
-    chmod(dir + '/run.sh', 0755)
+    chmod(dir + sep+'run.sh', 0755)
 
 
 def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
@@ -619,14 +619,14 @@ def extract(dir, spin_id=None):
         raise RelaxDirError, ('Modelfree4', dir)
 
     # Test if the file exists.
-    if not access(dir + "/mfout", F_OK):
-        raise RelaxFileError, ('Modelfree4', dir + "/mfout")
+    if not access(dir + sep+'mfout', F_OK):
+        raise RelaxFileError, ('Modelfree4', dir + sep+'mfout')
 
     # Determine the parameter set.
     model_type = model_free_obj.determine_model_type()
 
     # Open the file.
-    mfout_file = open(dir + "/mfout", 'r')
+    mfout_file = open(dir + sep+'mfout', 'r')
     mfout_lines = mfout_file.readlines()
     mfout_file.close()
 
