@@ -965,8 +965,8 @@ class Relax_fit(Common_functions):
     def return_units(self, stat_types, spin_id=None):
         """Dummy function which returns None as the stats have no units.
 
-        @param stat_type:   Not used.
-        @type stat_type:    None
+        @param stat_types:  Not used.
+        @type stat_types:   None
         @keyword spin_id:   Not used.
         @type spin_id:      None
         @return:            Nothing.
