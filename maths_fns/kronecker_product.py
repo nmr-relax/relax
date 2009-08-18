@@ -46,7 +46,8 @@ def kron_prod(A, B):
     C.shape = A.shape + B.shape
 
     # Generate and return the Kronecker product matrix.
-    return transpose_14(C)
+    transpose_14(C)
+    return C
 
 
 def transpose_12(matrix):
