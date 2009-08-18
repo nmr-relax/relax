@@ -30,6 +30,15 @@ from random import gauss, uniform
 def quaternion_to_R(quat, matrix):
     """Convert a quaternion into rotation matrix form.
 
+    This is from Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion), where::
+
+            | 1 - 2y**2 - 2z**2      2xy - 2zw          2xz + 2yw     |
+        Q = |     2xy + 2zw      1 - 2x**2 - 2z**2      2yz - 2xw     |,
+            |     2xz - 2yw          2yz + 2xw      1 - 2x**2 - 2y**2 |
+
+    and where the quaternion is defined as (x, y, z, w).
+
+
     @param quat:    The quaternion.
     @type quat:     numpy 4D, rank-1 array
     @param matrix:  A 3D matrix to convert to a rotation matrix.
