@@ -681,6 +681,38 @@ class Frame_order(Common_functions):
             cdp.pivot[i] = float(cdp.pivot[i])
 
 
+    def ref_domain(self, ref=None):
+        """Set the reference domain for the frame order, multi-domain models.
+
+        @param ref: The reference domain.
+        @type ref:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError, 'Frame order'
+
+        # Test if the reference domain exists.
+        exists = False
+        for tensor_cont in cdp.align_tensors:
+            if tensor_cont.domain == ref:
+                exists = True
+        if not exists:
+            raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
+
+        # Set the reference domain.
+        cdp.ref_domain = ref
+
+        # Update the model.
+        self.__update_model()
+
+
     def return_error(self, index):
         """Return the alignment tensor error structure.
 
