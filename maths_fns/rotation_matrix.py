@@ -37,7 +37,7 @@ def quaternion_to_R(quat, matrix):
             |     2xz - 2yw          2yz + 2xw      1 - 2x**2 - 2y**2 |
 
     and where the quaternion is defined as q = (w, x, y, z).  This has been verified using Simo
-    Särkkä's "Notes on Quaternions" at http://www.lce.hut.fi/~ssarkka/.
+    Saerkkae's "Notes on Quaternions" at http://www.lce.hut.fi/~ssarkka/.
 
 
     @param quat:    The quaternion.
