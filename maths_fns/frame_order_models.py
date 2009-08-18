@@ -120,6 +120,16 @@ class Frame_order:
         if red_tensors == None:
             raise RelaxError, "The reduced tensors have not been supplied."
 
+        # Some checks.
+        if full_tensors == None or not len(full_tensors):
+            raise RelaxError, "The full_tensors argument " + `full_tensors` + " must be supplied."
+        if red_tensors == None or not len(red_tensors):
+            raise RelaxError, "The red_tensors argument " + `red_tensors` + " must be supplied."
+        if red_errors == None or not len(red_errors):
+            raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
+        if full_in_ref_frame == None or not len(full_in_ref_frame):
+            raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
+
         # Tensor set up.
         self.num_tensors = len(full_tensors) / 5
         self.full_tensors = full_tensors
