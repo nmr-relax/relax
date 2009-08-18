@@ -100,7 +100,7 @@ class Frame_order:
                 raise RelaxError, "The arguments have been incorrectly supplied, cannot determine the optimisation mode."
 
 
-    def __init_iso_cone(self, full_tensors, red_tensors, red_errors):
+    def __init_iso_cone(self, full_tensors, red_tensors, red_errors, full_in_ref_frame):
         """Set up isotropic cone optimisation against the alignment tensor data.
 
         @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
