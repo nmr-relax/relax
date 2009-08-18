@@ -196,7 +196,7 @@ class Frame_order:
             raise RelaxStrError, ('reference frame', ref)
 
         # Execute the functional code.
-        frame_order.ref_domain(ref=ref)
+        frame_order_obj.ref_domain(ref=ref)
 
 
     def select_model(self, model=None):
