@@ -200,6 +200,26 @@ class Pipe:
         pipes.delete(pipe_name=pipe_name)
 
 
+    def display(self):
+        """Print a list of all the data pipes.
+
+        Examples
+        ~~~~~~~~
+
+        To run the user function, type:
+
+        relax> pipe.display()
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pipe.display()"
+            print(text)
+
+        # Execute the functional code.
+        pipes.display()
+
+
     def hybridise(self, hybrid=None, pipes=None):
         """Create a hybrid data pipe by fusing a number of other data pipes.
 
@@ -254,26 +274,6 @@ class Pipe:
 
         # Execute the functional code.
         hybrid_obj.hybridise(hybrid=hybrid, pipe_list=pipes)
-
-
-    def list(self):
-        """Print a list of all the data pipes.
-
-        Examples
-        ~~~~~~~~
-
-        To run the user function, type:
-
-        relax> pipe.list()
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.list()"
-            print(text)
-
-        # Execute the functional code.
-        pipes.list()
 
 
     def switch(self, pipe_name=None):

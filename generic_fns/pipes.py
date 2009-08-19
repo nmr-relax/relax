@@ -129,6 +129,17 @@ def delete(pipe_name=None):
         ds.current_pipe = None
 
 
+def display():
+    """Print the details of all the data pipes."""
+
+    # Heading.
+    print("%-20s%-20s" % ("Data pipe name", "Data pipe type"))
+
+    # Loop over the data pipes.
+    for pipe_name in ds:
+        print("%-20s%-20s" % (pipe_name, get_type(pipe_name)))
+
+
 def get_pipe(name=None):
     """Return a data pipe.
 
@@ -182,17 +193,6 @@ def has_pipe(name):
         return True
     else:
         return False
-
-
-def list():
-    """Print the details of all the data pipes."""
-
-    # Heading.
-    print("%-20s%-20s" % ("Data pipe name", "Data pipe type"))
-
-    # Loop over the data pipes.
-    for pipe_name in ds:
-        print("%-20s%-20s" % (pipe_name, get_type(pipe_name)))
 
 
 def pipe_loop(name=False):
