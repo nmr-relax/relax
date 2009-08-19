@@ -128,7 +128,7 @@ class Test_kronecker_product(TestCase):
 
         # The 3D, rank-2 matrices.
         R1 = array([[1, 4, 5], [-4, 2, 6], [-5, -6, 3]], float64)
-        R2 = array([[1, 0, 0], [0, 0, 0], [0, 0, 0]], float64)
+        R2 = array([[0, 1, 0], [0, 0, 0], [0, 0, 0]], float64)
 
         # The Kronecker product.
         C = kron_prod(R1, R2)
