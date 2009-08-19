@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import float64, zeros
+from numpy import array, eye, float64, zeros
 from sys import stdout
 from unittest import TestCase
 
@@ -121,6 +121,25 @@ class Test_kronecker_product(TestCase):
 
         # Return the tensor.
         return new
+
+
+    def test_kron_prod(self):
+        """Test the Kronecker product function kron_prod()."""
+
+        # The 3D, rank-2 matrices.
+        R1 = array([[1, 4, 5], [-4, 2, 6], [-5, -6, 3]], float64)
+        R2 = array([[1, 0, 0], [0, 0, 0], [0, 0, 0]], float64)
+
+        # The Kronecker product.
+        C = kron_prod(R1, R2)
+
+        # Print outs.
+        print("R1:\n%s" % R1)
+        print("R2:\n%s" % R2)
+        print("C:\n%s" % C)
+
+        # Checks.
+        self.assertEqual(C.shape, (9, 9))
 
 
     def test_transpose_12(self):
