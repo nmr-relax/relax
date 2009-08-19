@@ -62,7 +62,7 @@ def back_calc():
     cdp = pipes.get_pipe()
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -106,7 +106,7 @@ def calc_ave_sd():
     ###################################
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -132,7 +132,7 @@ def calc_ave_sd():
     ####################################
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
