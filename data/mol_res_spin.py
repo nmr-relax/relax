@@ -157,12 +157,12 @@ class SpinList(list):
                 # Spin number has been supplied.
                 if spin_num != None:
                     if self[i].num == spin_num:
-                        raise RelaxError, "The spin number '" + repr(spin_num) + "' already exists."
+                        raise RelaxError("The spin number '" + repr(spin_num) + "' already exists.")
 
                 # No spin numbers.
                 else:
                     if self[i].name == spin_name:
-                        raise RelaxError, "The unnumbered spin name '" + repr(spin_name) + "' already exists."
+                        raise RelaxError("The unnumbered spin name '" + repr(spin_name) + "' already exists.")
 
             # Append a new SpinContainer.
             self.append(SpinContainer(spin_name, spin_num, select))
@@ -193,7 +193,7 @@ class SpinList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the spins.
         for spin_node in spin_nodes:
@@ -410,12 +410,12 @@ class ResidueList(list):
                 # Residue number has been supplied.
                 if res_num != None:
                     if self[i].num == res_num:
-                        raise RelaxError, "The residue number '" + repr(res_num) + "' already exists in the sequence."
+                        raise RelaxError("The residue number '" + repr(res_num) + "' already exists in the sequence.")
 
                 # No residue numbers.
                 else:
                     if self[i].name == res_name:
-                        raise RelaxError, "The unnumbered residue name '" + repr(res_name) + "' already exists."
+                        raise RelaxError("The unnumbered residue name '" + repr(res_name) + "' already exists.")
 
             # Append a new ResidueContainer.
             self.append(ResidueContainer(res_name, res_num))
@@ -446,7 +446,7 @@ class ResidueList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the residues.
         for res_node in res_nodes:
@@ -615,7 +615,7 @@ class MoleculeList(list):
             # Test if the molecule name already exists.
             for i in xrange(len(self)):
                 if self[i].name == mol_name:
-                    raise RelaxError, "The molecule '%s' already exists in the sequence." % mol_name
+                    raise RelaxError("The molecule '%s' already exists in the sequence." % mol_name)
 
             # Append an empty MoleculeContainer.
             self.append(MoleculeContainer(mol_name))
@@ -646,7 +646,7 @@ class MoleculeList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the molecules.
         for mol_node in mol_nodes:

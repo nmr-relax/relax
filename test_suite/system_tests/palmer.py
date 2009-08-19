@@ -170,7 +170,7 @@ class Palmer(TestCase):
         # Catch a the old, buggy modelfree4 versions and complain loudly!
         spin = return_spin(':9', pipe='m2')
         if spin.s2 == 0.855:
-            raise RelaxError, "You are using an old, buggy Modelfree4 version!  You must upgrade to version 4.20 or later."
+            raise RelaxError("You are using an old, buggy Modelfree4 version!  You must upgrade to version 4.20 or later.")
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
         if spin.te == 20.043*1e-12:

@@ -80,7 +80,7 @@ def eliminate(function=None, args=None):
 
             # Test that the names and values vectors are of equal length.
             if len(names) != len(values):
-                raise RelaxError, "The names vector " + repr(names) + " is of a different length to the values vector " + repr(values) + "."
+                raise RelaxError("The names vector " + repr(names) + " is of a different length to the values vector " + repr(values) + ".")
 
             # Loop over the parameters.
             flag = False
@@ -110,7 +110,7 @@ def eliminate(function=None, args=None):
 
                 # Test that the names and values vectors are of equal length.
                 if len(names) != len(values):
-                    raise RelaxError, "The names vector " + repr(names) + " is of a different length to the values vector " + repr(values) + "."
+                    raise RelaxError("The names vector " + repr(names) + " is of a different length to the values vector " + repr(values) + ".")
 
                 # Loop over the parameters.
                 flag = False

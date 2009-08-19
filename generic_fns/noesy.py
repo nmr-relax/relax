@@ -176,14 +176,14 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
 
                 # Check the pseudoatom consistency.
                 if pseudo_name and pseudo_name != spin.pseudo_name:
-                    raise RelaxError, "The pseudoatom names '%s' and '%s' do not match." % (pseudo_name, spin.pseudo_name)
+                    raise RelaxError("The pseudoatom names '%s' and '%s' do not match." % (pseudo_name, spin.pseudo_name))
 
                 # Set the name.
                 pseudo_name = spin.pseudo_name
 
             # No pseudoatom.
             if not pseudo_name:
-                raise RelaxError, "Cannot find the pseudoatom corresponding to the atoms in %s." % noe_restraints[i][j]
+                raise RelaxError("Cannot find the pseudoatom corresponding to the atoms in %s." % noe_restraints[i][j])
 
             # Otherwise, place the pseudoatom name into the NOE restraint list.
             noe_restraints[i][j] = pseudo_name
@@ -194,6 +194,6 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
     # Check for the presence of the spin containers corresponding to the atom ids.
     for restraint in cdp.noe_restraints:
         if not return_spin(restraint[0]):
-            raise RelaxError, "The spin container corresponding to '%s' cannot be found." % restraint[0]
+            raise RelaxError("The spin container corresponding to '%s' cannot be found." % restraint[0])
         if not return_spin(restraint[1]):
-            raise RelaxError, "The spin container corresponding to '%s' cannot be found." % restraint[1]
+            raise RelaxError("The spin container corresponding to '%s' cannot be found." % restraint[1])

@@ -88,11 +88,11 @@ class Pipe:
 
         # The source data pipe argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
+            raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The target data pipe argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+            raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # Execute the functional code.
         pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
@@ -141,11 +141,11 @@ class Pipe:
 
         # The name of the data pipe.
         if type(pipe_name) != str:
-            raise RelaxStrError, ('data pipe name', pipe_name)
+            raise RelaxStrError('data pipe name', pipe_name)
 
         # The data pipe type.
         if type(pipe_type) != str:
-            raise RelaxStrError, ('data pipe type', pipe_type)
+            raise RelaxStrError('data pipe type', pipe_type)
 
         # Execute the functional code.
         pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
@@ -194,7 +194,7 @@ class Pipe:
 
         # The data pipe name argument.
         if pipe_name != None and type(pipe_name) != str:
-            raise RelaxNoneStrError, ('data pipe name', pipe_name)
+            raise RelaxNoneStrError('data pipe name', pipe_name)
 
         # Execute the functional code.
         pipes.delete(pipe_name=pipe_name)
@@ -242,15 +242,15 @@ class Pipe:
 
         # The hybrid argument.
         if hybrid != None and type(hybrid) != str:
-            raise RelaxNoneStrError, ('hybrid data pipe', hybrid)
+            raise RelaxNoneStrError('hybrid data pipe', hybrid)
 
         # Data pipes.
         if type(pipes) != list:
-            raise RelaxNoneListError, ('data pipes', pipes)
+            raise RelaxNoneListError('data pipes', pipes)
         else:
             for name in pipes:
                 if type(name) != str:
-                    raise RelaxListStrError, ('data pipes', pipes)
+                    raise RelaxListStrError('data pipes', pipes)
 
         # Execute the functional code.
         hybrid_obj.hybridise(hybrid=hybrid, pipe_list=pipes)
@@ -308,7 +308,7 @@ class Pipe:
 
         # The data pipe name argument.
         if pipe_name != None and type(pipe_name) != str:
-            raise RelaxNoneStrError, ('data pipe name', pipe_name)
+            raise RelaxNoneStrError('data pipe name', pipe_name)
 
         # Execute the functional code.
         pipes.switch(pipe_name=pipe_name)

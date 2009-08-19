@@ -154,7 +154,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -200,11 +200,11 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     else:
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
         if not test_labels(ri_label, frq_label, pipe=pipe_from):
-            raise RelaxNoRiError, (ri_label, frq_label)
+            raise RelaxNoRiError(ri_label, frq_label)
 
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
         if not test_labels(ri_label, frq_label, pipe=pipe_to):
-            raise RelaxRiError, (ri_label, frq_label)
+            raise RelaxRiError(ri_label, frq_label)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -407,7 +407,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
 
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:
-        raise RelaxError, "One of either the data or error column must be supplied."
+        raise RelaxError("One of either the data or error column must be supplied.")
 
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -458,14 +458,14 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             if error_col != None:
                 float(file_data[i][error_col])
         except ValueError:
-            raise RelaxError, "The RDC data in the line " + repr(file_data[i]) + " is invalid."
+            raise RelaxError("The RDC data in the line " + repr(file_data[i]) + " is invalid.")
 
         # Right, data is ok and exists.
         missing = False
 
     # Hmmm, no data!
     if missing:
-        raise RelaxError, "No corresponding data could be found within the file."
+        raise RelaxError("No corresponding data could be found within the file.")
 
 
     # Global (non-spin specific) data.
@@ -503,12 +503,12 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
 
         # Test the error value (cannot be 0.0).
         if error == 0.0:
-            raise RelaxError, "An invalid error value of zero has been encountered."
+            raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the corresponding spin container.
         spin = return_spin([id, spin_id])
         if spin == None:
-            raise RelaxNoSpinError, id
+            raise RelaxNoSpinError(id)
 
         # Add the data.
         if data_col != None:

@@ -95,7 +95,7 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
 
         # Invalid argument combination.
         else:
-            raise RelaxError, "When plotting errors, the errors must exist."
+            raise RelaxError("When plotting errors, the errors must exist.")
 
     # Plot of simulation values.
     else:
@@ -286,7 +286,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
     if plot_data not in ['value', 'error', 'sim']:
-        raise RelaxError, "The plot data argument " + repr(plot_data) + " must be set to either 'value', 'error', 'sim'."
+        raise RelaxError("The plot data argument " + repr(plot_data) + " must be set to either 'value', 'error', 'sim'.")
 
     # Test if the simulations exist.
     if plot_data == 'sim' and not hasattr(cdp, 'sim_number'):

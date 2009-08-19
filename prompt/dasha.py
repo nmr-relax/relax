@@ -89,16 +89,16 @@ class Dasha:
 
         # The algor argument.
         if type(algor) != str:
-            raise RelaxStrError, ('optimisation algorithm', algor)
+            raise RelaxStrError('optimisation algorithm', algor)
 
         # Directory.
         if dir != None:
             if type(dir) != str:
-                raise RelaxNoneStrError, ('directory name', dir)
+                raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         dasha.create(algor=algor, dir=dir, force=force)
@@ -142,15 +142,15 @@ class Dasha:
         # Directory.
         if dir != None:
             if type(dir) != str:
-                raise RelaxNoneStrError, ('directory name', dir)
+                raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # The Dasha executable file.
         if type(binary) != str:
-            raise RelaxStrError, ('Dasha binary', binary)
+            raise RelaxStrError('Dasha binary', binary)
 
         # Execute the functional code.
         dasha.execute(dir=dir, force=force, binary=binary)
@@ -174,7 +174,7 @@ class Dasha:
         # Directory.
         if dir != None:
             if type(dir) != str:
-                raise RelaxNoneStrError, ('directory name', dir)
+                raise RelaxNoneStrError('directory name', dir)
 
         # Execute the functional code.
         dasha.extract(dir=dir)

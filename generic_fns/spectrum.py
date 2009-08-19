@@ -54,7 +54,7 @@ def __errors_height_no_repl():
 
         # Test if the RMSD has been set.
         if not hasattr(spin, 'baseplane_rmsd'):
-            raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
+            raise RelaxError("The RMSD of the base plane noise for spin '%s' has not been set." % spin_id)
 
         # Set the error to the RMSD.
         spin.intensity_err = spin.baseplane_rmsd
@@ -87,7 +87,7 @@ def __errors_repl(verbosity=0):
 
     # Test if the standard deviation has already been calculated.
     if hasattr(cdp, 'sigma_I'):
-        raise RelaxError, "The peak intensity standard deviation of all spectra has already been calculated."
+        raise RelaxError("The peak intensity standard deviation of all spectra has already been calculated.")
 
     # Initialise.
     cdp.sigma_I = [0.0] * len(cdp.spectrum_ids)
@@ -230,11 +230,11 @@ def __errors_volume_no_repl():
 
         # Test if the RMSD has been set.
         if not hasattr(spin, 'baseplane_rmsd'):
-            raise RelaxError, "The RMSD of the base plane noise for spin '%s' has not been set." % spin_id
+            raise RelaxError("The RMSD of the base plane noise for spin '%s' has not been set." % spin_id)
 
         # Test that the total number of points have been set.
         if not hasattr(spin, 'N'):
-            raise RelaxError, "The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id
+            raise RelaxError("The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id)
 
         # Set the error to the RMSD multiplied by the square root of the total number of points.
         spin.intensity_err = spin.baseplane_rmsd * sqrt(spin.N)
@@ -292,7 +292,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
 
     # Test the spectrum id string.
     if spectrum_id not in cdp.spectrum_ids:
-        raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id
+        raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
 
     # The spectrum id index.
     spect_index = cdp.spectrum_ids.index(spectrum_id)
@@ -368,7 +368,7 @@ def error_analysis():
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):
-        raise RelaxError, "Error analysis is not possible, no spectra have been loaded."
+        raise RelaxError("Error analysis is not possible, no spectra have been loaded.")
 
     # Peak height category.
     if cdp.int_method == 'height':
@@ -434,7 +434,7 @@ def intensity_generic(line, int_col):
         except:
             num_delays = int(i - 7)
             if num_delays == 0:
-                raise RelaxError, "Generic file with no associated delays (and intensities)."
+                raise RelaxError("Generic file with no associated delays (and intensities).")
             break
 
     # The residue number.
@@ -442,7 +442,7 @@ def intensity_generic(line, int_col):
     try:
         res_num = int(line[1])
     except:
-        raise RelaxError, "Improperly formatted generic file."
+        raise RelaxError("Improperly formatted generic file.")
 
     # Nuclei names.
     x_name = ''
@@ -454,7 +454,7 @@ def intensity_generic(line, int_col):
     try:
         intensity = [float(line[6])]
     except ValueError:
-        raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
+        raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
     i = 1
     while i < num_delays:
@@ -462,7 +462,7 @@ def intensity_generic(line, int_col):
         try:
             intensity.append(float(line[i + 5]))
         except ValueError:
-            raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
+            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
     print('')
     print('The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).')
@@ -498,7 +498,7 @@ def intensity_nmrview(line, int_col):
         res_num = string.split(res_num,'.')
         res_num = res_num[0]
     except ValueError:
-        raise RelaxError, "The peak list is invalid."
+        raise RelaxError("The peak list is invalid.")
 
     # Nuclei names.
     x_name = ''
@@ -526,7 +526,7 @@ def intensity_nmrview(line, int_col):
     try:
         intensity = float(line[int_col])
     except ValueError:
-        raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
+        raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
     # Generate the spin_id.
     spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
@@ -571,7 +571,7 @@ def intensity_sparky(line, int_col):
         try:
             res_num = int(assignment[0])
         except:
-            raise RelaxError, "Improperly formatted Sparky file."
+            raise RelaxError("Improperly formatted Sparky file.")
 
         # Nuclei names.
         x_name = assignment[1]
@@ -585,7 +585,7 @@ def intensity_sparky(line, int_col):
         try:
             intensity = float(line[int_col])
         except ValueError:
-            raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
+            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
     # Generate the spin_id.
     spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
@@ -616,7 +616,7 @@ def intensity_xeasy(line, int_col, H_dim='w1'):
     try:
         res_num = int(line[5])
     except:
-        raise RelaxError, "Improperly formatted XEasy file."
+        raise RelaxError("Improperly formatted XEasy file.")
 
     # Nuclei names.
     if H_dim == 'w1':
@@ -634,7 +634,7 @@ def intensity_xeasy(line, int_col, H_dim='w1'):
     try:
         intensity = float(line[int_col])
     except ValueError:
-        raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
+        raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
     # Generate the spin_id.
     spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
@@ -754,11 +754,11 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # Test that the intensity measures are identical.
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
-        raise RelaxError, "The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method)
+        raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
 
     # Check the intensity measure.
     if not int_method in ['height', 'volume', 'other']:
-        raise RelaxError, "The intensity measure '%s' is not one of 'height', 'volume', 'other'." % int_method
+        raise RelaxError("The intensity measure '%s' is not one of 'height', 'volume', 'other'." % int_method)
 
     # Set the peak intensity measure.
     cdp.int_method = int_method
@@ -776,7 +776,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Test that column numbers have been given.
         if max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col) == None:
-            raise RelaxError, "No column numbers have been supplied."
+            raise RelaxError("No column numbers have been supplied.")
 
         # Set the intensity reading function.
         intensity_fn = intensity_generic
@@ -828,7 +828,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         if ncproc != None:
             cdp.ncproc = {}
     if spectrum_id in cdp.spectrum_ids:
-        raise RelaxError, "The spectrum identification string '%s' already exists." % spectrum_id
+        raise RelaxError("The spectrum identification string '%s' already exists." % spectrum_id)
     else:
         cdp.spectrum_ids.append(spectrum_id)
         if ncproc != None:
@@ -884,12 +884,12 @@ def replicated(spectrum_ids=None):
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):
-        raise RelaxError, "No spectra have been loaded therefore replicates cannot be specified."
+        raise RelaxError("No spectra have been loaded therefore replicates cannot be specified.")
 
     # Test the spectrum id strings.
     for spectrum_id in spectrum_ids:
         if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id
+            raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
 
     # Initialise.
     if not hasattr(cdp, 'replicates'):

@@ -384,7 +384,7 @@ def return_value(spin=None, stat_type=None, sim=None):
 
     # The statistic type does not exist.
     if not object_name:
-        raise RelaxError, "The statistic type " + repr(stat_type) + " does not exist."
+        raise RelaxError("The statistic type " + repr(stat_type) + " does not exist.")
 
     # The simulation object name.
     object_sim = object_name + '_sim'

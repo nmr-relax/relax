@@ -314,7 +314,7 @@ class Mf:
 
             # Setup the residue specific equations.
             if not self.setup_equations(self.data[i]):
-                raise RelaxError, "The model-free equations could not be setup."
+                raise RelaxError("The model-free equations could not be setup.")
 
             # Diffusion tensor parameters.
             if self.model_type == 'local_tm':

@@ -100,19 +100,19 @@ class Residue:
 
         # The data pipe from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
+            raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The residue from argument.
         if type(res_from) != str:
-            raise RelaxStrError, ('residue from', res_from)
+            raise RelaxStrError('residue from', res_from)
 
         # The data pipe to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+            raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # The residue to argument.
         if res_to != None and type(res_to) != str:
-            raise RelaxNoneStrError, ('residue to', res_to)
+            raise RelaxNoneStrError('residue to', res_to)
 
         # Execute the functional code.
         copy_residue(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
@@ -162,15 +162,15 @@ class Residue:
 
         # Residue number.
         if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
+            raise RelaxIntError('residue number', res_num)
 
         # Residue name.
         if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
+            raise RelaxNoneStrError('residue name', res_name)
 
         # The molecule name.
         if mol_name != None and type(mol_name) != str:
-            raise RelaxNoneStrError, ('molecule name', mol_name)
+            raise RelaxNoneStrError('molecule name', mol_name)
 
         # Execute the functional code.
         create_residue(res_num=res_num, res_name=res_name, mol_name=mol_name)
@@ -201,7 +201,7 @@ class Residue:
 
         # The residue identifier argument.
         if type(res_id) != str:
-            raise RelaxStrError, ('residue identifier', res_id)
+            raise RelaxStrError('residue identifier', res_id)
 
         # Execute the functional code.
         delete_residue(res_id=res_id)
@@ -224,7 +224,7 @@ class Residue:
 
         # The res_id argument.
         if res_id != None and type(res_id) != str:
-            raise RelaxNoneStrError, ('residue identification string', res_id)
+            raise RelaxNoneStrError('residue identification string', res_id)
 
         # Execute the functional code.
         display_residue(res_id=res_id)
@@ -274,15 +274,15 @@ class Residue:
 
         # Residue identification string.
         if type(res_id) != str:
-            raise RelaxStrError, ('residue identification string', res_id)
+            raise RelaxStrError('residue identification string', res_id)
 
         # New residue name.
         if type(name) != str:
-            raise RelaxStrError, ('new residue name', name)
+            raise RelaxStrError('new residue name', name)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         name_residue(res_id=res_id, name=name, force=force)
@@ -329,15 +329,15 @@ class Residue:
 
         # Residue identification string.
         if type(res_id) != str:
-            raise RelaxStrError, ('residue identification string', res_id)
+            raise RelaxStrError('residue identification string', res_id)
 
         # New residue number.
         if type(number) != int:
-            raise RelaxIntError, ('new residue number', number)
+            raise RelaxIntError('new residue number', number)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         number_residue(res_id=res_id, number=number, force=force)

@@ -89,11 +89,11 @@ class Results:
 
         # File.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Execute the functional code.
         results.read(file=file, directory=dir)
@@ -145,19 +145,19 @@ class Results:
 
         # File.
         if type(file) != str and not hasattr(file, 'write'):
-            raise RelaxStrFileError, ('file name', file)
+            raise RelaxStrFileError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Compression type.
         if type(compress_type) != int:
-            raise RelaxIntError, ('compression type', compress_type)
+            raise RelaxIntError('compression type', compress_type)
 
         # Execute the functional code.
         results.write(file=file, directory=dir, force=force, compress_type=compress_type)

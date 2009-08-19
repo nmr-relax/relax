@@ -100,19 +100,19 @@ class Spin:
 
         # The data pipe from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
+            raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The spin from argument.
         if type(spin_from) != str:
-            raise RelaxStrError, ('spin from', spin_from)
+            raise RelaxStrError('spin from', spin_from)
 
         # The data pipe to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+            raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # The spin to argument.
         if spin_to != None and type(spin_to) != str:
-            raise RelaxNoneStrError, ('spin to', spin_to)
+            raise RelaxNoneStrError('spin to', spin_to)
 
         # Execute the functional code.
         copy_spin(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
@@ -164,23 +164,23 @@ class Spin:
 
         # Spin number.
         if spin_num != None and type(spin_num) != int:
-            raise RelaxNoneIntError, ('spin number', spin_num)
+            raise RelaxNoneIntError('spin number', spin_num)
 
         # Spin name.
         if spin_name != None and type(spin_name) != str:
-            raise RelaxNoneStrError, ('spin name', spin_name)
+            raise RelaxNoneStrError('spin name', spin_name)
 
         # The residue number.
         if res_num != None and type(res_num) != int:
-            raise RelaxNoneIntError, ('residue number', res_num)
+            raise RelaxNoneIntError('residue number', res_num)
 
         # The residue name.
         if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
+            raise RelaxNoneStrError('residue name', res_name)
 
         # The molecule name.
         if mol_name != None and type(mol_name) != str:
-            raise RelaxNoneStrError, ('molecule name', mol_name)
+            raise RelaxNoneStrError('molecule name', mol_name)
 
         # Execute the functional code.
         create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
@@ -234,32 +234,32 @@ class Spin:
 
         # Spin name.
         if type(spin_name) != str:
-            raise RelaxStrError, ('spin name', spin_name)
+            raise RelaxStrError('spin name', spin_name)
 
         # Spin number.
         if spin_num != None and type(spin_num) != int:
-            raise RelaxNoneIntError, ('spin number', spin_num)
+            raise RelaxNoneIntError('spin number', spin_num)
 
         # The residue ID.
         if res_id != None and type(res_id) != str:
-            raise RelaxNoneStrError, ('residue identification string', res_id)
+            raise RelaxNoneStrError('residue identification string', res_id)
 
         # Member atoms.
         if type(members) != list:
-            raise RelaxListStrError, ('members', members)
+            raise RelaxListStrError('members', members)
         else:
             # Empty list.
             if members == []:
-                raise RelaxListStrError, ('members', members)
+                raise RelaxListStrError('members', members)
 
             # Check the values.
             for i in xrange(len(members)):
                 if type(members[i]) != str:
-                    raise RelaxListStrError, ('members', members)
+                    raise RelaxListStrError('members', members)
 
         # The positional averaging technique.
         if averaging != None and type(averaging) != str:
-            raise RelaxNoneStrError, ('positional averaging technique', averaging)
+            raise RelaxNoneStrError('positional averaging technique', averaging)
 
         # Execute the functional code.
         create_pseudo_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id, members=members, averaging=averaging)
@@ -289,7 +289,7 @@ class Spin:
 
         # The spin identifier argument.
         if type(spin_id) != str:
-            raise RelaxStrError, ('spin identifier', spin_id)
+            raise RelaxStrError('spin identifier', spin_id)
 
         # Execute the functional code.
         delete_spin(spin_id=spin_id)
@@ -312,7 +312,7 @@ class Spin:
 
         # The spin_id argument.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
         display_spin(spin_id=spin_id)
@@ -358,15 +358,15 @@ class Spin:
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # New spin name.
         if type(name) != str:
-            raise RelaxStrError, ('new spin name', name)
+            raise RelaxStrError('new spin name', name)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         name_spin(spin_id=spin_id, name=name, force=force)
@@ -414,15 +414,15 @@ class Spin:
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # New spin number.
         if number != None and  type(number) != int:
-            raise RelaxNoneIntError, ('new spin number', number)
+            raise RelaxNoneIntError('new spin number', number)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         number_spin(spin_id=spin_id, number=number, force=force)

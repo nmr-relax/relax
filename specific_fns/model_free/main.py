@@ -74,7 +74,7 @@ class Model_free_main:
 
             # Get the target object.
             if data_from and not hasattr(object_to, data_name):
-                raise RelaxError, "The structural object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe."
+                raise RelaxError("The structural object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe.")
             elif data_from:
                 data_to = getattr(object_to, data_name)
             else:
@@ -82,7 +82,7 @@ class Model_free_main:
 
             # The data must match!
             if data_from != data_to:
-                raise RelaxError, "The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
+                raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
 
     def are_mf_params_set(self, spin):
@@ -359,7 +359,7 @@ class Model_free_main:
 
                     # Unknown parameter.
                     else:
-                        raise RelaxError, "Unknown parameter."
+                        raise RelaxError("Unknown parameter.")
 
         # Replace all instances of None with 0.0 to allow the list to be converted to a numpy array.
         for i in xrange(len(param_vector)):
@@ -539,7 +539,7 @@ class Model_free_main:
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
+            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -548,7 +548,7 @@ class Model_free_main:
         # Check the validity of the model-free equation type.
         valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
         if not equation in valid_types:
-            raise RelaxError, "The model-free equation type argument " + repr(equation) + " is invalid and should be one of " + repr(valid_types) + "."
+            raise RelaxError("The model-free equation type argument " + repr(equation) + " is invalid and should be one of " + repr(valid_types) + ".")
 
         # Check the validity of the parameter array.
         s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -650,11 +650,11 @@ class Model_free_main:
 
             # Unknown parameter.
             else:
-                raise RelaxError, "The parameter " + params[i] + " is not supported."
+                raise RelaxError("The parameter " + params[i] + " is not supported.")
 
             # The invalid parameter flag is set.
             if invalid_param:
-                raise RelaxError, "The parameter array " + repr(params) + " contains an invalid combination of parameters."
+                raise RelaxError("The parameter array " + repr(params) + " contains an invalid combination of parameters.")
 
         # Set up the model.
         self.model_setup(model, equation, params, spin_id)
@@ -903,7 +903,7 @@ class Model_free_main:
         # Test if the pipe type is set to 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -956,7 +956,7 @@ class Model_free_main:
         else:
             # Global model deselection.
             if sim_index == None:
-                raise RelaxError, "Cannot deselect the global model."
+                raise RelaxError("Cannot deselect the global model.")
 
             # Simulation deselection.
             else:
@@ -995,7 +995,7 @@ class Model_free_main:
 
             # Inconsistencies.
             elif local_tm and not 'local_tm' in spin.params:
-                raise RelaxError, "All residues must either have a local tm parameter or not."
+                raise RelaxError("All residues must either have a local tm parameter or not.")
 
         # Check if any model-free parameters are allowed to vary.
         mf_all_fixed = True
@@ -1020,7 +1020,7 @@ class Model_free_main:
         if mf_all_deselected:
             # All parameters fixed!
             if cdp.diff_tensor.fixed:
-                raise RelaxError, "All parameters are fixed."
+                raise RelaxError("All parameters are fixed.")
 
             return 'diff'
 
@@ -1033,16 +1033,16 @@ class Model_free_main:
             # Catch when the local tm value is set but not in the parameter list.
             for spin in spin_loop():
                 if spin.local_tm != None and not 'local_tm' in spin.params:
-                    raise RelaxError, "The local tm value is set but not located in the model parameter list."
+                    raise RelaxError("The local tm value is set but not located in the model parameter list.")
 
             # Normal error.
-            raise RelaxNoTensorError, 'diffusion'
+            raise RelaxNoTensorError('diffusion')
 
         # 'diff' model type.
         if mf_all_fixed:
             # All parameters fixed!
             if cdp.diff_tensor.fixed:
-                raise RelaxError, "All parameters are fixed."
+                raise RelaxError("All parameters are fixed.")
 
             return 'diff'
 
@@ -1075,7 +1075,7 @@ class Model_free_main:
 
         # Arg tests.
         if model_index == None:
-            raise RelaxError, "The model_index argument cannot be None."
+            raise RelaxError("The model_index argument cannot be None.")
 
         # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
         if not pipes.has_pipe(pipe_to):
@@ -1105,7 +1105,7 @@ class Model_free_main:
 
                 # The data must match!
                 if data_from != data_to:
-                    raise RelaxError, "The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
+                    raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
                 # Skip the data.
                 continue
@@ -1130,7 +1130,7 @@ class Model_free_main:
 
                     # Get the target object.
                     if data_from and not hasattr(dp_to.diff_tensor, data_name):
-                        raise RelaxError, "The diffusion tensor object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe."
+                        raise RelaxError("The diffusion tensor object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe.")
                     elif data_from:
                         data_to = getattr(dp_to.diff_tensor, data_name)
                     else:
@@ -1138,7 +1138,7 @@ class Model_free_main:
 
                     # The data must match!
                     if data_from != data_to:
-                        raise RelaxError, "The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
+                        raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
         # Structure comparison.
         if hasattr(dp_from, 'structure'):
@@ -1153,7 +1153,7 @@ class Model_free_main:
 
                 # Tests for the model and molecule containers.
                 if len(dp_from.structure.structural_data) != len(dp_from.structure.structural_data):
-                    raise RelaxError, "The number of structural models is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
+                    raise RelaxError("The number of structural models is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
                 # Loop over the models.
                 for i in range(len(dp_from.structure.structural_data)):
@@ -1163,11 +1163,11 @@ class Model_free_main:
 
                     # Model numbers.
                     if model_from.num != model_to.num:
-                        raise RelaxError, "The structure models are not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
+                        raise RelaxError("The structure models are not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
                     # Molecule number.
                     if len(model_from.mol) != len(model_to.mol):
-                        raise RelaxError, "The number of molecules is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
+                        raise RelaxError("The number of molecules is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
                     # Loop over the models.
                     for mol_index in range(len(model_from.mol)):
@@ -1272,7 +1272,7 @@ class Model_free_main:
 
         # Can't handle this one yet!
         if model_type != 'mf' and model_type != 'local_tm':
-            raise RelaxError, "Elimination of the global model is not yet supported."
+            raise RelaxError("Elimination of the global model is not yet supported.")
 
         # Get the spin and it's id string.
         spin, spin_id = return_spin_from_index(model_index, return_spin_id=True)
@@ -1849,7 +1849,7 @@ class Model_free_main:
         # Test that no diffusion tensor exists if local tm is a parameter in the model.
         for param in params:
             if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
-                raise RelaxTensorError, 'diffusion'
+                raise RelaxTensorError('diffusion')
 
         # Loop over the sequence.
         for spin in spin_loop(spin_id):
@@ -1889,9 +1889,9 @@ class Model_free_main:
 
         # Bad argument combination.
         if model_info == None and spin_id == None:
-            raise RelaxError, "Either the model_info or spin_id argument must be supplied."
+            raise RelaxError("Either the model_info or spin_id argument must be supplied.")
         elif model_info != None and spin_id != None:
-            raise RelaxError, "The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied."
+            raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()
@@ -1959,7 +1959,7 @@ class Model_free_main:
             # The chi2 value.
             if model_type != 'local_tm':
                 if not hasattr(cdp, 'chi2'):
-                    raise RelaxError, "Global statistics are not available, most likely because the global model has not been optimised."
+                    raise RelaxError("Global statistics are not available, most likely because the global model has not been optimised.")
                 chi2 = cdp.chi2
 
         # Return the data.
@@ -2066,7 +2066,7 @@ class Model_free_main:
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
+            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -2441,7 +2441,7 @@ class Model_free_main:
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
         if function_type != 'mf':
-            raise RelaxFuncSetupError, specific_fns.get_string(function_type)
+            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -2713,7 +2713,7 @@ class Model_free_main:
 
         # Invalid model.
         else:
-            raise RelaxError, "The model '" + model + "' is invalid."
+            raise RelaxError("The model '" + model + "' is invalid.")
 
         # Set up the model.
         self.model_setup(model, equation, params, spin_id)
@@ -2967,7 +2967,7 @@ class Model_free_main:
 
                 # Test if the simulation object already exists.
                 if hasattr(cdp.diff_tensor, sim_object_name):
-                    raise RelaxError, "Monte Carlo parameter values have already been set."
+                    raise RelaxError("Monte Carlo parameter values have already been set.")
 
             # Loop over the minimisation stats objects.
             for object_name in min_names:
@@ -2976,7 +2976,7 @@ class Model_free_main:
 
                 # Test if the simulation object already exists.
                 if hasattr(cdp, sim_object_name):
-                    raise RelaxError, "Monte Carlo parameter values have already been set."
+                    raise RelaxError("Monte Carlo parameter values have already been set.")
 
         # Spin specific parameters.
         if model_type != 'diff':
@@ -2992,7 +2992,7 @@ class Model_free_main:
 
                     # Test if the simulation object already exists.
                     if hasattr(spin, sim_object_name):
-                        raise RelaxError, "Monte Carlo parameter values have already been set."
+                        raise RelaxError("Monte Carlo parameter values have already been set.")
 
 
         # Set the Monte Carlo parameter values.
@@ -3094,7 +3094,7 @@ class Model_free_main:
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'relax_sim_data'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
+            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.relax_sim_data = sim_data

@@ -169,11 +169,11 @@ class N_state_opt:
         if model == '2-domain':
             # Some checks.
             if red_data == None or not len(red_data):
-                raise RelaxError, "The red_data argument " + repr(red_data) + " must be supplied."
+                raise RelaxError("The red_data argument " + repr(red_data) + " must be supplied.")
             if red_errors == None or not len(red_errors):
-                raise RelaxError, "The red_errors argument " + repr(red_errors) + " must be supplied."
+                raise RelaxError("The red_errors argument " + repr(red_errors) + " must be supplied.")
             if full_in_ref_frame == None or not len(full_in_ref_frame):
-                raise RelaxError, "The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied."
+                raise RelaxError("The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied.")
 
             # Tensor set up.
             self.full_tensors = array(full_tensors, float64)
@@ -214,13 +214,13 @@ class N_state_opt:
 
             # Some checks.
             if self.rdc_flag and (xh_vect == None or not len(xh_vect)):
-                raise RelaxError, "The xh_vect argument " + repr(xh_vect) + " must be supplied."
+                raise RelaxError("The xh_vect argument " + repr(xh_vect) + " must be supplied.")
             if self.pcs_flag and (pcs_vect == None or not len(pcs_vect)):
-                raise RelaxError, "The pcs_vect argument " + repr(pcs_vect) + " must be supplied."
+                raise RelaxError("The pcs_vect argument " + repr(pcs_vect) + " must be supplied.")
 
             # No data?
             if not self.rdc_flag and not self.pcs_flag:
-                raise RelaxError, "No RDC or PCS data has been supplied."
+                raise RelaxError("No RDC or PCS data has been supplied.")
 
             # The total number of spins.
             if self.rdc_flag:

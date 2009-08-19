@@ -85,7 +85,7 @@ class Monte_carlo:
 
         # The method argument.
         if type(method) != str:
-            raise RelaxStrError, ('method', method)
+            raise RelaxStrError('method', method)
 
         # Execute the functional code.
         monte_carlo.create_data(method=method)
@@ -132,7 +132,7 @@ class Monte_carlo:
 
         # The prune argument.
         if type(prune) != int and type(prune) != float:
-            raise RelaxNumError, ('prune', prune)
+            raise RelaxNumError('prune', prune)
 
         # Execute the functional code.
         monte_carlo.error_analysis(prune=prune)
@@ -213,7 +213,7 @@ class Monte_carlo:
 
         # The number of simulations.
         if type(number) != int:
-            raise RelaxIntError, ('number', number)
+            raise RelaxIntError('number', number)
 
         # Execute the functional code.
         monte_carlo.setup(number=number)

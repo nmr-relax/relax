@@ -220,7 +220,7 @@ class Internal(Base_struct_API):
 
         # Check for empty files.
         if lines == []:
-            raise RelaxError, "The PDB file is empty."
+            raise RelaxError("The PDB file is empty.")
 
         # Init.
         model = None
@@ -233,7 +233,7 @@ class Internal(Base_struct_API):
                 try:
                     model = int(split(lines[i])[1])
                 except:
-                    raise RelaxError, "The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the PDB file."
+                    raise RelaxError("The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the PDB file.")
 
             # Skip all records prior to the first ATOM or HETATM record.
             if not (search('^ATOM', lines[i]) or search('^HETATM', lines[i])) and not len(records):
@@ -270,7 +270,7 @@ class Internal(Base_struct_API):
 
         # Check for empty records.
         if records == []:
-            raise RelaxError, "There are no PDB records for this model."
+            raise RelaxError("There are no PDB records for this model.")
 
         # Init.
         mol_num = 1
@@ -316,7 +316,7 @@ class Internal(Base_struct_API):
 
         # Check the other lengths.
         if len(struct.bonded) != num and len(struct.chain_id) != num and len(struct.element) != num and len(struct.pdb_record) != num and len(struct.res_name) != num and len(struct.res_num) != num and len(struct.seg_id) != num and len(struct.x) != num and len(struct.y) != num and len(struct.z) != num:
-            raise RelaxError, "The structural data is invalid."
+            raise RelaxError("The structural data is invalid.")
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -398,7 +398,7 @@ class Internal(Base_struct_API):
 
                             # Some sanity checks.
                             if mol.atom_num[i] != atom_num:
-                                raise RelaxError, "The loaded structures do not contain the same atoms.  The average structural properties can not be calculated."
+                                raise RelaxError("The loaded structures do not contain the same atoms.  The average structural properties can not be calculated.")
 
                             # Sum the atom positions.
                             pos = pos + array([mol.x[i], mol.y[i], mol.z[i]], float64)
@@ -500,7 +500,7 @@ class Internal(Base_struct_API):
 
                     # More than one matching atom!
                     if index != None:
-                        raise RelaxError, "The atom_id argument " + repr(atom_id) + " must correspond to a single atom."
+                        raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
 
                     # Update the index.
                     index = i
@@ -753,16 +753,16 @@ class Internal(Base_struct_API):
 
                         # The checks.
                         if het_data_coll[j][1] != het_data[index][i][1]:
-                            raise RelaxError, "The " + repr(het_data[index][i][1]) + " residue name of hetrogen " + repr(het_data[index][i][0]) + " " + het_data[index][i][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][1]) + " name of the previous structures."
+                            raise RelaxError("The " + repr(het_data[index][i][1]) + " residue name of hetrogen " + repr(het_data[index][i][0]) + " " + het_data[index][i][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][1]) + " name of the previous structures.")
 
                         elif het_data_coll[j][2] != het_data[index][i][2]:
-                            raise RelaxError, "The hetrogen chain id " + repr(het_data[index][i][2]) + " does not match " + repr(het_data_coll[j][2]) + " of residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of the previous structures."
+                            raise RelaxError("The hetrogen chain id " + repr(het_data[index][i][2]) + " does not match " + repr(het_data_coll[j][2]) + " of residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of the previous structures.")
 
                         elif het_data_coll[j][3] != het_data[index][i][3]:
-                            raise RelaxError, "The " + repr(het_data[index][i][3]) + " atoms of hetrogen " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][3]) + " of the previous structures."
+                            raise RelaxError("The " + repr(het_data[index][i][3]) + " atoms of hetrogen " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][3]) + " of the previous structures.")
 
                         elif het_data_coll[j][4] != het_data[index][i][4]:
-                            raise RelaxError, "The atom counts " + repr(het_data[index][i][4]) +  " for the hetrogen residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " do not match the counts " + repr(het_data_coll[j][4]) + " of the previous structures."
+                            raise RelaxError("The atom counts " + repr(het_data[index][i][4]) +  " for the hetrogen residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " do not match the counts " + repr(het_data_coll[j][4]) + " of the previous structures.")
 
                 # If there is no match, add the new residue to the collective.
                 if not found:

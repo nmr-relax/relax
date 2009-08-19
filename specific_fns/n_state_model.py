@@ -203,7 +203,7 @@ class N_state_model(Common_functions):
 
         # No data is present.
         if not list:
-            raise RelaxError, "Neither RDC, PCS, NOESY nor alignment tensor data is present."
+            raise RelaxError("Neither RDC, PCS, NOESY nor alignment tensor data is present.")
 
         # Return the list.
         return list
@@ -458,11 +458,11 @@ class N_state_model(Common_functions):
 
         # Data setup tests.
         if not hasattr(cdp, 'paramagnetic_centre'):
-            raise RelaxError, "The paramagnetic centre has not yet been specified."
+            raise RelaxError("The paramagnetic centre has not yet been specified.")
         if not hasattr(cdp, 'temperature'):
-            raise RelaxError, "The experimental temperatures have not been set."
+            raise RelaxError("The experimental temperatures have not been set.")
         if not hasattr(cdp, 'frq'):
-            raise RelaxError, "The spectrometer frequencies of the experiments have not been set."
+            raise RelaxError("The spectrometer frequencies of the experiments have not been set.")
 
         # Initialise.
         pcs = []
@@ -812,7 +812,7 @@ class N_state_model(Common_functions):
                 # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
                 dj_new = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
                 if dj and dj_new != dj:
-                    raise RelaxError, "All the RDCs must come from the same nucleus type."
+                    raise RelaxError("All the RDCs must come from the same nucleus type.")
                 else:
                     dj = dj_new
 
@@ -1024,7 +1024,7 @@ class N_state_model(Common_functions):
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # Init some numpy arrays.
         num_restraints = len(cdp.noe_restraints)
@@ -1168,12 +1168,12 @@ class N_state_model(Common_functions):
         # Test if the cone models have been determined.
         if cone_type == 'diff in cone':
             if not hasattr(cdp, 'S_diff_in_cone'):
-                raise RelaxError, "The diffusion in a cone model has not yet been determined."
+                raise RelaxError("The diffusion in a cone model has not yet been determined.")
         elif cone_type == 'diff on cone':
             if not hasattr(cdp, 'S_diff_on_cone'):
-                raise RelaxError, "The diffusion on a cone model has not yet been determined."
+                raise RelaxError("The diffusion on a cone model has not yet been determined.")
         else:
-            raise RelaxError, "The cone type " + repr(cone_type) + " is unknown."
+            raise RelaxError("The cone type " + repr(cone_type) + " is unknown.")
 
         # The number of increments for the filling of the cone objects.
         inc = 20
@@ -1303,7 +1303,7 @@ class N_state_model(Common_functions):
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # The number of parameters.
         n = self.param_num()
@@ -1409,17 +1409,17 @@ class N_state_model(Common_functions):
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # '2-domain' model setup tests.
         if cdp.model == '2-domain':
             # The number of states.
             if not hasattr(cdp, 'N'):
-                raise RelaxError, "The number of states has not been set."
+                raise RelaxError("The number of states has not been set.")
 
             # The reference domain.
             if not hasattr(cdp, 'ref_domain'):
-                raise RelaxError, "The reference domain has not been set."
+                raise RelaxError("The reference domain has not been set.")
 
         # Right, constraints cannot be used for the 'fixed' model.
         if constraints and cdp.model == 'fixed':
@@ -1479,11 +1479,11 @@ class N_state_model(Common_functions):
 
         # Catch infinite chi-squared values.
         if isInf(func):
-            raise RelaxInfError, 'chi-squared'
+            raise RelaxInfError('chi-squared')
 
         # Catch chi-squared values of NaN.
         if isNaN(func):
-            raise RelaxNaNError, 'chi-squared'
+            raise RelaxNaNError('chi-squared')
 
         # Scaling.
         if scaling:
@@ -1636,7 +1636,7 @@ class N_state_model(Common_functions):
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # Set the value of N.
         cdp.N = N
@@ -1660,11 +1660,11 @@ class N_state_model(Common_functions):
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # Test that the correct model is set.
         if cdp.model != '2-domain':
-            raise RelaxError, "Setting the reference domain is only possible for the '2-domain' N-state model."
+            raise RelaxError("Setting the reference domain is only possible for the '2-domain' N-state model.")
 
         # Test if the reference domain exists.
         exists = False
@@ -1672,7 +1672,7 @@ class N_state_model(Common_functions):
             if tensor_cont.domain == ref:
                 exists = True
         if not exists:
-            raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
 
         # Set the reference domain.
         cdp.ref_domain = ref
@@ -1852,11 +1852,11 @@ class N_state_model(Common_functions):
 
         # Test if the model is setup.
         if hasattr(cdp, 'model'):
-            raise RelaxModelError, 'N-state'
+            raise RelaxModelError('N-state')
 
         # Test if the model name exists.
         if not model in ['2-domain', 'population', 'fixed']:
-            raise RelaxError, "The model name " + repr(model) + " is invalid."
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
 
         # Set the model
         cdp.model = model
@@ -1899,7 +1899,7 @@ class N_state_model(Common_functions):
 
         # Test that the parameter and value lists are the same size.
         if type(param) == list and value[0] != None and len(param) != len(value):
-            raise RelaxError, "The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(param) + "."
+            raise RelaxError("The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(param) + ".")
 
         # Convert param to a list (if it is a string).
         if type(param) == str:
@@ -1916,7 +1916,7 @@ class N_state_model(Common_functions):
             # Get the object name and the parameter index.
             object_name, index = self.return_data_name(param[i], index=True)
             if not object_name:
-                raise RelaxError, "The data type " + repr(param[i]) + " does not exist."
+                raise RelaxError("The data type " + repr(param[i]) + " does not exist.")
 
             # Simple objects (not a list).
             if index == None:

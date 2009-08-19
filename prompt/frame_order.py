@@ -99,23 +99,23 @@ class Frame_order:
 
         # Object size.
         if type(size) != float and type(size) != int:
-            raise RelaxNumError, ('geometric object size', size)
+            raise RelaxNumError('geometric object size', size)
 
         # Increment number.
         if type(inc) != int:
-            raise RelaxIntError, ('increment number', inc)
+            raise RelaxIntError('increment number', inc)
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         frame_order_obj.cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
@@ -148,12 +148,12 @@ class Frame_order:
 
         # Pivot point argument.
         if type(pivot) != list:
-            raise RelaxListError, ('pivot point', pivot)
+            raise RelaxListError('pivot point', pivot)
         if len(pivot) != 3:
-            raise RelaxLenError, ('pivot point', 3)
+            raise RelaxLenError('pivot point', 3)
         for i in xrange(len(pivot)):
             if type(pivot[i]) != int and type(pivot[i]) != float:
-                raise RelaxListNumError, ('pivot point', pivot)
+                raise RelaxListNumError('pivot point', pivot)
 
         # Execute the functional code.
         frame_order_obj.pivot(pivot=pivot)
@@ -193,7 +193,7 @@ class Frame_order:
 
         # Ref frame argument.
         if type(ref) != str:
-            raise RelaxStrError, ('reference frame', ref)
+            raise RelaxStrError('reference frame', ref)
 
         # Execute the functional code.
         frame_order_obj.ref_domain(ref=ref)
@@ -233,7 +233,7 @@ class Frame_order:
 
         # Model argument.
         if type(model) != str:
-            raise RelaxStrError, ('model', model)
+            raise RelaxStrError('model', model)
 
         # Execute the functional code.
         frame_order_obj.select_model(model=model)

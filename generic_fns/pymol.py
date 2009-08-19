@@ -428,7 +428,7 @@ def view():
 
     # Open a PyMOL pipe.
     if pymol.pipe_open_test():
-        raise RelaxError, "The PyMOL pipe already exists."
+        raise RelaxError("The PyMOL pipe already exists.")
     else:
         pymol.pipe_open()
 

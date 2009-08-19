@@ -346,7 +346,7 @@ class Main:
                         name = name + ' spheroid'
 
                     # Throw an error to prevent misuse of the script.
-                    raise RelaxError, "Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script."
+                    raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
 
                 # Create the data pipe.
                 pipe.create(model, 'mf')
@@ -384,7 +384,7 @@ class Main:
         ###########################
 
         else:
-            raise RelaxError, "Unknown diffusion model, change the value of 'DIFF_MODEL'"
+            raise RelaxError("Unknown diffusion model, change the value of 'DIFF_MODEL'")
 
 
     def convergence(self):

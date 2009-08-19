@@ -63,7 +63,7 @@ class Results:
 
         # Can't determine the file version.
         else:
-            raise RelaxError, "Cannot determine the relax version the model-free results file belongs to."
+            raise RelaxError("Cannot determine the relax version the model-free results file belongs to.")
 
         # Print out.
         if verbosity:
@@ -681,7 +681,7 @@ class Results:
                 try:
                     sim_num = int(sim_num[1])
                 except:
-                    raise RelaxError, "The simulation number '%s' is invalid." % sim_num
+                    raise RelaxError("The simulation number '%s' is invalid." % sim_num)
 
                 # A new simulation number.
                 if sim_num not in sims:
@@ -907,7 +907,7 @@ class Results:
                     return
 
                 # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
+                raise RelaxError("The diffusion tensor parameters are not numbers.")
 
             # Values.
             if data_set == 'value':
@@ -941,7 +941,7 @@ class Results:
                     return
 
                 # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
+                raise RelaxError("The diffusion tensor parameters are not numbers.")
 
             # Values.
             if data_set == 'value':
@@ -989,7 +989,7 @@ class Results:
                     return
 
                 # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
+                raise RelaxError("The diffusion tensor parameters are not numbers.")
 
             # Values.
             if data_set == 'value':
@@ -1061,7 +1061,7 @@ class Results:
             try:
                 xh_vect = array(xh_vect, float64)
             except:
-                raise RelaxError, "The XH unit vector " + spin_line[col['xh_vect']] + " is invalid."
+                raise RelaxError("The XH unit vector " + spin_line[col['xh_vect']] + " is invalid.")
 
             # Set the vector.
             spin.xh_vect = xh_vect

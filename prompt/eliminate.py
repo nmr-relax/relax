@@ -84,11 +84,11 @@ class Eliminate:
 
         # User supplied function.
         if function != None and type(function) != FunctionType:
-            raise RelaxFunctionError, ('function', function)
+            raise RelaxFunctionError('function', function)
 
         # Function arguments.
         if args != None and type(args) != tuple:
-            raise RelaxNoneTupleError, ('args', args)
+            raise RelaxNoneTupleError('args', args)
 
         # Execute the functional code.
         eliminate.eliminate(function=function, args=args)

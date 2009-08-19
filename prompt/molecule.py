@@ -96,19 +96,19 @@ class Molecule:
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
+            raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The molecule from argument.
         if type(mol_from) != str:
-            raise RelaxStrError, ('molecule from', mol_from)
+            raise RelaxStrError('molecule from', mol_from)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+            raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # The molecule to argument.
         if mol_to != None and type(mol_to) != str:
-            raise RelaxNoneStrError, ('molecule to', mol_to)
+            raise RelaxNoneStrError('molecule to', mol_to)
 
         # Execute the functional code.
         copy_molecule(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
@@ -148,7 +148,7 @@ class Molecule:
 
         # Molecule name.
         if type(mol_name) != str:
-            raise RelaxStrError, ('molecule name', mol_name)
+            raise RelaxStrError('molecule name', mol_name)
 
         # Execute the functional code.
         create_molecule(mol_name=mol_name)
@@ -177,7 +177,7 @@ class Molecule:
 
         # The molecule identifier argument.
         if type(mol_id) != str:
-            raise RelaxStrError, ('molecule identifier', mol_id)
+            raise RelaxStrError('molecule identifier', mol_id)
 
         # Execute the functional code.
         delete_molecule(mol_id=mol_id)
@@ -200,7 +200,7 @@ class Molecule:
 
         # The molecule identifier argument.
         if mol_id != None and type(mol_id) != str:
-            raise RelaxNoneStrError, ('molecule identifier', mol_id)
+            raise RelaxNoneStrError('molecule identifier', mol_id)
 
         # Execute the functional code.
         display_molecule(mol_id=mol_id)
@@ -246,15 +246,15 @@ class Molecule:
 
         # Residue identification string.
         if mol_id != None and type(mol_id) != str:
-            raise RelaxNoneStrError, ('molecule identification string', mol_id)
+            raise RelaxNoneStrError('molecule identification string', mol_id)
 
         # New molecule name.
         if type(name) != str:
-            raise RelaxStrError, ('new molecule name', name)
+            raise RelaxStrError('new molecule name', name)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         name_molecule(mol_id=mol_id, name=name, force=force)

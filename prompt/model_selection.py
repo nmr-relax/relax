@@ -108,25 +108,25 @@ class Modsel:
 
         # Method.
         if type(method) != str:
-            raise RelaxStrError, ('model selection method', method)
+            raise RelaxStrError('model selection method', method)
 
         # Model selection data pipe name.
         if type(modsel_pipe) != str:
-            raise RelaxStrError, ('model selection data pipe name', modsel_pipe)
+            raise RelaxStrError('model selection data pipe name', modsel_pipe)
 
         # Runs.
         if pipes == None:
             pass
         elif type(pipes) != list:
-            raise RelaxNoneListError, ('data pipes', pipes)
+            raise RelaxNoneListError('data pipes', pipes)
         else:
             for name in pipes:
                 if type(name) == list:
                     for name2 in name:
                         if type(name2) != str:
-                            raise RelaxError, "The elements of the second dimension of the pipes argument must be strings."
+                            raise RelaxError("The elements of the second dimension of the pipes argument must be strings.")
                 elif type(name) != str:
-                    raise RelaxError, "The elements of the first dimension of the pipes argument must be either strings or arrays."
+                    raise RelaxError("The elements of the first dimension of the pipes argument must be either strings or arrays.")
 
         # Execute the functional code.
         model_selection.select(method=method, modsel_pipe=modsel_pipe, pipes=pipes)

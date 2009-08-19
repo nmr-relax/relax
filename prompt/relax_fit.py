@@ -75,11 +75,11 @@ class Relax_fit:
 
         # The relaxation time.
         if type(time) != int and type(time) != float:
-            raise RelaxNumError, ('relaxation time', time)
+            raise RelaxNumError('relaxation time', time)
 
         # The spectrum identification string.
         if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+            raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Execute the functional code.
         relax_fit_obj.relax_time(time=time, spectrum_id=spectrum_id)
@@ -115,7 +115,7 @@ class Relax_fit:
 
         # The model argument.
         if type(model) != str:
-            raise RelaxStrError, ('model', model)
+            raise RelaxStrError('model', model)
 
         # Execute the functional code.
         relax_fit_obj.select_model(model=model)

@@ -101,7 +101,7 @@ class Base_Map:
 
             # No bounds found.
             if not bounds:
-                raise RelaxError, "No bounds for the parameter " + repr(self.params[i]) + " could be determined."
+                raise RelaxError("No bounds for the parameter " + repr(self.params[i]) + " could be determined.")
 
             # Assign the bounds to the global data structure.
             self.bounds[i] = bounds
@@ -303,7 +303,7 @@ class Base_Map:
 
             # Bad parameter name.
             if not name:
-                raise RelaxUnknownParamError, self.params[i]
+                raise RelaxUnknownParamError(self.params[i])
 
             # Append the parameter name.
             self.param_names.append(name)

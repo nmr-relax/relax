@@ -106,23 +106,23 @@ class Align_tensor:
 
         # The tensor_from argument.
         if type(tensor_from) != str:
-            raise RelaxStrError, ('tensor from', tensor_from)
+            raise RelaxStrError('tensor from', tensor_from)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe from', pipe_from)
+            raise RelaxNoneStrError('pipe from', pipe_from)
 
         # The tensor_to argument.
         if type(tensor_to) != str:
-            raise RelaxStrError, ('tensor to', tensor_to)
+            raise RelaxStrError('tensor to', tensor_to)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe to', pipe_to)
+            raise RelaxNoneStrError('pipe to', pipe_to)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
         align_tensor.copy(tensor_from=tensor_from, pipe_from=pipe_from, tensor_to=tensor_to, pipe_to=pipe_to)
@@ -152,7 +152,7 @@ class Align_tensor:
 
         # Label argument.
         if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
+            raise RelaxStrError('tensor', tensor)
 
         # Execute the functional code.
         align_tensor.delete(tensor=tensor)
@@ -175,7 +175,7 @@ class Align_tensor:
 
         # Label argument.
         if tensor != None and type(tensor) != str:
-            raise RelaxNoneStrError, ('tensor', tensor)
+            raise RelaxNoneStrError('tensor', tensor)
 
         # Execute the functional code.
         align_tensor.display(tensor=tensor)
@@ -254,34 +254,34 @@ class Align_tensor:
 
         # Label argument.
         if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
+            raise RelaxStrError('tensor', tensor)
 
         # Parameter argument.
         if type(params) != tuple:
-            raise RelaxNumTupleError, ('alignment tensor parameters', params)
+            raise RelaxNumTupleError('alignment tensor parameters', params)
         else:
             if len(params) != 5:
-                raise RelaxError, "The alignment tensor parameters argument must be a tuple of numbers of length 5."
+                raise RelaxError("The alignment tensor parameters argument must be a tuple of numbers of length 5.")
             for i in xrange(len(params)):
                 if type(params[i]) not in float_list and type(params[i]) not in int_list:
                     print(type(params[i]))
-                    raise RelaxNumTupleError, ('alignment tensor parameters', params)
+                    raise RelaxNumTupleError('alignment tensor parameters', params)
 
         # Scale argument.
         if type(scale) not in float_list:
-            raise RelaxFloatError, ('scale', scale)
+            raise RelaxFloatError('scale', scale)
 
         # Angle units argument.
         if type(angle_units) != str:
-            raise RelaxStrError, ('angle units', angle_units)
+            raise RelaxStrError('angle units', angle_units)
 
         # Parameter types argument.
         if type(param_types) not in int_list:
-            raise RelaxIntError, ('parameter types', param_types)
+            raise RelaxIntError('parameter types', param_types)
 
         # The errors flag.
         if type(errors) != bool:
-            raise RelaxBoolError, ('errors flag', errors)
+            raise RelaxBoolError('errors flag', errors)
 
         # Execute the functional code.
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
@@ -317,20 +317,20 @@ class Align_tensor:
 
         # Basis set argument.
         if type(basis_set) != int:
-            raise RelaxIntError, ('basis set', basis_set)
+            raise RelaxIntError('basis set', basis_set)
 
         # Tensors argument.
         if tensors != None and type(tensors) != list:
-            raise RelaxNoneListstrError, ('tensors', tensors)
+            raise RelaxNoneListstrError('tensors', tensors)
         if type(tensors) == list:
             # Empty list.
             if tensors == []:
-                raise RelaxNoneListstrError, ('tensors', tensors)
+                raise RelaxNoneListstrError('tensors', tensors)
 
             # Check for strings.
             for i in xrange(len(tensors)):
                 if type(tensors[i]) != str:
-                    raise RelaxNoneListstrError, ('tensors', tensors)
+                    raise RelaxNoneListstrError('tensors', tensors)
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
@@ -372,11 +372,11 @@ class Align_tensor:
 
         # From tensor argument.
         if type(full_tensor) != str:
-            raise RelaxStrError, ('from tensor', full_tensor)
+            raise RelaxStrError('from tensor', full_tensor)
 
         # To tensor argument.
         if type(red_tensor) != str:
-            raise RelaxStrError, ('to tensor', red_tensor)
+            raise RelaxStrError('to tensor', red_tensor)
 
         # Execute the functional code.
         align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
@@ -417,11 +417,11 @@ class Align_tensor:
 
         # Tensor argument.
         if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
+            raise RelaxStrError('tensor', tensor)
 
         # Domain argument.
         if type(domain) != str:
-            raise RelaxStrError, ('domain', domain)
+            raise RelaxStrError('domain', domain)
 
         # Execute the functional code.
         align_tensor.set_domain(tensor=tensor, domain=domain)
@@ -483,20 +483,20 @@ class Align_tensor:
 
         # Basis set argument.
         if type(basis_set) != int:
-            raise RelaxIntError, ('basis set', basis_set)
+            raise RelaxIntError('basis set', basis_set)
 
         # Tensors argument.
         if tensors != None and type(tensors) != list:
-            raise RelaxNoneListstrError, ('tensors', tensors)
+            raise RelaxNoneListstrError('tensors', tensors)
         if type(tensors) == list:
             # Empty list.
             if tensors == []:
-                raise RelaxNoneListstrError, ('tensors', tensors)
+                raise RelaxNoneListstrError('tensors', tensors)
 
             # Check for strings.
             for i in xrange(len(tensors)):
                 if type(tensors[i]) != str:
-                    raise RelaxNoneListstrError, ('tensors', tensors)
+                    raise RelaxNoneListstrError('tensors', tensors)
 
         # Execute the functional code.
         align_tensor.svd(basis_set, tensors)

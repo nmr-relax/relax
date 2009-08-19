@@ -136,28 +136,28 @@ class Model_free:
 
         # Model argument.
         if type(model) != str:
-            raise RelaxStrError, ('model', model)
+            raise RelaxStrError('model', model)
 
         # Equation.
         if type(equation) != str:
-            raise RelaxStrError, ('model-free equation', equation)
+            raise RelaxStrError('model-free equation', equation)
 
         # Parameter types.
         if type(params) != list:
-            raise RelaxListStrError, ('parameters', params)
+            raise RelaxListStrError('parameters', params)
         else:
             # Empty list.
             if params == []:
-                raise RelaxListStrError, ('parameters', params)
+                raise RelaxListStrError('parameters', params)
 
             # Check the values.
             for i in xrange(len(params)):
                 if type(params[i]) != str:
-                    raise RelaxListStrError, ('parameters', params)
+                    raise RelaxListStrError('parameters', params)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
         model_free_obj.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
@@ -217,7 +217,7 @@ class Model_free:
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
         model_free_obj.remove_tm(spin_id=spin_id)
@@ -366,11 +366,11 @@ class Model_free:
 
         # Model argument.
         if type(model) != str:
-            raise RelaxStrError, ('model', model)
+            raise RelaxStrError('model', model)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
         model_free_obj.select_model(model=model, spin_id=spin_id)

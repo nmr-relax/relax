@@ -57,7 +57,7 @@ class Noe(Common_functions):
         elif spectrum_type == 'sat':
             spin.sat = intensity
         else:
-            raise RelaxError, "The spectrum type '%s' is unknown." % spectrum_type
+            raise RelaxError("The spectrum type '%s' is unknown." % spectrum_type)
 
 
     def calculate(self, verbosity=1):
@@ -81,11 +81,11 @@ class Noe(Common_functions):
 
         # The spectrum types have not been set.
         if not hasattr(cdp, 'spectrum_type'):
-            raise RelaxError, "The spectrum types have not been set."
+            raise RelaxError("The spectrum types have not been set.")
 
         # Test if the 2 spectra types 'ref' and 'sat' exist.
         if not 'ref' in cdp.spectrum_type or not 'sat' in cdp.spectrum_type:
-            raise RelaxError, "The reference and saturated NOE spectra have not been loaded."
+            raise RelaxError("The reference and saturated NOE spectra have not been loaded.")
 
         # Loop over the spins.
         for spin in spin_loop():
@@ -165,7 +165,7 @@ class Noe(Common_functions):
         # Spectrum type argument.
         spect_type_list = ['ref', 'sat']
         if spectrum_type not in spect_type_list:
-            raise RelaxArgNotInListError, ('spectrum type', spectrum_type, spect_type_list)
+            raise RelaxArgNotInListError('spectrum type', spectrum_type, spect_type_list)
         if spectrum_type == 'ref':
             print("Reference spectrum.")
         if spectrum_type == 'sat':
@@ -300,7 +300,7 @@ class Noe(Common_functions):
 
         # Test the spectrum id string.
         if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError, "The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id
+            raise RelaxError("The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id)
 
         # The spectrum id index.
         spect_index = cdp.spectrum_ids.index(spectrum_id)

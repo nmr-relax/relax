@@ -99,22 +99,22 @@ class N_state_model:
 
         # Pivot point argument.
         if type(pivot_point) != list:
-            raise RelaxListError, ('pivot point', pivot_point)
+            raise RelaxListError('pivot point', pivot_point)
         if len(pivot_point) != 3:
-            raise RelaxLenError, ('pivot point', 3)
+            raise RelaxLenError('pivot point', 3)
         for i in xrange(len(pivot_point)):
             if type(pivot_point[i]) != int and type(pivot_point[i]) != float:
-                raise RelaxListNumError, ('pivot point', pivot_point)
+                raise RelaxListNumError('pivot point', pivot_point)
 
         # CoM argument.
         if centre != None:
             if type(centre) != list:
-                raise RelaxListError, ('centre of mass', centre)
+                raise RelaxListError('centre of mass', centre)
             if len(centre) != 3:
-                raise RelaxLenError, ('centre of mass', 3)
+                raise RelaxLenError('centre of mass', 3)
             for i in xrange(len(centre)):
                 if type(centre[i]) != int and type(centre[i]) != float:
-                    raise RelaxListNumError, ('centre of mass', centre)
+                    raise RelaxListNumError('centre of mass', centre)
 
         # Execute the functional code.
         n_state_model_obj.CoM(pivot_point=pivot_point, centre=centre)
@@ -182,23 +182,23 @@ class N_state_model:
 
         # Cone type.
         if type(cone_type) != str:
-            raise RelaxStrError, ('cone type', cone_type)
+            raise RelaxStrError('cone type', cone_type)
 
         # Scaling.
         if type(scale) != float and type(scale) != int:
-            raise RelaxNumError, ('scaling factor', scale)
+            raise RelaxNumError('scaling factor', scale)
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
@@ -237,7 +237,7 @@ class N_state_model:
 
         # Number of states argument.
         if type(N) != int:
-            raise RelaxIntError, ('the number of states N', N)
+            raise RelaxIntError('the number of states N', N)
 
         # Execute the functional code.
         n_state_model_obj.number_of_states(N=N)
@@ -278,7 +278,7 @@ class N_state_model:
 
         # Ref frame argument.
         if type(ref) != str:
-            raise RelaxStrError, ('reference frame', ref)
+            raise RelaxStrError('reference frame', ref)
 
         # Execute the functional code.
         n_state_model_obj.ref_domain(ref=ref)
@@ -328,7 +328,7 @@ class N_state_model:
 
         # Model argument.
         if type(model) != str:
-            raise RelaxStrError, ('model', model)
+            raise RelaxStrError('model', model)
 
         # Execute the functional code.
         n_state_model_obj.select_model(model=model)

@@ -57,7 +57,7 @@ class Scientific_data(Base_struct_API):
 
         # Test for the PDB parser availability.
         if not dep_check.scientific_pdb_module:
-            raise RelaxError, "The Scientific python PDB module Scientific.IO.PDB could not be imported."
+            raise RelaxError("The Scientific python PDB module Scientific.IO.PDB could not be imported.")
 
         # Execute the base class __init__() method.
         Base_struct_API.__init__(self)
@@ -328,7 +328,7 @@ class Scientific_data(Base_struct_API):
 
                         # More than one matching atom!
                         if atom_found:
-                            raise RelaxError, "The atom_id argument " + repr(atom_id) + " must correspond to a single atom."
+                            raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
 
                         # The atom has been found, so store some info.
                         atom_found = True
@@ -448,7 +448,7 @@ class Scientific_data(Base_struct_API):
 
                         # More than one matching atom!
                         if atom_found:
-                            raise RelaxError, "The atom_id argument " + repr(atom_id) + " must correspond to a single atom."
+                            raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
 
                         # The atom has been found, so store some info.
                         atom_found = True
@@ -562,7 +562,7 @@ class Scientific_data(Base_struct_API):
 
                 # Ok, nothing is loadable from this file.
                 if not len(model):
-                    raise RelaxPdbLoadError, file_path
+                    raise RelaxPdbLoadError(file_path)
 
             # Test if the last structure has been reached.
             if not len(model):
@@ -636,7 +636,7 @@ class Scientific_data(Base_struct_API):
 
                     # Check.
                     if set_mol_name and mol_index >= len(set_mol_name):
-                        raise RelaxError, "The %s molecules read exceeds the number of molecule names supplied in %s." % (mol_index+1, set_mol_name)
+                        raise RelaxError("The %s molecules read exceeds the number of molecule names supplied in %s." % (mol_index+1, set_mol_name))
 
                     # Update structures.
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)

@@ -91,15 +91,15 @@ class Grace:
 
         # File.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Grace executable file.
         if type(grace_exe) != str:
-            raise RelaxStrError, ('Grace executable file', grace_exe)
+            raise RelaxStrError('Grace executable file', grace_exe)
 
         # Execute the functional code.
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
@@ -211,35 +211,35 @@ class Grace:
 
         # Data type for x-axis.
         if type(x_data_type) != str:
-            raise RelaxStrError, ('x data type', x_data_type)
+            raise RelaxStrError('x data type', x_data_type)
 
         # Data type for y-axis.
         if type(y_data_type) != str:
-            raise RelaxStrError, ('y data type', y_data_type)
+            raise RelaxStrError('y data type', y_data_type)
 
         # Spin ID string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # The plot data.
         if type(plot_data) != str:
-            raise RelaxStrError, ('plot data', plot_data)
+            raise RelaxStrError('plot data', plot_data)
 
         # File.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # The normalisation flag.
         if type(norm) != bool:
-            raise RelaxBoolError, ('normalisation flag', norm)
+            raise RelaxBoolError('normalisation flag', norm)
 
         # Execute the functional code.
         grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=dir, force=force, norm=norm)

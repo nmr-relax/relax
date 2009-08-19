@@ -305,17 +305,17 @@ class Interpreter:
 
         # File argument.
         if file == None:
-            raise RelaxNoneError, 'file'
+            raise RelaxNoneError('file')
         elif type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxStrError('file', file)
 
         # Test if the script file exists.
         if not access(file, F_OK):
-            raise RelaxError, "The script file '" + file + "' does not exist."
+            raise RelaxError("The script file '" + file + "' does not exist.")
 
         # Quit argument.
         if type(quit) != int or (quit != False and quit != True):
-            raise RelaxBinError, ('quit', quit)
+            raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
         self.intro = True
@@ -414,7 +414,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
             file = open(script_file, 'r')
         except IOError, warning:
             try:
-                raise RelaxError, "The script file '" + script_file + "' does not exist."
+                raise RelaxError("The script file '" + script_file + "' does not exist.")
             except AllRelaxErrors, instance:
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")

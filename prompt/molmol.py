@@ -92,7 +92,7 @@ class Molmol:
 
         # The command argument.
         if type(command) != str:
-            raise RelaxStrError, ('command', command)
+            raise RelaxStrError('command', command)
 
         # Execute the functional code.
         molmol.command(command=command)
@@ -164,27 +164,27 @@ class Molmol:
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+            raise RelaxStrError('data type', data_type)
 
         # The style.
         if type(style) != str:
-            raise RelaxStrError, ('style', style)
+            raise RelaxStrError('style', style)
 
         # The starting colour of the linear gradient.
         if colour_start != None and type(colour_start) != str and type(colour_start) != list:
-            raise RelaxNoneStrListError, ('starting colour of the linear gradient', colour_start)
+            raise RelaxNoneStrListError('starting colour of the linear gradient', colour_start)
         if type(colour_start) == list:
             for i in xrange(len(colour_start)):
                 if type(colour_start[i]) != float and type(colour_start[i]) != int:
-                    raise RelaxListNumError, ('starting colour of the linear gradient', colour_start)
+                    raise RelaxListNumError('starting colour of the linear gradient', colour_start)
 
         # The ending colour of the linear gradient.
         if colour_end != None and type(colour_end) != str and type(colour_end) != list:
-            raise RelaxNoneStrListError, ('ending colour of the linear gradient', colour_end)
+            raise RelaxNoneStrListError('ending colour of the linear gradient', colour_end)
         if type(colour_end) == list:
             for i in xrange(len(colour_end)):
                 if type(colour_end[i]) != float and type(colour_end[i]) != int:
-                    raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
+                    raise RelaxListNumError('ending colour of the linear gradient', colour_end)
 
         # Execute the functional code.
         molmol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
@@ -283,7 +283,7 @@ class Molmol:
 
         # The file name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Execute the functional code.
         molmol.tensor_pdb(file=file)
@@ -385,39 +385,39 @@ class Molmol:
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
-            raise RelaxStrError, ('data type', data_type)
+            raise RelaxStrError('data type', data_type)
 
         # The style.
         if type(style) != str:
-            raise RelaxStrError, ('style', style)
+            raise RelaxStrError('style', style)
 
         # The starting colour of the linear gradient.
         if colour_start != None and type(colour_start) != str and type(colour_start) != list:
-            raise RelaxNoneStrListError, ('starting colour of the linear gradient', colour_start)
+            raise RelaxNoneStrListError('starting colour of the linear gradient', colour_start)
         if type(colour_start) == list:
             for i in xrange(len(colour_start)):
                 if type(colour_start[i]) != float and type(colour_start[i]) != int:
-                    raise RelaxListNumError, ('starting colour of the linear gradient', colour_start)
+                    raise RelaxListNumError('starting colour of the linear gradient', colour_start)
 
         # The ending colour of the linear gradient.
         if colour_end != None and type(colour_end) != str and type(colour_end) != list:
-            raise RelaxNoneStrListError, ('ending colour of the linear gradient', colour_end)
+            raise RelaxNoneStrListError('ending colour of the linear gradient', colour_end)
         if type(colour_end) == list:
             for i in xrange(len(colour_end)):
                 if type(colour_end[i]) != float and type(colour_end[i]) != int:
-                    raise RelaxListNumError, ('ending colour of the linear gradient', colour_end)
+                    raise RelaxListNumError('ending colour of the linear gradient', colour_end)
 
         # File.
         if file != None and type(file) != str:
-            raise RelaxNoneStrError, ('file name', file)
+            raise RelaxNoneStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)

@@ -79,21 +79,21 @@ class OpenDX:
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory name.
         if dir == None:
             pass
         elif type(dir) != str:
-            raise RelaxNoneStrError, ('file name', file)
+            raise RelaxNoneStrError('file name', file)
 
         # The OpenDX executable file.
         if type(dx_exe) != str:
-            raise RelaxStrError, ('OpenDX executable file name', dx_exe)
+            raise RelaxStrError('OpenDX executable file name', dx_exe)
 
         # Visual program execution flag.
         if type(vp_exec) != bool:
-            raise RelaxBoolError, ('visual program execution flag', vp_exec)
+            raise RelaxBoolError('visual program execution flag', vp_exec)
 
         # Execute the functional code.
         opendx.main.run(file_prefix=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
@@ -204,75 +204,75 @@ class OpenDX:
 
         # The parameters to map.
         if type(params) != list:
-            raise RelaxListError, ('parameters', params)
+            raise RelaxListError('parameters', params)
         num_params = len(params)
         for i in xrange(num_params):
             if type(params[i]) != str:
-                raise RelaxListStrError, ('parameters', params)
+                raise RelaxListStrError('parameters', params)
 
         # Space type.
         if type(map_type) != str:
-            raise RelaxStrError, ('map type', map_type)
+            raise RelaxStrError('map type', map_type)
 
         # Spin identifier.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
+            raise RelaxNoneStrError('spin identifier', spin_id)
 
         # Increment.
         if type(inc) != int:
-            raise RelaxIntError, ('increment', inc)
+            raise RelaxIntError('increment', inc)
         elif inc <= 1:
-            raise RelaxError, "The increment value needs to be greater than 1."
+            raise RelaxError("The increment value needs to be greater than 1.")
 
         # Lower bounds.
         if lower != None:
             if type(lower) != list:
-                raise RelaxListError, ('lower bounds', lower)
+                raise RelaxListError('lower bounds', lower)
             if len(lower) != num_params:
-                raise RelaxLenError, ('lower bounds', num_params)
+                raise RelaxLenError('lower bounds', num_params)
             for i in xrange(len(lower)):
                 if type(lower[i]) != int and type(lower[i]) != float:
-                    raise RelaxListNumError, ('lower bounds', lower)
+                    raise RelaxListNumError('lower bounds', lower)
 
         # Upper bounds.
         if upper != None:
             if type(upper) != list:
-                raise RelaxListError, ('upper bounds', upper)
+                raise RelaxListError('upper bounds', upper)
             if len(upper) != num_params:
-                raise RelaxLenError, ('upper bounds', num_params)
+                raise RelaxLenError('upper bounds', num_params)
             for i in xrange(len(upper)):
                 if type(upper[i]) != int and type(upper[i]) != float:
-                    raise RelaxListNumError, ('upper bounds', upper)
+                    raise RelaxListNumError('upper bounds', upper)
 
         # Axis increments.
         if type(axis_incs) != int:
-            raise RelaxIntError, ('axis increments', axis_incs)
+            raise RelaxIntError('axis increments', axis_incs)
         elif axis_incs <= 1:
-            raise RelaxError, "The axis increment value needs to be greater than 1."
+            raise RelaxError("The axis increment value needs to be greater than 1.")
 
         # File prefix.
         if type(file_prefix) != str:
-            raise RelaxStrError, ('file prefix', file_prefix)
+            raise RelaxStrError('file prefix', file_prefix)
 
         # Directory name.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Point.
         if point != None:
             if type(point) != list:
-                raise RelaxListError, ('point', point)
+                raise RelaxListError('point', point)
             if len(point) != num_params:
-                raise RelaxLenError, ('point', point)
+                raise RelaxLenError('point', point)
             if type(point_file) != str:
-                raise RelaxStrError, ('point file name', point_file)
+                raise RelaxStrError('point file name', point_file)
             for i in xrange(len(point)):
                 if type(point[i]) != int and type(point[i]) != float:
-                    raise RelaxListNumError, ('point', point)
+                    raise RelaxListNumError('point', point)
 
         # Remap function.
         if remap != None and type(remap) is not FunctionType:
-            raise RelaxFunctionError, ('remap function', remap)
+            raise RelaxFunctionError('remap function', remap)
 
         # Execute the functional code.
         opendx.main.map(params=params, map_type=map_type, spin_id=spin_id, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file_prefix=file_prefix, dir=dir, point=point, point_file=point_file, remap=remap)

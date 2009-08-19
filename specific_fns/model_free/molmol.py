@@ -141,7 +141,7 @@ class Molmol:
         for spin, mol_name, res_num, res_name in spin_loop(spin_id):
             # More than one spin.
             if prev_res_num == res_num:
-                raise RelaxError, "Only a single spin per residue is allowed for the classic Molmol macro style."
+                raise RelaxError("Only a single spin per residue is allowed for the classic Molmol macro style.")
 
             # Update the previous residue number.
             prev_res_num = res_num
@@ -422,7 +422,7 @@ class Molmol:
         ####################
 
         else:
-            raise RelaxUnknownDataTypeError, data_type
+            raise RelaxUnknownDataTypeError(data_type)
 
 
     def molmol_classic_colour(self, res_num=None, width=None, rgb_array=None):
@@ -585,7 +585,7 @@ class Molmol:
 
         # Unknown style.
         else:
-            raise RelaxStyleError, style
+            raise RelaxStyleError(style)
 
         # Return the command array.
         return self.commands

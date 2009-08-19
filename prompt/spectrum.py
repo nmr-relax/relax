@@ -77,15 +77,15 @@ class Spectrum:
 
         # The error.
         if type(error) != float and type(error) != int:
-            raise RelaxNumError, ('error', error)
+            raise RelaxNumError('error', error)
 
         # The spectrum identification string.
         if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+            raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
         spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
@@ -276,15 +276,15 @@ class Spectrum:
 
         # The number of summed points.
         if type(N) != int:
-            raise RelaxIntError, ('number of summed points', N)
+            raise RelaxIntError('number of summed points', N)
 
         # The spectrum identification string.
         if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+            raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
         spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
@@ -426,68 +426,68 @@ class Spectrum:
 
         # The file name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The spectrum identification string (or list).
         if type(spectrum_id) != str and type(spectrum_id) != list:
-            raise RelaxStrListStrError, ('spectrum identification string', spectrum_id)
+            raise RelaxStrListStrError('spectrum identification string', spectrum_id)
 
         # The heteronucleus name.
         if type(heteronuc) != str:
-            raise RelaxStrError, ('heteronucleus name', heteronuc)
+            raise RelaxStrError('heteronucleus name', heteronuc)
 
         # The proton name.
         if type(proton) != str:
-            raise RelaxStrError, ('proton name', proton)
+            raise RelaxStrError('proton name', proton)
 
         # The intensity column.
         if int_col != None and type(int_col) != int and type(int_col) != list:
-            raise RelaxNoneIntListIntError, ('intensity column', int_col)
+            raise RelaxNoneIntListIntError('intensity column', int_col)
         if type(int_col) == list:
             # Empty list.
             if int_col == []:
-                raise RelaxListIntError, ('intensity column', int_col)
+                raise RelaxListIntError('intensity column', int_col)
 
             # Check the values.
             for i in xrange(len(int_col)):
                 if type(int_col[i]) != int:
-                    raise RelaxListIntError, ('intensity column', int_col)
+                    raise RelaxListIntError('intensity column', int_col)
 
         # The integration method name.
         if type(int_method) != str:
-            raise RelaxStrError, ('integration method', int_method)
+            raise RelaxStrError('integration method', int_method)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
+            raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
         if res_num_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
+            raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
         if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
+            raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
         if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+            raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
         if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+            raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Bruker ncproc parameter.
         if ncproc != None and type(ncproc) != int:
-            raise RelaxNoneIntError, ('Bruker ncproc parameter', ncproc)
+            raise RelaxNoneIntError('Bruker ncproc parameter', ncproc)
 
         # Execute the functional code.
         spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, ncproc=ncproc)
@@ -531,16 +531,16 @@ class Spectrum:
 
         # Spectrum ids.
         if type(spectrum_ids) != list:
-            raise RelaxListStrError, ('spectrum ids', spectrum_ids)
+            raise RelaxListStrError('spectrum ids', spectrum_ids)
         else:
             # Empty list.
             if spectrum_ids == []:
-                raise RelaxListStrError, ('spectrum ids', spectrum_ids)
+                raise RelaxListStrError('spectrum ids', spectrum_ids)
 
             # Check the values.
             for i in xrange(len(spectrum_ids)):
                 if type(spectrum_ids[i]) != str:
-                    raise RelaxListStrError, ('spectrum ids', spectrum_ids)
+                    raise RelaxListStrError('spectrum ids', spectrum_ids)
 
         # Execute the functional code.
         spectrum.replicated(spectrum_ids=spectrum_ids)

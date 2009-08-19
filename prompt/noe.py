@@ -106,31 +106,31 @@ class Noe:
 
         # The file name.
         if type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxStrError('file', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # First proton column.
         if proton1_col != None and type(proton1_col) != int:
-            raise RelaxNoneIntError, ('first proton column', proton1_col)
+            raise RelaxNoneIntError('first proton column', proton1_col)
 
         # Second proton column.
         if proton2_col != None and type(proton2_col) != int:
-            raise RelaxNoneIntError, ('second proton column', proton2_col)
+            raise RelaxNoneIntError('second proton column', proton2_col)
 
         # Lower bound column.
         if lower_col != None and type(lower_col) != int:
-            raise RelaxNoneIntError, ('lower bound column', lower_col)
+            raise RelaxNoneIntError('lower bound column', lower_col)
 
         # Upper bound column.
         if upper_col != None and type(upper_col) != int:
-            raise RelaxNoneIntError, ('upper bound column', upper_col)
+            raise RelaxNoneIntError('upper bound column', upper_col)
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
         noesy.read_restraints(file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
@@ -168,11 +168,11 @@ class Noe:
 
         # The spectrum type.
         if type(spectrum_type) != str:
-            raise RelaxStrError, ('spectrum type', spectrum_type)
+            raise RelaxStrError('spectrum type', spectrum_type)
 
         # The spectrum identification string.
         if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+            raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Execute the functional code.
         noe_obj.spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)

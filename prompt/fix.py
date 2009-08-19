@@ -77,11 +77,11 @@ class Fix:
 
         # The element argument.
         if type(element) != str and type(element) != int:
-            raise RelaxIntStrError, ('element', element)
+            raise RelaxIntStrError('element', element)
 
         # The fixed argument.
         if type(fixed) != bool:
-            raise RelaxBoolError, ('fixed', fixed)
+            raise RelaxBoolError('fixed', fixed)
 
         # Execute the functional code.
         fix.fix(element=element, fixed=fixed)

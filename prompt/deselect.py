@@ -133,39 +133,39 @@ class Deselect:
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
+            raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
         if res_num_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
+            raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
         if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
+            raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
         if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+            raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
         if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+            raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Change all flag.
         if type(change_all) != bool:
-            raise RelaxBoolError, ('change_all', change_all)
+            raise RelaxBoolError('change_all', change_all)
 
         # Execute the functional code.
         selection.desel_read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, change_all=change_all)
@@ -203,7 +203,7 @@ class Deselect:
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('Spin identification string', spin_id)
+            raise RelaxNoneStrError('Spin identification string', spin_id)
 
         # Execute the functional code.
         selection.reverse(spin_id=spin_id)
@@ -251,11 +251,11 @@ class Deselect:
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('Spin identification string', spin_id)
+            raise RelaxNoneStrError('Spin identification string', spin_id)
 
         # Change all flag.
         if type(change_all) != bool:
-            raise RelaxBoolError, ('change_all', change_all)
+            raise RelaxBoolError('change_all', change_all)
 
         # Execute the functional code.
         selection.desel_spin(spin_id=spin_id, change_all=change_all)

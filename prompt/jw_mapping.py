@@ -77,7 +77,7 @@ class Jw_mapping:
 
         # The frq argument.
         if type(frq) != float:
-            raise RelaxStrError, ('frq', frq)
+            raise RelaxStrError('frq', frq)
 
         # Execute the functional code.
         jw_mapping_obj.set_frq(frq=frq)

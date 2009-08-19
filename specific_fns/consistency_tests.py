@@ -46,7 +46,7 @@ class Consistency_tests(Common_functions):
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'ct_frq') or type(cdp.ct_frq) != float:
-            raise RelaxError, "The frequency has not been set up."
+            raise RelaxError("The frequency has not been set up.")
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -60,19 +60,19 @@ class Consistency_tests(Common_functions):
 
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
-                raise RelaxNoValueError, "CSA"
+                raise RelaxNoValueError("CSA")
 
             # Test if the bond length has been set.
             if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError, "bond length"
+                raise RelaxNoValueError("bond length")
 
             # Test if the angle Theta has been set.
             if not hasattr(spin, 'orientation') or spin.orientation == None:
-                raise RelaxNoValueError, "angle Theta"
+                raise RelaxNoValueError("angle Theta")
 
             # Test if the correlation time has been set.
             if not hasattr(spin, 'tc') or spin.tc == None:
-                raise RelaxNoValueError, "correlation time"
+                raise RelaxNoValueError("correlation time")
 
             # Test if the spin type has been set.
             if not hasattr(spin, 'heteronuc_type'):
@@ -84,7 +84,7 @@ class Consistency_tests(Common_functions):
 
         # Frequency index.
         if cdp.ct_frq not in cdp.frq:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + repr(cdp.ct_frq) + " has been loaded."
+            raise RelaxError("No relaxation data corresponding to the frequency " + repr(cdp.ct_frq) + " has been loaded.")
 
         # Consistency testing.
         for spin in spin_loop(spin_id):
@@ -495,11 +495,11 @@ class Consistency_tests(Common_functions):
         # Test if the pipe type is set to 'ct'.
         function_type = cdp.pipe_type
         if function_type != 'ct':
-            raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
 
         # Test if the frequency has been set.
         if hasattr(cdp, 'ct_frq'):
-            raise RelaxError, "The frequency for the run has already been set."
+            raise RelaxError("The frequency for the run has already been set.")
 
         # Create the data structure if it doesn't exist.
         if not hasattr(cdp, 'ct_frq'):
@@ -567,7 +567,7 @@ class Consistency_tests(Common_functions):
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'relax_sim_data'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
+            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.relax_sim_data = sim_data

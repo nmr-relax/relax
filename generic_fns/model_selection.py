@@ -116,7 +116,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
 
     # Test if the pipe already exists.
     if has_pipe(modsel_pipe):
-        raise RelaxPipeError, modsel_pipe
+        raise RelaxPipeError(modsel_pipe)
 
     # Use all pipes.
     if pipes == None:
@@ -135,13 +135,13 @@ def select(method=None, modsel_pipe=None, pipes=None):
         formula = bic
     elif method == 'CV':
         print("CV model selection.")
-        raise RelaxError, "The model selection technique " + repr(method) + " is not currently supported."
+        raise RelaxError("The model selection technique " + repr(method) + " is not currently supported.")
     else:
-        raise RelaxError, "The model selection technique " + repr(method) + " is not currently supported."
+        raise RelaxError("The model selection technique " + repr(method) + " is not currently supported.")
 
     # No pipes.
     if len(pipes) == 0:
-        raise RelaxError, "No data pipes are available for use in model selection."
+        raise RelaxError("No data pipes are available for use in model selection.")
 
     # Initialise.
     function_type = {}
@@ -156,7 +156,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     if type(pipes[0]) == list:
         # No pipes.
         if len(pipes[0]) == 0:
-            raise RelaxError, "No pipes are available for use in model selection in the array " + repr(pipes[0]) + "."
+            raise RelaxError("No pipes are available for use in model selection in the array " + repr(pipes[0]) + ".")
 
         # Loop over the data pipes.
         for i in xrange(len(pipes)):
@@ -172,7 +172,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
         for i in xrange(len(pipes)):
             for j in xrange(len(pipes[i])):
                 if model_loop[pipes[0][j]] != model_loop[pipes[i][j]]:
-                    raise RelaxError, "The models for each data pipes should be the same."
+                    raise RelaxError("The models for each data pipes should be the same.")
         model_loop = model_loop[pipes[0][0]]
 
         # The model description.

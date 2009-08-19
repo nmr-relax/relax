@@ -528,7 +528,7 @@ def execute(dir, force, binary):
     if dir == None:
         dir = pipes.cdp_name()
     if not access(dir, F_OK):
-        raise RelaxDirError, ('Modelfree4', dir)
+        raise RelaxDirError('Modelfree4', dir)
 
     # Change to this directory.
     chdir(dir)
@@ -537,25 +537,25 @@ def execute(dir, force, binary):
     try:
         # Test if the 'mfin' input file exists.
         if not access('mfin', F_OK):
-            raise RelaxFileError, ('mfin input', 'mfin')
+            raise RelaxFileError('mfin input', 'mfin')
 
         # Test if the 'mfdata' input file exists.
         if not access('mfdata', F_OK):
-            raise RelaxFileError, ('mfdata input', 'mfdata')
+            raise RelaxFileError('mfdata input', 'mfdata')
 
         # Test if the 'mfmodel' input file exists.
         if not access('mfmodel', F_OK):
-            raise RelaxFileError, ('mfmodel input', 'mfmodel')
+            raise RelaxFileError('mfmodel input', 'mfmodel')
 
         # Test if the 'mfpar' input file exists.
         if not access('mfpar', F_OK):
-            raise RelaxFileError, ('mfpar input', 'mfpar')
+            raise RelaxFileError('mfpar input', 'mfpar')
 
         # Test if the 'PDB' input file exists.
         if cdp.diff_tensor.type != 'sphere':
             pdb = cdp.structure.structural_data[0].mol[0].file_name
             if not access(pdb, F_OK):
-                raise RelaxFileError, ('PDB', pdb)
+                raise RelaxFileError('PDB', pdb)
         else:
             pdb = None
 
@@ -616,11 +616,11 @@ def extract(dir, spin_id=None):
     if dir == None:
         dir = pipes.cdp_name()
     if not access(dir, F_OK):
-        raise RelaxDirError, ('Modelfree4', dir)
+        raise RelaxDirError('Modelfree4', dir)
 
     # Test if the file exists.
     if not access(dir + sep+'mfout', F_OK):
-        raise RelaxFileError, ('Modelfree4', dir + sep+'mfout')
+        raise RelaxFileError('Modelfree4', dir + sep+'mfout')
 
     # Determine the parameter set.
     model_type = model_free_obj.determine_model_type()

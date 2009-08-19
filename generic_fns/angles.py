@@ -54,7 +54,7 @@ def angle_diff_frame():
 
     # Test if the diffusion tensor data is loaded.
     if not hasattr(cdp, 'diff_tensor'):
-        raise RelaxNoTensorError, 'diffusion'
+        raise RelaxNoTensorError('diffusion')
 
     # Sphere.
     if cdp.diff_tensor.type == 'sphere':
@@ -66,7 +66,7 @@ def angle_diff_frame():
 
     # Ellipsoid.
     elif cdp.diff_tensor.type == 'ellipsoid':
-        raise RelaxError, "No coded yet."
+        raise RelaxError("No coded yet.")
 
 
 def ellipsoid_frame():

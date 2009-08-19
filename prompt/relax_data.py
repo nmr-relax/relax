@@ -70,15 +70,15 @@ class Relax_data:
 
         # Relaxation data type.
         if type(ri_label) != str:
-            raise RelaxStrError, ('relaxation label', ri_label)
+            raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
         if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
+            raise RelaxStrError('frequency label', frq_label)
 
         # Frequency.
         if type(frq) != float:
-            raise RelaxFloatError, ('frequency', frq)
+            raise RelaxFloatError('frequency', frq)
 
         # Execute the functional code.
         relax_data.back_calc(ri_label=ri_label, frq_label=frq_label, frq=frq)
@@ -135,23 +135,23 @@ class Relax_data:
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe_from', pipe_from)
+            raise RelaxNoneStrError('pipe_from', pipe_from)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe_to', pipe_to)
+            raise RelaxNoneStrError('pipe_to', pipe_to)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Relaxation data type.
         if ri_label != None and type(ri_label) != str:
-            raise RelaxNoneStrError, ('relaxation label', ri_label)
+            raise RelaxNoneStrError('relaxation label', ri_label)
 
         # Frequency label.
         if frq_label != None and type(frq_label) != str:
-            raise RelaxNoneStrError, ('frequency label', frq_label)
+            raise RelaxNoneStrError('frequency label', frq_label)
 
         # Execute the functional code.
         relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_label=ri_label, frq_label=frq_label)
@@ -185,11 +185,11 @@ class Relax_data:
 
         # Relaxation data type.
         if type(ri_label) != str:
-            raise RelaxStrError, ('relaxation label', ri_label)
+            raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
         if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
+            raise RelaxStrError('frequency label', frq_label)
 
         # Execute the functional code.
         relax_data.delete(ri_label=ri_label, frq_label=frq_label)
@@ -223,11 +223,11 @@ class Relax_data:
 
         # Relaxation data type.
         if type(ri_label) != str:
-            raise RelaxStrError, ('relaxation label', ri_label)
+            raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
         if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
+            raise RelaxStrError('frequency label', frq_label)
 
         # Execute the functional code.
         relax_data.display(ri_label=ri_label, frq_label=frq_label)
@@ -319,55 +319,55 @@ class Relax_data:
 
         # Relaxation data type.
         if type(ri_label) != str:
-            raise RelaxStrError, ('relaxation label', ri_label)
+            raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
         if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
+            raise RelaxStrError('frequency label', frq_label)
 
         # Frequency.
         if type(frq) != float:
-            raise RelaxFloatError, ('frequency', frq)
+            raise RelaxFloatError('frequency', frq)
 
         # The file name.
         if type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxStrError('file', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
+            raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
         if res_num_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
+            raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
         if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
+            raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
         if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+            raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
         if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+            raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # The data column.
         if type(data_col) != int:
-            raise RelaxIntError, ('data column', data_col)
+            raise RelaxIntError('data column', data_col)
 
         # The error column.
         if type(error_col) != int:
-            raise RelaxIntError, ('error column', error_col)
+            raise RelaxIntError('error column', error_col)
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
         relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
@@ -410,23 +410,23 @@ class Relax_data:
 
         # Relaxation data type.
         if type(ri_label) != str:
-            raise RelaxStrError, ('relaxation label', ri_label)
+            raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
         if type(frq_label) != str:
-            raise RelaxStrError, ('frequency label', frq_label)
+            raise RelaxStrError('frequency label', frq_label)
 
         # File.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         relax_data.write(ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)

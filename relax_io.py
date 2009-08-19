@@ -81,7 +81,7 @@ def determine_compression(file_path):
 
     # The file doesn't exist.
     else:
-        raise RelaxFileError, file_path
+        raise RelaxFileError(file_path)
 
     # Return the compression type.
     return compress_type, file_path
@@ -248,7 +248,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
 
     # Invalid file name.
     if not file_name and type(file_name) != str:
-        raise RelaxError, "The file name " + repr(file_name) + " " + repr(type(file_name)) + " is invalid and cannot be opened."
+        raise RelaxError("The file name " + repr(file_name) + " " + repr(type(file_name)) + " is invalid and cannot be opened.")
 
     # File path.
     file_path = get_file_path(file_name, dir)
@@ -266,11 +266,11 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
             if dep_check.bz2_module:
                 file_obj = BZ2File(file_path, 'r')
             else:
-                raise RelaxError, "Cannot open the file " + repr(file_path) + ", try uncompressing first.  " + dep_check.bz2_module_message + "."
+                raise RelaxError("Cannot open the file " + repr(file_path) + ", try uncompressing first.  " + dep_check.bz2_module_message + ".")
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'r')
     except IOError, message:
-        raise RelaxError, "Cannot open the file " + repr(file_path) + ".  " + message.args[1] + "."
+        raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
     return file_obj
@@ -315,7 +315,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     if search('devnull', file_name):
         # Devnull could not be imported!
         if not dep_check.devnull_import:
-            raise RelaxError, dep_check.devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
+            raise RelaxError(dep_check.devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4.")
 
         # Print out.
         if verbosity:
@@ -353,7 +353,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
     # Fail if the file already exists and the force flag is set to 0.
     if access(file_path, F_OK) and not force:
-        raise RelaxFileOverwriteError, (file_path, 'force flag')
+        raise RelaxFileOverwriteError(file_path, 'force flag')
 
     # Open the file for writing.
     try:
@@ -366,7 +366,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'w')
     except IOError, message:
-        raise RelaxError, "Cannot open the file " + repr(file_path) + ".  " + message.args[1] + "."
+        raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
     if return_path:
@@ -461,11 +461,11 @@ def test_binary(binary):
     if search(path_sep, binary):
         # Test that the binary exists.
         if not access(binary, F_OK):
-            raise RelaxMissingBinaryError, binary
+            raise RelaxMissingBinaryError(binary)
 
         # Test that if the binary is executable.
         if not access(binary, X_OK):
-            raise RelaxNonExecError, binary
+            raise RelaxNonExecError(binary)
 
     # The path to the binary has not been given.
     else:
@@ -481,7 +481,7 @@ def test_binary(binary):
                 return
 
         # The binary is not located in the system path!
-        raise RelaxNoInPathError, binary
+        raise RelaxNoInPathError(binary)
 
 
 
@@ -514,7 +514,7 @@ class DummyFileObject:
 
         # Check if the file is closed.
         if self.closed:
-            raise ValueError, 'I/O operation on closed file'
+            raise ValueError('I/O operation on closed file')
 
         # Append the string to the data object.
         self.data = self.data + str
@@ -600,7 +600,7 @@ class IO:
         elif access(file_path + '.gz', F_OK):
             file_path = file_path + '.gz'
         else:
-            raise RelaxFileError, file_path
+            raise RelaxFileError(file_path)
 
         # Remove the file.
         remove(file_path)

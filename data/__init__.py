@@ -148,7 +148,7 @@ class Relax_data_store(dict):
 
         # Test if the pipe already exists.
         if pipe_name in self.instance.keys():
-            raise RelaxPipeError, pipe_name
+            raise RelaxPipeError(pipe_name)
 
         # Create a new container.
         self[pipe_name] = PipeContainer()

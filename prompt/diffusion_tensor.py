@@ -95,15 +95,15 @@ class Diffusion_tensor:
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe from', pipe_from)
+            raise RelaxNoneStrError('pipe from', pipe_from)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe to', pipe_to)
+            raise RelaxNoneStrError('pipe to', pipe_to)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
         diffusion_tensor.copy(pipe_from=pipe_from, pipe_to=pipe_to)
@@ -405,37 +405,37 @@ class Diffusion_tensor:
 
         # Parameter argument.
         if type(params) != int and type(params) != float and type(params) != tuple:
-            raise RelaxNumTupleError, ('diffusion parameters', params)
+            raise RelaxNumTupleError('diffusion parameters', params)
         if type(params) == tuple:
             if len(params) != 4 and len(params) != 6:
-                raise RelaxError, "The diffusion parameters argument " + repr(params) + " must either be a number or a tuple of numbers of length 4 or 6."
+                raise RelaxError("The diffusion parameters argument " + repr(params) + " must either be a number or a tuple of numbers of length 4 or 6.")
             for i in xrange(len(params)):
                 if type(params[i]) != float and type(params[i]) != int:
-                    raise RelaxNumTupleError, ('diffusion parameters', params)
+                    raise RelaxNumTupleError('diffusion parameters', params)
 
         # Time scale argument.
         if type(time_scale) != float:
-            raise RelaxFloatError, ('time scale', time_scale)
+            raise RelaxFloatError('time scale', time_scale)
 
         # D scale argument.
         if type(d_scale) != float:
-            raise RelaxFloatError, ('D scale', d_scale)
+            raise RelaxFloatError('D scale', d_scale)
 
         # Angle scale units argument.
         if type(angle_units) != str:
-            raise RelaxStrError, ('angle units', angle_units)
+            raise RelaxStrError('angle units', angle_units)
 
         # Parameter types argument.
         if type(param_types) != int:
-            raise RelaxIntError, ('parameter types', param_types)
+            raise RelaxIntError('parameter types', param_types)
 
         # Spheroid type argument.
         if spheroid_type != None and type(spheroid_type) != str:
-            raise RelaxNoneStrError, ('spheroid type', spheroid_type)
+            raise RelaxNoneStrError('spheroid type', spheroid_type)
 
         # The fixed flag.
         if type(fixed) != bool:
-            raise RelaxBoolError, ('fixed flag', fixed)
+            raise RelaxBoolError('fixed flag', fixed)
 
         # Execute the functional code.
         diffusion_tensor.init(params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)

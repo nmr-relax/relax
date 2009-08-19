@@ -72,11 +72,11 @@ class Frq:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('experiment identification string', id)
+            raise RelaxStrError('experiment identification string', id)
 
         # The spectrometer frequency.
         if type(frq) != float and type(frq) != int:
-            raise RelaxNumError, ('spectrometer frequency', frq)
+            raise RelaxNumError('spectrometer frequency', frq)
 
         # Execute the functional code.
         generic_fns.frq.set(id=id, frq=frq)

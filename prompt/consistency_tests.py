@@ -79,7 +79,7 @@ class Consistency_tests:
 
         # The frq argument.
         if type(frq) != float:
-            raise RelaxStrError, ('frq', frq)
+            raise RelaxStrError('frq', frq)
 
         # Execute the functional code.
         consistency_tests_obj.set_frq(frq=frq)

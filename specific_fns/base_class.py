@@ -248,7 +248,7 @@ class Common_functions:
 
             # Unknown data type.
             else:
-                raise RelaxError, "The parameter " + repr(param) + " does not exist."
+                raise RelaxError("The parameter " + repr(param) + " does not exist.")
 
         # Initial values.
         value = None
@@ -329,7 +329,7 @@ class Common_functions:
 
         # Throw a RelaxError.
         if value or param:
-            raise RelaxError, "Do not know how to handle the non-spin specific parameters " + repr(param) + " with the values " + repr(value)
+            raise RelaxError("Do not know how to handle the non-spin specific parameters " + repr(param) + " with the values " + repr(value))
 
 
     def set_selected_sim(self, spin, select_sim):
@@ -386,7 +386,7 @@ class Common_functions:
 
                 # Test if the simulation object already exists.
                 if hasattr(spin, sim_object_name):
-                    raise RelaxError, "Monte Carlo parameter values have already been set."
+                    raise RelaxError("Monte Carlo parameter values have already been set.")
 
 
         # Set the Monte Carlo parameter values.
@@ -507,14 +507,14 @@ class Common_functions:
         # Lower bounds test.
         if lower != None:
             if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
+                raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
         if upper != None:
             if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
+                raise RelaxLenError('upper bounds', n)
 
         # Increment.
         if type(inc) == list:
             if len(inc) != n:
-                raise RelaxLenError, ('increment', n)
+                raise RelaxLenError('increment', n)

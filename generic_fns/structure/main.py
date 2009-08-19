@@ -227,14 +227,14 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     # Test if the file exists.
     if not access(file_path, F_OK):
         if fail:
-            raise RelaxFileError, ('PDB', file_path)
+            raise RelaxFileError('PDB', file_path)
         else:
             warn(RelaxNoPDBFileWarning(file_path))
             return
 
     # Check that the parser is the same as the currently loaded PDB files.
     if hasattr(cdp, 'structure') and cdp.structure.id != parser:
-        raise RelaxError, "The " + repr(parser) + " parser does not match the " + repr(cdp.structure.id) + " parser of the PDB loaded into the current pipe."
+        raise RelaxError("The " + repr(parser) + " parser does not match the " + repr(cdp.structure.id) + " parser of the PDB loaded into the current pipe.")
 
     # Place the parser specific structural object into the relax data store.
     if not hasattr(cdp, 'structure'):
@@ -373,7 +373,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         if not hasattr(spin, 'attached_atom'):
             spin.attached_atom = attached_name
         elif spin.attached_atom != attached_name:
-            raise RelaxError, "The " + repr(spin.attached_atom) + " atom already attached to the spin does not match the attached atom " + repr(attached_name) + "."
+            raise RelaxError("The " + repr(spin.attached_atom) + " atom already attached to the spin does not match the attached atom " + repr(attached_name) + ".")
 
         # Initialise the average vector.
         if ave:
@@ -416,7 +416,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:
-        raise RelaxError, "No vectors could be extracted."
+        raise RelaxError("No vectors could be extracted.")
 
 
 def write_pdb(file=None, dir=None, model_num=None, force=False):
@@ -442,11 +442,11 @@ def write_pdb(file=None, dir=None, model_num=None, force=False):
 
     # Check if the structural object exists.
     if not hasattr(cdp, 'structure'):
-        raise RelaxError, "No structural data is present in the current data pipe."
+        raise RelaxError("No structural data is present in the current data pipe.")
 
     # Check if the structural object is writable.
     if cdp.structure.id in ['scientific']:
-        raise RelaxError, "The structures from the " + cdp.structure.id + " parser are not writable."
+        raise RelaxError("The structures from the " + cdp.structure.id + " parser are not writable.")
 
     # The file path.
     file_path = get_file_path(file, dir)

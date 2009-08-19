@@ -50,7 +50,7 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Test if the pipe already exists.
     if pipe_to in ds.keys():
-        raise RelaxPipeError, pipe_to
+        raise RelaxPipeError(pipe_to)
 
     # The current data pipe.
     if pipe_from == None:
@@ -90,11 +90,11 @@ def create(pipe_name=None, pipe_type=None, switch=True):
 
     # Test if pipe_type is valid.
     if not pipe_type in valid:
-        raise RelaxError, "The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(valid) + "."
+        raise RelaxError("The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(valid) + ".")
 
     # Test that the C modules have been loaded.
     if pipe_type == 'relax_fit' and not C_module_exp_fn:
-        raise RelaxError, "Relaxation curve fitting is not available.  Try compiling the C modules on your platform."
+        raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
 
     # Add the data pipe.
     ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
@@ -259,5 +259,5 @@ def test(pipe_name=None):
 
     # Test if the data pipe exists.
     if pipe_name not in ds:
-        raise RelaxNoPipeError, pipe_name
+        raise RelaxNoPipeError(pipe_name)
 

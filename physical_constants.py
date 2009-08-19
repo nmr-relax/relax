@@ -181,7 +181,7 @@ def return_gyromagnetic_ratio(nucleus=None):
     elif nucleus == '31P':
         return g31P
     else:
-        raise RelaxError, "The nucleus type " + repr(nucleus) + " is unknown."
+        raise RelaxError("The nucleus type " + repr(nucleus) + " is unknown.")
 
 
 # Relative atomic masses.
@@ -258,4 +258,4 @@ def return_atomic_mass(element=None):
         return ArCa
 
     # Unknown mass.
-    raise RelaxError, "The mass of the element " + repr(element) + " has not yet been programmed into relax."
+    raise RelaxError("The mass of the element " + repr(element) + " has not yet been programmed into relax.")

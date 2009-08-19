@@ -263,7 +263,7 @@ def view():
 
     # Open a Molmol pipe.
     if pipe_open_test():
-        raise RelaxError, "The Molmol pipe already exists."
+        raise RelaxError("The Molmol pipe already exists.")
     else:
         pipe_open()
 

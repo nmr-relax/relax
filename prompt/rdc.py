@@ -63,7 +63,7 @@ class RDC:
 
         # Identification string.
         if type(id) != str:
-            raise RelaxStrError, ('identification string', id)
+            raise RelaxStrError('identification string', id)
 
         # Execute the functional code.
         rdc.back_calc(id=id)
@@ -115,19 +115,19 @@ class RDC:
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe_from', pipe_from)
+            raise RelaxNoneStrError('pipe_from', pipe_from)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe_to', pipe_to)
+            raise RelaxNoneStrError('pipe_to', pipe_to)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Id string.
         if id != None and type(id) != str:
-            raise RelaxNoneStrError, ('alignment identification string', id)
+            raise RelaxNoneStrError('alignment identification string', id)
 
         # Execute the functional code.
         rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id)
@@ -158,7 +158,7 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('alignment identification string', id)
+            raise RelaxStrError('alignment identification string', id)
 
         # Execute the functional code.
         rdc.delete(id=id)
@@ -189,7 +189,7 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('alignment identification string', id)
+            raise RelaxStrError('alignment identification string', id)
 
         # Execute the functional code.
         rdc.display(id=id)
@@ -266,51 +266,51 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('alignment identification string', id)
+            raise RelaxStrError('alignment identification string', id)
 
         # The file name.
         if type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxStrError('file', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Spin identifier.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
+            raise RelaxNoneStrError('spin identifier', spin_id)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
+            raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
         if res_num_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
+            raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
         if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
+            raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
         if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+            raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
         if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+            raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # The data column.
         if data_col != None and type(data_col) != int:
-            raise RelaxNoneIntError, ('data column', data_col)
+            raise RelaxNoneIntError('data column', data_col)
 
         # The error column.
         if error_col != None and type(error_col) != int:
-            raise RelaxNoneIntError, ('error column', error_col)
+            raise RelaxNoneIntError('error column', error_col)
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
         rdc.read(id=id, file=file, dir=dir, spin_id=spin_id, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
@@ -349,19 +349,19 @@ class RDC:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('alignment identification string', id)
+            raise RelaxStrError('alignment identification string', id)
 
         # File.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         rdc.write(id=id, file=file, dir=dir, force=force)

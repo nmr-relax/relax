@@ -149,7 +149,7 @@ def molmol_colours(name):
 
     # Invalid colour string.
     if name not in colours:
-        raise RelaxInvalidColourError, name
+        raise RelaxInvalidColourError(name)
 
     # Return the RGB colour array.
     return colours[name]
@@ -769,7 +769,7 @@ def x11_colours(name):
 
     # Invalid colour string.
     if name not in colours:
-        raise RelaxInvalidColourError, name
+        raise RelaxInvalidColourError(name)
 
     # Return the RGB colour array (in numpy format and between 0 and 1).
     return array(colours[name], float64) / 255.

@@ -66,11 +66,11 @@ class Temp:
 
         # Id string.
         if type(id) != str:
-            raise RelaxStrError, ('experiment identification string', id)
+            raise RelaxStrError('experiment identification string', id)
 
         # The temperature.
         if type(temp) != float and type(temp) != int:
-            raise RelaxNumError, ('temp', temp)
+            raise RelaxNumError('temp', temp)
 
         # Execute the functional code.
         temperature.set(id=id, temp=temp)

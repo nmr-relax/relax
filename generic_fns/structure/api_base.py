@@ -209,7 +209,7 @@ class Base_struct_API:
 
         # Check if the target is a single model.
         if model == None and self.num_models() > 1:
-            raise RelaxError, "The target model cannot be determined as there are %s models already present." % self.num_modes()
+            raise RelaxError("The target model cannot be determined as there are %s models already present." % self.num_modes())
 
         # No model specified.
         if model == None:
@@ -315,11 +315,11 @@ class Base_struct_API:
 
         # Test the number of models.
         if len(orig_model_num) != len(data_matrix):
-            raise RelaxError, "Structural data mismatch, %s original models verses %s in the structural data." % (len(orig_model_num), len(data_matrix))
+            raise RelaxError("Structural data mismatch, %s original models verses %s in the structural data." % (len(orig_model_num), len(data_matrix)))
 
         # Test the number of molecules.
         if len(orig_mol_num) != len(data_matrix[0]):
-            raise RelaxError, "Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num), len(data_matrix[0]))
+            raise RelaxError("Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num), len(data_matrix[0])))
 
         # Model numbers do not change.
         if not set_model_num:
@@ -327,11 +327,11 @@ class Base_struct_API:
 
         # Test the model mapping.
         if len(set_model_num) != len(data_matrix):
-            raise RelaxError, "Failure of the mapping of new model numbers, %s new model numbers verses %s models in the structural data." % (len(set_model_num), len(data_matrix))
+            raise RelaxError("Failure of the mapping of new model numbers, %s new model numbers verses %s models in the structural data." % (len(set_model_num), len(data_matrix)))
 
         # Test the molecule mapping.
         if len(set_mol_name) != len(data_matrix[0]):
-            raise RelaxError, "Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_name), len(data_matrix[0]))
+            raise RelaxError("Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_name), len(data_matrix[0])))
 
         # Test that the target models and structures are absent, and get the already existing model numbers.
         current_models = []
@@ -342,7 +342,7 @@ class Base_struct_API:
             # Loop over the structures.
             for j in range(len(self.structural_data[i].mol)):
                 if self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].mol_name in set_mol_name:
-                    raise RelaxError, "The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num)
+                    raise RelaxError("The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num))
 
         # Loop over the models.
         for i in range(len(set_model_num)):
@@ -369,7 +369,7 @@ class Base_struct_API:
                 # Consistency check.
                 index = len(model.mol)
                 if model.num != self.structural_data[0].num and self.structural_data[0].mol[index].mol_name != set_mol_name[j]:
-                    raise RelaxError, "The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num)
+                    raise RelaxError("The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num))
 
                 # Pack the structures.
                 model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
@@ -697,12 +697,12 @@ class Base_struct_API:
 
             # Size check.
             if num_mols != len(model_i.mol):
-                raise RelaxError, "The structural object is not valid - the number of molecules is not the same for all models."
+                raise RelaxError("The structural object is not valid - the number of molecules is not the same for all models.")
 
             # Molecule name check.
             for j in range(len(model_i.mol)):
                 if model_i.mol[j].mol_name != self.structural_data[0].mol[j].mol_name:
-                    raise RelaxError, "The molecule name '%s' of model %s does not match the corresponding molecule '%s' of model %s." % (model_i.mol[j].mol_name, model_i.num, self.structural_data[0].mol[j].mol_name, self.structural_data[0].num)
+                    raise RelaxError("The molecule name '%s' of model %s does not match the corresponding molecule '%s' of model %s." % (model_i.mol[j].mol_name, model_i.num, self.structural_data[0].mol[j].mol_name, self.structural_data[0].num))
 
 
 
@@ -742,7 +742,7 @@ class ModelList(list):
             # Test if the model number already exists.
             for i in xrange(len(self)):
                 if self[i].num == model_num:
-                    raise RelaxError, "The model '" + repr(model_num) + "' already exists."
+                    raise RelaxError("The model '" + repr(model_num) + "' already exists.")
 
             # Append an empty ModelContainer.
             self.append(ModelContainer(model_num))
@@ -780,7 +780,7 @@ class ModelList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the models.
         for model_node in model_nodes:
@@ -943,7 +943,7 @@ class MolList(list):
             # Test if the molecule already exists.
             for i in xrange(len(self)):
                 if self[i].mol_name == mol_name:
-                    raise RelaxError, "The molecule '" + repr(mol_name) + "' already exists."
+                    raise RelaxError("The molecule '" + repr(mol_name) + "' already exists.")
 
             # Append an empty MolContainer.
             self.append(mol_cont)
@@ -984,7 +984,7 @@ class MolList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the molecules.
         for mol_node in mol_nodes:

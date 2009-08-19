@@ -449,22 +449,22 @@ class Relax_fit(Common_functions):
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
-            raise RelaxError, "Cannot run a grid search on a model with zero parameters."
+            raise RelaxError("Cannot run a grid search on a model with zero parameters.")
 
         # Lower bounds.
         if lower != None:
             if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
+                raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
         if upper != None:
             if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
+                raise RelaxLenError('upper bounds', n)
 
         # Increment.
         if type(inc) == list:
             if len(inc) != n:
-                raise RelaxLenError, ('increment', n)
+                raise RelaxLenError('increment', n)
             inc = inc
         elif type(inc) == int:
             temp = []
@@ -511,7 +511,7 @@ class Relax_fit(Common_functions):
         for i in xrange(len(min_options)):
             grid_size = grid_size * min_options[i][0]
         if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + repr(grid_size) + " is too large."
+            raise RelaxError("A grid search of size " + repr(grid_size) + " is too large.")
 
         # Diagonal scaling of minimisation options.
         for j in xrange(len(min_options)):
@@ -841,7 +841,7 @@ class Relax_fit(Common_functions):
 
         # Test if the spectrum id exists.
         if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
+            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
 
         # Store the relaxation time in the class instance.
         self.__relax_time = float(time)
@@ -1008,7 +1008,7 @@ class Relax_fit(Common_functions):
         # Test if the pipe type is set to 'relax_fit'.
         function_type = cdp.pipe_type
         if function_type != 'relax_fit':
-            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1026,7 +1026,7 @@ class Relax_fit(Common_functions):
 
         # Invalid model.
         else:
-            raise RelaxError, "The model '" + model + "' is invalid."
+            raise RelaxError("The model '" + model + "' is invalid.")
 
         # Set up the model.
         self.model_setup(model, params)
@@ -1057,7 +1057,7 @@ class Relax_fit(Common_functions):
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'sim_intensities'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
+            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.sim_intensities = sim_data

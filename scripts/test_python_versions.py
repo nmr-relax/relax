@@ -70,11 +70,11 @@ class Main:
 
         # Does it exist.
         if not access(self.path, F_OK):
-            raise NameError, "The Python binary '%s' cannot be found." % self.path
+            raise NameError("The Python binary '%s' cannot be found." % self.path)
 
         # Executable.
         if not access(self.path, X_OK):
-            raise NameError, "The Python binary '%s' is not executable." % self.path
+            raise NameError("The Python binary '%s' is not executable." % self.path)
 
 
     def get_args(self):
@@ -82,11 +82,11 @@ class Main:
 
         # The Python version must be supplied.
         if len(argv) == 1:
-            raise NameError, "The Python version number must be supplied as the first argument."
+            raise NameError("The Python version number must be supplied as the first argument.")
 
         # No other args are allowed.
         if len(argv) > 2:
-            raise NameError, "Only the Python version number is allowed as an argument."
+            raise NameError("Only the Python version number is allowed as an argument.")
 
         # The python version.
         self.version = argv[1]

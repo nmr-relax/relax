@@ -51,7 +51,7 @@ def __convert_to_id(string):
 
         # Don't know what this is!
         if len(info) != 2:
-            raise RelaxError, "Cannot convert the Xplor atom string '%s' to relax format." % string
+            raise RelaxError("Cannot convert the Xplor atom string '%s' to relax format." % string)
 
         # A molecule identifier.
         if info[0] == 'segid':
@@ -177,7 +177,7 @@ def first_parse(lines):
 
                 # A logical test (debugging).
                 if inside < 0:
-                    raise RelaxError, "Improperly formatted Xplor file, unmatched ')'."
+                    raise RelaxError("Improperly formatted Xplor file, unmatched ')'.")
 
                 # Append the character.
                 if inside:
@@ -232,7 +232,7 @@ def second_parse(id):
         if id[index] == '(':
             # 2 brackets?!?
             if inside:
-                raise RelaxError, "The Xplor pseudoatom ID string '%s' is invalid." % id
+                raise RelaxError("The Xplor pseudoatom ID string '%s' is invalid." % id)
 
             # The flag.
             inside = True

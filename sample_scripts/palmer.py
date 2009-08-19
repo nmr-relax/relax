@@ -153,6 +153,6 @@ elif STAGE == 2:
 elif STAGE == 3:
     exec_stage_3()
 else:
-    raise RelaxError, "The stage value, which is set to " + repr(stage) + ", should be either 1, 2, or 3."
+    raise RelaxError("The stage value, which is set to " + repr(stage) + ", should be either 1, 2, or 3.")
 
 # Either repeat all the above with the optimised diffusion tensor or run Monte Carlo simulations on the final results.

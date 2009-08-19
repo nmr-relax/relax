@@ -106,7 +106,7 @@ class PipeContainer(Prototype):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Get the global data node, and fill the contents of the pipe.
         global_node = relax_node.getElementsByTagName('global')[0]

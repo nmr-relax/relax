@@ -65,7 +65,7 @@ class Frame_order(Common_functions):
 
         # Checks.
         if not hasattr(cdp, 'ref_domain'):
-            raise RelaxError, "The reference domain has not been set up."
+            raise RelaxError("The reference domain has not been set up.")
 
         # Initialise.
         n = len(cdp.align_tensors.reduction)
@@ -202,11 +202,11 @@ class Frame_order(Common_functions):
 
         # Catch infinite chi-squared values.
         if isInf(func):
-            raise RelaxInfError, 'chi-squared'
+            raise RelaxInfError('chi-squared')
 
         # Catch chi-squared values of NaN.
         if isNaN(func):
-            raise RelaxNaNError, 'chi-squared'
+            raise RelaxNaNError('chi-squared')
 
         # Isotropic cone model.
         if cdp.model == 'iso cone':
@@ -349,13 +349,13 @@ class Frame_order(Common_functions):
 
         # Test for the data structures.
         if not hasattr(cdp, 'theta_cone'):
-            raise RelaxError, "The cone angle theta_cone does not exist."
+            raise RelaxError("The cone angle theta_cone does not exist.")
         if not hasattr(cdp, 'theta_axis'):
-            raise RelaxError, "The cone polar angle theta_axis does not exist."
+            raise RelaxError("The cone polar angle theta_axis does not exist.")
         if not hasattr(cdp, 'phi_axis'):
-            raise RelaxError, "The cone azimuthal angle phi_axis does not exist."
+            raise RelaxError("The cone azimuthal angle phi_axis does not exist.")
         if not hasattr(cdp, 'pivot'):
-            raise RelaxError, "The pivot point for the cone motion has not been set."
+            raise RelaxError("The pivot point for the cone motion has not been set.")
 
         # The cone axis. 
         cone_axis = zeros(3, float64)
@@ -548,7 +548,7 @@ class Frame_order(Common_functions):
 
         # Test if the Frame Order model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'Frame Order'
+            raise RelaxNoModelError('Frame Order')
 
         # The number of parameters.
         n = len(cdp.params)
@@ -696,7 +696,7 @@ class Frame_order(Common_functions):
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'Frame order'
+            raise RelaxNoModelError('Frame order')
 
         # Test if the reference domain exists.
         exists = False
@@ -704,7 +704,7 @@ class Frame_order(Common_functions):
             if tensor_cont.domain == ref:
                 exists = True
         if not exists:
-            raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
 
         # Set the reference domain.
         cdp.ref_domain = ref
@@ -744,11 +744,11 @@ class Frame_order(Common_functions):
 
         # Test if the model is already setup.
         if hasattr(cdp, 'model'):
-            raise RelaxModelError, 'Frame Order'
+            raise RelaxModelError('Frame Order')
 
         # Test if the model name exists.
         if not model in ['iso cone']:
-            raise RelaxError, "The model name " + repr(model) + " is invalid."
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
 
         # Set the model
         cdp.model = model
@@ -826,7 +826,7 @@ class Frame_order(Common_functions):
 
             # Test if the simulation object already exists.
             if hasattr(cdp, sim_object_name):
-                raise RelaxError, "Monte Carlo parameter values have already been set."
+                raise RelaxError("Monte Carlo parameter values have already been set.")
 
 
         # Set the Monte Carlo parameter values.

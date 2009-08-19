@@ -64,7 +64,7 @@ def create(algor='LM', dir=None, force=False):
 
     # Test if diffusion tensor data for the data_pipe exists.
     if model_type != 'local_tm' and not hasattr(cdp, 'diff_tensor'):
-        raise RelaxNoTensorError, 'diffusion'
+        raise RelaxNoTensorError('diffusion')
 
     # Test if the PDB file has been loaded (for the spheroid and ellipsoid).
     if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(cdp, 'structure'):
@@ -72,13 +72,13 @@ def create(algor='LM', dir=None, force=False):
 
     # Test the optimisation algorithm.
     if algor not in ['LM', 'NR']:
-        raise RelaxError, "The Dasha optimisation algorithm " + repr(algor) + " is unknown, it should either be 'LM' or 'NR'."
+        raise RelaxError("The Dasha optimisation algorithm " + repr(algor) + " is unknown, it should either be 'LM' or 'NR'.")
 
     # Multiple spins per residue not allowed.
     for residue in residue_loop():
         # Test the number of spins.
         if len(residue.spin) > 1:
-            raise RelaxError, "More than one spin per residue is not supported."
+            raise RelaxError("More than one spin per residue is not supported.")
 
     # Directory creation.
     if dir == None:
@@ -138,7 +138,7 @@ def create_script(file, model_type, algor):
     for spin in spin_loop():
         # Can only handle one spin type.
         if nucleus and spin.heteronuc_type != nucleus:
-            raise RelaxError, "The nuclei '%s' and '%s' do not match, relax can only handle one nucleus type in Dasha." % (nucleus, spin.heteronuc_type)
+            raise RelaxError("The nuclei '%s' and '%s' do not match, relax can only handle one nucleus type in Dasha." % (nucleus, spin.heteronuc_type))
 
         # Set the nucleus.
         if not nucleus:
@@ -150,7 +150,7 @@ def create_script(file, model_type, algor):
     elif nucleus == '13C':
         nucleus = 'C13'
     else:
-        raise RelaxError, 'Cannot handle the nucleus type ' + repr(nucleus) + ' within Dasha.'
+        raise RelaxError('Cannot handle the nucleus type ' + repr(nucleus) + ' within Dasha.')
     file.write('set nucl ' + nucleus + '\n')
 
     # Number of frequencies.
@@ -363,7 +363,7 @@ def create_script(file, model_type, algor):
         file.write('write chi2.out F\n')
 
     else:
-        raise RelaxError, 'Optimisation of the parameter set ' + repr(model_type) + ' currently not supported.'
+        raise RelaxError('Optimisation of the parameter set ' + repr(model_type) + ' currently not supported.')
 
 
 def execute(dir, force, binary):
@@ -388,7 +388,7 @@ def execute(dir, force, binary):
     if dir == None:
         dir = pipes.cdp_name()
     if not access(dir, F_OK):
-        raise RelaxDirError, ('Dasha', dir)
+        raise RelaxDirError('Dasha', dir)
 
     # Change to this directory.
     chdir(dir)
@@ -397,7 +397,7 @@ def execute(dir, force, binary):
     try:
         # Test if the 'dasha_script' script file exists.
         if not access('dasha_script', F_OK):
-            raise RelaxFileError, ('dasha script', 'dasha_script')
+            raise RelaxFileError('dasha script', 'dasha_script')
 
         # Execute Dasha.
         stdin, stdout, stderr = popen3(binary)
@@ -451,7 +451,7 @@ def extract(dir):
     if dir == None:
         dir = pipes.cdp_name()
     if not access(dir, F_OK):
-        raise RelaxDirError, ('Dasha', dir)
+        raise RelaxDirError('Dasha', dir)
 
     # Loop over the parameters.
     for param in ['S2', 'S2f', 'S2s', 'te', 'tf', 'ts', 'Rex']:
@@ -460,7 +460,7 @@ def extract(dir):
 
         # Test if the file exists.
         if not access(file_name, F_OK):
-            raise RelaxFileError, ('Dasha', file_name)
+            raise RelaxFileError('Dasha', file_name)
 
         # Scaling.
         if param in ['te', 'tf', 'ts']:
@@ -491,7 +491,7 @@ def extract(dir):
 
     # Test if the file exists.
     if not access(file_name, F_OK):
-        raise RelaxFileError, ('Dasha', file_name)
+        raise RelaxFileError('Dasha', file_name)
 
     # Set the values.
     value.read(param='chi2', file=file_name, res_num_col=0, res_name_col=None, data_col=1, error_col=2)

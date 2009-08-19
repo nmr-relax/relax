@@ -48,7 +48,7 @@ def load_state(state=None, dir_name=None):
     try:
         state = load(file)
     except:
-        raise RelaxError, "The saved state " + repr(state) + " is not compatible with this version of relax."
+        raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
 
     # Close the file.
     file.close()

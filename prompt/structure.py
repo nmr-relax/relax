@@ -153,19 +153,19 @@ class Structure:
 
         # Scaling.
         if type(scale) != float and type(scale) != int:
-            raise RelaxNumError, ('scaling factor', scale)
+            raise RelaxNumError('scaling factor', scale)
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
@@ -215,23 +215,23 @@ class Structure:
 
         # Vector length.
         if type(length) != float:
-            raise RelaxFloatError, ('vector length', length)
+            raise RelaxFloatError('vector length', length)
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The symmetry flag.
         if type(symmetry) != bool:
-            raise RelaxBoolError, ('symmetry flag', symmetry)
+            raise RelaxBoolError('symmetry flag', symmetry)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
@@ -297,15 +297,15 @@ class Structure:
 
         # Spin identifier.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
+            raise RelaxNoneStrError('spin identifier', spin_id)
 
         # The model combining flag.
         if type(combine_models) != bool:
-            raise RelaxBoolError, ('model combining flag', combine_models)
+            raise RelaxBoolError('model combining flag', combine_models)
 
         # The average position flag.
         if type(ave_pos) != bool:
-            raise RelaxBoolError, ('average position flag', ave_pos)
+            raise RelaxBoolError('average position flag', ave_pos)
 
         # Execute the functional code.
         generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
@@ -418,11 +418,11 @@ class Structure:
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The read_mol, read_models, and set_model_num arguments.
         arg_list = [read_mol, read_model, set_model_num]
@@ -430,35 +430,35 @@ class Structure:
         for i in range(len(arg_list)):
             # Basic type check.
             if arg_list[i] != None and type(arg_list[i]) != int and type(arg_list[i]) != list:
-                raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+                raise RelaxNoneIntListIntError(arg_desc[i], arg_list[i])
 
             # List check.
             if type(arg_list[i]) == list:
                 # Zero size list.
                 if len(arg_list[i]) == 0:
-                    raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+                    raise RelaxNoneIntListIntError(arg_desc[i], arg_list[i])
 
                 # Element check.
                 for j in range(len(arg_list[i])):
                     if type(arg_list[i][j]) != int:
-                        raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
+                        raise RelaxNoneIntListIntError(arg_desc[i], arg_list[i])
 
         # The set_mol_name arguments.
         if set_mol_name != None and type(set_mol_name) != str and type(set_mol_name) != list:
-            raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
+            raise RelaxNoneStrListStrError('set molecule names', set_mol_name)
         if type(set_mol_name) == list:
             # Zero size list.
             if len(set_mol_name) == 0:
-                raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
+                raise RelaxNoneStrListStrError('set molecule names', set_mol_name)
 
             # Element check.
             for i in range(len(set_mol_name)):
                 if type(set_mol_name[i]) != str:
-                    raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
+                    raise RelaxNoneStrListStrError('set molecule names', set_mol_name)
 
         # PDB parser.
         if type(parser) != str:
-            raise RelaxStrError, ('PDB parser', parser)
+            raise RelaxStrError('PDB parser', parser)
 
         # Execute the functional code.
         generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
@@ -560,27 +560,27 @@ class Structure:
 
         # The attached atom argument.
         if type(attached) != str:
-            raise RelaxStrError, ('the attached atom', attached)
+            raise RelaxStrError('the attached atom', attached)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+            raise RelaxNoneStrError('spin identification string', spin_id)
 
         # The model argument.
         if model != None and type(model) != int:
-            raise RelaxNoneIntError, ('model', model)
+            raise RelaxNoneIntError('model', model)
 
         # The verbosity level.
         if type(verbosity) != int:
-            raise RelaxIntError, ('verbosity level', verbosity)
+            raise RelaxIntError('verbosity level', verbosity)
 
         # The average vector flag.
         if type(ave) != bool:
-            raise RelaxBoolError, ('average vector flag', ave)
+            raise RelaxBoolError('average vector flag', ave)
 
         # The unit vector flag.
         if type(unit) != bool:
-            raise RelaxBoolError, ('unit vector flag', unit)
+            raise RelaxBoolError('unit vector flag', unit)
 
         # Execute the functional code.
         generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
@@ -634,19 +634,19 @@ class Structure:
 
         # File name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The model_num argument.
         if model_num != None and type(model_num) != int:
-            raise RelaxNoneIntError, ('model number', model_num)
+            raise RelaxNoneIntError('model number', model_num)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)

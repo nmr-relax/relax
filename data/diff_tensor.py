@@ -393,7 +393,7 @@ def calc_rotation(diff_type, *args):
 
     # Raise an error.
     else:
-        raise RelaxError, 'The diffusion tensor has not been specified'
+        raise RelaxError('The diffusion tensor has not been specified')
 
 
 def calc_tensor(rotation, tensor_diag):
@@ -631,7 +631,7 @@ class DiffTensorData(Element):
 
         # Test if the attribute that is trying to be set is modifiable.
         if not param_name in self.__mod_attr__:
-            raise RelaxError, "The object " + repr(name) + " is not a modifiable attribute."
+            raise RelaxError("The object " + repr(name) + " is not a modifiable attribute.")
 
         # Set the attribute normally.
         self.__dict__[name] = value

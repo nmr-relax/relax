@@ -94,11 +94,11 @@ class State:
 
         # File name.
         if type(state) != str and type(state) != file:
-            raise RelaxStrFileError, ('file name', state)
+            raise RelaxStrFileError('file name', state)
 
         # Directory.
         if dir_name != None and type(dir_name) != str:
-            raise RelaxNoneStrError, ('directory', dir_name)
+            raise RelaxNoneStrError('directory', dir_name)
 
         # Execute the functional code.
         load_state(state=state, dir_name=dir_name)
@@ -167,19 +167,19 @@ class State:
 
         # File name.
         if type(state) != str and type(state) != file:
-            raise RelaxStrFileError, ('file name', state)
+            raise RelaxStrFileError('file name', state)
 
         # Directory.
         if dir_name != None and type(dir_name) != str:
-            raise RelaxNoneStrError, ('directory', dir_name)
+            raise RelaxNoneStrError('directory', dir_name)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Compression type.
         if type(compress_type) != int:
-            raise RelaxIntError, ('compression type', compress_type)
+            raise RelaxIntError('compression type', compress_type)
 
         # Execute the functional code.
         save_state(state=state, dir_name=dir_name, force=force, compress_type=compress_type)

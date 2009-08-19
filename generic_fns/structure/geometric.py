@@ -197,7 +197,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 
         # Test if the diffusion tensor data is loaded.
         if not hasattr(pipe, 'diff_tensor'):
-            raise RelaxNoTensorError, 'diffusion'
+            raise RelaxNoTensorError('diffusion')
 
         # Test if a structure has been loaded.
         if not hasattr(cdp, 'structure'):
@@ -741,7 +741,7 @@ def uniform_vect_dist_spherical_angles(inc=20):
 
     # The inc argument must be an even number.
     if inc%2:
-        raise RelaxError, "The increment value of " + repr(inc) + " must be an even number."
+        raise RelaxError("The increment value of " + repr(inc) + " must be an even number.")
 
     # Generate the increment values of u.
     u = zeros(inc, float64)

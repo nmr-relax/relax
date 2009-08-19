@@ -95,15 +95,15 @@ class Sequence:
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe from', pipe_from)
+            raise RelaxNoneStrError('pipe from', pipe_from)
 
         # The pipe_to argument.
         if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe to', pipe_to)
+            raise RelaxNoneStrError('pipe to', pipe_to)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
         sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
@@ -142,27 +142,27 @@ class Sequence:
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Molecule name flag.
         if type(mol_name_flag) != bool:
-            raise RelaxBoolError, ('molecule name flag', mol_name_flag)
+            raise RelaxBoolError('molecule name flag', mol_name_flag)
 
         # Residue number flag.
         if type(res_num_flag) != bool:
-            raise RelaxBoolError, ('residue number flag', res_num_flag)
+            raise RelaxBoolError('residue number flag', res_num_flag)
 
         # Residue name flag.
         if type(res_name_flag) != bool:
-            raise RelaxBoolError, ('residue name flag', res_name_flag)
+            raise RelaxBoolError('residue name flag', res_name_flag)
 
         # Spin number flag.
         if type(spin_num_flag) != bool:
-            raise RelaxBoolError, ('spin number flag', spin_num_flag)
+            raise RelaxBoolError('spin number flag', spin_num_flag)
 
         # Spin name flag.
         if type(spin_name_flag) != bool:
-            raise RelaxBoolError, ('spin name flag', spin_name_flag)
+            raise RelaxBoolError('spin name flag', spin_name_flag)
 
         # Execute the functional code.
         sequence.display(sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
@@ -249,35 +249,35 @@ class Sequence:
 
         # The file name.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Molecule name column.
         if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
+            raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
         if res_name_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
+            raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
         if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
+            raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
         if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
+            raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
         if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
+            raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
         sequence.read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
@@ -330,39 +330,39 @@ class Sequence:
 
         # File.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Column separator.
         if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+            raise RelaxNoneStrError('column separator', sep)
 
         # Molecule name flag.
         if type(mol_name_flag) != bool:
-            raise RelaxBoolError, ('molecule name flag', mol_name_flag)
+            raise RelaxBoolError('molecule name flag', mol_name_flag)
 
         # Residue number flag.
         if type(res_num_flag) != bool:
-            raise RelaxBoolError, ('residue number flag', res_num_flag)
+            raise RelaxBoolError('residue number flag', res_num_flag)
 
         # Residue name flag.
         if type(res_name_flag) != bool:
-            raise RelaxBoolError, ('residue name flag', res_name_flag)
+            raise RelaxBoolError('residue name flag', res_name_flag)
 
         # Spin number flag.
         if type(spin_num_flag) != bool:
-            raise RelaxBoolError, ('spin number flag', spin_num_flag)
+            raise RelaxBoolError('spin number flag', spin_num_flag)
 
         # Spin name flag.
         if type(spin_name_flag) != bool:
-            raise RelaxBoolError, ('spin name flag', spin_name_flag)
+            raise RelaxBoolError('spin name flag', spin_name_flag)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         sequence.write(file=file, dir=dir, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)

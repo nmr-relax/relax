@@ -82,7 +82,7 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     # Defaults.
     if tensor_from == tensor_to and pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None when the tensor names are the same."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None when the tensor names are the same.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -98,11 +98,11 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
 
     # Test if pipe_from contains alignment tensor data.
     if not align_data_exists(tensor_from, pipe_from):
-        raise RelaxNoTensorError, 'alignment'
+        raise RelaxNoTensorError('alignment')
 
     # Test if pipe_to contains alignment tensor data.
     if align_data_exists(tensor_to, pipe_to):
-        raise RelaxTensorError, 'alignment'
+        raise RelaxTensorError('alignment')
 
     # Create the align_tensors dictionary if it doesn't yet exist.
     if not hasattr(dp_to, 'align_tensors'):
@@ -185,7 +185,7 @@ def delete(tensor):
 
     # Test if alignment tensor data exists.
     if not align_data_exists(tensor):
-        raise RelaxNoTensorError, 'alignment'
+        raise RelaxNoTensorError('alignment')
 
     # Find the tensor index.
     index = get_tensor_index(tensor)
@@ -226,7 +226,7 @@ def display(tensor):
     for tensor in tensor_list:
         # Test if alignment tensor data exists.
         if not align_data_exists(tensor):
-            raise RelaxNoTensorError, 'alignment'
+            raise RelaxNoTensorError('alignment')
 
         # Pull out the tensor.
         data = get_tensor_object(tensor)
@@ -458,12 +458,12 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
 
     # Test if alignment tensor data already exists.
     if errors and not align_data_exists(tensor):
-        raise RelaxNoTensorError, 'alignment'
+        raise RelaxNoTensorError('alignment')
 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
-        raise RelaxError, "The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'."
+        raise RelaxError("The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
 
     # Add the align_tensors object to the data pipe.
     if not errors:
@@ -552,7 +552,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
 
             # Different value.
             if r != spin.r:
-                raise RelaxError, "Not all spins have the same bond length."
+                raise RelaxError("Not all spins have the same bond length.")
 
         # Scaling.
         scale = scale / kappa() * r**3
@@ -579,7 +579,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
 
             # Different value.
             if r != spin.r:
-                raise RelaxError, "Not all spins have the same bond length."
+                raise RelaxError("Not all spins have the same bond length.")
 
         # Scaling.
         scale = scale / kappa() * r**3
@@ -624,7 +624,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
 
     # Unknown parameter combination.
     else:
-        raise RelaxUnknownParamCombError, ('param_types', param_types)
+        raise RelaxUnknownParamCombError('param_types', param_types)
 
 
 def map_bounds(param):
@@ -757,7 +757,7 @@ def matrix_angles(basis_set=0, tensors=None):
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
-        raise RelaxNoTensorError, 'alignment'
+        raise RelaxNoTensorError('alignment')
 
     # Count the number of tensors.
     tensor_num = 0
@@ -871,9 +871,9 @@ def reduction(full_tensor=None, red_tensor=None):
 
     # No match.
     if not match_full:
-        raise RelaxNoTensorError, ('alignment', full_tensor)
+        raise RelaxNoTensorError('alignment', full_tensor)
     if not match_red:
-        raise RelaxNoTensorError, ('alignment', red_tensor)
+        raise RelaxNoTensorError('alignment', red_tensor)
 
     # Store.
     if not hasattr(cdp.align_tensors, 'reduction'):
@@ -917,7 +917,7 @@ def return_data_name(name):
 
     # Enforce that the name must be a string.
     if type(name) != str:
-        raise RelaxStrError, ('name', name)
+        raise RelaxStrError('name', name)
 
     # Sxx.
     if search('^[Ss]xx$', name):
@@ -1016,7 +1016,7 @@ def return_data_name(name):
         return 'gamma'
 
     # No parameter?
-    raise RelaxUnknownParamError, name
+    raise RelaxUnknownParamError(name)
 
 # User function documentation.
 __return_data_name_prompt_doc__ = """
@@ -1130,7 +1130,7 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # Unknown parameter.
         if param[i] == None:
-            raise RelaxUnknownParamError, ("alignment tensor", 'None')
+            raise RelaxUnknownParamError("alignment tensor", 'None')
 
         # Default value.
         if value[i] == None:
@@ -1270,7 +1270,7 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # Cannot set the single parameter.
         else:
-            raise RelaxError, "The geometric alignment parameter " + repr(geo_params[0]) + " cannot be set."
+            raise RelaxError("The geometric alignment parameter " + repr(geo_params[0]) + " cannot be set.")
 
     # 5 geometric parameters.
     elif len(geo_params) == 5:
@@ -1414,12 +1414,12 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # Unknown parameter combination.
         else:
-            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+            raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
 
     # Unknown geometric parameters.
     else:
-        raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+        raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
 
     # Orientational parameters.
@@ -1479,7 +1479,7 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # Unknown parameter combination.
         else:
-            raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+            raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
     # Three orientational parameters.
     elif len(orient_params) == 3:
@@ -1496,11 +1496,11 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # Unknown parameter combination.
         else:
-            raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+            raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
     # More than three orientational parameters.
     elif len(orient_params) > 3:
-        raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+        raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
 
     # Fold the angles in.
@@ -1561,7 +1561,7 @@ def set_domain(tensor=None, domain=None):
 
     # The tensor label doesn't exist.
     if not match:
-        raise RelaxNoTensorError, ('alignment', tensor)
+        raise RelaxNoTensorError('alignment', tensor)
 
 
 def svd(basis_set=0, tensors=None):
@@ -1608,7 +1608,7 @@ def svd(basis_set=0, tensors=None):
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
-        raise RelaxNoTensorError, 'alignment'
+        raise RelaxNoTensorError('alignment')
 
     # Count the number of tensors used in the SVD.
     tensor_num = 0
