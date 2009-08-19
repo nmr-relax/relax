@@ -458,7 +458,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             if error_col != None:
                 float(file_data[i][error_col])
         except ValueError:
-            raise RelaxError, "The RDC data in the line " + `file_data[i]` + " is invalid."
+            raise RelaxError, "The RDC data in the line " + repr(file_data[i]) + " is invalid."
 
         # Right, data is ok and exists.
         missing = False

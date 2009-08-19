@@ -74,7 +74,7 @@ class SpinContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
 
@@ -135,7 +135,7 @@ class SpinList(list):
         # Residue data.
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s%-10s" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s%-8s%-10s" % (i, repr(self[i].num), self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j].spin[k]', where D is the relax data storage object.\n"
 
         return text
@@ -157,12 +157,12 @@ class SpinList(list):
                 # Spin number has been supplied.
                 if spin_num != None:
                     if self[i].num == spin_num:
-                        raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
+                        raise RelaxError, "The spin number '" + repr(spin_num) + "' already exists."
 
                 # No spin numbers.
                 else:
                     if self[i].name == spin_name:
-                        raise RelaxError, "The unnumbered spin name '" + `spin_name` + "' already exists."
+                        raise RelaxError, "The unnumbered spin name '" + repr(spin_name) + "' already exists."
 
             # Append a new SpinContainer.
             self.append(SpinContainer(spin_name, spin_num, select))
@@ -268,10 +268,10 @@ class SpinList(list):
 
                 # Store floats as IEEE-754 byte arrays (for full precision storage).
                 if type(object) == float or type(object) == numpy.float64:
-                    sub_element.setAttribute('ieee_754_byte_array', `floatAsByteArray(object)`)
+                    sub_element.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(object)))
 
                 # Add the text value to the sub element.
-                text_val = doc.createTextNode(`object`)
+                text_val = doc.createTextNode(repr(object))
                 sub_element.appendChild(text_val)
 
             # Add all simple python objects within the SpinContainer to the XML element.
@@ -324,7 +324,7 @@ class ResidueContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
 
@@ -389,7 +389,7 @@ class ResidueList(list):
         # Residue data.
         text = text + "%-8s%-8s%-8s" % ("Index", "Number", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s" % (i, `self[i].num`, self[i].name) + "\n"
+            text = text + "%-8i%-8s%-8s" % (i, repr(self[i].num), self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
 
         return text
@@ -410,12 +410,12 @@ class ResidueList(list):
                 # Residue number has been supplied.
                 if res_num != None:
                     if self[i].num == res_num:
-                        raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+                        raise RelaxError, "The residue number '" + repr(res_num) + "' already exists in the sequence."
 
                 # No residue numbers.
                 else:
                     if self[i].name == res_name:
-                        raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
+                        raise RelaxError, "The unnumbered residue name '" + repr(res_name) + "' already exists."
 
             # Append a new ResidueContainer.
             self.append(ResidueContainer(res_name, res_num))
@@ -536,7 +536,7 @@ class MoleculeContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
 

@@ -117,7 +117,7 @@ def __errors_repl(verbosity=0):
             indices[j] = cdp.spectrum_ids.index(spectra[j])
 
         # Print out.
-        print "\nReplicated spectra:  " + `spectra`
+        print "\nReplicated spectra:  " + repr(spectra)
         if verbosity:
             print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
 
@@ -154,7 +154,7 @@ def __errors_repl(verbosity=0):
 
             # Print out.
             if verbosity:
-                print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, `ave_intensity`, `var_I`)
+                print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))
 
             # Sum of variances (for average).
             cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
@@ -198,7 +198,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[i] = var_I
 
         # Print out.
-        print "Standard deviation for all spins:  " + `sqrt(var_I)`
+        print "Standard deviation for all spins:  " + repr(sqrt(var_I))
 
     # Loop over the spectra.
     for i in xrange(len(cdp.spectrum_ids)):
@@ -454,7 +454,7 @@ def intensity_generic(line, int_col):
     try:
         intensity = [float(line[6])]
     except ValueError:
-        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+        raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
 
     i = 1
     while i < num_delays:
@@ -462,11 +462,11 @@ def intensity_generic(line, int_col):
         try:
             intensity.append(float(line[i + 5]))
         except ValueError:
-            raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+            raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
 
     print ''
     print 'The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).'
-    print '    ' + `res_num`, h_name, x_name, intensity
+    print '    ' + repr(res_num), h_name, x_name, intensity
 
     # Generate the spin identification string.
     spin_id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
@@ -526,7 +526,7 @@ def intensity_nmrview(line, int_col):
     try:
         intensity = float(line[int_col])
     except ValueError:
-        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+        raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
 
     # Generate the spin_id.
     spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
@@ -585,7 +585,7 @@ def intensity_sparky(line, int_col):
         try:
             intensity = float(line[int_col])
         except ValueError:
-            raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+            raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
 
     # Generate the spin_id.
     spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
@@ -634,7 +634,7 @@ def intensity_xeasy(line, int_col, H_dim='w1'):
     try:
         intensity = float(line[int_col])
     except ValueError:
-        raise RelaxError, "The peak intensity value " + `intensity` + " from the line " + `line` + " is invalid."
+        raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
 
     # Generate the spin_id.
     spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
@@ -810,7 +810,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # Determine the number of header lines.
     num = number_of_header_lines(file_data, format, int_col, intensity_fn)
-    print "Number of header lines found: " + `num`
+    print "Number of header lines found: " + repr(num)
 
     # Remove the header.
     file_data = file_data[num:]
@@ -841,7 +841,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Skip data.
         if X_name != heteronuc or H_name != proton:
-            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % `file_data[i]`))
+            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % repr(file_data[i])))
             continue
 
         # Get the spin container.

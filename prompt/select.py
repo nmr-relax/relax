@@ -154,16 +154,16 @@ class Select:
         # Function intro test.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", sep=" + `sep`
-            text = text + ", boolean=" + `boolean`
-            text = text + ", change_all=" + `change_all` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", sep=" + repr(sep)
+            text = text + ", boolean=" + repr(boolean)
+            text = text + ", change_all=" + repr(change_all) + ")"
             print text
 
         # File name.
@@ -237,7 +237,7 @@ class Select:
         # Function intro test.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.reverse("
-            text = text + "spin_id=" + `spin_id` + ")"
+            text = text + "spin_id=" + repr(spin_id) + ")"
             print text
 
         # Spin identification string.
@@ -287,9 +287,9 @@ class Select:
         # Function intro test.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.spin("
-            text = text + "spin_id=" + `spin_id`
-            text = text + ", boolean=" + `boolean`
-            text = text + ", change_all=" + `change_all` + ")"
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", boolean=" + repr(boolean)
+            text = text + ", change_all=" + repr(change_all) + ")"
             print text
 
         # Spin identification string.

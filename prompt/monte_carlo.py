@@ -80,7 +80,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.create_data("
-            text = text + "method=" + `method` + ")"
+            text = text + "method=" + repr(method) + ")"
             print text
 
         # The method argument.
@@ -127,7 +127,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.error_analysis("
-            text = text + "prune=" + `prune` + ")"
+            text = text + "prune=" + repr(prune) + ")"
             print text
 
         # The prune argument.
@@ -208,7 +208,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.setup("
-            text = text + "number=" + `number` + ")"
+            text = text + "number=" + repr(number) + ")"
             print text
 
         # The number of simulations.

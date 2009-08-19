@@ -136,7 +136,7 @@ def calc(verbosity=1):
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print "Simulation " + `i+1`
+                print "Simulation " + repr(i+1)
             calculate(verbosity=verbosity-1, sim_index=i)
 
     # Minimisation.
@@ -183,7 +183,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print "Simulation " + `i+1`
+                print "Simulation " + repr(i+1)
             grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
     # Grid search.
@@ -240,7 +240,7 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print "Simulation " + `i+1`
+                print "Simulation " + repr(i+1)
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
     # Standard minimisation.
@@ -384,7 +384,7 @@ def return_value(spin=None, stat_type=None, sim=None):
 
     # The statistic type does not exist.
     if not object_name:
-        raise RelaxError, "The statistic type " + `stat_type` + " does not exist."
+        raise RelaxError, "The statistic type " + repr(stat_type) + " does not exist."
 
     # The simulation object name.
     object_sim = object_name + '_sim'

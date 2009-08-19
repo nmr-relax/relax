@@ -89,7 +89,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         # Return the text representation.
         return text
@@ -155,7 +155,7 @@ class PipeContainer(Prototype):
             elif parser == 'internal':
                 self.structure = generic_fns.structure.internal.Internal()
             else:
-                warn(RelaxWarning("The structural file parser " + `parser` + " is unknown.  The structure will not be loaded."))
+                warn(RelaxWarning("The structural file parser " + repr(parser) + " is unknown.  The structure will not be loaded."))
                 fail = True
 
             # Fill its contents.

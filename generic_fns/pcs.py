@@ -167,7 +167,7 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # Test the centre has already been set.
     if hasattr(cdp, 'paramagnetic_centre'):
-        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `cdp.paramagnetic_centre` + "."
+        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + "."
 
     # Get the positions.
     centre = zeros(3, float64)
@@ -534,7 +534,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             if error_col != None:
                 float(file_data[i][error_col])
         except ValueError:
-            raise RelaxError, "The PCS data in the line " + `file_data[i]` + " is invalid."
+            raise RelaxError, "The PCS data in the line " + repr(file_data[i]) + " is invalid."
 
         # Right, data is ok and exists.
         missing = False

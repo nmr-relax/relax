@@ -78,8 +78,8 @@ class Eliminate:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "eliminate("
-            text = text + "function=" + `function`
-            text = text + ", args=" + `args` + ")"
+            text = text + "function=" + repr(function)
+            text = text + ", args=" + repr(args) + ")"
             print text
 
         # User supplied function.

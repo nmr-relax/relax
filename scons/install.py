@@ -47,7 +47,7 @@ def install(target, source, env):
     print "####################"
     print "# Installing relax #"
     print "####################\n\n"
-    print "Installing the program relax into the directory " + `env['RELAX_PATH']` + "\n\n"
+    print "Installing the program relax into the directory " + repr(env['RELAX_PATH']) + "\n\n"
 
 
     # Tests.
@@ -55,17 +55,17 @@ def install(target, source, env):
 
     # Test that the installation path exists.
     if not access(env['INSTALL_PATH'], F_OK):
-        sys.stderr.write("Cannot install relax, the installation path " + `env['INSTALL_PATH']` + " does not exist.\n\n")
+        sys.stderr.write("Cannot install relax, the installation path " + repr(env['INSTALL_PATH']) + " does not exist.\n\n")
         return
 
     # Test if the binary directory already exists.
     if not access(env['BIN_PATH'], F_OK):
-        sys.stderr.write("Cannot install relax, the directory " + `env['BIN_PATH']` + " does not exist.\n\n")
+        sys.stderr.write("Cannot install relax, the directory " + repr(env['BIN_PATH']) + " does not exist.\n\n")
         return
 
     # Test if the relax installation directory already exists.
     if access(env['RELAX_PATH'], F_OK):
-        sys.stderr.write("Cannot install relax, the directory " + `env['RELAX_PATH']` + " already exists.\n\n")
+        sys.stderr.write("Cannot install relax, the directory " + repr(env['RELAX_PATH']) + " already exists.\n\n")
         return
 
     # Test if the symlink exists.
@@ -76,7 +76,7 @@ def install(target, source, env):
             # OK, symlink doesn't exist.
             pass
         else:
-            sys.stderr.write("Cannot install relax, the file " + `env['SYMLINK']` + " already exists.\n\n")
+            sys.stderr.write("Cannot install relax, the file " + repr(env['SYMLINK']) + " already exists.\n\n")
             return
 
 
@@ -85,7 +85,7 @@ def install(target, source, env):
 
     # Copy the files (and create the directory).
     try:
-        print "\nCopying all files in " + `getcwd()` + " to " + `env['RELAX_PATH']` + "."
+        print "\nCopying all files in " + repr(getcwd()) + " to " + repr(env['RELAX_PATH']) + "."
         copytree(getcwd(), env['RELAX_PATH'])
     except OSError, message:
         # Failure message.
@@ -93,18 +93,18 @@ def install(target, source, env):
 
         # You don't have the privilages to do this.
         if message.errno == 13:
-            sys.stderr.write("Permission denied, cannot create the directory " + `env['RELAX_PATH']` + ".\n\n")
+            sys.stderr.write("Permission denied, cannot create the directory " + repr(env['RELAX_PATH']) + ".\n\n")
 
         # All other errors (print normal python error message).
         else:
-            sys.stderr.write("OSError: [Errno " + `message.errno` + "] " + message.strerror + ": " + `message.filename` + "\n\n")
+            sys.stderr.write("OSError: [Errno " + repr(message.errno) + "] " + message.strerror + ": " + repr(message.filename) + "\n\n")
 
         # Quit the function.
         return
 
     # Create the symbolic link.
     if env['SYMLINK_FLAG']:
-        print "\nCreating the symbolic link from " + `env['RELAX_PATH'] + sep + 'relax'` + " to " + `env['SYMLINK']` + "."
+        print "\nCreating the symbolic link from " + repr(env['RELAX_PATH'] + sep + 'relax') + " to " + repr(env['SYMLINK']) + "."
         symlink(env['RELAX_PATH'] + sep + 'relax', env['SYMLINK'])
 
 
@@ -129,7 +129,7 @@ def uninstall(target, source, env):
     print "######################"
     print "# Uninstalling relax #"
     print "######################\n\n"
-    print "Uninstalling the program relax from the directory " + `env['INSTALL_PATH']` + "\n\n"
+    print "Uninstalling the program relax from the directory " + repr(env['INSTALL_PATH']) + "\n\n"
 
 
     # Tests.
@@ -137,17 +137,17 @@ def uninstall(target, source, env):
 
     # Test that the installation path exists.
     if not access(env['INSTALL_PATH'], F_OK):
-        sys.stderr.write("Cannot uninstall relax, the installation path " + `env['INSTALL_PATH']` + " does not exist.\n\n")
+        sys.stderr.write("Cannot uninstall relax, the installation path " + repr(env['INSTALL_PATH']) + " does not exist.\n\n")
         return
 
     # Test if the binary directory already exists.
     if not access(env['BIN_PATH'], F_OK):
-        sys.stderr.write("Cannot uninstall relax, the directory " + `env['BIN_PATH']` + " does not exist.\n\n")
+        sys.stderr.write("Cannot uninstall relax, the directory " + repr(env['BIN_PATH']) + " does not exist.\n\n")
         return
 
     # Test if the relax installation directory exists.
     if not access(env['RELAX_PATH'], F_OK):
-        sys.stderr.write("Cannot uninstall relax, the directory " + `env['RELAX_PATH']` + " does not exist.\n\n")
+        sys.stderr.write("Cannot uninstall relax, the directory " + repr(env['RELAX_PATH']) + " does not exist.\n\n")
         return
 
     # Test if the symlink exists.
@@ -155,7 +155,7 @@ def uninstall(target, source, env):
         try:
             lstat(env['SYMLINK'])
         except OSError:
-            sys.stderr.write("Cannot uninstall relax, the file " + `env['SYMLINK']` + " does not exist.\n\n")
+            sys.stderr.write("Cannot uninstall relax, the file " + repr(env['SYMLINK']) + " does not exist.\n\n")
             return
 
 
@@ -164,11 +164,11 @@ def uninstall(target, source, env):
 
     # Remove the symbolic link.
     if env['SYMLINK_FLAG']:
-        print "\nRemoving the symbolic link " + `env['SYMLINK']` + "."
+        print "\nRemoving the symbolic link " + repr(env['SYMLINK']) + "."
         remove(env['SYMLINK'])
 
     # Remove the directory.
-    print "\nRemoving the entire directory " + `env['RELAX_PATH']` + ".\n"
+    print "\nRemoving the entire directory " + repr(env['RELAX_PATH']) + ".\n"
     for root, dirs, files in walk(env['RELAX_PATH'], topdown=False):
         for file in files:
             remove(path.join(root, file))

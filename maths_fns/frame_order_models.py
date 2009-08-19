@@ -77,11 +77,11 @@ class Frame_order:
         if model == 'iso cone':
             # Some checks.
             if red_tensors == None or not len(red_tensors):
-                raise RelaxError, "The red_tensors argument " + `red_tensors` + " must be supplied."
+                raise RelaxError, "The red_tensors argument " + repr(red_tensors) + " must be supplied."
             if red_errors == None or not len(red_errors):
-                raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
+                raise RelaxError, "The red_errors argument " + repr(red_errors) + " must be supplied."
             if full_in_ref_frame == None or not len(full_in_ref_frame):
-                raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
+                raise RelaxError, "The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied."
 
             # Mix up.
             if full_tensors != None and frame_order_2nd != None:
@@ -122,13 +122,13 @@ class Frame_order:
 
         # Some checks.
         if full_tensors == None or not len(full_tensors):
-            raise RelaxError, "The full_tensors argument " + `full_tensors` + " must be supplied."
+            raise RelaxError, "The full_tensors argument " + repr(full_tensors) + " must be supplied."
         if red_tensors == None or not len(red_tensors):
-            raise RelaxError, "The red_tensors argument " + `red_tensors` + " must be supplied."
+            raise RelaxError, "The red_tensors argument " + repr(red_tensors) + " must be supplied."
         if red_errors == None or not len(red_errors):
-            raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
+            raise RelaxError, "The red_errors argument " + repr(red_errors) + " must be supplied."
         if full_in_ref_frame == None or not len(full_in_ref_frame):
-            raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
+            raise RelaxError, "The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied."
 
         # Tensor set up.
         self.num_tensors = len(full_tensors) / 5

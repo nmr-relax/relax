@@ -135,7 +135,7 @@ class Iso3D(Base_Map):
 
                 # Progress incrementation and print out.
                 percent = percent + percent_inc
-                print "%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + `values` + ",  f(x): ", chi2)
+                print "%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + repr(values) + ",  f(x): ", chi2)
 
                 # Increment the value of the second parameter.
                 values[1] = values[1] + self.step_size[1]
@@ -154,7 +154,7 @@ class Iso3D(Base_Map):
         # Generate the text.
         text = ""
         text = text + "file = " + self.file_prefix + "\n"
-        text = text + "grid = " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + " x " + `(self.inc + 1)` + "\n"
+        text = text + "grid = " + repr((self.inc + 1)) + " x " + repr((self.inc + 1)) + " x " + repr((self.inc + 1)) + "\n"
         text = text + "format = ascii\n"
         text = text + "interleaving = field\n"
         text = text + "majority = row\n"
@@ -191,9 +191,9 @@ class Iso3D(Base_Map):
         """Function for creating the text of the OpenDX program for a 3D map."""
 
         # Image setup.
-        image_array1 = "[" + `0.6 * (self.inc + 1.0)` + " " + `0.3 * (self.inc + 1.0)` + " " + `0.6 * (self.inc + 1.0)` + "]"
-        image_array2 = "[" + `0.6 * (self.inc + 1.0)` + " " + `0.3 * (self.inc + 1.0)` + " " + `6.0 * (self.inc + 1.0)` + "]"
-        image_val = `3.0 * (self.inc + 1.0)`
+        image_array1 = "[" + repr(0.6 * (self.inc + 1.0)) + " " + repr(0.3 * (self.inc + 1.0)) + " " + repr(0.6 * (self.inc + 1.0)) + "]"
+        image_array2 = "[" + repr(0.6 * (self.inc + 1.0)) + " " + repr(0.3 * (self.inc + 1.0)) + " " + repr(6.0 * (self.inc + 1.0)) + "]"
+        image_val = repr(3.0 * (self.inc + 1.0))
 
 
         # Generate the text of the program.

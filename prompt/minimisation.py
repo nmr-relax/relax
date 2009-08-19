@@ -54,7 +54,7 @@ class Minimisation:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "calc("
-            text = text + "verbosity=" + `verbosity` + ")"
+            text = text + "verbosity=" + repr(verbosity) + ")"
             print text
 
         # The verbosity level.
@@ -92,11 +92,11 @@ class Minimisation:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "grid_search("
-            text = text + "lower=" + `lower`
-            text = text + ", upper=" + `upper`
-            text = text + ", inc=" + `inc`
-            text = text + ", constraints=" + `constraints`
-            text = text + ", verbosity=" + `verbosity` + ")"
+            text = text + "lower=" + repr(lower)
+            text = text + ", upper=" + repr(upper)
+            text = text + ", inc=" + repr(inc)
+            text = text + ", constraints=" + repr(constraints)
+            text = text + ", verbosity=" + repr(verbosity) + ")"
             print text
 
         # The lower bounds.
@@ -302,12 +302,12 @@ class Minimisation:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "minimise("
-            text = text + "*args=" + `args`
-            text = text + ", func_tol=" + `func_tol`
-            text = text + ", max_iterations=" + `max_iterations`
-            text = text + ", constraints=" + `constraints`
-            text = text + ", scaling=" + `scaling`
-            text = text + ", verbosity=" + `verbosity` + ")"
+            text = text + "*args=" + repr(args)
+            text = text + ", func_tol=" + repr(func_tol)
+            text = text + ", max_iterations=" + repr(max_iterations)
+            text = text + ", constraints=" + repr(constraints)
+            text = text + ", scaling=" + repr(scaling)
+            text = text + ", verbosity=" + repr(verbosity) + ")"
             print text
 
         # Minimisation algorithm.
@@ -329,7 +329,7 @@ class Minimisation:
                 if key == valid_key:
                     valid = True
             if not valid:
-                raise RelaxError, "Unknown keyword argument " + `key` + "."
+                raise RelaxError, "Unknown keyword argument " + repr(key) + "."
 
         # The function tolerance value.
         if func_tol != None and type(func_tol) != int and type(func_tol) != float:

@@ -98,10 +98,10 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.copy("
-            text = text + "tensor_from=" + `tensor_from`
-            text = text + ", pipe_from=" + `pipe_from`
-            text = text + ", tensor_to=" + `tensor_to`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
+            text = text + "tensor_from=" + repr(tensor_from)
+            text = text + ", pipe_from=" + repr(pipe_from)
+            text = text + ", tensor_to=" + repr(tensor_to)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print text
 
         # The tensor_from argument.
@@ -147,7 +147,7 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.delete("
-            text = text + "tensor=" + `tensor` + ")"
+            text = text + "tensor=" + repr(tensor) + ")"
             print text
 
         # Label argument.
@@ -170,7 +170,7 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.display("
-            text = text + "tensor=" + `tensor` + ")"
+            text = text + "tensor=" + repr(tensor) + ")"
             print text
 
         # Label argument.
@@ -244,12 +244,12 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.init("
-            text = text + "tensor=" + `tensor`
-            text = text + ", params=" + `params`
-            text = text + ", scale=" + `scale`
-            text = text + ", angle_units=" + `angle_units`
-            text = text + ", param_types=" + `param_types`
-            text = text + ", errors=" + `errors` + ")"
+            text = text + "tensor=" + repr(tensor)
+            text = text + ", params=" + repr(params)
+            text = text + ", scale=" + repr(scale)
+            text = text + ", angle_units=" + repr(angle_units)
+            text = text + ", param_types=" + repr(param_types)
+            text = text + ", errors=" + repr(errors) + ")"
             print text
 
         # Label argument.
@@ -311,8 +311,8 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.matrix_angles("
-            text = text + "basis_set=" + `basis_set`
-            text = text + ", tensors=" + `tensors` + ")"
+            text = text + "basis_set=" + repr(basis_set)
+            text = text + ", tensors=" + repr(tensors) + ")"
             print text
 
         # Basis set argument.
@@ -366,8 +366,8 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.reduction("
-            text = text + "full_tensor=" + `full_tensor`
-            text = text + ", red_tensor=" + `red_tensor` + ")"
+            text = text + "full_tensor=" + repr(full_tensor)
+            text = text + ", red_tensor=" + repr(red_tensor) + ")"
             print text
 
         # From tensor argument.
@@ -411,8 +411,8 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.set_domain("
-            text = text + "tensor=" + `tensor`
-            text = text + ", domain=" + `domain` + ")"
+            text = text + "tensor=" + repr(tensor)
+            text = text + ", domain=" + repr(domain) + ")"
             print text
 
         # Tensor argument.
@@ -477,8 +477,8 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.svd("
-            text = text + "basis_set=" + `basis_set`
-            text = text + ", tensors=" + `tensors` + ")"
+            text = text + "basis_set=" + repr(basis_set)
+            text = text + ", tensors=" + repr(tensors) + ")"
             print text
 
         # Basis set argument.

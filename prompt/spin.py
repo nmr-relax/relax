@@ -92,10 +92,10 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", spin_from=" + `spin_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", spin_to=" + `spin_to` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", spin_from=" + repr(spin_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", spin_to=" + repr(spin_to) + ")"
             print text
 
         # The data pipe from argument.
@@ -155,11 +155,11 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.create("
-            text = text + "spin_num=" + `spin_num`
-            text = text + ", spin_name=" + `spin_name`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name`
-            text = text + ", mol_name=" + `mol_name` + ")"
+            text = text + "spin_num=" + repr(spin_num)
+            text = text + ", spin_name=" + repr(spin_name)
+            text = text + ", res_num=" + repr(res_num)
+            text = text + ", res_name=" + repr(res_name)
+            text = text + ", mol_name=" + repr(mol_name) + ")"
             print text
 
         # Spin number.
@@ -225,11 +225,11 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.create_pseudo("
-            text = text + "spin_name=" + `spin_name`
-            text = text + ", spin_num=" + `spin_num`
-            text = text + ", res_id=" + `res_id`
-            text = text + ", members=" + `members`
-            text = text + ", averaging=" + `averaging` + ")"
+            text = text + "spin_name=" + repr(spin_name)
+            text = text + ", spin_num=" + repr(spin_num)
+            text = text + ", res_id=" + repr(res_id)
+            text = text + ", members=" + repr(members)
+            text = text + ", averaging=" + repr(averaging) + ")"
             print text
 
         # Spin name.
@@ -284,7 +284,7 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.delete("
-            text = text + "spin_id=" + `spin_id` + ")"
+            text = text + "spin_id=" + repr(spin_id) + ")"
             print text
 
         # The spin identifier argument.
@@ -307,7 +307,7 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.display("
-            text = text + "spin_id=" + `spin_id` + ")"
+            text = text + "spin_id=" + repr(spin_id) + ")"
             print text
 
         # The spin_id argument.
@@ -351,9 +351,9 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.name("
-            text = text + "spin_id=" + `spin_id`
-            text = text + ", name=" + `name`
-            text = text + ", force=" + `force` + ")"
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", name=" + repr(name)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Spin identification string.
@@ -407,9 +407,9 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.number("
-            text = text + "spin_id=" + `spin_id`
-            text = text + ", number=" + `number`
-            text = text + ", force=" + `force` + ")"
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", number=" + repr(number)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Spin identification string.

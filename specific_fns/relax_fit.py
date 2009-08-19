@@ -511,7 +511,7 @@ class Relax_fit(Common_functions):
         for i in xrange(len(min_options)):
             grid_size = grid_size * min_options[i][0]
         if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
+            raise RelaxError, "A grid search of size " + repr(grid_size) + " is too large."
 
         # Diagonal scaling of minimisation options.
         for j in xrange(len(min_options)):
@@ -675,13 +675,13 @@ class Relax_fit(Common_functions):
                 if verbosity >= 2:
                     print "\n\n"
 
-                string = "Fitting to spin " + `spin_id`
+                string = "Fitting to spin " + repr(spin_id)
                 print "\n\n" + string
                 print len(string) * '~'
 
                 # Grid search print out.
                 if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+                    print "Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"
 
 
             # Initialise the function to minimise.

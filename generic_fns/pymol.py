@@ -185,13 +185,13 @@ def cartoon():
             open_files.append(pdb_file)
 
             # Hide everything.
-            pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
+            pymol.pipe_write("cmd.hide('everything'," + repr(id) + ")")
 
             # Show the cartoon style.
-            pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
+            pymol.pipe_write("cmd.show('cartoon'," + repr(id) + ")")
 
             # Colour by secondary structure.
-            pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+            pymol.pipe_write("util.cbss(" + repr(id) + ", 'red', 'yellow', 'green')")
 
 
 def command(command):
@@ -420,7 +420,7 @@ def vector_dist(file=None):
     ###################
 
     # Select the vector distribution.
-    pymol.pipe_write("cmd.show('surface', " + `id` + ")")
+    pymol.pipe_write("cmd.show('surface', " + repr(id) + ")")
 
 
 def view():

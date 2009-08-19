@@ -75,7 +75,7 @@ class Jw_mapping(Common_functions):
 
         # Frequency index.
         if cdp.jw_frq not in cdp.frq:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `cdp.jw_frq` + " has been loaded."
+            raise RelaxError, "No relaxation data corresponding to the frequency " + repr(cdp.jw_frq) + " has been loaded."
 
         # Reduced spectral density mapping.
         for spin in spin_loop(spin_id):

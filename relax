@@ -201,7 +201,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(log_file, F_OK):
-                parser.error("the log file " + `log_file` + " already exists")
+                parser.error("the log file " + repr(log_file) + " already exists")
         else:
             log_file = None
 
@@ -216,7 +216,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(tee_file, F_OK):
-                parser.error("the tee file " + `tee_file` + " already exists")
+                parser.error("the tee file " + repr(tee_file) + " already exists")
         else:
             tee_file = None
 
@@ -231,7 +231,7 @@ class Relax:
 
             # Test if the script file exists.
             if not access(self.script_file, F_OK):
-                parser.error("the script file " + `self.script_file` + " does not exist")
+                parser.error("the script file " + repr(self.script_file) + " does not exist")
 
 
         # Determine the relax mode and test for mutually exclusive modes.

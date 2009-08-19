@@ -74,7 +74,7 @@ class Model_free_main:
 
             # Get the target object.
             if data_from and not hasattr(object_to, data_name):
-                raise RelaxError, "The structural object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
+                raise RelaxError, "The structural object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe."
             elif data_from:
                 data_to = getattr(object_to, data_name)
             else:
@@ -82,7 +82,7 @@ class Model_free_main:
 
             # The data must match!
             if data_from != data_to:
-                raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                raise RelaxError, "The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
 
 
     def are_mf_params_set(self, spin):
@@ -548,7 +548,7 @@ class Model_free_main:
         # Check the validity of the model-free equation type.
         valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
         if not equation in valid_types:
-            raise RelaxError, "The model-free equation type argument " + `equation` + " is invalid and should be one of " + `valid_types` + "."
+            raise RelaxError, "The model-free equation type argument " + repr(equation) + " is invalid and should be one of " + repr(valid_types) + "."
 
         # Check the validity of the parameter array.
         s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -654,7 +654,7 @@ class Model_free_main:
 
             # The invalid parameter flag is set.
             if invalid_param:
-                raise RelaxError, "The parameter array " + `params` + " contains an invalid combination of parameters."
+                raise RelaxError, "The parameter array " + repr(params) + " contains an invalid combination of parameters."
 
         # Set up the model.
         self.model_setup(model, equation, params, spin_id)
@@ -1105,7 +1105,7 @@ class Model_free_main:
 
                 # The data must match!
                 if data_from != data_to:
-                    raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                    raise RelaxError, "The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
 
                 # Skip the data.
                 continue
@@ -1130,7 +1130,7 @@ class Model_free_main:
 
                     # Get the target object.
                     if data_from and not hasattr(dp_to.diff_tensor, data_name):
-                        raise RelaxError, "The diffusion tensor object " + `data_name` + " of the " + `pipe_from` + " data pipe is not located in the " + `pipe_to` + " data pipe."
+                        raise RelaxError, "The diffusion tensor object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe."
                     elif data_from:
                         data_to = getattr(dp_to.diff_tensor, data_name)
                     else:
@@ -1138,7 +1138,7 @@ class Model_free_main:
 
                     # The data must match!
                     if data_from != data_to:
-                        raise RelaxError, "The object " + `data_name` + " is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                        raise RelaxError, "The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
 
         # Structure comparison.
         if hasattr(dp_from, 'structure'):
@@ -1153,7 +1153,7 @@ class Model_free_main:
 
                 # Tests for the model and molecule containers.
                 if len(dp_from.structure.structural_data) != len(dp_from.structure.structural_data):
-                    raise RelaxError, "The number of structural models is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                    raise RelaxError, "The number of structural models is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
 
                 # Loop over the models.
                 for i in range(len(dp_from.structure.structural_data)):
@@ -1163,11 +1163,11 @@ class Model_free_main:
 
                     # Model numbers.
                     if model_from.num != model_to.num:
-                        raise RelaxError, "The structure models are not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                        raise RelaxError, "The structure models are not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
 
                     # Molecule number.
                     if len(model_from.mol) != len(model_to.mol):
-                        raise RelaxError, "The number of molecules is not consistent between the pipes " + `pipe_from` + " and " + `pipe_to` + "."
+                        raise RelaxError, "The number of molecules is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + "."
 
                     # Loop over the models.
                     for mol_index in range(len(model_from.mol)):
@@ -1891,7 +1891,7 @@ class Model_free_main:
         if model_info == None and spin_id == None:
             raise RelaxError, "Either the model_info or spin_id argument must be supplied."
         elif model_info != None and spin_id != None:
-            raise RelaxError, "The model_info arg " + `model_info` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
+            raise RelaxError, "The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied."
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()

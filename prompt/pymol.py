@@ -121,7 +121,7 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.command("
-            text = text + "command=" + `command` + ")"
+            text = text + "command=" + repr(command) + ")"
             print text
 
         # The command argument.
@@ -168,7 +168,7 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.cone_pdb("
-            text = text + "file=" + `file` + ")"
+            text = text + "file=" + repr(file) + ")"
             print text
 
         # The file name.
@@ -235,11 +235,11 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.macro_exec("
-            text = text + "data_type=" + `data_type`
-            text = text + ", style=" + `style`
-            text = text + ", colour_start=" + `colour_start`
-            text = text + ", colour_end=" + `colour_end`
-            text = text + ", colour_list=" + `colour_list` + ")"
+            text = text + "data_type=" + repr(data_type)
+            text = text + ", style=" + repr(style)
+            text = text + ", colour_start=" + repr(colour_start)
+            text = text + ", colour_end=" + repr(colour_end)
+            text = text + ", colour_list=" + repr(colour_list) + ")"
             print text
 
         # Data type for mapping to the structure.
@@ -315,7 +315,7 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.tensor_pdb("
-            text = text + "file=" + `file` + ")"
+            text = text + "file=" + repr(file) + ")"
             print text
 
         # The file name.
@@ -352,7 +352,7 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.vector_dist("
-            text = text + "file=" + `file` + ")"
+            text = text + "file=" + repr(file) + ")"
             print text
 
         # The file name.
@@ -447,14 +447,14 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.write("
-            text = text + "data_type=" + `data_type`
-            text = text + ", style=" + `style`
-            text = text + ", colour_start=" + `colour_start`
-            text = text + ", colour_end=" + `colour_end`
-            text = text + ", colour_list=" + `colour_list`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "data_type=" + repr(data_type)
+            text = text + ", style=" + repr(style)
+            text = text + ", colour_start=" + repr(colour_start)
+            text = text + ", colour_end=" + repr(colour_end)
+            text = text + ", colour_list=" + repr(colour_list)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Data type for mapping to the structure.

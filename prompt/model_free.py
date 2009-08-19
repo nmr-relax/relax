@@ -128,10 +128,10 @@ class Model_free:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.create_model("
-            text = text + "model=" + `model`
-            text = text + ", equation=" + `equation`
-            text = text + ", params=" + `params`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + "model=" + repr(model)
+            text = text + ", equation=" + repr(equation)
+            text = text + ", params=" + repr(params)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print text
 
         # Model argument.
@@ -212,7 +212,7 @@ class Model_free:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.remove_tm("
-            text = text + "spin_id=" + `spin_id` + ")"
+            text = text + "spin_id=" + repr(spin_id) + ")"
             print text
 
         # Spin identification string.
@@ -360,8 +360,8 @@ class Model_free:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.select_model("
-            text = text + "model=" + `model`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + "model=" + repr(model)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print text
 
         # Model argument.

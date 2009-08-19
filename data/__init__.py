@@ -78,7 +78,7 @@ class Relax_data_store(dict):
         pipes = self.instance.keys()
         if pipes:
             for pipe in pipes:
-                text = text + "  %s\n" % `pipe`
+                text = text + "  %s\n" % repr(pipe)
         else:
             text = text + "  None\n"
 

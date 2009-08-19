@@ -289,7 +289,7 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
 
     # Monte Carlo simulations.
     if sims:
-        file.write("simulations     " + sim_type + "    " + `sims` + "       " + `trim` + "\n\n")
+        file.write("simulations     " + sim_type + "    " + repr(sims) + "       " + repr(trim) + "\n\n")
     else:
         file.write("simulations     none\n\n")
 
@@ -297,9 +297,9 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
     file.write("selection       " + selection + "\n\n")
     file.write("sim_algorithm   " + algorithm + "\n\n")
 
-    file.write("fields          " + `num_frq`)
+    file.write("fields          " + repr(num_frq))
     for val in frq:
-        file.write("  " + `val*1e-6`)
+        file.write("  " + repr(val*1e-6))
     file.write("\n")
 
     # tm.

@@ -95,13 +95,13 @@ class Noe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "noe.read_restraints("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", proton1_col=" + `proton1_col`
-            text = text + ", proton2_col=" + `proton2_col`
-            text = text + ", lower_col=" + `lower_col`
-            text = text + ", upper_col=" + `upper_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", proton1_col=" + repr(proton1_col)
+            text = text + ", proton2_col=" + repr(proton2_col)
+            text = text + ", lower_col=" + repr(lower_col)
+            text = text + ", upper_col=" + repr(upper_col)
+            text = text + ", sep=" + repr(sep) + ")"
             print text
 
         # The file name.
@@ -162,8 +162,8 @@ class Noe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "noe.spectrum_type("
-            text = text + "spectrum_type=" + `spectrum_type`
-            text = text + ", spectrum_id=" + `spectrum_id` + ")"
+            text = text + "spectrum_type=" + repr(spectrum_type)
+            text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print text
 
         # The spectrum type.

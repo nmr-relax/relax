@@ -912,14 +912,14 @@ class N_state_model(Common_functions):
             # Add the probability or population weight parameters.
             if cdp.model in ['2-domain', 'population']:
                 for i in xrange(cdp.N-1):
-                    cdp.params.append('p' + `i`)
+                    cdp.params.append('p' + repr(i))
 
             # Add the Euler angle parameters.
             if cdp.model == '2-domain':
                 for i in xrange(cdp.N):
-                    cdp.params.append('alpha' + `i`)
-                    cdp.params.append('beta' + `i`)
-                    cdp.params.append('gamma' + `i`)
+                    cdp.params.append('alpha' + repr(i))
+                    cdp.params.append('beta' + repr(i))
+                    cdp.params.append('gamma' + repr(i))
 
         # Initialise the probability and Euler angle arrays.
         if cdp.model in ['2-domain', 'population']:
@@ -1127,14 +1127,14 @@ class N_state_model(Common_functions):
         cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
-        print "\n%-40s %-20s" % ("Pivot point:", `cdp.pivot_point`)
-        print "%-40s %-20s" % ("Moving domain CoM (prior to rotation):", `cdp.CoM`)
-        print "%-40s %-20s" % ("Pivot-CoM vector", `cdp.pivot_CoM`)
-        print "%-40s %-20s" % ("Pivot-CoM unit vector:", `unit_vect`)
-        print "%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", `cdp.ave_unit_pivot_CoM`)
-        print "%-40s %-20s" % ("Average of the pivot-CoM vector:", `cdp.ave_pivot_CoM`)
-        print "%-40s %-20s" % ("Full length rotated pivot-CoM vector:", `cdp.full_ave_pivot_CoM`)
-        print "%-40s %-20s" % ("Length reduction from unity:", `cdp.ave_pivot_CoM_red`)
+        print "\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))
+        print "%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))
+        print "%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))
+        print "%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))
+        print "%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))
+        print "%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))
+        print "%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))
+        print "%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))
         print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
         print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
         print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
@@ -1173,7 +1173,7 @@ class N_state_model(Common_functions):
             if not hasattr(cdp, 'S_diff_on_cone'):
                 raise RelaxError, "The diffusion on a cone model has not yet been determined."
         else:
-            raise RelaxError, "The cone type " + `cone_type` + " is unknown."
+            raise RelaxError, "The cone type " + repr(cone_type) + " is unknown."
 
         # The number of increments for the filling of the cone objects.
         inc = 20
@@ -1856,7 +1856,7 @@ class N_state_model(Common_functions):
 
         # Test if the model name exists.
         if not model in ['2-domain', 'population', 'fixed']:
-            raise RelaxError, "The model name " + `model` + " is invalid."
+            raise RelaxError, "The model name " + repr(model) + " is invalid."
 
         # Set the model
         cdp.model = model
@@ -1899,7 +1899,7 @@ class N_state_model(Common_functions):
 
         # Test that the parameter and value lists are the same size.
         if type(param) == list and value[0] != None and len(param) != len(value):
-            raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `param` + "."
+            raise RelaxError, "The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(param) + "."
 
         # Convert param to a list (if it is a string).
         if type(param) == str:
@@ -1916,7 +1916,7 @@ class N_state_model(Common_functions):
             # Get the object name and the parameter index.
             object_name, index = self.return_data_name(param[i], index=True)
             if not object_name:
-                raise RelaxError, "The data type " + `param[i]` + " does not exist."
+                raise RelaxError, "The data type " + repr(param[i]) + " does not exist."
 
             # Simple objects (not a list).
             if index == None:

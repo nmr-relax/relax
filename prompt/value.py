@@ -88,9 +88,9 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", param=" + `param` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", param=" + repr(param) + ")"
             print text
 
         # The pipe_from argument.
@@ -135,7 +135,7 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.display("
-            text = text + "param=" + `param` + ")"
+            text = text + "param=" + repr(param) + ")"
             print text
 
         # The parameter.
@@ -195,14 +195,14 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.read("
-            text = text + "param=" + `param`
-            text = text + ", scaling=" + `scaling`
-            text = text + ", file=" + `file`
-            text = text + ", num_col=" + `num_col`
-            text = text + ", name_col=" + `name_col`
-            text = text + ", data_col=" + `data_col`
-            text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = text + "param=" + repr(param)
+            text = text + ", scaling=" + repr(scaling)
+            text = text + ", file=" + repr(file)
+            text = text + ", num_col=" + repr(num_col)
+            text = text + ", name_col=" + repr(name_col)
+            text = text + ", data_col=" + repr(data_col)
+            text = text + ", error_col=" + repr(error_col)
+            text = text + ", sep=" + repr(sep) + ")"
             print text
 
         # The parameter.
@@ -363,9 +363,9 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.set("
-            text = text + "val=" + `val`
-            text = text + ", param=" + `param`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + "val=" + repr(val)
+            text = text + ", param=" + repr(param)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print text
 
         # The value.
@@ -458,10 +458,10 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.write("
-            text = text + "param=" + `param`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "param=" + repr(param)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # The parameter.

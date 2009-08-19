@@ -86,7 +86,7 @@ def ellipsoid_frame():
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
             # Throw a warning.
-            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+            warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))
 
             # Skip the spin.
             continue
@@ -116,7 +116,7 @@ def spheroid_frame():
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
             # Throw a warning.
-            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+            warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))
 
             # Skip the spin.
             continue

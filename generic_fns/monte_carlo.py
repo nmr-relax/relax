@@ -55,7 +55,7 @@ def create_data(method=None):
     # Test the method argument.
     valid_methods = ['back_calc', 'direct']
     if method not in valid_methods:
-        raise RelaxError, "The simulation creation method " + `method` + " is not valid."
+        raise RelaxError, "The simulation creation method " + repr(method) + " is not valid."
 
     # Specific Monte Carlo data creation, data return, and error return function setup.
     base_data_loop = get_specific_fn('base_data_loop', cdp.pipe_type)

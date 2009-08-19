@@ -689,7 +689,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
                 float(file_data[i][data_col])
                 float(file_data[i][error_col])
             except ValueError:
-                raise RelaxError, "The relaxation data in the line " + `file_data[i]` + " is invalid."
+                raise RelaxError, "The relaxation data in the line " + repr(file_data[i]) + " is invalid."
 
     # Loop over the file data to create the data structures for packing.
     values = []

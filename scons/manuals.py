@@ -73,7 +73,7 @@ def clean_manual_files(target, source, env):
             else:
                 raise
         else:
-            print "Removing the file " + `file` + "."
+            print "Removing the file " + repr(file) + "."
 
     # Final print out.
     print "\n\n\n"

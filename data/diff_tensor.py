@@ -631,7 +631,7 @@ class DiffTensorData(Element):
 
         # Test if the attribute that is trying to be set is modifiable.
         if not param_name in self.__mod_attr__:
-            raise RelaxError, "The object " + `name` + " is not a modifiable attribute."
+            raise RelaxError, "The object " + repr(name) + " is not a modifiable attribute."
 
         # Set the attribute normally.
         self.__dict__[name] = value

@@ -216,14 +216,14 @@ def display():
 
         # Parameters.
         print "\nParameters {tm}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print "tm (s):  " + repr(cdp.diff_tensor.tm)
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print "Diso (1/s):  " + repr(cdp.diff_tensor.Diso)
 
         # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+        print "\nFixed:  " + repr(cdp.diff_tensor.fixed)
 
     # Spheroidal diffusion.
     elif cdp.diff_tensor.type == 'spheroid':
@@ -232,34 +232,34 @@ def display():
 
         # Parameters.
         print "\nParameters {tm, Da, theta, phi}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print "tm (s):  " + repr(cdp.diff_tensor.tm)
+        print "Da (1/s):  " + repr(cdp.diff_tensor.Da)
+        print "theta (rad):  " + repr(cdp.diff_tensor.theta)
+        print "phi (rad):  " + repr(cdp.diff_tensor.phi)
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso, Da, theta, phi}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print "Diso (1/s):  " + repr(cdp.diff_tensor.Diso)
+        print "Da (1/s):  " + repr(cdp.diff_tensor.Da)
+        print "theta (rad):  " + repr(cdp.diff_tensor.theta)
+        print "phi (rad):  " + repr(cdp.diff_tensor.phi)
 
         # Alternate parameters.
         print "\nAlternate parameters {Dpar, Dper, theta, phi}."
-        print "Dpar (1/s):  " + `cdp.diff_tensor.Dpar`
-        print "Dper (1/s):  " + `cdp.diff_tensor.Dper`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print "Dpar (1/s):  " + repr(cdp.diff_tensor.Dpar)
+        print "Dper (1/s):  " + repr(cdp.diff_tensor.Dper)
+        print "theta (rad):  " + repr(cdp.diff_tensor.theta)
+        print "phi (rad):  " + repr(cdp.diff_tensor.phi)
 
         # Alternate parameters.
         print "\nAlternate parameters {tm, Dratio, theta, phi}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Dratio:  " + `cdp.diff_tensor.Dratio`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print "tm (s):  " + repr(cdp.diff_tensor.tm)
+        print "Dratio:  " + repr(cdp.diff_tensor.Dratio)
+        print "theta (rad):  " + repr(cdp.diff_tensor.theta)
+        print "phi (rad):  " + repr(cdp.diff_tensor.phi)
 
         # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+        print "\nFixed:  " + repr(cdp.diff_tensor.fixed)
 
     # Ellipsoidal diffusion.
     elif cdp.diff_tensor.type == 'ellipsoid':
@@ -268,33 +268,33 @@ def display():
 
         # Parameters.
         print "\nParameters {tm, Da, Dr, alpha, beta, gamma}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "Dr:  " + `cdp.diff_tensor.Dr`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+        print "tm (s):  " + repr(cdp.diff_tensor.tm)
+        print "Da (1/s):  " + repr(cdp.diff_tensor.Da)
+        print "Dr:  " + repr(cdp.diff_tensor.Dr)
+        print "alpha (rad):  " + repr(cdp.diff_tensor.alpha)
+        print "beta (rad):  " + repr(cdp.diff_tensor.beta)
+        print "gamma (rad):  " + repr(cdp.diff_tensor.gamma)
 
         # Alternate parameters.
         print "\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "Dr:  " + `cdp.diff_tensor.Dr`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+        print "Diso (1/s):  " + repr(cdp.diff_tensor.Diso)
+        print "Da (1/s):  " + repr(cdp.diff_tensor.Da)
+        print "Dr:  " + repr(cdp.diff_tensor.Dr)
+        print "alpha (rad):  " + repr(cdp.diff_tensor.alpha)
+        print "beta (rad):  " + repr(cdp.diff_tensor.beta)
+        print "gamma (rad):  " + repr(cdp.diff_tensor.gamma)
 
         # Alternate parameters.
         print "\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}."
-        print "Dx (1/s):  " + `cdp.diff_tensor.Dx`
-        print "Dy (1/s):  " + `cdp.diff_tensor.Dy`
-        print "Dz (1/s):  " + `cdp.diff_tensor.Dz`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+        print "Dx (1/s):  " + repr(cdp.diff_tensor.Dx)
+        print "Dy (1/s):  " + repr(cdp.diff_tensor.Dy)
+        print "Dz (1/s):  " + repr(cdp.diff_tensor.Dz)
+        print "alpha (rad):  " + repr(cdp.diff_tensor.alpha)
+        print "beta (rad):  " + repr(cdp.diff_tensor.beta)
+        print "gamma (rad):  " + repr(cdp.diff_tensor.gamma)
 
         # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+        print "\nFixed:  " + repr(cdp.diff_tensor.fixed)
 
 
 def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
@@ -564,7 +564,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
-        raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+        raise RelaxError, "The diffusion tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'."
 
     # Add the diff_tensor object to the data pipe.
     cdp.diff_tensor = DiffTensorData()
@@ -589,7 +589,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
 
     # Unknown.
     else:
-        raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
+        raise RelaxError, "The diffusion tensor parameters " + repr(params) + " are of an unknown type."
 
     # Test the validity of the parameters.
     test_params(num_params)
@@ -685,7 +685,7 @@ def map_labels(index, params, bounds, swap, inc):
         string = "{"
         val = 0.0
         for j in xrange(axis_incs + 1):
-            string = string + " " + `val`
+            string = string + " " + repr(val)
             val = val + loc_inc
         string = string + " }"
         tick_locations.append(string)
@@ -983,7 +983,7 @@ def set(value=None, param=None):
 
             # Cannot set the single parameter.
             else:
-                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+                raise RelaxError, "The geometric diffusion parameter " + repr(geo_params[0]) + " cannot be set."
 
         # More than one geometric parameters.
         elif len(geo_params) > 1:
@@ -995,7 +995,7 @@ def set(value=None, param=None):
 
         # ???
         if len(orient_params):
-            raise RelaxError, "For spherical diffusion, the orientation parameters " + `orient_params` + " should not exist."
+            raise RelaxError, "For spherical diffusion, the orientation parameters " + repr(orient_params) + " should not exist."
 
 
     # Spheroidal diffusion.
@@ -1026,7 +1026,7 @@ def set(value=None, param=None):
 
             # Cannot set the single parameter.
             else:
-                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+                raise RelaxError, "The geometric diffusion parameter " + repr(geo_params[0]) + " cannot be set."
 
         # Two geometric parameters.
         elif len(geo_params) == 2:
@@ -1104,7 +1104,7 @@ def set(value=None, param=None):
 
             # Disallowed parameter.
             else:
-                raise RelaxError, "For spheroidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
+                raise RelaxError, "For spheroidal diffusion, the orientation parameter " + repr(orient_params) + " cannot be set."
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
@@ -1149,7 +1149,7 @@ def set(value=None, param=None):
 
             # Cannot set the single parameter.
             else:
-                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+                raise RelaxError, "The geometric diffusion parameter " + repr(geo_params[0]) + " cannot be set."
 
         # Two geometric parameters.
         elif len(geo_params) == 2:
@@ -1284,7 +1284,7 @@ def set(value=None, param=None):
 
             # Disallowed parameter.
             else:
-                raise RelaxError, "For ellipsoidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
+                raise RelaxError, "For ellipsoidal diffusion, the orientation parameter " + repr(orient_params) + " cannot be set."
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
@@ -1442,7 +1442,7 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
     # Spheroid diffusion type.
     allowed_types = [None, 'oblate', 'prolate']
     if spheroid_type not in allowed_types:
-        raise RelaxError, "The 'spheroid_type' argument " + `spheroid_type` + " should be 'oblate', 'prolate', or None."
+        raise RelaxError, "The 'spheroid_type' argument " + repr(spheroid_type) + " should be 'oblate', 'prolate', or None."
     cdp.diff_tensor.spheroid_type = spheroid_type
 
     # (tm, Da, theta, phi).
@@ -1528,7 +1528,7 @@ def test_params(num_params):
     # tm.
     tm = cdp.diff_tensor.tm
     if tm <= 0.0 or tm > 1e-6:
-        raise RelaxError, "The tm value of " + `tm` + " should be between zero and one microsecond."
+        raise RelaxError, "The tm value of " + repr(tm) + " should be between zero and one microsecond."
 
     # Spheroid.
     if num_params == 4:
@@ -1538,7 +1538,7 @@ def test_params(num_params):
 
         # Da.
         if Da < (-1.5*Diso - error*Diso) or Da > (3.0*Diso + error*Diso):
-            raise RelaxError, "The Da value of " + `Da` + " should be between -3/2 * Diso and 3Diso."
+            raise RelaxError, "The Da value of " + repr(Da) + " should be between -3/2 * Diso and 3Diso."
 
     # Ellipsoid.
     if num_params == 6:
@@ -1549,11 +1549,11 @@ def test_params(num_params):
 
         # Da.
         if Da < (0.0 - error*Diso) or Da > (3.0*Diso + error*Diso):
-            raise RelaxError, "The Da value of " + `Da` + " should be between zero and 3Diso."
+            raise RelaxError, "The Da value of " + repr(Da) + " should be between zero and 3Diso."
 
         # Dr.
         if Dr < (0.0 - error) or Dr > (1.0 + error):
-            raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
+            raise RelaxError, "The Dr value of " + repr(Dr) + " should be between zero and one."
 
 
 def unit_axes():

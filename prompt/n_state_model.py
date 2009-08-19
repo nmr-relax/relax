@@ -93,8 +93,8 @@ class N_state_model:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.CoM("
-            text = text + "pivot_point=" + `pivot_point`
-            text = text + ", centre=" + `centre` + ")"
+            text = text + "pivot_point=" + repr(pivot_point)
+            text = text + ", centre=" + repr(centre) + ")"
             print text
 
         # Pivot point argument.
@@ -173,11 +173,11 @@ class N_state_model:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.cone_pdb("
-            text = text + "cone_type=" + `cone_type`
-            text = text + ", scale=" + `scale`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "cone_type=" + repr(cone_type)
+            text = text + ", scale=" + repr(scale)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Cone type.
@@ -232,7 +232,7 @@ class N_state_model:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.number_of_states("
-            text = text + "N=" + `N` + ")"
+            text = text + "N=" + repr(N) + ")"
             print text
 
         # Number of states argument.
@@ -273,7 +273,7 @@ class N_state_model:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.ref_domain("
-            text = text + "ref=" + `ref` + ")"
+            text = text + "ref=" + repr(ref) + ")"
             print text
 
         # Ref frame argument.
@@ -323,7 +323,7 @@ class N_state_model:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.select_model("
-            text = text + "model=" + `model` + ")"
+            text = text + "model=" + repr(model) + ")"
             print text
 
         # Model argument.

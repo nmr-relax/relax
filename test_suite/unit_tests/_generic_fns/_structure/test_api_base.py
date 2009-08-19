@@ -64,7 +64,7 @@ class Test_api_base(TestCase):
                 text = text + ', '
 
             # The keyword.
-            text = text + args[i] + '=' + `defaults[i-index]`
+            text = text + args[i] + '=' + repr(defaults[i-index])
 
         # End.
         text = text + ')'
@@ -128,7 +128,7 @@ class Test_api_base(TestCase):
 
             # Not present.
             if name not in base_names:
-                self.fail('The object ' + `name` + ' ' + `type(obj)` + ' cannot be found in the structural API base class.')
+                self.fail('The object ' + repr(name) + ' ' + repr(type(obj)) + ' cannot be found in the structural API base class.')
 
 
     def test_Scientific_method_args(self):
@@ -187,4 +187,4 @@ class Test_api_base(TestCase):
 
             # Not present.
             if name not in base_names:
-                self.fail('The object ' + `name` + ' ' + `type(obj)` + ' cannot be found in the structural API base class.')
+                self.fail('The object ' + repr(name) + ' ' + repr(type(obj)) + ' cannot be found in the structural API base class.')

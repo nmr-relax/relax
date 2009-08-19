@@ -119,8 +119,8 @@ class Results:
         if verbosity >= 2:
             print "\nFixing parameters based on the model type."
             print "Model type: " + model_type
-            print "Diffusion tensor fixed: " + `diff_fixed`
-            print "Model-free parameters fixed: " + `mf_fixed`
+            print "Diffusion tensor fixed: " + repr(diff_fixed)
+            print "Model-free parameters fixed: " + repr(mf_fixed)
 
         # Set the diffusion tensor fixed flag.
         if model_type != 'local_tm' and diff_fixed != None:

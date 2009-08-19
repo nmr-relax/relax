@@ -405,7 +405,7 @@ class Base_struct_API:
             target.append(set[index])
         else:
             # Set the name to the file name plus the structure number.
-            target.append(file_root(file) + '_mol' + `mol_num`)
+            target.append(file_root(file) + '_mol' + repr(mol_num))
 
 
     def to_xml(self, doc, element):
@@ -742,7 +742,7 @@ class ModelList(list):
             # Test if the model number already exists.
             for i in xrange(len(self)):
                 if self[i].num == model_num:
-                    raise RelaxError, "The model '" + `model_num` + "' already exists."
+                    raise RelaxError, "The model '" + repr(model_num) + "' already exists."
 
             # Append an empty ModelContainer.
             self.append(ModelContainer(model_num))
@@ -865,7 +865,7 @@ class ModelContainer(object):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
 
@@ -943,7 +943,7 @@ class MolList(list):
             # Test if the molecule already exists.
             for i in xrange(len(self)):
                 if self[i].mol_name == mol_name:
-                    raise RelaxError, "The molecule '" + `mol_name` + "' already exists."
+                    raise RelaxError, "The molecule '" + repr(mol_name) + "' already exists."
 
             # Append an empty MolContainer.
             self.append(mol_cont)

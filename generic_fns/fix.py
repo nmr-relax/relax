@@ -72,4 +72,4 @@ def fix(element, fixed):
 
     # Unknown.
     if element not in ['diff', 'all_spins', 'all']:
-        raise RelaxError, "The 'element' argument " + `element` + " is unknown."
+        raise RelaxError, "The 'element' argument " + repr(element) + " is unknown."

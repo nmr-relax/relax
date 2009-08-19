@@ -92,10 +92,10 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", res_from=" + `res_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", res_to=" + `res_to` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", res_from=" + repr(res_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", res_to=" + repr(res_to) + ")"
             print text
 
         # The data pipe from argument.
@@ -155,9 +155,9 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.create("
-            text = text + "res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name`
-            text = text + ", mol_name=" + `mol_name` + ")"
+            text = text + "res_num=" + repr(res_num)
+            text = text + ", res_name=" + repr(res_name)
+            text = text + ", mol_name=" + repr(mol_name) + ")"
             print text
 
         # Residue number.
@@ -196,7 +196,7 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.delete("
-            text = text + "res_id=" + `res_id` + ")"
+            text = text + "res_id=" + repr(res_id) + ")"
             print text
 
         # The residue identifier argument.
@@ -219,7 +219,7 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.display("
-            text = text + "res_id=" + `res_id` + ")"
+            text = text + "res_id=" + repr(res_id) + ")"
             print text
 
         # The res_id argument.
@@ -267,9 +267,9 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.name("
-            text = text + "res_id=" + `res_id`
-            text = text + ", name=" + `name`
-            text = text + ", force=" + `force` + ")"
+            text = text + "res_id=" + repr(res_id)
+            text = text + ", name=" + repr(name)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Residue identification string.
@@ -322,9 +322,9 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.number("
-            text = text + "res_id=" + `res_id`
-            text = text + ", number=" + `number`
-            text = text + ", force=" + `force` + ")"
+            text = text + "res_id=" + repr(res_id)
+            text = text + ", number=" + repr(number)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Residue identification string.

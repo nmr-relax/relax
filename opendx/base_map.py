@@ -101,7 +101,7 @@ class Base_Map:
 
             # No bounds found.
             if not bounds:
-                raise RelaxError, "No bounds for the parameter " + `self.params[i]` + " could be determined."
+                raise RelaxError, "No bounds for the parameter " + repr(self.params[i]) + " could be determined."
 
             # Assign the bounds to the global data structure.
             self.bounds[i] = bounds
@@ -254,13 +254,13 @@ class Base_Map:
         self.corners = "{[0"
         for i in xrange(self.n - 1):
             self.corners = self.corners + " 0"
-        self.corners = self.corners + "] [" + `self.inc`
+        self.corners = self.corners + "] [" + repr(self.inc)
         for i in xrange(self.n - 1):
-            self.corners = self.corners + " "  + `self.inc`
+            self.corners = self.corners + " "  + repr(self.inc)
         self.corners = self.corners + "]}"
 
         # Sphere size.
-        self.sphere_size = `0.025 * (self.inc + 1.0)`
+        self.sphere_size = repr(0.025 * (self.inc + 1.0))
 
         # Get the text of the program.
         text = self.program_text()
@@ -351,6 +351,6 @@ class Base_Map:
             string = ""
             val = 0.0
             for j in xrange(self.axis_incs + 1):
-                string = string + " " + `val`
+                string = string + " " + repr(val)
                 val = val + loc_inc
             self.tick_locations.append("{" + string + " }")

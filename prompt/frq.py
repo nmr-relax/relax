@@ -66,8 +66,8 @@ class Frq:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frq("
-            text = text + "id=" + `id`
-            text = text + ", frq=" + `frq` + ")"
+            text = text + "id=" + repr(id)
+            text = text + ", frq=" + repr(frq) + ")"
             print text
 
         # Id string.

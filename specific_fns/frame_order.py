@@ -748,7 +748,7 @@ class Frame_order(Common_functions):
 
         # Test if the model name exists.
         if not model in ['iso cone']:
-            raise RelaxError, "The model name " + `model` + " is invalid."
+            raise RelaxError, "The model name " + repr(model) + " is invalid."
 
         # Set the model
         cdp.model = model

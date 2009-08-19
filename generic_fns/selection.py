@@ -160,7 +160,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
             elif boolean == 'XNOR':
                 spin.select = (spin.select and False) or not (spin.select or False)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError, "Unknown boolean operator " + repr(boolean)
 
 
 def desel_spin(spin_id=None, boolean='AND', change_all=False):
@@ -214,7 +214,7 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
             elif boolean == 'XNOR':
                 spin.select = (spin.select and False) or not (spin.select or False)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError, "Unknown boolean operator " + repr(boolean)
 
 
 def reverse(spin_id=None):
@@ -368,7 +368,7 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
             elif boolean == 'XNOR':
                 spin.select = (spin.select and True) or not (spin.select or True)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError, "Unknown boolean operator " + repr(boolean)
 
 
 def sel_spin(spin_id=None, boolean='OR', change_all=False):
@@ -423,4 +423,4 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
             elif boolean == 'XNOR':
                 spin.select = (spin.select and True) or not (spin.select or True)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError, "Unknown boolean operator " + repr(boolean)

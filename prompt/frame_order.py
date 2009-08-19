@@ -90,11 +90,11 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.cone_pdb("
-            text = text + "size=" + `size`
-            text = text + ", inc=" + `inc`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "size=" + repr(size)
+            text = text + ", inc=" + repr(inc)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Object size.
@@ -143,7 +143,7 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.pivot("
-            text = text + "pivot=" + `pivot` + ")"
+            text = text + "pivot=" + repr(pivot) + ")"
             print text
 
         # Pivot point argument.
@@ -188,7 +188,7 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.ref_domain("
-            text = text + "ref=" + `ref` + ")"
+            text = text + "ref=" + repr(ref) + ")"
             print text
 
         # Ref frame argument.
@@ -228,7 +228,7 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.select_model("
-            text = text + "model=" + `model` + ")"
+            text = text + "model=" + repr(model) + ")"
             print text
 
         # Model argument.

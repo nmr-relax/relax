@@ -288,7 +288,7 @@ class Main:
                 # Normal round of optimisation for diffusion models MII to MV.
                 else:
                     # Base directory to place files into.
-                    self.base_dir = DIFF_MODEL + sep+'round_'+`self.round`+sep
+                    self.base_dir = DIFF_MODEL + sep+'round_'+repr(self.round)+sep
 
                     # Load the optimised diffusion tensor from either the previous round.
                     self.load_tensor()
@@ -352,7 +352,7 @@ class Main:
                 pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
-                results.read(file='results', dir=model + sep+'round_'+`self.round`+sep+'opt')
+                results.read(file='results', dir=model + sep+'round_'+repr(self.round)+sep+'opt')
 
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
@@ -410,11 +410,11 @@ class Main:
         ###################
 
         print "Chi-squared test:"
-        print "    chi2 (k-1):          " + `prev_pipe.chi2`
-        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
-        print "    chi2 (k):            " + `cdp.chi2`
-        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
-        print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
+        print "    chi2 (k-1):          " + repr(prev_pipe.chi2)
+        print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_pipe.chi2)) + ')'
+        print "    chi2 (k):            " + repr(cdp.chi2)
+        print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(cdp.chi2)) + ')'
+        print "    chi2 (difference):   " + repr(prev_pipe.chi2 - cdp.chi2)
         if prev_pipe.chi2 == cdp.chi2:
             print "    The chi-squared value has converged.\n"
         else:
@@ -473,10 +473,10 @@ class Main:
                 # Test if not identical.
                 if prev_val != curr_val:
                     print "    Parameter:   " + param
-                    print "    Value (k-1): " + `prev_val`
-                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                    print "    Value (k):   " + `curr_val`
-                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
+                    print "    Value (k-1): " + repr(prev_val)
+                    print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'
+                    print "    Value (k):   " + repr(curr_val)
+                    print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(curr_val)) + ')'
                     print "    The diffusion parameters have not converged.\n"
                     params_converged = False
 
@@ -507,12 +507,12 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin ID:     " + `spin_id`
+                            print "    Spin ID:     " + repr(spin_id)
                             print "    Parameter:   " + curr_spin.params[j]
-                            print "    Value (k-1): " + `prev_val`
-                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                            print "    Value (k):   " + `curr_val`
-                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
+                            print "    Value (k-1): " + repr(prev_val)
+                            print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'
+                            print "    Value (k):   " + repr(curr_val)
+                            print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'
                             print "    The model-free parameters have not converged.\n"
                             params_converged = False
                             break
@@ -589,7 +589,7 @@ class Main:
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('results', DIFF_MODEL + sep+'round_'+`self.round-1`+sep+'opt')
+            results.read('results', DIFF_MODEL + sep+'round_'+repr(self.round-1)+sep+'opt')
 
 
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):

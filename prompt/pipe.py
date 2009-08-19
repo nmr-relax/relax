@@ -82,8 +82,8 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print text
 
         # The source data pipe argument.
@@ -135,8 +135,8 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.create("
-            text = text + "pipe_name=" + `pipe_name`
-            text = text + ", pipe_type=" + `pipe_type` + ")"
+            text = text + "pipe_name=" + repr(pipe_name)
+            text = text + ", pipe_type=" + repr(pipe_type) + ")"
             print text
 
         # The name of the data pipe.
@@ -189,7 +189,7 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.delete("
-            text = text + "pipe_name=" + `pipe_name` + ")"
+            text = text + "pipe_name=" + repr(pipe_name) + ")"
             print text
 
         # The data pipe name argument.
@@ -236,8 +236,8 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.hybridise("
-            text = text + "hybrid=" + `hybrid`
-            text = text + ", pipes=" + `pipes` + ")"
+            text = text + "hybrid=" + repr(hybrid)
+            text = text + ", pipes=" + repr(pipes) + ")"
             print text
 
         # The hybrid argument.
@@ -303,7 +303,7 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.switch("
-            text = text + "pipe_name=" + `pipe_name` + ")"
+            text = text + "pipe_name=" + repr(pipe_name) + ")"
             print text
 
         # The data pipe name argument.

@@ -88,10 +88,10 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", mol_from=" + `mol_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", mol_to=" + `mol_to` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", mol_from=" + repr(mol_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", mol_to=" + repr(mol_to) + ")"
             print text
 
         # The pipe_from argument.
@@ -143,7 +143,7 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.create("
-            text = text + "mol_name=" + `mol_name` + ")"
+            text = text + "mol_name=" + repr(mol_name) + ")"
             print text
 
         # Molecule name.
@@ -172,7 +172,7 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.delete("
-            text = text + "mol_id=" + `mol_id` + ")"
+            text = text + "mol_id=" + repr(mol_id) + ")"
             print text
 
         # The molecule identifier argument.
@@ -195,7 +195,7 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.display("
-            text = text + "mol_id=" + `mol_id` + ")"
+            text = text + "mol_id=" + repr(mol_id) + ")"
             print text
 
         # The molecule identifier argument.
@@ -239,9 +239,9 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.name("
-            text = text + "mol_id=" + `mol_id`
-            text = text + ", name=" + `name`
-            text = text + ", force=" + `force` + ")"
+            text = text + "mol_id=" + repr(mol_id)
+            text = text + ", name=" + repr(name)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Residue identification string.

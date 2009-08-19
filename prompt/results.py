@@ -83,8 +83,8 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir) + ")"
             print text
 
         # File.
@@ -137,10 +137,10 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.write("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", compress_type=" + `compress_type` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", compress_type=" + repr(compress_type) + ")"
             print text
 
         # File.

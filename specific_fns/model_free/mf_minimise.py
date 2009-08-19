@@ -135,9 +135,9 @@ class Mf_minimise:
             # Make sure that the errors are strictly positive numbers.
             for j in xrange(len(spin.relax_error)):
                 if spin.relax_error[j] == 0.0:
-                    raise RelaxError, "Zero error for spin '" + `spin.num` + " " + spin.name + "', calculation not possible."
+                    raise RelaxError, "Zero error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible."
                 elif spin.relax_error[j] < 0.0:
-                    raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', calculation not possible."
+                    raise RelaxError, "Negative error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible."
 
             # Create the initial parameter vector.
             param_vector = self.assemble_param_vector(spin=spin, sim_index=sim_index)
@@ -893,7 +893,7 @@ class Mf_minimise:
                 if model_type == 'mf' or model_type == 'local_tm':
                     if verbosity >= 2:
                         print "\n\n"
-                    string = "Fitting to spin " + `spin_id`
+                    string = "Fitting to spin " + repr(spin_id)
                     print "\n\n" + string
                     print len(string) * '~'
 
@@ -1191,9 +1191,9 @@ class Mf_minimise:
             # Make sure that the errors are strictly positive numbers.
             for k in xrange(len(spin.relax_error)):
                 if spin.relax_error[k] == 0.0:
-                    raise RelaxError, "Zero error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
+                    raise RelaxError, "Zero error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible."
                 elif spin.relax_error[k] < 0.0:
-                    raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
+                    raise RelaxError, "Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible."
 
             # Repackage the data.
             if sim_index == None:
@@ -1315,8 +1315,8 @@ class Mf_minimise:
 
         # Print out.
         if verbosity >= 1:
-            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+            print "Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"
 
         # Too big.
         if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
+            raise RelaxError, "A grid search of size " + repr(grid_size) + " is too large."

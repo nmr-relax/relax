@@ -61,7 +61,7 @@ def gpg_sign(target, source, env):
             file = env['DIST_FILE'] + '.tar.bz2'
 
         # Print out.
-        print "\n\nSigning the distribution package " + `file` + ".\n"
+        print "\n\nSigning the distribution package " + repr(file) + ".\n"
 
         # Run the 'gpg' command.
         system("gpg --detach-sign --default-key " + key + " " + path.pardir + path.sep + file)
@@ -93,7 +93,7 @@ def package(target, source, env):
             file = env['DIST_FILE'] + '.tar.bz2'
 
         # Print out.
-        print "\n\nCreating the package distribution " + `file` + ".\n"
+        print "\n\nCreating the package distribution " + repr(file) + ".\n"
 
         # Open the Zip distribution file.
         if dist_type == 'zip':

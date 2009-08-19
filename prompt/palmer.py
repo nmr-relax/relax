@@ -106,19 +106,19 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.create("
-            text = text + "dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", binary=" + `binary`
-            text = text + ", diff_search=" + `diff_search`
-            text = text + ", sims=" + `sims`
-            text = text + ", sim_type=" + `sim_type`
-            text = text + ", trim=" + `trim`
-            text = text + ", steps=" + `steps`
-            text = text + ", constraints=" + `constraints`
-            text = text + ", heteronucleus=" + `heteronuc_type`
-            text = text + ", atom1=" + `atom1`
-            text = text + ", atom2=" + `atom2`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + "dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", binary=" + repr(binary)
+            text = text + ", diff_search=" + repr(diff_search)
+            text = text + ", sims=" + repr(sims)
+            text = text + ", sim_type=" + repr(sim_type)
+            text = text + ", trim=" + repr(trim)
+            text = text + ", steps=" + repr(steps)
+            text = text + ", constraints=" + repr(constraints)
+            text = text + ", heteronucleus=" + repr(heteronuc_type)
+            text = text + ", atom1=" + repr(atom1)
+            text = text + ", atom2=" + repr(atom2)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print text
 
         # Directory.
@@ -207,9 +207,9 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.execute("
-            text = text + "dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", binary=" + `binary` + ")"
+            text = text + "dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", binary=" + repr(binary) + ")"
             print text
 
         # Directory.
@@ -241,7 +241,7 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.extract("
-            text = text + "dir=" + `dir` + ")"
+            text = text + "dir=" + repr(dir) + ")"
             print text
 
         # Directory.

@@ -467,7 +467,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         if value:
             # Test if the length of the value array is equal to the length of the parameter array.
             if len(value) != len(spin.params):
-                raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for spin " + `spin.num` + " " + spin.name + "."
+                raise RelaxError, "The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(spin.params) + ", for spin " + repr(spin.num) + " " + spin.name + "."
 
         # Default values.
         else:
@@ -483,7 +483,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
             # Get the object.
             object_name = return_data_name(spin.params[i])
             if not object_name:
-                raise RelaxError, "The data type " + `spin.params[i]` + " does not exist."
+                raise RelaxError, "The data type " + repr(spin.params[i]) + " does not exist."
 
             # Initialise all data if it doesn't exist.
             if not hasattr(spin, object_name):
@@ -510,7 +510,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         # Get the object.
         object_name = return_data_name(param)
         if not object_name:
-            raise RelaxError, "The data type " + `param` + " does not exist."
+            raise RelaxError, "The data type " + repr(param) + " does not exist."
 
         # Initialise all data if it doesn't exist.
         if not hasattr(spin, object_name):
@@ -615,4 +615,4 @@ def write_data(param=None, file=None, return_value=None):
         value, error = return_value(spin, param)
 
         # Write the data.
-        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(`value`, `error`), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(repr(value), repr(error)), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)

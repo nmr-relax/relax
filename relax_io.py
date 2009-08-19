@@ -248,7 +248,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
 
     # Invalid file name.
     if not file_name and type(file_name) != str:
-        raise RelaxError, "The file name " + `file_name` + " " + `type(file_name)` + " is invalid and cannot be opened."
+        raise RelaxError, "The file name " + repr(file_name) + " " + repr(type(file_name)) + " is invalid and cannot be opened."
 
     # File path.
     file_path = get_file_path(file_name, dir)
@@ -259,18 +259,18 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     # Open the file for reading.
     try:
         if verbosity:
-            print "Opening the file " + `file_path` + " for reading."
+            print "Opening the file " + repr(file_path) + " for reading."
         if compress_type == 0:
             file_obj = open(file_path, 'r')
         elif compress_type == 1:
             if dep_check.bz2_module:
                 file_obj = BZ2File(file_path, 'r')
             else:
-                raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + dep_check.bz2_module_message + "."
+                raise RelaxError, "Cannot open the file " + repr(file_path) + ", try uncompressing first.  " + dep_check.bz2_module_message + "."
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'r')
     except IOError, message:
-        raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
+        raise RelaxError, "Cannot open the file " + repr(file_path) + ".  " + message.args[1] + "."
 
     # Return the opened file.
     return file_obj
@@ -358,7 +358,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     # Open the file for writing.
     try:
         if verbosity:
-            print "Opening the file " + `file_path` + " for writing."
+            print "Opening the file " + repr(file_path) + " for writing."
         if compress_type == 0:
             file_obj = open(file_path, 'w')
         elif compress_type == 1:
@@ -366,7 +366,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'w')
     except IOError, message:
-        raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
+        raise RelaxError, "Cannot open the file " + repr(file_path) + ".  " + message.args[1] + "."
 
     # Return the opened file.
     if return_path:

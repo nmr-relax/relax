@@ -71,8 +71,8 @@ class Fix:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "fix("
-            text = text + "element=" + `element`
-            text = text + ", fixed=" + `fixed` + ")"
+            text = text + "element=" + repr(element)
+            text = text + ", fixed=" + repr(fixed) + ")"
             print text
 
         # The element argument.

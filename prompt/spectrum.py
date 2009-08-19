@@ -70,9 +70,9 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.baseplane_rmsd("
-            text = text + "error=" + `error`
-            text = text + ", spectrum_id=" + `spectrum_id`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + "error=" + repr(error)
+            text = text + ", spectrum_id=" + repr(spectrum_id)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print text
 
         # The error.
@@ -269,9 +269,9 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.integration_points("
-            text = text + "N=" + `N`
-            text = text + ", spectrum_id=" + `spectrum_id`
-            text = text + ", spin_id=" + `spin_id` + ")"
+            text = text + "N=" + repr(N)
+            text = text + ", spectrum_id=" + repr(spectrum_id)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print text
 
         # The number of summed points.
@@ -409,19 +409,19 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.read_intensities("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", spectrum_id=" + `spectrum_id`
-            text = text + ", heteronuc=" + `heteronuc`
-            text = text + ", proton=" + `proton`
-            text = text + ", int_col=" + `int_col`
-            text = text + ", int_method=" + `int_method`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", spectrum_id=" + repr(spectrum_id)
+            text = text + ", heteronuc=" + repr(heteronuc)
+            text = text + ", proton=" + repr(proton)
+            text = text + ", int_col=" + repr(int_col)
+            text = text + ", int_method=" + repr(int_method)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", sep=" + repr(sep) + ")"
             print text
 
         # The file name.
@@ -526,7 +526,7 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.replicated("
-            text = text + "spectrum_ids=" + `spectrum_ids` + ")"
+            text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
             print text
 
         # Spectrum ids.

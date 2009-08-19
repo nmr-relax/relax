@@ -429,22 +429,22 @@ class Molmol:
         """Colour the given peptide bond."""
 
         # Ca to C bond.
-        self.commands.append("SelectBond 'atom1.name = \"CA\"  & atom2.name = \"C\" & res.num = " + `res_num-1` + "'")
+        self.commands.append("SelectBond 'atom1.name = \"CA\"  & atom2.name = \"C\" & res.num = " + repr(res_num-1) + "'")
         self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
 
         # C to N bond.
-        self.commands.append("SelectBond 'atom1.name = \"C\"  & atom2.name = \"N\" & res.num = " + `res_num-1` + "'")
+        self.commands.append("SelectBond 'atom1.name = \"C\"  & atom2.name = \"N\" & res.num = " + repr(res_num-1) + "'")
         self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
 
         # N to Ca bond.
-        self.commands.append("SelectBond 'atom1.name = \"N\"  & atom2.name = \"CA\" & res.num = " + `res_num` + "'")
+        self.commands.append("SelectBond 'atom1.name = \"N\"  & atom2.name = \"CA\" & res.num = " + repr(res_num) + "'")
         self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
 
         # Blank line.
         self.commands.append("")

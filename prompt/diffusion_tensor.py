@@ -89,8 +89,8 @@ class Diffusion_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print text
 
         # The pipe_from argument.
@@ -394,13 +394,13 @@ class Diffusion_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.init("
-            text = text + "params=" + `params`
-            text = text + ", time_scale=" + `time_scale`
-            text = text + ", d_scale=" + `d_scale`
-            text = text + ", angle_units=" + `angle_units`
-            text = text + ", param_types=" + `param_types`
-            text = text + ", spheroid_type=" + `spheroid_type`
-            text = text + ", fixed=" + `fixed` + ")"
+            text = text + "params=" + repr(params)
+            text = text + ", time_scale=" + repr(time_scale)
+            text = text + ", d_scale=" + repr(d_scale)
+            text = text + ", angle_units=" + repr(angle_units)
+            text = text + ", param_types=" + repr(param_types)
+            text = text + ", spheroid_type=" + repr(spheroid_type)
+            text = text + ", fixed=" + repr(fixed) + ")"
             print text
 
         # Parameter argument.
@@ -408,7 +408,7 @@ class Diffusion_tensor:
             raise RelaxNumTupleError, ('diffusion parameters', params)
         if type(params) == tuple:
             if len(params) != 4 and len(params) != 6:
-                raise RelaxError, "The diffusion parameters argument " + `params` + " must either be a number or a tuple of numbers of length 4 or 6."
+                raise RelaxError, "The diffusion parameters argument " + repr(params) + " must either be a number or a tuple of numbers of length 4 or 6."
             for i in xrange(len(params)):
                 if type(params[i]) != float and type(params[i]) != int:
                     raise RelaxNumTupleError, ('diffusion parameters', params)

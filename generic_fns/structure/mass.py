@@ -76,14 +76,14 @@ def centre_of_mass(return_mass=False):
         if res_name == None and res_num == None:
             res_cont = mol_cont.res[0]
         else:
-            id = id + ':' + `res_num`
+            id = id + ':' + repr(res_num)
             res_cont = return_residue(id)
 
         # Get the corresponding spin container.
         if atom_name == None and atom_num == None:
             spin_cont = res_cont.spin[0]
         else:
-            id = id + '@' + `atom_num`
+            id = id + '@' + repr(atom_num)
             spin_cont = return_spin(id)
 
         # Deselected spins.
@@ -110,8 +110,8 @@ def centre_of_mass(return_mass=False):
     R = R / M
 
     # Final print out.
-    print "    Total mass:      M = " + `M`
-    print "    Centre of mass:  R = " + `R`
+    print "    Total mass:      M = " + repr(M)
+    print "    Centre of mass:  R = " + repr(R)
 
     # Return the centre of mass.
     if return_mass:

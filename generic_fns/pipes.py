@@ -90,7 +90,7 @@ def create(pipe_name=None, pipe_type=None, switch=True):
 
     # Test if pipe_type is valid.
     if not pipe_type in valid:
-        raise RelaxError, "The data pipe type " + `pipe_type` + " is invalid and must be one of the strings in the list " + `valid` + "."
+        raise RelaxError, "The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(valid) + "."
 
     # Test that the C modules have been loaded.
     if pipe_type == 'relax_fit' and not C_module_exp_fn:

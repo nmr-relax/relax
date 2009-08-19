@@ -135,9 +135,9 @@ def select(method=None, modsel_pipe=None, pipes=None):
         formula = bic
     elif method == 'CV':
         print "CV model selection."
-        raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
+        raise RelaxError, "The model selection technique " + repr(method) + " is not currently supported."
     else:
-        raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
+        raise RelaxError, "The model selection technique " + repr(method) + " is not currently supported."
 
     # No pipes.
     if len(pipes) == 0:
@@ -156,7 +156,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     if type(pipes[0]) == list:
         # No pipes.
         if len(pipes[0]) == 0:
-            raise RelaxError, "No pipes are available for use in model selection in the array " + `pipes[0]` + "."
+            raise RelaxError, "No pipes are available for use in model selection in the array " + repr(pipes[0]) + "."
 
         # Loop over the data pipes.
         for i in xrange(len(pipes)):
@@ -283,7 +283,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
             # Print out of selected model.
-            print "The model from the data pipe " + `best_model` + " has been selected."
+            print "The model from the data pipe " + repr(best_model) + " has been selected."
 
             # Switch to the selected data pipe.
             switch(best_model)

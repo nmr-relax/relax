@@ -72,7 +72,7 @@ class Jw_mapping:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "jw_mapping.set_frq("
-            text = text + "frq=" + `frq` + ")"
+            text = text + "frq=" + repr(frq) + ")"
             print text
 
         # The frq argument.

@@ -63,9 +63,9 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.back_calc("
-            text = text + "ri_label=" + `ri_label`
-            text = text + ", frq_label=" + `frq_label`
-            text = text + ", frq=" + `frq` + ")"
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label)
+            text = text + ", frq=" + repr(frq) + ")"
             print text
 
         # Relaxation data type.
@@ -127,10 +127,10 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", ri_label=" + `ri_label`
-            text = text + ", frq_label=" + `frq_label` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label) + ")"
             print text
 
         # The pipe_from argument.
@@ -179,8 +179,8 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.delete("
-            text = text + "ri_label=" + `ri_label`
-            text = text + ", frq_label=" + `frq_label` + ")"
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label) + ")"
             print text
 
         # Relaxation data type.
@@ -217,8 +217,8 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.display("
-            text = text + "ri_label=" + `ri_label`
-            text = text + ", frq_label=" + `frq_label` + ")"
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label) + ")"
             print text
 
         # Relaxation data type.
@@ -302,19 +302,19 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.read("
-            text = text + "ri_label=" + `ri_label`
-            text = text + ", frq_label=" + `frq_label`
-            text = text + ", frq=" + `frq`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", data_col=" + `data_col`
-            text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label)
+            text = text + ", frq=" + repr(frq)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", data_col=" + repr(data_col)
+            text = text + ", error_col=" + repr(error_col)
+            text = text + ", sep=" + repr(sep) + ")"
             print text
 
         # Relaxation data type.
@@ -401,11 +401,11 @@ class Relax_data:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_data.write("
-            text = text + "ri_label=" + `ri_label`
-            text = text + ", frq_label=" + `frq_label`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "ri_label=" + repr(ri_label)
+            text = text + ", frq_label=" + repr(frq_label)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Relaxation data type.

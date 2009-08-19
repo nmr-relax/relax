@@ -103,7 +103,7 @@ class Internal(Base_struct_API):
                 matching_names.append(mol.atom_name[i])
 
             # Return nothing but a warning.
-            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_names`
+            return None, None, None, None, None, 'More than one attached atom found: ' + repr(matching_names)
 
         # No attached atoms.
         if num_attached == 0:
@@ -233,7 +233,7 @@ class Internal(Base_struct_API):
                 try:
                     model = int(split(lines[i])[1])
                 except:
-                    raise RelaxError, "The MODEL record " + `lines[i]` + " is corrupt, cannot read the PDB file."
+                    raise RelaxError, "The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the PDB file."
 
             # Skip all records prior to the first ATOM or HETATM record.
             if not (search('^ATOM', lines[i]) or search('^HETATM', lines[i])) and not len(records):
@@ -500,7 +500,7 @@ class Internal(Base_struct_API):
 
                     # More than one matching atom!
                     if index != None:
-                        raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+                        raise RelaxError, "The atom_id argument " + repr(atom_id) + " must correspond to a single atom."
 
                     # Update the index.
                     index = i
@@ -616,7 +616,7 @@ class Internal(Base_struct_API):
                             num_struct = len(model.mol)
 
                     # Set the name to the file name plus the structure number.
-                    new_mol_name.append(file_root(file) + '_mol' + `mol_num+num_struct`)
+                    new_mol_name.append(file_root(file) + '_mol' + repr(mol_num+num_struct))
 
                 # Store the original mol number.
                 orig_mol_num.append(mol_num)
@@ -753,16 +753,16 @@ class Internal(Base_struct_API):
 
                         # The checks.
                         if het_data_coll[j][1] != het_data[index][i][1]:
-                            raise RelaxError, "The " + `het_data[index][i][1]` + " residue name of hetrogen " + `het_data[index][i][0]` + " " + het_data[index][i][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][1]` + " name of the previous structures."
+                            raise RelaxError, "The " + repr(het_data[index][i][1]) + " residue name of hetrogen " + repr(het_data[index][i][0]) + " " + het_data[index][i][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][1]) + " name of the previous structures."
 
                         elif het_data_coll[j][2] != het_data[index][i][2]:
-                            raise RelaxError, "The hetrogen chain id " + `het_data[index][i][2]` + " does not match " + `het_data_coll[j][2]` + " of residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of the previous structures."
+                            raise RelaxError, "The hetrogen chain id " + repr(het_data[index][i][2]) + " does not match " + repr(het_data_coll[j][2]) + " of residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of the previous structures."
 
                         elif het_data_coll[j][3] != het_data[index][i][3]:
-                            raise RelaxError, "The " + `het_data[index][i][3]` + " atoms of hetrogen " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][3]` + " of the previous structures."
+                            raise RelaxError, "The " + repr(het_data[index][i][3]) + " atoms of hetrogen " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][3]) + " of the previous structures."
 
                         elif het_data_coll[j][4] != het_data[index][i][4]:
-                            raise RelaxError, "The atom counts " + `het_data[index][i][4]` +  " for the hetrogen residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " do not match the counts " + `het_data_coll[j][4]` + " of the previous structures."
+                            raise RelaxError, "The atom counts " + repr(het_data[index][i][4]) +  " for the hetrogen residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " do not match the counts " + repr(het_data_coll[j][4]) + " of the previous structures."
 
                 # If there is no match, add the new residue to the collective.
                 if not found:
@@ -827,7 +827,7 @@ class Internal(Base_struct_API):
 
             # Loop over the atoms.
             for atom_count in het[4]:
-                formula = formula + atom_count[0] + `atom_count[1]`
+                formula = formula + atom_count[0] + repr(atom_count[1])
 
             # The FORMUL record (chemical formula).
             file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
@@ -1077,7 +1077,7 @@ class MolContainer:
                 return j
 
         # Should not be here, the PDB connect records are incorrect.
-        warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
+        warn(RelaxWarning("The atom number " + repr(atom_num) + " from the CONECT record cannot be found within the ATOM and HETATM records."))
 
 
     def __det_pdb_element(self, atom_name):

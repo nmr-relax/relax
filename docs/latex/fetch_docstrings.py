@@ -641,7 +641,7 @@ class Fetch_docstrings:
         #############
 
         # Print the function name to sys.stdout
-        sys.stdout.write("Function: " + `function` + "\n")
+        sys.stdout.write("Function: " + repr(function) + "\n")
 
         # Get the docstring.
         docstring = getdoc(object)
@@ -832,7 +832,7 @@ class Fetch_docstrings:
 
                     # Don't know what to do with this!
                     if len(line_elements) > 2:
-                        sys.write("Keyword failure in: " + `line` + " \n ")
+                        sys.write("Keyword failure in: " + repr(line) + " \n ")
                         sys.exit()
 
                     # Format the keyword.
@@ -898,7 +898,7 @@ class Fetch_docstrings:
                 # Badly formatted list.
                 if len(elements) > 2:
                     sys.stderr.write("Error: Badly formatted list element.\n")
-                    sys.stderr.write("The element is: " + `lines[i]` + "\n")
+                    sys.stderr.write("The element is: " + repr(lines[i]) + "\n")
                     sys.exit()
 
                 # Plain list.
@@ -959,7 +959,7 @@ class Fetch_docstrings:
 
         # Weird quote.
         elif len(elements) > 3:
-            sys.stderr.write('Unknown quote: ' + `self.words[index]`)
+            sys.stderr.write('Unknown quote: ' + repr(self.words[index]))
             sys.exit()
 
         # Multiword quote.
@@ -1092,7 +1092,7 @@ class Fetch_docstrings:
 
         # Count the number of columns.
         num_col = len(split(self.docstring_lines[self.i], '|'))
-        string = `num_col-2` + ' \n '
+        string = repr(num_col-2) + ' \n '
 
         # Not really a table!
         if num_col == 1:

@@ -82,9 +82,9 @@ class Dasha:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.create("
-            text = text + "algor=" + `algor`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "algor=" + repr(algor)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # The algor argument.
@@ -134,9 +134,9 @@ class Dasha:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.execute("
-            text = text + "dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", binary=" + `binary` + ")"
+            text = text + "dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", binary=" + repr(binary) + ")"
             print text
 
         # Directory.
@@ -168,7 +168,7 @@ class Dasha:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.extract("
-            text = text + "dir=" + `dir` + ")"
+            text = text + "dir=" + repr(dir) + ")"
             print text
 
         # Directory.

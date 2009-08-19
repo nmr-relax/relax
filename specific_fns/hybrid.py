@@ -157,7 +157,7 @@ class Hybrid:
         if model_info == None and spin_id == None:
             raise RelaxError, "Either the model_info or spin_id argument must be supplied."
         elif model_info != None and spin_id != None:
-            raise RelaxError, "The model_info arg " + `model_info` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
+            raise RelaxError, "The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied."
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()

@@ -125,7 +125,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 mol_cont = cdp.mol[-1]
 
         # Add the residue number to the ID string (residue name is ignored because only the number is unique).
-        id = id + ':' + `res_num`
+        id = id + ':' + repr(res_num)
 
         # Get the corresponding residue container.
         res_cont = return_residue(id)
@@ -139,7 +139,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
             res_cont = mol_cont.res[-1]
 
         # Add the atom number to the ID string (atom name is ignored because only the number is unique).
-        id = id + '@' + `atom_num`
+        id = id + '@' + repr(atom_num)
 
         # Get the corresponding spin container.
         spin_cont = return_spin(id)
@@ -234,7 +234,7 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
 
     # Check that the parser is the same as the currently loaded PDB files.
     if hasattr(cdp, 'structure') and cdp.structure.id != parser:
-        raise RelaxError, "The " + `parser` + " parser does not match the " + `cdp.structure.id` + " parser of the PDB loaded into the current pipe."
+        raise RelaxError, "The " + repr(parser) + " parser does not match the " + repr(cdp.structure.id) + " parser of the PDB loaded into the current pipe."
 
     # Place the parser specific structural object into the relax data store.
     if not hasattr(cdp, 'structure'):
@@ -347,14 +347,14 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
         # Test that the spin number or name are set (one or both are essential for the identification of the atom).
         if spin.num == None and spin.name == None:
-            warn(RelaxWarning("Either the spin number or name must be set for the spin " + `id` + " to identify the corresponding atom in the molecule."))
+            warn(RelaxWarning("Either the spin number or name must be set for the spin " + repr(id) + " to identify the corresponding atom in the molecule."))
             continue
 
         # The bond vector already exists.
         if hasattr(spin, object_name):
             obj = getattr(spin, object_name)
             if obj:
-                warn(RelaxWarning("The bond vector for the spin " + `id` + " already exists."))
+                warn(RelaxWarning("The bond vector for the spin " + repr(id) + " already exists."))
                 continue
 
         # Get the bond info.
@@ -364,7 +364,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         if not bond_vectors:
             # Warning messages.
             if warnings:
-                warn(RelaxWarning(warnings + " (atom ID " + `id` + ")."))
+                warn(RelaxWarning(warnings + " (atom ID " + repr(id) + ")."))
 
             # Skip the spin.
             continue
@@ -373,7 +373,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         if not hasattr(spin, 'attached_atom'):
             spin.attached_atom = attached_name
         elif spin.attached_atom != attached_name:
-            raise RelaxError, "The " + `spin.attached_atom` + " atom already attached to the spin does not match the attached atom " + `attached_name` + "."
+            raise RelaxError, "The " + repr(spin.attached_atom) + " atom already attached to the spin does not match the attached atom " + repr(attached_name) + "."
 
         # Initialise the average vector.
         if ave:
@@ -412,7 +412,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
         # Print out of modified spins.
         if verbosity:
-            print "Extracted " + spin.name + "-" + attached_name + " vectors for " + `id` + '.'
+            print "Extracted " + spin.name + "-" + attached_name + " vectors for " + repr(id) + '.'
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:

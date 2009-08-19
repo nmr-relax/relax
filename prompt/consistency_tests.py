@@ -74,7 +74,7 @@ class Consistency_tests:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "consistency_tests.set_frq("
-            text = text + "frq=" + `frq` + ")"
+            text = text + "frq=" + repr(frq) + ")"
             print text
 
         # The frq argument.

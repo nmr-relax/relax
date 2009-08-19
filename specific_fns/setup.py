@@ -288,7 +288,7 @@ def get_instance(function_type):
         return hybrid_obj
 
     # Unknown analysis.
-    raise RelaxError, "The function_type " + `function_type` + " is unknown."
+    raise RelaxError, "The function_type " + repr(function_type) + " is unknown."
 
 
 def get_string(function_type):
@@ -327,4 +327,4 @@ def get_string(function_type):
         return "hybrid models"
 
     # Unknown analysis.
-    raise RelaxError, "The function_type " + `function_type` + " is unknown."
+    raise RelaxError, "The function_type " + repr(function_type) + " is unknown."

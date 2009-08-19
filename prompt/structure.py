@@ -145,10 +145,10 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.create_diff_tensor_pdb("
-            text = text + "scale=" + `scale`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "scale=" + repr(scale)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Scaling.
@@ -206,11 +206,11 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.create_vector_dist("
-            text = text + "length=" + `length`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", symmetry=" + `symmetry`
-            text = text + ", force=" + `force` + ")"
+            text = text + "length=" + repr(length)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", symmetry=" + repr(symmetry)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Vector length.
@@ -290,9 +290,9 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.load_spins("
-            text = text + "spin_id=" + `spin_id`
-            text = text + ", combine_models=" + `combine_models`
-            text = text + ", ave_pos=" + `ave_pos` + ")"
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", combine_models=" + repr(combine_models)
+            text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print text
 
         # Spin identifier.
@@ -407,13 +407,13 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.read_pdb("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", read_mol=" + `read_mol`
-            text = text + ", set_mol_name=" + `set_mol_name`
-            text = text + ", read_model=" + `read_model`
-            text = text + ", set_model_num=" + `set_model_num`
-            text = text + ", parser=" + `parser` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", read_mol=" + repr(read_mol)
+            text = text + ", set_mol_name=" + repr(set_mol_name)
+            text = text + ", read_model=" + repr(read_model)
+            text = text + ", set_model_num=" + repr(set_model_num)
+            text = text + ", parser=" + repr(parser) + ")"
             print text
 
         # File name.
@@ -550,12 +550,12 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.vectors("
-            text = text + "attached=" + `attached`
-            text = text + ", spin_id=" + `spin_id`
-            text = text + ", model=" + `model`
-            text = text + ", verbosity=" + `verbosity`
-            text = text + ", ave=" + `ave`
-            text = text + ", unit=" + `unit` + ")"
+            text = text + "attached=" + repr(attached)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", model=" + repr(model)
+            text = text + ", verbosity=" + repr(verbosity)
+            text = text + ", ave=" + repr(ave)
+            text = text + ", unit=" + repr(unit) + ")"
             print text
 
         # The attached atom argument.
@@ -626,10 +626,10 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.write_pdb("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", model_num=" + `model_num`
-            text = text + ", force=" + `force` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", model_num=" + repr(model_num)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # File name.

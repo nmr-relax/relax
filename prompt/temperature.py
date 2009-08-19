@@ -60,8 +60,8 @@ class Temp:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "temperature("
-            text = text + "id=" + `id`
-            text = text + ", temp=" + `temp` + ")"
+            text = text + "id=" + repr(id)
+            text = text + ", temp=" + repr(temp) + ")"
             print text
 
         # Id string.

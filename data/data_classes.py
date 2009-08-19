@@ -45,7 +45,7 @@ class Element(object):
                 continue
 
             # Generate the text.
-            text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
+            text = text + "%-25s%-100s\n" % (name, repr(getattr(self, name)))
 
         # Return the lot.
         return text

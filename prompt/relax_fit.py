@@ -69,8 +69,8 @@ class Relax_fit:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.relax_time("
-            text = text + "time=" + `time`
-            text = text + ", spectrum_id=" + `spectrum_id` + ")"
+            text = text + "time=" + repr(time)
+            text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print text
 
         # The relaxation time.
@@ -110,7 +110,7 @@ class Relax_fit:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.select_model("
-            text = text + "model=" + `model` + ")"
+            text = text + "model=" + repr(model) + ")"
             print text
 
         # The model argument.

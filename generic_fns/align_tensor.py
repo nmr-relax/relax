@@ -463,7 +463,7 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
-        raise RelaxError, "The alignment tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+        raise RelaxError, "The alignment tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'."
 
     # Add the align_tensors object to the data pipe.
     if not errors:
@@ -723,7 +723,7 @@ def map_labels(index, params, bounds, swap, inc):
         string = "{"
         val = 0.0
         for j in xrange(axis_incs + 1):
-            string = string + " " + `val`
+            string = string + " " + repr(val)
             val = val + loc_inc
         string = string + " }"
         tick_locations.append(string)
@@ -805,7 +805,7 @@ def matrix_angles(basis_set=0, tensors=None):
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header print out.
-    sys.stdout.write("\nData pipe: " + `pipes.cdp_name()` + "\n")
+    sys.stdout.write("\nData pipe: " + repr(pipes.cdp_name()) + "\n")
     sys.stdout.write("\n5D angles in deg between the vectors ")
     if basis_set == 0:
         sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}")
@@ -1270,7 +1270,7 @@ def set(tensor=None, value=None, param=None, errors=False):
 
         # Cannot set the single parameter.
         else:
-            raise RelaxError, "The geometric alignment parameter " + `geo_params[0]` + " cannot be set."
+            raise RelaxError, "The geometric alignment parameter " + repr(geo_params[0]) + " cannot be set."
 
     # 5 geometric parameters.
     elif len(geo_params) == 5:
@@ -1656,8 +1656,8 @@ def svd(basis_set=0, tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    print "\nData pipe: " + `pipes.cdp_name()`
+    print "\nData pipe: " + repr(pipes.cdp_name())
     print "\nSingular values:"
     for val in s:
-        print "\t" + `val`
-    print "\nCondition number: " + `cdp.align_tensors.cond_num`
+        print "\t" + repr(val)
+    print "\nCondition number: " + repr(cdp.align_tensors.cond_num)

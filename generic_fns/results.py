@@ -117,7 +117,7 @@ def read(file='results', directory=None):
 
     # Unknown results file.
     else:
-        raise RelaxError, "The format of the results file " + `file_path` + " cannot be determined."
+        raise RelaxError, "The format of the results file " + repr(file_path) + " cannot be determined."
 
 
 def write(file="results", directory=None, force=False, compress_type=1, verbosity=1):

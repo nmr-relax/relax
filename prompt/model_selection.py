@@ -101,9 +101,9 @@ class Modsel:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "model_selection("
-            text = text + "method=" + `method`
-            text = text + ", modsel_pipe=" + `modsel_pipe`
-            text = text + ", pipes=" + `pipes` + ")"
+            text = text + "method=" + repr(method)
+            text = text + ", modsel_pipe=" + repr(modsel_pipe)
+            text = text + ", pipes=" + repr(pipes) + ")"
             print text
 
         # Method.

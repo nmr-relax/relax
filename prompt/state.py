@@ -88,8 +88,8 @@ class State:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.load("
-            text = text + "state=" + `state`
-            text = text + ", dir_name=" + `dir_name` + ")"
+            text = text + "state=" + repr(state)
+            text = text + ", dir_name=" + repr(dir_name) + ")"
             print text
 
         # File name.
@@ -159,10 +159,10 @@ class State:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.save("
-            text = text + "state=" + `state`
-            text = text + ", dir_name=" + `dir_name`
-            text = text + ", force=" + `force`
-            text = text + ", compress_type=" + `compress_type` + ")"
+            text = text + "state=" + repr(state)
+            text = text + ", dir_name=" + repr(dir_name)
+            text = text + ", force=" + repr(force)
+            text = text + ", compress_type=" + repr(compress_type) + ")"
             print text
 
         # File name.

@@ -71,10 +71,10 @@ class OpenDX:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dx("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", dx_exe=" + `dx_exe`
-            text = text + ", vp_exec=" + `vp_exec` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", dx_exe=" + repr(dx_exe)
+            text = text + ", vp_exec=" + repr(vp_exec) + ")"
             print text
 
         # File name.
@@ -188,18 +188,18 @@ class OpenDX:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "map("
-            text = text + "params=" + `params`
-            text = text + ", map_type=" + `map_type`
-            text = text + ", spin_id=" + `spin_id`
-            text = text + ", inc=" + `inc`
-            text = text + ", lower=" + `lower`
-            text = text + ", upper=" + `upper`
-            text = text + ", axis_incs=" + `axis_incs`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", point=" + `point`
-            text = text + ", point_file=" + `point_file`
-            text = text + ", remap=" + `remap` + ")"
+            text = text + "params=" + repr(params)
+            text = text + ", map_type=" + repr(map_type)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", inc=" + repr(inc)
+            text = text + ", lower=" + repr(lower)
+            text = text + ", upper=" + repr(upper)
+            text = text + ", axis_incs=" + repr(axis_incs)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", point=" + repr(point)
+            text = text + ", point_file=" + repr(point_file)
+            text = text + ", remap=" + repr(remap) + ")"
             print text
 
         # The parameters to map.

@@ -419,7 +419,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")
                 return
-        sys.stdout.write("script = " + `script_file` + "\n")
+        sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")

@@ -90,7 +90,7 @@ class Scientific_data(Base_struct_API):
 
         # Problem.
         if num_attached > 1:
-            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_list`
+            return None, None, None, None, None, 'More than one attached atom found: ' + repr(matching_list)
 
         # No attached atoms.
         if num_attached == 0:
@@ -328,7 +328,7 @@ class Scientific_data(Base_struct_API):
 
                         # More than one matching atom!
                         if atom_found:
-                            raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+                            raise RelaxError, "The atom_id argument " + repr(atom_id) + " must correspond to a single atom."
 
                         # The atom has been found, so store some info.
                         atom_found = True
@@ -448,7 +448,7 @@ class Scientific_data(Base_struct_API):
 
                         # More than one matching atom!
                         if atom_found:
-                            raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+                            raise RelaxError, "The atom_id argument " + repr(atom_id) + " must correspond to a single atom."
 
                         # The atom has been found, so store some info.
                         atom_found = True
@@ -701,7 +701,7 @@ class MolContainer:
         model = Scientific.IO.PDB.Structure(file_path, self.file_model)
 
         # Print out.
-        print "\n" + `model`
+        print "\n" + repr(model)
 
         # Counter for finding the molecule.
         mol_num = 1

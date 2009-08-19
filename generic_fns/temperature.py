@@ -50,7 +50,7 @@ def set(id=None, temp=None):
 
     # Test the temperature has not already been set.
     if cdp.temperature.has_key(id):
-        raise RelaxError, "The temperature for the experiment " + `id` + " has already been set."
+        raise RelaxError, "The temperature for the experiment " + repr(id) + " has already been set."
 
     # Set the temperature.
     cdp.temperature[id] = temp

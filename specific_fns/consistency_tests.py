@@ -84,7 +84,7 @@ class Consistency_tests(Common_functions):
 
         # Frequency index.
         if cdp.ct_frq not in cdp.frq:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `cdp.ct_frq` + " has been loaded."
+            raise RelaxError, "No relaxation data corresponding to the frequency " + repr(cdp.ct_frq) + " has been loaded."
 
         # Consistency testing.
         for spin in spin_loop(spin_id):

@@ -84,9 +84,9 @@ class Grace:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "grace.view("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", grace_exe=" + `grace_exe` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", grace_exe=" + repr(grace_exe) + ")"
             print text
 
         # File.
@@ -199,14 +199,14 @@ class Grace:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "grace.write("
-            text = text + "x_data_type=" + `x_data_type`
-            text = text + ", y_data_type=" + `y_data_type`
-            text = text + ", spin_id=" + `spin_id`
-            text = text + ", plot_data=" + `plot_data`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", norm=" + `norm` + ")"
+            text = text + "x_data_type=" + repr(x_data_type)
+            text = text + ", y_data_type=" + repr(y_data_type)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", plot_data=" + repr(plot_data)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", norm=" + repr(norm) + ")"
             print text
 
         # Data type for x-axis.

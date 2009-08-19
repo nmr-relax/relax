@@ -248,7 +248,7 @@ class Common_functions:
 
             # Unknown data type.
             else:
-                raise RelaxError, "The parameter " + `param` + " does not exist."
+                raise RelaxError, "The parameter " + repr(param) + " does not exist."
 
         # Initial values.
         value = None
@@ -329,7 +329,7 @@ class Common_functions:
 
         # Throw a RelaxError.
         if value or param:
-            raise RelaxError, "Do not know how to handle the non-spin specific parameters " + `param` + " with the values " + `value`
+            raise RelaxError, "Do not know how to handle the non-spin specific parameters " + repr(param) + " with the values " + repr(value)
 
 
     def set_selected_sim(self, spin, select_sim):

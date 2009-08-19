@@ -58,7 +58,7 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.back_calc("
-            text = text + "id=" + `id` + ")"
+            text = text + "id=" + repr(id) + ")"
             print text
 
         # Identification string.
@@ -118,9 +118,9 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.centre("
-            text = text + "atom_id=" + `atom_id`
-            text = text + ", pipe=" + `pipe`
-            text = text + ", ave_pos=" + `ave_pos` + ")"
+            text = text + "atom_id=" + repr(atom_id)
+            text = text + ", pipe=" + repr(pipe)
+            text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print text
 
         # The atom identifier argument.
@@ -178,9 +178,9 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", id=" + `id` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", id=" + repr(id) + ")"
             print text
 
         # The pipe_from argument.
@@ -223,7 +223,7 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.delete("
-            text = text + "id=" + `id` + ")"
+            text = text + "id=" + repr(id) + ")"
             print text
 
         # Id string.
@@ -254,7 +254,7 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.display("
-            text = text + "id=" + `id` + ")"
+            text = text + "id=" + repr(id) + ")"
             print text
 
         # Id string.
@@ -315,18 +315,18 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.read("
-            text = text + "id=" + `id`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", spin_id=" + `spin_id`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", data_col=" + `data_col`
-            text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = text + "id=" + repr(id)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", data_col=" + repr(data_col)
+            text = text + ", error_col=" + repr(error_col)
+            text = text + ", sep=" + repr(sep) + ")"
             print text
 
         # Id string.
@@ -406,10 +406,10 @@ class PCS:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.write("
-            text = text + "id=" + `id`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
+            text = text + "id=" + repr(id)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # Id string.

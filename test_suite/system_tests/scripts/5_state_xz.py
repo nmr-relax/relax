@@ -75,10 +75,10 @@ n_state_model.ref_domain(ref='C')
 
 # Set the initial parameter values to the actual values (the grid search is too expensive).
 for i in xrange(5):
-    value.set(0.2, 'p'+`i`)
-    value.set(0.0, 'alpha'+`i`)
-    value.set(pi/4-pi/8*i, 'beta'+`i`)
-    value.set(0.0, 'gamma'+`i`)
+    value.set(0.2, 'p'+repr(i))
+    value.set(0.0, 'alpha'+repr(i))
+    value.set(pi/4-pi/8*i, 'beta'+repr(i))
+    value.set(0.0, 'gamma'+repr(i))
 #value.set()
 
 # Minimise.

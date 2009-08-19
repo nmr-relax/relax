@@ -89,8 +89,8 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print text
 
         # The pipe_from argument.
@@ -132,12 +132,12 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.display("
-            text = text + "sep=" + `sep`
-            text = text + ", mol_name_flag=" + `mol_name_flag`
-            text = text + ", res_num_flag=" + `res_num_flag`
-            text = text + ", res_name_flag=" + `res_name_flag`
-            text = text + ", spin_num_flag=" + `spin_num_flag`
-            text = text + ", spin_name_flag=" + `spin_name_flag` + ")"
+            text = text + "sep=" + repr(sep)
+            text = text + ", mol_name_flag=" + repr(mol_name_flag)
+            text = text + ", res_num_flag=" + repr(res_num_flag)
+            text = text + ", res_name_flag=" + repr(res_name_flag)
+            text = text + ", spin_num_flag=" + repr(spin_num_flag)
+            text = text + ", spin_name_flag=" + repr(spin_name_flag) + ")"
             print text
 
         # Column separator.
@@ -237,14 +237,14 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", sep=" + `sep` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", sep=" + repr(sep) + ")"
             print text
 
         # The file name.
@@ -317,15 +317,15 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.write("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", sep=" + `sep`
-            text = text + ", mol_name_flag=" + `mol_name_flag`
-            text = text + ", res_num_flag=" + `res_num_flag`
-            text = text + ", res_name_flag=" + `res_name_flag`
-            text = text + ", spin_num_flag=" + `spin_num_flag`
-            text = text + ", spin_name_flag=" + `spin_name_flag`
-            text = text + ", force=" + `force` + ")"
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", sep=" + repr(sep)
+            text = text + ", mol_name_flag=" + repr(mol_name_flag)
+            text = text + ", res_num_flag=" + repr(res_num_flag)
+            text = text + ", res_name_flag=" + repr(res_name_flag)
+            text = text + ", spin_num_flag=" + repr(spin_num_flag)
+            text = text + ", spin_name_flag=" + repr(spin_name_flag)
+            text = text + ", force=" + repr(force) + ")"
             print text
 
         # File.
