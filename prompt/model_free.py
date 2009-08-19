@@ -132,7 +132,7 @@ class Model_free:
             text = text + ", equation=" + repr(equation)
             text = text + ", params=" + repr(params)
             text = text + ", spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # Model argument.
         if type(model) != str:
@@ -177,7 +177,7 @@ class Model_free:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.delete()"
-            print text
+            print(text)
 
         # Execute the functional code.
         model_free_obj.delete()
@@ -213,7 +213,7 @@ class Model_free:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_free.remove_tm("
             text = text + "spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
@@ -362,7 +362,7 @@ class Model_free:
             text = sys.ps3 + "model_free.select_model("
             text = text + "model=" + repr(model)
             text = text + ", spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # Model argument.
         if type(model) != str:

@@ -87,7 +87,7 @@ class Grace:
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", grace_exe=" + repr(grace_exe) + ")"
-            print text
+            print(text)
 
         # File.
         if type(file) != str:
@@ -207,7 +207,7 @@ class Grace:
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", norm=" + repr(norm) + ")"
-            print text
+            print(text)
 
         # Data type for x-axis.
         if type(x_data_type) != str:

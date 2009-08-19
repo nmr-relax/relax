@@ -90,7 +90,7 @@ class State:
             text = sys.ps3 + "state.load("
             text = text + "state=" + repr(state)
             text = text + ", dir_name=" + repr(dir_name) + ")"
-            print text
+            print(text)
 
         # File name.
         if type(state) != str and type(state) != file:
@@ -163,7 +163,7 @@ class State:
             text = text + ", dir_name=" + repr(dir_name)
             text = text + ", force=" + repr(force)
             text = text + ", compress_type=" + repr(compress_type) + ")"
-            print text
+            print(text)
 
         # File name.
         if type(state) != str and type(state) != file:

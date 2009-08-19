@@ -75,7 +75,7 @@ class Consistency_tests:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "consistency_tests.set_frq("
             text = text + "frq=" + repr(frq) + ")"
-            print text
+            print(text)
 
         # The frq argument.
         if type(frq) != float:

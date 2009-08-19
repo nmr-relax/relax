@@ -99,10 +99,10 @@ class Main:
         ##############
 
         # Print out.
-        print "\n\n\n"
-        print "Final stage"
-        print "==========="
-        print "\n"
+        print("\n\n\n")
+        print("Final stage")
+        print("===========")
+        print("\n")
 
         # Unfix all parameters (to switch to the global models).
         fix('all', fixed=False)
@@ -136,10 +136,10 @@ class Main:
         #################################################
 
         # Print out.
-        print "\n\n\n"
-        print "MC simulations of the diffusion tensor"
-        print "======================================"
-        print "\n"
+        print("\n\n\n")
+        print("MC simulations of the diffusion tensor")
+        print("======================================")
+        print("\n")
 
         # Unfix all parameters (to switch to the global models).
         fix('all', fixed=False)

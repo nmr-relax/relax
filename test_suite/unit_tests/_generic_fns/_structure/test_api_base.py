@@ -101,7 +101,7 @@ class Test_api_base(TestCase):
                 # Get string representations of the methods.
                 doc_base = self.format_method(name, args_base, varargs_base, varkw_base, defaults_base)
                 doc_intern = self.format_method(name, args_intern, varargs_intern, varkw_intern, defaults_intern)
-                print doc_base
+                print(doc_base)
 
                 # Fail.
                 self.fail('The args of the method\n\t' + doc_intern + '\ndo not match those of the API method\n\t' + doc_base)

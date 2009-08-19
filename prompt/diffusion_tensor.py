@@ -91,7 +91,7 @@ class Diffusion_tensor:
             text = sys.ps3 + "diffusion_tensor.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
-            print text
+            print(text)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -121,7 +121,7 @@ class Diffusion_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.delete()"
-            print text
+            print(text)
 
         # Execute the functional code.
         diffusion_tensor.delete()
@@ -133,7 +133,7 @@ class Diffusion_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "diffusion_tensor.display()"
-            print text
+            print(text)
 
         # Execute the functional code.
         diffusion_tensor.display()
@@ -401,7 +401,7 @@ class Diffusion_tensor:
             text = text + ", param_types=" + repr(param_types)
             text = text + ", spheroid_type=" + repr(spheroid_type)
             text = text + ", fixed=" + repr(fixed) + ")"
-            print text
+            print(text)
 
         # Parameter argument.
         if type(params) != int and type(params) != float and type(params) != tuple:

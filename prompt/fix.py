@@ -73,7 +73,7 @@ class Fix:
             text = sys.ps3 + "fix("
             text = text + "element=" + repr(element)
             text = text + ", fixed=" + repr(fixed) + ")"
-            print text
+            print(text)
 
         # The element argument.
         if type(element) != str and type(element) != int:

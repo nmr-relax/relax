@@ -75,7 +75,7 @@ class OpenDX:
             text = text + ", dir=" + repr(dir)
             text = text + ", dx_exe=" + repr(dx_exe)
             text = text + ", vp_exec=" + repr(vp_exec) + ")"
-            print text
+            print(text)
 
         # File name.
         if type(file) != str:
@@ -200,7 +200,7 @@ class OpenDX:
             text = text + ", point=" + repr(point)
             text = text + ", point_file=" + repr(point_file)
             text = text + ", remap=" + repr(remap) + ")"
-            print text
+            print(text)
 
         # The parameters to map.
         if type(params) != list:

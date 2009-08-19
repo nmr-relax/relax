@@ -80,9 +80,9 @@ def __errors_repl(verbosity=0):
     # Are all spectra replicated?
     all_repl = not (False in repl)
     if all_repl:
-        print "All spectra replicated:  Yes."
+        print("All spectra replicated:  Yes.")
     else:
-        print "All spectra replicated:  No."
+        print("All spectra replicated:  No.")
 
 
     # Test if the standard deviation has already been calculated.
@@ -117,9 +117,9 @@ def __errors_repl(verbosity=0):
             indices[j] = cdp.spectrum_ids.index(spectra[j])
 
         # Print out.
-        print "\nReplicated spectra:  " + repr(spectra)
+        print("\nReplicated spectra:  " + repr(spectra))
         if verbosity:
-            print "%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")
+            print("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD"))
 
         # Calculate the mean value.
         count = 0
@@ -154,7 +154,7 @@ def __errors_repl(verbosity=0):
 
             # Print out.
             if verbosity:
-                print "%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))
+                print("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I)))
 
             # Sum of variances (for average).
             cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
@@ -168,13 +168,13 @@ def __errors_repl(verbosity=0):
             cdp.var_I[indices[j]] = cdp.var_I[indices[0]]
 
         # Print out.
-        print "Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]])
+        print("Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]]))
 
 
     # Average across all spectra if there are time points with a single spectrum.
     if not all_repl:
         # Print out.
-        print "\nVariance averaging over all spectra."
+        print("\nVariance averaging over all spectra.")
 
         # Initialise.
         var_I = 0.0
@@ -198,7 +198,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[i] = var_I
 
         # Print out.
-        print "Standard deviation for all spins:  " + repr(sqrt(var_I))
+        print("Standard deviation for all spins:  " + repr(sqrt(var_I)))
 
     # Loop over the spectra.
     for i in xrange(len(cdp.spectrum_ids)):
@@ -336,7 +336,7 @@ def det_dimensions(file_data, proton, heteronuc, int_col):
             H_dim = 'w1'
 
             # Print out.
-            print "The proton dimension is w1"
+            print("The proton dimension is w1")
 
             # Don't continue (waste of time).
             break
@@ -347,7 +347,7 @@ def det_dimensions(file_data, proton, heteronuc, int_col):
             H_dim = 'w2'
 
             # Print out.
-            print "The proton dimension is w2"
+            print("The proton dimension is w2")
 
             # Don't continue (waste of time).
             break
@@ -373,12 +373,12 @@ def error_analysis():
     # Peak height category.
     if cdp.int_method == 'height':
         # Print out.
-        print "Intensity measure:  Peak heights."
+        print("Intensity measure:  Peak heights.")
 
         # Do we have replicated spectra?
         if hasattr(cdp, 'replicates'):
             # Print out.
-            print "Replicated spectra:  Yes."
+            print("Replicated spectra:  Yes.")
 
             # Set the errors.
             __errors_repl()
@@ -386,7 +386,7 @@ def error_analysis():
         # No replicated spectra.
         else:
             # Print out.
-            print "Replicated spectra:  No."
+            print("Replicated spectra:  No.")
 
             # Set the errors.
             __errors_height_no_repl()
@@ -394,18 +394,18 @@ def error_analysis():
     # Peak volume category.
     if cdp.int_method == 'volume':
         # Print out.
-        print "Intensity measure:  Peak volumes."
+        print("Intensity measure:  Peak volumes.")
 
         # Do we have replicated spectra?
         if hasattr(cdp, 'replicates'):
             # Print out.
-            print "Replicated spectra:  Yes."
+            print("Replicated spectra:  Yes.")
             raise RelaxImplementError
 
         # No replicated spectra.
         else:
             # Print out.
-            print "Replicated spectra:  No."
+            print("Replicated spectra:  No.")
 
             # Set the errors.
             __errors_repl()
@@ -464,9 +464,9 @@ def intensity_generic(line, int_col):
         except ValueError:
             raise RelaxError, "The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid."
 
-    print ''
-    print 'The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).'
-    print '    ' + repr(res_num), h_name, x_name, intensity
+    print('')
+    print('The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).')
+    print('    ' + repr(res_num), h_name, x_name, intensity)
 
     # Generate the spin identification string.
     spin_id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
@@ -518,9 +518,9 @@ def intensity_nmrview(line, int_col):
     if int_col == None:
         int_col = 16
     if int_col == 16:
-        print 'Using peak heights.'
+        print('Using peak heights.')
     if int_col == 15:
-        print 'Using peak volumes (or evolumes).'
+        print('Using peak volumes (or evolumes).')
 
     # Intensity.
     try:
@@ -772,7 +772,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Generic.
     if format == 'generic':
         # Print out.
-        print "Generic formatted data file.\n"
+        print("Generic formatted data file.\n")
 
         # Test that column numbers have been given.
         if max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col) == None:
@@ -784,7 +784,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # NMRView.
     elif format == 'nmrview':
         # Print out.
-        print "NMRView formatted data file.\n"
+        print("NMRView formatted data file.\n")
 
         # Set the intensity reading function.
         intensity_fn = intensity_nmrview
@@ -792,7 +792,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Sparky.
     elif format == 'sparky':
         # Print out.
-        print "Sparky formatted data file.\n"
+        print("Sparky formatted data file.\n")
 
         # Set the intensity reading function.
         intensity_fn = intensity_sparky
@@ -800,7 +800,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # XEasy.
     elif format == 'xeasy':
         # Print out.
-        print "XEasy formatted data file.\n"
+        print("XEasy formatted data file.\n")
 
         # Set the default proton dimension.
         H_dim = 'w1'
@@ -810,7 +810,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # Determine the number of header lines.
     num = number_of_header_lines(file_data, format, int_col, intensity_fn)
-    print "Number of header lines found: " + repr(num)
+    print("Number of header lines found: " + repr(num))
 
     # Remove the header.
     file_data = file_data[num:]

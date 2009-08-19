@@ -73,7 +73,7 @@ class Spectrum:
             text = text + "error=" + repr(error)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # The error.
         if type(error) != float and type(error) != int:
@@ -235,7 +235,7 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.error_analysis()"
-            print text
+            print(text)
 
         # Execute the functional code.
         spectrum.error_analysis()
@@ -272,7 +272,7 @@ class Spectrum:
             text = text + "N=" + repr(N)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # The number of summed points.
         if type(N) != int:
@@ -422,7 +422,7 @@ class Spectrum:
             text = text + ", spin_num_col=" + repr(spin_num_col)
             text = text + ", spin_name_col=" + repr(spin_name_col)
             text = text + ", sep=" + repr(sep) + ")"
-            print text
+            print(text)
 
         # The file name.
         if type(file) != str:
@@ -527,7 +527,7 @@ class Spectrum:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.replicated("
             text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
-            print text
+            print(text)
 
         # Spectrum ids.
         if type(spectrum_ids) != list:

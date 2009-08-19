@@ -95,7 +95,7 @@ class N_state_model:
             text = sys.ps3 + "n_state_model.CoM("
             text = text + "pivot_point=" + repr(pivot_point)
             text = text + ", centre=" + repr(centre) + ")"
-            print text
+            print(text)
 
         # Pivot point argument.
         if type(pivot_point) != list:
@@ -178,7 +178,7 @@ class N_state_model:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Cone type.
         if type(cone_type) != str:
@@ -233,7 +233,7 @@ class N_state_model:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.number_of_states("
             text = text + "N=" + repr(N) + ")"
-            print text
+            print(text)
 
         # Number of states argument.
         if type(N) != int:
@@ -274,7 +274,7 @@ class N_state_model:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
-            print text
+            print(text)
 
         # Ref frame argument.
         if type(ref) != str:
@@ -324,7 +324,7 @@ class N_state_model:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "n_state_model.select_model("
             text = text + "model=" + repr(model) + ")"
-            print text
+            print(text)
 
         # Model argument.
         if type(model) != str:

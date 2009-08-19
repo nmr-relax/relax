@@ -48,7 +48,7 @@ class View:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "view()"
-            print text
+            print(text)
 
         # Execute the functional code.
         self.relax.generic.view.view()

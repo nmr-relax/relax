@@ -67,7 +67,7 @@ class Results:
 
         # Print out.
         if verbosity:
-            print "relax " + version + " model-free results file."
+            print("relax " + version + " model-free results file.")
 
         # Return the version.
         return version
@@ -117,10 +117,10 @@ class Results:
 
         # Print out.
         if verbosity >= 2:
-            print "\nFixing parameters based on the model type."
-            print "Model type: " + model_type
-            print "Diffusion tensor fixed: " + repr(diff_fixed)
-            print "Model-free parameters fixed: " + repr(mf_fixed)
+            print("\nFixing parameters based on the model type.")
+            print("Model type: " + model_type)
+            print("Diffusion tensor fixed: " + repr(diff_fixed))
+            print("Model-free parameters fixed: " + repr(mf_fixed))
 
         # Set the diffusion tensor fixed flag.
         if model_type != 'local_tm' and diff_fixed != None:
@@ -639,7 +639,7 @@ class Results:
 
         # Generate the sequence.
         if verbosity:
-            print "\nGenerating the sequence."
+            print("\nGenerating the sequence.")
         for file_line in file_data:
             # The data set.
             data_set = file_line[col['data_set']]
@@ -695,9 +695,9 @@ class Results:
                 # Initial print out for the simulation.
                 if verbosity:
                     if diff_sim_set == None:
-                        print "\nLoading simulations."
+                        print("\nLoading simulations.")
                     if sim_num != diff_sim_set:
-                        print data_set
+                        print(data_set)
 
             # Diffusion tensor data.
             if data_set == 'value' and not diff_data_set:
@@ -893,8 +893,8 @@ class Results:
 
         # Print out.
         if diff_type and data_set == 'value' and verbosity:
-            print "\nSetting the diffusion tensor."
-            print "Diffusion type: " + diff_type
+            print("\nSetting the diffusion tensor.")
+            print("Diffusion type: " + diff_type)
 
         # Sphere.
         if diff_type == 'sphere':

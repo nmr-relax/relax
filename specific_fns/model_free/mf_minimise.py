@@ -823,13 +823,13 @@ class Mf_minimise:
         # Print out.
         if verbosity >= 1:
             if model_type == 'mf':
-                print "Only the model-free parameters for single spins will be used."
+                print("Only the model-free parameters for single spins will be used.")
             elif model_type == 'local_mf':
-                print "Only a local tm value together with the model-free parameters for single spins will be used."
+                print("Only a local tm value together with the model-free parameters for single spins will be used.")
             elif model_type == 'diff':
-                print "Only diffusion tensor parameters will be used."
+                print("Only diffusion tensor parameters will be used.")
             elif model_type == 'all':
-                print "The diffusion tensor parameters together with the model-free parameters for all spins will be used."
+                print("The diffusion tensor parameters together with the model-free parameters for all spins will be used.")
 
         # Test if the CSA and bond length values have been set.
         for spin in spin_loop():
@@ -892,10 +892,10 @@ class Mf_minimise:
                 # Individual spin stuff.
                 if model_type == 'mf' or model_type == 'local_tm':
                     if verbosity >= 2:
-                        print "\n\n"
+                        print("\n\n")
                     string = "Fitting to spin " + repr(spin_id)
-                    print "\n\n" + string
-                    print len(string) * '~'
+                    print("\n\n" + string)
+                    print(len(string) * '~')
 
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
@@ -1315,7 +1315,7 @@ class Mf_minimise:
 
         # Print out.
         if verbosity >= 1:
-            print "Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"
+            print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
 
         # Too big.
         if type(grid_size) == long:

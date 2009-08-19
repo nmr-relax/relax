@@ -73,7 +73,7 @@ class Jw_mapping:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "jw_mapping.set_frq("
             text = text + "frq=" + repr(frq) + ")"
-            print text
+            print(text)
 
         # The frq argument.
         if type(frq) != float:

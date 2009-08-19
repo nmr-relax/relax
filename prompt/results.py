@@ -52,7 +52,7 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.display()"
-            print text
+            print(text)
 
         # Execute the functional code.
         results.display()
@@ -85,7 +85,7 @@ class Results:
             text = sys.ps3 + "results.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"
-            print text
+            print(text)
 
         # File.
         if type(file) != str:
@@ -141,7 +141,7 @@ class Results:
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", compress_type=" + repr(compress_type) + ")"
-            print text
+            print(text)
 
         # File.
         if type(file) != str and not hasattr(file, 'write'):

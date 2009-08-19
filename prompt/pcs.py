@@ -59,7 +59,7 @@ class PCS:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.back_calc("
             text = text + "id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # Identification string.
         if type(id) != str:
@@ -121,7 +121,7 @@ class PCS:
             text = text + "atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
-            print text
+            print(text)
 
         # The atom identifier argument.
         if type(atom_id) != str:
@@ -181,7 +181,7 @@ class PCS:
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -224,7 +224,7 @@ class PCS:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.delete("
             text = text + "id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:
@@ -255,7 +255,7 @@ class PCS:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.display("
             text = text + "id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:
@@ -327,7 +327,7 @@ class PCS:
             text = text + ", data_col=" + repr(data_col)
             text = text + ", error_col=" + repr(error_col)
             text = text + ", sep=" + repr(sep) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:
@@ -410,7 +410,7 @@ class PCS:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:

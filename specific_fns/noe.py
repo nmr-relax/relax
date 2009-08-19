@@ -167,9 +167,9 @@ class Noe(Common_functions):
         if spectrum_type not in spect_type_list:
             raise RelaxArgNotInListError, ('spectrum type', spectrum_type, spect_type_list)
         if spectrum_type == 'ref':
-            print "Reference spectrum."
+            print("Reference spectrum.")
         if spectrum_type == 'sat':
-            print "Saturated spectrum."
+            print("Saturated spectrum.")
 
         # Generic intensity function.
         intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function, spectrum_type=spectrum_type)

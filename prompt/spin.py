@@ -96,7 +96,7 @@ class Spin:
             text = text + ", spin_from=" + repr(spin_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", spin_to=" + repr(spin_to) + ")"
-            print text
+            print(text)
 
         # The data pipe from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -160,7 +160,7 @@ class Spin:
             text = text + ", res_num=" + repr(res_num)
             text = text + ", res_name=" + repr(res_name)
             text = text + ", mol_name=" + repr(mol_name) + ")"
-            print text
+            print(text)
 
         # Spin number.
         if spin_num != None and type(spin_num) != int:
@@ -230,7 +230,7 @@ class Spin:
             text = text + ", res_id=" + repr(res_id)
             text = text + ", members=" + repr(members)
             text = text + ", averaging=" + repr(averaging) + ")"
-            print text
+            print(text)
 
         # Spin name.
         if type(spin_name) != str:
@@ -285,7 +285,7 @@ class Spin:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.delete("
             text = text + "spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # The spin identifier argument.
         if type(spin_id) != str:
@@ -308,7 +308,7 @@ class Spin:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.display("
             text = text + "spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # The spin_id argument.
         if spin_id != None and type(spin_id) != str:
@@ -354,7 +354,7 @@ class Spin:
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
@@ -410,7 +410,7 @@ class Spin:
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", number=" + repr(number)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:

@@ -395,10 +395,10 @@ class Main:
         prev_pipe = pipes.get_pipe('previous')
 
         # Print out.
-        print "\n\n\n"
-        print "#####################"
-        print "# Convergence tests #"
-        print "#####################\n\n"
+        print("\n\n\n")
+        print("#####################")
+        print("# Convergence tests #")
+        print("#####################\n\n")
 
         # Convergence flags.
         chi2_converged = True
@@ -409,23 +409,23 @@ class Main:
         # Chi-squared test.
         ###################
 
-        print "Chi-squared test:"
-        print "    chi2 (k-1):          " + repr(prev_pipe.chi2)
-        print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_pipe.chi2)) + ')'
-        print "    chi2 (k):            " + repr(cdp.chi2)
-        print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(cdp.chi2)) + ')'
-        print "    chi2 (difference):   " + repr(prev_pipe.chi2 - cdp.chi2)
+        print("Chi-squared test:")
+        print("    chi2 (k-1):          " + repr(prev_pipe.chi2))
+        print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_pipe.chi2)) + ')')
+        print("    chi2 (k):            " + repr(cdp.chi2))
+        print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(cdp.chi2)) + ')')
+        print("    chi2 (difference):   " + repr(prev_pipe.chi2 - cdp.chi2))
         if prev_pipe.chi2 == cdp.chi2:
-            print "    The chi-squared value has converged.\n"
+            print("    The chi-squared value has converged.\n")
         else:
-            print "    The chi-squared value has not converged.\n"
+            print("    The chi-squared value has not converged.\n")
             chi2_converged = False
 
 
         # Identical model-free model test.
         ##################################
 
-        print "Identical model-free models test:"
+        print("Identical model-free models test:")
 
         # Create a string representation of the model-free models of the previous data pipe.
         prev_models = ''
@@ -443,16 +443,16 @@ class Main:
 
         # The test.
         if prev_models == curr_models:
-            print "    The model-free models have converged.\n"
+            print("    The model-free models have converged.\n")
         else:
-            print "    The model-free models have not converged.\n"
+            print("    The model-free models have not converged.\n")
             models_converged = False
 
 
         # Identical parameter value test.
         #################################
 
-        print "Identical parameter test:"
+        print("Identical parameter test:")
 
         # Only run the tests if the model-free models have converged.
         if models_converged:
@@ -472,12 +472,12 @@ class Main:
 
                 # Test if not identical.
                 if prev_val != curr_val:
-                    print "    Parameter:   " + param
-                    print "    Value (k-1): " + repr(prev_val)
-                    print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'
-                    print "    Value (k):   " + repr(curr_val)
-                    print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(curr_val)) + ')'
-                    print "    The diffusion parameters have not converged.\n"
+                    print("    Parameter:   " + param)
+                    print("    Value (k-1): " + repr(prev_val))
+                    print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')')
+                    print("    Value (k):   " + repr(curr_val))
+                    print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(curr_val)) + ')')
+                    print("    The diffusion parameters have not converged.\n")
                     params_converged = False
 
             # Skip the rest if the diffusion tensor parameters have not converged.
@@ -507,35 +507,35 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin ID:     " + repr(spin_id)
-                            print "    Parameter:   " + curr_spin.params[j]
-                            print "    Value (k-1): " + repr(prev_val)
-                            print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'
-                            print "    Value (k):   " + repr(curr_val)
-                            print "        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'
-                            print "    The model-free parameters have not converged.\n"
+                            print("    Spin ID:     " + repr(spin_id))
+                            print("    Parameter:   " + curr_spin.params[j])
+                            print("    Value (k-1): " + repr(prev_val))
+                            print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')')
+                            print("    Value (k):   " + repr(curr_val))
+                            print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')')
+                            print("    The model-free parameters have not converged.\n")
                             params_converged = False
                             break
 
         # The model-free models haven't converged hence the parameter values haven't converged.
         else:
-            print "    The model-free models haven't converged hence the parameters haven't converged.\n"
+            print("    The model-free models haven't converged hence the parameters haven't converged.\n")
             params_converged = False
 
         # Print out.
         if params_converged:
-            print "    The diffusion tensor and model-free parameters have converged.\n"
+            print("    The diffusion tensor and model-free parameters have converged.\n")
 
 
         # Final print out.
         ##################
 
-        print "\nConvergence:"
+        print("\nConvergence:")
         if chi2_converged and models_converged and params_converged:
-            print "    [ Yes ]"
+            print("    [ Yes ]")
             return True
         else:
-            print "    [ No ]"
+            print("    [ No ]")
             return False
 
 

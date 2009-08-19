@@ -1127,19 +1127,19 @@ class N_state_model(Common_functions):
         cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
-        print "\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))
-        print "%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))
-        print "%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))
-        print "%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))
-        print "%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))
-        print "%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))
-        print "%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))
-        print "%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))
-        print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
-        print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
-        print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
-        print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)
-        print "\n\n"
+        print("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point)))
+        print("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM)))
+        print("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM)))
+        print("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect)))
+        print("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM)))
+        print("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM)))
+        print("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM)))
+        print("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red)))
+        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.))
+        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2))
+        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.))
+        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2))
+        print("\n\n")
 
 
     def cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
@@ -1195,14 +1195,14 @@ class N_state_model(Common_functions):
         mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
         # Generate the average pivot-CoM vectors.
-        print "\nGenerating the average pivot-CoM vectors."
+        print("\nGenerating the average pivot-CoM vectors.")
         sim_vectors = None
         if hasattr(cdp, 'ave_pivot_CoM_sim'):
             sim_vectors = cdp.ave_pivot_CoM_sim
         res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
-        print "\nGenerating the cone outer edge."
+        print("\nGenerating the cone outer edge.")
         if cone_type == 'diff in cone':
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
@@ -1212,13 +1212,13 @@ class N_state_model(Common_functions):
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
-            print "\nGenerating the cone cap."
+            print("\nGenerating the cone cap.")
             cone_start_atom = mol.atom_num[-1]+1
             generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
             generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
 
         # Create the PDB file.
-        print "\nGenerating the PDB file."
+        print("\nGenerating the PDB file.")
         pdb_file = open_write_file(file, dir, force=force)
         structure.write_pdb(pdb_file)
         pdb_file.close()
@@ -1310,7 +1310,7 @@ class N_state_model(Common_functions):
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
-            print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
+            print("Cannot run a grid search on a model with zero parameters, skipping the grid search.")
             return
 
         # Test the grid search options.

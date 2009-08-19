@@ -55,7 +55,7 @@ class Angles:
         # Function intro text.
         if self.relax.interpreter.intro:
             text = sys.ps3 + "angle_diff_frame()"
-            print text
+            print(text)
 
         # Execute the functional code.
         angles.angle_diff_frame()

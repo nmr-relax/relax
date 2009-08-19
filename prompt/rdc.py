@@ -59,7 +59,7 @@ class RDC:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.back_calc("
             text = text + "id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # Identification string.
         if type(id) != str:
@@ -111,7 +111,7 @@ class RDC:
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -154,7 +154,7 @@ class RDC:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.delete("
             text = text + "id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:
@@ -185,7 +185,7 @@ class RDC:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.display("
             text = text + "id=" + repr(id) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:
@@ -262,7 +262,7 @@ class RDC:
             text = text + ", data_col=" + repr(data_col)
             text = text + ", error_col=" + repr(error_col)
             text = text + ", sep=" + repr(sep) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:
@@ -345,7 +345,7 @@ class RDC:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:

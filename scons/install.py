@@ -43,11 +43,11 @@ def install(target, source, env):
     # Print out.
     ############
 
-    print
-    print "####################"
-    print "# Installing relax #"
-    print "####################\n\n"
-    print "Installing the program relax into the directory " + repr(env['RELAX_PATH']) + "\n\n"
+    print('')
+    print("####################")
+    print("# Installing relax #")
+    print("####################\n\n")
+    print("Installing the program relax into the directory " + repr(env['RELAX_PATH']) + "\n\n")
 
 
     # Tests.
@@ -85,7 +85,7 @@ def install(target, source, env):
 
     # Copy the files (and create the directory).
     try:
-        print "\nCopying all files in " + repr(getcwd()) + " to " + repr(env['RELAX_PATH']) + "."
+        print("\nCopying all files in " + repr(getcwd()) + " to " + repr(env['RELAX_PATH']) + ".")
         copytree(getcwd(), env['RELAX_PATH'])
     except OSError, message:
         # Failure message.
@@ -104,7 +104,7 @@ def install(target, source, env):
 
     # Create the symbolic link.
     if env['SYMLINK_FLAG']:
-        print "\nCreating the symbolic link from " + repr(env['RELAX_PATH'] + sep + 'relax') + " to " + repr(env['SYMLINK']) + "."
+        print("\nCreating the symbolic link from " + repr(env['RELAX_PATH'] + sep + 'relax') + " to " + repr(env['SYMLINK']) + ".")
         symlink(env['RELAX_PATH'] + sep + 'relax', env['SYMLINK'])
 
 
@@ -112,11 +112,11 @@ def install(target, source, env):
     ###############
 
     # Run relax to create the *.pyc files.
-    print "\nRunning relax to create the byte-compiled *.pyc files."
+    print("\nRunning relax to create the byte-compiled *.pyc files.")
     system(env['SYMLINK'] + " --test")
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")
 
 
 def uninstall(target, source, env):
@@ -125,11 +125,11 @@ def uninstall(target, source, env):
     # Print out.
     ############
 
-    print
-    print "######################"
-    print "# Uninstalling relax #"
-    print "######################\n\n"
-    print "Uninstalling the program relax from the directory " + repr(env['INSTALL_PATH']) + "\n\n"
+    print('')
+    print("######################")
+    print("# Uninstalling relax #")
+    print("######################\n\n")
+    print("Uninstalling the program relax from the directory " + repr(env['INSTALL_PATH']) + "\n\n")
 
 
     # Tests.
@@ -164,11 +164,11 @@ def uninstall(target, source, env):
 
     # Remove the symbolic link.
     if env['SYMLINK_FLAG']:
-        print "\nRemoving the symbolic link " + repr(env['SYMLINK']) + "."
+        print("\nRemoving the symbolic link " + repr(env['SYMLINK']) + ".")
         remove(env['SYMLINK'])
 
     # Remove the directory.
-    print "\nRemoving the entire directory " + repr(env['RELAX_PATH']) + ".\n"
+    print("\nRemoving the entire directory " + repr(env['RELAX_PATH']) + ".\n")
     for root, dirs, files in walk(env['RELAX_PATH'], topdown=False):
         for file in files:
             remove(path.join(root, file))
@@ -177,4 +177,4 @@ def uninstall(target, source, env):
     rmdir(env['RELAX_PATH'])
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")

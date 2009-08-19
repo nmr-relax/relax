@@ -57,7 +57,7 @@ class Vmd:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "vmd.view()"
-            print text
+            print(text)
 
         # Execute the functional code.
         vmd.view()

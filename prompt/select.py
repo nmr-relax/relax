@@ -92,7 +92,7 @@ class Select:
         # Function intro test.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.all()"
-            print text
+            print(text)
 
         # Execute the functional code.
         selection.sel_all()
@@ -164,7 +164,7 @@ class Select:
             text = text + ", sep=" + repr(sep)
             text = text + ", boolean=" + repr(boolean)
             text = text + ", change_all=" + repr(change_all) + ")"
-            print text
+            print(text)
 
         # File name.
         if type(file) != str:
@@ -238,7 +238,7 @@ class Select:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "select.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
@@ -290,7 +290,7 @@ class Select:
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", boolean=" + repr(boolean)
             text = text + ", change_all=" + repr(change_all) + ")"
-            print text
+            print(text)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:

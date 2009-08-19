@@ -91,7 +91,7 @@ class Sequence:
             text = sys.ps3 + "sequence.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
-            print text
+            print(text)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -138,7 +138,7 @@ class Sequence:
             text = text + ", res_name_flag=" + repr(res_name_flag)
             text = text + ", spin_num_flag=" + repr(spin_num_flag)
             text = text + ", spin_name_flag=" + repr(spin_name_flag) + ")"
-            print text
+            print(text)
 
         # Column separator.
         if sep != None and type(sep) != str:
@@ -245,7 +245,7 @@ class Sequence:
             text = text + ", spin_num_col=" + repr(spin_num_col)
             text = text + ", spin_name_col=" + repr(spin_name_col)
             text = text + ", sep=" + repr(sep) + ")"
-            print text
+            print(text)
 
         # The file name.
         if type(file) != str:
@@ -326,7 +326,7 @@ class Sequence:
             text = text + ", spin_num_flag=" + repr(spin_num_flag)
             text = text + ", spin_name_flag=" + repr(spin_name_flag)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # File.
         if type(file) != str:

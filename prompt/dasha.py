@@ -85,7 +85,7 @@ class Dasha:
             text = text + "algor=" + repr(algor)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # The algor argument.
         if type(algor) != str:
@@ -137,7 +137,7 @@ class Dasha:
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
-            print text
+            print(text)
 
         # Directory.
         if dir != None:
@@ -169,7 +169,7 @@ class Dasha:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dasha.extract("
             text = text + "dir=" + repr(dir) + ")"
-            print text
+            print(text)
 
         # Directory.
         if dir != None:

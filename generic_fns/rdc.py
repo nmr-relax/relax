@@ -484,7 +484,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     #####################
 
     # Loop over the RDC data.
-    print "\n%-50s %-15s %-15s" % ("spin_id", "value", "error")
+    print("\n%-50s %-15s %-15s" % ("spin_id", "value", "error"))
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -529,7 +529,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             spin.rdc_err.append(error)
 
         # Print out.
-        print "%-50s %15s %15s" % (id, value, error)
+        print("%-50s %15s %15s" % (id, value, error))
 
 
 def return_data_desc(name):

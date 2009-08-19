@@ -91,7 +91,7 @@ class Value:
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", param=" + repr(param) + ")"
-            print text
+            print(text)
 
         # The pipe_from argument.
         if type(pipe_from) != str:
@@ -136,7 +136,7 @@ class Value:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.display("
             text = text + "param=" + repr(param) + ")"
-            print text
+            print(text)
 
         # The parameter.
         if type(param) != str:
@@ -203,7 +203,7 @@ class Value:
             text = text + ", data_col=" + repr(data_col)
             text = text + ", error_col=" + repr(error_col)
             text = text + ", sep=" + repr(sep) + ")"
-            print text
+            print(text)
 
         # The parameter.
         if type(param) != str:
@@ -366,7 +366,7 @@ class Value:
             text = text + "val=" + repr(val)
             text = text + ", param=" + repr(param)
             text = text + ", spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # The value.
         if val != None and type(val) not in float_list and type(val) not in int_list and type(val) != str and type(val) != list:
@@ -379,7 +379,7 @@ class Value:
             # Check for values.
             for i in xrange(len(val)):
                 if type(val[i]) not in float_list and type(val[i]) not in int_list:
-                    print type(val[i])
+                    print(type(val[i]))
                     raise RelaxListFloatStrError, ('value', val)
 
         # The parameter.
@@ -462,7 +462,7 @@ class Value:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # The parameter.
         if type(param) != str:

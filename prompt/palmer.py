@@ -119,7 +119,7 @@ class Palmer:
             text = text + ", atom1=" + repr(atom1)
             text = text + ", atom2=" + repr(atom2)
             text = text + ", spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # Directory.
         if dir != None:
@@ -210,7 +210,7 @@ class Palmer:
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
-            print text
+            print(text)
 
         # Directory.
         if dir != None:
@@ -242,7 +242,7 @@ class Palmer:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.extract("
             text = text + "dir=" + repr(dir) + ")"
-            print text
+            print(text)
 
         # Directory.
         if dir != None:

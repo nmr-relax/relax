@@ -188,11 +188,11 @@ def list():
     """Print the details of all the data pipes."""
 
     # Heading.
-    print "%-20s%-20s" % ("Data pipe name", "Data pipe type")
+    print("%-20s%-20s" % ("Data pipe name", "Data pipe type"))
 
     # Loop over the data pipes.
     for pipe_name in ds:
-        print "%-20s%-20s" % (pipe_name, get_type(pipe_name))
+        print("%-20s%-20s" % (pipe_name, get_type(pipe_name)))
 
 
 def pipe_loop(name=False):

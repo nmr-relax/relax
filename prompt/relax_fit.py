@@ -71,7 +71,7 @@ class Relax_fit:
             text = sys.ps3 + "relax_fit.relax_time("
             text = text + "time=" + repr(time)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
-            print text
+            print(text)
 
         # The relaxation time.
         if type(time) != int and type(time) != float:
@@ -111,7 +111,7 @@ class Relax_fit:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.select_model("
             text = text + "model=" + repr(model) + ")"
-            print text
+            print(text)
 
         # The model argument.
         if type(model) != str:

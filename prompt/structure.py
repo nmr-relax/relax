@@ -149,7 +149,7 @@ class Structure:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Scaling.
         if type(scale) != float and type(scale) != int:
@@ -211,7 +211,7 @@ class Structure:
             text = text + ", dir=" + repr(dir)
             text = text + ", symmetry=" + repr(symmetry)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Vector length.
         if type(length) != float:
@@ -293,7 +293,7 @@ class Structure:
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", combine_models=" + repr(combine_models)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
-            print text
+            print(text)
 
         # Spin identifier.
         if spin_id != None and type(spin_id) != str:
@@ -414,7 +414,7 @@ class Structure:
             text = text + ", read_model=" + repr(read_model)
             text = text + ", set_model_num=" + repr(set_model_num)
             text = text + ", parser=" + repr(parser) + ")"
-            print text
+            print(text)
 
         # File name.
         if type(file) != str:
@@ -556,7 +556,7 @@ class Structure:
             text = text + ", verbosity=" + repr(verbosity)
             text = text + ", ave=" + repr(ave)
             text = text + ", unit=" + repr(unit) + ")"
-            print text
+            print(text)
 
         # The attached atom argument.
         if type(attached) != str:
@@ -630,7 +630,7 @@ class Structure:
             text = text + ", dir=" + repr(dir)
             text = text + ", model_num=" + repr(model_num)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # File name.
         if type(file) != str:

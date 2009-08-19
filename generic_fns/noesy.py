@@ -50,11 +50,11 @@ def __file_format(lines):
     for line in lines:
         # Xplor format.
         if search('^assign ', line):
-            print "Xplor formatted file."
+            print("Xplor formatted file.")
             return 'xplor'
 
     # Print out.
-    print "Generic formatted file."
+    print("Generic formatted file.")
     return 'generic'
 
 

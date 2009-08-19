@@ -80,7 +80,7 @@ class Eliminate:
             text = sys.ps3 + "eliminate("
             text = text + "function=" + repr(function)
             text = text + ", args=" + repr(args) + ")"
-            print text
+            print(text)
 
         # User supplied function.
         if function != None and type(function) != FunctionType:

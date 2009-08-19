@@ -62,7 +62,7 @@ class Temp:
             text = sys.ps3 + "temperature("
             text = text + "id=" + repr(id)
             text = text + ", temp=" + repr(temp) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:

@@ -69,7 +69,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
         raise RelaxNoPdbError
 
     # Print out.
-    print "Adding the following spins to the relax data store.\n"
+    print("Adding the following spins to the relax data store.\n")
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
     # Loop over all atoms of the spin_id selection.
@@ -111,7 +111,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 # Rename the molecule container if the mol name is given and the sole container is unnamed.
                 if mol_cont.name == None and mol_name:
                     # Print out.
-                    print "Renaming the unnamed sole molecule container to '%s'." % mol_name
+                    print("Renaming the unnamed sole molecule container to '%s'." % mol_name)
 
                     # Set the name.
                     mol_cont.name = mol_name
@@ -304,19 +304,19 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         # Multiple models loaded.
         if num_models > 1:
             if model:
-                print "Extracting vectors for model '%s'." % model
+                print("Extracting vectors for model '%s'." % model)
             else:
-                print "Extracting vectors for all %s models." % num_models
+                print("Extracting vectors for all %s models." % num_models)
                 if ave:
-                    print "Averaging all vectors."
+                    print("Averaging all vectors.")
 
         # Single model loaded.
         else:
-            print "Extracting vectors from the single model."
+            print("Extracting vectors from the single model.")
 
         # Unit vectors.
         if unit:
-            print "Calculating the unit vectors."
+            print("Calculating the unit vectors.")
 
     # Determine if the attached atom is a proton.
     proton = False
@@ -324,10 +324,10 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         proton = True
     if verbosity:
         if proton:
-            print "The attached atom is a proton."
+            print("The attached atom is a proton.")
         else:
-            print "The attached atom is not a proton."
-        print
+            print("The attached atom is not a proton.")
+        print('')
 
     # Set the variable name in which the vectors will be stored.
     if proton:
@@ -412,7 +412,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
         # Print out of modified spins.
         if verbosity:
-            print "Extracted " + spin.name + "-" + attached_name + " vectors for " + repr(id) + '.'
+            print("Extracted " + spin.name + "-" + attached_name + " vectors for " + repr(id) + '.')
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:

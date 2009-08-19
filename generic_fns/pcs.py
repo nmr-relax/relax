@@ -198,18 +198,18 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
     centre = centre / float(num_pos)
 
     # Print out.
-    print "Paramagnetic centres located at:"
+    print("Paramagnetic centres located at:")
     for pos in full_pos_list:
-        print "    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])
-    print "\nAverage paramagnetic centre located at:"
-    print "    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])
+        print("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2]))
+    print("\nAverage paramagnetic centre located at:")
+    print("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2]))
 
     # Set the centre (place it into the current data pipe).
     if ave_pos:
-        print "\nUsing the average paramagnetic position."
+        print("\nUsing the average paramagnetic position.")
         cdp.paramagnetic_centre = centre
     else:
-        print "\nUsing all paramagnetic positions."
+        print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
 
 
@@ -560,7 +560,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     #####################
 
     # Loop over the PCS data.
-    print "\n%-50s %-15s %-15s" % ("spin_id", "value", "error")
+    print("\n%-50s %-15s %-15s" % ("spin_id", "value", "error"))
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -605,7 +605,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             spin.pcs_err.append(error)
 
         # Print out.
-        print "%-50s %15s %15s" % (id, value, error)
+        print("%-50s %15s %15s" % (id, value, error))
 
 
 def return_data_desc(name):

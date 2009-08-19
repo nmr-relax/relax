@@ -34,11 +34,11 @@ class Main:
 
         # Print out.
 
-        print "\n"*2
-        print "#"*27
-        print "# Compiling the C modules #"
-        print "#"*27
-        print "\n"*2
+        print("\n"*2)
+        print("#"*27)
+        print("# Compiling the C modules #")
+        print("#"*27)
+        print("\n"*2)
 
         # Assume Linux (to be fixed later).
         include = PATH_PREFIX + sep + 'include' + sep + self.python
@@ -53,12 +53,12 @@ class Main:
 
         # Execute.
         for command in commands:
-            print command
+            print(command)
             system(command)
 
         # End print out.
-        print "\nDone"
-        print "\n"*4
+        print("\nDone")
+        print("\n"*4)
 
 
     def check_for_python(self):

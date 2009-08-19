@@ -76,7 +76,7 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.cartoon()"
-            print text
+            print(text)
 
         # Execute the functional code.
         pymol.cartoon()
@@ -88,7 +88,7 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.clear_history()"
-            print text
+            print(text)
 
         # Execute the functional code.
         self.__relax__.generic.pymol.clear_history()
@@ -122,7 +122,7 @@ class Pymol:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.command("
             text = text + "command=" + repr(command) + ")"
-            print text
+            print(text)
 
         # The command argument.
         if type(command) != str:
@@ -169,7 +169,7 @@ class Pymol:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.cone_pdb("
             text = text + "file=" + repr(file) + ")"
-            print text
+            print(text)
 
         # The file name.
         if type(file) != str:
@@ -240,7 +240,7 @@ class Pymol:
             text = text + ", colour_start=" + repr(colour_start)
             text = text + ", colour_end=" + repr(colour_end)
             text = text + ", colour_list=" + repr(colour_list) + ")"
-            print text
+            print(text)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
@@ -316,7 +316,7 @@ class Pymol:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
-            print text
+            print(text)
 
         # The file name.
         if type(file) != str:
@@ -353,7 +353,7 @@ class Pymol:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.vector_dist("
             text = text + "file=" + repr(file) + ")"
-            print text
+            print(text)
 
         # The file name.
         if type(file) != str:
@@ -376,7 +376,7 @@ class Pymol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pymol.view()"
-            print text
+            print(text)
 
         # Execute the functional code.
         pymol.view()
@@ -455,7 +455,7 @@ class Pymol:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:

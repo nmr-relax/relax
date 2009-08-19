@@ -52,7 +52,7 @@ def centre_of_mass(return_mass=False):
         raise RelaxNoPdbError
 
     # Print out.
-    print "Calculating the centre of mass."
+    print("Calculating the centre of mass.")
 
     # Initialise the centre of mass.
     R = zeros(3, float64)
@@ -110,8 +110,8 @@ def centre_of_mass(return_mass=False):
     R = R / M
 
     # Final print out.
-    print "    Total mass:      M = " + repr(M)
-    print "    Centre of mass:  R = " + repr(R)
+    print("    Total mass:      M = " + repr(M))
+    print("    Centre of mass:  R = " + repr(R))
 
     # Return the centre of mass.
     if return_mass:

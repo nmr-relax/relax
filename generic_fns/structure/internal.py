@@ -563,7 +563,7 @@ class Internal(Base_struct_API):
 
         # Initial print out.
         if verbosity:
-            print "\nInternal relax PDB parser."
+            print("\nInternal relax PDB parser.")
 
         # Test if the file exists.
         if not access(file_path, F_OK):
@@ -676,10 +676,10 @@ class Internal(Base_struct_API):
         num_conect = 0
 
         # Print out.
-        print "\nCreating the PDB records\n"
+        print("\nCreating the PDB records\n")
 
         # Write some initial remarks.
-        print "REMARK"
+        print("REMARK")
         file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
         file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
         num_remark = 2
@@ -776,7 +776,7 @@ class Internal(Base_struct_API):
         ##################
 
         # Print out.
-        print "HET"
+        print("HET")
 
         # Write the HET records.
         for het in het_data_coll:
@@ -787,7 +787,7 @@ class Internal(Base_struct_API):
         #####################
 
         # Print out.
-        print "HETNAM"
+        print("HETNAM")
 
         # Loop over the non-standard residues.
         residues = []
@@ -811,7 +811,7 @@ class Internal(Base_struct_API):
         #####################
 
         # Print out.
-        print "FORMUL"
+        print("FORMUL")
 
         # Loop over the non-standard residues and generate and write the chemical formula.
         residues = []
@@ -848,7 +848,7 @@ class Internal(Base_struct_API):
 
             if model_records:
                 # Print out.
-                print "\nMODEL %s" % model.num
+                print("\nMODEL %s" % model.num)
 
                 # Write the model record.
                 file.write("%-6s    %4i\n" % ('MODEL', model.num))
@@ -860,7 +860,7 @@ class Internal(Base_struct_API):
             # Loop over the molecules.
             for mol in model.mol:
                 # Print out.
-                print "ATOM, HETATM, TER"
+                print("ATOM, HETATM, TER")
 
                 # Loop over the atomic data.
                 for i in xrange(len(mol.atom_name)):
@@ -916,7 +916,7 @@ class Internal(Base_struct_API):
 
             if model_records:
                 # Print out.
-                print "ENDMDL"
+                print("ENDMDL")
 
                 # Write the model record.
                 file.write("%-6s\n" % 'ENDMDL')
@@ -926,7 +926,7 @@ class Internal(Base_struct_API):
         ############################
 
         # Print out.
-        print "CONECT"
+        print("CONECT")
 
         # Loop over the molecules of the first model.
         for mol in self.structural_data[0].mol:
@@ -981,7 +981,7 @@ class Internal(Base_struct_API):
         ################
 
         # Print out.
-        print "\nMASTER"
+        print("\nMASTER")
 
         # Write the MASTER record.
         file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data_coll), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
@@ -991,7 +991,7 @@ class Internal(Base_struct_API):
         ######
 
         # Print out.
-        print "END"
+        print("END")
 
         # Write the END record.
         file.write("END\n")

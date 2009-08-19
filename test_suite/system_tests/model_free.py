@@ -143,7 +143,7 @@ class Mf(TestCase):
                 continue
 
             # Print out.
-            print "\t" + name
+            print("\t" + name)
 
             # Get the sub-objects.
             sub_obj1 = getattr(obj1, name)
@@ -772,7 +772,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Debugging print out.
-        print cdp
+        print(cdp)
 
         # The spin specific data.
         num = [3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 35]
@@ -837,8 +837,8 @@ class Mf(TestCase):
             spin = cdp.mol[0].res[i].spin[0]
 
             # Debugging print out.
-            print res
-            print spin
+            print(res)
+            print(spin)
 
             # Spin info tests.
             self.assertEqual(res.num, num[i])
@@ -919,11 +919,11 @@ class Mf(TestCase):
         pipe_13 = pipes.get_pipe('1.3')
 
         # Test that the objects in the base pipes are the same.
-        print "Comparison of the objects of the base data pipe:"
+        print("Comparison of the objects of the base data pipe:")
         self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
 
         # Test that the diffusion tensor data is the same.
-        print "Comparison of the objects of the diffusion tensor:"
+        print("Comparison of the objects of the diffusion tensor:")
         self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
 
         # Test the number of molecules.
@@ -932,7 +932,7 @@ class Mf(TestCase):
         # Loop over the molecules.
         for i in xrange(len(pipe_12.mol)):
             # Test the objects.
-            print "Comparison of the objects of the molecule:"
+            print("Comparison of the objects of the molecule:")
             self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
 
             # Test the number of residues.
@@ -945,7 +945,7 @@ class Mf(TestCase):
                     break
 
                 # Test the objects.
-                print "Comparison of the objects of the residue:"
+                print("Comparison of the objects of the residue:")
                 self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
 
                 # Test the number of spins.
@@ -954,7 +954,7 @@ class Mf(TestCase):
                 # Loop over the spins.
                 for k in xrange(len(pipe_12.mol[i].res[j].spin)):
                     # Test the objects.
-                    print "Comparison of the objects of the spin:"
+                    print("Comparison of the objects of the spin:")
                     self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
 
 

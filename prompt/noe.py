@@ -102,7 +102,7 @@ class Noe:
             text = text + ", lower_col=" + repr(lower_col)
             text = text + ", upper_col=" + repr(upper_col)
             text = text + ", sep=" + repr(sep) + ")"
-            print text
+            print(text)
 
         # The file name.
         if type(file) != str:
@@ -164,7 +164,7 @@ class Noe:
             text = sys.ps3 + "noe.spectrum_type("
             text = text + "spectrum_type=" + repr(spectrum_type)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
-            print text
+            print(text)
 
         # The spectrum type.
         if type(spectrum_type) != str:

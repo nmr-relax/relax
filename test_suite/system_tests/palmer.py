@@ -92,9 +92,9 @@ class Palmer(TestCase):
             rex = [[None, None, None], [None, None, None], [4.308, 4.278, 1.050]]
         chi2 = [[36.6223, 20.3954, 5.2766], [36.6223, 20.3299, 0.0], [1.9763, 0.6307, 5.2766]]
         for model_index in xrange(3):
-            print "Model " + repr(models[model_index])
+            print("Model " + repr(models[model_index]))
             for spin_index in xrange(3):
-                print "Spin " + repr(spin_names[spin_index])
+                print("Spin " + repr(spin_names[spin_index]))
 
                 # Get the spin.
                 spin = return_spin(spin_names[spin_index], pipe=models[model_index])
@@ -192,9 +192,9 @@ class Palmer(TestCase):
 
         # Checks for model m1, m2, and m3 mfout file reading.
         for model_index in xrange(3):
-            print "Model " + repr(models[model_index])
+            print("Model " + repr(models[model_index]))
             for spin_index in xrange(3):
-                print "Spin " + repr(spin_names[spin_index])
+                print("Spin " + repr(spin_names[spin_index]))
 
                 # Get the spin.
                 spin = return_spin(spin_names[spin_index], pipe=models[model_index])

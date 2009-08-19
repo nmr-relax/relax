@@ -66,7 +66,7 @@ class Relax_data:
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", frq=" + repr(frq) + ")"
-            print text
+            print(text)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -131,7 +131,7 @@ class Relax_data:
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
-            print text
+            print(text)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -181,7 +181,7 @@ class Relax_data:
             text = sys.ps3 + "relax_data.delete("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
-            print text
+            print(text)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -219,7 +219,7 @@ class Relax_data:
             text = sys.ps3 + "relax_data.display("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
-            print text
+            print(text)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -315,7 +315,7 @@ class Relax_data:
             text = text + ", data_col=" + repr(data_col)
             text = text + ", error_col=" + repr(error_col)
             text = text + ", sep=" + repr(sep) + ")"
-            print text
+            print(text)
 
         # Relaxation data type.
         if type(ri_label) != str:
@@ -406,7 +406,7 @@ class Relax_data:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Relaxation data type.
         if type(ri_label) != str:

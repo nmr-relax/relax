@@ -102,7 +102,7 @@ class Align_tensor:
             text = text + ", pipe_from=" + repr(pipe_from)
             text = text + ", tensor_to=" + repr(tensor_to)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
-            print text
+            print(text)
 
         # The tensor_from argument.
         if type(tensor_from) != str:
@@ -148,7 +148,7 @@ class Align_tensor:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.delete("
             text = text + "tensor=" + repr(tensor) + ")"
-            print text
+            print(text)
 
         # Label argument.
         if type(tensor) != str:
@@ -171,7 +171,7 @@ class Align_tensor:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.display("
             text = text + "tensor=" + repr(tensor) + ")"
-            print text
+            print(text)
 
         # Label argument.
         if tensor != None and type(tensor) != str:
@@ -250,7 +250,7 @@ class Align_tensor:
             text = text + ", angle_units=" + repr(angle_units)
             text = text + ", param_types=" + repr(param_types)
             text = text + ", errors=" + repr(errors) + ")"
-            print text
+            print(text)
 
         # Label argument.
         if type(tensor) != str:
@@ -264,7 +264,7 @@ class Align_tensor:
                 raise RelaxError, "The alignment tensor parameters argument must be a tuple of numbers of length 5."
             for i in xrange(len(params)):
                 if type(params[i]) not in float_list and type(params[i]) not in int_list:
-                    print type(params[i])
+                    print(type(params[i]))
                     raise RelaxNumTupleError, ('alignment tensor parameters', params)
 
         # Scale argument.
@@ -313,7 +313,7 @@ class Align_tensor:
             text = sys.ps3 + "align_tensor.matrix_angles("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
-            print text
+            print(text)
 
         # Basis set argument.
         if type(basis_set) != int:
@@ -368,7 +368,7 @@ class Align_tensor:
             text = sys.ps3 + "align_tensor.reduction("
             text = text + "full_tensor=" + repr(full_tensor)
             text = text + ", red_tensor=" + repr(red_tensor) + ")"
-            print text
+            print(text)
 
         # From tensor argument.
         if type(full_tensor) != str:
@@ -413,7 +413,7 @@ class Align_tensor:
             text = sys.ps3 + "align_tensor.set_domain("
             text = text + "tensor=" + repr(tensor)
             text = text + ", domain=" + repr(domain) + ")"
-            print text
+            print(text)
 
         # Tensor argument.
         if type(tensor) != str:
@@ -479,7 +479,7 @@ class Align_tensor:
             text = sys.ps3 + "align_tensor.svd("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
-            print text
+            print(text)
 
         # Basis set argument.
         if type(basis_set) != int:

@@ -84,7 +84,7 @@ class Pipe:
             text = sys.ps3 + "pipe.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
-            print text
+            print(text)
 
         # The source data pipe argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -137,7 +137,7 @@ class Pipe:
             text = sys.ps3 + "pipe.create("
             text = text + "pipe_name=" + repr(pipe_name)
             text = text + ", pipe_type=" + repr(pipe_type) + ")"
-            print text
+            print(text)
 
         # The name of the data pipe.
         if type(pipe_name) != str:
@@ -165,7 +165,7 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.current()"
-            print text
+            print(text)
 
         # Execute the functional code.
         pipes.current()
@@ -190,7 +190,7 @@ class Pipe:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.delete("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
-            print text
+            print(text)
 
         # The data pipe name argument.
         if pipe_name != None and type(pipe_name) != str:
@@ -238,7 +238,7 @@ class Pipe:
             text = sys.ps3 + "pipe.hybridise("
             text = text + "hybrid=" + repr(hybrid)
             text = text + ", pipes=" + repr(pipes) + ")"
-            print text
+            print(text)
 
         # The hybrid argument.
         if hybrid != None and type(hybrid) != str:
@@ -270,7 +270,7 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.list()"
-            print text
+            print(text)
 
         # Execute the functional code.
         pipes.list()
@@ -304,7 +304,7 @@ class Pipe:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.switch("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
-            print text
+            print(text)
 
         # The data pipe name argument.
         if pipe_name != None and type(pipe_name) != str:

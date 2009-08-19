@@ -95,7 +95,7 @@ class Frame_order:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Object size.
         if type(size) != float and type(size) != int:
@@ -144,7 +144,7 @@ class Frame_order:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.pivot("
             text = text + "pivot=" + repr(pivot) + ")"
-            print text
+            print(text)
 
         # Pivot point argument.
         if type(pivot) != list:
@@ -189,7 +189,7 @@ class Frame_order:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
-            print text
+            print(text)
 
         # Ref frame argument.
         if type(ref) != str:
@@ -229,7 +229,7 @@ class Frame_order:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.select_model("
             text = text + "model=" + repr(model) + ")"
-            print text
+            print(text)
 
         # Model argument.
         if type(model) != str:

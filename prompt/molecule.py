@@ -92,7 +92,7 @@ class Molecule:
             text = text + ", mol_from=" + repr(mol_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", mol_to=" + repr(mol_to) + ")"
-            print text
+            print(text)
 
         # The pipe_from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -144,7 +144,7 @@ class Molecule:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.create("
             text = text + "mol_name=" + repr(mol_name) + ")"
-            print text
+            print(text)
 
         # Molecule name.
         if type(mol_name) != str:
@@ -173,7 +173,7 @@ class Molecule:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.delete("
             text = text + "mol_id=" + repr(mol_id) + ")"
-            print text
+            print(text)
 
         # The molecule identifier argument.
         if type(mol_id) != str:
@@ -196,7 +196,7 @@ class Molecule:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.display("
             text = text + "mol_id=" + repr(mol_id) + ")"
-            print text
+            print(text)
 
         # The molecule identifier argument.
         if mol_id != None and type(mol_id) != str:
@@ -242,7 +242,7 @@ class Molecule:
             text = text + "mol_id=" + repr(mol_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Residue identification string.
         if mol_id != None and type(mol_id) != str:

@@ -146,7 +146,7 @@ class Base_Map:
         """Function for creating the OpenDX .cfg program configuration file."""
 
         # Print out.
-        print "\nCreating the OpenDX .cfg program configuration file."
+        print("\nCreating the OpenDX .cfg program configuration file.")
 
         # Open the file.
         config_file = open_write_file(file_name=self.file_prefix+".cfg", dir=self.dir, force=True)
@@ -165,7 +165,7 @@ class Base_Map:
         """Function for creating the OpenDX .general file."""
 
         # Print out.
-        print "\nCreating the OpenDX .general file."
+        print("\nCreating the OpenDX .general file.")
 
         # Open the file.
         general_file = open_write_file(file_name=self.file_prefix+".general", dir=self.dir, force=True)
@@ -184,7 +184,7 @@ class Base_Map:
         """Function for creating the map."""
 
         # Print out.
-        print "\nCreating the map."
+        print("\nCreating the map.")
 
         # Open the file.
         map_file = open_write_file(file_name=self.file_prefix, dir=self.dir, force=True)
@@ -215,7 +215,7 @@ class Base_Map:
         """
 
         # Print out.
-        print "\nCreating the OpenDX .general and data files for the given point."
+        print("\nCreating the OpenDX .general and data files for the given point.")
 
         # Open the files.
         point_file = open_write_file(file_name=self.point_file, dir=self.dir, force=True)
@@ -242,7 +242,7 @@ class Base_Map:
         """Function for creating the OpenDX .net program file."""
 
         # Print out.
-        print "\nCreating the OpenDX .net program file."
+        print("\nCreating the OpenDX .net program file.")
 
         # Open the file.
         program_file = open_write_file(file_name=self.file_prefix+".net", dir=self.dir, force=True)

@@ -510,7 +510,7 @@ class Scientific_data(Base_struct_API):
 
         # Initial print out.
         if verbosity:
-            print "\nScientific Python PDB parser."
+            print("\nScientific Python PDB parser.")
 
         # Test if the file exists.
         if not access(file_path, F_OK):
@@ -586,7 +586,7 @@ class Scientific_data(Base_struct_API):
 
             # Print the PDB info.
             if verbosity:
-                print model
+                print(model)
 
             # First add the peptide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'peptide_chains'):
@@ -701,7 +701,7 @@ class MolContainer:
         model = Scientific.IO.PDB.Structure(file_path, self.file_model)
 
         # Print out.
-        print "\n" + repr(model)
+        print("\n" + repr(model))
 
         # Counter for finding the molecule.
         mol_num = 1

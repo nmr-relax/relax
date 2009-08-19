@@ -54,7 +54,7 @@ class Molmol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.clear_history()"
-            print text
+            print(text)
 
         # Execute the functional code.
         self.__relax__.generic.molmol.clear_history()
@@ -88,7 +88,7 @@ class Molmol:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.command("
             text = text + "command=" + repr(command) + ")"
-            print text
+            print(text)
 
         # The command argument.
         if type(command) != str:
@@ -160,7 +160,7 @@ class Molmol:
             text = text + ", colour_start=" + repr(colour_start)
             text = text + ", colour_end=" + repr(colour_end)
             text = text + ", colour_list=" + repr(colour_list) + ")"
-            print text
+            print(text)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:
@@ -217,7 +217,7 @@ class Molmol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.ribbon()"
-            print text
+            print(text)
 
         # Execute the functional code.
         molmol.ribbon()
@@ -279,7 +279,7 @@ class Molmol:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
-            print text
+            print(text)
 
         # The file name.
         if type(file) != str:
@@ -302,7 +302,7 @@ class Molmol:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molmol.view()"
-            print text
+            print(text)
 
         # Execute the functional code.
         molmol.view()
@@ -381,7 +381,7 @@ class Molmol:
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Data type for mapping to the structure.
         if type(data_type) != str:

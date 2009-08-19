@@ -60,7 +60,7 @@ class Deselect:
         # Function intro test.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "deselect.all()"
-            print text
+            print(text)
 
         # Execute the functional code.
         selection.desel_all()
@@ -129,7 +129,7 @@ class Deselect:
             text = text + ", spin_name_col=" + repr(spin_name_col)
             text = text + ", sep=" + repr(sep)
             text = text + ", change_all=" + repr(change_all) + ")"
-            print text
+            print(text)
 
         # File name.
         if type(file) != str:
@@ -199,7 +199,7 @@ class Deselect:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "deselect.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
-            print text
+            print(text)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:
@@ -247,7 +247,7 @@ class Deselect:
             text = sys.ps3 + "deselect.spin("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", change_all=" + repr(change_all) + ")"
-            print text
+            print(text)
 
         # Spin identification string.
         if spin_id != None and type(spin_id) != str:

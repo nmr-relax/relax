@@ -290,14 +290,14 @@ class Interpreter:
         """Function for turning the function introductions off."""
 
         self.intro = False
-        print "Echoing of user function calls has been disabled."
+        print("Echoing of user function calls has been disabled.")
 
 
     def _on(self):
         """Function for turning the function introductions on."""
 
         self.intro = True
-        print "Echoing of user function calls has been enabled."
+        print("Echoing of user function calls has been enabled.")
 
 
     def script(self, file=None, quit=False):
@@ -331,7 +331,7 @@ class _Exit:
     def __repr__(self):
         """Exit the program."""
 
-        print "Exiting the program."
+        print("Exiting the program.")
         sys.exit()
 
 
@@ -555,4 +555,4 @@ def runcode(self, code):
         self.showtraceback()
     else:
         if softspace(sys.stdout, 0):
-            print
+            print('')

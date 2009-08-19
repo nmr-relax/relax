@@ -673,15 +673,15 @@ class Relax_fit(Common_functions):
 
                 # Individual spin print out.
                 if verbosity >= 2:
-                    print "\n\n"
+                    print("\n\n")
 
                 string = "Fitting to spin " + repr(spin_id)
-                print "\n\n" + string
-                print len(string) * '~'
+                print("\n\n" + string)
+                print(len(string) * '~')
 
                 # Grid search print out.
                 if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"
+                    print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
 
 
             # Initialise the function to minimise.
@@ -1016,12 +1016,12 @@ class Relax_fit(Common_functions):
 
         # Two parameter exponential fit.
         if model == 'exp':
-            print "Two parameter exponential fit."
+            print("Two parameter exponential fit.")
             params = ['Rx', 'I0']
 
         # Three parameter inversion recovery fit.
         elif model == 'inv':
-            print "Three parameter inversion recovery fit."
+            print("Three parameter inversion recovery fit.")
             params = ['Rx', 'I0', 'Iinf']
 
         # Invalid model.

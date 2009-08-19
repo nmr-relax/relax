@@ -96,7 +96,7 @@ class Residue:
             text = text + ", res_from=" + repr(res_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", res_to=" + repr(res_to) + ")"
-            print text
+            print(text)
 
         # The data pipe from argument.
         if pipe_from != None and type(pipe_from) != str:
@@ -158,7 +158,7 @@ class Residue:
             text = text + "res_num=" + repr(res_num)
             text = text + ", res_name=" + repr(res_name)
             text = text + ", mol_name=" + repr(mol_name) + ")"
-            print text
+            print(text)
 
         # Residue number.
         if type(res_num) != int:
@@ -197,7 +197,7 @@ class Residue:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.delete("
             text = text + "res_id=" + repr(res_id) + ")"
-            print text
+            print(text)
 
         # The residue identifier argument.
         if type(res_id) != str:
@@ -220,7 +220,7 @@ class Residue:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.display("
             text = text + "res_id=" + repr(res_id) + ")"
-            print text
+            print(text)
 
         # The res_id argument.
         if res_id != None and type(res_id) != str:
@@ -270,7 +270,7 @@ class Residue:
             text = text + "res_id=" + repr(res_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Residue identification string.
         if type(res_id) != str:
@@ -325,7 +325,7 @@ class Residue:
             text = text + "res_id=" + repr(res_id)
             text = text + ", number=" + repr(number)
             text = text + ", force=" + repr(force) + ")"
-            print text
+            print(text)
 
         # Residue identification string.
         if type(res_id) != str:

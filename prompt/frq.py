@@ -68,7 +68,7 @@ class Frq:
             text = sys.ps3 + "frq("
             text = text + "id=" + repr(id)
             text = text + ", frq=" + repr(frq) + ")"
-            print text
+            print(text)
 
         # Id string.
         if type(id) != str:

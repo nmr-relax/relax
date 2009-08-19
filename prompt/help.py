@@ -52,7 +52,7 @@ interactive python help system, type 'help_python()'.
 
     def __call__(self, *args, **kwds):
         if len(args) != 1 or type(args[0]) == str:
-            print self.text
+            print(self.text)
             return
         if hasattr(args[0], '__relax_help__'):
             sys.stdout.write(args[0].__relax_help__ + "\n")

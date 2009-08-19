@@ -55,7 +55,7 @@ class Minimisation:
         if self.relax.interpreter.intro:
             text = sys.ps3 + "calc("
             text = text + "verbosity=" + repr(verbosity) + ")"
-            print text
+            print(text)
 
         # The verbosity level.
         if type(verbosity) != int:
@@ -97,7 +97,7 @@ class Minimisation:
             text = text + ", inc=" + repr(inc)
             text = text + ", constraints=" + repr(constraints)
             text = text + ", verbosity=" + repr(verbosity) + ")"
-            print text
+            print(text)
 
         # The lower bounds.
         if lower == None:
@@ -308,7 +308,7 @@ class Minimisation:
             text = text + ", constraints=" + repr(constraints)
             text = text + ", scaling=" + repr(scaling)
             text = text + ", verbosity=" + repr(verbosity) + ")"
-            print text
+            print(text)
 
         # Minimisation algorithm.
         if len(args) == 0:

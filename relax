@@ -106,7 +106,7 @@ class Relax:
 
         # Show the version number and exit.
         if mode == 'version':
-            print 'relax ' + self.version
+            print('relax ' + self.version)
             sys.exit()
 
         # Logging.

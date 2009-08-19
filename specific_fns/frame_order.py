@@ -360,8 +360,8 @@ class Frame_order(Common_functions):
         # The cone axis. 
         cone_axis = zeros(3, float64)
         generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
-        print "Cone axis: %s." % cone_axis
-        print "Cone angle: %s." % cdp.theta_cone
+        print("Cone axis: %s." % cone_axis)
+        print("Cone angle: %s." % cdp.theta_cone)
 
         # Cone axis from simulations.
         num_sim = 0
@@ -404,22 +404,22 @@ class Frame_order(Common_functions):
             mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
 
             # Generate the axis vectors.
-            print "\nGenerating the axis vectors."
+            print("\nGenerating the axis vectors.")
             res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
 
             # Generate the cone outer edge.
-            print "\nGenerating the cone outer edge."
+            print("\nGenerating the cone outer edge.")
             edge_start_atom = mol.atom_num[-1]+1
             cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
 
             # Generate the cone cap, and stitch it to the cone edge.
-            print "\nGenerating the cone cap."
+            print("\nGenerating the cone cap.")
             cone_start_atom = mol.atom_num[-1]+1
             generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
             stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
 
             # Create the PDB file.
-            print "\nGenerating the PDB file."
+            print("\nGenerating the PDB file.")
             pdb_file = open_write_file(prefix+file, dir, force=force)
             structure.write_pdb(pdb_file)
             pdb_file.close()

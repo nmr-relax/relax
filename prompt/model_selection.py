@@ -104,7 +104,7 @@ class Modsel:
             text = text + "method=" + repr(method)
             text = text + ", modsel_pipe=" + repr(modsel_pipe)
             text = text + ", pipes=" + repr(pipes) + ")"
-            print text
+            print(text)
 
         # Method.
         if type(method) != str:

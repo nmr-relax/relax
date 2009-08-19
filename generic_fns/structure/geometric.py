@@ -221,7 +221,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         atom_id_ext = '_' + chain_id
 
         # Print out.
-        print "\nChain " + chain_id + "\n"
+        print("\nChain " + chain_id + "\n")
 
 
         # Centre of mass.
@@ -241,7 +241,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         ######################
 
         # Print out.
-        print "\nGenerating the geometric object."
+        print("\nGenerating the geometric object.")
 
         # The distribution.
         generate_vector_dist(mol=mol, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
@@ -256,8 +256,8 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Create the unique axis of the spheroid.
         if pipe.diff_tensor.type == 'spheroid':
             # Print out.
-            print "\nGenerating the unique axis of the diffusion tensor."
-            print "    Scaling factor:                      " + repr(scale)
+            print("\nGenerating the unique axis of the diffusion tensor.")
+            print("    Scaling factor:                      " + repr(scale))
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
@@ -274,8 +274,8 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Create the three axes of the ellipsoid.
         if pipe.diff_tensor.type == 'ellipsoid':
             # Print out.
-            print "Generating the three axes of the ellipsoid."
-            print "    Scaling factor:                      " + repr(scale)
+            print("Generating the three axes of the ellipsoid.")
+            print("    Scaling factor:                      " + repr(scale))
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
@@ -301,7 +301,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     ######################
 
     # Print out.
-    print "\nGenerating the PDB file."
+    print("\nGenerating the PDB file.")
 
     # Open the PDB file for writing.
     tensor_pdb_file = open_write_file(file, dir, force=force)
@@ -440,7 +440,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     ######################
 
     # Print out.
-    print "\nGenerating the PDB file."
+    print("\nGenerating the PDB file.")
 
     # Open the PDB file for writing.
     tensor_pdb_file = open_write_file(file, dir, force=force)
@@ -489,7 +489,7 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
     atom_num = origin_num
 
     # Get the uniform vector distribution.
-    print "    Creating the uniform vector distribution."
+    print("    Creating the uniform vector distribution.")
     vectors = uniform_vect_dist_spherical_angles(inc=inc)
 
     # Generate the increment values of v.
@@ -617,8 +617,8 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
         mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N')
 
     # Print out.
-    print "    " + atom_name + " vector (scaled + shifted to origin): " + repr(origin+vector*scale)
-    print "    Creating the MC simulation vectors."
+    print("    " + atom_name + " vector (scaled + shifted to origin): " + repr(origin+vector*scale))
+    print("    Creating the MC simulation vectors.")
 
     # Monte Carlo simulations.
     if sim_vectors != None:

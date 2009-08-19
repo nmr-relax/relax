@@ -81,7 +81,7 @@ class Monte_carlo:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.create_data("
             text = text + "method=" + repr(method) + ")"
-            print text
+            print(text)
 
         # The method argument.
         if type(method) != str:
@@ -128,7 +128,7 @@ class Monte_carlo:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.error_analysis("
             text = text + "prune=" + repr(prune) + ")"
-            print text
+            print(text)
 
         # The prune argument.
         if type(prune) != int and type(prune) != float:
@@ -159,7 +159,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.initial_values()"
-            print text
+            print(text)
 
         # Execute the functional code.
         monte_carlo.initial_values()
@@ -171,7 +171,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.off()"
-            print text
+            print(text)
 
         # Execute the functional code.
         monte_carlo.off()
@@ -183,7 +183,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.on()"
-            print text
+            print(text)
 
         # Execute the functional code.
         monte_carlo.on()
@@ -209,7 +209,7 @@ class Monte_carlo:
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.setup("
             text = text + "number=" + repr(number) + ")"
-            print text
+            print(text)
 
         # The number of simulations.
         if type(number) != int:
