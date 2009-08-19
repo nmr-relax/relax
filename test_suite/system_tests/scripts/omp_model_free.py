@@ -185,7 +185,7 @@ class Main:
         # Loop over the data pipes.
         for name in self.pipes:
             # Create the data pipe.
-            if ds.has_key(name):
+            if name in ds:
                 pipe.delete(name)
             pipe.create(name, 'mf')
 

@@ -298,7 +298,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     spect_index = cdp.spectrum_ids.index(spectrum_id)
 
     # The scaling by NC_proc.
-    if hasattr(cdp, 'ncproc') and cdp.ncproc.has_key(spectrum_id):
+    if hasattr(cdp, 'ncproc') and spectrum_id in cdp.ncproc:
         scale = 1.0 / 2**cdp.ncproc[spectrum_id]
     else:
         scale = 1.0

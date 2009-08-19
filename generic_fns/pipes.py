@@ -178,7 +178,7 @@ def has_pipe(name):
     """
 
     # Check.
-    if ds.has_key(name):
+    if name in ds:
         return True
     else:
         return False
@@ -258,6 +258,6 @@ def test(pipe_name=None):
             raise RelaxNoPipeError
 
     # Test if the data pipe exists.
-    if not ds.has_key(pipe_name):
+    if pipe_name not in ds:
         raise RelaxNoPipeError, pipe_name
 

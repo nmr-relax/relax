@@ -61,7 +61,7 @@ class Test___init__(TestCase):
         ds.add(pipe_name='new', pipe_type='mf')
 
         # Test that the new data pipe exists.
-        self.assert_(ds.has_key('new'))
+        self.assert_('new' in ds)
 
 
     def test_repr(self):

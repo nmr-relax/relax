@@ -148,7 +148,7 @@ def molmol_colours(name):
         colours[key] = array(colours[key], float64)
 
     # Invalid colour string.
-    if not colours.has_key(name):
+    if name not in colours:
         raise RelaxInvalidColourError, name
 
     # Return the RGB colour array.
@@ -768,7 +768,7 @@ def x11_colours(name):
     colours['light green']              = [144, 238, 144]
 
     # Invalid colour string.
-    if not colours.has_key(name):
+    if name not in colours:
         raise RelaxInvalidColourError, name
 
     # Return the RGB colour array (in numpy format and between 0 and 1).

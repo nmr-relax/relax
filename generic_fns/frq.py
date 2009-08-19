@@ -49,7 +49,7 @@ def set(id=None, frq=None):
         cdp.frq = {}
 
     # Test the frequency has not already been set.
-    if cdp.frq.has_key(id):
+    if id in cdp.frq:
         raise RelaxError, "The frequency for the experiment " + repr(id) + " has already been set."
 
     # Set the frequency.

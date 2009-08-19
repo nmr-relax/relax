@@ -70,7 +70,7 @@ class Test_pipes(TestCase):
         pipes.copy('orig', 'new')
 
         # Test that the new data pipe exists.
-        self.assert_(ds.has_key('new'))
+        self.assert_('new' in ds)
 
         # Test that the new data pipe has the object 'x' and that its value is 1.
         self.assertEqual(ds['new'].x, 1)
@@ -101,7 +101,7 @@ class Test_pipes(TestCase):
         pipes.copy(pipe_to='new')
 
         # Test that the new data pipe exists.
-        self.assert_(ds.has_key('new'))
+        self.assert_('new' in ds)
 
         # Test that the new data pipe has the object 'x' and that its value is 1.
         self.assertEqual(ds['new'].x, 1)
@@ -143,7 +143,7 @@ class Test_pipes(TestCase):
         pipes.create(name, 'mf')
 
         # Test that the data pipe exists.
-        self.assert_(ds.has_key(name))
+        self.assert_(name in ds)
 
         # Test that the current pipe is the new pipe.
         self.assertEqual(pipes.cdp_name(), name)
@@ -183,7 +183,7 @@ class Test_pipes(TestCase):
         pipes.delete(name)
 
         # Test that the data pipe no longer exists.
-        self.assert_(not ds.has_key(name))
+        self.assert_(name not in ds)
 
         # Test that the current pipe is None (as the current pipe was deleted).
         self.assertEqual(pipes.cdp_name(), None)

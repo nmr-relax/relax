@@ -145,7 +145,7 @@ class Results:
         """
 
         # The spin info (for relax 1.2).
-        if col.has_key('num'):
+        if 'num' in col:
             mol_name = None
             res_num = int(spin_line[col['num']])
             res_name = spin_line[col['name']]
@@ -187,7 +187,7 @@ class Results:
         """
 
         # The spin info (for relax 1.2).
-        if col.has_key('num'):
+        if 'num' in col:
             mol_name = None
             res_num = int(spin_line[col['num']])
             res_name = spin_line[col['name']]

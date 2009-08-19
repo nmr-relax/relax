@@ -262,39 +262,39 @@ class Minimisation:
         # The function intro text is found at the end!
 
         # Keyword: func_tol.
-        if keywords.has_key('func_tol'):
+        if 'func_tol' in keywords:
             func_tol = keywords['func_tol']
         else:
             func_tol = 1e-25
 
         # Keyword: grad_tol.
-        if keywords.has_key('grad_tol'):
+        if 'grad_tol' in keywords:
             grad_tol = keywords['grad_tol']
         else:
             grad_tol = None
 
         # Keyword: max_iterations.
-        if keywords.has_key('max_iterations'):
+        if 'max_iterations' in keywords:
             max_iterations = keywords['max_iterations']
-        elif keywords.has_key('max_iter'):
+        elif 'max_iter' in keywords:
             max_iterations = keywords['max_iter']
         else:
             max_iterations = 10000000
 
         # Keyword: constraints.
-        if keywords.has_key('constraints'):
+        if 'constraints' in keywords:
             constraints = keywords['constraints']
         else:
             constraints = True
 
         # Keyword: scaling.
-        if keywords.has_key('scaling'):
+        if 'scaling' in keywords:
             scaling = keywords['scaling']
         else:
             scaling = True
 
         # Keyword: verbosity.
-        if keywords.has_key('verbosity'):
+        if 'verbosity' in keywords:
             verbosity = keywords['verbosity']
         else:
             verbosity = 1
