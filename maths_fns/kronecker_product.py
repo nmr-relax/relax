@@ -43,10 +43,12 @@ def kron_prod(A, B):
     C = outer(A, B)
 
     # Redefine the shape.
+    orig_shape = C.shape
     C.shape = A.shape + B.shape
 
     # Generate and return the Kronecker product matrix.
-    transpose_14(C)
+    transpose_23(C)
+    C.shape = orig_shape
     return C
 
 
