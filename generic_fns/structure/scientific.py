@@ -83,7 +83,7 @@ class Scientific_data(Base_struct_API):
 
         # The find the attached atom in the residue (FIXME).
         matching_list = []
-        for atom in res.atoms.keys():
+        for atom in list(res.atoms.keys()):
             if relax_re.search(atom, attached_atom):
                 matching_list.append(atom)
         num_attached = len(matching_list)
@@ -619,7 +619,7 @@ class Scientific_data(Base_struct_API):
 
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'molecules'):
-                for key in model.molecules.keys():
+                for key in list(model.molecules.keys()):
                     # Only read the required molecule.
                     if read_mol and mol_index+1 not in read_mol:
                         mol_index = mol_index + 1
@@ -728,7 +728,7 @@ class MolContainer:
 
         # Finally all other molecules.
         if hasattr(model, 'molecules'):
-            for key in model.molecules.keys():
+            for key in list(model.molecules.keys()):
                 # Pack if the molecule index matches.
                 if mol_num == self.file_mol_num:
                     # Loop over the molecules.
@@ -758,4 +758,4 @@ class MolContainer:
         mol_element.setAttribute('name', str(self.mol_name))
 
         # Add all simple python objects within the MolContainer to the XML element.
-        fill_object_contents(doc, mol_element, object=self, blacklist=['data'] + self.__class__.__dict__.keys())
+        fill_object_contents(doc, mol_element, object=self, blacklist=['data'] + list(self.__class__.__dict__.keys()))

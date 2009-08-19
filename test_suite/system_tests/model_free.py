@@ -139,7 +139,7 @@ class Mf(TestCase):
                 continue
 
             # Skip original class methods.
-            if name in obj1.__class__.__dict__.keys():
+            if name in list(obj1.__class__.__dict__.keys()):
                 continue
 
             # Print out.

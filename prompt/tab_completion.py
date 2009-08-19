@@ -36,7 +36,7 @@ class Tab_completion:
     def create_list(self):
         """Function to create the dictionary of options for tab completion."""
 
-        self.list = self.name_space.keys()
+        self.list = list(self.name_space.keys())
 
         self.options = []
         for name in self.list:

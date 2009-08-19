@@ -58,7 +58,7 @@ class Fetch_docstrings:
         self.file = open(file, 'w')
 
         # Get the names of the data structures.
-        names = self.local.keys()
+        names = list(self.local.keys())
 
         # Alphabetically sort the names of the data structures.
         names.sort()

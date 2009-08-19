@@ -817,7 +817,7 @@ class ModelList(list):
             model_element.setAttribute('num', str(self[i].num))
 
             # Add all simple python objects within the ModelContainer to the XML element.
-            fill_object_contents(doc, model_element, object=self[i], blacklist=['num', 'mol'] + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, model_element, object=self[i], blacklist=['num', 'mol'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the molecule data.
             self[i].mol.to_xml(doc, model_element)

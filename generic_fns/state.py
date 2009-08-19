@@ -72,7 +72,7 @@ def load_state(state=None, dir_name=None):
         setattr(ds, name, obj)
  
     # Loop over the keys of the dictionary.
-    for key in state.keys():
+    for key in list(state.keys()):
         # Shift the PipeContainer.
         ds[key] = state[key]
 

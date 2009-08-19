@@ -81,7 +81,7 @@ class PipeContainer(Prototype):
                 text = text + "  structure: The 3D molecular data object\n"
 
             # Skip the PipeContainer methods.
-            if name in self.__class__.__dict__.keys():
+            if name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip certain objects.
@@ -189,7 +189,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Skip the PipeContainer methods.
-            if name in self.__class__.__dict__.keys():
+            if name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip special objects.
@@ -216,7 +216,7 @@ class PipeContainer(Prototype):
         global_element = doc.createElement('global')
         element.appendChild(global_element)
         global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
+        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + list(self.__class__.__dict__.keys()))
 
         # Hybrid info.
         self.xml_create_hybrid_element(doc, element)

@@ -78,7 +78,7 @@ class Test___init__(TestCase):
         ds.__reset__()
 
         # Test that there are no keys.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
 
         # Test that the object ds.test is deleted.
         self.assert_(not hasattr(ds, 'test'))

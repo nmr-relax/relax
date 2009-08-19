@@ -75,7 +75,7 @@ class Relax_data_store(dict):
         # The data pipes.
         text = text + "\n"
         text = text + "Data pipes:\n"
-        pipes = self.instance.keys()
+        pipes = list(self.instance.keys())
         if pipes:
             for pipe in pipes:
                 text = text + "  %s\n" % repr(pipe)
@@ -85,7 +85,7 @@ class Relax_data_store(dict):
         # Data store objects.
         text = text + "\n"
         text = text + "Data store objects:\n"
-        names = self.__class__.__dict__.keys()
+        names = list(self.__class__.__dict__.keys())
         names.sort()
         for name in names:
             # The object.
@@ -106,7 +106,7 @@ class Relax_data_store(dict):
                 continue
 
             # Skip overwritten methods.
-            if name in self.__class__.__dict__.keys():
+            if name in list(self.__class__.__dict__.keys()):
                 continue
 
             # The object.
@@ -127,7 +127,7 @@ class Relax_data_store(dict):
         """
 
         # Loop over the keys of self.__dict__ and delete the corresponding object.
-        for key in self.__dict__.keys():
+        for key in list(self.__dict__.keys()):
             # Delete the object.
             del self.__dict__[key]
 
@@ -147,7 +147,7 @@ class Relax_data_store(dict):
         """
 
         # Test if the pipe already exists.
-        if pipe_name in self.instance.keys():
+        if pipe_name in list(self.instance.keys()):
             raise RelaxPipeError(pipe_name)
 
         # Create a new container.

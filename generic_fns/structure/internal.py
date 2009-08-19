@@ -1104,7 +1104,7 @@ class MolContainer:
         }
 
         # Translate amino acids.
-        for key in table.keys():
+        for key in list(table.keys()):
             if element in table[key]:
                 element = key
                 break
@@ -1430,4 +1430,4 @@ class MolContainer:
         mol_element.setAttribute('name', str(self.mol_name))
 
         # Add all simple python objects within the MolContainer to the XML element.
-        fill_object_contents(doc, mol_element, object=self, blacklist=self.__class__.__dict__.keys())
+        fill_object_contents(doc, mol_element, object=self, blacklist=list(self.__class__.__dict__.keys()))

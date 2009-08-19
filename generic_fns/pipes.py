@@ -49,7 +49,7 @@ def copy(pipe_from=None, pipe_to=None):
     """
 
     # Test if the pipe already exists.
-    if pipe_to in ds.keys():
+    if pipe_to in list(ds.keys()):
         raise RelaxPipeError(pipe_to)
 
     # The current data pipe.
@@ -205,7 +205,7 @@ def pipe_loop(name=False):
     """
 
     # Loop over the keys.
-    for key in ds.keys():
+    for key in list(ds.keys()):
         # Return the pipe and name.
         if name:
             yield ds[key], key
@@ -222,7 +222,7 @@ def pipe_names():
     @rtype:         list of str
     """
 
-    return ds.keys()
+    return list(ds.keys())
 
 
 def switch(pipe_name=None):

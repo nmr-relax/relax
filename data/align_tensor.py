@@ -666,7 +666,7 @@ class AlignTensorList(ListType):
             tensor_element.setAttribute('desc', 'Alignment tensor')
 
             # Add all simple python objects within the PipeContainer to the pipe element.
-            fill_object_contents(doc, tensor_element, object=self[i], blacklist=self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, tensor_element, object=self[i], blacklist=list(self[i].__class__.__dict__.keys()))
 
 
 class AlignTensorData(Element):

@@ -60,7 +60,7 @@ class Model_free_main:
         # Loop over the modifiable objects.
         for data_name in dir(object_from):
             # Skip special objects (starting with _, or in the original class and base class namespaces).
-            if search('^_', data_name) or data_name in object_from.__class__.__dict__.keys() or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in object_from.__class__.__bases__[0].__dict__.keys()):
+            if search('^_', data_name) or data_name in list(object_from.__class__.__dict__.keys()) or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in list(object_from.__class__.__bases__[0].__dict__.keys())):
                 continue
 
             # Skip some more special objects.
@@ -1092,7 +1092,7 @@ class Model_free_main:
                 continue
 
             # Skip special objects.
-            if search('^_', data_name) or data_name in dp_from.__class__.__dict__.keys():
+            if search('^_', data_name) or data_name in list(dp_from.__class__.__dict__.keys()):
                 continue
 
             # Get the original object.

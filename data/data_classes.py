@@ -37,7 +37,7 @@ class Element(object):
         # Data structures.
         for name in dir(self):
             # Skip Element and derived class methods.
-            if name in Element.__dict__.keys() or name in self.__class__.__dict__.keys():
+            if name in list(Element.__dict__.keys()) or name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip special objects.
@@ -61,7 +61,7 @@ class Element(object):
         # An object has been added to the container.
         for name in dir(self):
             # Skip Element and derived class methods.
-            if name in Element.__dict__.keys() or name in self.__class__.__dict__.keys():
+            if name in list(Element.__dict__.keys()) or name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip special objects.

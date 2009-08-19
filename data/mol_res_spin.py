@@ -275,7 +275,7 @@ class SpinList(list):
                 sub_element.appendChild(text_val)
 
             # Add all simple python objects within the SpinContainer to the XML element.
-            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + blacklist + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + blacklist + list(self[i].__class__.__dict__.keys()))
 
 
 
@@ -485,7 +485,7 @@ class ResidueList(list):
             res_element.setAttribute('num', str(self[i].num))
 
             # Add all simple python objects within the ResidueContainer to the XML element.
-            fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the residue data.
             self[i].spin.to_xml(doc, res_element)
@@ -683,7 +683,7 @@ class MoleculeList(list):
             mol_element.setAttribute('name', str(self[i].name))
 
             # Add all simple python objects within the MoleculeContainer to the XML element.
-            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the residue data.
             self[i].res.to_xml(doc, mol_element)
