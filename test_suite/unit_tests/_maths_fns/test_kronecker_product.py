@@ -133,13 +133,29 @@ class Test_kronecker_product(TestCase):
         # The Kronecker product.
         C = kron_prod(R1, R2)
 
+        # The real Kronecker product!
+        D = array([
+            [ 0,  1,  0,  0,  4,  0,  0,  5,  0],
+            [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+            [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+            [ 0, -4,  0,  0,  2,  0,  0,  6,  0],
+            [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+            [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+            [ 0, -5,  0,  0, -6,  0,  0,  3,  0],
+            [ 0,  0,  0,  0,  0,  0,  0,  0,  0],
+            [ 0,  0,  0,  0,  0,  0,  0,  0,  0]], float64)
+
         # Print outs.
         print("R1:\n%s" % R1)
         print("R2:\n%s" % R2)
         print("C:\n%s" % C)
+        print("D:\n%s" % D)
 
         # Checks.
         self.assertEqual(C.shape, (9, 9))
+        for i in range(9):
+            for j in range(9):
+                self.assertEqual(C[i, j], D[i, j])
 
 
     def test_transpose_12(self):
