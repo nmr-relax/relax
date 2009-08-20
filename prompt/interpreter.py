@@ -545,7 +545,7 @@ def runcode(self, code):
     """
 
     try:
-        exec code in self.locals
+        exec(code, self.locals)
     except SystemExit:
         raise
     except AllRelaxErrors, instance:
