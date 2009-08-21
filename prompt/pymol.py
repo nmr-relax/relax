@@ -125,7 +125,7 @@ class Pymol:
             print(text)
 
         # The command argument.
-        if type(command) != str:
+        if not isinstance(command, str):
             raise RelaxStrError('command', command)
 
         # Execute the functional code.
@@ -172,7 +172,7 @@ class Pymol:
             print(text)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Execute the functional code.
@@ -243,27 +243,27 @@ class Pymol:
             print(text)
 
         # Data type for mapping to the structure.
-        if type(data_type) != str:
+        if not isinstance(data_type, str):
             raise RelaxStrError('data type', data_type)
 
         # The style.
-        if type(style) != str:
+        if not isinstance(style, str):
             raise RelaxStrError('style', style)
 
         # The starting colour of the linear gradient.
-        if colour_start != None and type(colour_start) != str and type(colour_start) != list:
+        if colour_start != None and not isinstance(colour_start, str) and not isinstance(colour_start, list):
             raise RelaxNoneStrListError('starting colour of the linear gradient', colour_start)
-        if type(colour_start) == list:
+        if isinstance(colour_start, list):
             for i in xrange(len(colour_start)):
-                if type(colour_start[i]) != float and type(colour_start[i]) != int:
+                if not isinstance(colour_start[i], float) and not isinstance(colour_start[i], int):
                     raise RelaxListNumError('starting colour of the linear gradient', colour_start)
 
         # The ending colour of the linear gradient.
-        if colour_end != None and type(colour_end) != str and type(colour_end) != list:
+        if colour_end != None and not isinstance(colour_end, str) and not isinstance(colour_end, list):
             raise RelaxNoneStrListError('ending colour of the linear gradient', colour_end)
-        if type(colour_end) == list:
+        if isinstance(colour_end, list):
             for i in xrange(len(colour_end)):
-                if type(colour_end[i]) != float and type(colour_end[i]) != int:
+                if not isinstance(colour_end[i], float) and not isinstance(colour_end[i], int):
                     raise RelaxListNumError('ending colour of the linear gradient', colour_end)
 
         # Execute the functional code.
@@ -319,7 +319,7 @@ class Pymol:
             print(text)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Execute the functional code.
@@ -356,7 +356,7 @@ class Pymol:
             print(text)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Execute the functional code.
@@ -458,39 +458,39 @@ class Pymol:
             print(text)
 
         # Data type for mapping to the structure.
-        if type(data_type) != str:
+        if not isinstance(data_type, str):
             raise RelaxStrError('data type', data_type)
 
         # The style.
-        if type(style) != str:
+        if not isinstance(style, str):
             raise RelaxStrError('style', style)
 
         # The starting colour of the linear gradient.
-        if colour_start != None and type(colour_start) != str and type(colour_start) != list:
+        if colour_start != None and not isinstance(colour_start, str) and not isinstance(colour_start, list):
             raise RelaxNoneStrListError('starting colour of the linear gradient', colour_start)
-        if type(colour_start) == list:
+        if isinstance(colour_start, list):
             for i in xrange(len(colour_start)):
-                if type(colour_start[i]) != float and type(colour_start[i]) != int:
+                if not isinstance(colour_start[i], float) and not isinstance(colour_start[i], int):
                     raise RelaxListNumError('starting colour of the linear gradient', colour_start)
 
         # The ending colour of the linear gradient.
-        if colour_end != None and type(colour_end) != str and type(colour_end) != list:
+        if colour_end != None and not isinstance(colour_end, str) and not isinstance(colour_end, list):
             raise RelaxNoneStrListError('ending colour of the linear gradient', colour_end)
-        if type(colour_end) == list:
+        if isinstance(colour_end, list):
             for i in xrange(len(colour_end)):
-                if type(colour_end[i]) != float and type(colour_end[i]) != int:
+                if not isinstance(colour_end[i], float) and not isinstance(colour_end[i], int):
                     raise RelaxListNumError('ending colour of the linear gradient', colour_end)
 
         # File.
-        if file != None and type(file) != str:
+        if file != None and not isinstance(file, str):
             raise RelaxNoneStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

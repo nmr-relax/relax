@@ -87,11 +87,11 @@ class Pipe:
             print(text)
 
         # The source data pipe argument.
-        if pipe_from != None and type(pipe_from) != str:
+        if pipe_from != None and not isinstance(pipe_from, str):
             raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The target data pipe argument.
-        if pipe_to != None and type(pipe_to) != str:
+        if pipe_to != None and not isinstance(pipe_to, str):
             raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # Execute the functional code.
@@ -140,11 +140,11 @@ class Pipe:
             print(text)
 
         # The name of the data pipe.
-        if type(pipe_name) != str:
+        if not isinstance(pipe_name, str):
             raise RelaxStrError('data pipe name', pipe_name)
 
         # The data pipe type.
-        if type(pipe_type) != str:
+        if not isinstance(pipe_type, str):
             raise RelaxStrError('data pipe type', pipe_type)
 
         # Execute the functional code.
@@ -193,7 +193,7 @@ class Pipe:
             print(text)
 
         # The data pipe name argument.
-        if pipe_name != None and type(pipe_name) != str:
+        if pipe_name != None and not isinstance(pipe_name, str):
             raise RelaxNoneStrError('data pipe name', pipe_name)
 
         # Execute the functional code.
@@ -261,15 +261,15 @@ class Pipe:
             print(text)
 
         # The hybrid argument.
-        if hybrid != None and type(hybrid) != str:
+        if hybrid != None and not isinstance(hybrid, str):
             raise RelaxNoneStrError('hybrid data pipe', hybrid)
 
         # Data pipes.
-        if type(pipes) != list:
+        if not isinstance(pipes, list):
             raise RelaxNoneListError('data pipes', pipes)
         else:
             for name in pipes:
-                if type(name) != str:
+                if not isinstance(name, str):
                     raise RelaxListStrError('data pipes', pipes)
 
         # Execute the functional code.
@@ -307,7 +307,7 @@ class Pipe:
             print(text)
 
         # The data pipe name argument.
-        if pipe_name != None and type(pipe_name) != str:
+        if pipe_name != None and not isinstance(pipe_name, str):
             raise RelaxNoneStrError('data pipe name', pipe_name)
 
         # Execute the functional code.

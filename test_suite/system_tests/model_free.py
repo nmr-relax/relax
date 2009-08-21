@@ -1100,11 +1100,11 @@ class Mf(TestCase):
         mesg = self.mesg_opt_debug(spin)
 
         # Convert to lists.
-        if type(f_count) != list:
+        if not isinstance(f_count, list):
             f_count = [f_count]
-        if type(g_count) != list:
+        if not isinstance(g_count, list):
             g_count = [g_count]
-        if type(h_count) != list:
+        if not isinstance(h_count, list):
             h_count = [h_count]
 
         # Test all the values.

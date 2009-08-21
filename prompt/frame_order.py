@@ -98,23 +98,23 @@ class Frame_order:
             print(text)
 
         # Object size.
-        if type(size) != float and type(size) != int:
+        if not isinstance(size, float) and not isinstance(size, int):
             raise RelaxNumError('geometric object size', size)
 
         # Increment number.
-        if type(inc) != int:
+        if not isinstance(inc, int):
             raise RelaxIntError('increment number', inc)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
@@ -147,12 +147,12 @@ class Frame_order:
             print(text)
 
         # Pivot point argument.
-        if type(pivot) != list:
+        if not isinstance(pivot, list):
             raise RelaxListError('pivot point', pivot)
         if len(pivot) != 3:
             raise RelaxLenError('pivot point', 3)
         for i in xrange(len(pivot)):
-            if type(pivot[i]) != int and type(pivot[i]) != float:
+            if not isinstance(pivot[i], int) and not isinstance(pivot[i], float):
                 raise RelaxListNumError('pivot point', pivot)
 
         # Execute the functional code.
@@ -192,7 +192,7 @@ class Frame_order:
             print(text)
 
         # Ref frame argument.
-        if type(ref) != str:
+        if not isinstance(ref, str):
             raise RelaxStrError('reference frame', ref)
 
         # Execute the functional code.
@@ -232,7 +232,7 @@ class Frame_order:
             print(text)
 
         # Model argument.
-        if type(model) != str:
+        if not isinstance(model, str):
             raise RelaxStrError('model', model)
 
         # Execute the functional code.

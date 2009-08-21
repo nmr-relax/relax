@@ -192,7 +192,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # Catch all list arguments.
-            if type(data[1]) == list:
+            if isinstance(data[1], list):
                 self.assertRaises(RelaxListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
 
             # All other arguments.

@@ -152,19 +152,19 @@ class Structure:
             print(text)
 
         # Scaling.
-        if type(scale) != float and type(scale) != int:
+        if not isinstance(scale, float) and not isinstance(scale, int):
             raise RelaxNumError('scaling factor', scale)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
@@ -214,23 +214,23 @@ class Structure:
             print(text)
 
         # Vector length.
-        if type(length) != float:
+        if not isinstance(length, float):
             raise RelaxFloatError('vector length', length)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The symmetry flag.
-        if type(symmetry) != bool:
+        if not isinstance(symmetry, bool):
             raise RelaxBoolError('symmetry flag', symmetry)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
@@ -296,15 +296,15 @@ class Structure:
             print(text)
 
         # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identifier', spin_id)
 
         # The model combining flag.
-        if type(combine_models) != bool:
+        if not isinstance(combine_models, bool):
             raise RelaxBoolError('model combining flag', combine_models)
 
         # The average position flag.
-        if type(ave_pos) != bool:
+        if not isinstance(ave_pos, bool):
             raise RelaxBoolError('average position flag', ave_pos)
 
         # Execute the functional code.
@@ -417,11 +417,11 @@ class Structure:
             print(text)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The read_mol, read_models, and set_model_num arguments.
@@ -429,35 +429,35 @@ class Structure:
         arg_desc = ['read molecule number', 'read model', 'set model numbers']
         for i in range(len(arg_list)):
             # Basic type check.
-            if arg_list[i] != None and type(arg_list[i]) != int and type(arg_list[i]) != list:
+            if arg_list[i] != None and not isinstance(arg_list[i], int) and not isinstance(arg_list[i], list):
                 raise RelaxNoneIntListIntError(arg_desc[i], arg_list[i])
 
             # List check.
-            if type(arg_list[i]) == list:
+            if isinstance(arg_list[i], list):
                 # Zero size list.
                 if len(arg_list[i]) == 0:
                     raise RelaxNoneIntListIntError(arg_desc[i], arg_list[i])
 
                 # Element check.
                 for j in range(len(arg_list[i])):
-                    if type(arg_list[i][j]) != int:
+                    if not isinstance(arg_list[i][j], int):
                         raise RelaxNoneIntListIntError(arg_desc[i], arg_list[i])
 
         # The set_mol_name arguments.
-        if set_mol_name != None and type(set_mol_name) != str and type(set_mol_name) != list:
+        if set_mol_name != None and not isinstance(set_mol_name, str) and not isinstance(set_mol_name, list):
             raise RelaxNoneStrListStrError('set molecule names', set_mol_name)
-        if type(set_mol_name) == list:
+        if isinstance(set_mol_name, list):
             # Zero size list.
             if len(set_mol_name) == 0:
                 raise RelaxNoneStrListStrError('set molecule names', set_mol_name)
 
             # Element check.
             for i in range(len(set_mol_name)):
-                if type(set_mol_name[i]) != str:
+                if not isinstance(set_mol_name[i], str):
                     raise RelaxNoneStrListStrError('set molecule names', set_mol_name)
 
         # PDB parser.
-        if type(parser) != str:
+        if not isinstance(parser, str):
             raise RelaxStrError('PDB parser', parser)
 
         # Execute the functional code.
@@ -559,27 +559,27 @@ class Structure:
             print(text)
 
         # The attached atom argument.
-        if type(attached) != str:
+        if not isinstance(attached, str):
             raise RelaxStrError('the attached atom', attached)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # The model argument.
-        if model != None and type(model) != int:
+        if model != None and not isinstance(model, int):
             raise RelaxNoneIntError('model', model)
 
         # The verbosity level.
-        if type(verbosity) != int:
+        if not isinstance(verbosity, int):
             raise RelaxIntError('verbosity level', verbosity)
 
         # The average vector flag.
-        if type(ave) != bool:
+        if not isinstance(ave, bool):
             raise RelaxBoolError('average vector flag', ave)
 
         # The unit vector flag.
-        if type(unit) != bool:
+        if not isinstance(unit, bool):
             raise RelaxBoolError('unit vector flag', unit)
 
         # Execute the functional code.
@@ -633,19 +633,19 @@ class Structure:
             print(text)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The model_num argument.
-        if model_num != None and type(model_num) != int:
+        if model_num != None and not isinstance(model_num, int):
             raise RelaxNoneIntError('model number', model_num)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

@@ -84,7 +84,7 @@ class Monte_carlo:
             print(text)
 
         # The method argument.
-        if type(method) != str:
+        if not isinstance(method, str):
             raise RelaxStrError('method', method)
 
         # Execute the functional code.
@@ -131,7 +131,7 @@ class Monte_carlo:
             print(text)
 
         # The prune argument.
-        if type(prune) != int and type(prune) != float:
+        if not isinstance(prune, int) and not isinstance(prune, float):
             raise RelaxNumError('prune', prune)
 
         # Execute the functional code.
@@ -212,7 +212,7 @@ class Monte_carlo:
             print(text)
 
         # The number of simulations.
-        if type(number) != int:
+        if not isinstance(number, int):
             raise RelaxIntError('number', number)
 
         # Execute the functional code.

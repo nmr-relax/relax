@@ -66,7 +66,7 @@ class N_state_model(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the model is selected.
-        if not hasattr(cdp, 'model') or type(cdp.model) != str:
+        if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
             raise RelaxNoModelError
 
         # Determine the data type.
@@ -230,7 +230,7 @@ class N_state_model(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the model is selected.
-        if not hasattr(cdp, 'model') or type(cdp.model) != str:
+        if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
             raise RelaxNoModelError
 
         # Unpack and strip off the alignment tensor parameters.
@@ -629,7 +629,7 @@ class N_state_model(Common_functions):
 
             # Append the RDC and XH vectors to the lists.
             rdcs.append(spin.rdc)
-            if type(spin.xh_vect[0]) == float:
+            if isinstance(spin.xh_vect[0], float):
                 xh_vectors.append([spin.xh_vect])
             else:
                 xh_vectors.append(spin.xh_vect)
@@ -1317,7 +1317,7 @@ class N_state_model(Common_functions):
         self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
 
         # If inc is a single int, convert it into an array of that value.
-        if type(inc) == int:
+        if isinstance(inc, int):
             temp = []
             for j in xrange(n):
                 temp.append(inc)
@@ -1603,14 +1603,14 @@ class N_state_model(Common_functions):
             if 'rdc' in data_types:
                 if hasattr(spin, 'rdc'):
                     for rdc in spin.rdc:
-                        if type(rdc) == float:
+                        if isinstance(rdc, float):
                             n = n + 1
 
             # PCS data (skipping array elements set to None).
             if 'pcs' in data_types:
                 if hasattr(spin, 'pcs'):
                     for pcs in spin.pcs:
-                        if type(pcs) == float:
+                        if isinstance(pcs, float):
                             n = n + 1
 
         # Alignment tensors.
@@ -1898,11 +1898,11 @@ class N_state_model(Common_functions):
             param = cdp.params
 
         # Test that the parameter and value lists are the same size.
-        if type(param) == list and value[0] != None and len(param) != len(value):
+        if isinstance(param, list) and value[0] != None and len(param) != len(value):
             raise RelaxError("The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(param) + ".")
 
         # Convert param to a list (if it is a string).
-        if type(param) == str:
+        if isinstance(param, str):
             param = [param]
 
         # If no value is supplied (i.e. value == [None]), then get the default values.

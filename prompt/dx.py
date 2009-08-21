@@ -78,21 +78,21 @@ class OpenDX:
             print(text)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory name.
         if dir == None:
             pass
-        elif type(dir) != str:
+        elif not isinstance(dir, str):
             raise RelaxNoneStrError('file name', file)
 
         # The OpenDX executable file.
-        if type(dx_exe) != str:
+        if not isinstance(dx_exe, str):
             raise RelaxStrError('OpenDX executable file name', dx_exe)
 
         # Visual program execution flag.
-        if type(vp_exec) != bool:
+        if not isinstance(vp_exec, bool):
             raise RelaxBoolError('visual program execution flag', vp_exec)
 
         # Execute the functional code.
@@ -203,75 +203,75 @@ class OpenDX:
             print(text)
 
         # The parameters to map.
-        if type(params) != list:
+        if not isinstance(params, list):
             raise RelaxListError('parameters', params)
         num_params = len(params)
         for i in xrange(num_params):
-            if type(params[i]) != str:
+            if not isinstance(params[i], str):
                 raise RelaxListStrError('parameters', params)
 
         # Space type.
-        if type(map_type) != str:
+        if not isinstance(map_type, str):
             raise RelaxStrError('map type', map_type)
 
         # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identifier', spin_id)
 
         # Increment.
-        if type(inc) != int:
+        if not isinstance(inc, int):
             raise RelaxIntError('increment', inc)
         elif inc <= 1:
             raise RelaxError("The increment value needs to be greater than 1.")
 
         # Lower bounds.
         if lower != None:
-            if type(lower) != list:
+            if not isinstance(lower, list):
                 raise RelaxListError('lower bounds', lower)
             if len(lower) != num_params:
                 raise RelaxLenError('lower bounds', num_params)
             for i in xrange(len(lower)):
-                if type(lower[i]) != int and type(lower[i]) != float:
+                if not isinstance(lower[i], int) and not isinstance(lower[i], float):
                     raise RelaxListNumError('lower bounds', lower)
 
         # Upper bounds.
         if upper != None:
-            if type(upper) != list:
+            if not isinstance(upper, list):
                 raise RelaxListError('upper bounds', upper)
             if len(upper) != num_params:
                 raise RelaxLenError('upper bounds', num_params)
             for i in xrange(len(upper)):
-                if type(upper[i]) != int and type(upper[i]) != float:
+                if not isinstance(upper[i], int) and not isinstance(upper[i], float):
                     raise RelaxListNumError('upper bounds', upper)
 
         # Axis increments.
-        if type(axis_incs) != int:
+        if not isinstance(axis_incs, int):
             raise RelaxIntError('axis increments', axis_incs)
         elif axis_incs <= 1:
             raise RelaxError("The axis increment value needs to be greater than 1.")
 
         # File prefix.
-        if type(file_prefix) != str:
+        if not isinstance(file_prefix, str):
             raise RelaxStrError('file prefix', file_prefix)
 
         # Directory name.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # Point.
         if point != None:
-            if type(point) != list:
+            if not isinstance(point, list):
                 raise RelaxListError('point', point)
             if len(point) != num_params:
                 raise RelaxLenError('point', point)
-            if type(point_file) != str:
+            if not isinstance(point_file, str):
                 raise RelaxStrError('point file name', point_file)
             for i in xrange(len(point)):
-                if type(point[i]) != int and type(point[i]) != float:
+                if not isinstance(point[i], int) and not isinstance(point[i], float):
                     raise RelaxListNumError('point', point)
 
         # Remap function.
-        if remap != None and type(remap) is not FunctionType:
+        if remap != None and not isinstance(remap, FunctionType):
             raise RelaxFunctionError('remap function', remap)
 
         # Execute the functional code.

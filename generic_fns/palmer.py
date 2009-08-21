@@ -830,7 +830,7 @@ def line_positions(mfout_lines):
             i = i + 2
 
             # Walk through all the data.
-            while 1:
+            while True:
                 # Break once the end of the data section is reached.
                 if not mfout_lines[i] == '\n' and not search('^ ', mfout_lines[i]):
                     break

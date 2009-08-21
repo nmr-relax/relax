@@ -135,15 +135,15 @@ class Model_free:
             print(text)
 
         # Model argument.
-        if type(model) != str:
+        if not isinstance(model, str):
             raise RelaxStrError('model', model)
 
         # Equation.
-        if type(equation) != str:
+        if not isinstance(equation, str):
             raise RelaxStrError('model-free equation', equation)
 
         # Parameter types.
-        if type(params) != list:
+        if not isinstance(params, list):
             raise RelaxListStrError('parameters', params)
         else:
             # Empty list.
@@ -152,11 +152,11 @@ class Model_free:
 
             # Check the values.
             for i in xrange(len(params)):
-                if type(params[i]) != str:
+                if not isinstance(params[i], str):
                     raise RelaxListStrError('parameters', params)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
@@ -216,7 +216,7 @@ class Model_free:
             print(text)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
@@ -365,11 +365,11 @@ class Model_free:
             print(text)
 
         # Model argument.
-        if type(model) != str:
+        if not isinstance(model, str):
             raise RelaxStrError('model', model)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.

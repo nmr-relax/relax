@@ -98,22 +98,22 @@ class N_state_model:
             print(text)
 
         # Pivot point argument.
-        if type(pivot_point) != list:
+        if not isinstance(pivot_point, list):
             raise RelaxListError('pivot point', pivot_point)
         if len(pivot_point) != 3:
             raise RelaxLenError('pivot point', 3)
         for i in xrange(len(pivot_point)):
-            if type(pivot_point[i]) != int and type(pivot_point[i]) != float:
+            if not isinstance(pivot_point[i], int) and not isinstance(pivot_point[i], float):
                 raise RelaxListNumError('pivot point', pivot_point)
 
         # CoM argument.
         if centre != None:
-            if type(centre) != list:
+            if not isinstance(centre, list):
                 raise RelaxListError('centre of mass', centre)
             if len(centre) != 3:
                 raise RelaxLenError('centre of mass', 3)
             for i in xrange(len(centre)):
-                if type(centre[i]) != int and type(centre[i]) != float:
+                if not isinstance(centre[i], int) and not isinstance(centre[i], float):
                     raise RelaxListNumError('centre of mass', centre)
 
         # Execute the functional code.
@@ -181,23 +181,23 @@ class N_state_model:
             print(text)
 
         # Cone type.
-        if type(cone_type) != str:
+        if not isinstance(cone_type, str):
             raise RelaxStrError('cone type', cone_type)
 
         # Scaling.
-        if type(scale) != float and type(scale) != int:
+        if not isinstance(scale, float) and not isinstance(scale, int):
             raise RelaxNumError('scaling factor', scale)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
@@ -236,7 +236,7 @@ class N_state_model:
             print(text)
 
         # Number of states argument.
-        if type(N) != int:
+        if not isinstance(N, int):
             raise RelaxIntError('the number of states N', N)
 
         # Execute the functional code.
@@ -277,7 +277,7 @@ class N_state_model:
             print(text)
 
         # Ref frame argument.
-        if type(ref) != str:
+        if not isinstance(ref, str):
             raise RelaxStrError('reference frame', ref)
 
         # Execute the functional code.
@@ -327,7 +327,7 @@ class N_state_model:
             print(text)
 
         # Model argument.
-        if type(model) != str:
+        if not isinstance(model, str):
             raise RelaxStrError('model', model)
 
         # Execute the functional code.

@@ -123,51 +123,51 @@ class Palmer:
 
         # Directory.
         if dir != None:
-            if type(dir) != str:
+            if not isinstance(dir, str):
                 raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # The Modelfree executable file.
-        if type(binary) != str:
+        if not isinstance(binary, str):
             raise RelaxStrError('Modelfree binary', binary)
 
         # The diff_search argument.
-        if type(diff_search) != str:
+        if not isinstance(diff_search, str):
             raise RelaxStrError('diff_search', diff_search)
 
         # The number of Monte Carlo simulations.
-        if type(sims) != int:
+        if not isinstance(sims, int):
             raise RelaxIntError('sims', sims)
 
         # The sim_type argument.
-        if type(sim_type) != str:
+        if not isinstance(sim_type, str):
             raise RelaxStrError('sim_type', sim_type)
 
         # The trim argument.
-        if type(trim) != float and type(trim) != int:
+        if not isinstance(trim, float) and not isinstance(trim, int):
             raise RelaxFloatError('trim', trim)
 
         # The steps argument.
-        if type(steps) != int:
+        if not isinstance(steps, int):
             raise RelaxIntError('steps', steps)
 
         # Constraint flag.
-        if type(constraints) != bool:
+        if not isinstance(constraints, bool):
             raise RelaxBoolError('constraints flag', constraints)
 
         # The heteronucleus argument.
-        if type(heteronuc_type) != str:
+        if not isinstance(heteronuc_type, str):
             raise RelaxStrError('heteronucleus', heteronuc_type)
 
         # The atom1 argument.
-        if type(atom1) != str:
+        if not isinstance(atom1, str):
             raise RelaxStrError('atom1', atom1)
 
         # The atom2 argument.
-        if type(atom2) != str:
+        if not isinstance(atom2, str):
             raise RelaxStrError('atom2', atom2)
 
         # Execute the functional code.
@@ -214,15 +214,15 @@ class Palmer:
 
         # Directory.
         if dir != None:
-            if type(dir) != str:
+            if not isinstance(dir, str):
                 raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # The Modelfree executable file.
-        if type(binary) != str:
+        if not isinstance(binary, str):
             raise RelaxStrError('Modelfree binary', binary)
 
         # Execute the functional code.
@@ -246,7 +246,7 @@ class Palmer:
 
         # Directory.
         if dir != None:
-            if type(dir) != str:
+            if not isinstance(dir, str):
                 raise RelaxNoneStrError('directory name', dir)
 
         # Execute the functional code.

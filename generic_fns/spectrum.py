@@ -427,7 +427,7 @@ def intensity_generic(line, int_col):
 
     # Determine the number of delays (and associated intensities).
     i = 6
-    while 1:
+    while True:
         i = i + 1
         try:
             current_field = line[i-1]

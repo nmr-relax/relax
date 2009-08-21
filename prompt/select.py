@@ -167,43 +167,43 @@ class Select:
             print(text)
 
         # File name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
+        if mol_name_col != None and not isinstance(mol_name_col, int):
             raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
-        if res_num_col != None and type(res_num_col) != int:
+        if res_num_col != None and not isinstance(res_num_col, int):
             raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
+        if res_name_col != None and not isinstance(res_name_col, int):
             raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
+        if spin_num_col != None and not isinstance(spin_num_col, int):
             raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
+        if spin_name_col != None and not isinstance(spin_name_col, int):
             raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Boolean operator.
-        if type(boolean) != str:
+        if not isinstance(boolean, str):
             raise RelaxStrError('boolean operator', boolean)
 
         # Change all flag.
-        if type(change_all) != bool:
+        if not isinstance(change_all, bool):
             raise RelaxBoolError('change_all', change_all)
 
         # Execute the functional code.
@@ -241,7 +241,7 @@ class Select:
             print(text)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('Spin identification string', spin_id)
 
         # Execute the functional code.
@@ -293,15 +293,15 @@ class Select:
             print(text)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('Spin identification string', spin_id)
 
         # Boolean operator.
-        if type(boolean) != str:
+        if not isinstance(boolean, str):
             raise RelaxStrError('boolean operator', boolean)
 
         # Change all flag.
-        if type(change_all) != bool:
+        if not isinstance(change_all, bool):
             raise RelaxBoolError('change_all', change_all)
 
         # Execute the functional code.

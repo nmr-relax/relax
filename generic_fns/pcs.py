@@ -131,7 +131,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Simulation data.
     else:
         # Create the data structure if necessary.
-        if not hasattr(spin, 'relax_sim_data') or type(spin.relax_sim_data) != list:
+        if not hasattr(spin, 'relax_sim_data') or not isinstance(spin.relax_sim_data, list):
             spin.relax_sim_data = []
 
         # Append the simulation's relaxation data.
@@ -179,7 +179,7 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
             continue
 
         # Spin position list.
-        if type(spin.pos[0]) == float or type(spin.pos[0]) == float64:
+        if isinstance(spin.pos[0], float) or isinstance(spin.pos[0], float64):
             pos_list = [spin.pos]
         else:
             pos_list = spin.pos

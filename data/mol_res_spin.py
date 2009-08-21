@@ -267,7 +267,7 @@ class SpinList(list):
                 object = getattr(self[i], name)
 
                 # Store floats as IEEE-754 byte arrays (for full precision storage).
-                if type(object) == float or type(object) == numpy.float64:
+                if isinstance(object, float) or isinstance(object, numpy.float64):
                     sub_element.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(object)))
 
                 # Add the text value to the sub element.

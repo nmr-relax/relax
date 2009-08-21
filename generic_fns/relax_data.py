@@ -134,7 +134,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Simulation data.
     else:
         # Create the data structure if necessary.
-        if not hasattr(spin, 'relax_sim_data') or type(spin.relax_sim_data) != list:
+        if not hasattr(spin, 'relax_sim_data') or not isinstance(spin.relax_sim_data, list):
             spin.relax_sim_data = []
 
         # Append the simulation's relaxation data.

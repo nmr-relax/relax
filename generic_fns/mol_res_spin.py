@@ -143,7 +143,7 @@ class Selection(object):
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
 
         # Simple spin identification string.
-        if type(obj) == str:
+        if isinstance(obj, str):
             return self.__contains_spin_id(obj)
 
         # Comparison of data containers to this selection object.
@@ -168,7 +168,7 @@ class Selection(object):
         spin = None
 
         # The object is not a tuple, so lets turn it into one.
-        if type(obj) != tuple:
+        if not isinstance(obj, tuple):
             obj = (obj,)
 
         # Max 3 objects (cannot match, so False).
@@ -1873,7 +1873,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
     dp = pipes.get_pipe(pipe)
 
     # Parse the selection string.
-    if type(selection) == str:
+    if isinstance(selection, str):
         selection = [selection]
     select_obj = []
     for i in range(len(selection)):
@@ -2002,14 +2002,14 @@ def return_single_residue_info(residue_token):
     res_name = None
     for info in residue_info:
         # A residue name identifier.
-        if type(info) == str:
+        if isinstance(info, str):
             if res_name == None:
                 res_name = info
             else:
                 raise RelaxError("The residue identifier " + repr(residue_token) + " does not correspond to a single residue.")
 
         # A residue number identifier.
-        if type(info) == int:
+        if isinstance(info, int):
             if res_num == None:
                 res_num = info
             else:
@@ -2036,14 +2036,14 @@ def return_single_spin_info(spin_token):
     spin_name = None
     for info in spin_info:
         # A spin name identifier.
-        if type(info) == str:
+        if isinstance(info, str):
             if spin_name == None:
                 spin_name = info
             else:
                 raise RelaxError("The spin identifier " + repr(spin_token) + " does not correspond to a single spin.")
 
         # A spin number identifier.
-        if type(info) == int:
+        if isinstance(info, int):
             if spin_num == None:
                 spin_num = info
             else:

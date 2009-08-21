@@ -85,14 +85,13 @@ class Relax_data_store(dict):
         # Data store objects.
         text = text + "\n"
         text = text + "Data store objects:\n"
-        names = list(self.__class__.__dict__.keys())
-        names.sort()
+        names = sorted(self.__class__.__dict__.keys())
         for name in names:
             # The object.
             obj = getattr(self, name)
 
             # The text.
-            if obj == None or type(obj) == str:
+            if obj == None or isinstance(obj, str):
                 text = text + "  %s %s: %s\n" % (name, type(obj), obj)
             else:
                 text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])

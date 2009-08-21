@@ -588,7 +588,7 @@ class DiffTensorData(Element):
             setattr(new_obj, name, deepcopy(value, memo))
 
             # Place the new class object into the namespace of DiffTensorSimList objects.
-            if type(value) == DiffTensorSimList:
+            if isinstance(value, DiffTensorSimList):
                 # Get the new list.
                 new_value = getattr(new_obj, name)
 
@@ -891,7 +891,7 @@ class DiffTensorData(Element):
                             skip = True
 
                         # String data type.
-                        if type(deps[j]) == str:
+                        if isinstance(deps[j], str):
                             args[-1] = args[-1] + (deps[j],)
 
                         # List data type.

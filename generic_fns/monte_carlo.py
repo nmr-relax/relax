@@ -154,8 +154,7 @@ def error_analysis(prune=0.0):
             n = len(chi2_array)
 
             # Create a sorted array of chi-squared values.
-            chi2_sorted = deepcopy(chi2_array)
-            chi2_sorted.sort()
+            chi2_sorted = sorted(deepcopy(chi2_array))
 
             # Number of indices to remove from one side of the chi2 distribution.
             num = int(float(n) * 0.5 * prune)
@@ -170,7 +169,7 @@ def error_analysis(prune=0.0):
 
         # Loop over the parameters.
         index = 0
-        while 1:
+        while True:
             # Get the array of simulation parameters for the index.
             param_array = return_sim_param(model_info, index)
 

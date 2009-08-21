@@ -93,11 +93,11 @@ class State:
             print(text)
 
         # File name.
-        if type(state) != str and type(state) != file:
+        if not isinstance(state, str) and not isinstance(state, file):
             raise RelaxStrFileError('file name', state)
 
         # Directory.
-        if dir_name != None and type(dir_name) != str:
+        if dir_name != None and not isinstance(dir_name, str):
             raise RelaxNoneStrError('directory', dir_name)
 
         # Execute the functional code.
@@ -166,19 +166,19 @@ class State:
             print(text)
 
         # File name.
-        if type(state) != str and type(state) != file:
+        if not isinstance(state, str) and not isinstance(state, file):
             raise RelaxStrFileError('file name', state)
 
         # Directory.
-        if dir_name != None and type(dir_name) != str:
+        if dir_name != None and not isinstance(dir_name, str):
             raise RelaxNoneStrError('directory', dir_name)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Compression type.
-        if type(compress_type) != int:
+        if not isinstance(compress_type, int):
             raise RelaxIntError('compression type', compress_type)
 
         # Execute the functional code.

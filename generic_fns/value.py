@@ -135,7 +135,7 @@ def partition_params(val, param):
     other_values = []
 
     # Single parameter.
-    if type(param) == str:
+    if isinstance(param, str):
         # Spin specific parameter.
         if is_spin_param(param):
             params = spin_params
@@ -147,7 +147,7 @@ def partition_params(val, param):
             values = other_values
 
         # List of values.
-        if type(val) == list or isinstance(val, ndarray):
+        if isinstance(val, list) or isinstance(val, ndarray):
             # Parameter name.
             for i in xrange(len(val)):
                 params.append(param)
@@ -164,7 +164,7 @@ def partition_params(val, param):
             values.append(val)
 
     # Multiple parameters.
-    elif type(param) == list:
+    elif isinstance(param, list):
         # Loop over all parameters.
         for i in xrange(len(param)):
             # Spin specific parameter.
@@ -181,7 +181,7 @@ def partition_params(val, param):
             params.append(param[i])
 
             # Parameter value.
-            if type(val) == list or isinstance(val, ndarray):
+            if isinstance(val, list) or isinstance(val, ndarray):
                 values.append(val[i])
             else:
                 values.append(val)
@@ -414,7 +414,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
     # All model parameters (i.e. no parameters have been supplied).
     else:
         # Convert val to a list if necessary.
-        if type(val) != list or not isinstance(val, ndarray):
+        if not isinstance(val, list) or not isinstance(val, ndarray):
             val = [val]
 
         # Spin specific models.

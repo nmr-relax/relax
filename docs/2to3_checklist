@@ -24,10 +24,10 @@ The transformations
 -except
 +exec
 +execfile
- filter
- funcattrs
- future
- getcwdu
+~filter
+~funcattrs
+~future
+~getcwdu
 +has_key
  idioms
  import
@@ -58,7 +58,7 @@ The transformations
  sys_exc
  throw
  tuple_params
- types
+~types
  unicode
  urllib
  ws_comma

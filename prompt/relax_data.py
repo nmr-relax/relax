@@ -69,15 +69,15 @@ class Relax_data:
             print(text)
 
         # Relaxation data type.
-        if type(ri_label) != str:
+        if not isinstance(ri_label, str):
             raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
-        if type(frq_label) != str:
+        if not isinstance(frq_label, str):
             raise RelaxStrError('frequency label', frq_label)
 
         # Frequency.
-        if type(frq) != float:
+        if not isinstance(frq, float):
             raise RelaxFloatError('frequency', frq)
 
         # Execute the functional code.
@@ -134,11 +134,11 @@ class Relax_data:
             print(text)
 
         # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
+        if pipe_from != None and not isinstance(pipe_from, str):
             raise RelaxNoneStrError('pipe_from', pipe_from)
 
         # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
+        if pipe_to != None and not isinstance(pipe_to, str):
             raise RelaxNoneStrError('pipe_to', pipe_to)
 
         # Both pipe arguments cannot be None.
@@ -146,11 +146,11 @@ class Relax_data:
             raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Relaxation data type.
-        if ri_label != None and type(ri_label) != str:
+        if ri_label != None and not isinstance(ri_label, str):
             raise RelaxNoneStrError('relaxation label', ri_label)
 
         # Frequency label.
-        if frq_label != None and type(frq_label) != str:
+        if frq_label != None and not isinstance(frq_label, str):
             raise RelaxNoneStrError('frequency label', frq_label)
 
         # Execute the functional code.
@@ -184,11 +184,11 @@ class Relax_data:
             print(text)
 
         # Relaxation data type.
-        if type(ri_label) != str:
+        if not isinstance(ri_label, str):
             raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
-        if type(frq_label) != str:
+        if not isinstance(frq_label, str):
             raise RelaxStrError('frequency label', frq_label)
 
         # Execute the functional code.
@@ -222,11 +222,11 @@ class Relax_data:
             print(text)
 
         # Relaxation data type.
-        if type(ri_label) != str:
+        if not isinstance(ri_label, str):
             raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
-        if type(frq_label) != str:
+        if not isinstance(frq_label, str):
             raise RelaxStrError('frequency label', frq_label)
 
         # Execute the functional code.
@@ -318,55 +318,55 @@ class Relax_data:
             print(text)
 
         # Relaxation data type.
-        if type(ri_label) != str:
+        if not isinstance(ri_label, str):
             raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
-        if type(frq_label) != str:
+        if not isinstance(frq_label, str):
             raise RelaxStrError('frequency label', frq_label)
 
         # Frequency.
-        if type(frq) != float:
+        if not isinstance(frq, float):
             raise RelaxFloatError('frequency', frq)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
+        if mol_name_col != None and not isinstance(mol_name_col, int):
             raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
-        if res_num_col != None and type(res_num_col) != int:
+        if res_num_col != None and not isinstance(res_num_col, int):
             raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
+        if res_name_col != None and not isinstance(res_name_col, int):
             raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
+        if spin_num_col != None and not isinstance(spin_num_col, int):
             raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
+        if spin_name_col != None and not isinstance(spin_name_col, int):
             raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # The data column.
-        if type(data_col) != int:
+        if not isinstance(data_col, int):
             raise RelaxIntError('data column', data_col)
 
         # The error column.
-        if type(error_col) != int:
+        if not isinstance(error_col, int):
             raise RelaxIntError('error column', error_col)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
@@ -409,23 +409,23 @@ class Relax_data:
             print(text)
 
         # Relaxation data type.
-        if type(ri_label) != str:
+        if not isinstance(ri_label, str):
             raise RelaxStrError('relaxation label', ri_label)
 
         # Frequency label.
-        if type(frq_label) != str:
+        if not isinstance(frq_label, str):
             raise RelaxStrError('frequency label', frq_label)
 
         # File.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

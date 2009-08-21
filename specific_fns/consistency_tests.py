@@ -45,7 +45,7 @@ class Consistency_tests(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the frequency has been set.
-        if not hasattr(cdp, 'ct_frq') or type(cdp.ct_frq) != float:
+        if not hasattr(cdp, 'ct_frq') or not isinstance(cdp.ct_frq, float):
             raise RelaxError("The frequency has not been set up.")
 
         # Test if the sequence data is loaded.

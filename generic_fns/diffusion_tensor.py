@@ -573,17 +573,17 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     cdp.diff_tensor.fixed = fixed
 
     # Spherical diffusion.
-    if type(params) == float:
+    if isinstance(params, float):
         num_params = 1
         sphere(params, time_scale, param_types)
 
     # Spheroidal diffusion.
-    elif (type(params) == tuple or type(params) == list) and len(params) == 4:
+    elif (isinstance(params, tuple) or isinstance(params, list)) and len(params) == 4:
         num_params = 4
         spheroid(params, time_scale, d_scale, angle_units, param_types, spheroid_type)
 
     # Ellipsoidal diffusion.
-    elif (type(params) == tuple or type(params) == list) and len(params) == 6:
+    elif (isinstance(params, tuple) or isinstance(params, list)) and len(params) == 6:
         num_params = 6
         ellipsoid(params, time_scale, d_scale, angle_units, param_types)
 
@@ -745,7 +745,7 @@ def return_data_name(name):
     """
 
     # Enforce that the name must be a string.
-    if type(name) != str:
+    if not isinstance(name, str):
         raise RelaxStrError('name', name)
 
     # Local tm.

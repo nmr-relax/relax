@@ -76,15 +76,15 @@ class Spectrum:
             print(text)
 
         # The error.
-        if type(error) != float and type(error) != int:
+        if not isinstance(error, float) and not isinstance(error, int):
             raise RelaxNumError('error', error)
 
         # The spectrum identification string.
-        if type(spectrum_id) != str:
+        if not isinstance(spectrum_id, str):
             raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
@@ -275,15 +275,15 @@ class Spectrum:
             print(text)
 
         # The number of summed points.
-        if type(N) != int:
+        if not isinstance(N, int):
             raise RelaxIntError('number of summed points', N)
 
         # The spectrum identification string.
-        if type(spectrum_id) != str:
+        if not isinstance(spectrum_id, str):
             raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
@@ -425,68 +425,68 @@ class Spectrum:
             print(text)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The spectrum identification string (or list).
-        if type(spectrum_id) != str and type(spectrum_id) != list:
+        if not isinstance(spectrum_id, str) and not isinstance(spectrum_id, list):
             raise RelaxStrListStrError('spectrum identification string', spectrum_id)
 
         # The heteronucleus name.
-        if type(heteronuc) != str:
+        if not isinstance(heteronuc, str):
             raise RelaxStrError('heteronucleus name', heteronuc)
 
         # The proton name.
-        if type(proton) != str:
+        if not isinstance(proton, str):
             raise RelaxStrError('proton name', proton)
 
         # The intensity column.
-        if int_col != None and type(int_col) != int and type(int_col) != list:
+        if int_col != None and not isinstance(int_col, int) and not isinstance(int_col, list):
             raise RelaxNoneIntListIntError('intensity column', int_col)
-        if type(int_col) == list:
+        if isinstance(int_col, list):
             # Empty list.
             if int_col == []:
                 raise RelaxListIntError('intensity column', int_col)
 
             # Check the values.
             for i in xrange(len(int_col)):
-                if type(int_col[i]) != int:
+                if not isinstance(int_col[i], int):
                     raise RelaxListIntError('intensity column', int_col)
 
         # The integration method name.
-        if type(int_method) != str:
+        if not isinstance(int_method, str):
             raise RelaxStrError('integration method', int_method)
 
         # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
+        if mol_name_col != None and not isinstance(mol_name_col, int):
             raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
-        if res_num_col != None and type(res_num_col) != int:
+        if res_num_col != None and not isinstance(res_num_col, int):
             raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
+        if res_name_col != None and not isinstance(res_name_col, int):
             raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
+        if spin_num_col != None and not isinstance(spin_num_col, int):
             raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
+        if spin_name_col != None and not isinstance(spin_name_col, int):
             raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Bruker ncproc parameter.
-        if ncproc != None and type(ncproc) != int:
+        if ncproc != None and not isinstance(ncproc, int):
             raise RelaxNoneIntError('Bruker ncproc parameter', ncproc)
 
         # Execute the functional code.
@@ -530,7 +530,7 @@ class Spectrum:
             print(text)
 
         # Spectrum ids.
-        if type(spectrum_ids) != list:
+        if not isinstance(spectrum_ids, list):
             raise RelaxListStrError('spectrum ids', spectrum_ids)
         else:
             # Empty list.
@@ -539,7 +539,7 @@ class Spectrum:
 
             # Check the values.
             for i in xrange(len(spectrum_ids)):
-                if type(spectrum_ids[i]) != str:
+                if not isinstance(spectrum_ids[i], str):
                     raise RelaxListStrError('spectrum ids', spectrum_ids)
 
         # Execute the functional code.

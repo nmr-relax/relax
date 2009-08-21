@@ -94,15 +94,15 @@ class Value:
             print(text)
 
         # The pipe_from argument.
-        if type(pipe_from) != str:
+        if not isinstance(pipe_from, str):
             raise RelaxStrError('pipe_from', pipe_from)
 
         # The pipe_to argument.
-        if type(pipe_to) != str:
+        if not isinstance(pipe_to, str):
             raise RelaxStrError('pipe_to', pipe_to)
 
         # The parameter.
-        if type(param) != str:
+        if not isinstance(param, str):
             raise RelaxStrError('parameter', param)
 
         # Execute the functional code.
@@ -139,7 +139,7 @@ class Value:
             print(text)
 
         # The parameter.
-        if type(param) != str:
+        if not isinstance(param, str):
             raise RelaxStrError('parameter', param)
 
         # Execute the functional code.
@@ -206,7 +206,7 @@ class Value:
             print(text)
 
         # The parameter.
-        if type(param) != str:
+        if not isinstance(param, str):
             raise RelaxStrError('parameter', param)
 
         # The scaling factor.
@@ -214,7 +214,7 @@ class Value:
             raise RelaxFloatError('scaling', scaling)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file', file)
 
         # The number column.
@@ -234,7 +234,7 @@ class Value:
             raise RelaxNoneIntError('error column', error_col)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
@@ -369,9 +369,9 @@ class Value:
             print(text)
 
         # The value.
-        if val != None and type(val) not in float_list and type(val) not in int_list and type(val) != str and type(val) != list:
+        if val != None and type(val) not in float_list and type(val) not in int_list and not isinstance(val, str) and not isinstance(val, list):
             raise RelaxNoneFloatStrListError('value', val)
-        if type(val) == list:
+        if isinstance(val, list):
             # Empty list.
             if val == []:
                 raise RelaxListFloatStrError('value', val)
@@ -383,32 +383,32 @@ class Value:
                     raise RelaxListFloatStrError('value', val)
 
         # The parameter.
-        if param != None and type(param) != str and type(param) != list:
+        if param != None and not isinstance(param, str) and not isinstance(param, list):
             raise RelaxNoneStrListError('parameter', param)
-        if type(param) == list:
+        if isinstance(param, list):
             # Empty list.
             if param == []:
                 raise RelaxListStrError('parameter', param)
 
             # Check for strings.
             for i in xrange(len(param)):
-                if type(param[i]) != str:
+                if not isinstance(param[i], str):
                     raise RelaxListStrError('parameter', param)
 
         # The invalid combination of a single value and no param argument.
-        if (type(val) == float or type(val) == int) and param == None:
+        if (isinstance(val, float) or isinstance(val, int)) and param == None:
             raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
 
         # The invalid combination of an array of values and a single param string.
-        if type(val) == list and type(param) == str:
+        if isinstance(val, list) and isinstance(param, str):
             raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
 
         # Value array and parameter array of equal length.
-        if type(val) == list and type(param) == list and len(val) != len(param):
+        if isinstance(val, list) and isinstance(param, list) and len(val) != len(param):
             raise RelaxError("Both the value array and parameter array must be of equal length.")
 
         # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identifier', spin_id)
 
         # Execute the functional code.
@@ -465,19 +465,19 @@ class Value:
             print(text)
 
         # The parameter.
-        if type(param) != str:
+        if not isinstance(param, str):
             raise RelaxStrError('parameter', param)
 
         # File.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

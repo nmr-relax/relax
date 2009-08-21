@@ -56,7 +56,7 @@ class Test_value(Value_base_class, TestCase):
                     self.assertRaises(RelaxError, self.value_fns.set, val=data[1], param=['CSA'])
 
             # Catch all other list arguments.
-            elif type(data[1]) == list:
+            elif isinstance(data[1], list):
                 self.assertRaises(RelaxListFloatStrError, self.value_fns.set, val=data[1], param=None)
 
             # All other arguments.
@@ -81,7 +81,7 @@ class Test_value(Value_base_class, TestCase):
                     self.assertRaises(RelaxError, self.value_fns.set, param=data[1], val=[1.0, 2.0])
 
             # Catch all other list arguments.
-            elif type(data[1]) == list:
+            elif isinstance(data[1], list):
                 self.assertRaises(RelaxListStrError, self.value_fns.set, param=data[1], val=None)
 
             # All other arguments.

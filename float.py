@@ -661,7 +661,7 @@ def bitpatternToFloat(string, endian='big'):
     """
 
     # Test that the bit pattern is a string.
-    if type(string) != str:
+    if not isinstance(string, str):
         raise TypeError("The string argument '%s' is not a string." % string)
 
     # Test the length of the bit pattern.
@@ -700,7 +700,7 @@ def bitpatternToInt(string, endian='big'):
     """
 
     # Test that the bit pattern is a string.
-    if type(string) != str:
+    if not isinstance(string, str):
         raise TypeError("The string argument '%s' is not a string." % string)
 
     # Test that the string consists solely of zeros and ones.

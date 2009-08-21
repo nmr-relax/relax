@@ -328,7 +328,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Test for multiple data sets.
     multi = False
-    if type(data[0][-4]) == list or isinstance(data[0][-4], ndarray):
+    if isinstance(data[0][-4], list) or isinstance(data[0][-4], ndarray):
         multi = True
 
     # Multiple data sets.

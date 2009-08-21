@@ -76,7 +76,7 @@ class Jw_mapping:
             print(text)
 
         # The frq argument.
-        if type(frq) != float:
+        if not isinstance(frq, float):
             raise RelaxStrError('frq', frq)
 
         # Execute the functional code.

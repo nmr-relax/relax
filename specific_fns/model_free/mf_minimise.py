@@ -509,7 +509,7 @@ class Mf_minimise:
         self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
 
         # If inc is a single int, convert it into an array of that value.
-        if type(inc) == int:
+        if isinstance(inc, int):
             temp = []
             for i in xrange(num_params):
                 temp.append(inc)
@@ -1318,5 +1318,5 @@ class Mf_minimise:
             print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
 
         # Too big.
-        if type(grid_size) == long:
+        if isinstance(grid_size, long):
             raise RelaxError("A grid search of size " + repr(grid_size) + " is too large.")

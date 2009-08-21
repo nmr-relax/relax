@@ -109,7 +109,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     # Data not already extracted from the file.
     if not file_data:
         # Open the file.
-        if type(file) == str:
+        if isinstance(file, str):
             file = open_read_file(file_name=file, dir=dir)
 
         # Read lines.
@@ -242,12 +242,12 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     """
 
     # A file descriptor object.
-    if type(file_name) == file:
+    if isinstance(file_name, file):
         # Nothing to do here!
         return file_name
 
     # Invalid file name.
-    if not file_name and type(file_name) != str:
+    if not file_name and not isinstance(file_name, str):
         raise RelaxError("The file name " + repr(file_name) + " " + repr(type(file_name)) + " is invalid and cannot be opened.")
 
     # File path.
@@ -302,7 +302,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     """
 
     # A file descriptor object.
-    if type(file_name) == file:
+    if isinstance(file_name, file):
         # Nothing to do here!
         return file_name
 

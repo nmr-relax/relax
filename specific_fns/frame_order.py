@@ -554,7 +554,7 @@ class Frame_order(Common_functions):
         n = len(cdp.params)
 
         # If inc is an int, convert it into an array of that value.
-        if type(inc) == int:
+        if isinstance(inc, int):
             inc = [inc]*n
 
         # Initialise the grid_ops structure.

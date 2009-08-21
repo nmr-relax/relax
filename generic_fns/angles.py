@@ -128,7 +128,7 @@ def spheroid_frame():
 def wrap_angles(angle, lower, upper):
     """Convert the given angle to be between the lower and upper values."""
 
-    while 1:
+    while True:
         if angle > upper:
             angle = angle - upper
         elif angle < lower:

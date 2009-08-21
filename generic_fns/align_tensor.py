@@ -916,7 +916,7 @@ def return_data_name(name):
     """
 
     # Enforce that the name must be a string.
-    if type(name) != str:
+    if not isinstance(name, str):
         raise RelaxStrError('name', name)
 
     # Sxx.

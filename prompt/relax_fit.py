@@ -74,11 +74,11 @@ class Relax_fit:
             print(text)
 
         # The relaxation time.
-        if type(time) != int and type(time) != float:
+        if not isinstance(time, int) and not isinstance(time, float):
             raise RelaxNumError('relaxation time', time)
 
         # The spectrum identification string.
-        if type(spectrum_id) != str:
+        if not isinstance(spectrum_id, str):
             raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Execute the functional code.
@@ -114,7 +114,7 @@ class Relax_fit:
             print(text)
 
         # The model argument.
-        if type(model) != str:
+        if not isinstance(model, str):
             raise RelaxStrError('model', model)
 
         # Execute the functional code.

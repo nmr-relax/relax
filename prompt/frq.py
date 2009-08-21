@@ -71,11 +71,11 @@ class Frq:
             print(text)
 
         # Id string.
-        if type(id) != str:
+        if not isinstance(id, str):
             raise RelaxStrError('experiment identification string', id)
 
         # The spectrometer frequency.
-        if type(frq) != float and type(frq) != int:
+        if not isinstance(frq, float) and not isinstance(frq, int):
             raise RelaxNumError('spectrometer frequency', frq)
 
         # Execute the functional code.

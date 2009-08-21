@@ -306,7 +306,7 @@ class Interpreter:
         # File argument.
         if file == None:
             raise RelaxNoneError('file')
-        elif type(file) != str:
+        elif not isinstance(file, str):
             raise RelaxStrError('file', file)
 
         # Test if the script file exists.
@@ -314,7 +314,7 @@ class Interpreter:
             raise RelaxError("The script file '" + file + "' does not exist.")
 
         # Quit argument.
-        if type(quit) != int or (quit != False and quit != True):
+        if not isinstance(quit, int) or (quit != False and quit != True):
             raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.

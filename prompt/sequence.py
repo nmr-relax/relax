@@ -94,11 +94,11 @@ class Sequence:
             print(text)
 
         # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
+        if pipe_from != None and not isinstance(pipe_from, str):
             raise RelaxNoneStrError('pipe from', pipe_from)
 
         # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
+        if pipe_to != None and not isinstance(pipe_to, str):
             raise RelaxNoneStrError('pipe to', pipe_to)
 
         # Both pipe arguments cannot be None.
@@ -141,27 +141,27 @@ class Sequence:
             print(text)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Molecule name flag.
-        if type(mol_name_flag) != bool:
+        if not isinstance(mol_name_flag, bool):
             raise RelaxBoolError('molecule name flag', mol_name_flag)
 
         # Residue number flag.
-        if type(res_num_flag) != bool:
+        if not isinstance(res_num_flag, bool):
             raise RelaxBoolError('residue number flag', res_num_flag)
 
         # Residue name flag.
-        if type(res_name_flag) != bool:
+        if not isinstance(res_name_flag, bool):
             raise RelaxBoolError('residue name flag', res_name_flag)
 
         # Spin number flag.
-        if type(spin_num_flag) != bool:
+        if not isinstance(spin_num_flag, bool):
             raise RelaxBoolError('spin number flag', spin_num_flag)
 
         # Spin name flag.
-        if type(spin_name_flag) != bool:
+        if not isinstance(spin_name_flag, bool):
             raise RelaxBoolError('spin name flag', spin_name_flag)
 
         # Execute the functional code.
@@ -248,35 +248,35 @@ class Sequence:
             print(text)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
+        if mol_name_col != None and not isinstance(mol_name_col, int):
             raise RelaxNoneIntError('molecule name column', mol_name_col)
 
         # Residue number column.
-        if res_name_col != None and type(res_num_col) != int:
+        if res_name_col != None and not isinstance(res_num_col, int):
             raise RelaxNoneIntError('residue number column', res_num_col)
 
         # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
+        if res_name_col != None and not isinstance(res_name_col, int):
             raise RelaxNoneIntError('residue name column', res_name_col)
 
         # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
+        if spin_num_col != None and not isinstance(spin_num_col, int):
             raise RelaxNoneIntError('spin number column', spin_num_col)
 
         # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
+        if spin_name_col != None and not isinstance(spin_name_col, int):
             raise RelaxNoneIntError('spin name column', spin_name_col)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
@@ -329,39 +329,39 @@ class Sequence:
             print(text)
 
         # File.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Molecule name flag.
-        if type(mol_name_flag) != bool:
+        if not isinstance(mol_name_flag, bool):
             raise RelaxBoolError('molecule name flag', mol_name_flag)
 
         # Residue number flag.
-        if type(res_num_flag) != bool:
+        if not isinstance(res_num_flag, bool):
             raise RelaxBoolError('residue number flag', res_num_flag)
 
         # Residue name flag.
-        if type(res_name_flag) != bool:
+        if not isinstance(res_name_flag, bool):
             raise RelaxBoolError('residue name flag', res_name_flag)
 
         # Spin number flag.
-        if type(spin_num_flag) != bool:
+        if not isinstance(spin_num_flag, bool):
             raise RelaxBoolError('spin number flag', spin_num_flag)
 
         # Spin name flag.
-        if type(spin_name_flag) != bool:
+        if not isinstance(spin_name_flag, bool):
             raise RelaxBoolError('spin name flag', spin_name_flag)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

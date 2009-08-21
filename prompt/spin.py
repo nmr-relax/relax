@@ -99,19 +99,19 @@ class Spin:
             print(text)
 
         # The data pipe from argument.
-        if pipe_from != None and type(pipe_from) != str:
+        if pipe_from != None and not isinstance(pipe_from, str):
             raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The spin from argument.
-        if type(spin_from) != str:
+        if not isinstance(spin_from, str):
             raise RelaxStrError('spin from', spin_from)
 
         # The data pipe to argument.
-        if pipe_to != None and type(pipe_to) != str:
+        if pipe_to != None and not isinstance(pipe_to, str):
             raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # The spin to argument.
-        if spin_to != None and type(spin_to) != str:
+        if spin_to != None and not isinstance(spin_to, str):
             raise RelaxNoneStrError('spin to', spin_to)
 
         # Execute the functional code.
@@ -163,23 +163,23 @@ class Spin:
             print(text)
 
         # Spin number.
-        if spin_num != None and type(spin_num) != int:
+        if spin_num != None and not isinstance(spin_num, int):
             raise RelaxNoneIntError('spin number', spin_num)
 
         # Spin name.
-        if spin_name != None and type(spin_name) != str:
+        if spin_name != None and not isinstance(spin_name, str):
             raise RelaxNoneStrError('spin name', spin_name)
 
         # The residue number.
-        if res_num != None and type(res_num) != int:
+        if res_num != None and not isinstance(res_num, int):
             raise RelaxNoneIntError('residue number', res_num)
 
         # The residue name.
-        if res_name != None and type(res_name) != str:
+        if res_name != None and not isinstance(res_name, str):
             raise RelaxNoneStrError('residue name', res_name)
 
         # The molecule name.
-        if mol_name != None and type(mol_name) != str:
+        if mol_name != None and not isinstance(mol_name, str):
             raise RelaxNoneStrError('molecule name', mol_name)
 
         # Execute the functional code.
@@ -233,19 +233,19 @@ class Spin:
             print(text)
 
         # Spin name.
-        if type(spin_name) != str:
+        if not isinstance(spin_name, str):
             raise RelaxStrError('spin name', spin_name)
 
         # Spin number.
-        if spin_num != None and type(spin_num) != int:
+        if spin_num != None and not isinstance(spin_num, int):
             raise RelaxNoneIntError('spin number', spin_num)
 
         # The residue ID.
-        if res_id != None and type(res_id) != str:
+        if res_id != None and not isinstance(res_id, str):
             raise RelaxNoneStrError('residue identification string', res_id)
 
         # Member atoms.
-        if type(members) != list:
+        if not isinstance(members, list):
             raise RelaxListStrError('members', members)
         else:
             # Empty list.
@@ -254,11 +254,11 @@ class Spin:
 
             # Check the values.
             for i in xrange(len(members)):
-                if type(members[i]) != str:
+                if not isinstance(members[i], str):
                     raise RelaxListStrError('members', members)
 
         # The positional averaging technique.
-        if averaging != None and type(averaging) != str:
+        if averaging != None and not isinstance(averaging, str):
             raise RelaxNoneStrError('positional averaging technique', averaging)
 
         # Execute the functional code.
@@ -288,7 +288,7 @@ class Spin:
             print(text)
 
         # The spin identifier argument.
-        if type(spin_id) != str:
+        if not isinstance(spin_id, str):
             raise RelaxStrError('spin identifier', spin_id)
 
         # Execute the functional code.
@@ -311,7 +311,7 @@ class Spin:
             print(text)
 
         # The spin_id argument.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # Execute the functional code.
@@ -357,15 +357,15 @@ class Spin:
             print(text)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # New spin name.
-        if type(name) != str:
+        if not isinstance(name, str):
             raise RelaxStrError('new spin name', name)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
@@ -413,15 +413,15 @@ class Spin:
             print(text)
 
         # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # New spin number.
-        if number != None and  type(number) != int:
+        if number != None and  not isinstance(number, int):
             raise RelaxNoneIntError('new spin number', number)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

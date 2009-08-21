@@ -46,7 +46,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the list arguments.
-            if type(data[1]) == list:
+            if isinstance(data[1], list):
                 # The wrong length.
                 if len(data[1]) != 3:
                     self.assertRaises(RelaxLenError, self.n_state_model_fns.CoM, pivot_point=data[1])
@@ -74,7 +74,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
                 continue
 
             # Catch the list arguments.
-            if type(data[1]) == list:
+            if isinstance(data[1], list):
                 # The wrong length.
                 if len(data[1]) != 3:
                     self.assertRaises(RelaxLenError, self.n_state_model_fns.CoM, centre=data[1])

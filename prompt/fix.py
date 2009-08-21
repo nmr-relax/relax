@@ -76,11 +76,11 @@ class Fix:
             print(text)
 
         # The element argument.
-        if type(element) != str and type(element) != int:
+        if not isinstance(element, str) and not isinstance(element, int):
             raise RelaxIntStrError('element', element)
 
         # The fixed argument.
-        if type(fixed) != bool:
+        if not isinstance(fixed, bool):
             raise RelaxBoolError('fixed', fixed)
 
         # Execute the functional code.

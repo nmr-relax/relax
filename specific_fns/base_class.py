@@ -515,6 +515,6 @@ class Common_functions:
                 raise RelaxLenError('upper bounds', n)
 
         # Increment.
-        if type(inc) == list:
+        if isinstance(inc, list):
             if len(inc) != n:
                 raise RelaxLenError('increment', n)

@@ -105,31 +105,31 @@ class Noe:
             print(text)
 
         # The file name.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # First proton column.
-        if proton1_col != None and type(proton1_col) != int:
+        if proton1_col != None and not isinstance(proton1_col, int):
             raise RelaxNoneIntError('first proton column', proton1_col)
 
         # Second proton column.
-        if proton2_col != None and type(proton2_col) != int:
+        if proton2_col != None and not isinstance(proton2_col, int):
             raise RelaxNoneIntError('second proton column', proton2_col)
 
         # Lower bound column.
-        if lower_col != None and type(lower_col) != int:
+        if lower_col != None and not isinstance(lower_col, int):
             raise RelaxNoneIntError('lower bound column', lower_col)
 
         # Upper bound column.
-        if upper_col != None and type(upper_col) != int:
+        if upper_col != None and not isinstance(upper_col, int):
             raise RelaxNoneIntError('upper bound column', upper_col)
 
         # Column separator.
-        if sep != None and type(sep) != str:
+        if sep != None and not isinstance(sep, str):
             raise RelaxNoneStrError('column separator', sep)
 
         # Execute the functional code.
@@ -167,11 +167,11 @@ class Noe:
             print(text)
 
         # The spectrum type.
-        if type(spectrum_type) != str:
+        if not isinstance(spectrum_type, str):
             raise RelaxStrError('spectrum type', spectrum_type)
 
         # The spectrum identification string.
-        if type(spectrum_id) != str:
+        if not isinstance(spectrum_id, str):
             raise RelaxStrError('spectrum identification string', spectrum_id)
 
         # Execute the functional code.

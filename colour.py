@@ -51,7 +51,7 @@ def linear_gradient(value, start, end, colour_list=None):
     """
 
     # Translate the end colour to RGB arrays if necessary.
-    if type(start) == str:
+    if isinstance(start, str):
         # Default (search the molmol list then the X11 list).
         if colour_list == None:
             try:
@@ -68,7 +68,7 @@ def linear_gradient(value, start, end, colour_list=None):
             start = x11_colours(start)
 
     # Translate the end colour to RGB arrays if necessary.
-    if type(end) == str:
+    if isinstance(end, str):
         # Default (search the molmol list then the X11 list).
         if colour_list == None:
             try:

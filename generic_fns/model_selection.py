@@ -153,7 +153,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
     modsel_pipe_exists = False
 
     # Cross validation setup.
-    if type(pipes[0]) == list:
+    if isinstance(pipes[0], list):
         # No pipes.
         if len(pipes[0]) == 0:
             raise RelaxError("No pipes are available for use in model selection in the array " + repr(pipes[0]) + ".")

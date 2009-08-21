@@ -94,11 +94,11 @@ class Diffusion_tensor:
             print(text)
 
         # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
+        if pipe_from != None and not isinstance(pipe_from, str):
             raise RelaxNoneStrError('pipe from', pipe_from)
 
         # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
+        if pipe_to != None and not isinstance(pipe_to, str):
             raise RelaxNoneStrError('pipe to', pipe_to)
 
         # Both pipe arguments cannot be None.
@@ -404,37 +404,37 @@ class Diffusion_tensor:
             print(text)
 
         # Parameter argument.
-        if type(params) != int and type(params) != float and type(params) != tuple:
+        if not isinstance(params, int) and not isinstance(params, float) and not isinstance(params, tuple):
             raise RelaxNumTupleError('diffusion parameters', params)
-        if type(params) == tuple:
+        if isinstance(params, tuple):
             if len(params) != 4 and len(params) != 6:
                 raise RelaxError("The diffusion parameters argument " + repr(params) + " must either be a number or a tuple of numbers of length 4 or 6.")
             for i in xrange(len(params)):
-                if type(params[i]) != float and type(params[i]) != int:
+                if not isinstance(params[i], float) and not isinstance(params[i], int):
                     raise RelaxNumTupleError('diffusion parameters', params)
 
         # Time scale argument.
-        if type(time_scale) != float:
+        if not isinstance(time_scale, float):
             raise RelaxFloatError('time scale', time_scale)
 
         # D scale argument.
-        if type(d_scale) != float:
+        if not isinstance(d_scale, float):
             raise RelaxFloatError('D scale', d_scale)
 
         # Angle scale units argument.
-        if type(angle_units) != str:
+        if not isinstance(angle_units, str):
             raise RelaxStrError('angle units', angle_units)
 
         # Parameter types argument.
-        if type(param_types) != int:
+        if not isinstance(param_types, int):
             raise RelaxIntError('parameter types', param_types)
 
         # Spheroid type argument.
-        if spheroid_type != None and type(spheroid_type) != str:
+        if spheroid_type != None and not isinstance(spheroid_type, str):
             raise RelaxNoneStrError('spheroid type', spheroid_type)
 
         # The fixed flag.
-        if type(fixed) != bool:
+        if not isinstance(fixed, bool):
             raise RelaxBoolError('fixed flag', fixed)
 
         # Execute the functional code.

@@ -89,7 +89,7 @@ class Test_api_base(TestCase):
             obj_intern = getattr(intern, name)
 
             # Skip non-method objects.
-            if type(obj_base) != types.MethodType:
+            if not isinstance(obj_base, types.MethodType):
                 continue
 
             # Get the args and their default values.
@@ -149,7 +149,7 @@ class Test_api_base(TestCase):
             obj_sci = getattr(sci, name)
 
             # Skip non-method objects.
-            if type(obj_base) != types.MethodType:
+            if not isinstance(obj_base, types.MethodType):
                 continue
 
             # Get the args and their default values.

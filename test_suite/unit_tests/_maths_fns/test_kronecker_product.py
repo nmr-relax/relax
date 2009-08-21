@@ -71,7 +71,7 @@ class Test_kronecker_product(TestCase):
                     line = line + ' | '
 
                 # The matrix element.
-                if type(daeg[i][j]) == str:
+                if isinstance(daeg[i][j], str):
                     line = line + daeg[i][j] + " "
                 else:
                     val = "%s" % int(daeg[i, j])

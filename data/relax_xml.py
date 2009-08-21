@@ -67,7 +67,7 @@ def fill_object_contents(doc, elem, object=None, blacklist=None):
         subobj = getattr(object, name)
 
         # Store floats as IEEE-754 byte arrays (for full precision storage).
-        if type(subobj) == float or type(subobj) == float64:
+        if isinstance(subobj, float) or isinstance(subobj, float64):
             sub_elem.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(subobj)))
 
         # Add the text value to the sub element.

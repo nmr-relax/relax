@@ -521,13 +521,13 @@ class Scientific_data(Base_struct_API):
         path, file = os.path.split(file_path)
 
         # Convert the structure reading args into lists.
-        if read_mol and type(read_mol) != list:
+        if read_mol and not isinstance(read_mol, list):
             read_mol = [read_mol]
-        if set_mol_name and type(set_mol_name) != list:
+        if set_mol_name and not isinstance(set_mol_name, list):
             set_mol_name = [set_mol_name]
-        if read_model and type(read_model) != list:
+        if read_model and not isinstance(read_model, list):
             read_model = [read_model]
-        if set_model_num and type(set_model_num) != list:
+        if set_model_num and not isinstance(set_model_num, list):
             set_model_num = [set_model_num]
 
         # Load all models.
@@ -536,7 +536,7 @@ class Scientific_data(Base_struct_API):
         model_load_num = 1
         orig_model_num = []
         mol_conts = []
-        while 1:
+        while True:
             # Only load the desired model.
             if read_model:
                 # No more models to read.

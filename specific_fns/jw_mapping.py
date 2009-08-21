@@ -44,7 +44,7 @@ class Jw_mapping(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the frequency has been set.
-        if not hasattr(cdp, 'jw_frq') or type(cdp.jw_frq) != float:
+        if not hasattr(cdp, 'jw_frq') or not isinstance(cdp.jw_frq, float):
             raise RelaxError("The frequency has not been set up.")
 
         # Test if the sequence data is loaded.

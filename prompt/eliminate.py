@@ -83,11 +83,11 @@ class Eliminate:
             print(text)
 
         # User supplied function.
-        if function != None and type(function) != FunctionType:
+        if function != None and not isinstance(function, FunctionType):
             raise RelaxFunctionError('function', function)
 
         # Function arguments.
-        if args != None and type(args) != tuple:
+        if args != None and not isinstance(args, tuple):
             raise RelaxNoneTupleError('args', args)
 
         # Execute the functional code.

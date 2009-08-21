@@ -90,15 +90,15 @@ class Grace:
             print(text)
 
         # File.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # Grace executable file.
-        if type(grace_exe) != str:
+        if not isinstance(grace_exe, str):
             raise RelaxStrError('Grace executable file', grace_exe)
 
         # Execute the functional code.
@@ -210,35 +210,35 @@ class Grace:
             print(text)
 
         # Data type for x-axis.
-        if type(x_data_type) != str:
+        if not isinstance(x_data_type, str):
             raise RelaxStrError('x data type', x_data_type)
 
         # Data type for y-axis.
-        if type(y_data_type) != str:
+        if not isinstance(y_data_type, str):
             raise RelaxStrError('y data type', y_data_type)
 
         # Spin ID string.
-        if spin_id != None and type(spin_id) != str:
+        if spin_id != None and not isinstance(spin_id, str):
             raise RelaxNoneStrError('spin identification string', spin_id)
 
         # The plot data.
-        if type(plot_data) != str:
+        if not isinstance(plot_data, str):
             raise RelaxStrError('plot data', plot_data)
 
         # File.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # The normalisation flag.
-        if type(norm) != bool:
+        if not isinstance(norm, bool):
             raise RelaxBoolError('normalisation flag', norm)
 
         # Execute the functional code.

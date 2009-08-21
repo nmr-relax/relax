@@ -95,19 +95,19 @@ class Molecule:
             print(text)
 
         # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
+        if pipe_from != None and not isinstance(pipe_from, str):
             raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The molecule from argument.
-        if type(mol_from) != str:
+        if not isinstance(mol_from, str):
             raise RelaxStrError('molecule from', mol_from)
 
         # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
+        if pipe_to != None and not isinstance(pipe_to, str):
             raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # The molecule to argument.
-        if mol_to != None and type(mol_to) != str:
+        if mol_to != None and not isinstance(mol_to, str):
             raise RelaxNoneStrError('molecule to', mol_to)
 
         # Execute the functional code.
@@ -147,7 +147,7 @@ class Molecule:
             print(text)
 
         # Molecule name.
-        if type(mol_name) != str:
+        if not isinstance(mol_name, str):
             raise RelaxStrError('molecule name', mol_name)
 
         # Execute the functional code.
@@ -176,7 +176,7 @@ class Molecule:
             print(text)
 
         # The molecule identifier argument.
-        if type(mol_id) != str:
+        if not isinstance(mol_id, str):
             raise RelaxStrError('molecule identifier', mol_id)
 
         # Execute the functional code.
@@ -199,7 +199,7 @@ class Molecule:
             print(text)
 
         # The molecule identifier argument.
-        if mol_id != None and type(mol_id) != str:
+        if mol_id != None and not isinstance(mol_id, str):
             raise RelaxNoneStrError('molecule identifier', mol_id)
 
         # Execute the functional code.
@@ -245,15 +245,15 @@ class Molecule:
             print(text)
 
         # Residue identification string.
-        if mol_id != None and type(mol_id) != str:
+        if mol_id != None and not isinstance(mol_id, str):
             raise RelaxNoneStrError('molecule identification string', mol_id)
 
         # New molecule name.
-        if type(name) != str:
+        if not isinstance(name, str):
             raise RelaxStrError('new molecule name', name)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

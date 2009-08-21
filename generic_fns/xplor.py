@@ -92,14 +92,14 @@ def parse_noe_restraints(lines):
         id2 = second_parse(id2)
 
         # Convert to relax spin IDs.
-        if type(id1) == list:
+        if isinstance(id1, list):
             relax_id1 = []
             for i in range(len(id1)):
                 relax_id1.append(__convert_to_id(id1[i]))
         else:
             relax_id1 = __convert_to_id(id1)
 
-        if type(id2) == list:
+        if isinstance(id2, list):
             relax_id2 = []
             for i in range(len(id2)):
                 relax_id2.append(__convert_to_id(id2[i]))
@@ -131,7 +131,7 @@ def first_parse(lines):
 
     # Extract the data.
     line_index = 0
-    while 1:
+    while True:
         # Break out!
         if line_index >= len(lines):
             break
@@ -145,7 +145,7 @@ def first_parse(lines):
             id = ['', '']
             id_index = 0
             inside = 0
-            while 1:
+            while True:
                 # Inc the character index.
                 char_index = char_index + 1
 
@@ -220,7 +220,7 @@ def second_parse(id):
     atoms = ['']
     index = -1
     inside = False
-    while 1:
+    while True:
         # Inc the character index.
         index = index + 1
 

@@ -58,7 +58,7 @@ class Minimisation:
             print(text)
 
         # The verbosity level.
-        if type(verbosity) != int:
+        if not isinstance(verbosity, int):
             raise RelaxIntError('verbosity level', verbosity)
 
         # Execute the functional code.
@@ -102,7 +102,7 @@ class Minimisation:
         # The lower bounds.
         if lower == None:
             pass
-        elif type(lower) != list:
+        elif not isinstance(lower, list):
             raise RelaxListError('lower bounds', lower)
         else:
             # Empty list.
@@ -111,13 +111,13 @@ class Minimisation:
 
             # Check the values.
             for i in xrange(len(lower)):
-                if type(lower[i]) != float and type(lower[i]) != int:
+                if not isinstance(lower[i], float) and not isinstance(lower[i], int):
                     raise RelaxListNumError('lower bounds', lower)
 
         # The upper bounds.
         if upper == None:
             pass
-        elif type(upper) != list:
+        elif not isinstance(upper, list):
             raise RelaxListError('upper bounds', upper)
         else:
             # Empty list.
@@ -126,30 +126,30 @@ class Minimisation:
 
             # Check the values.
             for i in xrange(len(upper)):
-                if type(upper[i]) != float and type(upper[i]) != int:
+                if not isinstance(upper[i], float) and not isinstance(upper[i], int):
                     raise RelaxListNumError('upper bounds', upper)
 
         # The incrementation value.
-        if type(inc) == int:
+        if isinstance(inc, int):
             pass
-        elif type(inc) == list:
+        elif isinstance(inc, list):
             # Empty list.
             if inc == []:
                 raise RelaxIntListIntError('incrementation value', inc)
 
             # Check the values.
             for i in xrange(len(inc)):
-                if type(inc[i]) != int:
+                if not isinstance(inc[i], int):
                     raise RelaxIntListIntError('incrementation value', inc)
         else:
             raise RelaxIntListIntError('incrementation value', inc)
 
         # Constraint flag.
-        if type(constraints) != bool:
+        if not isinstance(constraints, bool):
             raise RelaxBoolError('constraint flag', constraints)
 
         # The verbosity level.
-        if type(verbosity) != int:
+        if not isinstance(verbosity, int):
             raise RelaxIntError('verbosity level', verbosity)
 
         # Execute the functional code.
@@ -314,7 +314,7 @@ class Minimisation:
         if len(args) == 0:
             raise RelaxNoneError('minimisation algorithm')
         for i in xrange(len(args)):
-            if type(args[i]) != str:
+            if not isinstance(args[i], str):
                 raise RelaxStrError('minimisation algorithm', args[0])
         min_algor = args[0]
 
@@ -332,30 +332,30 @@ class Minimisation:
                 raise RelaxError("Unknown keyword argument " + repr(key) + ".")
 
         # The function tolerance value.
-        if func_tol != None and type(func_tol) != int and type(func_tol) != float:
+        if func_tol != None and not isinstance(func_tol, int) and not isinstance(func_tol, float):
             raise RelaxNoneNumError('function tolerance', func_tol)
 
         # The gradient tolerance value.
-        if grad_tol != None and type(grad_tol) != int and type(grad_tol) != float:
+        if grad_tol != None and not isinstance(grad_tol, int) and not isinstance(grad_tol, float):
             raise RelaxNoneNumError('gradient tolerance', grad_tol)
 
         # The maximum number of iterations.
-        if type(max_iterations) != int:
+        if not isinstance(max_iterations, int):
             raise RelaxIntError('maximum number of iterations', max_iterations)
 
         # Constraint flag.
-        if type(constraints) != bool:
+        if not isinstance(constraints, bool):
             raise RelaxBoolError('constraint flag', constraints)
         elif constraints:
             min_algor = 'Method of Multipliers'
             min_options = args
 
         # Scaling.
-        if type(scaling) != bool:
+        if not isinstance(scaling, bool):
             raise RelaxBoolError('scaling', scaling)
 
         # The verbosity level.
-        if type(verbosity) != int:
+        if not isinstance(verbosity, int):
             raise RelaxIntError('verbosity level', verbosity)
 
         # Execute the functional code.

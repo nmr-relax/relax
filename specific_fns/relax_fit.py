@@ -462,11 +462,11 @@ class Relax_fit(Common_functions):
                 raise RelaxLenError('upper bounds', n)
 
         # Increment.
-        if type(inc) == list:
+        if isinstance(inc, list):
             if len(inc) != n:
                 raise RelaxLenError('increment', n)
             inc = inc
-        elif type(inc) == int:
+        elif isinstance(inc, int):
             temp = []
             for j in xrange(n):
                 temp.append(inc)
@@ -510,7 +510,7 @@ class Relax_fit(Common_functions):
         grid_size = 1
         for i in xrange(len(min_options)):
             grid_size = grid_size * min_options[i][0]
-        if type(grid_size) == long:
+        if isinstance(grid_size, long):
             raise RelaxError("A grid search of size " + repr(grid_size) + " is too large.")
 
         # Diagonal scaling of minimisation options.
@@ -854,7 +854,7 @@ class Relax_fit(Common_functions):
             cdp.relax_times = [None] * len(cdp.spectrum_ids)
 
         # Index not present in the global relaxation time data structure.
-        while 1:
+        while True:
             if index > len(cdp.relax_times) - 1:
                 cdp.relax_times.append(None)
             else:

@@ -232,7 +232,7 @@ class Main:
         elif DIFF_MODEL == 'sphere' or DIFF_MODEL == 'prolate' or DIFF_MODEL == 'oblate' or DIFF_MODEL == 'ellipsoid':
             # Loop until convergence if CONV_LOOP is set, otherwise just loop once.
             # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
-            while 1:
+            while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=DIFF_MODEL)
 

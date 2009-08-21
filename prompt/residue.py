@@ -99,19 +99,19 @@ class Residue:
             print(text)
 
         # The data pipe from argument.
-        if pipe_from != None and type(pipe_from) != str:
+        if pipe_from != None and not isinstance(pipe_from, str):
             raise RelaxNoneStrError('data pipe from', pipe_from)
 
         # The residue from argument.
-        if type(res_from) != str:
+        if not isinstance(res_from, str):
             raise RelaxStrError('residue from', res_from)
 
         # The data pipe to argument.
-        if pipe_to != None and type(pipe_to) != str:
+        if pipe_to != None and not isinstance(pipe_to, str):
             raise RelaxNoneStrError('data pipe to', pipe_to)
 
         # The residue to argument.
-        if res_to != None and type(res_to) != str:
+        if res_to != None and not isinstance(res_to, str):
             raise RelaxNoneStrError('residue to', res_to)
 
         # Execute the functional code.
@@ -161,15 +161,15 @@ class Residue:
             print(text)
 
         # Residue number.
-        if type(res_num) != int:
+        if not isinstance(res_num, int):
             raise RelaxIntError('residue number', res_num)
 
         # Residue name.
-        if res_name != None and type(res_name) != str:
+        if res_name != None and not isinstance(res_name, str):
             raise RelaxNoneStrError('residue name', res_name)
 
         # The molecule name.
-        if mol_name != None and type(mol_name) != str:
+        if mol_name != None and not isinstance(mol_name, str):
             raise RelaxNoneStrError('molecule name', mol_name)
 
         # Execute the functional code.
@@ -200,7 +200,7 @@ class Residue:
             print(text)
 
         # The residue identifier argument.
-        if type(res_id) != str:
+        if not isinstance(res_id, str):
             raise RelaxStrError('residue identifier', res_id)
 
         # Execute the functional code.
@@ -223,7 +223,7 @@ class Residue:
             print(text)
 
         # The res_id argument.
-        if res_id != None and type(res_id) != str:
+        if res_id != None and not isinstance(res_id, str):
             raise RelaxNoneStrError('residue identification string', res_id)
 
         # Execute the functional code.
@@ -273,15 +273,15 @@ class Residue:
             print(text)
 
         # Residue identification string.
-        if type(res_id) != str:
+        if not isinstance(res_id, str):
             raise RelaxStrError('residue identification string', res_id)
 
         # New residue name.
-        if type(name) != str:
+        if not isinstance(name, str):
             raise RelaxStrError('new residue name', name)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
@@ -328,15 +328,15 @@ class Residue:
             print(text)
 
         # Residue identification string.
-        if type(res_id) != str:
+        if not isinstance(res_id, str):
             raise RelaxStrError('residue identification string', res_id)
 
         # New residue number.
-        if type(number) != int:
+        if not isinstance(number, int):
             raise RelaxIntError('new residue number', number)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

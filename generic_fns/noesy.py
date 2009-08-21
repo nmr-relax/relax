@@ -165,7 +165,7 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
         # Loop over atom IDs.
         for j in range(2):
             # Skip normal atoms.
-            if type(noe_restraints[i][j]) == str:
+            if isinstance(noe_restraints[i][j], str):
                 continue
 
             # Loop over the pseudoatoms.
