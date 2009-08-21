@@ -206,3 +206,55 @@ def is_str(arg, name, can_be_none=False):
             raise RelaxStrError(name, arg)
         else:
             raise RelaxNoneStrError(name, arg)
+
+
+def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+    """Test if the argument is a list of strings.
+
+    @param arg:                     The argument.
+    @type arg:                      anything
+    @param name:                    The plain English name of the argument.
+    @type name:                     str
+    @keyword size:                  The number of elements required.
+    @type size:                     None or int
+    @keyword can_be_none:           A flag specifying if the argument can be none.
+    @type can_be_none:              bool
+    @raise RelaxListStrError:       If not a list of strings.
+    @raise RelaxNoneListStrError:   If not a list of strings or None.
+    """
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a list.
+    if not isinstance(arg, list):
+        if can_be_none:
+            raise RelaxNoneListStrError(name, arg)
+        else:
+            raise RelaxListStrError(name, arg)
+
+    # Fail size is wrong.
+    if size != None and len(arg) != size:
+        if can_be_none:
+            raise RelaxNoneListStrError(name, arg, size)
+        else:
+            raise RelaxListStrError(name, arg, size)
+
+    # Fail if empty.
+    if not can_be_empty and arg == []:
+        if can_be_none:
+            raise RelaxNoneListStrError(name, arg)
+        else:
+            raise RelaxListStrError(name, arg)
+
+    # Fail if not strings.
+    for i in range(len(params)):
+        if not isinstance(arg[i], str):
+            if can_be_none:
+                raise RelaxNoneListStrError(name, arg)
+            else:
+                raise RelaxListStrError(name, arg)
+
+
+
