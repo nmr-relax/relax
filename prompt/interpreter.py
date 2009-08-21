@@ -430,7 +430,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
     # Execute the script.
     try:
-        execfile(script_file, local)
+        exec(compile(open(script_file).read(), script_file, 'exec'), local)
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
