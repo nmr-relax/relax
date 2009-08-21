@@ -24,7 +24,7 @@
 """Argument checking functions for the relax user functions."""
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneStrError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneStrError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
 
 
 def is_bool(arg, name):
