@@ -31,7 +31,7 @@ import sys
 from base_class import User_fn_class
 import check
 from generic_fns import sequence
-from relax_errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 
 
 class Sequence(User_fn_class):
@@ -85,8 +85,8 @@ class Sequence(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from')
-        check.is_str(pipe_to, 'pipe to')
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -128,7 +128,7 @@ class Sequence(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(sep, 'column separator')
+        check.is_str(sep, 'column separator', can_be_none=True)
         check.is_bool(mol_name_flag, 'molecule name flag')
         check.is_bool(res_num_flag, 'residue number flag')
         check.is_bool(res_name_flag, 'residue name flag')
@@ -219,14 +219,14 @@ class Sequence(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name', False)
-        check.is_str(dir, 'directory name')
-        check.is_int(mol_name_col, 'molecule name column')
-        check.is_int(res_num_col, 'residue number column')
-        check.is_int(res_name_col, 'residue name column')
-        check.is_int(spin_num_col, 'spin number column')
-        check.is_int(spin_name_col, 'spin name column')
-        check.is_str(sep, 'column separator')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         sequence.read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
@@ -278,14 +278,14 @@ class Sequence(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name', False)
-        check.is_str(dir, 'directory name')
-        check.is_str(sep, 'column separator')
-        check.is_bool(mol_name_flag, 'molecule name flag')
-        check.is_bool(res_num_flag, 'residue number flag')
-        check.is_bool(res_name_flag, 'residue name flag')
-        check.is_bool(spin_num_flag, 'spin number flag')
-        check.is_bool(spin_name_flag, 'spin name flag')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_bool(mol_name_flag, 'molecule name flag', can_be_none=True)
+        check.is_bool(res_num_flag, 'residue number flag', can_be_none=True)
+        check.is_bool(res_name_flag, 'residue name flag', can_be_none=True)
+        check.is_bool(spin_num_flag, 'spin number flag', can_be_none=True)
+        check.is_bool(spin_name_flag, 'spin name flag', can_be_none=True)
         check.is_bool(force, 'force flag')
 
         # Execute the functional code.
