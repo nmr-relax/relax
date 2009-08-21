@@ -24,7 +24,7 @@
 """Argument checking functions for the relax user functions."""
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
 
 
 def is_bool(arg, name):
@@ -286,4 +286,64 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
                 raise RelaxListStrError(name, arg)
 
 
+def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False):
+    """Test if the argument is a number, a string, a list of numbers, or a list of strings.
 
+    @param arg:                             The argument.
+    @type arg:                              anything
+    @param name:                            The plain English name of the argument.
+    @type name:                             str
+    @keyword size:                          The number of elements required.
+    @type size:                             None or int
+    @keyword can_be_none:                   A flag specifying if the argument can be none.
+    @type can_be_none:                      bool
+    @raise RelaxNumStrListNumStrError:      If not a float, a string, or a list of floats or
+                                            strings.
+    @raise RelaxNoneNumStrListNumStrError:  If not a float, a string, a list of floats or strings,
+                                        or None.
+    """
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # A number or a string.
+    if not isinstance(arg, list):
+        # Check if it is a string.
+        try:
+            is_str(arg, name)
+        except:
+            # Not a string, therefore check if it is a number.
+            try:
+                is_num(arg, name)
+            except:
+                # Neither a number or a string.
+                if can_be_none:
+                    raise RelaxNoneNumStrListNumStrError(name, arg)
+                else:
+                    raise RelaxNumStrListNumStrError(name, arg)
+
+    # A list.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            if can_be_none:
+                raise RelaxNoneNumStrListNumStrError(name, arg, size)
+            else:
+                raise RelaxNumStrListNumStrError(name, arg, size)
+
+        # Check the arguments.
+        for i in range(len(arg)):
+            # Check if it is a string.
+            try:
+                is_str(arg[i], name)
+            except:
+                # Not a string, therefore check if it is a number.
+                try:
+                    is_num(arg[i], name)
+                except:
+                    # Neither a number or a string.
+                    if can_be_none:
+                        raise RelaxNoneNumStrListNumStrError(name, arg)
+                    else:
+                        raise RelaxNumStrListNumStrError(name, arg)
