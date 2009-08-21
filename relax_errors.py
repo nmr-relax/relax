@@ -356,6 +356,11 @@ class RelaxNoneListError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must either be an array or None."
 
+# None or list of numbers.
+class RelaxNoneListNumError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be an array of numbers or None."
+
 # None or list of strings.
 class RelaxNoneListStrError(BaseError):
     def __init__(self, name, value):
