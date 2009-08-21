@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.value import Value
-from relax_errors import RelaxError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneStrError, RelaxNoneStrListStrError
+from relax_errors import RelaxError, RelaxNoneNumStrListNumStrError, RelaxNoneStrError, RelaxNoneStrListStrError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
