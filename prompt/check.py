@@ -24,7 +24,7 @@
 """Argument checking functions for the relax user functions."""
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneStrError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
 
 
 def is_bool(arg, name):
@@ -75,39 +75,6 @@ def is_float(arg, name, can_be_none=False):
             raise RelaxNoneFloatError(name, arg)
 
 
-def is_num_tuple(arg, name, size=None, can_be_none=False):
-    """Test if the argument is a tuple of numbers.
-
-    @param arg:                 The argument.
-    @type arg:                  anything
-    @param name:                The plain English name of the argument.
-    @type name:                 str
-    @keyword size:              The number of elements required.
-    @type size:                 None or int
-    @keyword can_be_none:       A flag specifying if the argument can be none.
-    @type can_be_none:          bool
-    @raise RelaxTupleError:     If not a tuple.
-    @raise RelaxNoneFloatError: If not an integer or not None.
-    """
-
-    # An argument of None is allowed.
-    if can_be_none and arg == None:
-        return
-
-    # Fail if not a tuple.
-    if not isinstance(arg, tuple):
-        raise RelaxTupleError(name, arg)
-
-    # Fail size is wrong.
-    if size != None and len(arg) != size:
-        raise RelaxTupleNumError(name, arg, size)
-
-    # Fail if not numbers.
-    for i in range(len(params)):
-        if not isinstance(arg[i], float) and not isinstance(arg[i], int):
-            raise RelaxTupleNumError(name, arg)
-
-
 def is_int(arg, name, can_be_none=False):
     """Test if the argument is an integer.
 
@@ -135,6 +102,81 @@ def is_int(arg, name, can_be_none=False):
             raise RelaxIntError(name, arg)
         else:
             raise RelaxNoneIntError(name, arg)
+
+
+def is_num_list(arg, name, size=None, can_be_none=False):
+    """Test if the argument is a list of numbers.
+
+    @param arg:                 The argument.
+    @type arg:                  anything
+    @param name:                The plain English name of the argument.
+    @type name:                 str
+    @keyword size:              The number of elements required.
+    @type size:                 None or int
+    @keyword can_be_none:       A flag specifying if the argument can be none.
+    @type can_be_none:          bool
+    @raise RelaxListError:      If not a list.
+    @raise RelaxListNumError:   If not a list of numbers.
+    """
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a list.
+    if not isinstance(arg, list):
+        if can_be_none:
+            raise RelaxNoneListNumError(name, arg)
+        else:
+            raise RelaxListNumError(name, arg)
+
+    # Fail size is wrong.
+    if size != None and len(arg) != size:
+        if can_be_none:
+            raise RelaxNoneListNumError(name, arg, size)
+        else:
+            raise RelaxListNumError(name, arg, size)
+
+    # Fail if not numbers.
+    for i in range(len(params)):
+        if not isinstance(arg[i], float) and not isinstance(arg[i], int):
+            if can_be_none:
+                raise RelaxNoneListNumError(name, arg)
+            else:
+                raise RelaxListNumError(name, arg)
+
+
+def is_num_tuple(arg, name, size=None, can_be_none=False):
+    """Test if the argument is a tuple of numbers.
+
+    @param arg:                 The argument.
+    @type arg:                  anything
+    @param name:                The plain English name of the argument.
+    @type name:                 str
+    @keyword size:              The number of elements required.
+    @type size:                 None or int
+    @keyword can_be_none:       A flag specifying if the argument can be none.
+    @type can_be_none:          bool
+    @raise RelaxTupleError:     If not a tuple.
+    @raise RelaxTupleNumError:  If not a tuple of numbers.
+    """
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a tuple.
+    if not isinstance(arg, tuple):
+        raise RelaxTupleNumError(name, arg)
+
+    # Fail size is wrong.
+    if size != None and len(arg) != size:
+        raise RelaxTupleNumError(name, arg, size)
+
+    # Fail if not numbers.
+    for i in range(len(params)):
+        if not isinstance(arg[i], float) and not isinstance(arg[i], int):
+            raise RelaxTupleNumError(name, arg)
 
 
 def is_str(arg, name, can_be_none=False):
