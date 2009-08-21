@@ -249,7 +249,7 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
             raise RelaxListStrError(name, arg)
 
     # Fail if not strings.
-    for i in range(len(params)):
+    for i in range(len(arg)):
         if not isinstance(arg[i], str):
             if can_be_none:
                 raise RelaxNoneListStrError(name, arg)
