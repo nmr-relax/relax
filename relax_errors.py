@@ -303,6 +303,14 @@ class RelaxTupleError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be a tuple."
 
+# Tuple of numbers.
+class RelaxTupleNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a tuple of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a tuple of numbers of length %s." % (name, value, length)
+
 # Tuple or number.
 class RelaxNumTupleError(BaseError):
     def __init__(self, name, value):
