@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.value import Value
-from relax_errors import RelaxError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneStrError, RelaxNoneStrListError
+from relax_errors import RelaxError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneStrError, RelaxNoneStrListStrError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -70,23 +70,11 @@ class Test_value(Value_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str':
+            if data[0] == 'None' or data[0] == 'str' or data[0] == 'str list':
                 continue
 
-            # Catch the string list arguments.
-            if data[0] == 'str list':
-                if len(data[1]) != 1:
-                    self.assertRaises(RelaxError, self.value_fns.set, param=data[1], val=[1.0])
-                else:
-                    self.assertRaises(RelaxError, self.value_fns.set, param=data[1], val=[1.0, 2.0])
-
-            # Catch all other list arguments.
-            elif isinstance(data[1], list):
-                self.assertRaises(RelaxListStrError, self.value_fns.set, param=data[1], val=None)
-
-            # All other arguments.
-            else:
-                self.assertRaises(RelaxNoneStrListError, self.value_fns.set, param=data[1], val=None)
+            # The argument test.
+            self.assertRaises(RelaxNoneStrListStrError, self.value_fns.set, param=data[1], val=None)
 
 
     def test_set_argfail_spin_id(self):
