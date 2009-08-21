@@ -32,7 +32,6 @@ from doc_string import docs
 import help
 from generic_fns import diffusion_tensor
 from generic_fns import value
-from num_types import int_list, float_list
 from relax_errors import RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneIntError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
