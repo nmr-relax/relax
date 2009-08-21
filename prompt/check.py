@@ -46,7 +46,7 @@ def is_bool(arg, name):
         raise RelaxBoolError(name, arg)
 
 
-def is_float(arg, name, can_be_none=True):
+def is_float(arg, name, can_be_none=False):
     """Test if the argument is a float.
 
     @param arg:                 The argument.
@@ -75,7 +75,7 @@ def is_float(arg, name, can_be_none=True):
             raise RelaxNoneFloatError(name, arg)
 
 
-def is_num_tuple(arg, name, size=None, can_be_none=True):
+def is_num_tuple(arg, name, size=None, can_be_none=False):
     """Test if the argument is a tuple of numbers.
 
     @param arg:                 The argument.
@@ -108,7 +108,7 @@ def is_num_tuple(arg, name, size=None, can_be_none=True):
             raise RelaxTupleNumError(name, arg)
 
 
-def is_int(arg, name, can_be_none=True):
+def is_int(arg, name, can_be_none=False):
     """Test if the argument is an integer.
 
     @param arg:                 The argument.
@@ -137,7 +137,7 @@ def is_int(arg, name, can_be_none=True):
             raise RelaxNoneIntError(name, arg)
 
 
-def is_str(arg, name, can_be_none=True):
+def is_str(arg, name, can_be_none=False):
     """Test if the argument is a string.
 
     @param arg:                 The argument.
