@@ -24,7 +24,7 @@
 """Argument checking functions for the relax user functions."""
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneStrError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError, RelaxTupleError, RelaxTupleNumError
 
 
 def is_bool(arg, name):
@@ -104,6 +104,35 @@ def is_int(arg, name, can_be_none=False):
             raise RelaxNoneIntError(name, arg)
 
 
+def is_num(arg, name, can_be_none=False):
+    """Test if the argument is a number.
+
+    @param arg:                 The argument.
+    @type arg:                  anything
+    @param name:                The plain English name of the argument.
+    @type name:                 str
+    @keyword can_be_none:       A flag specifying if the argument can be none.
+    @type can_be_none:          bool
+    @raise RelaxNumError:       If not a number.
+    @raise RelaxNoneNumError:   If not a number or not None.
+    """
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Check for floats and integers (avoiding Booleans).
+    elif (isinstance(arg, float) or isinstance(arg, int)) and not isinstance(arg, bool):
+        return
+
+    # Fail.
+    else:
+        if not can_be_none:
+            raise RelaxIntError(name, arg)
+        else:
+            raise RelaxNoneIntError(name, arg)
+
+
 def is_num_list(arg, name, size=None, can_be_none=False):
     """Test if the argument is a list of numbers.
 
@@ -139,7 +168,7 @@ def is_num_list(arg, name, size=None, can_be_none=False):
 
     # Fail if not numbers.
     for i in range(len(params)):
-        if not isinstance(arg[i], float) and not isinstance(arg[i], int):
+        if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
             if can_be_none:
                 raise RelaxNoneListNumError(name, arg)
             else:
@@ -175,7 +204,7 @@ def is_num_tuple(arg, name, size=None, can_be_none=False):
 
     # Fail if not numbers.
     for i in range(len(params)):
-        if not isinstance(arg[i], float) and not isinstance(arg[i], int):
+        if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
             raise RelaxTupleNumError(name, arg)
 
 
