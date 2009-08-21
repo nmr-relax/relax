@@ -28,24 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import align_tensor
-from num_types import int_list, float_list
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError
 
 
-class Align_tensor:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating the alignment tensor."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Align_tensor(User_fn_class):
+    """Class for manipulating the alignment tensor."""
 
     def copy(self, tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         """Function for copying alignment tensor data.
@@ -104,21 +94,11 @@ class Align_tensor:
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
 
-        # The tensor_from argument.
-        if not isinstance(tensor_from, str):
-            raise RelaxStrError('tensor from', tensor_from)
-
-        # The pipe_from argument.
-        if pipe_from != None and not isinstance(pipe_from, str):
-            raise RelaxNoneStrError('pipe from', pipe_from)
-
-        # The tensor_to argument.
-        if not isinstance(tensor_to, str):
-            raise RelaxStrError('tensor to', tensor_to)
-
-        # The pipe_to argument.
-        if pipe_to != None and not isinstance(pipe_to, str):
-            raise RelaxNoneStrError('pipe to', pipe_to)
+        # The argument checks.
+        check.is_str(tensor_from, 'tensor from')
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(tensor_to, 'tensor to')
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -150,9 +130,8 @@ class Align_tensor:
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
-        # Label argument.
-        if not isinstance(tensor, str):
-            raise RelaxStrError('tensor', tensor)
+        # The argument checks.
+        check.is_str(tensor, 'tensor')
 
         # Execute the functional code.
         align_tensor.delete(tensor=tensor)
@@ -173,9 +152,8 @@ class Align_tensor:
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
-        # Label argument.
-        if tensor != None and not isinstance(tensor, str):
-            raise RelaxNoneStrError('tensor', tensor)
+        # The argument checks.
+        check.is_str(tensor, 'tensor', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.display(tensor=tensor)
@@ -252,36 +230,13 @@ class Align_tensor:
             text = text + ", errors=" + repr(errors) + ")"
             print(text)
 
-        # Label argument.
-        if not isinstance(tensor, str):
-            raise RelaxStrError('tensor', tensor)
-
-        # Parameter argument.
-        if not isinstance(params, tuple):
-            raise RelaxNumTupleError('alignment tensor parameters', params)
-        else:
-            if len(params) != 5:
-                raise RelaxError("The alignment tensor parameters argument must be a tuple of numbers of length 5.")
-            for i in xrange(len(params)):
-                if type(params[i]) not in float_list and type(params[i]) not in int_list:
-                    print(type(params[i]))
-                    raise RelaxNumTupleError('alignment tensor parameters', params)
-
-        # Scale argument.
-        if type(scale) not in float_list:
-            raise RelaxFloatError('scale', scale)
-
-        # Angle units argument.
-        if not isinstance(angle_units, str):
-            raise RelaxStrError('angle units', angle_units)
-
-        # Parameter types argument.
-        if type(param_types) not in int_list:
-            raise RelaxIntError('parameter types', param_types)
-
-        # The errors flag.
-        if not isinstance(errors, bool):
-            raise RelaxBoolError('errors flag', errors)
+        # The argument checks.
+        check.is_str(tensor, 'tensor')
+        check.is_num_tuple(params, 'alignment tensor parameters', size=5)
+        check.is_float(scale, 'scale')
+        check.is_str(angle_units, 'angle units')
+        check.is_int(param_type, 'parameter types')
+        check.is_bool(errors, 'errors flag')
 
         # Execute the functional code.
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
@@ -315,22 +270,9 @@ class Align_tensor:
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)
 
-        # Basis set argument.
-        if not isinstance(basis_set, int):
-            raise RelaxIntError('basis set', basis_set)
-
-        # Tensors argument.
-        if tensors != None and not isinstance(tensors, list):
-            raise RelaxNoneListstrError('tensors', tensors)
-        if isinstance(tensors, list):
-            # Empty list.
-            if tensors == []:
-                raise RelaxNoneListstrError('tensors', tensors)
-
-            # Check for strings.
-            for i in xrange(len(tensors)):
-                if not isinstance(tensors[i], str):
-                    raise RelaxNoneListstrError('tensors', tensors)
+        # The argument checks.
+        check.is_int(basis_set, 'basis set')
+        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
@@ -370,13 +312,9 @@ class Align_tensor:
             text = text + ", red_tensor=" + repr(red_tensor) + ")"
             print(text)
 
-        # From tensor argument.
-        if not isinstance(full_tensor, str):
-            raise RelaxStrError('from tensor', full_tensor)
-
-        # To tensor argument.
-        if not isinstance(red_tensor, str):
-            raise RelaxStrError('to tensor', red_tensor)
+        # The argument checks.
+        check.is_str(full_tensor, 'full tensor')
+        check.is_str(red_tensor, 'reduced tensor')
 
         # Execute the functional code.
         align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
@@ -415,13 +353,9 @@ class Align_tensor:
             text = text + ", domain=" + repr(domain) + ")"
             print(text)
 
-        # Tensor argument.
-        if not isinstance(tensor, str):
-            raise RelaxStrError('tensor', tensor)
-
-        # Domain argument.
-        if not isinstance(domain, str):
-            raise RelaxStrError('domain', domain)
+        # The argument checks.
+        check.is_str(tensor, 'tensor')
+        check.is_str(domain, 'domain')
 
         # Execute the functional code.
         align_tensor.set_domain(tensor=tensor, domain=domain)
@@ -481,22 +415,9 @@ class Align_tensor:
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)
 
-        # Basis set argument.
-        if not isinstance(basis_set, int):
-            raise RelaxIntError('basis set', basis_set)
-
-        # Tensors argument.
-        if tensors != None and not isinstance(tensors, list):
-            raise RelaxNoneListstrError('tensors', tensors)
-        if isinstance(tensors, list):
-            # Empty list.
-            if tensors == []:
-                raise RelaxNoneListstrError('tensors', tensors)
-
-            # Check for strings.
-            for i in xrange(len(tensors)):
-                if not isinstance(tensors[i], str):
-                    raise RelaxNoneListstrError('tensors', tensors)
+        # The argument checks.
+        check.is_int(basis_set, 'basis set')
+        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.svd(basis_set, tensors)
