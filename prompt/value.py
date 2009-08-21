@@ -29,10 +29,11 @@ import sys
 
 # relax module imports.
 from doc_string import docs
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import diffusion_tensor
 from generic_fns import value
-from relax_errors import RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneIntError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
+from relax_errors import RelaxError
 from specific_fns.jw_mapping import Jw_mapping
 from specific_fns.model_free import Model_free
 from specific_fns.relax_fit import Relax_fit
@@ -40,18 +41,8 @@ from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 
 
-class Value:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for setting data values."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Value(User_fn_class):
+    """Class for setting data values."""
 
     def copy(self, pipe_from=None, pipe_to=None, param=None):
         """Copy spin specific data values from one data pipe to another.
@@ -92,17 +83,10 @@ class Value:
             text = text + ", param=" + repr(param) + ")"
             print(text)
 
-        # The pipe_from argument.
-        if not isinstance(pipe_from, str):
-            raise RelaxStrError('pipe_from', pipe_from)
-
-        # The pipe_to argument.
-        if not isinstance(pipe_to, str):
-            raise RelaxStrError('pipe_to', pipe_to)
-
-        # The parameter.
-        if not isinstance(param, str):
-            raise RelaxStrError('parameter', param)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from')
+        check.is_str(pipe_to, 'pipe to')
+        check.is_str(param, 'parameter')
 
         # Execute the functional code.
         self.__relax__.generic.value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
@@ -137,9 +121,8 @@ class Value:
             text = text + "param=" + repr(param) + ")"
             print(text)
 
-        # The parameter.
-        if not isinstance(param, str):
-            raise RelaxStrError('parameter', param)
+        # The argument checks.
+        check.is_str(param, 'parameter')
 
         # Execute the functional code.
         self.__relax__.generic.value.display(param=param)
@@ -204,37 +187,15 @@ class Value:
             text = text + ", sep=" + repr(sep) + ")"
             print(text)
 
-        # The parameter.
-        if not isinstance(param, str):
-            raise RelaxStrError('parameter', param)
-
-        # The scaling factor.
-        if type(scaling) not in float_list:
-            raise RelaxFloatError('scaling', scaling)
-
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file', file)
-
-        # The number column.
-        if type(num_col) not in int_list:
-            raise RelaxIntError('residue number column', num_col)
-
-        # The name column.
-        if name_col != None and type(name_col) not in int_list:
-            raise RelaxNoneIntError('residue name column', name_col)
-
-        # The data column.
-        if type(data_col) not in int_list:
-            raise RelaxIntError('data column', data_col)
-
-        # The error column.
-        if error_col != None and type(error_col) not in int_list:
-            raise RelaxNoneIntError('error column', error_col)
-
-        # Column separator.
-        if sep != None and not isinstance(sep, str):
-            raise RelaxNoneStrError('column separator', sep)
+        # The argument checks.
+        check.is_str(param, 'parameter')
+        check.is_float(scaling, 'scaling')
+        check.is_str(file, 'file name')
+        check.is_int(num_col, 'residue number column')
+        check.is_int(name_col, 'residue name column')
+        check.is_int(data_col, 'data column')
+        check.is_int(error_col, 'residue name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
@@ -367,32 +328,10 @@ class Value:
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
-        # The value.
-        if val != None and type(val) not in float_list and type(val) not in int_list and not isinstance(val, str) and not isinstance(val, list):
-            raise RelaxNoneFloatStrListError('value', val)
-        if isinstance(val, list):
-            # Empty list.
-            if val == []:
-                raise RelaxListFloatStrError('value', val)
-
-            # Check for values.
-            for i in xrange(len(val)):
-                if type(val[i]) not in float_list and type(val[i]) not in int_list:
-                    print(type(val[i]))
-                    raise RelaxListFloatStrError('value', val)
-
-        # The parameter.
-        if param != None and not isinstance(param, str) and not isinstance(param, list):
-            raise RelaxNoneStrListError('parameter', param)
-        if isinstance(param, list):
-            # Empty list.
-            if param == []:
-                raise RelaxListStrError('parameter', param)
-
-            # Check for strings.
-            for i in xrange(len(param)):
-                if not isinstance(param[i], str):
-                    raise RelaxListStrError('parameter', param)
+        # The argument checks.
+        check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
+        check.is_str_or_str_list(param, 'parameter', can_be_none=True)
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # The invalid combination of a single value and no param argument.
         if (isinstance(val, float) or isinstance(val, int)) and param == None:
@@ -405,10 +344,6 @@ class Value:
         # Value array and parameter array of equal length.
         if isinstance(val, list) and isinstance(param, list) and len(val) != len(param):
             raise RelaxError("Both the value array and parameter array must be of equal length.")
-
-        # Spin identifier.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identifier', spin_id)
 
         # Execute the functional code.
         value.set(val=val, param=param, spin_id=spin_id)
@@ -463,21 +398,11 @@ class Value:
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
-        # The parameter.
-        if not isinstance(param, str):
-            raise RelaxStrError('parameter', param)
-
-        # File.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
+        # The argument checks.
+        check.is_str(param, 'parameter')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         value.write(param=param, file=file, dir=dir, force=force)
