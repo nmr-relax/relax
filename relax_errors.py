@@ -401,6 +401,22 @@ class RelaxStrListStrError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must either be an string or an array of strings."
 
+# Number, string, or list of numbers or strings.
+class RelaxNumStrListNumStrError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a number, a string, or a list of numbers or strings." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a number, a string, or a list of numbers or strings of length %s." % (name, value, length)
+
+# None, number, string, or list of numbers or strings.
+class RelaxNoneNumStrListNumStrError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a number, a string, a list of numbers or strings, or None." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a number, a string, a list of numbers or strings of length %s, or None." % (name, value, length)
+
 
 # Sequence errors.
 ##################
