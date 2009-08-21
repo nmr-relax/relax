@@ -357,7 +357,7 @@ class RelaxNoneListError(BaseError):
         self.text = "The " + name + " argument " + repr(value) + " must either be an array or None."
 
 # None or list of strings.
-class RelaxNoneListstrError(BaseError):
+class RelaxNoneListStrError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must either be an array of strings or None."
 
