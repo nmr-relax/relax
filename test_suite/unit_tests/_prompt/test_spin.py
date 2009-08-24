@@ -214,12 +214,12 @@ class Test_spin(Spin_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str':
+            # Catch the str arguments, and skip them.
+            if data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.spin_fns.create_pseudo, averaging=data[1], spin_name='Q', members=['x'])
+            self.assertRaises(RelaxStrError, self.spin_fns.create_pseudo, averaging=data[1], spin_name='Q', members=['x'])
 
 
     def test_delete_argfail_spin_id(self):
@@ -293,8 +293,8 @@ class Test_spin(Spin_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the None, int and bin arguments, and skip them.
-            if data[0] == 'None' or  data[0] == 'int' or data[0] == 'bin':
+            if data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneIntError, self.spin_fns.number, spin_id='@111', number=data[1])
+            self.assertRaises(RelaxIntError, self.spin_fns.number, spin_id='@111', number=data[1])

@@ -29,6 +29,7 @@ from string import split
 import sys
 
 # relax module imports.
+import check
 from minfx.generic import generic_minimise
 from generic_fns import minimise
 from relax_errors import RelaxBoolError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
@@ -57,9 +58,8 @@ class Minimisation:
             text = text + "verbosity=" + repr(verbosity) + ")"
             print(text)
 
-        # The verbosity level.
-        if not isinstance(verbosity, int):
-            raise RelaxIntError('verbosity level', verbosity)
+        # The argument checks.
+        check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.calc(verbosity=verbosity)
@@ -99,58 +99,12 @@ class Minimisation:
             text = text + ", verbosity=" + repr(verbosity) + ")"
             print(text)
 
-        # The lower bounds.
-        if lower == None:
-            pass
-        elif not isinstance(lower, list):
-            raise RelaxListError('lower bounds', lower)
-        else:
-            # Empty list.
-            if lower == []:
-                raise RelaxListNumError('lower bounds', lower)
-
-            # Check the values.
-            for i in xrange(len(lower)):
-                if not isinstance(lower[i], float) and not isinstance(lower[i], int):
-                    raise RelaxListNumError('lower bounds', lower)
-
-        # The upper bounds.
-        if upper == None:
-            pass
-        elif not isinstance(upper, list):
-            raise RelaxListError('upper bounds', upper)
-        else:
-            # Empty list.
-            if upper == []:
-                raise RelaxListNumError('upper bounds', upper)
-
-            # Check the values.
-            for i in xrange(len(upper)):
-                if not isinstance(upper[i], float) and not isinstance(upper[i], int):
-                    raise RelaxListNumError('upper bounds', upper)
-
-        # The incrementation value.
-        if isinstance(inc, int):
-            pass
-        elif isinstance(inc, list):
-            # Empty list.
-            if inc == []:
-                raise RelaxIntListIntError('incrementation value', inc)
-
-            # Check the values.
-            for i in xrange(len(inc)):
-                if not isinstance(inc[i], int):
-                    raise RelaxIntListIntError('incrementation value', inc)
-        else:
-            raise RelaxIntListIntError('incrementation value', inc)
-
-        # Constraint flag.
-        if not isinstance(constraints, bool):
-            raise RelaxBoolError('constraint flag', constraints)
-
-        # The verbosity level.
-        if not isinstance(verbosity, int):
-            raise RelaxIntError('verbosity level', verbosity)
+        # The argument checks.
+        check.is_num_list(lower, 'lower bounds', can_be_none=True)
+        check.is_num_list(upper, 'upper bounds', can_be_none=True)
+        check.is_int_or_int_list(inc, 'incrementation value')
+        check.is_bool(constraints, 'constraints flag')
+        check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
@@ -331,32 +285,18 @@ class Minimisation:
             if not valid:
                 raise RelaxError("Unknown keyword argument " + repr(key) + ".")
 
-        # The function tolerance value.
-        if func_tol != None and not isinstance(func_tol, int) and not isinstance(func_tol, float):
-            raise RelaxNoneNumError('function tolerance', func_tol)
-
-        # The gradient tolerance value.
-        if grad_tol != None and not isinstance(grad_tol, int) and not isinstance(grad_tol, float):
-            raise RelaxNoneNumError('gradient tolerance', grad_tol)
-
-        # The maximum number of iterations.
-        if not isinstance(max_iterations, int):
-            raise RelaxIntError('maximum number of iterations', max_iterations)
+        # The argument checks.
+        check.is_num(func_tol, 'function tolerance')
+        check.is_num(grad_tol, 'gradient tolerance', can_be_none=True)
+        check.is_int(max_iterations, 'maximum number of iterations')
+        check.is_bool(constraints, 'constraints flag')
+        check.is_bool(scaling, 'diagonal scaling flag')
+        check.is_int(verbosity, 'verbosity level')
 
         # Constraint flag.
-        if not isinstance(constraints, bool):
-            raise RelaxBoolError('constraint flag', constraints)
-        elif constraints:
+        if constraints:
             min_algor = 'Method of Multipliers'
             min_options = args
-
-        # Scaling.
-        if not isinstance(scaling, bool):
-            raise RelaxBoolError('scaling', scaling)
-
-        # The verbosity level.
-        if not isinstance(verbosity, int):
-            raise RelaxIntError('verbosity level', verbosity)
 
         # Execute the functional code.
         minimise.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)

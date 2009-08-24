@@ -281,11 +281,11 @@ class Sequence(User_fn_class):
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
         check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_bool(mol_name_flag, 'molecule name flag', can_be_none=True)
-        check.is_bool(res_num_flag, 'residue number flag', can_be_none=True)
-        check.is_bool(res_name_flag, 'residue name flag', can_be_none=True)
-        check.is_bool(spin_num_flag, 'spin number flag', can_be_none=True)
-        check.is_bool(spin_name_flag, 'spin name flag', can_be_none=True)
+        check.is_bool(mol_name_flag, 'molecule name flag')
+        check.is_bool(res_num_flag, 'residue number flag')
+        check.is_bool(res_name_flag, 'residue name flag')
+        check.is_bool(spin_num_flag, 'spin number flag')
+        check.is_bool(spin_name_flag, 'spin name flag')
         check.is_bool(force, 'force flag')
 
         # Execute the functional code.

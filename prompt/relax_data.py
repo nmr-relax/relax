@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2008 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2009 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import relax_data
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 
 
-class Relax_data:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating R1, R2, and NOE relaxation data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Relax_data(User_fn_class):
+    """Class for manipulating R1, R2, and NOE relaxation data."""
 
     def back_calc(self, ri_label=None, frq_label=None, frq=None):
         """Function for back calculating relaxation data.
@@ -68,17 +59,10 @@ class Relax_data:
             text = text + ", frq=" + repr(frq) + ")"
             print(text)
 
-        # Relaxation data type.
-        if not isinstance(ri_label, str):
-            raise RelaxStrError('relaxation label', ri_label)
-
-        # Frequency label.
-        if not isinstance(frq_label, str):
-            raise RelaxStrError('frequency label', frq_label)
-
-        # Frequency.
-        if not isinstance(frq, float):
-            raise RelaxFloatError('frequency', frq)
+        # The argument checks.
+        check.is_str(ri_label, 'relaxation label')
+        check.is_str(frq_label, 'frequency label')
+        check.is_num(frq, 'frequency')
 
         # Execute the functional code.
         relax_data.back_calc(ri_label=ri_label, frq_label=frq_label, frq=frq)
@@ -133,25 +117,15 @@ class Relax_data:
             text = text + ", frq_label=" + repr(frq_label) + ")"
             print(text)
 
-        # The pipe_from argument.
-        if pipe_from != None and not isinstance(pipe_from, str):
-            raise RelaxNoneStrError('pipe_from', pipe_from)
-
-        # The pipe_to argument.
-        if pipe_to != None and not isinstance(pipe_to, str):
-            raise RelaxNoneStrError('pipe_to', pipe_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        check.is_str(ri_label, 'relaxation label', can_be_none=True)
+        check.is_str(frq_label, 'frequency label', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
             raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
-
-        # Relaxation data type.
-        if ri_label != None and not isinstance(ri_label, str):
-            raise RelaxNoneStrError('relaxation label', ri_label)
-
-        # Frequency label.
-        if frq_label != None and not isinstance(frq_label, str):
-            raise RelaxNoneStrError('frequency label', frq_label)
 
         # Execute the functional code.
         relax_data.copy(pipe_from=pipe_from, pipe_to=pipe_to, ri_label=ri_label, frq_label=frq_label)
@@ -183,13 +157,9 @@ class Relax_data:
             text = text + ", frq_label=" + repr(frq_label) + ")"
             print(text)
 
-        # Relaxation data type.
-        if not isinstance(ri_label, str):
-            raise RelaxStrError('relaxation label', ri_label)
-
-        # Frequency label.
-        if not isinstance(frq_label, str):
-            raise RelaxStrError('frequency label', frq_label)
+        # The argument checks.
+        check.is_str(ri_label, 'relaxation label')
+        check.is_str(frq_label, 'frequency label')
 
         # Execute the functional code.
         relax_data.delete(ri_label=ri_label, frq_label=frq_label)
@@ -221,13 +191,9 @@ class Relax_data:
             text = text + ", frq_label=" + repr(frq_label) + ")"
             print(text)
 
-        # Relaxation data type.
-        if not isinstance(ri_label, str):
-            raise RelaxStrError('relaxation label', ri_label)
-
-        # Frequency label.
-        if not isinstance(frq_label, str):
-            raise RelaxStrError('frequency label', frq_label)
+        # The argument checks.
+        check.is_str(ri_label, 'relaxation label')
+        check.is_str(frq_label, 'frequency label')
 
         # Execute the functional code.
         relax_data.display(ri_label=ri_label, frq_label=frq_label)
@@ -317,57 +283,20 @@ class Relax_data:
             text = text + ", sep=" + repr(sep) + ")"
             print(text)
 
-        # Relaxation data type.
-        if not isinstance(ri_label, str):
-            raise RelaxStrError('relaxation label', ri_label)
-
-        # Frequency label.
-        if not isinstance(frq_label, str):
-            raise RelaxStrError('frequency label', frq_label)
-
-        # Frequency.
-        if not isinstance(frq, float):
-            raise RelaxFloatError('frequency', frq)
-
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # Molecule name column.
-        if mol_name_col != None and not isinstance(mol_name_col, int):
-            raise RelaxNoneIntError('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_num_col != None and not isinstance(res_num_col, int):
-            raise RelaxNoneIntError('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and not isinstance(res_name_col, int):
-            raise RelaxNoneIntError('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and not isinstance(spin_num_col, int):
-            raise RelaxNoneIntError('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and not isinstance(spin_name_col, int):
-            raise RelaxNoneIntError('spin name column', spin_name_col)
-
-        # The data column.
-        if not isinstance(data_col, int):
-            raise RelaxIntError('data column', data_col)
-
-        # The error column.
-        if not isinstance(error_col, int):
-            raise RelaxIntError('error column', error_col)
-
-        # Column separator.
-        if sep != None and not isinstance(sep, str):
-            raise RelaxNoneStrError('column separator', sep)
+        # The argument checks.
+        check.is_str(ri_label, 'relaxation label')
+        check.is_str(frq_label, 'frequency label')
+        check.is_num(frq, 'frequency')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_int(data_col, 'data column')
+        check.is_int(error_col, 'error column')
+        check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         relax_data.read(ri_label=ri_label, frq_label=frq_label, frq=frq, file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
@@ -408,25 +337,12 @@ class Relax_data:
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
-        # Relaxation data type.
-        if not isinstance(ri_label, str):
-            raise RelaxStrError('relaxation label', ri_label)
-
-        # Frequency label.
-        if not isinstance(frq_label, str):
-            raise RelaxStrError('frequency label', frq_label)
-
-        # File.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
+        # The argument checks.
+        check.is_str(ri_label, 'relaxation label')
+        check.is_str(frq_label, 'frequency label')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         relax_data.write(ri_label=ri_label, frq_label=frq_label, file=file, dir=dir, force=force)

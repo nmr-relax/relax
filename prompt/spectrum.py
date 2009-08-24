@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxIntError, RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from base_class import User_fn_class
+import check
 from generic_fns import spectrum
 
 
-class Spectrum:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for supporting the input of spectral data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Spectrum(User_fn_class):
+    """Class for supporting the input of spectral data."""
 
     def baseplane_rmsd(self, error=0.0, spectrum_id=None, spin_id=None):
         """Set the baseplane RMSD of a given spin in a spectrum for error analysis.
@@ -75,17 +65,10 @@ class Spectrum:
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
-        # The error.
-        if not isinstance(error, float) and not isinstance(error, int):
-            raise RelaxNumError('error', error)
-
-        # The spectrum identification string.
-        if not isinstance(spectrum_id, str):
-            raise RelaxStrError('spectrum identification string', spectrum_id)
-
-        # Spin identification string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identification string', spin_id)
+        # The argument checks.
+        check.is_num(error, 'error')
+        check.is_str(spectrum_id, 'spectrum identification string')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
@@ -274,17 +257,10 @@ class Spectrum:
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
-        # The number of summed points.
-        if not isinstance(N, int):
-            raise RelaxIntError('number of summed points', N)
-
-        # The spectrum identification string.
-        if not isinstance(spectrum_id, str):
-            raise RelaxStrError('spectrum identification string', spectrum_id)
-
-        # Spin identification string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identification string', spin_id)
+        # The argument checks.
+        check.is_int(N, 'number of summed points')
+        check.is_str(spectrum_id, 'spectrum identification string')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
@@ -424,70 +400,21 @@ class Spectrum:
             text = text + ", sep=" + repr(sep) + ")"
             print(text)
 
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The spectrum identification string (or list).
-        if not isinstance(spectrum_id, str) and not isinstance(spectrum_id, list):
-            raise RelaxStrListStrError('spectrum identification string', spectrum_id)
-
-        # The heteronucleus name.
-        if not isinstance(heteronuc, str):
-            raise RelaxStrError('heteronucleus name', heteronuc)
-
-        # The proton name.
-        if not isinstance(proton, str):
-            raise RelaxStrError('proton name', proton)
-
-        # The intensity column.
-        if int_col != None and not isinstance(int_col, int) and not isinstance(int_col, list):
-            raise RelaxNoneIntListIntError('intensity column', int_col)
-        if isinstance(int_col, list):
-            # Empty list.
-            if int_col == []:
-                raise RelaxListIntError('intensity column', int_col)
-
-            # Check the values.
-            for i in xrange(len(int_col)):
-                if not isinstance(int_col[i], int):
-                    raise RelaxListIntError('intensity column', int_col)
-
-        # The integration method name.
-        if not isinstance(int_method, str):
-            raise RelaxStrError('integration method', int_method)
-
-        # Molecule name column.
-        if mol_name_col != None and not isinstance(mol_name_col, int):
-            raise RelaxNoneIntError('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_num_col != None and not isinstance(res_num_col, int):
-            raise RelaxNoneIntError('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and not isinstance(res_name_col, int):
-            raise RelaxNoneIntError('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and not isinstance(spin_num_col, int):
-            raise RelaxNoneIntError('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and not isinstance(spin_name_col, int):
-            raise RelaxNoneIntError('spin name column', spin_name_col)
-
-        # Column separator.
-        if sep != None and not isinstance(sep, str):
-            raise RelaxNoneStrError('column separator', sep)
-
-        # Bruker ncproc parameter.
-        if ncproc != None and not isinstance(ncproc, int):
-            raise RelaxNoneIntError('Bruker ncproc parameter', ncproc)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str_or_str_list(spectrum_id, 'spectrum identification string')
+        check.is_str(heteronuc, 'heteronucleus name')
+        check.is_str(proton, 'proton name')
+        check.is_int_or_int_list(int_col, 'intensity column', can_be_none=True)
+        check.is_str(int_method, 'integration method')
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_int(ncproc, 'Bruker ncproc parameter', can_be_none=True)
 
         # Execute the functional code.
         spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, ncproc=ncproc)
@@ -530,17 +457,7 @@ class Spectrum:
             print(text)
 
         # Spectrum ids.
-        if not isinstance(spectrum_ids, list):
-            raise RelaxListStrError('spectrum ids', spectrum_ids)
-        else:
-            # Empty list.
-            if spectrum_ids == []:
-                raise RelaxListStrError('spectrum ids', spectrum_ids)
-
-            # Check the values.
-            for i in xrange(len(spectrum_ids)):
-                if not isinstance(spectrum_ids[i], str):
-                    raise RelaxListStrError('spectrum ids', spectrum_ids)
+        check.is_str_or_str_list(spectrum_ids, 'spectrum identification strings')
 
         # Execute the functional code.
         spectrum.replicated(spectrum_ids=spectrum_ids)

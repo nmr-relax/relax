@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from specific_fns.setup import n_state_model_obj
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 
-class N_state_model:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating the alignment tensor."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class N_state_model(User_fn_class):
+    """Class for the N-state models."""
 
     def CoM(self, pivot_point=[0.0, 0.0, 0.0], centre=None):
         """Centre of mass (CoM) analysis.
@@ -97,24 +87,9 @@ class N_state_model:
             text = text + ", centre=" + repr(centre) + ")"
             print(text)
 
-        # Pivot point argument.
-        if not isinstance(pivot_point, list):
-            raise RelaxListError('pivot point', pivot_point)
-        if len(pivot_point) != 3:
-            raise RelaxLenError('pivot point', 3)
-        for i in xrange(len(pivot_point)):
-            if not isinstance(pivot_point[i], int) and not isinstance(pivot_point[i], float):
-                raise RelaxListNumError('pivot point', pivot_point)
-
-        # CoM argument.
-        if centre != None:
-            if not isinstance(centre, list):
-                raise RelaxListError('centre of mass', centre)
-            if len(centre) != 3:
-                raise RelaxLenError('centre of mass', 3)
-            for i in xrange(len(centre)):
-                if not isinstance(centre[i], int) and not isinstance(centre[i], float):
-                    raise RelaxListNumError('centre of mass', centre)
+        # The argument checks.
+        check.is_num_list(pivot_point, 'pivot point', size=3)
+        check.is_num_list(centre, 'centre of mass', size=3, can_be_none=True)
 
         # Execute the functional code.
         n_state_model_obj.CoM(pivot_point=pivot_point, centre=centre)
@@ -180,25 +155,12 @@ class N_state_model:
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
-        # Cone type.
-        if not isinstance(cone_type, str):
-            raise RelaxStrError('cone type', cone_type)
-
-        # Scaling.
-        if not isinstance(scale, float) and not isinstance(scale, int):
-            raise RelaxNumError('scaling factor', scale)
-
-        # File name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
+        # The argument checks.
+        check.is_str(cone_type, 'cone type')
+        check.is_num(scale, 'scaling factor')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
@@ -235,9 +197,8 @@ class N_state_model:
             text = text + "N=" + repr(N) + ")"
             print(text)
 
-        # Number of states argument.
-        if not isinstance(N, int):
-            raise RelaxIntError('the number of states N', N)
+        # The argument checks.
+        check.is_int(N, 'number of states N')
 
         # Execute the functional code.
         n_state_model_obj.number_of_states(N=N)
@@ -276,9 +237,8 @@ class N_state_model:
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
-        # Ref frame argument.
-        if not isinstance(ref, str):
-            raise RelaxStrError('reference frame', ref)
+        # The argument checks.
+        check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
         n_state_model_obj.ref_domain(ref=ref)
@@ -326,9 +286,8 @@ class N_state_model:
             text = text + "model=" + repr(model) + ")"
             print(text)
 
-        # Model argument.
-        if not isinstance(model, str):
-            raise RelaxStrError('model', model)
+        # The argument checks.
+        check.is_str(model, 'model')
 
         # Execute the functional code.
         n_state_model_obj.select_model(model=model)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import diffusion_tensor
-from relax_errors import RelaxBoolError, RelaxError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError
 
 
-class Diffusion_tensor:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating the diffusion tensor."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Diffusion_tensor(User_fn_class):
+    """Class for manipulating the diffusion tensor."""
 
     def copy(self, pipe_from=None, pipe_to=None):
         """Function for copying diffusion tensor data from one data pipe to another.
@@ -93,13 +84,9 @@ class Diffusion_tensor:
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
 
-        # The pipe_from argument.
-        if pipe_from != None and not isinstance(pipe_from, str):
-            raise RelaxNoneStrError('pipe from', pipe_from)
-
-        # The pipe_to argument.
-        if pipe_to != None and not isinstance(pipe_to, str):
-            raise RelaxNoneStrError('pipe to', pipe_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -403,39 +390,14 @@ class Diffusion_tensor:
             text = text + ", fixed=" + repr(fixed) + ")"
             print(text)
 
-        # Parameter argument.
-        if not isinstance(params, int) and not isinstance(params, float) and not isinstance(params, tuple):
-            raise RelaxNumTupleError('diffusion parameters', params)
-        if isinstance(params, tuple):
-            if len(params) != 4 and len(params) != 6:
-                raise RelaxError("The diffusion parameters argument " + repr(params) + " must either be a number or a tuple of numbers of length 4 or 6.")
-            for i in xrange(len(params)):
-                if not isinstance(params[i], float) and not isinstance(params[i], int):
-                    raise RelaxNumTupleError('diffusion parameters', params)
-
-        # Time scale argument.
-        if not isinstance(time_scale, float):
-            raise RelaxFloatError('time scale', time_scale)
-
-        # D scale argument.
-        if not isinstance(d_scale, float):
-            raise RelaxFloatError('D scale', d_scale)
-
-        # Angle scale units argument.
-        if not isinstance(angle_units, str):
-            raise RelaxStrError('angle units', angle_units)
-
-        # Parameter types argument.
-        if not isinstance(param_types, int):
-            raise RelaxIntError('parameter types', param_types)
-
-        # Spheroid type argument.
-        if spheroid_type != None and not isinstance(spheroid_type, str):
-            raise RelaxNoneStrError('spheroid type', spheroid_type)
-
-        # The fixed flag.
-        if not isinstance(fixed, bool):
-            raise RelaxBoolError('fixed flag', fixed)
+        # The argument checks.
+        check.is_num_or_num_tuple(params, 'diffusion parameters', size=[4, 6])
+        check.is_num(time_scale, 'time scale')
+        check.is_num(d_scale, 'D scale')
+        check.is_str(angle_units, 'angle units')
+        check.is_int(param_types, 'parameter types')
+        check.is_str(spheroid_type, 'spheroid type', can_be_none=True)
+        check.is_bool(fixed, 'fixed flag')
 
         # Execute the functional code.
         diffusion_tensor.init(params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)

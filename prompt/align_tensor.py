@@ -235,7 +235,7 @@ class Align_tensor(User_fn_class):
         check.is_num_tuple(params, 'alignment tensor parameters', size=5)
         check.is_float(scale, 'scale')
         check.is_str(angle_units, 'angle units')
-        check.is_int(param_type, 'parameter types')
+        check.is_int(param_types, 'parameter types')
         check.is_bool(errors, 'errors flag')
 
         # Execute the functional code.

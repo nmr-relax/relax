@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
+# Copyright (C) 2003, 2004, 2008-2009 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import selection
 from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Deselect:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for deselecting spins."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Deselect(User_fn_class):
+    """Class for deselecting spins."""
 
     def all(self):
         """Function for deselecting all spins.
@@ -131,41 +122,16 @@ class Deselect:
             text = text + ", change_all=" + repr(change_all) + ")"
             print(text)
 
-        # File name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # Molecule name column.
-        if mol_name_col != None and not isinstance(mol_name_col, int):
-            raise RelaxNoneIntError('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_num_col != None and not isinstance(res_num_col, int):
-            raise RelaxNoneIntError('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and not isinstance(res_name_col, int):
-            raise RelaxNoneIntError('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and not isinstance(spin_num_col, int):
-            raise RelaxNoneIntError('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and not isinstance(spin_name_col, int):
-            raise RelaxNoneIntError('spin name column', spin_name_col)
-
-        # Column separator.
-        if sep != None and not isinstance(sep, str):
-            raise RelaxNoneStrError('column separator', sep)
-
-        # Change all flag.
-        if not isinstance(change_all, bool):
-            raise RelaxBoolError('change_all', change_all)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_bool(change_all, 'change all')
 
         # Execute the functional code.
         selection.desel_read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, change_all=change_all)
@@ -201,9 +167,8 @@ class Deselect:
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
-        # Spin identification string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('Spin identification string', spin_id)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         selection.reverse(spin_id=spin_id)
@@ -249,13 +214,9 @@ class Deselect:
             text = text + ", change_all=" + repr(change_all) + ")"
             print(text)
 
-        # Spin identification string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('Spin identification string', spin_id)
-
-        # Change all flag.
-        if not isinstance(change_all, bool):
-            raise RelaxBoolError('change_all', change_all)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_bool(change_all, 'change all')
 
         # Execute the functional code.
         selection.desel_spin(spin_id=spin_id, change_all=change_all)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,24 +28,15 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import noesy
 from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from specific_fns.setup import noe_obj
 
 
-class Noe:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for handling steady-state NOE and NOESY data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Noe(User_fn_class):
+    """Class for handling steady-state NOE and NOESY data."""
 
     def read_restraints(self, file=None, dir=None, proton1_col=None, proton2_col=None, lower_col=None, upper_col=None, sep=None):
         """Read NOESY or ROESY restraints from a file.
@@ -104,33 +95,14 @@ class Noe:
             text = text + ", sep=" + repr(sep) + ")"
             print(text)
 
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # First proton column.
-        if proton1_col != None and not isinstance(proton1_col, int):
-            raise RelaxNoneIntError('first proton column', proton1_col)
-
-        # Second proton column.
-        if proton2_col != None and not isinstance(proton2_col, int):
-            raise RelaxNoneIntError('second proton column', proton2_col)
-
-        # Lower bound column.
-        if lower_col != None and not isinstance(lower_col, int):
-            raise RelaxNoneIntError('lower bound column', lower_col)
-
-        # Upper bound column.
-        if upper_col != None and not isinstance(upper_col, int):
-            raise RelaxNoneIntError('upper bound column', upper_col)
-
-        # Column separator.
-        if sep != None and not isinstance(sep, str):
-            raise RelaxNoneStrError('column separator', sep)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(proton1_col, 'first proton column', can_be_none=True)
+        check.is_int(proton2_col, 'second proton column', can_be_none=True)
+        check.is_int(lower_col, 'lower bound column', can_be_none=True)
+        check.is_int(upper_col, 'upper bound column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         noesy.read_restraints(file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
@@ -166,13 +138,9 @@ class Noe:
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)
 
-        # The spectrum type.
-        if not isinstance(spectrum_type, str):
-            raise RelaxStrError('spectrum type', spectrum_type)
-
-        # The spectrum identification string.
-        if not isinstance(spectrum_id, str):
-            raise RelaxStrError('spectrum identification string', spectrum_id)
+        # The argument checks.
+        check.is_str(spectrum_type, 'spectrum type')
+        check.is_str(spectrum_id, 'spectrum identification string')
 
         # Execute the functional code.
         noe_obj.spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)
