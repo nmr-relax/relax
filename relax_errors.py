@@ -317,6 +317,14 @@ class RelaxTupleNumError(BaseError):
         else:
             self.text = "The %s argument '%s' must be a tuple of numbers of length %s." % (name, value, length)
 
+# Number or tuple of numbers.
+class RelaxNumTupleNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a number or a tuple of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a number or a tuple of numbers of length %s." % (name, value, length)
+
 # Tuple or number.
 class RelaxNumTupleError(BaseError):
     def __init__(self, name, value):
@@ -404,6 +412,14 @@ class RelaxNoneStrListStrError(BaseError):
 class RelaxNoneTupleError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must either be a tuple or None."
+
+# None or number or tuple of numbers.
+class RelaxNoneNumTupleNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a number, a tuple of numbers or None." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a number, a tuple of numbers of length %s or None." % (name, value, length)
 
 # String.
 class RelaxStrError(BaseError):
