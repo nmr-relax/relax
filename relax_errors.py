@@ -290,13 +290,19 @@ class RelaxListIntError(BaseError):
 
 # List of numbers.
 class RelaxListNumError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be an array of numbers."
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a list of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a list of numbers of length %s." % (name, value, length)
 
 # List of strings.
 class RelaxListStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be an array of strings."
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a list of strings." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a list of strings of length %s." % (name, value, length)
 
 # Tuple.
 class RelaxTupleError(BaseError):
