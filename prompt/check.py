@@ -229,7 +229,7 @@ def is_num_list(arg, name, size=None, can_be_none=False):
             raise RelaxListNumError(name, arg, size)
 
     # Fail if not numbers.
-    for i in range(len(params)):
+    for i in range(len(arg)):
         if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
             if can_be_none:
                 raise RelaxNoneListNumError(name, arg)
@@ -265,7 +265,7 @@ def is_num_tuple(arg, name, size=None, can_be_none=False):
         raise RelaxTupleNumError(name, arg, size)
 
     # Fail if not numbers.
-    for i in range(len(params)):
+    for i in range(len(arg)):
         if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
             raise RelaxTupleNumError(name, arg)
 
