@@ -24,7 +24,7 @@
 """Argument checking functions for the relax user functions."""
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxStrError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxIntListIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxStrError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
 
 
 def is_bool(arg, name):
@@ -102,6 +102,68 @@ def is_int(arg, name, can_be_none=False):
             raise RelaxIntError(name, arg)
         else:
             raise RelaxNoneIntError(name, arg)
+
+
+def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+    """Test if the argument is an integer or a list of integers.
+
+    @param arg:                         The argument.
+    @type arg:                          anything
+    @param name:                        The plain English name of the argument.
+    @type name:                         str
+    @keyword size:                      The number of elements required.
+    @type size:                         None or int
+    @keyword can_be_none:               A flag specifying if the argument can be none.
+    @type can_be_none:                  bool
+    @keyword can_be_empty:              A flag which if True allows the list to be empty.
+    @type can_be_empty:                 bool
+    @raise RelaxIntListIntError:        If not an integer or a list of integers.
+    @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None.
+    """
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # An integer
+    if not isinstance(arg, list):
+        # Check if it is an integer.
+        try:
+            is_int(arg, name)
+        except:
+            # Not an integer.
+            if can_be_none:
+                raise RelaxNoneIntListIntError(name, arg)
+            else:
+                raise RelaxIntListIntError(name, arg)
+
+    # A list.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            if can_be_none:
+                raise RelaxNoneIntListIntError(name, arg, size)
+            else:
+                raise RelaxIntListIntError(name, arg, size)
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            if can_be_none:
+                raise RelaxNoneIntListIntError(name, arg)
+            else:
+                raise RelaxIntListIntError(name, arg)
+
+       # Check the arguments.
+        for i in range(len(arg)):
+            # Check if it is an integer.
+            try:
+                is_int(arg[i], name)
+            except:
+                # Not an integer.
+                if can_be_none:
+                    raise RelaxNoneIntListIntError(name, arg)
+                else:
+                    raise RelaxIntListIntError(name, arg)
 
 
 def is_num(arg, name, can_be_none=False):
