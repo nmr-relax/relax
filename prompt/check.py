@@ -128,9 +128,9 @@ def is_num(arg, name, can_be_none=False):
     # Fail.
     else:
         if not can_be_none:
-            raise RelaxIntError(name, arg)
+            raise RelaxNumError(name, arg)
         else:
-            raise RelaxNoneIntError(name, arg)
+            raise RelaxNoneNumError(name, arg)
 
 
 def is_num_list(arg, name, size=None, can_be_none=False):
