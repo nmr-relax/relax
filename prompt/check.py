@@ -43,7 +43,10 @@ def is_bool(arg, name):
 
     # Fail.
     else:
-        raise RelaxBoolError(name, arg)
+        fail = True
+
+    # The RelaxError.
+    raise RelaxBoolError(name, arg)
 
 
 def is_float(arg, name, can_be_none=False):
@@ -64,15 +67,14 @@ def is_float(arg, name, can_be_none=False):
         return
 
     # Check for a float.
-    elif isinstance(arg, float):
+    if isinstance(arg, float):
         return
 
     # Fail.
+    if not can_be_none:
+        raise RelaxFloatError(name, arg)
     else:
-        if not can_be_none:
-            raise RelaxFloatError(name, arg)
-        else:
-            raise RelaxNoneFloatError(name, arg)
+        raise RelaxNoneFloatError(name, arg)
 
 
 def is_int(arg, name, can_be_none=False):
@@ -93,15 +95,14 @@ def is_int(arg, name, can_be_none=False):
         return
 
     # Check for an integer (avoiding Booleans).
-    elif isinstance(arg, int) and not isinstance(arg, bool):
+    if isinstance(arg, int) and not isinstance(arg, bool):
         return
 
     # Fail.
+    if not can_be_none:
+        raise RelaxIntError(name, arg)
     else:
-        if not can_be_none:
-            raise RelaxIntError(name, arg)
-        else:
-            raise RelaxNoneIntError(name, arg)
+        raise RelaxNoneIntError(name, arg)
 
 
 def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
@@ -121,6 +122,9 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
     @raise RelaxNoneIntListIntError:    If not an integer, a list of integers, or None.
     """
 
+    # Init.
+    fail = False
+
     # An argument of None is allowed.
     if can_be_none and arg == None:
         return
@@ -131,27 +135,17 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
         try:
             is_int(arg, name)
         except:
-            # Not an integer.
-            if can_be_none:
-                raise RelaxNoneIntListIntError(name, arg)
-            else:
-                raise RelaxIntListIntError(name, arg)
+            fail = True    # Not an integer.
 
     # A list.
     else:
         # Fail size is wrong.
         if size != None and len(arg) != size:
-            if can_be_none:
-                raise RelaxNoneIntListIntError(name, arg, size)
-            else:
-                raise RelaxIntListIntError(name, arg, size)
+            fail = True
 
         # Fail if empty.
         if not can_be_empty and arg == []:
-            if can_be_none:
-                raise RelaxNoneIntListIntError(name, arg)
-            else:
-                raise RelaxIntListIntError(name, arg)
+            fail = True
 
        # Check the arguments.
         for i in range(len(arg)):
@@ -159,11 +153,18 @@ def is_int_or_int_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
             try:
                 is_int(arg[i], name)
             except:
-                # Not an integer.
-                if can_be_none:
-                    raise RelaxNoneIntListIntError(name, arg)
-                else:
-                    raise RelaxIntListIntError(name, arg)
+                fail = True    # Not an integer.
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneIntListIntError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneIntListIntError(name, arg)
+        elif size != None:
+            raise RelaxIntListIntError(name, arg, size)
+        else:
+            raise RelaxIntListIntError(name, arg)
 
 
 def is_num(arg, name, can_be_none=False):
@@ -184,15 +185,14 @@ def is_num(arg, name, can_be_none=False):
         return
 
     # Check for floats and integers (avoiding Booleans).
-    elif (isinstance(arg, float) or isinstance(arg, int)) and not isinstance(arg, bool):
+    if (isinstance(arg, float) or isinstance(arg, int)) and not isinstance(arg, bool):
         return
 
     # Fail.
+    if not can_be_none:
+        raise RelaxNumError(name, arg)
     else:
-        if not can_be_none:
-            raise RelaxNumError(name, arg)
-        else:
-            raise RelaxNoneNumError(name, arg)
+        raise RelaxNoneNumError(name, arg)
 
 
 def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
@@ -212,41 +212,45 @@ def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
     @raise RelaxListNumError:   If not a list of numbers.
     """
 
+    # Init.
+    fail = False
+
     # An argument of None is allowed.
     if can_be_none and arg == None:
         return
 
     # Fail if not a list.
     if not isinstance(arg, list):
-        if can_be_none:
-            raise RelaxNoneListNumError(name, arg)
-        else:
-            raise RelaxListNumError(name, arg)
+        fail = True
 
-    # Fail size is wrong.
-    if size != None and len(arg) != size:
-        if can_be_none:
+    # Other checks.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+        # Fail if not numbers.
+        for i in range(len(arg)):
+            if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+                fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
             raise RelaxNoneListNumError(name, arg, size)
-        else:
-            raise RelaxListNumError(name, arg, size)
-
-    # Fail if empty.
-    if not can_be_empty and arg == []:
-        if can_be_none:
+        elif can_be_none:
             raise RelaxNoneListNumError(name, arg)
+        elif size != None:
+            raise RelaxListNumError(name, arg, size)
         else:
             raise RelaxListNumError(name, arg)
 
-    # Fail if not numbers.
-    for i in range(len(arg)):
-        if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
-            if can_be_none:
-                raise RelaxNoneListNumError(name, arg)
-            else:
-                raise RelaxListNumError(name, arg)
 
-
-def is_num_tuple(arg, name, size=None, can_be_none=False):
+def is_num_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
     """Test if the argument is a tuple of numbers.
 
     @param arg:                 The argument.
@@ -257,9 +261,14 @@ def is_num_tuple(arg, name, size=None, can_be_none=False):
     @type size:                 None or int
     @keyword can_be_none:       A flag specifying if the argument can be none.
     @type can_be_none:          bool
+    @keyword can_be_empty:      A flag which if True allows the list to be empty.
+    @type can_be_empty:         bool
     @raise RelaxTupleError:     If not a tuple.
     @raise RelaxTupleNumError:  If not a tuple of numbers.
     """
+
+    # Init.
+    fail = False
 
     # An argument of None is allowed.
     if can_be_none and arg == None:
@@ -267,15 +276,32 @@ def is_num_tuple(arg, name, size=None, can_be_none=False):
 
     # Fail if not a tuple.
     if not isinstance(arg, tuple):
-        raise RelaxTupleNumError(name, arg)
+        fail = True
 
-    # Fail size is wrong.
-    if size != None and len(arg) != size:
-        raise RelaxTupleNumError(name, arg, size)
+    # Other checks.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
 
-    # Fail if not numbers.
-    for i in range(len(arg)):
-        if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+        # Fail if not numbers.
+        for i in range(len(arg)):
+            if (not isinstance(arg[i], float) and not isinstance(arg[i], int)) or isinstance(arg, bool):
+                fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneTupleNumError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneTupleNumError(name, arg)
+        elif size != None:
+            raise RelaxTupleNumError(name, arg, size)
+        else:
             raise RelaxTupleNumError(name, arg)
 
 
@@ -297,15 +323,14 @@ def is_str(arg, name, can_be_none=False):
         return
 
     # Check for a string.
-    elif isinstance(arg, str):
+    if isinstance(arg, str):
         return
 
     # Fail.
+    if not can_be_none:
+        raise RelaxStrError(name, arg)
     else:
-        if not can_be_none:
-            raise RelaxStrError(name, arg)
-        else:
-            raise RelaxNoneStrError(name, arg)
+        raise RelaxNoneStrError(name, arg)
 
 
 def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
@@ -325,38 +350,43 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
     @raise RelaxNoneListStrError:   If not a list of strings or None.
     """
 
+    # Init.
+    fail = False
+
     # An argument of None is allowed.
     if can_be_none and arg == None:
         return
 
     # Fail if not a list.
     if not isinstance(arg, list):
-        if can_be_none:
-            raise RelaxNoneListStrError(name, arg)
-        else:
-            raise RelaxListStrError(name, arg)
+        fail = True
 
-    # Fail size is wrong.
-    if size != None and len(arg) != size:
-        if can_be_none:
+    # Other checks.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+        # Fail if not strings.
+        if isinstance(arg, list):
+            for i in range(len(arg)):
+                if not isinstance(arg[i], str):
+                    fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
             raise RelaxNoneListStrError(name, arg, size)
-        else:
-            raise RelaxListStrError(name, arg, size)
-
-    # Fail if empty.
-    if not can_be_empty and arg == []:
-        if can_be_none:
+        elif can_be_none:
             raise RelaxNoneListStrError(name, arg)
+        elif size != None:
+            raise RelaxListStrError(name, arg, size)
         else:
             raise RelaxListStrError(name, arg)
-
-    # Fail if not strings.
-    for i in range(len(arg)):
-        if not isinstance(arg[i], str):
-            if can_be_none:
-                raise RelaxNoneListStrError(name, arg)
-            else:
-                raise RelaxListStrError(name, arg)
 
 
 def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
@@ -378,6 +408,9 @@ def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_b
                                         or None.
     """
 
+    # Init.
+    fail = False
+
     # An argument of None is allowed.
     if can_be_none and arg == None:
         return
@@ -392,27 +425,17 @@ def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_b
             try:
                 is_num(arg, name)
             except:
-                # Neither a number or a string.
-                if can_be_none:
-                    raise RelaxNoneNumStrListNumStrError(name, arg)
-                else:
-                    raise RelaxNumStrListNumStrError(name, arg)
+                fail = True    # Neither a number or a string.
 
     # A list.
     else:
         # Fail size is wrong.
         if size != None and len(arg) != size:
-            if can_be_none:
-                raise RelaxNoneNumStrListNumStrError(name, arg, size)
-            else:
-                raise RelaxNumStrListNumStrError(name, arg, size)
+            fail = True
 
         # Fail if empty.
         if not can_be_empty and arg == []:
-            if can_be_none:
-                raise RelaxNoneNumStrListNumStrError(name, arg)
-            else:
-                raise RelaxNumStrListNumStrError(name, arg)
+            fail = True
 
         # Check the arguments.
         for i in range(len(arg)):
@@ -424,11 +447,18 @@ def is_str_or_num_or_str_num_list(arg, name, size=None, can_be_none=False, can_b
                 try:
                     is_num(arg[i], name)
                 except:
-                    # Neither a number or a string.
-                    if can_be_none:
-                        raise RelaxNoneNumStrListNumStrError(name, arg)
-                    else:
-                        raise RelaxNumStrListNumStrError(name, arg)
+                    fail = True    # Neither a number or a string.
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneNumStrListNumStrError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneNumStrListNumStrError(name, arg)
+        elif size != None:
+            raise RelaxNumStrListNumStrError(name, arg, size)
+        else:
+            raise RelaxNumStrListNumStrError(name, arg)
 
 
 def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
@@ -448,6 +478,9 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
     @raise RelaxNoneStrListStrError:    If not a string, a list of strings, or None.
     """
 
+    # Init.
+    fail = False
+
     # An argument of None is allowed.
     if can_be_none and arg == None:
         return
@@ -458,27 +491,17 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
         try:
             is_str(arg, name)
         except:
-            # Not a string.
-            if can_be_none:
-                raise RelaxNoneStrListStrError(name, arg)
-            else:
-                raise RelaxStrListStrError(name, arg)
+            fail = True    # Not a string.
 
     # A list.
     else:
         # Fail size is wrong.
         if size != None and len(arg) != size:
-            if can_be_none:
-                raise RelaxNoneStrListStrError(name, arg, size)
-            else:
-                raise RelaxStrListStrError(name, arg, size)
+            fail = True
 
         # Fail if empty.
         if not can_be_empty and arg == []:
-            if can_be_none:
-                raise RelaxNoneStrListStrError(name, arg)
-            else:
-                raise RelaxStrListStrError(name, arg)
+            fail = True
 
        # Check the arguments.
         for i in range(len(arg)):
@@ -486,8 +509,15 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
             try:
                 is_str(arg[i], name)
             except:
-                # Not a string.
-                if can_be_none:
-                    raise RelaxNoneStrListStrError(name, arg)
-                else:
-                    raise RelaxStrListStrError(name, arg)
+                fail = True    # Not a string.
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneStrListStrError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneStrListStrError(name, arg)
+        elif size != None:
+            raise RelaxStrListStrError(name, arg, size)
+        else:
+            raise RelaxStrListStrError(name, arg)
