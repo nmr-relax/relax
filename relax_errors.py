@@ -364,8 +364,11 @@ class RelaxNoneListError(BaseError):
 
 # None or list of numbers.
 class RelaxNoneListNumError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an array of numbers or None."
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must either be a list of numbers or None." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must either be a list of numbers of length %s or None." % (name, value, length)
 
 # None or list of strings.
 class RelaxNoneListStrError(BaseError):
