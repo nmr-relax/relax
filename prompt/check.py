@@ -195,7 +195,7 @@ def is_num(arg, name, can_be_none=False):
             raise RelaxNoneNumError(name, arg)
 
 
-def is_num_list(arg, name, size=None, can_be_none=False):
+def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
     """Test if the argument is a list of numbers.
 
     @param arg:                 The argument.
@@ -206,6 +206,8 @@ def is_num_list(arg, name, size=None, can_be_none=False):
     @type size:                 None or int
     @keyword can_be_none:       A flag specifying if the argument can be none.
     @type can_be_none:          bool
+    @keyword can_be_empty:      A flag which if True allows the list to be empty.
+    @type can_be_empty:         bool
     @raise RelaxListError:      If not a list.
     @raise RelaxListNumError:   If not a list of numbers.
     """
@@ -227,6 +229,13 @@ def is_num_list(arg, name, size=None, can_be_none=False):
             raise RelaxNoneListNumError(name, arg, size)
         else:
             raise RelaxListNumError(name, arg, size)
+
+    # Fail if empty.
+    if not can_be_empty and arg == []:
+        if can_be_none:
+            raise RelaxNoneListNumError(name, arg)
+        else:
+            raise RelaxListNumError(name, arg)
 
     # Fail if not numbers.
     for i in range(len(arg)):
