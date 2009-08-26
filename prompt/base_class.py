@@ -27,6 +27,19 @@
 import help
 
 
+
+class Basic_class:
+    def __init__(self, relax):
+        """All non-user function classes.
+
+        @param relax:   The relax instance.
+        @type relax:    relax instance
+        """
+
+        # Place relax in the class namespace.
+        self.__relax__ = relax
+
+
 class User_fn_class:
     def __init__(self, relax):
         """Initialise the user function class, compiling the help string.
