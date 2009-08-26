@@ -31,7 +31,6 @@ import sys
 from base_class import User_fn_class
 import check
 from generic_fns import align_tensor
-from relax_errors import RelaxError
 
 
 class Align_tensor(User_fn_class):
@@ -99,10 +98,6 @@ class Align_tensor(User_fn_class):
         check.is_str(pipe_from, 'pipe from', can_be_none=True)
         check.is_str(tensor_to, 'tensor to')
         check.is_str(pipe_to, 'pipe to', can_be_none=True)
-
-        # Both pipe arguments cannot be None.
-        if pipe_from == None and pipe_to == None:
-            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
         align_tensor.copy(tensor_from=tensor_from, pipe_from=pipe_from, tensor_to=tensor_to, pipe_to=pipe_to)

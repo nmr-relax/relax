@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,24 +28,15 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
+from base_class import User_fn_class
+import check
 import colour
 from generic_fns import pymol
-import help
 from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
 
-class Pymol:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for interfacing with PyMOL."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Pymol(User_fn_class):
+    """Class for interfacing with PyMOL."""
 
     def cartoon(self):
         """Apply the PyMOL cartoon style and colour by secondary structure.
@@ -124,9 +115,8 @@ class Pymol:
             text = text + "command=" + repr(command) + ")"
             print(text)
 
-        # The command argument.
-        if not isinstance(command, str):
-            raise RelaxStrError('command', command)
+        # The argument checks.
+        check.is_str(command, 'pymol command')
 
         # Execute the functional code.
         pymol.command(command=command)
@@ -171,9 +161,8 @@ class Pymol:
             text = text + "file=" + repr(file) + ")"
             print(text)
 
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
+        # The argument checks.
+        check.is_str(file, 'file name')
 
         # Execute the functional code.
         pymol.cone_pdb(file=file)
@@ -242,29 +231,12 @@ class Pymol:
             text = text + ", colour_list=" + repr(colour_list) + ")"
             print(text)
 
-        # Data type for mapping to the structure.
-        if not isinstance(data_type, str):
-            raise RelaxStrError('data type', data_type)
-
-        # The style.
-        if not isinstance(style, str):
-            raise RelaxStrError('style', style)
-
-        # The starting colour of the linear gradient.
-        if colour_start != None and not isinstance(colour_start, str) and not isinstance(colour_start, list):
-            raise RelaxNoneStrListError('starting colour of the linear gradient', colour_start)
-        if isinstance(colour_start, list):
-            for i in xrange(len(colour_start)):
-                if not isinstance(colour_start[i], float) and not isinstance(colour_start[i], int):
-                    raise RelaxListNumError('starting colour of the linear gradient', colour_start)
-
-        # The ending colour of the linear gradient.
-        if colour_end != None and not isinstance(colour_end, str) and not isinstance(colour_end, list):
-            raise RelaxNoneStrListError('ending colour of the linear gradient', colour_end)
-        if isinstance(colour_end, list):
-            for i in xrange(len(colour_end)):
-                if not isinstance(colour_end[i], float) and not isinstance(colour_end[i], int):
-                    raise RelaxListNumError('ending colour of the linear gradient', colour_end)
+        # The argument checks.
+        check.is_str(data_type, 'data type')
+        check.is_str(style, 'style')
+        check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        check.is_str(colour_list, 'colour list', can_be_none=True)
 
         # Execute the functional code.
         pymol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
@@ -318,9 +290,8 @@ class Pymol:
             text = text + "file=" + repr(file) + ")"
             print(text)
 
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
+        # The argument checks.
+        check.is_str_or_inst(file, 'file name')
 
         # Execute the functional code.
         pymol.tensor_pdb(file=file)
@@ -355,9 +326,8 @@ class Pymol:
             text = text + "file=" + repr(file) + ")"
             print(text)
 
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
+        # The argument checks.
+        check.is_str(file, 'file name')
 
         # Execute the functional code.
         pymol.vector_dist(file=file)
@@ -457,41 +427,15 @@ class Pymol:
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
-        # Data type for mapping to the structure.
-        if not isinstance(data_type, str):
-            raise RelaxStrError('data type', data_type)
-
-        # The style.
-        if not isinstance(style, str):
-            raise RelaxStrError('style', style)
-
-        # The starting colour of the linear gradient.
-        if colour_start != None and not isinstance(colour_start, str) and not isinstance(colour_start, list):
-            raise RelaxNoneStrListError('starting colour of the linear gradient', colour_start)
-        if isinstance(colour_start, list):
-            for i in xrange(len(colour_start)):
-                if not isinstance(colour_start[i], float) and not isinstance(colour_start[i], int):
-                    raise RelaxListNumError('starting colour of the linear gradient', colour_start)
-
-        # The ending colour of the linear gradient.
-        if colour_end != None and not isinstance(colour_end, str) and not isinstance(colour_end, list):
-            raise RelaxNoneStrListError('ending colour of the linear gradient', colour_end)
-        if isinstance(colour_end, list):
-            for i in xrange(len(colour_end)):
-                if not isinstance(colour_end[i], float) and not isinstance(colour_end[i], int):
-                    raise RelaxListNumError('ending colour of the linear gradient', colour_end)
-
-        # File.
-        if file != None and not isinstance(file, str):
-            raise RelaxNoneStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
+        # The argument checks.
+        check.is_str(data_type, 'data type')
+        check.is_str(style, 'style')
+        check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        check.is_str(colour_list, 'colour list', can_be_none=True)
+        check.is_str_or_inst(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         pymol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)

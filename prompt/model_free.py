@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxIntError, RelaxListError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
+from base_class import User_fn_class
+import check
 from specific_fns.setup import model_free_obj
 
 
-class Model_free:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for holding the preset model functions."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Model_free(User_fn_class):
+    """Class for holding the preset model functions."""
 
     def create_model(self, model=None, equation=None, params=None, spin_id=None):
         """Function to create a model-free model.
@@ -134,30 +124,11 @@ class Model_free:
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
-        # Model argument.
-        if not isinstance(model, str):
-            raise RelaxStrError('model', model)
-
-        # Equation.
-        if not isinstance(equation, str):
-            raise RelaxStrError('model-free equation', equation)
-
-        # Parameter types.
-        if not isinstance(params, list):
-            raise RelaxListStrError('parameters', params)
-        else:
-            # Empty list.
-            if params == []:
-                raise RelaxListStrError('parameters', params)
-
-            # Check the values.
-            for i in xrange(len(params)):
-                if not isinstance(params[i], str):
-                    raise RelaxListStrError('parameters', params)
-
-        # Spin identification string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identification string', spin_id)
+        # The argument checks.
+        check.is_str(model, 'model-free model')
+        check.is_str(equation, 'model-free equation')
+        check.is_str_list(params, 'model-free parameters')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         model_free_obj.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
@@ -215,9 +186,8 @@ class Model_free:
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
-        # Spin identification string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identification string', spin_id)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         model_free_obj.remove_tm(spin_id=spin_id)
@@ -364,13 +334,9 @@ class Model_free:
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
-        # Model argument.
-        if not isinstance(model, str):
-            raise RelaxStrError('model', model)
-
-        # Spin identification string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identification string', spin_id)
+        # The argument checks.
+        check.is_str(model, 'preset model name')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         model_free_obj.select_model(model=model, spin_id=spin_id)

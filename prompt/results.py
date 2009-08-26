@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008 Edward d'Auvergne                              #
+# Copyright (C) 2003-2005,2008-2009 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,26 +28,22 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import results
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
-class Results:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating results."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Results(User_fn_class):
+    """Class for manipulating results."""
 
     def display(self):
-        """Function for displaying the results."""
+        """Function for displaying the results.
+
+        Description
+        ~~~~~~~~~~~
+
+        This will print to screen (STDOUT) the results contained within the current data pipe.
+        """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
@@ -87,13 +83,9 @@ class Results:
             text = text + ", dir=" + repr(dir) + ")"
             print(text)
 
-        # File.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         results.read(file=file, directory=dir)
@@ -143,21 +135,11 @@ class Results:
             text = text + ", compress_type=" + repr(compress_type) + ")"
             print(text)
 
-        # File.
-        if not isinstance(file, str) and not hasattr(file, 'write'):
-            raise RelaxStrFileError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
-
-        # Compression type.
-        if not isinstance(compress_type, int):
-            raise RelaxIntError('compression type', compress_type)
+        # The argument checks.
+        check.is_str_or_inst(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
+        check.is_int(compress_type, 'compression type')
 
         # Execute the functional code.
         results.write(file=file, directory=dir, force=force, compress_type=compress_type)

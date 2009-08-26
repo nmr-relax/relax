@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2008 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2009 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import rdc
-from relax_errors import RelaxError, RelaxBoolError, RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 
 
-class RDC:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating R1, R2, and NOE relaxation data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class RDC(User_fn_class):
+    """Class for handling residual dipolar coulpings."""
 
     def back_calc(self, id=None):
         """Back calculate RDCs.
@@ -61,9 +52,8 @@ class RDC:
             text = text + "id=" + repr(id) + ")"
             print(text)
 
-        # Identification string.
-        if not isinstance(id, str):
-            raise RelaxStrError('identification string', id)
+        # The argument checks.
+        check.is_str(id, 'alignment identification string')
 
         # Execute the functional code.
         rdc.back_calc(id=id)
@@ -113,21 +103,14 @@ class RDC:
             text = text + ", id=" + repr(id) + ")"
             print(text)
 
-        # The pipe_from argument.
-        if pipe_from != None and not isinstance(pipe_from, str):
-            raise RelaxNoneStrError('pipe_from', pipe_from)
-
-        # The pipe_to argument.
-        if pipe_to != None and not isinstance(pipe_to, str):
-            raise RelaxNoneStrError('pipe_to', pipe_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        check.is_str(id, 'alignment identification string', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
             raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
-
-        # Id string.
-        if id != None and not isinstance(id, str):
-            raise RelaxNoneStrError('alignment identification string', id)
 
         # Execute the functional code.
         rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id)
@@ -156,9 +139,8 @@ class RDC:
             text = text + "id=" + repr(id) + ")"
             print(text)
 
-        # Id string.
-        if not isinstance(id, str):
-            raise RelaxStrError('alignment identification string', id)
+        # The argument checks.
+        check.is_str(id, 'alignment identification string')
 
         # Execute the functional code.
         rdc.delete(id=id)
@@ -187,9 +169,8 @@ class RDC:
             text = text + "id=" + repr(id) + ")"
             print(text)
 
-        # Id string.
-        if not isinstance(id, str):
-            raise RelaxStrError('alignment identification string', id)
+        # The argument checks.
+        check.is_str(id, 'alignment identification string')
 
         # Execute the functional code.
         rdc.display(id=id)
@@ -264,53 +245,19 @@ class RDC:
             text = text + ", sep=" + repr(sep) + ")"
             print(text)
 
-        # Id string.
-        if not isinstance(id, str):
-            raise RelaxStrError('alignment identification string', id)
-
-        # The file name.
-        if not isinstance(file, str):
-            raise RelaxStrError('file', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # Spin identifier.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identifier', spin_id)
-
-        # Molecule name column.
-        if mol_name_col != None and not isinstance(mol_name_col, int):
-            raise RelaxNoneIntError('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_num_col != None and not isinstance(res_num_col, int):
-            raise RelaxNoneIntError('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and not isinstance(res_name_col, int):
-            raise RelaxNoneIntError('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and not isinstance(spin_num_col, int):
-            raise RelaxNoneIntError('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and not isinstance(spin_name_col, int):
-            raise RelaxNoneIntError('spin name column', spin_name_col)
-
-        # The data column.
-        if data_col != None and not isinstance(data_col, int):
-            raise RelaxNoneIntError('data column', data_col)
-
-        # The error column.
-        if error_col != None and not isinstance(error_col, int):
-            raise RelaxNoneIntError('error column', error_col)
-
-        # Column separator.
-        if sep != None and not isinstance(sep, str):
-            raise RelaxNoneStrError('column separator', sep)
+        # The argument checks.
+        check.is_str(id, 'alignment identification string')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_int(data_col, 'data column', can_be_none=True)
+        check.is_int(error_col, 'error column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         rdc.read(id=id, file=file, dir=dir, spin_id=spin_id, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
@@ -347,21 +294,11 @@ class RDC:
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
-        # Id string.
-        if not isinstance(id, str):
-            raise RelaxStrError('alignment identification string', id)
-
-        # File.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
+        # The argument checks.
+        check.is_str(id, 'alignment identification string')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         rdc.write(id=id, file=file, dir=dir, force=force)

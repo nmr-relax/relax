@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,9 +28,9 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxStrError
+from base_class import User_fn_class
+import check
 from doc_string import docs
-import help
 from generic_fns import grace, minimise
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
@@ -38,18 +38,8 @@ from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
 
 
-class Grace:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for interfacing with Grace."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Grace(User_fn_class):
+    """Class for interfacing with Grace."""
 
     def view(self, file=None, dir='grace', grace_exe='xmgrace'):
         """Function for running Grace.
@@ -89,17 +79,10 @@ class Grace:
             text = text + ", grace_exe=" + repr(grace_exe) + ")"
             print(text)
 
-        # File.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # Grace executable file.
-        if not isinstance(grace_exe, str):
-            raise RelaxStrError('Grace executable file', grace_exe)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(grace_exe, 'Grace executable file')
 
         # Execute the functional code.
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
@@ -209,37 +192,15 @@ class Grace:
             text = text + ", norm=" + repr(norm) + ")"
             print(text)
 
-        # Data type for x-axis.
-        if not isinstance(x_data_type, str):
-            raise RelaxStrError('x data type', x_data_type)
-
-        # Data type for y-axis.
-        if not isinstance(y_data_type, str):
-            raise RelaxStrError('y data type', y_data_type)
-
-        # Spin ID string.
-        if spin_id != None and not isinstance(spin_id, str):
-            raise RelaxNoneStrError('spin identification string', spin_id)
-
-        # The plot data.
-        if not isinstance(plot_data, str):
-            raise RelaxStrError('plot data', plot_data)
-
-        # File.
-        if not isinstance(file, str):
-            raise RelaxStrError('file name', file)
-
-        # Directory.
-        if dir != None and not isinstance(dir, str):
-            raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
-
-        # The normalisation flag.
-        if not isinstance(norm, bool):
-            raise RelaxBoolError('normalisation flag', norm)
+        # The argument checks.
+        check.is_str(x_data_type, 'x data type')
+        check.is_str(y_data_type, 'y data type')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_str(plot_data, 'plot data')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
+        check.is_bool(norm, 'normalisation flag')
 
         # Execute the functional code.
         grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=dir, force=force, norm=norm)

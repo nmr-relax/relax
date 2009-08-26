@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import dasha
-from relax_errors import RelaxBoolError, RelaxNoneStrError, RelaxStrError
 
 
-class Dasha:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for interfacing with the program Dasha."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Dasha(User_fn_class):
+    """Class for interfacing with the program Dasha."""
 
     def create(self, algor='LM', dir=None, force=False):
         """Function for creating the Dasha script.
@@ -87,18 +77,10 @@ class Dasha:
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
-        # The algor argument.
-        if not isinstance(algor, str):
-            raise RelaxStrError('optimisation algorithm', algor)
-
-        # Directory.
-        if dir != None:
-            if not isinstance(dir, str):
-                raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
+        # The argument checks.
+        check.is_str(algor, 'optimisation algorithm')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         dasha.create(algor=algor, dir=dir, force=force)
@@ -139,18 +121,10 @@ class Dasha:
             text = text + ", binary=" + repr(binary) + ")"
             print(text)
 
-        # Directory.
-        if dir != None:
-            if not isinstance(dir, str):
-                raise RelaxNoneStrError('directory name', dir)
-
-        # The force flag.
-        if not isinstance(force, bool):
-            raise RelaxBoolError('force flag', force)
-
-        # The Dasha executable file.
-        if not isinstance(binary, str):
-            raise RelaxStrError('Dasha binary', binary)
+        # The argument checks.
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
+        check.is_str(binary, 'Dasha executable file')
 
         # Execute the functional code.
         dasha.execute(dir=dir, force=force, binary=binary)
@@ -171,10 +145,8 @@ class Dasha:
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 
-        # Directory.
-        if dir != None:
-            if not isinstance(dir, str):
-                raise RelaxNoneStrError('directory name', dir)
+        # The argument checks.
+        check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         dasha.extract(dir=dir)
