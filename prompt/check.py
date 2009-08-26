@@ -25,6 +25,7 @@
 
 # relax module imports.
 from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxIntListIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
+from relax_io import DummyFileObject
 
 
 def is_bool(arg, name):
@@ -468,7 +469,7 @@ def is_str_or_inst(arg, name, can_be_none=False):
         return
 
     # Check for a string.
-    if isinstance(arg, str) or isinstance(arg, file):
+    if isinstance(arg, str) or isinstance(arg, file) or isinstance(arg, DummyFileObject):
         return
 
     # Fail.
