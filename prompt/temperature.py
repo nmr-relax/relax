@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,16 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
+from base_class import Basic_class
+import check
 from generic_fns import temperature
-from relax_errors import RelaxNumError, RelaxStrError
 
 
-class Temp:
-    def __init__(self, relax):
-        """Class containing the function for setting the experimental temperature."""
-
-        self.relax = relax
-
+class Temp(Basic_class):
+    """Class containing the function for setting the experimental temperature."""
 
     def set(self, id=None, temp=None):
         """Specify the temperature of an experiment.
@@ -58,19 +55,15 @@ class Temp:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "temperature("
             text = text + "id=" + repr(id)
             text = text + ", temp=" + repr(temp) + ")"
             print(text)
 
-        # Id string.
-        if not isinstance(id, str):
-            raise RelaxStrError('experiment identification string', id)
-
-        # The temperature.
-        if not isinstance(temp, float) and not isinstance(temp, int):
-            raise RelaxNumError('temp', temp)
+        # The argument checks.
+        check.is_str(id, 'experiment identification string')
+        check.is_num(temp, 'experiment temparture')
 
         # Execute the functional code.
         temperature.set(id=id, temp=temp)

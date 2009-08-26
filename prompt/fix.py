@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
+# Copyright (C) 2003, 2004, 2008-2009 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,16 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
+from base_class import Basic_class
+import check
 from generic_fns import fix
-from relax_errors import RelaxBinError, RelaxIntStrError, RelaxStrError
 
 
-class Fix:
-    def __init__(self, relax):
-        """Class containing the function for fixing or allowing parameter values to change."""
-
-        self.relax = relax
-
+class Fix(Basic_class):
+    """Class containing the function for fixing or allowing parameter values to change."""
 
     def fix(self, element=None, fixed=True):
         """Function for either fixing or allowing parameter values to change during optimisation.
@@ -69,19 +66,15 @@ class Fix:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "fix("
             text = text + "element=" + repr(element)
             text = text + ", fixed=" + repr(fixed) + ")"
             print(text)
 
-        # The element argument.
-        if not isinstance(element, str) and not isinstance(element, int):
-            raise RelaxIntStrError('element', element)
-
-        # The fixed argument.
-        if not isinstance(fixed, bool):
-            raise RelaxBoolError('fixed', fixed)
+        # The argument checks.
+        check.is_str(element, 'element')
+        check.is_bool(fixed, 'fixed')
 
         # Execute the functional code.
         fix.fix(element=element, fixed=fixed)

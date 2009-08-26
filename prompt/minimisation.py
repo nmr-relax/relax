@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2008 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2008-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,18 +29,15 @@ from string import split
 import sys
 
 # relax module imports.
+from base_class import Basic_class
 import check
 from minfx.generic import generic_minimise
 from generic_fns import minimise
-from relax_errors import RelaxBoolError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxError, RelaxNoneError, RelaxStrError
 
 
-class Minimisation:
-    def __init__(self, relax):
-        """Class containing the calc, grid, minimisation, and set functions."""
-
-        self.relax = relax
-
+class Minimisation(Basic_class):
+    """Class containing the calc, grid, minimisation, and set functions."""
 
     def calc(self, verbosity=1):
         """Function for calculating the function value.
@@ -53,7 +50,7 @@ class Minimisation:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "calc("
             text = text + "verbosity=" + repr(verbosity) + ")"
             print(text)
@@ -90,7 +87,7 @@ class Minimisation:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "grid_search("
             text = text + "lower=" + repr(lower)
             text = text + ", upper=" + repr(upper)
@@ -254,7 +251,7 @@ class Minimisation:
             verbosity = 1
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "minimise("
             text = text + "*args=" + repr(args)
             text = text + ", func_tol=" + repr(func_tol)

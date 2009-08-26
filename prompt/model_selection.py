@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008 Edward d'Auvergne                            #
+# Copyright (C) 2003, 2004, 2008-2009 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,16 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
+from base_class import Basic_class
+import check
 from generic_fns import model_selection
 from relax_errors import RelaxError, RelaxNoneListError, RelaxStrError
 
 
-class Modsel:
-    def __init__(self, relax):
-        """Class containing the function for selecting which model selection method should be used."""
-
-        self.relax = relax
-
+class Modsel(Basic_class):
+    """Class containing the function for selecting which model selection method should be used."""
 
     def model_selection(self, method=None, modsel_pipe=None, pipes=None):
         """Function for model selection.
@@ -99,34 +97,17 @@ class Modsel:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "model_selection("
             text = text + "method=" + repr(method)
             text = text + ", modsel_pipe=" + repr(modsel_pipe)
             text = text + ", pipes=" + repr(pipes) + ")"
             print(text)
 
-        # Method.
-        if not isinstance(method, str):
-            raise RelaxStrError('model selection method', method)
-
-        # Model selection data pipe name.
-        if not isinstance(modsel_pipe, str):
-            raise RelaxStrError('model selection data pipe name', modsel_pipe)
-
-        # Runs.
-        if pipes == None:
-            pass
-        elif not isinstance(pipes, list):
-            raise RelaxNoneListError('data pipes', pipes)
-        else:
-            for name in pipes:
-                if isinstance(name, list):
-                    for name2 in name:
-                        if not isinstance(name2, str):
-                            raise RelaxError("The elements of the second dimension of the pipes argument must be strings.")
-                elif not isinstance(name, str):
-                    raise RelaxError("The elements of the first dimension of the pipes argument must be either strings or arrays.")
+        # The argument checks.
+        check.is_str(method, 'model selection method')
+        check.is_str(modsel_pipe, 'model selection data pipe name')
+        check.is_str_list(pipes, 'data pipes', can_be_none=True, list_of_lists=True)
 
         # Execute the functional code.
         model_selection.select(method=method, modsel_pipe=modsel_pipe, pipes=pipes)

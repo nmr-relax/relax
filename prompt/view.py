@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2009 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,15 +25,12 @@
 __docformat__ = 'plaintext'
 
 # Python module imports.
+from base_class import Basic_class
 import sys
 
 
-class View:
-    def __init__(self, relax):
-        """Class containing the view function."""
-
-        self.relax = relax
-
+class View(Basic_class):
+    """Class containing the view function."""
 
     def view(self):
         """Function for viewing the collection of molecules extracted from the PDB file.
@@ -46,9 +43,9 @@ class View:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "view()"
             print(text)
 
         # Execute the functional code.
-        self.relax.generic.view.view()
+        self.__relax__.generic.view.view()

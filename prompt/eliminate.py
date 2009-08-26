@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004 Edward d'Auvergne                                  #
+# Copyright (C) 2003, 2004, 2009 Edward d'Auvergne                            #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,17 +29,15 @@ import sys
 from types import FunctionType
 
 # relax module imports.
+from base_class import Basic_class
+import check
 from generic_fns import eliminate
 from relax_errors import RelaxFunctionError, RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
 from specific_fns.model_free import Model_free
 
 
-class Eliminate:
-    def __init__(self, relax):
-        """Class containing the function for model elimination."""
-
-        self.relax = relax
-
+class Eliminate(Basic_class):
+    """Class containing the function for model elimination."""
 
     def eliminate(self, function=None, args=None):
         """Function for model elimination.
@@ -76,19 +74,16 @@ class Eliminate:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "eliminate("
             text = text + "function=" + repr(function)
             text = text + ", args=" + repr(args) + ")"
             print(text)
 
-        # User supplied function.
-        if function != None and not isinstance(function, FunctionType):
-            raise RelaxFunctionError('function', function)
-
-        # Function arguments.
-        if args != None and not isinstance(args, tuple):
-            raise RelaxNoneTupleError('args', args)
+        # The argument checks.
+        check.is_func(function, 'function', can_be_none=True)
+        if function:
+            check.is_tuple(args, 'args')
 
         # Execute the functional code.
         eliminate.eliminate(function=function, args=args)
