@@ -24,8 +24,9 @@
 """Argument checking functions for the relax user functions."""
 
 # relax module imports.
-from relax_errors import RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxIntListIntError, RelaxNoneFloatError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
+from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
 from relax_io import DummyFileObject
+from types import FunctionType
 
 
 def is_bool(arg, name):
@@ -76,6 +77,34 @@ def is_float(arg, name, can_be_none=False):
         raise RelaxFloatError(name, arg)
     else:
         raise RelaxNoneFloatError(name, arg)
+
+
+def is_func(arg, name, can_be_none=False):
+    """Test if the argument is a function.
+
+    @param arg:                     The argument.
+    @type arg:                      anything
+    @param name:                    The plain English name of the argument.
+    @type name:                     str
+    @keyword can_be_none:           A flag specifying if the argument can be none.
+    @type can_be_none:              bool
+    @raise RelaxFunctionError:      If not a function.
+    @raise RelaxNoneFunctionError:  If not a function or not None.
+    """
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Check for a function.
+    if isinstance(arg, FunctionType):
+        return
+
+    # Fail.
+    if not can_be_none:
+        raise RelaxFunctionError(name, arg)
+    else:
+        raise RelaxNoneFunctionError(name, arg)
 
 
 def is_int(arg, name, can_be_none=False):
