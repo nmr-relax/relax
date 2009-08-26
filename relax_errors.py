@@ -243,6 +243,11 @@ class RelaxFunctionError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be a function."
 
+# Function or None.
+class RelaxNoneFunctionError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must be a function or None."
+
 # Integer.
 class RelaxIntError(BaseError):
     def __init__(self, name, value):
