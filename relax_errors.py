@@ -434,6 +434,14 @@ class RelaxStrError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be a string."
 
+# String or list of numbers.
+class RelaxStrListNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must either be a string or a list of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must either be a string or a list of numbers of length %s." % (name, value, length)
+
 # String or list of strings.
 class RelaxStrListStrError(BaseError):
     def __init__(self, name, value):
