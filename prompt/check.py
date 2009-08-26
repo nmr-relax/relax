@@ -424,7 +424,7 @@ def is_str(arg, name, can_be_none=False):
         raise RelaxNoneStrError(name, arg)
 
 
-def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
+def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of_lists=False):
     """Test if the argument is a list of strings.
 
     @param arg:                     The argument.
@@ -437,6 +437,9 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
     @type can_be_none:              bool
     @keyword can_be_empty:          A flag which if True allows the list to be empty.
     @type can_be_empty:             bool
+    @keyword list_of_lists:         A flag which if True allows the argument to be a list of lists
+                                    of strings.
+    @type list_of_lists:            bool
     @raise RelaxListStrError:       If not a list of strings.
     @raise RelaxNoneListStrError:   If not a list of strings or None.
     """
@@ -463,8 +466,16 @@ def is_str_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
             fail = True
 
         # Fail if not strings.
-        if isinstance(arg, list):
-            for i in range(len(arg)):
+        for i in range(len(arg)):
+            # List of lists.
+            if list_of_lists and isinstance(arg[i], list):
+                for j in range(len(arg[i])):
+                    if not isinstance(arg[i][j], str):
+                        fail = True
+
+
+            # Simple list.
+            else:
                 if not isinstance(arg[i], str):
                     fail = True
 
@@ -702,3 +713,53 @@ def is_str_or_str_list(arg, name, size=None, can_be_none=False, can_be_empty=Fal
             raise RelaxStrListStrError(name, arg, size)
         else:
             raise RelaxStrListStrError(name, arg)
+
+
+def is_tuple(arg, name, size=None, can_be_none=False, can_be_empty=False):
+    """Test if the argument is a tuple.
+
+    @param arg:                 The argument.
+    @type arg:                  anything
+    @param name:                The plain English name of the argument.
+    @type name:                 str
+    @keyword size:              The number of elements required.
+    @type size:                 None or int
+    @keyword can_be_none:       A flag specifying if the argument can be none.
+    @type can_be_none:          bool
+    @keyword can_be_empty:      A flag which if True allows the list to be empty.
+    @type can_be_empty:         bool
+    @raise RelaxTupleError:     If not a tuple.
+    @raise RelaxNoneTupleError: If not a tuple or not None.
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return
+
+    # Fail if not a tuple.
+    if not isinstance(arg, tuple):
+        fail = True
+
+    # Other checks.
+    else:
+        # Fail size is wrong.
+        if size != None and len(arg) != size:
+            fail = True
+
+        # Fail if empty.
+        if not can_be_empty and arg == []:
+            fail = True
+
+    # Fail.
+    if fail:
+        if can_be_none and size != None:
+            raise RelaxNoneTupleError(name, arg, size)
+        elif can_be_none:
+            raise RelaxNoneTupleError(name, arg)
+        elif size != None:
+            raise RelaxTupleError(name, arg, size)
+        else:
+            raise RelaxTupleError(name, arg)
