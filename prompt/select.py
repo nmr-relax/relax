@@ -31,7 +31,6 @@ import sys
 from base_class import User_fn_class
 import check
 from generic_fns import selection
-from relax_errors import RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Select(User_fn_class):

@@ -25,7 +25,6 @@ import os
 
 # relax module imports.
 import check
-from relax_errors import RelaxStrError
 
 
 class Lh:

@@ -31,7 +31,6 @@ import sys
 from base_class import User_fn_class
 import check
 from generic_fns.mol_res_spin import copy_residue, create_residue, delete_residue, display_residue, id_string_doc, name_residue, number_residue
-from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
 class Residue(User_fn_class):

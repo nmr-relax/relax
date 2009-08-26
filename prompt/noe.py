@@ -31,7 +31,6 @@ import sys
 from base_class import User_fn_class
 import check
 from generic_fns import noesy
-from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 from specific_fns.setup import noe_obj
 
 

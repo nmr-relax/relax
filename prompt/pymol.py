@@ -32,7 +32,6 @@ from base_class import User_fn_class
 import check
 import colour
 from generic_fns import pymol
-from relax_errors import RelaxBinError, RelaxListNumError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
 
 
 class Pymol(User_fn_class):

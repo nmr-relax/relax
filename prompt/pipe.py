@@ -31,7 +31,7 @@ import sys
 from base_class import User_fn_class
 import check
 from generic_fns import pipes
-from relax_errors import RelaxListStrError, RelaxNoneListError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 from specific_fns.setup import hybrid_obj
 
 

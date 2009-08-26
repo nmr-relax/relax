@@ -32,7 +32,6 @@ from base_class import User_fn_class
 import check
 import generic_fns.structure.geometric
 import generic_fns.structure.main
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxStrError
 
 
 class Structure(User_fn_class):

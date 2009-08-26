@@ -31,7 +31,6 @@ import sys
 from base_class import Basic_class
 import check
 from generic_fns import model_selection
-from relax_errors import RelaxError, RelaxNoneListError, RelaxStrError
 
 
 class Modsel(Basic_class):
