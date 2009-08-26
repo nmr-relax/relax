@@ -350,7 +350,7 @@ class Spin(User_fn_class):
 
         # The argument checks.
         check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_int(number, 'new spin number')
+        check.is_int(number, 'new spin number', can_be_none=True)
         check.is_bool(force, 'force flag')
 
         # Execute the functional code.

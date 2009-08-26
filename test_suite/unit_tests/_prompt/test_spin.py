@@ -293,8 +293,8 @@ class Test_spin(Spin_base_class, TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the None, int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.spin_fns.number, spin_id='@111', number=data[1])
+            self.assertRaises(RelaxNoneIntError, self.spin_fns.number, spin_id='@111', number=data[1])
