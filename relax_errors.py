@@ -205,6 +205,10 @@ class RelaxProtonTypeError(BaseError):
 # Argument errors.
 ##################
 
+
+# Misc.
+#~~~~~~
+
 # Invalid argument.
 class RelaxInvalidError(BaseError):
     def __init__(self, name, value):
@@ -217,6 +221,20 @@ class RelaxArgNotInListError(BaseError):
         for i in xrange(len(list)-1):
             self.text = self.text + repr(list[i]) + ', '
         self.text = self.text + 'nor ' + repr(list[-1]) + "."
+
+# Length of the list.
+class RelaxLenError(BaseError):
+    def __init__(self, name, len):
+        self.text = "The " + name + " argument must be of length " + repr(len) + "."
+
+# None.
+class RelaxNoneError(BaseError):
+    def __init__(self, name):
+        self.text = "The " + name + " argument has not been supplied."
+
+
+# Simple types.
+#~~~~~~~~~~~~~~
 
 # Boolean - the values True and False.
 class RelaxBoolError(BaseError):
@@ -233,17 +251,24 @@ class RelaxFloatError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be a floating point number."
 
+class RelaxNoneFloatError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number or None."
+
 # Number.
 class RelaxNumError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be a number."
+
+class RelaxNoneNumError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be a number or None."
 
 # Function.
 class RelaxFunctionError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be a function."
 
-# Function or None.
 class RelaxNoneFunctionError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be a function or None."
@@ -253,30 +278,54 @@ class RelaxIntError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be an integer."
 
-# Integer or list of integers.
-class RelaxIntListIntError(BaseError):
+class RelaxNoneIntError(BaseError):
     def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an integer or an array of integers."
+        self.text = "The " + name + " argument " + repr(value) + " must either be an integer or None."
+
+# String.
+class RelaxStrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must be a string."
+
+class RelaxNoneStrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be a string or None."
+
+
+# Simple mixes.
+#~~~~~~~~~~~~~~
 
 # Integer or string.
 class RelaxIntStrError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must either be an integer or a string."
 
+class RelaxNoneIntStrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be an integer, a string, or None."
+
 # String or file descriptor.
 class RelaxStrFileError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must either be a string or a file descriptor."
 
-# Length of the list.
-class RelaxLenError(BaseError):
-    def __init__(self, name, len):
-        self.text = "The " + name + " argument must be of length " + repr(len) + "."
+class RelaxNoneStrFileError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be a string, a file descriptor or None."
+
+
+# List types.
+#~~~~~~~~~~~~
+
 
 # List.
 class RelaxListError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must be an array."
+
+class RelaxNoneListError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be an array or None."
 
 # List of floating point numbers.
 class RelaxListFloatError(BaseError):
@@ -301,6 +350,13 @@ class RelaxListNumError(BaseError):
         else:
             self.text = "The %s argument '%s' must be a list of numbers of length %s." % (name, value, length)
 
+class RelaxNoneListNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must either be a list of numbers or None." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must either be a list of numbers of length %s or None." % (name, value, length)
+
 # List of strings.
 class RelaxListStrError(BaseError):
     def __init__(self, name, value, length=None):
@@ -309,148 +365,32 @@ class RelaxListStrError(BaseError):
         else:
             self.text = "The %s argument '%s' must be a list of strings of length %s." % (name, value, length)
 
-# Tuple.
-class RelaxTupleError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a tuple."
-
-# Tuple of numbers.
-class RelaxTupleNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a tuple of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a tuple of numbers of length %s." % (name, value, length)
-
-# Number or tuple of numbers.
-class RelaxNumTupleNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a number or a tuple of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a number or a tuple of numbers of length %s." % (name, value, length)
-
-# Tuple or number.
-class RelaxNumTupleError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a number or tuple of numbers."
-
-# None.
-class RelaxNoneError(BaseError):
-    def __init__(self, name):
-        self.text = "The " + name + " argument has not been supplied."
-
-# None or float.
-class RelaxNoneFloatError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number or None."
-
-# None, float, or list.
-class RelaxNoneFloatListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number, a list, or None."
-
-# None, float, str, or list.
-class RelaxNoneFloatStrListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number, a string, a list, or None."
-
-# None or integer.
-class RelaxNoneIntError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an integer or None."
-
-# None, integer, or list of integers.
-class RelaxNoneIntListIntError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be None, an integer or an array of integers."
-
-# None, integer, or string.
-class RelaxNoneIntStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an integer, a string, or None."
-
-# None or list.
-class RelaxNoneListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an array or None."
-
-# None or list of numbers.
-class RelaxNoneListNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must either be a list of numbers or None." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must either be a list of numbers of length %s or None." % (name, value, length)
-
-# None or list of strings.
 class RelaxNoneListStrError(BaseError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " must either be an array of strings or None."
 
-# None or string or file descriptor.
-class RelaxNoneStrFileError(BaseError):
+
+# Simple or list types.
+#~~~~~~~~~~~~~~~~~~~~~~
+
+# Float or list.
+class RelaxNoneFloatListError(BaseError):
     def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a string, a file descriptor or None."
+        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number, a list, or None."
 
-# None or number.
-class RelaxNoneNumError(BaseError):
+# Float, str, or list.
+class RelaxNoneFloatStrListError(BaseError):
     def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a number or None."
+        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number, a string, a list, or None."
 
-# None or string.
-class RelaxNoneStrError(BaseError):
+# Integer or list of integers.
+class RelaxIntListIntError(BaseError):
     def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a string or None."
+        self.text = "The " + name + " argument " + repr(value) + " must either be an integer or an array of integers."
 
-# None, string, or list.
-class RelaxNoneStrListError(BaseError):
+class RelaxNoneIntListIntError(BaseError):
     def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be None, a string or a list."
-
-# None, string, or list of numbers.
-class RelaxNoneStrListNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must either be None, a string or a list of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must either be None, a string or a list of numbers of length %s." % (name, value, length)
-
-# None, string, or list of strings.
-class RelaxNoneStrListStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be None, a string or a list of strings."
-
-# None or tuple.
-class RelaxNoneTupleError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a tuple or None."
-
-# None or number or tuple of numbers.
-class RelaxNoneNumTupleNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a number, a tuple of numbers or None." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a number, a tuple of numbers of length %s or None." % (name, value, length)
-
-# String.
-class RelaxStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a string."
-
-# String or list of numbers.
-class RelaxStrListNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must either be a string or a list of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must either be a string or a list of numbers of length %s." % (name, value, length)
-
-# String or list of strings.
-class RelaxStrListStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an string or an array of strings."
+        self.text = "The " + name + " argument " + repr(value) + " must either be None, an integer or an array of integers."
 
 # Number, string, or list of numbers or strings.
 class RelaxNumStrListNumStrError(BaseError):
@@ -460,13 +400,87 @@ class RelaxNumStrListNumStrError(BaseError):
         else:
             self.text = "The %s argument '%s' must be a number, a string, or a list of numbers or strings of length %s." % (name, value, length)
 
-# None, number, string, or list of numbers or strings.
 class RelaxNoneNumStrListNumStrError(BaseError):
     def __init__(self, name, value, length=None):
         if length == None:
             self.text = "The %s argument '%s' must be a number, a string, a list of numbers or strings, or None." % (name, value)
         else:
             self.text = "The %s argument '%s' must be a number, a string, a list of numbers or strings of length %s, or None." % (name, value, length)
+
+# String or list.
+class RelaxNoneStrListError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be None, a string or a list."
+
+# String or list of numbers.
+class RelaxStrListNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must either be a string or a list of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must either be a string or a list of numbers of length %s." % (name, value, length)
+
+class RelaxNoneStrListNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must either be None, a string or a list of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must either be None, a string or a list of numbers of length %s." % (name, value, length)
+
+# String or list of strings.
+class RelaxStrListStrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be an string or an array of strings."
+
+class RelaxNoneStrListStrError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be None, a string or a list of strings."
+
+
+# Tuple types.
+#~~~~~~~~~~~~~
+
+# Tuple.
+class RelaxTupleError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must be a tuple."
+
+class RelaxNoneTupleError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be a tuple or None."
+
+# Tuple of numbers.
+class RelaxTupleNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a tuple of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a tuple of numbers of length %s." % (name, value, length)
+
+
+# Simple or tuple types.
+#~~~~~~~~~~~~~~~~~~~~~~~
+
+# Number or tuple.
+class RelaxNumTupleError(BaseError):
+    def __init__(self, name, value):
+        self.text = "The " + name + " argument " + repr(value) + " must either be a number or tuple of numbers."
+
+# Number or tuple of numbers.
+class RelaxNumTupleNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a number or a tuple of numbers." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a number or a tuple of numbers of length %s." % (name, value, length)
+
+class RelaxNoneNumTupleNumError(BaseError):
+    def __init__(self, name, value, length=None):
+        if length == None:
+            self.text = "The %s argument '%s' must be a number, a tuple of numbers or None." % (name, value)
+        else:
+            self.text = "The %s argument '%s' must be a number, a tuple of numbers of length %s or None." % (name, value, length)
+
 
 
 # Sequence errors.
