@@ -36,8 +36,14 @@ from sys import stderr
 import time
 from types import ClassType
 
+
 # Global variables.
 Debug = False
+
+# Text variables.
+NONE = 'None'
+NUM = 'a number'
+NUM_TUPLE = 'a tuple of numbers'
 
 
 def save_state():
@@ -74,13 +80,64 @@ def save_state():
 ############################
 
 class BaseError(Exception):
+    """The base class for all RelaxErrors."""
+
     def __str__(self):
+        """Modify the behaviour of the error system."""
+
         # Save the state if debugging is turned on.
         if Debug:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start.
         return ("RelaxError: " + self.text + "\n")
+
+
+class BaseArgError(BaseError):
+    """The base class for all the argument related RelaxErrors."""
+
+    # The allowed simple types.
+    simple_types = []
+
+    # The allowed list types (anything with a length).
+    list_types = []
+
+
+    def __init__(self, name, value, length=None):
+        """A default initialisation and error message formatting method."""
+
+        # The initial part of the message.
+        self.text = "The %s argument '%s' must be " % (name, value)
+
+        # Append the fixed length to the list types.
+        if length != None:
+            for i in range(len(self.list_types)):
+                self.list_types[i] = self.list_types[i] + " of length %s" % length
+
+        # Combine all elements.
+        all_types = self.simple_types + self.list_types
+
+        # Multiple elements.
+        if len(all_types) > 1:
+            self.text = self.text + "either "
+
+        # Generate the list string.
+        for i in range(len(all_types)):
+            # Separators.
+            if i > 0:
+                # Or.
+                if i == len(all_types)-1:
+                    self.text = self.text + ", or "
+
+                # Commas.
+                else:
+                    self.text = self.text + ", "
+
+            # Append the text.
+            self.text = self.text + all_types[i]
+
+        # The end.
+        self.text = self.text + "."
 
 
 # Standard errors.
@@ -463,23 +520,16 @@ class RelaxTupleNumError(BaseError):
 
 # Number or tuple.
 class RelaxNumTupleError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a number or tuple of numbers."
+    list_types = [NUM_TUPLE]
 
 # Number or tuple of numbers.
-class RelaxNumTupleNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a number or a tuple of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a number or a tuple of numbers of length %s." % (name, value, length)
+class RelaxNumTupleNumError(BaseArgError):
+    simple_types = [NUM]
+    list_types = [NUM_TUPLE]
 
-class RelaxNoneNumTupleNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a number, a tuple of numbers or None." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a number, a tuple of numbers of length %s or None." % (name, value, length)
+class RelaxNoneNumTupleNumError(BaseArgError):
+    simple_types = [NONE, NUM]
+    list_types = [NUM_TUPLE]
 
 
 
