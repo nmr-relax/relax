@@ -66,7 +66,7 @@ class N_state_model(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the model is selected.
-        if not hasattr(cdp, 'model') or type(cdp.model) != str:
+        if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
             raise RelaxNoModelError
 
         # Determine the data type.
@@ -203,7 +203,7 @@ class N_state_model(Common_functions):
 
         # No data is present.
         if not list:
-            raise RelaxError, "Neither RDC, PCS, NOESY nor alignment tensor data is present."
+            raise RelaxError("Neither RDC, PCS, NOESY nor alignment tensor data is present.")
 
         # Return the list.
         return list
@@ -230,7 +230,7 @@ class N_state_model(Common_functions):
         cdp = pipes.get_pipe()
 
         # Test if the model is selected.
-        if not hasattr(cdp, 'model') or type(cdp.model) != str:
+        if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
             raise RelaxNoModelError
 
         # Unpack and strip off the alignment tensor parameters.
@@ -458,11 +458,11 @@ class N_state_model(Common_functions):
 
         # Data setup tests.
         if not hasattr(cdp, 'paramagnetic_centre'):
-            raise RelaxError, "The paramagnetic centre has not yet been specified."
+            raise RelaxError("The paramagnetic centre has not yet been specified.")
         if not hasattr(cdp, 'temperature'):
-            raise RelaxError, "The experimental temperatures have not been set."
+            raise RelaxError("The experimental temperatures have not been set.")
         if not hasattr(cdp, 'frq'):
-            raise RelaxError, "The spectrometer frequencies of the experiments have not been set."
+            raise RelaxError("The spectrometer frequencies of the experiments have not been set.")
 
         # Initialise.
         pcs = []
@@ -629,7 +629,7 @@ class N_state_model(Common_functions):
 
             # Append the RDC and XH vectors to the lists.
             rdcs.append(spin.rdc)
-            if type(spin.xh_vect[0]) == float:
+            if isinstance(spin.xh_vect[0], float):
                 xh_vectors.append([spin.xh_vect])
             else:
                 xh_vectors.append(spin.xh_vect)
@@ -812,7 +812,7 @@ class N_state_model(Common_functions):
                 # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
                 dj_new = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
                 if dj and dj_new != dj:
-                    raise RelaxError, "All the RDCs must come from the same nucleus type."
+                    raise RelaxError("All the RDCs must come from the same nucleus type.")
                 else:
                     dj = dj_new
 
@@ -912,14 +912,14 @@ class N_state_model(Common_functions):
             # Add the probability or population weight parameters.
             if cdp.model in ['2-domain', 'population']:
                 for i in xrange(cdp.N-1):
-                    cdp.params.append('p' + `i`)
+                    cdp.params.append('p' + repr(i))
 
             # Add the Euler angle parameters.
             if cdp.model == '2-domain':
                 for i in xrange(cdp.N):
-                    cdp.params.append('alpha' + `i`)
-                    cdp.params.append('beta' + `i`)
-                    cdp.params.append('gamma' + `i`)
+                    cdp.params.append('alpha' + repr(i))
+                    cdp.params.append('beta' + repr(i))
+                    cdp.params.append('gamma' + repr(i))
 
         # Initialise the probability and Euler angle arrays.
         if cdp.model in ['2-domain', 'population']:
@@ -963,7 +963,7 @@ class N_state_model(Common_functions):
     def calc_ave_dist(self, atom1, atom2, exp=1):
         """Calculate the average distances.
 
-        The formula used is:
+        The formula used is::
 
                       _N_
                   / 1 \                  \ 1/exp
@@ -1024,7 +1024,7 @@ class N_state_model(Common_functions):
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # Init some numpy arrays.
         num_restraints = len(cdp.noe_restraints)
@@ -1127,19 +1127,19 @@ class N_state_model(Common_functions):
         cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
-        print "\n%-40s %-20s" % ("Pivot point:", `cdp.pivot_point`)
-        print "%-40s %-20s" % ("Moving domain CoM (prior to rotation):", `cdp.CoM`)
-        print "%-40s %-20s" % ("Pivot-CoM vector", `cdp.pivot_CoM`)
-        print "%-40s %-20s" % ("Pivot-CoM unit vector:", `unit_vect`)
-        print "%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", `cdp.ave_unit_pivot_CoM`)
-        print "%-40s %-20s" % ("Average of the pivot-CoM vector:", `cdp.ave_pivot_CoM`)
-        print "%-40s %-20s" % ("Full length rotated pivot-CoM vector:", `cdp.full_ave_pivot_CoM`)
-        print "%-40s %-20s" % ("Length reduction from unity:", `cdp.ave_pivot_CoM_red`)
-        print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)
-        print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)
-        print "%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)
-        print "%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)
-        print "\n\n"
+        print("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point)))
+        print("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM)))
+        print("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM)))
+        print("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect)))
+        print("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM)))
+        print("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM)))
+        print("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM)))
+        print("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red)))
+        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.))
+        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2))
+        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.))
+        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2))
+        print("\n\n")
 
 
     def cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
@@ -1168,12 +1168,12 @@ class N_state_model(Common_functions):
         # Test if the cone models have been determined.
         if cone_type == 'diff in cone':
             if not hasattr(cdp, 'S_diff_in_cone'):
-                raise RelaxError, "The diffusion in a cone model has not yet been determined."
+                raise RelaxError("The diffusion in a cone model has not yet been determined.")
         elif cone_type == 'diff on cone':
             if not hasattr(cdp, 'S_diff_on_cone'):
-                raise RelaxError, "The diffusion on a cone model has not yet been determined."
+                raise RelaxError("The diffusion on a cone model has not yet been determined.")
         else:
-            raise RelaxError, "The cone type " + `cone_type` + " is unknown."
+            raise RelaxError("The cone type " + repr(cone_type) + " is unknown.")
 
         # The number of increments for the filling of the cone objects.
         inc = 20
@@ -1195,14 +1195,14 @@ class N_state_model(Common_functions):
         mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
 
         # Generate the average pivot-CoM vectors.
-        print "\nGenerating the average pivot-CoM vectors."
+        print("\nGenerating the average pivot-CoM vectors.")
         sim_vectors = None
         if hasattr(cdp, 'ave_pivot_CoM_sim'):
             sim_vectors = cdp.ave_pivot_CoM_sim
         res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
         # Generate the cone outer edge.
-        print "\nGenerating the cone outer edge."
+        print("\nGenerating the cone outer edge.")
         if cone_type == 'diff in cone':
             angle = cdp.theta_diff_in_cone
         elif cone_type == 'diff on cone':
@@ -1212,20 +1212,19 @@ class N_state_model(Common_functions):
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
-            print "\nGenerating the cone cap."
+            print("\nGenerating the cone cap.")
             cone_start_atom = mol.atom_num[-1]+1
             generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
             generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
 
         # Create the PDB file.
-        print "\nGenerating the PDB file."
+        print("\nGenerating the PDB file.")
         pdb_file = open_write_file(file, dir, force=force)
         structure.write_pdb(pdb_file)
         pdb_file.close()
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         N-state model default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1251,7 +1250,14 @@ class N_state_model(Common_functions):
         all the other probabilities.
         """
 
-        __docformat__ = "plaintext"
+    def default_value(self, param):
+        """The default N-state model parameter values.
+
+        @param param:   The N-state model parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
 
         # Get the current data pipe.
         cdp = pipes.get_pipe()
@@ -1297,21 +1303,21 @@ class N_state_model(Common_functions):
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # The number of parameters.
         n = self.param_num()
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
-            print "Cannot run a grid search on a model with zero parameters, skipping the grid search."
+            print("Cannot run a grid search on a model with zero parameters, skipping the grid search.")
             return
 
         # Test the grid search options.
         self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
 
         # If inc is a single int, convert it into an array of that value.
-        if type(inc) == int:
+        if isinstance(inc, int):
             temp = []
             for j in xrange(n):
                 temp.append(inc)
@@ -1403,17 +1409,17 @@ class N_state_model(Common_functions):
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # '2-domain' model setup tests.
         if cdp.model == '2-domain':
             # The number of states.
             if not hasattr(cdp, 'N'):
-                raise RelaxError, "The number of states has not been set."
+                raise RelaxError("The number of states has not been set.")
 
             # The reference domain.
             if not hasattr(cdp, 'ref_domain'):
-                raise RelaxError, "The reference domain has not been set."
+                raise RelaxError("The reference domain has not been set.")
 
         # Right, constraints cannot be used for the 'fixed' model.
         if constraints and cdp.model == 'fixed':
@@ -1473,11 +1479,11 @@ class N_state_model(Common_functions):
 
         # Catch infinite chi-squared values.
         if isInf(func):
-            raise RelaxInfError, 'chi-squared'
+            raise RelaxInfError('chi-squared')
 
         # Catch chi-squared values of NaN.
         if isNaN(func):
-            raise RelaxNaNError, 'chi-squared'
+            raise RelaxNaNError('chi-squared')
 
         # Scaling.
         if scaling:
@@ -1597,14 +1603,14 @@ class N_state_model(Common_functions):
             if 'rdc' in data_types:
                 if hasattr(spin, 'rdc'):
                     for rdc in spin.rdc:
-                        if type(rdc) == float:
+                        if isinstance(rdc, float):
                             n = n + 1
 
             # PCS data (skipping array elements set to None).
             if 'pcs' in data_types:
                 if hasattr(spin, 'pcs'):
                     for pcs in spin.pcs:
-                        if type(pcs) == float:
+                        if isinstance(pcs, float):
                             n = n + 1
 
         # Alignment tensors.
@@ -1630,7 +1636,7 @@ class N_state_model(Common_functions):
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # Set the value of N.
         cdp.N = N
@@ -1654,11 +1660,11 @@ class N_state_model(Common_functions):
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'N-state'
+            raise RelaxNoModelError('N-state')
 
         # Test that the correct model is set.
         if cdp.model != '2-domain':
-            raise RelaxError, "Setting the reference domain is only possible for the '2-domain' N-state model."
+            raise RelaxError("Setting the reference domain is only possible for the '2-domain' N-state model.")
 
         # Test if the reference domain exists.
         exists = False
@@ -1666,7 +1672,7 @@ class N_state_model(Common_functions):
             if tensor_cont.domain == ref:
                 exists = True
         if not exists:
-            raise RelaxError, "The reference domain cannot be found within any of the loaded tensors."
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
 
         # Set the reference domain.
         cdp.ref_domain = ref
@@ -1707,8 +1713,7 @@ class N_state_model(Common_functions):
         return num
 
 
-    def return_data_name(self, name, index=False):
-        """
+    return_data_name_doc = """
         N-state model data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1736,7 +1741,16 @@ class N_state_model(Common_functions):
         corrsponding to each state.
         """
 
-        __docformat__ = "plaintext"
+    def return_data_name(self, name, index=None):
+        """Return a unique identifying string for the N-state model parameter.
+
+        @param name:    The N-state model parameter.
+        @type name:     str
+        @keyword index: The probability parameter index.
+        @type index:    None or int
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
 
         # Probability.
         if search('^p[0-9]*$', name):
@@ -1838,11 +1852,11 @@ class N_state_model(Common_functions):
 
         # Test if the model is setup.
         if hasattr(cdp, 'model'):
-            raise RelaxModelError, 'N-state'
+            raise RelaxModelError('N-state')
 
         # Test if the model name exists.
         if not model in ['2-domain', 'population', 'fixed']:
-            raise RelaxError, "The model name " + `model` + " is invalid."
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
 
         # Set the model
         cdp.model = model
@@ -1854,8 +1868,7 @@ class N_state_model(Common_functions):
         self.__update_model()
 
 
-    def set_doc(self):
-        """
+    set_doc = """
         N-state model set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1866,7 +1879,6 @@ class N_state_model(Common_functions):
         gamma of the third state is specified using the string 'gamma2'.
 
         """
-        __docformat__ = "plaintext"
 
 
     def set_non_spin_params(self, value=None, param=None):
@@ -1886,11 +1898,11 @@ class N_state_model(Common_functions):
             param = cdp.params
 
         # Test that the parameter and value lists are the same size.
-        if type(param) == list and value[0] != None and len(param) != len(value):
-            raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `param` + "."
+        if isinstance(param, list) and value[0] != None and len(param) != len(value):
+            raise RelaxError("The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(param) + ".")
 
         # Convert param to a list (if it is a string).
-        if type(param) == str:
+        if isinstance(param, str):
             param = [param]
 
         # If no value is supplied (i.e. value == [None]), then get the default values.
@@ -1904,7 +1916,7 @@ class N_state_model(Common_functions):
             # Get the object name and the parameter index.
             object_name, index = self.return_data_name(param[i], index=True)
             if not object_name:
-                raise RelaxError, "The data type " + `param[i]` + " does not exist."
+                raise RelaxError("The data type " + repr(param[i]) + " does not exist.")
 
             # Simple objects (not a list).
             if index == None:

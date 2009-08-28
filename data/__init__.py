@@ -75,24 +75,23 @@ class Relax_data_store(dict):
         # The data pipes.
         text = text + "\n"
         text = text + "Data pipes:\n"
-        pipes = self.instance.keys()
+        pipes = list(self.instance.keys())
         if pipes:
             for pipe in pipes:
-                text = text + "  %s\n" % `pipe`
+                text = text + "  %s\n" % repr(pipe)
         else:
             text = text + "  None\n"
 
         # Data store objects.
         text = text + "\n"
         text = text + "Data store objects:\n"
-        names = self.__class__.__dict__.keys()
-        names.sort()
+        names = sorted(self.__class__.__dict__.keys())
         for name in names:
             # The object.
             obj = getattr(self, name)
 
             # The text.
-            if obj == None or type(obj) == str:
+            if obj == None or isinstance(obj, str):
                 text = text + "  %s %s: %s\n" % (name, type(obj), obj)
             else:
                 text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
@@ -106,7 +105,7 @@ class Relax_data_store(dict):
                 continue
 
             # Skip overwritten methods.
-            if name in self.__class__.__dict__.keys():
+            if name in list(self.__class__.__dict__.keys()):
                 continue
 
             # The object.
@@ -127,7 +126,7 @@ class Relax_data_store(dict):
         """
 
         # Loop over the keys of self.__dict__ and delete the corresponding object.
-        for key in self.__dict__.keys():
+        for key in list(self.__dict__.keys()):
             # Delete the object.
             del self.__dict__[key]
 
@@ -147,8 +146,8 @@ class Relax_data_store(dict):
         """
 
         # Test if the pipe already exists.
-        if pipe_name in self.instance.keys():
-            raise RelaxPipeError, pipe_name
+        if pipe_name in list(self.instance.keys()):
+            raise RelaxPipeError(pipe_name)
 
         # Create a new container.
         self[pipe_name] = PipeContainer()

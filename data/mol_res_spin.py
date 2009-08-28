@@ -74,7 +74,7 @@ class SpinContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
 
@@ -135,7 +135,7 @@ class SpinList(list):
         # Residue data.
         text = text + "%-8s%-8s%-8s%-10s" % ("Index", "Number", "Name", "Selected") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s%-10s" % (i, `self[i].num`, self[i].name, self[i].select) + "\n"
+            text = text + "%-8i%-8s%-8s%-10s" % (i, repr(self[i].num), self[i].name, self[i].select) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j].spin[k]', where D is the relax data storage object.\n"
 
         return text
@@ -157,12 +157,12 @@ class SpinList(list):
                 # Spin number has been supplied.
                 if spin_num != None:
                     if self[i].num == spin_num:
-                        raise RelaxError, "The spin number '" + `spin_num` + "' already exists."
+                        raise RelaxError("The spin number '" + repr(spin_num) + "' already exists.")
 
                 # No spin numbers.
                 else:
                     if self[i].name == spin_name:
-                        raise RelaxError, "The unnumbered spin name '" + `spin_name` + "' already exists."
+                        raise RelaxError("The unnumbered spin name '" + repr(spin_name) + "' already exists.")
 
             # Append a new SpinContainer.
             self.append(SpinContainer(spin_name, spin_num, select))
@@ -193,7 +193,7 @@ class SpinList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the spins.
         for spin_node in spin_nodes:
@@ -267,15 +267,15 @@ class SpinList(list):
                 object = getattr(self[i], name)
 
                 # Store floats as IEEE-754 byte arrays (for full precision storage).
-                if type(object) == float or type(object) == numpy.float64:
-                    sub_element.setAttribute('ieee_754_byte_array', `floatAsByteArray(object)`)
+                if isinstance(object, float) or isinstance(object, numpy.float64):
+                    sub_element.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(object)))
 
                 # Add the text value to the sub element.
-                text_val = doc.createTextNode(`object`)
+                text_val = doc.createTextNode(repr(object))
                 sub_element.appendChild(text_val)
 
             # Add all simple python objects within the SpinContainer to the XML element.
-            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + blacklist + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, spin_element, object=self[i], blacklist=['name', 'num', 'spin'] + blacklist + list(self[i].__class__.__dict__.keys()))
 
 
 
@@ -324,7 +324,7 @@ class ResidueContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
 
@@ -389,7 +389,7 @@ class ResidueList(list):
         # Residue data.
         text = text + "%-8s%-8s%-8s" % ("Index", "Number", "Name") + "\n"
         for i in xrange(len(self)):
-            text = text + "%-8i%-8s%-8s" % (i, `self[i].num`, self[i].name) + "\n"
+            text = text + "%-8i%-8s%-8s" % (i, repr(self[i].num), self[i].name) + "\n"
         text = text + "\nThese can be accessed by typing 'D.mol[i].res[j]', where D is the relax data storage object.\n"
 
         return text
@@ -410,12 +410,12 @@ class ResidueList(list):
                 # Residue number has been supplied.
                 if res_num != None:
                     if self[i].num == res_num:
-                        raise RelaxError, "The residue number '" + `res_num` + "' already exists in the sequence."
+                        raise RelaxError("The residue number '" + repr(res_num) + "' already exists in the sequence.")
 
                 # No residue numbers.
                 else:
                     if self[i].name == res_name:
-                        raise RelaxError, "The unnumbered residue name '" + `res_name` + "' already exists."
+                        raise RelaxError("The unnumbered residue name '" + repr(res_name) + "' already exists.")
 
             # Append a new ResidueContainer.
             self.append(ResidueContainer(res_name, res_num))
@@ -446,7 +446,7 @@ class ResidueList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the residues.
         for res_node in res_nodes:
@@ -485,7 +485,7 @@ class ResidueList(list):
             res_element.setAttribute('num', str(self[i].num))
 
             # Add all simple python objects within the ResidueContainer to the XML element.
-            fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the residue data.
             self[i].spin.to_xml(doc, res_element)
@@ -536,7 +536,7 @@ class MoleculeContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         return text
 
@@ -615,7 +615,7 @@ class MoleculeList(list):
             # Test if the molecule name already exists.
             for i in xrange(len(self)):
                 if self[i].name == mol_name:
-                    raise RelaxError, "The molecule '%s' already exists in the sequence." % mol_name
+                    raise RelaxError("The molecule '%s' already exists in the sequence." % mol_name)
 
             # Append an empty MoleculeContainer.
             self.append(MoleculeContainer(mol_name))
@@ -646,7 +646,7 @@ class MoleculeList(list):
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Loop over the molecules.
         for mol_node in mol_nodes:
@@ -683,7 +683,7 @@ class MoleculeList(list):
             mol_element.setAttribute('name', str(self[i].name))
 
             # Add all simple python objects within the MoleculeContainer to the XML element.
-            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the residue data.
             self[i].res.to_xml(doc, mol_element)

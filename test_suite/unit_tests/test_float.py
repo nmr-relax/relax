@@ -57,7 +57,7 @@ def winnow_dist_to_list_by_id(dict, exclude):
         del(resultDict[id(val)])
 
     # Return as a list.
-    return resultDict.values()
+    return list(resultDict.values())
 
 
 class Test_float(TestCase):

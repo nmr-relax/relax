@@ -59,11 +59,11 @@ def copy(pipe_from=None, pipe_to=None, param=None):
 
     # Test if the sequence data for pipe_from is loaded.
     if not exists_mol_res_spin_data(pipe_from):
-        raise RelaxNoSequenceError, pipe_from
+        raise RelaxNoSequenceError(pipe_from)
 
     # Test if the sequence data for pipe_to is loaded.
     if not exists_mol_res_spin_data(pipe_to):
-        raise RelaxNoSequenceError, pipe_to
+        raise RelaxNoSequenceError(pipe_to)
 
     # Specific value and error returning function.
     return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type(pipe_from))
@@ -75,7 +75,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
 
         # Data exists.
         if value != None or error != None:
-            raise RelaxValueError, (param, pipe_to)
+            raise RelaxValueError(param, pipe_to)
 
     # Copy the values.
     for spin, spin_id in spin_loop(pipe_from, return_id=True):
@@ -135,7 +135,7 @@ def partition_params(val, param):
     other_values = []
 
     # Single parameter.
-    if type(param) == str:
+    if isinstance(param, str):
         # Spin specific parameter.
         if is_spin_param(param):
             params = spin_params
@@ -147,7 +147,7 @@ def partition_params(val, param):
             values = other_values
 
         # List of values.
-        if type(val) == list or isinstance(val, ndarray):
+        if isinstance(val, list) or isinstance(val, ndarray):
             # Parameter name.
             for i in xrange(len(val)):
                 params.append(param)
@@ -164,7 +164,7 @@ def partition_params(val, param):
             values.append(val)
 
     # Multiple parameters.
-    elif type(param) == list:
+    elif isinstance(param, list):
         # Loop over all parameters.
         for i in xrange(len(param)):
             # Spin specific parameter.
@@ -181,7 +181,7 @@ def partition_params(val, param):
             params.append(param[i])
 
             # Parameter value.
-            if type(val) == list or isinstance(val, ndarray):
+            if isinstance(val, list) or isinstance(val, ndarray):
                 values.append(val[i])
             else:
                 values.append(val)
@@ -261,7 +261,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
 
         # Data exists.
         if value != None or error != None:
-            raise RelaxValueError, param
+            raise RelaxValueError(param)
 
     # Extract the data from the file.
     file_data = extract_data(file, dir=dir, sep=sep)
@@ -307,9 +307,9 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
 
         except ValueError:
             if error_col != None:
-                raise RelaxError, "The data is invalid (data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ")."
+                raise RelaxError("The data is invalid (data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ").")
             else:
-                raise RelaxError, "The data is invalid (data=" + file_data[i][data_col] + ")."
+                raise RelaxError("The data is invalid (data=" + file_data[i][data_col] + ").")
 
     # Loop over the data.
     for i in xrange(len(file_data)):
@@ -335,7 +335,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         # Get the corresponding spin container.
         spin = return_spin(id)
         if spin == None:
-            raise RelaxNoSpinError, id
+            raise RelaxNoSpinError(id)
 
         # Set the value.
         set(value=value, error=error, param=param, scaling=scaling, spin=spin)
@@ -393,7 +393,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
 
                         # Data exists.
                         if temp_value != None or temp_error != None:
-                            raise RelaxValueError, (param)
+                            raise RelaxValueError((param))
 
             # Loop over the spins.
             for spin in spin_loop(spin_id):
@@ -414,7 +414,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
     # All model parameters (i.e. no parameters have been supplied).
     else:
         # Convert val to a list if necessary.
-        if type(val) != list or not isinstance(val, ndarray):
+        if not isinstance(val, list) or not isinstance(val, ndarray):
             val = [val]
 
         # Spin specific models.
@@ -467,7 +467,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         if value:
             # Test if the length of the value array is equal to the length of the parameter array.
             if len(value) != len(spin.params):
-                raise RelaxError, "The length of " + `len(value)` + " of the value array must be equal to the length of the parameter array, " + `spin.params` + ", for spin " + `spin.num` + " " + spin.name + "."
+                raise RelaxError("The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(spin.params) + ", for spin " + repr(spin.num) + " " + spin.name + ".")
 
         # Default values.
         else:
@@ -483,7 +483,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
             # Get the object.
             object_name = return_data_name(spin.params[i])
             if not object_name:
-                raise RelaxError, "The data type " + `spin.params[i]` + " does not exist."
+                raise RelaxError("The data type " + repr(spin.params[i]) + " does not exist.")
 
             # Initialise all data if it doesn't exist.
             if not hasattr(spin, object_name):
@@ -510,7 +510,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
         # Get the object.
         object_name = return_data_name(param)
         if not object_name:
-            raise RelaxError, "The data type " + `param` + " does not exist."
+            raise RelaxError("The data type " + repr(param) + " does not exist.")
 
         # Initialise all data if it doesn't exist.
         if not hasattr(spin, object_name):
@@ -522,7 +522,7 @@ def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
 
         # No default value, hence the parameter cannot be set.
         if value == None:
-            raise RelaxParamSetError, param
+            raise RelaxParamSetError(param)
 
         # Set the value.
         if value == None:
@@ -615,4 +615,4 @@ def write_data(param=None, file=None, return_value=None):
         value, error = return_value(spin, param)
 
         # Write the data.
-        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(`value`, `error`), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(repr(value), repr(error)), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)

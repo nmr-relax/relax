@@ -34,7 +34,7 @@ def view():
 
     # Test if the module is available.
     if not dep_check.vmd_module:
-        raise RelaxError, "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
+        raise RelaxError("VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency).")
 
     # Alias the current data pipe.
     cdp = pipes.get_pipe()

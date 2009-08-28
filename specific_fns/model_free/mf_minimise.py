@@ -87,7 +87,7 @@ class Mf_minimise:
 
         # Test if diffusion tensor data exists.
         if model_type != 'local_tm' and not diff_data_exists():
-            raise RelaxNoTensorError, 'diffusion'
+            raise RelaxNoTensorError('diffusion')
 
         # Test if the PDB file has been loaded.
         if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(cdp, 'structure'):
@@ -118,15 +118,15 @@ class Mf_minimise:
             # Test if the model-free parameter values exist.
             unset_param = self.are_mf_params_set(spin)
             if unset_param != None:
-                raise RelaxNoValueError, unset_param
+                raise RelaxNoValueError(unset_param)
 
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
-                raise RelaxNoValueError, "CSA"
+                raise RelaxNoValueError("CSA")
 
             # Test if the bond length value has been set.
             if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError, "bond length"
+                raise RelaxNoValueError("bond length")
 
             # Skip spins where there is no data or errors.
             if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
@@ -135,9 +135,9 @@ class Mf_minimise:
             # Make sure that the errors are strictly positive numbers.
             for j in xrange(len(spin.relax_error)):
                 if spin.relax_error[j] == 0.0:
-                    raise RelaxError, "Zero error for spin '" + `spin.num` + " " + spin.name + "', calculation not possible."
+                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
                 elif spin.relax_error[j] < 0.0:
-                    raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', calculation not possible."
+                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
 
             # Create the initial parameter vector.
             param_vector = self.assemble_param_vector(spin=spin, sim_index=sim_index)
@@ -391,7 +391,7 @@ class Mf_minimise:
 
                     # Unknown parameter.
                     else:
-                        raise RelaxError, "Unknown parameter."
+                        raise RelaxError("Unknown parameter.")
 
                     # Increment the parameter index.
                     param_index = param_index + 1
@@ -509,7 +509,7 @@ class Mf_minimise:
         self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
 
         # If inc is a single int, convert it into an array of that value.
-        if type(inc) == int:
+        if isinstance(inc, int):
             temp = []
             for i in xrange(num_params):
                 temp.append(inc)
@@ -692,7 +692,7 @@ class Mf_minimise:
 
             # Unknown option.
             else:
-                raise RelaxError, "Unknown model-free parameter."
+                raise RelaxError("Unknown model-free parameter.")
 
             # Increment m.
             m = m + 1
@@ -794,7 +794,7 @@ class Mf_minimise:
 
         # Test if diffusion tensor data exists.
         if model_type != 'local_tm' and not diffusion_tensor.diff_data_exists():
-            raise RelaxNoTensorError, 'diffusion'
+            raise RelaxNoTensorError('diffusion')
 
         # Tests for the PDB file and unit vectors.
         if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
@@ -818,18 +818,18 @@ class Mf_minimise:
             for spin in spin_loop():
                 unset_param = self.are_mf_params_set(spin)
                 if unset_param != None:
-                    raise RelaxNoValueError, unset_param
+                    raise RelaxNoValueError(unset_param)
 
         # Print out.
         if verbosity >= 1:
             if model_type == 'mf':
-                print "Only the model-free parameters for single spins will be used."
+                print("Only the model-free parameters for single spins will be used.")
             elif model_type == 'local_mf':
-                print "Only a local tm value together with the model-free parameters for single spins will be used."
+                print("Only a local tm value together with the model-free parameters for single spins will be used.")
             elif model_type == 'diff':
-                print "Only diffusion tensor parameters will be used."
+                print("Only diffusion tensor parameters will be used.")
             elif model_type == 'all':
-                print "The diffusion tensor parameters together with the model-free parameters for all spins will be used."
+                print("The diffusion tensor parameters together with the model-free parameters for all spins will be used.")
 
         # Test if the CSA and bond length values have been set.
         for spin in spin_loop():
@@ -839,11 +839,11 @@ class Mf_minimise:
 
             # CSA value.
             if not hasattr(spin, 'csa') or spin.csa == None:
-                raise RelaxNoValueError, "CSA"
+                raise RelaxNoValueError("CSA")
 
             # Bond length value.
             if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError, "bond length"
+                raise RelaxNoValueError("bond length")
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -892,10 +892,10 @@ class Mf_minimise:
                 # Individual spin stuff.
                 if model_type == 'mf' or model_type == 'local_tm':
                     if verbosity >= 2:
-                        print "\n\n"
-                    string = "Fitting to spin " + `spin_id`
-                    print "\n\n" + string
-                    print len(string) * '~'
+                        print("\n\n")
+                    string = "Fitting to spin " + repr(spin_id)
+                    print("\n\n" + string)
+                    print(len(string) * '~')
 
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
@@ -1002,11 +1002,11 @@ class Mf_minimise:
 
             # Catch infinite chi-squared values.
             if isInf(func):
-                raise RelaxInfError, 'chi-squared'
+                raise RelaxInfError('chi-squared')
 
             # Catch chi-squared values of NaN.
             if isNaN(func):
-                raise RelaxNaNError, 'chi-squared'
+                raise RelaxNaNError('chi-squared')
 
             # Scaling.
             if scaling:
@@ -1191,9 +1191,9 @@ class Mf_minimise:
             # Make sure that the errors are strictly positive numbers.
             for k in xrange(len(spin.relax_error)):
                 if spin.relax_error[k] == 0.0:
-                    raise RelaxError, "Zero error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
+                    raise RelaxError("Zero error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
                 elif spin.relax_error[k] < 0.0:
-                    raise RelaxError, "Negative error for spin '" + `spin.num` + " " + spin.name + "', minimisation not possible."
+                    raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', minimisation not possible.")
 
             # Repackage the data.
             if sim_index == None:
@@ -1315,8 +1315,8 @@ class Mf_minimise:
 
         # Print out.
         if verbosity >= 1:
-            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+            print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
 
         # Too big.
-        if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
+        if isinstance(grid_size, long):
+            raise RelaxError("A grid search of size " + repr(grid_size) + " is too large.")

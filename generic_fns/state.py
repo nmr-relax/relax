@@ -48,7 +48,7 @@ def load_state(state=None, dir_name=None):
     try:
         state = load(file)
     except:
-        raise RelaxError, "The saved state " + `state` + " is not compatible with this version of relax."
+        raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
 
     # Close the file.
     file.close()
@@ -72,7 +72,7 @@ def load_state(state=None, dir_name=None):
         setattr(ds, name, obj)
  
     # Loop over the keys of the dictionary.
-    for key in state.keys():
+    for key in list(state.keys()):
         # Shift the PipeContainer.
         ds[key] = state[key]
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2009 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns.mol_res_spin import copy_residue, create_residue, delete_residue, display_residue, id_string_doc, name_residue, number_residue
-from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Residue:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating the residue data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Residue(User_fn_class):
+    """Class for manipulating the residue data."""
 
     def copy(self, pipe_from=None, res_from=None, pipe_to=None, res_to=None):
         """Function for copying all data associated with a residue.
@@ -92,27 +82,17 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", res_from=" + `res_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", res_to=" + `res_to` + ")"
-            print text
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", res_from=" + repr(res_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", res_to=" + repr(res_to) + ")"
+            print(text)
 
-        # The data pipe from argument.
-        if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
-
-        # The residue from argument.
-        if type(res_from) != str:
-            raise RelaxStrError, ('residue from', res_from)
-
-        # The data pipe to argument.
-        if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
-
-        # The residue to argument.
-        if res_to != None and type(res_to) != str:
-            raise RelaxNoneStrError, ('residue to', res_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(res_from, 'residue from')
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        check.is_str(res_to, 'residue to', can_be_none=True)
 
         # Execute the functional code.
         copy_residue(pipe_from=pipe_from, res_from=res_from, pipe_to=pipe_to, res_to=res_to)
@@ -155,22 +135,15 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.create("
-            text = text + "res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name`
-            text = text + ", mol_name=" + `mol_name` + ")"
-            print text
+            text = text + "res_num=" + repr(res_num)
+            text = text + ", res_name=" + repr(res_name)
+            text = text + ", mol_name=" + repr(mol_name) + ")"
+            print(text)
 
-        # Residue number.
-        if type(res_num) != int:
-            raise RelaxIntError, ('residue number', res_num)
-
-        # Residue name.
-        if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
-
-        # The molecule name.
-        if mol_name != None and type(mol_name) != str:
-            raise RelaxNoneStrError, ('molecule name', mol_name)
+        # The argument checks.
+        check.is_int(res_num, 'residue number')
+        check.is_str(res_name, 'residue name', can_be_none=True)
+        check.is_str(mol_name, 'molecule name', can_be_none=True)
 
         # Execute the functional code.
         create_residue(res_num=res_num, res_name=res_name, mol_name=mol_name)
@@ -196,12 +169,11 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.delete("
-            text = text + "res_id=" + `res_id` + ")"
-            print text
+            text = text + "res_id=" + repr(res_id) + ")"
+            print(text)
 
-        # The residue identifier argument.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identifier', res_id)
+        # The argument checks.
+        check.is_str(res_id, 'residue identification string')
 
         # Execute the functional code.
         delete_residue(res_id=res_id)
@@ -219,12 +191,11 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.display("
-            text = text + "res_id=" + `res_id` + ")"
-            print text
+            text = text + "res_id=" + repr(res_id) + ")"
+            print(text)
 
-        # The res_id argument.
-        if res_id != None and type(res_id) != str:
-            raise RelaxNoneStrError, ('residue identification string', res_id)
+        # The argument checks.
+        check.is_str(res_id, 'residue identification string', can_be_none=True)
 
         # Execute the functional code.
         display_residue(res_id=res_id)
@@ -267,22 +238,15 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.name("
-            text = text + "res_id=" + `res_id`
-            text = text + ", name=" + `name`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "res_id=" + repr(res_id)
+            text = text + ", name=" + repr(name)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Residue identification string.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identification string', res_id)
-
-        # New residue name.
-        if type(name) != str:
-            raise RelaxStrError, ('new residue name', name)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(res_id, 'residue identification string')
+        check.is_str(name, 'new residue name')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         name_residue(res_id=res_id, name=name, force=force)
@@ -322,22 +286,15 @@ class Residue:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "residue.number("
-            text = text + "res_id=" + `res_id`
-            text = text + ", number=" + `number`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "res_id=" + repr(res_id)
+            text = text + ", number=" + repr(number)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Residue identification string.
-        if type(res_id) != str:
-            raise RelaxStrError, ('residue identification string', res_id)
-
-        # New residue number.
-        if type(number) != int:
-            raise RelaxIntError, ('new residue number', number)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(res_id, 'residue identification string')
+        check.is_int(number, 'new residue number')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         number_residue(res_id=res_id, number=number, force=force)

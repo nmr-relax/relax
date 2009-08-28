@@ -63,7 +63,7 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
@@ -79,7 +79,7 @@ class State_base_class:
         dp = pipes.get_pipe('orig')
 
         # Test the contents of the restored singleton.
-        self.assertEqual(ds.keys(), ['orig'])
+        self.assertEqual(list(ds.keys()), ['orig'])
         self.assertEqual(pipes.cdp_name(), 'orig')
         self.assertEqual(dp.x, 1)
         self.assertEqual(ds.y, 'Hello')
@@ -92,7 +92,7 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
@@ -114,7 +114,7 @@ class State_base_class:
         dp_new = pipes.get_pipe('new')
 
         # Test the contents of the restored singleton (with subsequent data added).
-        self.assertEqual(ds.keys().sort(), ['orig', 'new'].sort())
+        self.assertEqual(list(ds.keys()).sort(), ['orig', 'new'].sort())
         self.assertEqual(pipes.cdp_name(), 'new')
         self.assertEqual(dp_orig.x, 1)
         self.assertEqual(ds.y, 'Hello')
@@ -128,7 +128,7 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
@@ -144,7 +144,7 @@ class State_base_class:
         ds.__reset__()
 
         # Test that there are no contents in the reset singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 

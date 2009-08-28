@@ -54,7 +54,7 @@ def angle_diff_frame():
 
     # Test if the diffusion tensor data is loaded.
     if not hasattr(cdp, 'diff_tensor'):
-        raise RelaxNoTensorError, 'diffusion'
+        raise RelaxNoTensorError('diffusion')
 
     # Sphere.
     if cdp.diff_tensor.type == 'sphere':
@@ -66,7 +66,7 @@ def angle_diff_frame():
 
     # Ellipsoid.
     elif cdp.diff_tensor.type == 'ellipsoid':
-        raise RelaxError, "No coded yet."
+        raise RelaxError("No coded yet.")
 
 
 def ellipsoid_frame():
@@ -86,7 +86,7 @@ def ellipsoid_frame():
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
             # Throw a warning.
-            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+            warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))
 
             # Skip the spin.
             continue
@@ -116,7 +116,7 @@ def spheroid_frame():
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
             # Throw a warning.
-            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+            warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))
 
             # Skip the spin.
             continue
@@ -128,7 +128,7 @@ def spheroid_frame():
 def wrap_angles(angle, lower, upper):
     """Convert the given angle to be between the lower and upper values."""
 
-    while 1:
+    while True:
         if angle > upper:
             angle = angle - upper
         elif angle < lower:

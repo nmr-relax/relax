@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxNumError, RelaxStrError
+from base_class import User_fn_class
+import check
 import generic_fns.frq
 
 
-class Frq:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating spectrometer frequencies."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Frq(User_fn_class):
+    """Class for manipulating spectrometer frequencies."""
 
     def set(self, id=None, frq=None):
         """Set the spectrometer frequency of the experiment.
@@ -66,17 +56,13 @@ class Frq:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frq("
-            text = text + "id=" + `id`
-            text = text + ", frq=" + `frq` + ")"
-            print text
+            text = text + "id=" + repr(id)
+            text = text + ", frq=" + repr(frq) + ")"
+            print(text)
 
-        # Id string.
-        if type(id) != str:
-            raise RelaxStrError, ('experiment identification string', id)
-
-        # The spectrometer frequency.
-        if type(frq) != float and type(frq) != int:
-            raise RelaxNumError, ('spectrometer frequency', frq)
+        # The argument checks.
+        check.is_str(id, 'experiment identification string')
+        check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         generic_fns.frq.set(id=id, frq=frq)

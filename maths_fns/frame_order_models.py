@@ -68,7 +68,7 @@ class Frame_order:
 
         # Model test.
         if not model:
-            raise RelaxError, "The type of Frame Order model must be specified."
+            raise RelaxError("The type of Frame Order model must be specified.")
 
         # Store the initial parameter (as a copy).
         self.params = deepcopy(init_params)
@@ -77,15 +77,15 @@ class Frame_order:
         if model == 'iso cone':
             # Some checks.
             if red_tensors == None or not len(red_tensors):
-                raise RelaxError, "The red_tensors argument " + `red_tensors` + " must be supplied."
+                raise RelaxError("The red_tensors argument " + repr(red_tensors) + " must be supplied.")
             if red_errors == None or not len(red_errors):
-                raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
+                raise RelaxError("The red_errors argument " + repr(red_errors) + " must be supplied.")
             if full_in_ref_frame == None or not len(full_in_ref_frame):
-                raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
+                raise RelaxError("The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied.")
 
             # Mix up.
             if full_tensors != None and frame_order_2nd != None:
-                raise RelaxError, "Tensors and Frame Order matrices cannot be supplied together."
+                raise RelaxError("Tensors and Frame Order matrices cannot be supplied together.")
 
             # Tensor optimisation.
             elif full_tensors != None:
@@ -97,10 +97,10 @@ class Frame_order:
 
             # Badly supplied arguments.
             else:
-                raise RelaxError, "The arguments have been incorrectly supplied, cannot determine the optimisation mode."
+                raise RelaxError("The arguments have been incorrectly supplied, cannot determine the optimisation mode.")
 
 
-    def __init_iso_cone(self, full_tensors, red_tensors, red_errors):
+    def __init_iso_cone(self, full_tensors, red_tensors, red_errors, full_in_ref_frame):
         """Set up isotropic cone optimisation against the alignment tensor data.
 
         @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
@@ -118,7 +118,17 @@ class Frame_order:
 
         # Checks.
         if red_tensors == None:
-            raise RelaxError, "The reduced tensors have not been supplied."
+            raise RelaxError("The reduced tensors have not been supplied.")
+
+        # Some checks.
+        if full_tensors == None or not len(full_tensors):
+            raise RelaxError("The full_tensors argument " + repr(full_tensors) + " must be supplied.")
+        if red_tensors == None or not len(red_tensors):
+            raise RelaxError("The red_tensors argument " + repr(red_tensors) + " must be supplied.")
+        if red_errors == None or not len(red_errors):
+            raise RelaxError("The red_errors argument " + repr(red_errors) + " must be supplied.")
+        if full_in_ref_frame == None or not len(full_in_ref_frame):
+            raise RelaxError("The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied.")
 
         # Tensor set up.
         self.num_tensors = len(full_tensors) / 5
