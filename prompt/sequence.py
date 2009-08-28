@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2007-2008 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2007-2009 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import sequence
-from relax_errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 
 
-class Sequence:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating sequence data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Sequence(User_fn_class):
+    """Class for manipulating sequence data."""
 
     def copy(self, pipe_from=None, pipe_to=None):
         """Copy the molecule, residue, and spin sequence data from one data pipe to another.
@@ -89,21 +80,17 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
-            print text
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
+            print(text)
 
-        # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe from', pipe_from)
-
-        # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe to', pipe_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
         sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
@@ -132,37 +119,21 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.display("
-            text = text + "sep=" + `sep`
-            text = text + ", mol_name_flag=" + `mol_name_flag`
-            text = text + ", res_num_flag=" + `res_num_flag`
-            text = text + ", res_name_flag=" + `res_name_flag`
-            text = text + ", spin_num_flag=" + `spin_num_flag`
-            text = text + ", spin_name_flag=" + `spin_name_flag` + ")"
-            print text
+            text = text + "sep=" + repr(sep)
+            text = text + ", mol_name_flag=" + repr(mol_name_flag)
+            text = text + ", res_num_flag=" + repr(res_num_flag)
+            text = text + ", res_name_flag=" + repr(res_name_flag)
+            text = text + ", spin_num_flag=" + repr(spin_num_flag)
+            text = text + ", spin_name_flag=" + repr(spin_name_flag) + ")"
+            print(text)
 
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
-
-        # Molecule name flag.
-        if type(mol_name_flag) != bool:
-            raise RelaxBoolError, ('molecule name flag', mol_name_flag)
-
-        # Residue number flag.
-        if type(res_num_flag) != bool:
-            raise RelaxBoolError, ('residue number flag', res_num_flag)
-
-        # Residue name flag.
-        if type(res_name_flag) != bool:
-            raise RelaxBoolError, ('residue name flag', res_name_flag)
-
-        # Spin number flag.
-        if type(spin_num_flag) != bool:
-            raise RelaxBoolError, ('spin number flag', spin_num_flag)
-
-        # Spin name flag.
-        if type(spin_name_flag) != bool:
-            raise RelaxBoolError, ('spin name flag', spin_name_flag)
+        # The argument checks.
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_bool(mol_name_flag, 'molecule name flag')
+        check.is_bool(res_num_flag, 'residue number flag')
+        check.is_bool(res_name_flag, 'residue name flag')
+        check.is_bool(spin_num_flag, 'spin number flag')
+        check.is_bool(spin_name_flag, 'spin name flag')
 
         # Execute the functional code.
         sequence.display(sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
@@ -237,47 +208,25 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", sep=" + `sep` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", sep=" + repr(sep) + ")"
+            print(text)
 
-        # The file name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_name_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         sequence.read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
@@ -317,52 +266,27 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.write("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", sep=" + `sep`
-            text = text + ", mol_name_flag=" + `mol_name_flag`
-            text = text + ", res_num_flag=" + `res_num_flag`
-            text = text + ", res_name_flag=" + `res_name_flag`
-            text = text + ", spin_num_flag=" + `spin_num_flag`
-            text = text + ", spin_name_flag=" + `spin_name_flag`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", sep=" + repr(sep)
+            text = text + ", mol_name_flag=" + repr(mol_name_flag)
+            text = text + ", res_num_flag=" + repr(res_num_flag)
+            text = text + ", res_name_flag=" + repr(res_name_flag)
+            text = text + ", spin_num_flag=" + repr(spin_num_flag)
+            text = text + ", spin_name_flag=" + repr(spin_name_flag)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
-
-        # Molecule name flag.
-        if type(mol_name_flag) != bool:
-            raise RelaxBoolError, ('molecule name flag', mol_name_flag)
-
-        # Residue number flag.
-        if type(res_num_flag) != bool:
-            raise RelaxBoolError, ('residue number flag', res_num_flag)
-
-        # Residue name flag.
-        if type(res_name_flag) != bool:
-            raise RelaxBoolError, ('residue name flag', res_name_flag)
-
-        # Spin number flag.
-        if type(spin_num_flag) != bool:
-            raise RelaxBoolError, ('spin number flag', spin_num_flag)
-
-        # Spin name flag.
-        if type(spin_name_flag) != bool:
-            raise RelaxBoolError, ('spin name flag', spin_name_flag)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_bool(mol_name_flag, 'molecule name flag')
+        check.is_bool(res_num_flag, 'residue number flag')
+        check.is_bool(res_name_flag, 'residue name flag')
+        check.is_bool(spin_num_flag, 'spin number flag')
+        check.is_bool(spin_name_flag, 'spin name flag')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         sequence.write(file=file, dir=dir, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)

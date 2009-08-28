@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxStrError
+from base_class import User_fn_class
+import check
 from specific_fns.setup import jw_mapping_obj
 
 
-class Jw_mapping:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class containing functions specific to reduced spectral density mapping."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Jw_mapping(User_fn_class):
+    """Class containing functions specific to reduced spectral density mapping."""
 
     def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping.
@@ -72,12 +62,11 @@ class Jw_mapping:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "jw_mapping.set_frq("
-            text = text + "frq=" + `frq` + ")"
-            print text
+            text = text + "frq=" + repr(frq) + ")"
+            print(text)
 
-        # The frq argument.
-        if type(frq) != float:
-            raise RelaxStrError, ('frq', frq)
+        # The argument checks.
+        check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         jw_mapping_obj.set_frq(frq=frq)

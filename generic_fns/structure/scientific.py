@@ -57,7 +57,7 @@ class Scientific_data(Base_struct_API):
 
         # Test for the PDB parser availability.
         if not dep_check.scientific_pdb_module:
-            raise RelaxError, "The Scientific python PDB module Scientific.IO.PDB could not be imported."
+            raise RelaxError("The Scientific python PDB module Scientific.IO.PDB could not be imported.")
 
         # Execute the base class __init__() method.
         Base_struct_API.__init__(self)
@@ -83,14 +83,14 @@ class Scientific_data(Base_struct_API):
 
         # The find the attached atom in the residue (FIXME).
         matching_list = []
-        for atom in res.atoms.keys():
+        for atom in list(res.atoms.keys()):
             if relax_re.search(atom, attached_atom):
                 matching_list.append(atom)
         num_attached = len(matching_list)
 
         # Problem.
         if num_attached > 1:
-            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_list`
+            return None, None, None, None, None, 'More than one attached atom found: ' + repr(matching_list)
 
         # No attached atoms.
         if num_attached == 0:
@@ -328,7 +328,7 @@ class Scientific_data(Base_struct_API):
 
                         # More than one matching atom!
                         if atom_found:
-                            raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+                            raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
 
                         # The atom has been found, so store some info.
                         atom_found = True
@@ -448,7 +448,7 @@ class Scientific_data(Base_struct_API):
 
                         # More than one matching atom!
                         if atom_found:
-                            raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+                            raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
 
                         # The atom has been found, so store some info.
                         atom_found = True
@@ -510,7 +510,7 @@ class Scientific_data(Base_struct_API):
 
         # Initial print out.
         if verbosity:
-            print "\nScientific Python PDB parser."
+            print("\nScientific Python PDB parser.")
 
         # Test if the file exists.
         if not access(file_path, F_OK):
@@ -521,13 +521,13 @@ class Scientific_data(Base_struct_API):
         path, file = os.path.split(file_path)
 
         # Convert the structure reading args into lists.
-        if read_mol and type(read_mol) != list:
+        if read_mol and not isinstance(read_mol, list):
             read_mol = [read_mol]
-        if set_mol_name and type(set_mol_name) != list:
+        if set_mol_name and not isinstance(set_mol_name, list):
             set_mol_name = [set_mol_name]
-        if read_model and type(read_model) != list:
+        if read_model and not isinstance(read_model, list):
             read_model = [read_model]
-        if set_model_num and type(set_model_num) != list:
+        if set_model_num and not isinstance(set_model_num, list):
             set_model_num = [set_model_num]
 
         # Load all models.
@@ -536,7 +536,7 @@ class Scientific_data(Base_struct_API):
         model_load_num = 1
         orig_model_num = []
         mol_conts = []
-        while 1:
+        while True:
             # Only load the desired model.
             if read_model:
                 # No more models to read.
@@ -562,7 +562,7 @@ class Scientific_data(Base_struct_API):
 
                 # Ok, nothing is loadable from this file.
                 if not len(model):
-                    raise RelaxPdbLoadError, file_path
+                    raise RelaxPdbLoadError(file_path)
 
             # Test if the last structure has been reached.
             if not len(model):
@@ -586,7 +586,7 @@ class Scientific_data(Base_struct_API):
 
             # Print the PDB info.
             if verbosity:
-                print model
+                print(model)
 
             # First add the peptide chains (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'peptide_chains'):
@@ -619,7 +619,7 @@ class Scientific_data(Base_struct_API):
 
             # Finally all other molecules (generating the molecule names and incrementing the molecule index).
             if hasattr(model, 'molecules'):
-                for key in model.molecules.keys():
+                for key in list(model.molecules.keys()):
                     # Only read the required molecule.
                     if read_mol and mol_index+1 not in read_mol:
                         mol_index = mol_index + 1
@@ -636,7 +636,7 @@ class Scientific_data(Base_struct_API):
 
                     # Check.
                     if set_mol_name and mol_index >= len(set_mol_name):
-                        raise RelaxError, "The %s molecules read exceeds the number of molecule names supplied in %s." % (mol_index+1, set_mol_name)
+                        raise RelaxError("The %s molecules read exceeds the number of molecule names supplied in %s." % (mol_index+1, set_mol_name))
 
                     # Update structures.
                     self.target_mol_name(set=set_mol_name, target=new_mol_name, index=mol_index, mol_num=mol_index+1+mol_offset, file=file)
@@ -701,7 +701,7 @@ class MolContainer:
         model = Scientific.IO.PDB.Structure(file_path, self.file_model)
 
         # Print out.
-        print "\n" + `model`
+        print("\n" + repr(model))
 
         # Counter for finding the molecule.
         mol_num = 1
@@ -728,7 +728,7 @@ class MolContainer:
 
         # Finally all other molecules.
         if hasattr(model, 'molecules'):
-            for key in model.molecules.keys():
+            for key in list(model.molecules.keys()):
                 # Pack if the molecule index matches.
                 if mol_num == self.file_mol_num:
                     # Loop over the molecules.
@@ -758,4 +758,4 @@ class MolContainer:
         mol_element.setAttribute('name', str(self.mol_name))
 
         # Add all simple python objects within the MolContainer to the XML element.
-        fill_object_contents(doc, mol_element, object=self, blacklist=['data'] + self.__class__.__dict__.keys())
+        fill_object_contents(doc, mol_element, object=self, blacklist=['data'] + list(self.__class__.__dict__.keys()))

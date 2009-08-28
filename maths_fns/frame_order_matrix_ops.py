@@ -66,13 +66,13 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     populate_2nd_eigenframe_iso_cone(matrix, theta_cone)
 
     # Perform the T14 transpose to obtain the Kronecker product matrix!
-    matrix = transpose_14(matrix)
+    transpose_14(matrix)
 
     # Rotate.
     matrix = dot(R_kron, dot(matrix, transpose(R_kron)))
 
     # Perform T14 again to return back.
-    matrix = transpose_14(matrix)
+    transpose_14(matrix)
 
     # Return the matrix.
     return matrix

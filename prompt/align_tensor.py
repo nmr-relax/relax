@@ -28,24 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import align_tensor
-from num_types import int_list, float_list
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
 
 
-class Align_tensor:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating the alignment tensor."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Align_tensor(User_fn_class):
+    """Class for manipulating the alignment tensor."""
 
     def copy(self, tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         """Function for copying alignment tensor data.
@@ -98,31 +87,17 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.copy("
-            text = text + "tensor_from=" + `tensor_from`
-            text = text + ", pipe_from=" + `pipe_from`
-            text = text + ", tensor_to=" + `tensor_to`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
-            print text
+            text = text + "tensor_from=" + repr(tensor_from)
+            text = text + ", pipe_from=" + repr(pipe_from)
+            text = text + ", tensor_to=" + repr(tensor_to)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
+            print(text)
 
-        # The tensor_from argument.
-        if type(tensor_from) != str:
-            raise RelaxStrError, ('tensor from', tensor_from)
-
-        # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe from', pipe_from)
-
-        # The tensor_to argument.
-        if type(tensor_to) != str:
-            raise RelaxStrError, ('tensor to', tensor_to)
-
-        # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe to', pipe_to)
-
-        # Both pipe arguments cannot be None.
-        if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        # The argument checks.
+        check.is_str(tensor_from, 'tensor from')
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(tensor_to, 'tensor to')
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.copy(tensor_from=tensor_from, pipe_from=pipe_from, tensor_to=tensor_to, pipe_to=pipe_to)
@@ -147,12 +122,11 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.delete("
-            text = text + "tensor=" + `tensor` + ")"
-            print text
+            text = text + "tensor=" + repr(tensor) + ")"
+            print(text)
 
-        # Label argument.
-        if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
+        # The argument checks.
+        check.is_str(tensor, 'tensor')
 
         # Execute the functional code.
         align_tensor.delete(tensor=tensor)
@@ -170,12 +144,11 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.display("
-            text = text + "tensor=" + `tensor` + ")"
-            print text
+            text = text + "tensor=" + repr(tensor) + ")"
+            print(text)
 
-        # Label argument.
-        if tensor != None and type(tensor) != str:
-            raise RelaxNoneStrError, ('tensor', tensor)
+        # The argument checks.
+        check.is_str(tensor, 'tensor', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.display(tensor=tensor)
@@ -244,44 +217,21 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.init("
-            text = text + "tensor=" + `tensor`
-            text = text + ", params=" + `params`
-            text = text + ", scale=" + `scale`
-            text = text + ", angle_units=" + `angle_units`
-            text = text + ", param_types=" + `param_types`
-            text = text + ", errors=" + `errors` + ")"
-            print text
+            text = text + "tensor=" + repr(tensor)
+            text = text + ", params=" + repr(params)
+            text = text + ", scale=" + repr(scale)
+            text = text + ", angle_units=" + repr(angle_units)
+            text = text + ", param_types=" + repr(param_types)
+            text = text + ", errors=" + repr(errors) + ")"
+            print(text)
 
-        # Label argument.
-        if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
-
-        # Parameter argument.
-        if type(params) != tuple:
-            raise RelaxNumTupleError, ('alignment tensor parameters', params)
-        else:
-            if len(params) != 5:
-                raise RelaxError, "The alignment tensor parameters argument must be a tuple of numbers of length 5."
-            for i in xrange(len(params)):
-                if type(params[i]) not in float_list and type(params[i]) not in int_list:
-                    print type(params[i])
-                    raise RelaxNumTupleError, ('alignment tensor parameters', params)
-
-        # Scale argument.
-        if type(scale) not in float_list:
-            raise RelaxFloatError, ('scale', scale)
-
-        # Angle units argument.
-        if type(angle_units) != str:
-            raise RelaxStrError, ('angle units', angle_units)
-
-        # Parameter types argument.
-        if type(param_types) not in int_list:
-            raise RelaxIntError, ('parameter types', param_types)
-
-        # The errors flag.
-        if type(errors) != bool:
-            raise RelaxBoolError, ('errors flag', errors)
+        # The argument checks.
+        check.is_str(tensor, 'tensor')
+        check.is_num_tuple(params, 'alignment tensor parameters', size=5)
+        check.is_float(scale, 'scale')
+        check.is_str(angle_units, 'angle units')
+        check.is_int(param_types, 'parameter types')
+        check.is_bool(errors, 'errors flag')
 
         # Execute the functional code.
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
@@ -311,26 +261,13 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.matrix_angles("
-            text = text + "basis_set=" + `basis_set`
-            text = text + ", tensors=" + `tensors` + ")"
-            print text
+            text = text + "basis_set=" + repr(basis_set)
+            text = text + ", tensors=" + repr(tensors) + ")"
+            print(text)
 
-        # Basis set argument.
-        if type(basis_set) != int:
-            raise RelaxIntError, ('basis set', basis_set)
-
-        # Tensors argument.
-        if tensors != None and type(tensors) != list:
-            raise RelaxNoneListstrError, ('tensors', tensors)
-        if type(tensors) == list:
-            # Empty list.
-            if tensors == []:
-                raise RelaxNoneListstrError, ('tensors', tensors)
-
-            # Check for strings.
-            for i in xrange(len(tensors)):
-                if type(tensors[i]) != str:
-                    raise RelaxNoneListstrError, ('tensors', tensors)
+        # The argument checks.
+        check.is_int(basis_set, 'basis set')
+        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
@@ -366,17 +303,13 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.reduction("
-            text = text + "full_tensor=" + `full_tensor`
-            text = text + ", red_tensor=" + `red_tensor` + ")"
-            print text
+            text = text + "full_tensor=" + repr(full_tensor)
+            text = text + ", red_tensor=" + repr(red_tensor) + ")"
+            print(text)
 
-        # From tensor argument.
-        if type(full_tensor) != str:
-            raise RelaxStrError, ('from tensor', full_tensor)
-
-        # To tensor argument.
-        if type(red_tensor) != str:
-            raise RelaxStrError, ('to tensor', red_tensor)
+        # The argument checks.
+        check.is_str(full_tensor, 'full tensor')
+        check.is_str(red_tensor, 'reduced tensor')
 
         # Execute the functional code.
         align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
@@ -411,17 +344,13 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.set_domain("
-            text = text + "tensor=" + `tensor`
-            text = text + ", domain=" + `domain` + ")"
-            print text
+            text = text + "tensor=" + repr(tensor)
+            text = text + ", domain=" + repr(domain) + ")"
+            print(text)
 
-        # Tensor argument.
-        if type(tensor) != str:
-            raise RelaxStrError, ('tensor', tensor)
-
-        # Domain argument.
-        if type(domain) != str:
-            raise RelaxStrError, ('domain', domain)
+        # The argument checks.
+        check.is_str(tensor, 'tensor')
+        check.is_str(domain, 'domain')
 
         # Execute the functional code.
         align_tensor.set_domain(tensor=tensor, domain=domain)
@@ -477,26 +406,13 @@ class Align_tensor:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "align_tensor.svd("
-            text = text + "basis_set=" + `basis_set`
-            text = text + ", tensors=" + `tensors` + ")"
-            print text
+            text = text + "basis_set=" + repr(basis_set)
+            text = text + ", tensors=" + repr(tensors) + ")"
+            print(text)
 
-        # Basis set argument.
-        if type(basis_set) != int:
-            raise RelaxIntError, ('basis set', basis_set)
-
-        # Tensors argument.
-        if tensors != None and type(tensors) != list:
-            raise RelaxNoneListstrError, ('tensors', tensors)
-        if type(tensors) == list:
-            # Empty list.
-            if tensors == []:
-                raise RelaxNoneListstrError, ('tensors', tensors)
-
-            # Check for strings.
-            for i in xrange(len(tensors)):
-                if type(tensors[i]) != str:
-                    raise RelaxNoneListstrError, ('tensors', tensors)
+        # The argument checks.
+        check.is_int(basis_set, 'basis set')
+        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.svd(basis_set, tensors)

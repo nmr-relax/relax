@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,15 +28,12 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
+from base_class import Basic_class
 from generic_fns import angles
 
 
-class Angles:
-    def __init__(self, relax):
-        """Class containing the function for calculating XH bond angles."""
-
-        self.relax = relax
-
+class Angles(Basic_class):
+    """Class containing the function for calculating XH bond angles."""
 
     def angle_diff_frame(self):
         """Calculate the angles defining the XH bond vector within the diffusion frame.
@@ -53,9 +50,9 @@ class Angles:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "angle_diff_frame()"
-            print text
+            print(text)
 
         # Execute the functional code.
         angles.angle_diff_frame()

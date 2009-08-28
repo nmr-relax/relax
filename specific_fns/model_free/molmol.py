@@ -35,10 +35,9 @@ from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 class Molmol:
     """Class containing the Molmol specific functions for model-free analysis."""
 
-    def molmol_classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
-        """
-        Classic style
-        ~~~~~~~~~~~~~
+    molmol_classic_style_doc = """
+        Model-free classic style
+        ~~~~~~~~~~~~~~~~~~~~~~~~
 
         Creator:  Edward d'Auvergne
 
@@ -115,8 +114,21 @@ class Molmol:
         |                |             | gradient starts at 'yellow' and finishes at 'red'.        |
         |________________|_____________|___________________________________________________________|
         """
-        __docformat__ = "plaintext"
 
+    def molmol_classic_style(self, data_type=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+        """The MOLMOL classic style.
+
+        @keyword data_type:     The parameter name.
+        @type data_type:        str
+        @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
+        @type colour_start:     str
+        @keyword colour_end:    The ending colour (must be a MOLMOL or X11 name).
+        @type colour_end:       str
+        @keyword colour_list:   The colour list used, either 'molmol' or 'x11'.
+        @type colour_list:      str
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        """
 
         # Test the validity of the data (only a single spin per residue).
         #################################################################
@@ -129,7 +141,7 @@ class Molmol:
         for spin, mol_name, res_num, res_name in spin_loop(spin_id):
             # More than one spin.
             if prev_res_num == res_num:
-                raise RelaxError, "Only a single spin per residue is allowed for the classic Molmol macro style."
+                raise RelaxError("Only a single spin per residue is allowed for the classic Molmol macro style.")
 
             # Update the previous residue number.
             prev_res_num = res_num
@@ -410,29 +422,29 @@ class Molmol:
         ####################
 
         else:
-            raise RelaxUnknownDataTypeError, data_type
+            raise RelaxUnknownDataTypeError(data_type)
 
 
     def molmol_classic_colour(self, res_num=None, width=None, rgb_array=None):
         """Colour the given peptide bond."""
 
         # Ca to C bond.
-        self.commands.append("SelectBond 'atom1.name = \"CA\"  & atom2.name = \"C\" & res.num = " + `res_num-1` + "'")
+        self.commands.append("SelectBond 'atom1.name = \"CA\"  & atom2.name = \"C\" & res.num = " + repr(res_num-1) + "'")
         self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
 
         # C to N bond.
-        self.commands.append("SelectBond 'atom1.name = \"C\"  & atom2.name = \"N\" & res.num = " + `res_num-1` + "'")
+        self.commands.append("SelectBond 'atom1.name = \"C\"  & atom2.name = \"N\" & res.num = " + repr(res_num-1) + "'")
         self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
 
         # N to Ca bond.
-        self.commands.append("SelectBond 'atom1.name = \"N\"  & atom2.name = \"CA\" & res.num = " + `res_num` + "'")
+        self.commands.append("SelectBond 'atom1.name = \"N\"  & atom2.name = \"CA\" & res.num = " + repr(res_num) + "'")
         self.commands.append("StyleBond neon")
-        self.commands.append("RadiusBond " + `width`)
-        self.commands.append("ColorBond " + `rgb_array[0]` + " " + `rgb_array[1]` + " " + `rgb_array[2]`)
+        self.commands.append("RadiusBond " + repr(width))
+        self.commands.append("ColorBond " + repr(rgb_array[0]) + " " + repr(rgb_array[1]) + " " + repr(rgb_array[2]))
 
         # Blank line.
         self.commands.append("")
@@ -573,7 +585,7 @@ class Molmol:
 
         # Unknown style.
         else:
-            raise RelaxStyleError, style
+            raise RelaxStyleError(style)
 
         # Return the command array.
         return self.commands

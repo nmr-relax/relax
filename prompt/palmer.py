@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2006, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import palmer
-from relax_errors import RelaxBinError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Palmer:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for interfacing with Art Palmer's Modelfree 4."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Palmer(User_fn_class):
+    """Class for interfacing with Art Palmer's Modelfree 4."""
 
     def create(self, dir=None, force=False, binary='modelfree4', diff_search='none', sims=0, sim_type='pred', trim=0, steps=20, constraints=True, heteronuc_type='15N', atom1='N', atom2='H', spin_id=None):
         """Function for creating the Modelfree4 input files.
@@ -106,69 +96,34 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.create("
-            text = text + "dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", binary=" + `binary`
-            text = text + ", diff_search=" + `diff_search`
-            text = text + ", sims=" + `sims`
-            text = text + ", sim_type=" + `sim_type`
-            text = text + ", trim=" + `trim`
-            text = text + ", steps=" + `steps`
-            text = text + ", constraints=" + `constraints`
-            text = text + ", heteronucleus=" + `heteronuc_type`
-            text = text + ", atom1=" + `atom1`
-            text = text + ", atom2=" + `atom2`
-            text = text + ", spin_id=" + `spin_id` + ")"
-            print text
+            text = text + "dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", binary=" + repr(binary)
+            text = text + ", diff_search=" + repr(diff_search)
+            text = text + ", sims=" + repr(sims)
+            text = text + ", sim_type=" + repr(sim_type)
+            text = text + ", trim=" + repr(trim)
+            text = text + ", steps=" + repr(steps)
+            text = text + ", constraints=" + repr(constraints)
+            text = text + ", heteronucleus=" + repr(heteronuc_type)
+            text = text + ", atom1=" + repr(atom1)
+            text = text + ", atom2=" + repr(atom2)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        # Directory.
-        if dir != None:
-            if type(dir) != str:
-                raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
-
-        # The Modelfree executable file.
-        if type(binary) != str:
-            raise RelaxStrError, ('Modelfree binary', binary)
-
-        # The diff_search argument.
-        if type(diff_search) != str:
-            raise RelaxStrError, ('diff_search', diff_search)
-
-        # The number of Monte Carlo simulations.
-        if type(sims) != int:
-            raise RelaxIntError, ('sims', sims)
-
-        # The sim_type argument.
-        if type(sim_type) != str:
-            raise RelaxStrError, ('sim_type', sim_type)
-
-        # The trim argument.
-        if type(trim) != float and type(trim) != int:
-            raise RelaxFloatError, ('trim', trim)
-
-        # The steps argument.
-        if type(steps) != int:
-            raise RelaxIntError, ('steps', steps)
-
-        # Constraint flag.
-        if type(constraints) != bool:
-            raise RelaxBoolError, ('constraints flag', constraints)
-
-        # The heteronucleus argument.
-        if type(heteronuc_type) != str:
-            raise RelaxStrError, ('heteronucleus', heteronuc_type)
-
-        # The atom1 argument.
-        if type(atom1) != str:
-            raise RelaxStrError, ('atom1', atom1)
-
-        # The atom2 argument.
-        if type(atom2) != str:
-            raise RelaxStrError, ('atom2', atom2)
+        # The argument checks.
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
+        check.is_str(binary, 'Modelfree executable file')
+        check.is_str(diff_search, 'diffusion search')
+        check.is_int(sims, 'number of Monte Carlo simulations')
+        check.is_str(sim_type, 'simulation type')
+        check.is_num(trim, 'trimming')
+        check.is_int(steps, 'steps')
+        check.is_bool(constraints, 'constraints flag')
+        check.is_str(heteronuc_type, 'heteronucleus')
+        check.is_str(atom1, 'atom1')
+        check.is_str(atom2, 'atom2')
 
         # Execute the functional code.
         palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, heteronuc_type=heteronuc_type, atom1=atom1, atom2=atom2, spin_id=spin_id)
@@ -207,23 +162,15 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.execute("
-            text = text + "dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", binary=" + `binary` + ")"
-            print text
+            text = text + "dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", binary=" + repr(binary) + ")"
+            print(text)
 
-        # Directory.
-        if dir != None:
-            if type(dir) != str:
-                raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
-
-        # The Modelfree executable file.
-        if type(binary) != str:
-            raise RelaxStrError, ('Modelfree binary', binary)
+        # The argument checks.
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
+        check.is_str(binary, 'Modelfree executable file')
 
         # Execute the functional code.
         palmer.execute(dir=dir, force=force, binary=binary)
@@ -241,13 +188,11 @@ class Palmer:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "palmer.extract("
-            text = text + "dir=" + `dir` + ")"
-            print text
+            text = text + "dir=" + repr(dir) + ")"
+            print(text)
 
-        # Directory.
-        if dir != None:
-            if type(dir) != str:
-                raise RelaxNoneStrError, ('directory name', dir)
+        # The argument checks.
+        check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         palmer.extract(dir=dir)

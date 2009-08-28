@@ -36,10 +36,10 @@ def gpg_sign(target, source, env):
     """Builder action for creating a GPG signature of the binary distribution file."""
 
     # Print out.
-    print
-    print "############################################"
-    print "# GPG signing the binary distribution file #"
-    print "############################################\n\n"
+    print('')
+    print("############################################")
+    print("# GPG signing the binary distribution file #")
+    print("############################################\n\n")
 
     # List of distribution files.
     type_list = [env['DIST_TYPE']]
@@ -61,23 +61,23 @@ def gpg_sign(target, source, env):
             file = env['DIST_FILE'] + '.tar.bz2'
 
         # Print out.
-        print "\n\nSigning the distribution package " + `file` + ".\n"
+        print("\n\nSigning the distribution package " + repr(file) + ".\n")
 
         # Run the 'gpg' command.
         system("gpg --detach-sign --default-key " + key + " " + path.pardir + path.sep + file)
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")
 
 
 def package(target, source, env):
     """Builder action for packaging the distribution archives."""
 
     # Print out.
-    print
-    print "#######################"
-    print "# Packaging the files #"
-    print "#######################"
+    print('')
+    print("#######################")
+    print("# Packaging the files #")
+    print("#######################")
 
     # List of distribution files.
     type_list = [env['DIST_TYPE']]
@@ -93,7 +93,7 @@ def package(target, source, env):
             file = env['DIST_FILE'] + '.tar.bz2'
 
         # Print out.
-        print "\n\nCreating the package distribution " + `file` + ".\n"
+        print("\n\nCreating the package distribution " + repr(file) + ".\n")
 
         # Open the Zip distribution file.
         if dist_type == 'zip':
@@ -126,7 +126,7 @@ def package(target, source, env):
                 # Create the file name (without the base directory).
                 name = path.join(root, files[i])
                 name = name[len(base):]
-                print 'relax-' + version + path.sep + name
+                print('relax-' + version + path.sep + name)
 
                 # The archive file name.
                 arcname = 'relax-' + version + path.sep + name
@@ -143,4 +143,4 @@ def package(target, source, env):
         archive.close()
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")

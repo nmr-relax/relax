@@ -1,0 +1,67 @@
+The following is a checklist for the migration from Python 2.x to Python 3.x.  Only changes which allow relax to run on both versions will currently be applied.  This is performed by the 2to3 program that comes with Python 3.x and the syntax used is:
+
+2to3 -w relax . -f xxx
+
+where xxx is the transformation being applied.
+
+
+Key
+~~~
+
++ committed.
+- deadly for python 2.x.
+~ nothing to do.
+
+
+The transformations
+~~~~~~~~~~~~~~~~~~~
+
+~apply
+~basestring
+~buffer
+~callable
++dict
+-except
++exec
++execfile
+~filter
+~funcattrs
+~future
+~getcwdu
++has_key
++idioms
+ import
+ imports
+ imports2
+ input
+ intern
+ isinstance
+ itertools
+ itertools_imports
+ long
+ map
+ metaclass
+ methodattrs
+ ne
+ next
+ nonzero
+ numliterals
+ paren
++print
++raise
+ raw_input
+ reduce
+ renames
++repr
+ set_literal
+ standarderror
+ sys_exc
+ throw
+ tuple_params
+~types
+ unicode
+ urllib
+ ws_comma
+ xrange
+ xreadlines
+ zip

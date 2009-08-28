@@ -662,11 +662,11 @@ class AlignTensorList(ListType):
             # Create an XML element for a single tensor.
             tensor_element = doc.createElement('align_tensor')
             tensor_list_element.appendChild(tensor_element)
-            tensor_element.setAttribute('index', `i`)
+            tensor_element.setAttribute('index', repr(i))
             tensor_element.setAttribute('desc', 'Alignment tensor')
 
             # Add all simple python objects within the PipeContainer to the pipe element.
-            fill_object_contents(doc, tensor_element, object=self[i], blacklist=self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, tensor_element, object=self[i], blacklist=list(self[i].__class__.__dict__.keys()))
 
 
 class AlignTensorData(Element):
@@ -710,7 +710,7 @@ class AlignTensorData(Element):
 
         # Test if the attribute that is trying to be set is modifiable.
         if not param_name in self.__mod_attr__:
-            raise RelaxError, "The object " + `name` + " is not modifiable."
+            raise RelaxError("The object " + repr(name) + " is not modifiable.")
 
         # Set the attribute normally.
         self.__dict__[name] = value

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2007, 2009 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrFileError
+from base_class import User_fn_class
+import check
 from generic_fns.state import load_state, save_state
 
 
-class State:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for saving or loading the program state."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class State(User_fn_class):
+    """Class for saving or loading the program state."""
 
     def load(self, state=None, dir_name=None):
         """Function for loading a saved program state.
@@ -88,17 +78,13 @@ class State:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.load("
-            text = text + "state=" + `state`
-            text = text + ", dir_name=" + `dir_name` + ")"
-            print text
+            text = text + "state=" + repr(state)
+            text = text + ", dir_name=" + repr(dir_name) + ")"
+            print(text)
 
-        # File name.
-        if type(state) != str and type(state) != file:
-            raise RelaxStrFileError, ('file name', state)
-
-        # Directory.
-        if dir_name != None and type(dir_name) != str:
-            raise RelaxNoneStrError, ('directory', dir_name)
+        # The argument checks.
+        check.is_str_or_inst(state, 'file name')
+        check.is_str(dir_name, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         load_state(state=state, dir_name=dir_name)
@@ -159,27 +145,17 @@ class State:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.save("
-            text = text + "state=" + `state`
-            text = text + ", dir_name=" + `dir_name`
-            text = text + ", force=" + `force`
-            text = text + ", compress_type=" + `compress_type` + ")"
-            print text
+            text = text + "state=" + repr(state)
+            text = text + ", dir_name=" + repr(dir_name)
+            text = text + ", force=" + repr(force)
+            text = text + ", compress_type=" + repr(compress_type) + ")"
+            print(text)
 
-        # File name.
-        if type(state) != str and type(state) != file:
-            raise RelaxStrFileError, ('file name', state)
-
-        # Directory.
-        if dir_name != None and type(dir_name) != str:
-            raise RelaxNoneStrError, ('directory', dir_name)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
-
-        # Compression type.
-        if type(compress_type) != int:
-            raise RelaxIntError, ('compression type', compress_type)
+        # The argument checks.
+        check.is_str_or_inst(state, 'file name')
+        check.is_str(dir_name, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
+        check.is_int(compress_type, 'compression type')
 
         # Execute the functional code.
         save_state(state=state, dir_name=dir_name, force=force, compress_type=compress_type)

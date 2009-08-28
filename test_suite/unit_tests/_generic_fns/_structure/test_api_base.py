@@ -64,7 +64,7 @@ class Test_api_base(TestCase):
                 text = text + ', '
 
             # The keyword.
-            text = text + args[i] + '=' + `defaults[i-index]`
+            text = text + args[i] + '=' + repr(defaults[i-index])
 
         # End.
         text = text + ')'
@@ -89,7 +89,7 @@ class Test_api_base(TestCase):
             obj_intern = getattr(intern, name)
 
             # Skip non-method objects.
-            if type(obj_base) != types.MethodType:
+            if not isinstance(obj_base, types.MethodType):
                 continue
 
             # Get the args and their default values.
@@ -101,7 +101,7 @@ class Test_api_base(TestCase):
                 # Get string representations of the methods.
                 doc_base = self.format_method(name, args_base, varargs_base, varkw_base, defaults_base)
                 doc_intern = self.format_method(name, args_intern, varargs_intern, varkw_intern, defaults_intern)
-                print doc_base
+                print(doc_base)
 
                 # Fail.
                 self.fail('The args of the method\n\t' + doc_intern + '\ndo not match those of the API method\n\t' + doc_base)
@@ -128,7 +128,7 @@ class Test_api_base(TestCase):
 
             # Not present.
             if name not in base_names:
-                self.fail('The object ' + `name` + ' ' + `type(obj)` + ' cannot be found in the structural API base class.')
+                self.fail('The object ' + repr(name) + ' ' + repr(type(obj)) + ' cannot be found in the structural API base class.')
 
 
     def test_Scientific_method_args(self):
@@ -149,7 +149,7 @@ class Test_api_base(TestCase):
             obj_sci = getattr(sci, name)
 
             # Skip non-method objects.
-            if type(obj_base) != types.MethodType:
+            if not isinstance(obj_base, types.MethodType):
                 continue
 
             # Get the args and their default values.
@@ -187,4 +187,4 @@ class Test_api_base(TestCase):
 
             # Not present.
             if name not in base_names:
-                self.fail('The object ' + `name` + ' ' + `type(obj)` + ' cannot be found in the structural API base class.')
+                self.fail('The object ' + repr(name) + ' ' + repr(type(obj)) + ' cannot be found in the structural API base class.')

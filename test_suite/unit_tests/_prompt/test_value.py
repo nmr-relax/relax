@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.value import Value
-from relax_errors import RelaxError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneStrError, RelaxNoneStrListError
+from relax_errors import RelaxError, RelaxNoneNumStrListNumStrError, RelaxNoneStrError, RelaxNoneStrListStrError
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
@@ -45,23 +45,12 @@ class Test_value(Value_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None, float, int, str, or bin arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'str' or data[0] == 'float':
+            # Catch the None, float, int, str, bin, float list, int list, str list, or bin list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'str' or data[0] == 'float' or data[0] == 'int list' or data[0] == 'bin list' or data[0] == 'str list' or data[0] == 'float list' or data[0] == 'number list':
                 continue
 
-            # Catch all number lists.
-            if data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
-                self.assertRaises(RelaxError, self.value_fns.set, val=data[1], param='CSA')
-                if len(data[1]) != 1:
-                    self.assertRaises(RelaxError, self.value_fns.set, val=data[1], param=['CSA'])
-
-            # Catch all other list arguments.
-            elif type(data[1]) == list:
-                self.assertRaises(RelaxListFloatStrError, self.value_fns.set, val=data[1], param=None)
-
-            # All other arguments.
-            else:
-                self.assertRaises(RelaxNoneFloatStrListError, self.value_fns.set, val=data[1], param='CSA')
+            # The argument test.
+            self.assertRaises(RelaxNoneNumStrListNumStrError, self.value_fns.set, val=data[1], param='CSA')
 
 
     def test_set_argfail_param(self):
@@ -69,24 +58,12 @@ class Test_value(Value_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None and str arguments, and skip them.
-            if data[0] == 'None' or data[0] == 'str':
+            # Catch the None, str, and str list arguments, and skip them.
+            if data[0] == 'None' or data[0] == 'str' or data[0] == 'str list':
                 continue
 
-            # Catch the string list arguments.
-            if data[0] == 'str list':
-                if len(data[1]) != 1:
-                    self.assertRaises(RelaxError, self.value_fns.set, param=data[1], val=[1.0])
-                else:
-                    self.assertRaises(RelaxError, self.value_fns.set, param=data[1], val=[1.0, 2.0])
-
-            # Catch all other list arguments.
-            elif type(data[1]) == list:
-                self.assertRaises(RelaxListStrError, self.value_fns.set, param=data[1], val=None)
-
-            # All other arguments.
-            else:
-                self.assertRaises(RelaxNoneStrListError, self.value_fns.set, param=data[1], val=None)
+            # The argument test.
+            self.assertRaises(RelaxNoneStrListStrError, self.value_fns.set, param=data[1], val=None)
 
 
     def test_set_argfail_spin_id(self):

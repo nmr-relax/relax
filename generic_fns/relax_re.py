@@ -57,11 +57,11 @@ def search(pattern, id):
         return False
 
     # If a number, convert to a string.
-    if type(id) == int or type(id) == float:
+    if isinstance(id, int) or isinstance(id, float):
         id = str(id)
 
     # If pattern is not a list, convert it to one.
-    if type(pattern) != list:
+    if not isinstance(pattern, list):
         patterns = [pattern]
     else:
         patterns = pattern

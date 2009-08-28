@@ -50,7 +50,7 @@ def copy(pipe_from=None, pipe_to=None, preserve_select=False, verbose=True):
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -91,7 +91,7 @@ def compare_sequence(pipe1=None, pipe2=None, fail=True):
     @type fail:         bool
     @return:            1 if the sequence is the same, 0 if different.
     @rtype:             int
-    @raises:            RelaxError if the sequence is different and the fail flag is True.
+    @raises RelaxError: If the sequence is different and the fail flag is True.
     """
 
     # Failure status.
@@ -101,19 +101,19 @@ def compare_sequence(pipe1=None, pipe2=None, fail=True):
     if count_molecules(pipe=pipe1) != count_molecules(pipe=pipe2):
         status = 0
         if fail:
-            raise RelaxDiffMolNumError, (pipe1, pipe2)
+            raise RelaxDiffMolNumError(pipe1, pipe2)
 
     # Residue number.
     if count_residues(pipe=pipe1) != count_residues(pipe=pipe2):
         status = 0
         if fail:
-            raise RelaxDiffResNumError, (pipe1, pipe2)
+            raise RelaxDiffResNumError(pipe1, pipe2)
 
     # Spin number.
     if count_spins(pipe=pipe1) != count_spins(pipe=pipe2):
         status = 0
         if fail:
-            raise RelaxDiffSpinNumError, (pipe1, pipe2)
+            raise RelaxDiffSpinNumError(pipe1, pipe2)
 
     # Create a string representation of the 2 sequences.
     seq1 = ''
@@ -127,7 +127,7 @@ def compare_sequence(pipe1=None, pipe2=None, fail=True):
     if seq1 != seq2:
         status = 0
         if fail:
-            raise RelaxDiffSeqError, (pipe1, pipe2)
+            raise RelaxDiffSeqError(pipe1, pipe2)
 
     # Return the status.
     return status
@@ -349,7 +349,7 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
             try:
                 data[i][mol_name_col]
             except IndexError:
-                raise RelaxInvalidSeqError, data[i]
+                raise RelaxInvalidSeqError(data[i])
 
         # Residue number data.
         if res_num_col != None:
@@ -357,20 +357,20 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
             try:
                 data[i][res_num_col]
             except IndexError:
-                raise RelaxInvalidSeqError, data[i]
+                raise RelaxInvalidSeqError(data[i])
 
             # Bad data in column.
             try:
                 int(data[i][res_num_col])
             except ValueError:
-                raise RelaxInvalidSeqError, data[i]
+                raise RelaxInvalidSeqError(data[i])
 
         # Residue name data.
         if res_name_col != None:
             try:
                 data[i][res_name_col]
             except IndexError:
-                raise RelaxInvalidSeqError, data[i]
+                raise RelaxInvalidSeqError(data[i])
 
         # Spin number data.
         if spin_num_col != None:
@@ -378,20 +378,20 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
             try:
                 data[i][spin_num_col]
             except IndexError:
-                raise RelaxInvalidSeqError, data[i]
+                raise RelaxInvalidSeqError(data[i])
 
             # Bad data in column.
             try:
                 int(data[i][spin_num_col])
             except ValueError:
-                raise RelaxInvalidSeqError, data[i]
+                raise RelaxInvalidSeqError(data[i])
 
         # Spin name data.
         if spin_name_col != None:
             try:
                 data[i][spin_name_col]
             except IndexError:
-                raise RelaxInvalidSeqError, data[i]
+                raise RelaxInvalidSeqError(data[i])
 
 
 def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):

@@ -97,12 +97,12 @@ class Test_structure(Structure_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float arguments, and skip them.
-            if data[0] == 'float':
+            # Catch the number arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFloatError, self.structure_fns.create_vector_dist, length=data[1])
+            self.assertRaises(RelaxNumError, self.structure_fns.create_vector_dist, length=data[1])
 
 
     def test_create_vector_dist_argfail_file(self):

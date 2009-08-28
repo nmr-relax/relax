@@ -48,7 +48,7 @@ def fix(element, fixed):
     if element == 'diff' or element == 'all':
         # Test if the diffusion tensor data is loaded.
         if not hasattr(cdp, 'diff_tensor'):
-            raise RelaxNoTensorError, 'diffusion'
+            raise RelaxNoTensorError('diffusion')
 
         # Set the fixed flag.
         cdp.diff_tensor.fixed = fixed
@@ -72,4 +72,4 @@ def fix(element, fixed):
 
     # Unknown.
     if element not in ['diff', 'all_spins', 'all']:
-        raise RelaxError, "The 'element' argument " + `element` + " is unknown."
+        raise RelaxError("The 'element' argument " + repr(element) + " is unknown.")
