@@ -34,11 +34,11 @@ class Main:
 
         # Print out.
 
-        print "\n"*2
-        print "#"*27
-        print "# Compiling the C modules #"
-        print "#"*27
-        print "\n"*2
+        print("\n"*2)
+        print("#"*27)
+        print("# Compiling the C modules #")
+        print("#"*27)
+        print("\n"*2)
 
         # Assume Linux (to be fixed later).
         include = PATH_PREFIX + sep + 'include' + sep + self.python
@@ -53,12 +53,12 @@ class Main:
 
         # Execute.
         for command in commands:
-            print command
+            print(command)
             system(command)
 
         # End print out.
-        print "\nDone"
-        print "\n"*4
+        print("\nDone")
+        print("\n"*4)
 
 
     def check_for_python(self):
@@ -70,11 +70,11 @@ class Main:
 
         # Does it exist.
         if not access(self.path, F_OK):
-            raise NameError, "The Python binary '%s' cannot be found." % self.path
+            raise NameError("The Python binary '%s' cannot be found." % self.path)
 
         # Executable.
         if not access(self.path, X_OK):
-            raise NameError, "The Python binary '%s' is not executable." % self.path
+            raise NameError("The Python binary '%s' is not executable." % self.path)
 
 
     def get_args(self):
@@ -82,11 +82,11 @@ class Main:
 
         # The Python version must be supplied.
         if len(argv) == 1:
-            raise NameError, "The Python version number must be supplied as the first argument."
+            raise NameError("The Python version number must be supplied as the first argument.")
 
         # No other args are allowed.
         if len(argv) > 2:
-            raise NameError, "Only the Python version number is allowed as an argument."
+            raise NameError("Only the Python version number is allowed as an argument.")
 
         # The python version.
         self.version = argv[1]

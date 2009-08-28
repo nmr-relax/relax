@@ -103,7 +103,7 @@ class Internal(Base_struct_API):
                 matching_names.append(mol.atom_name[i])
 
             # Return nothing but a warning.
-            return None, None, None, None, None, 'More than one attached atom found: ' + `matching_names`
+            return None, None, None, None, None, 'More than one attached atom found: ' + repr(matching_names)
 
         # No attached atoms.
         if num_attached == 0:
@@ -220,7 +220,7 @@ class Internal(Base_struct_API):
 
         # Check for empty files.
         if lines == []:
-            raise RelaxError, "The PDB file is empty."
+            raise RelaxError("The PDB file is empty.")
 
         # Init.
         model = None
@@ -233,7 +233,7 @@ class Internal(Base_struct_API):
                 try:
                     model = int(split(lines[i])[1])
                 except:
-                    raise RelaxError, "The MODEL record " + `lines[i]` + " is corrupt, cannot read the PDB file."
+                    raise RelaxError("The MODEL record " + repr(lines[i]) + " is corrupt, cannot read the PDB file.")
 
             # Skip all records prior to the first ATOM or HETATM record.
             if not (search('^ATOM', lines[i]) or search('^HETATM', lines[i])) and not len(records):
@@ -270,7 +270,7 @@ class Internal(Base_struct_API):
 
         # Check for empty records.
         if records == []:
-            raise RelaxError, "There are no PDB records for this model."
+            raise RelaxError("There are no PDB records for this model.")
 
         # Init.
         mol_num = 1
@@ -316,7 +316,7 @@ class Internal(Base_struct_API):
 
         # Check the other lengths.
         if len(struct.bonded) != num and len(struct.chain_id) != num and len(struct.element) != num and len(struct.pdb_record) != num and len(struct.res_name) != num and len(struct.res_num) != num and len(struct.seg_id) != num and len(struct.x) != num and len(struct.y) != num and len(struct.z) != num:
-            raise RelaxError, "The structural data is invalid."
+            raise RelaxError("The structural data is invalid.")
 
 
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
@@ -398,7 +398,7 @@ class Internal(Base_struct_API):
 
                             # Some sanity checks.
                             if mol.atom_num[i] != atom_num:
-                                raise RelaxError, "The loaded structures do not contain the same atoms.  The average structural properties can not be calculated."
+                                raise RelaxError("The loaded structures do not contain the same atoms.  The average structural properties can not be calculated.")
 
                             # Sum the atom positions.
                             pos = pos + array([mol.x[i], mol.y[i], mol.z[i]], float64)
@@ -500,7 +500,7 @@ class Internal(Base_struct_API):
 
                     # More than one matching atom!
                     if index != None:
-                        raise RelaxError, "The atom_id argument " + `atom_id` + " must correspond to a single atom."
+                        raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
 
                     # Update the index.
                     index = i
@@ -563,7 +563,7 @@ class Internal(Base_struct_API):
 
         # Initial print out.
         if verbosity:
-            print "\nInternal relax PDB parser."
+            print("\nInternal relax PDB parser.")
 
         # Test if the file exists.
         if not access(file_path, F_OK):
@@ -574,13 +574,13 @@ class Internal(Base_struct_API):
         path, file = os.path.split(file_path)
 
         # Convert the structure reading args into lists.
-        if read_mol and type(read_mol) != list:
+        if read_mol and not isinstance(read_mol, list):
             read_mol = [read_mol]
-        if set_mol_name and type(set_mol_name) != list:
+        if set_mol_name and not isinstance(set_mol_name, list):
             set_mol_name = [set_mol_name]
-        if read_model and type(read_model) != list:
+        if read_model and not isinstance(read_model, list):
             read_model = [read_model]
-        if set_model_num and type(set_model_num) != list:
+        if set_model_num and not isinstance(set_model_num, list):
             set_model_num = [set_model_num]
 
         # Loop over all models in the PDB file.
@@ -616,7 +616,7 @@ class Internal(Base_struct_API):
                             num_struct = len(model.mol)
 
                     # Set the name to the file name plus the structure number.
-                    new_mol_name.append(file_root(file) + '_mol' + `mol_num+num_struct`)
+                    new_mol_name.append(file_root(file) + '_mol' + repr(mol_num+num_struct))
 
                 # Store the original mol number.
                 orig_mol_num.append(mol_num)
@@ -676,10 +676,10 @@ class Internal(Base_struct_API):
         num_conect = 0
 
         # Print out.
-        print "\nCreating the PDB records\n"
+        print("\nCreating the PDB records\n")
 
         # Write some initial remarks.
-        print "REMARK"
+        print("REMARK")
         file.write("REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007\n")
         file.write("REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)\n")
         num_remark = 2
@@ -753,16 +753,16 @@ class Internal(Base_struct_API):
 
                         # The checks.
                         if het_data_coll[j][1] != het_data[index][i][1]:
-                            raise RelaxError, "The " + `het_data[index][i][1]` + " residue name of hetrogen " + `het_data[index][i][0]` + " " + het_data[index][i][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][1]` + " name of the previous structures."
+                            raise RelaxError("The " + repr(het_data[index][i][1]) + " residue name of hetrogen " + repr(het_data[index][i][0]) + " " + het_data[index][i][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][1]) + " name of the previous structures.")
 
                         elif het_data_coll[j][2] != het_data[index][i][2]:
-                            raise RelaxError, "The hetrogen chain id " + `het_data[index][i][2]` + " does not match " + `het_data_coll[j][2]` + " of residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of the previous structures."
+                            raise RelaxError("The hetrogen chain id " + repr(het_data[index][i][2]) + " does not match " + repr(het_data_coll[j][2]) + " of residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of the previous structures.")
 
                         elif het_data_coll[j][3] != het_data[index][i][3]:
-                            raise RelaxError, "The " + `het_data[index][i][3]` + " atoms of hetrogen " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " does not match the " + `het_data_coll[j][3]` + " of the previous structures."
+                            raise RelaxError("The " + repr(het_data[index][i][3]) + " atoms of hetrogen " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][3]) + " of the previous structures.")
 
                         elif het_data_coll[j][4] != het_data[index][i][4]:
-                            raise RelaxError, "The atom counts " + `het_data[index][i][4]` +  " for the hetrogen residue " + `het_data_coll[j][0]` + " " + het_data_coll[j][1] + " of structure " + `index` + " do not match the counts " + `het_data_coll[j][4]` + " of the previous structures."
+                            raise RelaxError("The atom counts " + repr(het_data[index][i][4]) +  " for the hetrogen residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " do not match the counts " + repr(het_data_coll[j][4]) + " of the previous structures.")
 
                 # If there is no match, add the new residue to the collective.
                 if not found:
@@ -776,7 +776,7 @@ class Internal(Base_struct_API):
         ##################
 
         # Print out.
-        print "HET"
+        print("HET")
 
         # Write the HET records.
         for het in het_data_coll:
@@ -787,7 +787,7 @@ class Internal(Base_struct_API):
         #####################
 
         # Print out.
-        print "HETNAM"
+        print("HETNAM")
 
         # Loop over the non-standard residues.
         residues = []
@@ -811,7 +811,7 @@ class Internal(Base_struct_API):
         #####################
 
         # Print out.
-        print "FORMUL"
+        print("FORMUL")
 
         # Loop over the non-standard residues and generate and write the chemical formula.
         residues = []
@@ -827,7 +827,7 @@ class Internal(Base_struct_API):
 
             # Loop over the atoms.
             for atom_count in het[4]:
-                formula = formula + atom_count[0] + `atom_count[1]`
+                formula = formula + atom_count[0] + repr(atom_count[1])
 
             # The FORMUL record (chemical formula).
             file.write("%-6s  %2s  %3s %2s%1s%-51s\n" % ('FORMUL', het[0], het[1], '', '', formula))
@@ -848,7 +848,7 @@ class Internal(Base_struct_API):
 
             if model_records:
                 # Print out.
-                print "\nMODEL %s" % model.num
+                print("\nMODEL %s" % model.num)
 
                 # Write the model record.
                 file.write("%-6s    %4i\n" % ('MODEL', model.num))
@@ -860,7 +860,7 @@ class Internal(Base_struct_API):
             # Loop over the molecules.
             for mol in model.mol:
                 # Print out.
-                print "ATOM, HETATM, TER"
+                print("ATOM, HETATM, TER")
 
                 # Loop over the atomic data.
                 for i in xrange(len(mol.atom_name)):
@@ -916,7 +916,7 @@ class Internal(Base_struct_API):
 
             if model_records:
                 # Print out.
-                print "ENDMDL"
+                print("ENDMDL")
 
                 # Write the model record.
                 file.write("%-6s\n" % 'ENDMDL')
@@ -926,7 +926,7 @@ class Internal(Base_struct_API):
         ############################
 
         # Print out.
-        print "CONECT"
+        print("CONECT")
 
         # Loop over the molecules of the first model.
         for mol in self.structural_data[0].mol:
@@ -981,7 +981,7 @@ class Internal(Base_struct_API):
         ################
 
         # Print out.
-        print "\nMASTER"
+        print("\nMASTER")
 
         # Write the MASTER record.
         file.write("%-6s    %5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s%5s\n" % ('MASTER', 0, 0, len(het_data_coll), 0, 0, 0, 0, 0, num_atom+num_hetatm, num_ter, num_conect, 0))
@@ -991,7 +991,7 @@ class Internal(Base_struct_API):
         ######
 
         # Print out.
-        print "END"
+        print("END")
 
         # Write the END record.
         file.write("END\n")
@@ -1077,7 +1077,7 @@ class MolContainer:
                 return j
 
         # Should not be here, the PDB connect records are incorrect.
-        warn(RelaxWarning("The atom number " + `atom_num` + " from the CONECT record cannot be found within the ATOM and HETATM records."))
+        warn(RelaxWarning("The atom number " + repr(atom_num) + " from the CONECT record cannot be found within the ATOM and HETATM records."))
 
 
     def __det_pdb_element(self, atom_name):
@@ -1104,7 +1104,7 @@ class MolContainer:
         }
 
         # Translate amino acids.
-        for key in table.keys():
+        for key in list(table.keys()):
             if element in table[key]:
                 element = key
                 break
@@ -1430,4 +1430,4 @@ class MolContainer:
         mol_element.setAttribute('name', str(self.mol_name))
 
         # Add all simple python objects within the MolContainer to the XML element.
-        fill_object_contents(doc, mol_element, object=self, blacklist=self.__class__.__dict__.keys())
+        fill_object_contents(doc, mol_element, object=self, blacklist=list(self.__class__.__dict__.keys()))

@@ -81,7 +81,7 @@ def determine_compression(file_path):
 
     # The file doesn't exist.
     else:
-        raise RelaxFileError, file_path
+        raise RelaxFileError(file_path)
 
     # Return the compression type.
     return compress_type, file_path
@@ -109,7 +109,7 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
     # Data not already extracted from the file.
     if not file_data:
         # Open the file.
-        if type(file) == str:
+        if isinstance(file, str):
             file = open_read_file(file_name=file, dir=dir)
 
         # Read lines.
@@ -192,9 +192,9 @@ def log(file_name=None, dir=None, verbosity=1):
 
     # Print out.
     if verbosity:
-        print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
-        print "Redirecting the sys.stdout IO stream to the log file '%s'." % file_path
-        print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
+        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
+        print("Redirecting the sys.stdout IO stream to the log file '%s'." % file_path)
+        print("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path)
 
     # Set the logging IO streams.
     log_stdout = log_file
@@ -224,7 +224,7 @@ def mkdir_nofail(dir=None, verbosity=1):
         makedirs(dir)
     except OSError:
         if verbosity:
-            print "Directory ." + sep + dir + " already exists.\n"
+            print("Directory ." + sep + dir + " already exists.\n")
 
 
 def open_read_file(file_name=None, dir=None, verbosity=1):
@@ -242,13 +242,13 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     """
 
     # A file descriptor object.
-    if type(file_name) == file:
+    if isinstance(file_name, file):
         # Nothing to do here!
         return file_name
 
     # Invalid file name.
-    if not file_name and type(file_name) != str:
-        raise RelaxError, "The file name " + `file_name` + " " + `type(file_name)` + " is invalid and cannot be opened."
+    if not file_name and not isinstance(file_name, str):
+        raise RelaxError("The file name " + repr(file_name) + " " + repr(type(file_name)) + " is invalid and cannot be opened.")
 
     # File path.
     file_path = get_file_path(file_name, dir)
@@ -259,18 +259,18 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     # Open the file for reading.
     try:
         if verbosity:
-            print "Opening the file " + `file_path` + " for reading."
+            print("Opening the file " + repr(file_path) + " for reading.")
         if compress_type == 0:
             file_obj = open(file_path, 'r')
         elif compress_type == 1:
             if dep_check.bz2_module:
                 file_obj = BZ2File(file_path, 'r')
             else:
-                raise RelaxError, "Cannot open the file " + `file_path` + ", try uncompressing first.  " + dep_check.bz2_module_message + "."
+                raise RelaxError("Cannot open the file " + repr(file_path) + ", try uncompressing first.  " + dep_check.bz2_module_message + ".")
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'r')
     except IOError, message:
-        raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
+        raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
     return file_obj
@@ -302,7 +302,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     """
 
     # A file descriptor object.
-    if type(file_name) == file:
+    if isinstance(file_name, file):
         # Nothing to do here!
         return file_name
 
@@ -315,11 +315,11 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     if search('devnull', file_name):
         # Devnull could not be imported!
         if not dep_check.devnull_import:
-            raise RelaxError, dep_check.devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4."
+            raise RelaxError(dep_check.devnull_import_message + ".  To use devnull, please upgrade to Python >= 2.4.")
 
         # Print out.
         if verbosity:
-            print "Opening the null device file for writing."
+            print("Opening the null device file for writing.")
 
         # Open the null device.
         file_obj = open(devnull, 'w')
@@ -353,12 +353,12 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
     # Fail if the file already exists and the force flag is set to 0.
     if access(file_path, F_OK) and not force:
-        raise RelaxFileOverwriteError, (file_path, 'force flag')
+        raise RelaxFileOverwriteError(file_path, 'force flag')
 
     # Open the file for writing.
     try:
         if verbosity:
-            print "Opening the file " + `file_path` + " for writing."
+            print("Opening the file " + repr(file_path) + " for writing.")
         if compress_type == 0:
             file_obj = open(file_path, 'w')
         elif compress_type == 1:
@@ -366,7 +366,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         elif compress_type == 2:
             file_obj = GzipFile(file_path, 'w')
     except IOError, message:
-        raise RelaxError, "Cannot open the file " + `file_path` + ".  " + message.args[1] + "."
+        raise RelaxError("Cannot open the file " + repr(file_path) + ".  " + message.args[1] + ".")
 
     # Return the opened file.
     if return_path:
@@ -430,9 +430,9 @@ def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
 
     # Print out.
     if verbosity:
-        print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
-        print "Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path
-        print "Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path
+        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
+        print("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path)
+        print("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path)
 
     # Set the tee IO streams.
     tee_stdout.split(stdout, tee_file)
@@ -461,11 +461,11 @@ def test_binary(binary):
     if search(path_sep, binary):
         # Test that the binary exists.
         if not access(binary, F_OK):
-            raise RelaxMissingBinaryError, binary
+            raise RelaxMissingBinaryError(binary)
 
         # Test that if the binary is executable.
         if not access(binary, X_OK):
-            raise RelaxNonExecError, binary
+            raise RelaxNonExecError(binary)
 
     # The path to the binary has not been given.
     else:
@@ -481,7 +481,7 @@ def test_binary(binary):
                 return
 
         # The binary is not located in the system path!
-        raise RelaxNoInPathError, binary
+        raise RelaxNoInPathError(binary)
 
 
 
@@ -514,7 +514,7 @@ class DummyFileObject:
 
         # Check if the file is closed.
         if self.closed:
-            raise ValueError, 'I/O operation on closed file'
+            raise ValueError('I/O operation on closed file')
 
         # Append the string to the data object.
         self.data = self.data + str
@@ -547,25 +547,25 @@ class IO:
         """Class containing the file operations.
 
         IO streams
-        ~~~~~~~~~~
+        ==========
 
         Standard python IO streams:
 
-        sys.stdin  = self.python_stdin
-        sys.stdout = self.python_stdout
-        sys.stderr = self.python_stderr
+            - sys.stdin  = self.python_stdin
+            - sys.stdout = self.python_stdout
+            - sys.stderr = self.python_stderr
 
         Logging IO streams:
 
-        sys.stdin  = self.log_stdin  = self.python_stdin
-        sys.stdout = self.log_stdout = self.log_file
-        sys.stderr = self.log_stdout = (self.python_stderr, self.log_file)
+            - sys.stdin  = self.log_stdin  = self.python_stdin
+            - sys.stdout = self.log_stdout = self.log_file
+            - sys.stderr = self.log_stdout = (self.python_stderr, self.log_file)
 
         Tee IO streams:
 
-        sys.stdin  = self.tee_stdin  = self.python_stdin
-        sys.stdout = self.tee_stdout = (self.python_stdout, self.tee_file)
-        sys.stderr = self.tee_stdout = (self.python_stderr, self.tee_file)
+            - sys.stdin  = self.tee_stdin  = self.python_stdin
+            - sys.stdout = self.tee_stdout = (self.python_stdout, self.tee_file)
+            - sys.stderr = self.tee_stdout = (self.python_stderr, self.tee_file)
         """
 
         self.relax = relax
@@ -600,7 +600,7 @@ class IO:
         elif access(file_path + '.gz', F_OK):
             file_path = file_path + '.gz'
         else:
-            raise RelaxFileError, file_path
+            raise RelaxFileError(file_path)
 
         # Remove the file.
         remove(file_path)
@@ -611,9 +611,9 @@ class IO:
 
         # Print out.
         if verbosity:
-            print "Redirecting the sys.stdin IO stream to the python stdin IO stream."
-            print "Redirecting the sys.stdout IO stream to the python stdout IO stream."
-            print "Redirecting the sys.stderr IO stream to the python stderr IO stream."
+            print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
+            print("Redirecting the sys.stdout IO stream to the python stdout IO stream.")
+            print("Redirecting the sys.stderr IO stream to the python stderr IO stream.")
 
         # IO stream redirection.
         sys.stdin  = self.python_stdin

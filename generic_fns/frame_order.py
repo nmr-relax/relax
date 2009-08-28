@@ -31,7 +31,7 @@ def print_frame_order_2nd_degree(matrix, name=None):
     """Nicely print out the Frame Order matrix of the 2nd degree.
 
     @param matrix:  The 3D, rank-4 Frame Order matrix.
-    @type name:     numpy 3D, rank-4 array
+    @type matrix:   numpy 3D, rank-4 array
     @keyword name:  The name of the matrix.
     @type name:     None or str
     """

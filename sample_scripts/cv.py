@@ -14,10 +14,10 @@ for i in xrange(len(pipes)):
     for j in xrange(len(ri_labels)):
         cv_pipes[i].append(pipes[i] + "_" + ri_labels[j] + "_" + frq_labels[j])
 
-print "\n\n\n\n"
-print "# Calibration set."
-print "##################"
-print "\n"
+print("\n\n\n\n")
+print("# Calibration set.")
+print("##################")
+print("\n")
 
 # Loop over the pipes for single-item-out cross-validation.
 for i in xrange(len(pipes)):
@@ -56,10 +56,10 @@ for i in xrange(len(pipes)):
         results.write(force=True)
 
 
-print "\n\n\n\n"
-print "# Validation set."
-print "#################"
-print "\n"
+print("\n\n\n\n")
+print("# Validation set.")
+print("#################")
+print("\n")
 
 # Load all the pipes.
 for i in xrange(len(pipes)):
@@ -81,18 +81,18 @@ for i in xrange(len(pipes)):
         calc()
 
 
-print "\n\n\n\n"
-print "# Model selection."
-print "##################"
-print "\n"
+print("\n\n\n\n")
+print("# Model selection.")
+print("##################")
+print("\n")
 
 model_selection('CV', 'cv', cv_pipes)
 
 
-print "\n\n\n\n"
-print "# Final minimisation using all relaxation data."
-print "###############################################"
-print "\n"
+print("\n\n\n\n")
+print("# Final minimisation using all relaxation data.")
+print("###############################################")
+print("\n")
 
 # Switch to the 'cv' data pipe.
 pipe.switch('cv')

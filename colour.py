@@ -51,7 +51,7 @@ def linear_gradient(value, start, end, colour_list=None):
     """
 
     # Translate the end colour to RGB arrays if necessary.
-    if type(start) == str:
+    if isinstance(start, str):
         # Default (search the molmol list then the X11 list).
         if colour_list == None:
             try:
@@ -68,7 +68,7 @@ def linear_gradient(value, start, end, colour_list=None):
             start = x11_colours(start)
 
     # Translate the end colour to RGB arrays if necessary.
-    if type(end) == str:
+    if isinstance(end, str):
         # Default (search the molmol list then the X11 list).
         if colour_list == None:
             try:
@@ -148,8 +148,8 @@ def molmol_colours(name):
         colours[key] = array(colours[key], float64)
 
     # Invalid colour string.
-    if not colours.has_key(name):
-        raise RelaxInvalidColourError, name
+    if name not in colours:
+        raise RelaxInvalidColourError(name)
 
     # Return the RGB colour array.
     return colours[name]
@@ -768,8 +768,8 @@ def x11_colours(name):
     colours['light green']              = [144, 238, 144]
 
     # Invalid colour string.
-    if not colours.has_key(name):
-        raise RelaxInvalidColourError, name
+    if name not in colours:
+        raise RelaxInvalidColourError(name)
 
     # Return the RGB colour array (in numpy format and between 0 and 1).
     return array(colours[name], float64) / 255.

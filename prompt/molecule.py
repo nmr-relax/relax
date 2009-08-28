@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2009 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule
-from relax_errors import RelaxIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Molecule:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating the residue data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Molecule(User_fn_class):
+    """Class for manipulating the residue data."""
 
     def copy(self, pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
         """Function for copying all data associated with a molecule.
@@ -88,27 +78,17 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", mol_from=" + `mol_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", mol_to=" + `mol_to` + ")"
-            print text
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", mol_from=" + repr(mol_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", mol_to=" + repr(mol_to) + ")"
+            print(text)
 
-        # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
-
-        # The molecule from argument.
-        if type(mol_from) != str:
-            raise RelaxStrError, ('molecule from', mol_from)
-
-        # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
-
-        # The molecule to argument.
-        if mol_to != None and type(mol_to) != str:
-            raise RelaxNoneStrError, ('molecule to', mol_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(mol_from, 'molecule from')
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        check.is_str(mol_to, 'molecule to', can_be_none=True)
 
         # Execute the functional code.
         copy_molecule(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
@@ -143,12 +123,11 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.create("
-            text = text + "mol_name=" + `mol_name` + ")"
-            print text
+            text = text + "mol_name=" + repr(mol_name) + ")"
+            print(text)
 
-        # Molecule name.
-        if type(mol_name) != str:
-            raise RelaxStrError, ('molecule name', mol_name)
+        # The argument checks.
+        check.is_str(mol_name, 'molecule name')
 
         # Execute the functional code.
         create_molecule(mol_name=mol_name)
@@ -172,12 +151,11 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.delete("
-            text = text + "mol_id=" + `mol_id` + ")"
-            print text
+            text = text + "mol_id=" + repr(mol_id) + ")"
+            print(text)
 
-        # The molecule identifier argument.
-        if type(mol_id) != str:
-            raise RelaxStrError, ('molecule identifier', mol_id)
+        # The argument checks.
+        check.is_str(mol_id, 'molecule identification string')
 
         # Execute the functional code.
         delete_molecule(mol_id=mol_id)
@@ -195,12 +173,11 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.display("
-            text = text + "mol_id=" + `mol_id` + ")"
-            print text
+            text = text + "mol_id=" + repr(mol_id) + ")"
+            print(text)
 
-        # The molecule identifier argument.
-        if mol_id != None and type(mol_id) != str:
-            raise RelaxNoneStrError, ('molecule identifier', mol_id)
+        # The argument checks.
+        check.is_str(mol_id, 'molecule identification string', can_be_none=True)
 
         # Execute the functional code.
         display_molecule(mol_id=mol_id)
@@ -239,22 +216,15 @@ class Molecule:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "molecule.name("
-            text = text + "mol_id=" + `mol_id`
-            text = text + ", name=" + `name`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "mol_id=" + repr(mol_id)
+            text = text + ", name=" + repr(name)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Residue identification string.
-        if mol_id != None and type(mol_id) != str:
-            raise RelaxNoneStrError, ('molecule identification string', mol_id)
-
-        # New molecule name.
-        if type(name) != str:
-            raise RelaxStrError, ('new molecule name', name)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        check.is_str(name, 'new molecule name')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         name_molecule(mol_id=mol_id, name=name, force=force)

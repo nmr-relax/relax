@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from specific_fns.setup import frame_order_obj
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 
 
-class Frame_order:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class containing the user functions of the Frame Order theories."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Frame_order(User_fn_class):
+    """Class containing the user functions of the Frame Order theories."""
 
     def cone_pdb(self, size=30.0, inc=40, file='cone.pdb', dir=None, force=False):
         """Create a PDB file representing the Frame Order cone models.
@@ -90,32 +80,19 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.cone_pdb("
-            text = text + "size=" + `size`
-            text = text + ", inc=" + `inc`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "size=" + repr(size)
+            text = text + ", inc=" + repr(inc)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Object size.
-        if type(size) != float and type(size) != int:
-            raise RelaxNumError, ('geometric object size', size)
-
-        # Increment number.
-        if type(inc) != int:
-            raise RelaxIntError, ('increment number', inc)
-
-        # File name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_num(size, 'geometric object size')
+        check.is_int(inc, 'increment number')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         frame_order_obj.cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
@@ -143,17 +120,11 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.pivot("
-            text = text + "pivot=" + `pivot` + ")"
-            print text
+            text = text + "pivot=" + repr(pivot) + ")"
+            print(text)
 
-        # Pivot point argument.
-        if type(pivot) != list:
-            raise RelaxListError, ('pivot point', pivot)
-        if len(pivot) != 3:
-            raise RelaxLenError, ('pivot point', 3)
-        for i in xrange(len(pivot)):
-            if type(pivot[i]) != int and type(pivot[i]) != float:
-                raise RelaxListNumError, ('pivot point', pivot)
+        # The argument checks.
+        check.is_num_list(pivot_point, 'pivot point', size=3)
 
         # Execute the functional code.
         frame_order_obj.pivot(pivot=pivot)
@@ -188,15 +159,14 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.ref_domain("
-            text = text + "ref=" + `ref` + ")"
-            print text
+            text = text + "ref=" + repr(ref) + ")"
+            print(text)
 
-        # Ref frame argument.
-        if type(ref) != str:
-            raise RelaxStrError, ('reference frame', ref)
+        # The argument checks.
+        check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
-        frame_order.ref_domain(ref=ref)
+        frame_order_obj.ref_domain(ref=ref)
 
 
     def select_model(self, model=None):
@@ -228,12 +198,11 @@ class Frame_order:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "frame_order.select_model("
-            text = text + "model=" + `model` + ")"
-            print text
+            text = text + "model=" + repr(model) + ")"
+            print(text)
 
-        # Model argument.
-        if type(model) != str:
-            raise RelaxStrError, ('model', model)
+        # The argument checks.
+        check.is_str(model, 'Frame Order model')
 
         # Execute the functional code.
         frame_order_obj.select_model(model=model)

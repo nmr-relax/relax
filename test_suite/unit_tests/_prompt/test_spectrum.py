@@ -191,13 +191,8 @@ class Test_spectrum(TestCase):
             if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'int list':
                 continue
 
-            # Catch all list arguments.
-            if type(data[1]) == list:
-                self.assertRaises(RelaxListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
-
-            # All other arguments.
-            else:
-                self.assertRaises(RelaxNoneIntListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
+            # The argument test.
+            self.assertRaises(RelaxNoneIntListIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_col=data[1])
 
 
     def test_read_intensities_argfail_int_method(self):

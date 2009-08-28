@@ -63,11 +63,11 @@ class Results:
 
         # Can't determine the file version.
         else:
-            raise RelaxError, "Cannot determine the relax version the model-free results file belongs to."
+            raise RelaxError("Cannot determine the relax version the model-free results file belongs to.")
 
         # Print out.
         if verbosity:
-            print "relax " + version + " model-free results file."
+            print("relax " + version + " model-free results file.")
 
         # Return the version.
         return version
@@ -117,10 +117,10 @@ class Results:
 
         # Print out.
         if verbosity >= 2:
-            print "\nFixing parameters based on the model type."
-            print "Model type: " + model_type
-            print "Diffusion tensor fixed: " + `diff_fixed`
-            print "Model-free parameters fixed: " + `mf_fixed`
+            print("\nFixing parameters based on the model type.")
+            print("Model type: " + model_type)
+            print("Diffusion tensor fixed: " + repr(diff_fixed))
+            print("Model-free parameters fixed: " + repr(mf_fixed))
 
         # Set the diffusion tensor fixed flag.
         if model_type != 'local_tm' and diff_fixed != None:
@@ -145,7 +145,7 @@ class Results:
         """
 
         # The spin info (for relax 1.2).
-        if col.has_key('num'):
+        if 'num' in col:
             mol_name = None
             res_num = int(spin_line[col['num']])
             res_name = spin_line[col['name']]
@@ -187,7 +187,7 @@ class Results:
         """
 
         # The spin info (for relax 1.2).
-        if col.has_key('num'):
+        if 'num' in col:
             mol_name = None
             res_num = int(spin_line[col['num']])
             res_name = spin_line[col['name']]
@@ -639,7 +639,7 @@ class Results:
 
         # Generate the sequence.
         if verbosity:
-            print "\nGenerating the sequence."
+            print("\nGenerating the sequence.")
         for file_line in file_data:
             # The data set.
             data_set = file_line[col['data_set']]
@@ -681,7 +681,7 @@ class Results:
                 try:
                     sim_num = int(sim_num[1])
                 except:
-                    raise RelaxError, "The simulation number '%s' is invalid." % sim_num
+                    raise RelaxError("The simulation number '%s' is invalid." % sim_num)
 
                 # A new simulation number.
                 if sim_num not in sims:
@@ -695,9 +695,9 @@ class Results:
                 # Initial print out for the simulation.
                 if verbosity:
                     if diff_sim_set == None:
-                        print "\nLoading simulations."
+                        print("\nLoading simulations.")
                     if sim_num != diff_sim_set:
-                        print data_set
+                        print(data_set)
 
             # Diffusion tensor data.
             if data_set == 'value' and not diff_data_set:
@@ -893,8 +893,8 @@ class Results:
 
         # Print out.
         if diff_type and data_set == 'value' and verbosity:
-            print "\nSetting the diffusion tensor."
-            print "Diffusion type: " + diff_type
+            print("\nSetting the diffusion tensor.")
+            print("Diffusion type: " + diff_type)
 
         # Sphere.
         if diff_type == 'sphere':
@@ -907,7 +907,7 @@ class Results:
                     return
 
                 # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
+                raise RelaxError("The diffusion tensor parameters are not numbers.")
 
             # Values.
             if data_set == 'value':
@@ -941,7 +941,7 @@ class Results:
                     return
 
                 # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
+                raise RelaxError("The diffusion tensor parameters are not numbers.")
 
             # Values.
             if data_set == 'value':
@@ -989,7 +989,7 @@ class Results:
                     return
 
                 # Genuine error.
-                raise RelaxError, "The diffusion tensor parameters are not numbers."
+                raise RelaxError("The diffusion tensor parameters are not numbers.")
 
             # Values.
             if data_set == 'value':
@@ -1061,7 +1061,7 @@ class Results:
             try:
                 xh_vect = array(xh_vect, float64)
             except:
-                raise RelaxError, "The XH unit vector " + spin_line[col['xh_vect']] + " is invalid."
+                raise RelaxError("The XH unit vector " + spin_line[col['xh_vect']] + " is invalid.")
 
             # Set the vector.
             spin.xh_vect = xh_vect

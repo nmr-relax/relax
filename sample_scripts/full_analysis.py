@@ -232,7 +232,7 @@ class Main:
         elif DIFF_MODEL == 'sphere' or DIFF_MODEL == 'prolate' or DIFF_MODEL == 'oblate' or DIFF_MODEL == 'ellipsoid':
             # Loop until convergence if CONV_LOOP is set, otherwise just loop once.
             # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
-            while 1:
+            while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=DIFF_MODEL)
 
@@ -288,7 +288,7 @@ class Main:
                 # Normal round of optimisation for diffusion models MII to MV.
                 else:
                     # Base directory to place files into.
-                    self.base_dir = DIFF_MODEL + sep+'round_'+`self.round`+sep
+                    self.base_dir = DIFF_MODEL + sep+'round_'+repr(self.round)+sep
 
                     # Load the optimised diffusion tensor from either the previous round.
                     self.load_tensor()
@@ -346,13 +346,13 @@ class Main:
                         name = name + ' spheroid'
 
                     # Throw an error to prevent misuse of the script.
-                    raise RelaxError, "Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script."
+                    raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
 
                 # Create the data pipe.
                 pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
-                results.read(file='results', dir=model + sep+'round_'+`self.round`+sep+'opt')
+                results.read(file='results', dir=model + sep+'round_'+repr(self.round)+sep+'opt')
 
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
@@ -384,7 +384,7 @@ class Main:
         ###########################
 
         else:
-            raise RelaxError, "Unknown diffusion model, change the value of 'DIFF_MODEL'"
+            raise RelaxError("Unknown diffusion model, change the value of 'DIFF_MODEL'")
 
 
     def convergence(self):
@@ -395,10 +395,10 @@ class Main:
         prev_pipe = pipes.get_pipe('previous')
 
         # Print out.
-        print "\n\n\n"
-        print "#####################"
-        print "# Convergence tests #"
-        print "#####################\n\n"
+        print("\n\n\n")
+        print("#####################")
+        print("# Convergence tests #")
+        print("#####################\n\n")
 
         # Convergence flags.
         chi2_converged = True
@@ -409,23 +409,23 @@ class Main:
         # Chi-squared test.
         ###################
 
-        print "Chi-squared test:"
-        print "    chi2 (k-1):          " + `prev_pipe.chi2`
-        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
-        print "    chi2 (k):            " + `cdp.chi2`
-        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
-        print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
+        print("Chi-squared test:")
+        print("    chi2 (k-1):          " + repr(prev_pipe.chi2))
+        print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_pipe.chi2)) + ')')
+        print("    chi2 (k):            " + repr(cdp.chi2))
+        print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(cdp.chi2)) + ')')
+        print("    chi2 (difference):   " + repr(prev_pipe.chi2 - cdp.chi2))
         if prev_pipe.chi2 == cdp.chi2:
-            print "    The chi-squared value has converged.\n"
+            print("    The chi-squared value has converged.\n")
         else:
-            print "    The chi-squared value has not converged.\n"
+            print("    The chi-squared value has not converged.\n")
             chi2_converged = False
 
 
         # Identical model-free model test.
         ##################################
 
-        print "Identical model-free models test:"
+        print("Identical model-free models test:")
 
         # Create a string representation of the model-free models of the previous data pipe.
         prev_models = ''
@@ -443,16 +443,16 @@ class Main:
 
         # The test.
         if prev_models == curr_models:
-            print "    The model-free models have converged.\n"
+            print("    The model-free models have converged.\n")
         else:
-            print "    The model-free models have not converged.\n"
+            print("    The model-free models have not converged.\n")
             models_converged = False
 
 
         # Identical parameter value test.
         #################################
 
-        print "Identical parameter test:"
+        print("Identical parameter test:")
 
         # Only run the tests if the model-free models have converged.
         if models_converged:
@@ -472,12 +472,12 @@ class Main:
 
                 # Test if not identical.
                 if prev_val != curr_val:
-                    print "    Parameter:   " + param
-                    print "    Value (k-1): " + `prev_val`
-                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                    print "    Value (k):   " + `curr_val`
-                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
-                    print "    The diffusion parameters have not converged.\n"
+                    print("    Parameter:   " + param)
+                    print("    Value (k-1): " + repr(prev_val))
+                    print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')')
+                    print("    Value (k):   " + repr(curr_val))
+                    print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(curr_val)) + ')')
+                    print("    The diffusion parameters have not converged.\n")
                     params_converged = False
 
             # Skip the rest if the diffusion tensor parameters have not converged.
@@ -507,35 +507,35 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin ID:     " + `spin_id`
-                            print "    Parameter:   " + curr_spin.params[j]
-                            print "    Value (k-1): " + `prev_val`
-                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                            print "    Value (k):   " + `curr_val`
-                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                            print "    The model-free parameters have not converged.\n"
+                            print("    Spin ID:     " + repr(spin_id))
+                            print("    Parameter:   " + curr_spin.params[j])
+                            print("    Value (k-1): " + repr(prev_val))
+                            print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')')
+                            print("    Value (k):   " + repr(curr_val))
+                            print("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')')
+                            print("    The model-free parameters have not converged.\n")
                             params_converged = False
                             break
 
         # The model-free models haven't converged hence the parameter values haven't converged.
         else:
-            print "    The model-free models haven't converged hence the parameters haven't converged.\n"
+            print("    The model-free models haven't converged hence the parameters haven't converged.\n")
             params_converged = False
 
         # Print out.
         if params_converged:
-            print "    The diffusion tensor and model-free parameters have converged.\n"
+            print("    The diffusion tensor and model-free parameters have converged.\n")
 
 
         # Final print out.
         ##################
 
-        print "\nConvergence:"
+        print("\nConvergence:")
         if chi2_converged and models_converged and params_converged:
-            print "    [ Yes ]"
+            print("    [ Yes ]")
             return True
         else:
-            print "    [ No ]"
+            print("    [ No ]")
             return False
 
 
@@ -589,7 +589,7 @@ class Main:
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('results', DIFF_MODEL + sep+'round_'+`self.round-1`+sep+'opt')
+            results.read('results', DIFF_MODEL + sep+'round_'+repr(self.round-1)+sep+'opt')
 
 
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):

@@ -45,7 +45,7 @@ def exec_stage_1(pipes):
     # Loop over the data pipes.
     for name in pipes:
         # Create the data pipe.
-        print "\n\n# " + name + " #"
+        print("\n\n# " + name + " #")
         pipe.create(name, 'mf')
 
         # Load the sequence.
@@ -91,7 +91,7 @@ def exec_stage_2(pipes):
     state.load('stage1.save')
 
     # Print out.
-    print "\n\nLoading all the Modelfree 4 data."
+    print("\n\nLoading all the Modelfree 4 data.")
 
     # Loop over the data pipes.
     for name in pipes:
@@ -102,7 +102,7 @@ def exec_stage_2(pipes):
         palmer.extract(dir=name)
 
     # Print out.
-    print "\n\nModel selection."
+    print("\n\nModel selection.")
 
     # Model selection.
     model_selection(method='AIC', modsel_pipe='aic')
@@ -153,6 +153,6 @@ elif STAGE == 2:
 elif STAGE == 3:
     exec_stage_3()
 else:
-    raise RelaxError, "The stage value, which is set to " + `stage` + ", should be either 1, 2, or 3."
+    raise RelaxError("The stage value, which is set to " + repr(stage) + ", should be either 1, 2, or 3.")
 
 # Either repeat all the above with the optimised diffusion tensor or run Monte Carlo simulations on the final results.

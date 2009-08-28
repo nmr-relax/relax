@@ -49,8 +49,8 @@ def copy(pipe_from=None, pipe_to=None):
     """
 
     # Test if the pipe already exists.
-    if pipe_to in ds.keys():
-        raise RelaxPipeError, pipe_to
+    if pipe_to in list(ds.keys()):
+        raise RelaxPipeError(pipe_to)
 
     # The current data pipe.
     if pipe_from == None:
@@ -90,11 +90,11 @@ def create(pipe_name=None, pipe_type=None, switch=True):
 
     # Test if pipe_type is valid.
     if not pipe_type in valid:
-        raise RelaxError, "The data pipe type " + `pipe_type` + " is invalid and must be one of the strings in the list " + `valid` + "."
+        raise RelaxError("The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(valid) + ".")
 
     # Test that the C modules have been loaded.
     if pipe_type == 'relax_fit' and not C_module_exp_fn:
-        raise RelaxError, "Relaxation curve fitting is not available.  Try compiling the C modules on your platform."
+        raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
 
     # Add the data pipe.
     ds.add(pipe_name=pipe_name, pipe_type=pipe_type)
@@ -127,6 +127,17 @@ def delete(pipe_name=None):
     # Set the current data pipe to None if it is the deleted data pipe.
     if ds.current_pipe == pipe_name:
         ds.current_pipe = None
+
+
+def display():
+    """Print the details of all the data pipes."""
+
+    # Heading.
+    print("%-20s%-20s" % ("Data pipe name", "Data pipe type"))
+
+    # Loop over the data pipes.
+    for pipe_name in ds:
+        print("%-20s%-20s" % (pipe_name, get_type(pipe_name)))
 
 
 def get_pipe(name=None):
@@ -178,21 +189,10 @@ def has_pipe(name):
     """
 
     # Check.
-    if ds.has_key(name):
+    if name in ds:
         return True
     else:
         return False
-
-
-def list():
-    """Print the details of all the data pipes."""
-
-    # Heading.
-    print "%-20s%-20s" % ("Data pipe name", "Data pipe type")
-
-    # Loop over the data pipes.
-    for pipe_name in ds:
-        print "%-20s%-20s" % (pipe_name, get_type(pipe_name))
 
 
 def pipe_loop(name=False):
@@ -205,7 +205,7 @@ def pipe_loop(name=False):
     """
 
     # Loop over the keys.
-    for key in ds.keys():
+    for key in list(ds.keys()):
         # Return the pipe and name.
         if name:
             yield ds[key], key
@@ -222,7 +222,7 @@ def pipe_names():
     @rtype:         list of str
     """
 
-    return ds.keys()
+    return list(ds.keys())
 
 
 def switch(pipe_name=None):
@@ -258,6 +258,6 @@ def test(pipe_name=None):
             raise RelaxNoPipeError
 
     # Test if the data pipe exists.
-    if not ds.has_key(pipe_name):
-        raise RelaxNoPipeError, pipe_name
+    if pipe_name not in ds:
+        raise RelaxNoPipeError(pipe_name)
 

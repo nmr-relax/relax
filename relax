@@ -108,7 +108,7 @@ class Relax:
 
         # Show the version number and exit.
         if self.mode == 'version':
-            print 'relax ' + self.version
+            print('relax ' + self.version)
             sys.exit()
 
         # Logging.
@@ -205,7 +205,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(log_file, F_OK):
-                parser.error("the log file " + `log_file` + " already exists")
+                parser.error("the log file " + repr(log_file) + " already exists")
         else:
             self.log_file = None
 
@@ -220,7 +220,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(tee_file, F_OK):
-                parser.error("the tee file " + `tee_file` + " already exists")
+                parser.error("the tee file " + repr(tee_file) + " already exists")
         else:
             self.tee_file = None
 
@@ -235,7 +235,7 @@ class Relax:
 
             # Test if the script file exists.
             if not access(self.script_file, F_OK):
-                parser.error("the script file " + `self.script_file` + " does not exist")
+                parser.error("the script file " + repr(self.script_file) + " does not exist")
 
         # Set the multi-processor type and number.
         self.multiprocessor_type = options.multiprocessor
@@ -412,7 +412,7 @@ class RelaxParser(OptionParser):
 
         # Raise a clean error.
         try:
-            raise relax_errors.RelaxError, message
+            raise relax_errors.RelaxError(message)
         except relax_errors.AllRelaxErrors, instance:
             sys.stderr.write(instance.__str__())
 

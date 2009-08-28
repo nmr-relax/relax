@@ -139,7 +139,7 @@ def get_module_relative_path(package_path, module_name, root_paths=None):
         root_path = segment_path(os.path.abspath(root_path))
 
         # Catch if the package path has already been converted to a segment list.
-        if type(package_path) != list:
+        if not isinstance(package_path, list):
             package_path = segment_path(os.path.abspath(package_path))
 
         common_prefix = get_common_prefix(root_path, package_path)
@@ -368,7 +368,7 @@ class Test_finder:
         @rtype:     TestSuite instance
         '''
 
-        print self.root_path
+        print(self.root_path)
         self.suite = unittest.TestSuite()
         suite_dictionary = {'':self.suite}
         for (dir_path, dir_names, file_names) in os.walk(self.root_path):
@@ -506,9 +506,9 @@ class Unit_test_runner(object):
 
         if (search_for_root_path) == True or (search_for_unit_test_path == True):
             if verbose:
-                print 'searching for paths'
-                print '-------------------'
-                print ''
+                print('searching for paths')
+                print('-------------------')
+                print('')
 
          # find system directories or leave it for someone else as needed
         if search_for_root_path:
@@ -522,7 +522,7 @@ class Unit_test_runner(object):
                 raise Exception("can't find system directory start from %s" % root_path)
             else:
                 if verbose:
-                    print 'search for system directory found:    %s' % self.system_directory
+                    print('search for system directory found:    %s' % self.system_directory)
         else:
             self.system_directory = None
 
@@ -534,14 +534,14 @@ class Unit_test_runner(object):
                 raise Exception("can't find unit test directory start from %s" % root_path)
             else:
                 if verbose:
-                    print 'search for unit test directory found: %s' % self.unit_test_directory
+                    print('search for unit test directory found: %s' % self.unit_test_directory)
         else:
 
             self.unit_test_directory = None
 
         if (search_for_root_path) == True or (search_for_unit_test_path == True):
             if verbose:
-                print ''
+                print('')
 
         #deal with test_module
         if test_module == None:
@@ -706,20 +706,20 @@ class Unit_test_runner(object):
             raise Exception(msg % ('system_directory', 'system', 'root'))
 
 
-        print 'testing units...'
-        print '----------------'
-        print
+        print('testing units...')
+        print('----------------')
+        print('')
 
 
         module_paths = self.paths_from_test_module(self.test_module)
         if self.verbose:
-            print 'root path:          ', self.root_path
-            print 'system directory:   ', self.system_directory
-            print 'unit test directory:', self.unit_test_directory
-            print ''
+            print('root path:          ', self.root_path)
+            print('system directory:   ', self.system_directory)
+            print('unit test directory:', self.unit_test_directory)
+            print('')
             for i,elem in enumerate(module_paths):
-                print 'module path %d:  %s'  % (i,elem)
-            print ''
+                print('module path %d:  %s'  % (i,elem))
+            print('')
 
 
         # add SystemDirectory to python path
@@ -744,16 +744,16 @@ class Unit_test_runner(object):
 
         if tests == None:
             for module_path in module_paths:
-                print module_path
+                print(module_path)
                 path_len = len(module_path)
                 if path_len <= 1:
                     continue
                 elif path_len == 2:
 
-                    print 'trying to load 2: ',  module_path[0], module_path[1]
+                    print('trying to load 2: ',  module_path[0], module_path[1])
                     tests=load_test_case('', module_path[0], module_path[1])
                 else:
-                    print 'trying to load 3: ', os.path.join(*module_path[:-2]), module_path[-2], module_path[-1]
+                    print('trying to load 3: ', os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
                     tests=load_test_case(os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
                 if tests != None:
                     break
@@ -763,9 +763,9 @@ class Unit_test_runner(object):
 
 
         if self.verbose:
-            print 'results'
-            print '-------'
-            print ''
+            print('results')
+            print('-------')
+            print('')
 
         # Run the unit tests and catch the TestResult object.
         if tests != None and tests.countTestCases() != 0:
@@ -776,11 +776,11 @@ class Unit_test_runner(object):
         elif tests == None:
             results=None
             result_string = 'Error: no test directories found for input module: %s' % self.test_module
-            print result_string
+            print(result_string)
         else:
             results=None
             result_string = 'note: no tests found for input module: %s' % self.test_module
-            print result_string
+            print(result_string)
 
         #Return the result of all the tests.
         return result_string
@@ -841,17 +841,17 @@ if __name__ == '__main__':
 
     if options.system_directory != None:
         if not os.path.exists(options.system_directory):
-            print "The path to the system directory doeesn't exist"
-            print "provided path: %s" % options.system_directory
-            print "exiting..."
+            print("The path to the system directory doeesn't exist")
+            print("provided path: %s" % options.system_directory)
+            print("exiting...")
             sys.exit(0)
         search_system=False
 
     if options.unit_test_directory != None:
         if not os.path.exists(options.unit_test_directory):
-            print "The path to the system directory doeesn't exist"
-            print "provided path: %s" % options.unit_test_directory
-            print "exiting..."
+            print("The path to the system directory doeesn't exist")
+            print("provided path: %s" % options.unit_test_directory)
+            print("exiting...")
             sys.exit(0)
         search_unit=False
 
