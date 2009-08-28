@@ -626,6 +626,10 @@ class Frame_order(Common_functions):
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
+        # Constraints not implemented yet.
+        if constraints:
+            raise RelaxError("Constraints are as of yet not implemented.")
+
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # The initial parameter vector (the cone axis angles and the cone angle).
