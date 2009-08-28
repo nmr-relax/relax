@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.diffusion_tensor import Diffusion_tensor
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxNumError, RelaxNumTupleNumError, RelaxStrError
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 # Unit test imports.
@@ -84,17 +84,12 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
             # Catch the tuple arguments.
             if data[0] == 'tuple' or data[0] == 'float tuple' or data[0] == 'str tuple':
-                # Incorrect tuple length.
-                if len(data[1]) != 4 and len(data[1]) != 6:
-                    self.assertRaises(RelaxError, self.diffusion_tensor_fns.init, params=data[1])
-
-                # Must be a number.
-                elif data[0] != 'float tuple':
-                    self.assertRaises(RelaxNumTupleError, self.diffusion_tensor_fns.init, params=data[1])
+                # Correct tuple length.
+                if len(data[1]) == 4 or len(data[1]) == 6:
+                    continue
 
             # The argument test.
-            else:
-                self.assertRaises(RelaxNumTupleError, self.diffusion_tensor_fns.init, params=data[1])
+            self.assertRaises(RelaxNumTupleNumError, self.diffusion_tensor_fns.init, params=data[1])
 
 
     def test_init_argfail_time_scale(self):
@@ -102,12 +97,12 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float argument, and skip it.
-            if data[0] == 'float':
+            # Catch the number arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFloatError, self.diffusion_tensor_fns.init, params=1e-9, time_scale=data[1])
+            self.assertRaises(RelaxNumError, self.diffusion_tensor_fns.init, params=1e-9, time_scale=data[1])
 
 
     def test_init_argfail_d_scale(self):
@@ -115,12 +110,12 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float argument, and skip it.
-            if data[0] == 'float':
+            # Catch the number arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFloatError, self.diffusion_tensor_fns.init, params=1e-9, d_scale=data[1])
+            self.assertRaises(RelaxNumError, self.diffusion_tensor_fns.init, params=1e-9, d_scale=data[1])
 
 
     def test_init_argfail_angle_units(self):

@@ -254,7 +254,7 @@ def get_specific_fn(eqi, function_type, raise_error=True):
     # Raise an error if the function doesn't exist.
     if raise_error and function == None:
         # Raise the error.
-        raise RelaxFuncSetupError, get_string(function_type)
+        raise RelaxFuncSetupError(get_string(function_type))
 
     # Return the function.
     return function
@@ -296,7 +296,7 @@ def get_instance(function_type):
         return hybrid_obj
 
     # Unknown analysis.
-    raise RelaxError, "The function_type " + `function_type` + " is unknown."
+    raise RelaxError("The function_type " + repr(function_type) + " is unknown.")
 
 
 def get_string(function_type):
@@ -335,4 +335,4 @@ def get_string(function_type):
         return "hybrid models"
 
     # Unknown analysis.
-    raise RelaxError, "The function_type " + `function_type` + " is unknown."
+    raise RelaxError("The function_type " + repr(function_type) + " is unknown.")

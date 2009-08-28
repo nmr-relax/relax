@@ -135,7 +135,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Simulation data.
     else:
         # Create the data structure if necessary.
-        if not hasattr(spin, 'relax_sim_data') or type(spin.relax_sim_data) != list:
+        if not hasattr(spin, 'relax_sim_data') or not isinstance(spin.relax_sim_data, list):
             spin.relax_sim_data = []
 
         # Append the simulation's relaxation data.
@@ -165,7 +165,7 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
 
     # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
     if test_labels(ri_label, frq_label):
-        raise RelaxRiError, (ri_label, frq_label)
+        raise RelaxRiError(ri_label, frq_label)
 
 
     # Global (non-residue specific) data.
@@ -326,7 +326,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -372,11 +372,11 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     else:
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
         if not test_labels(ri_label, frq_label, pipe=pipe_from):
-            raise RelaxNoRiError, (ri_label, frq_label)
+            raise RelaxNoRiError(ri_label, frq_label)
 
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
         if not test_labels(ri_label, frq_label, pipe=pipe_to):
-            raise RelaxRiError, (ri_label, frq_label)
+            raise RelaxRiError(ri_label, frq_label)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -525,7 +525,7 @@ def delete(ri_label=None, frq_label=None):
 
     # Test if data corresponding to 'ri_label' and 'frq_label' exists.
     if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError, (ri_label, frq_label)
+        raise RelaxNoRiError(ri_label, frq_label)
 
     # Loop over the spins.
     for spin in spin_loop():
@@ -589,7 +589,7 @@ def display(ri_label=None, frq_label=None):
 
     # Test if data corresponding to 'ri_label' and 'frq_label' exists.
     if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError, (ri_label, frq_label)
+        raise RelaxNoRiError(ri_label, frq_label)
 
     # Print the data.
     value.write_data(param=(ri_label, frq_label), file=sys.stdout, return_value=return_value)
@@ -669,17 +669,17 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
 
     # Test the data.
     if len(errors) != N:
-        raise RelaxError, "The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N)
+        raise RelaxError("The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N))
     if len(mol_names) != N:
-        raise RelaxError, "The length of the mol_names arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N)
+        raise RelaxError("The length of the mol_names arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
     if len(res_nums) != N:
-        raise RelaxError, "The length of the res_nums arg (%s) does not match that of the value arg (%s)." % (len(res_nums), N)
+        raise RelaxError("The length of the res_nums arg (%s) does not match that of the value arg (%s)." % (len(res_nums), N))
     if len(res_names) != N:
-        raise RelaxError, "The length of the res_names arg (%s) does not match that of the value arg (%s)." % (len(res_names), N)
+        raise RelaxError("The length of the res_names arg (%s) does not match that of the value arg (%s)." % (len(res_names), N))
     if len(spin_nums) != N:
-        raise RelaxError, "The length of the spin_nums arg (%s) does not match that of the value arg (%s)." % (len(spin_nums), N)
+        raise RelaxError("The length of the spin_nums arg (%s) does not match that of the value arg (%s)." % (len(spin_nums), N))
     if len(spin_names) != N:
-        raise RelaxError, "The length of the spin_names arg (%s) does not match that of the value arg (%s)." % (len(spin_names), N)
+        raise RelaxError("The length of the spin_names arg (%s) does not match that of the value arg (%s)." % (len(spin_names), N))
 
     # Get the current data pipe.
     cdp = pipes.get_pipe()
@@ -703,7 +703,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
         spin = return_spin(id)
         if spin == None:
             if not gen_seq:
-                raise RelaxNoSpinError, id
+                raise RelaxNoSpinError(id)
             else:
                 create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
                 spin = return_spin(id)
@@ -793,7 +793,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
                 float(file_data[i][data_col])
                 float(file_data[i][error_col])
             except ValueError:
-                raise RelaxError, "The relaxation data in the line " + `file_data[i]` + " is invalid."
+                raise RelaxError("The relaxation data in the line " + repr(file_data[i]) + " is invalid.")
 
     # Loop over the file data to create the data structures for packing.
     values = []
@@ -1111,7 +1111,7 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
 
     # Test if data corresponding to 'ri_label' and 'frq_label' exists.
     if not test_labels(ri_label, frq_label):
-        raise RelaxNoRiError, (ri_label, frq_label)
+        raise RelaxNoRiError(ri_label, frq_label)
 
     # Create the file name if none is given.
     if file == None:

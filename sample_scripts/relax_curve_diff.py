@@ -62,7 +62,7 @@ def back_calc():
     cdp = pipes.get_pipe()
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -106,7 +106,7 @@ def calc_ave_sd():
     ###################################
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -132,7 +132,7 @@ def calc_ave_sd():
     ####################################
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -243,7 +243,7 @@ def grace_plot(ave, sd):
                 continue
 
             # Grace data point.
-            file.write("%-30s%-30s\n" % (`cdp.relax_times[i]`, `spin.intensities[i][0] - spin.fit_int[i]`))
+            file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.intensities[i][0] - spin.fit_int[i])))
 
     # End the graph.
     file.write("&\n")
@@ -266,7 +266,7 @@ def grace_plot(ave, sd):
 
             # Grace data point.
             if len(spin.intensities[i]) == 2:
-                file.write("%-30s%-30s\n" % (`cdp.relax_times[i]`, `spin.intensities[i][1] - spin.fit_int[i]`))
+                file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.intensities[i][1] - spin.fit_int[i])))
 
     # End the graph.
     file.write("&\n")
@@ -284,7 +284,7 @@ def grace_plot(ave, sd):
     for i in xrange(len(cdp.num_spectra)):
         for j in xrange(cdp.num_spectra[i]):
             # Grace data point.
-            file.write("%-30s%-30s%-30s\n" % (`cdp.relax_times[i]`, `ave[index]`, `sd[index]`))
+            file.write("%-30s%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(ave[index]), repr(sd[index])))
 
             # Increment the index.
             index = index + 1

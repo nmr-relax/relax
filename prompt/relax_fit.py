@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxNumError, RelaxStrError
+from base_class import User_fn_class
+import check
 from specific_fns.setup import relax_fit_obj
 
 
-class Relax_fit:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for relaxation curve fitting."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Relax_fit(User_fn_class):
+    """Class for relaxation curve fitting."""
 
     def relax_time(self, time=0.0, spectrum_id=None):
         """Function for setting the relaxation time period associated with each spectrum.
@@ -69,17 +59,13 @@ class Relax_fit:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.relax_time("
-            text = text + "time=" + `time`
-            text = text + ", spectrum_id=" + `spectrum_id` + ")"
-            print text
+            text = text + "time=" + repr(time)
+            text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
+            print(text)
 
-        # The relaxation time.
-        if type(time) != int and type(time) != float:
-            raise RelaxNumError, ('relaxation time', time)
-
-        # The spectrum identification string.
-        if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
+        # The argument checks.
+        check.is_num(time, 'relaxation time')
+        check.is_str(spectrum_id, 'spectrum identification string')
 
         # Execute the functional code.
         relax_fit_obj.relax_time(time=time, spectrum_id=spectrum_id)
@@ -110,12 +96,11 @@ class Relax_fit:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "relax_fit.select_model("
-            text = text + "model=" + `model` + ")"
-            print text
+            text = text + "model=" + repr(model) + ")"
+            print(text)
 
-        # The model argument.
-        if type(model) != str:
-            raise RelaxStrError, ('model', model)
+        # The argument checks.
+        check.is_str(model, 'model')
 
         # Execute the functional code.
         relax_fit_obj.select_model(model=model)

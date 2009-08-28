@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003 Edward d'Auvergne                                        #
+# Copyright (C) 2003, 2008-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 import os
 
 # relax module imports.
-from relax_errors import RelaxStrError
+import check
 
 
 class Lh:
@@ -54,6 +54,5 @@ class Ls:
 def system(command):
     """Function which executes the user supplied shell command."""
 
-    if not type(command) == str:
-        raise RelaxStrError, ('command', command)
+    check.is_str(command, 'command')
     stat = os.system(command)

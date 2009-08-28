@@ -21,12 +21,35 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing number type lists for argument checks."""
+"""The base class for all the user function classes."""
 
-# Python module imports.
-from numpy import int8, int16, int32, int64, float32, float64
+# relax module imports.
+import help
 
 
-# The lists.
-int_list = [int, int8, int16, int32]
-float_list = [float, float32, float64]
+
+class Basic_class:
+    def __init__(self, relax):
+        """All non-user function classes.
+
+        @param relax:   The relax instance.
+        @type relax:    relax instance
+        """
+
+        # Place relax in the class namespace.
+        self.__relax__ = relax
+
+
+class User_fn_class:
+    def __init__(self, relax):
+        """Initialise the user function class, compiling the help string.
+
+        @param relax:   The relax instance.
+        @type relax:    relax instance
+        """
+
+        # Add the generic help string.
+        self.__relax_help__ = self.__doc__ + "\n" + help.relax_class_help
+
+        # Place relax in the class namespace.
+        self.__relax__ = relax

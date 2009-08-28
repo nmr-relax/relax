@@ -75,12 +75,12 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
     # Space type.
     if string.lower(map_type) == "iso3d":
         if len(params) != 3:
-            raise RelaxError, "The 3D isosurface map requires a 3 parameter model."
+            raise RelaxError("The 3D isosurface map requires a 3 parameter model.")
 
         # Create the map.
         isosurface_3D.Iso3D(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap)
     else:
-        raise RelaxError, "The map type '" + map_type + "' is not supported."
+        raise RelaxError("The map type '" + map_type + "' is not supported.")
 
 
 def run(file_prefix="map", dir="dx", dx_exe="dx", vp_exec=True):

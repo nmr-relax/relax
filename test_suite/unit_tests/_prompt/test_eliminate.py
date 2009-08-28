@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,11 +25,17 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.eliminate import Eliminate
-from relax_errors import RelaxFunctionError, RelaxNoneTupleError
+from relax_errors import RelaxNoneFunctionError, RelaxTupleError
 
 # Unit test imports.
 from data_types import DATA_TYPES
 import fake_relax
+
+
+
+def dummy_function():
+    pass
+
 
 
 class Test_eliminate(TestCase):
@@ -49,7 +55,7 @@ class Test_eliminate(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFunctionError, self.eliminate_fns.eliminate, function=data[1])
+            self.assertRaises(RelaxNoneFunctionError, self.eliminate_fns.eliminate, function=data[1])
 
 
     def test_eliminate_args(self):
@@ -62,4 +68,4 @@ class Test_eliminate(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneTupleError, self.eliminate_fns.eliminate, args=data[1])
+            self.assertRaises(RelaxTupleError, self.eliminate_fns.eliminate, function=dummy_function, args=data[1])

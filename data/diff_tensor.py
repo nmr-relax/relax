@@ -393,7 +393,7 @@ def calc_rotation(diff_type, *args):
 
     # Raise an error.
     else:
-        raise RelaxError, 'The diffusion tensor has not been specified'
+        raise RelaxError('The diffusion tensor has not been specified')
 
 
 def calc_tensor(rotation, tensor_diag):
@@ -588,7 +588,7 @@ class DiffTensorData(Element):
             setattr(new_obj, name, deepcopy(value, memo))
 
             # Place the new class object into the namespace of DiffTensorSimList objects.
-            if type(value) == DiffTensorSimList:
+            if isinstance(value, DiffTensorSimList):
                 # Get the new list.
                 new_value = getattr(new_obj, name)
 
@@ -631,7 +631,7 @@ class DiffTensorData(Element):
 
         # Test if the attribute that is trying to be set is modifiable.
         if not param_name in self.__mod_attr__:
-            raise RelaxError, "The object " + `name` + " is not a modifiable attribute."
+            raise RelaxError("The object " + repr(name) + " is not a modifiable attribute.")
 
         # Set the attribute normally.
         self.__dict__[name] = value
@@ -891,7 +891,7 @@ class DiffTensorData(Element):
                             skip = True
 
                         # String data type.
-                        if type(deps[j]) == str:
+                        if isinstance(deps[j], str):
                             args[-1] = args[-1] + (deps[j],)
 
                         # List data type.
@@ -940,7 +940,7 @@ class DiffTensorData(Element):
         tensor_element.setAttribute('type', self.type)
 
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, tensor_element, object=self, blacklist=['type'] + self.__class__.__dict__.keys())
+        fill_object_contents(doc, tensor_element, object=self, blacklist=['type'] + list(self.__class__.__dict__.keys()))
 
 
 
@@ -960,7 +960,7 @@ class DiffTensorSimList(ListType):
                 continue
 
             # Skip the class methods.
-            if name in self.__class__.__dict__.keys() or name in dir(ListType):
+            if name in list(self.__class__.__dict__.keys()) or name in dir(ListType):
                 continue
 
             # Skip the diff_element object.

@@ -98,7 +98,7 @@ class RelaxNoSpinWarning(BaseWarning):
 # Zero length XH bond vector.
 class RelaxZeroVectorWarning(BaseWarning):
     def __init__(self, res):
-        self.text = "The XH bond vector for residue " + `res` + " is of zero length."
+        self.text = "The XH bond vector for residue " + repr(res) + " is of zero length."
 
 
 # The atom is missing from the PDB file.

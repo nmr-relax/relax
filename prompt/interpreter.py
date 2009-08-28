@@ -293,14 +293,14 @@ class Interpreter:
         """Function for turning the function introductions off."""
 
         self.intro = False
-        print "Echoing of user function calls has been disabled."
+        print("Echoing of user function calls has been disabled.")
 
 
     def _on(self):
         """Function for turning the function introductions on."""
 
         self.intro = True
-        print "Echoing of user function calls has been enabled."
+        print("Echoing of user function calls has been enabled.")
 
 
     def script(self, file=None, quit=False):
@@ -308,17 +308,17 @@ class Interpreter:
 
         # File argument.
         if file == None:
-            raise RelaxNoneError, 'file'
-        elif type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxNoneError('file')
+        elif not isinstance(file, str):
+            raise RelaxStrError('file', file)
 
         # Test if the script file exists.
         if not access(file, F_OK):
-            raise RelaxError, "The script file '" + file + "' does not exist."
+            raise RelaxError("The script file '" + file + "' does not exist.")
 
         # Quit argument.
-        if type(quit) != int or (quit != False and quit != True):
-            raise RelaxBinError, ('quit', quit)
+        if not isinstance(quit, int) or (quit != False and quit != True):
+            raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
         self.intro = True
@@ -334,7 +334,7 @@ class _Exit:
     def __repr__(self):
         """Exit the program."""
 
-        print "Exiting the program."
+        print("Exiting the program.")
         sys.exit()
 
 
@@ -417,12 +417,12 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
             file = open(script_file, 'r')
         except IOError, warning:
             try:
-                raise RelaxError, "The script file '" + script_file + "' does not exist."
+                raise RelaxError("The script file '" + script_file + "' does not exist.")
             except AllRelaxErrors, instance:
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")
                 return
-        sys.stdout.write("script = " + `script_file` + "\n")
+        sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
@@ -433,7 +433,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
     # Execute the script.
     try:
-        execfile(script_file, local)
+        exec(compile(open(script_file).read(), script_file, 'exec'), local)
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
@@ -548,7 +548,7 @@ def runcode(self, code):
     """
 
     try:
-        exec code in self.locals
+        exec(code, self.locals)
     except SystemExit:
         raise
     except AllRelaxErrors, instance:
@@ -558,4 +558,4 @@ def runcode(self, code):
         self.showtraceback()
     else:
         if softspace(sys.stdout, 0):
-            print
+            print('')

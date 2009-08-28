@@ -187,6 +187,7 @@ class Test_sequence(Sequence_base_class, TestCase):
                 continue
 
             # The argument test.
+            print data
             self.assertRaises(RelaxNoneIntError, self.sequence_fns.read, file='a', mol_name_col=data[1])
 
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005 Edward d'Auvergne                                        #
+# Copyright (C) 2005, 2009 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,9 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module containing various shared docstrings."""
+__docformat__ = 'plaintext'
 
-def regexp_doc():
-    """Function for returning the docstring for regular expression."""
+
+class Regexp:
+    """Class containing regular expression docstrings."""
 
     doc = """
 
@@ -57,4 +61,16 @@ def regexp_doc():
         the same data type.
     """
 
-    return doc
+
+class Strings:
+    """The docstring object containing class containers of docstrings."""
+
+    def __init__(self):
+        """Initialise docstring object."""
+
+        # The regular expression.
+        self.regexp = Regexp()
+
+
+# The object.
+docs = Strings()

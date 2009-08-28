@@ -139,11 +139,11 @@ class Mf(TestCase):
                 continue
 
             # Skip original class methods.
-            if name in obj1.__class__.__dict__.keys():
+            if name in list(obj1.__class__.__dict__.keys()):
                 continue
 
             # Print out.
-            print "\t" + name
+            print("\t" + name)
 
             # Get the sub-objects.
             sub_obj1 = getattr(obj1, name)
@@ -586,24 +586,23 @@ class Mf(TestCase):
         rex = 0.14900000000002225
         chi2 = 6.8756889983348349e-28
         iter = 22
-        f_count = 159
-        g_count = 159
+        f_count = [159]
+        g_count = [159]
         h_count = 22
         warning = None
 
         # Optimisation differences.
         if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            f_count = 91
-            g_count = 91
-            if search('^2.5', PY_VER) or search('^2.6', PY_VER):
-                f_count = 153
-                g_count = 153
+            f_count.append(91)
+            g_count.append(91)
+            f_count.append(153)    # Not sure why there is a difference here, maybe this is gcc or blas/lapack (Python and numpy versions are identical).
+            g_count.append(153)
         elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
-            f_count = 165
-            g_count = 165
+            f_count.append(165)
+            g_count.append(165)
         elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
-            f_count = 160
-            g_count = 160
+            f_count.append(160)
+            g_count.append(160)
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -773,7 +772,7 @@ class Mf(TestCase):
         cdp = pipes.get_pipe()
 
         # Debugging print out.
-        print cdp
+        print(cdp)
 
         # The spin specific data.
         num = [3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 35]
@@ -838,8 +837,8 @@ class Mf(TestCase):
             spin = cdp.mol[0].res[i].spin[0]
 
             # Debugging print out.
-            print res
-            print spin
+            print(res)
+            print(spin)
 
             # Spin info tests.
             self.assertEqual(res.num, num[i])
@@ -920,11 +919,11 @@ class Mf(TestCase):
         pipe_13 = pipes.get_pipe('1.3')
 
         # Test that the objects in the base pipes are the same.
-        print "Comparison of the objects of the base data pipe:"
+        print("Comparison of the objects of the base data pipe:")
         self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
 
         # Test that the diffusion tensor data is the same.
-        print "Comparison of the objects of the diffusion tensor:"
+        print("Comparison of the objects of the diffusion tensor:")
         self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
 
         # Test the number of molecules.
@@ -933,7 +932,7 @@ class Mf(TestCase):
         # Loop over the molecules.
         for i in xrange(len(pipe_12.mol)):
             # Test the objects.
-            print "Comparison of the objects of the molecule:"
+            print("Comparison of the objects of the molecule:")
             self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
 
             # Test the number of residues.
@@ -946,7 +945,7 @@ class Mf(TestCase):
                     break
 
                 # Test the objects.
-                print "Comparison of the objects of the residue:"
+                print("Comparison of the objects of the residue:")
                 self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
 
                 # Test the number of spins.
@@ -955,7 +954,7 @@ class Mf(TestCase):
                 # Loop over the spins.
                 for k in xrange(len(pipe_12.mol[i].res[j].spin)):
                     # Test the objects.
-                    print "Comparison of the objects of the spin:"
+                    print("Comparison of the objects of the spin:")
                     self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
 
 
@@ -1100,6 +1099,14 @@ class Mf(TestCase):
         # Get the debugging message.
         mesg = self.mesg_opt_debug(spin)
 
+        # Convert to lists.
+        if not isinstance(f_count, list):
+            f_count = [f_count]
+        if not isinstance(g_count, list):
+            g_count = [g_count]
+        if not isinstance(h_count, list):
+            h_count = [h_count]
+
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
         self.assertAlmostEqual(spin.s2, s2, msg=mesg)
@@ -1107,7 +1114,7 @@ class Mf(TestCase):
         self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
         self.assertEqual(spin.iter, iter, msg=mesg)
-        self.assertEqual(spin.f_count, f_count, msg=mesg)
-        self.assertEqual(spin.g_count, g_count, msg=mesg)
-        self.assertEqual(spin.h_count, h_count, msg=mesg)
+        self.assert_(spin.f_count in f_count, msg=mesg)
+        self.assert_(spin.g_count in g_count, msg=mesg)
+        self.assert_(spin.h_count in h_count, msg=mesg)
         self.assertEqual(spin.warning, warning, msg=mesg)

@@ -661,17 +661,17 @@ def bitpatternToFloat(string, endian='big'):
     """
 
     # Test that the bit pattern is a string.
-    if type(string) != str:
-        raise TypeError, "The string argument '%s' is not a string." % string
+    if not isinstance(string, str):
+        raise TypeError("The string argument '%s' is not a string." % string)
 
     # Test the length of the bit pattern.
     if len(string) != 64:
-        raise TypeError, "The string '%s' is not 64 characters long." % string
+        raise TypeError("The string '%s' is not 64 characters long." % string)
 
     # Test that the string consists solely of zeros and ones.
     for char in string:
         if char not in ['0', '1']:
-            raise TypeError, "The string '%s' should be composed solely of the characters '0' and '1'." % string
+            raise TypeError("The string '%s' should be composed solely of the characters '0' and '1'." % string)
 
     # Reverse the byte order as neccessary.
     if endian == 'big' and sys.byteorder == 'little':
@@ -700,13 +700,13 @@ def bitpatternToInt(string, endian='big'):
     """
 
     # Test that the bit pattern is a string.
-    if type(string) != str:
-        raise TypeError, "The string argument '%s' is not a string." % string
+    if not isinstance(string, str):
+        raise TypeError("The string argument '%s' is not a string." % string)
 
     # Test that the string consists solely of zeros and ones.
     for char in string:
         if char not in ['0', '1']:
-            raise TypeError, "The string '%s' should be composed solely of the characters '0' and '1'." % string
+            raise TypeError("The string '%s' should be composed solely of the characters '0' and '1'." % string)
 
     # Reverse the byte order as neccessary.
     if endian == 'big' and sys.byteorder == 'little':

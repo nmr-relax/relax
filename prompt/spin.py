@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns.mol_res_spin import copy_spin, create_pseudo_spin, create_spin, delete_spin, display_spin, id_string_doc, name_spin, number_spin
-from relax_errors import RelaxIntError, RelaxListStrError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 
-class Spin:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating the spin data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Spin(User_fn_class):
+    """Class for manipulating the spin data."""
 
     def copy(self, pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
         """Function for copying all data associated with a spin.
@@ -92,27 +82,17 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", spin_from=" + `spin_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", spin_to=" + `spin_to` + ")"
-            print text
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", spin_from=" + repr(spin_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", spin_to=" + repr(spin_to) + ")"
+            print(text)
 
-        # The data pipe from argument.
-        if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
-
-        # The spin from argument.
-        if type(spin_from) != str:
-            raise RelaxStrError, ('spin from', spin_from)
-
-        # The data pipe to argument.
-        if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
-
-        # The spin to argument.
-        if spin_to != None and type(spin_to) != str:
-            raise RelaxNoneStrError, ('spin to', spin_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(spin_from, 'spin from')
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        check.is_str(spin_to, 'spin to', can_be_none=True)
 
         # Execute the functional code.
         copy_spin(pipe_from=pipe_from, spin_from=spin_from, pipe_to=pipe_to, spin_to=spin_to)
@@ -155,32 +135,19 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.create("
-            text = text + "spin_num=" + `spin_num`
-            text = text + ", spin_name=" + `spin_name`
-            text = text + ", res_num=" + `res_num`
-            text = text + ", res_name=" + `res_name`
-            text = text + ", mol_name=" + `mol_name` + ")"
-            print text
+            text = text + "spin_num=" + repr(spin_num)
+            text = text + ", spin_name=" + repr(spin_name)
+            text = text + ", res_num=" + repr(res_num)
+            text = text + ", res_name=" + repr(res_name)
+            text = text + ", mol_name=" + repr(mol_name) + ")"
+            print(text)
 
-        # Spin number.
-        if spin_num != None and type(spin_num) != int:
-            raise RelaxNoneIntError, ('spin number', spin_num)
-
-        # Spin name.
-        if spin_name != None and type(spin_name) != str:
-            raise RelaxNoneStrError, ('spin name', spin_name)
-
-        # The residue number.
-        if res_num != None and type(res_num) != int:
-            raise RelaxNoneIntError, ('residue number', res_num)
-
-        # The residue name.
-        if res_name != None and type(res_name) != str:
-            raise RelaxNoneStrError, ('residue name', res_name)
-
-        # The molecule name.
-        if mol_name != None and type(mol_name) != str:
-            raise RelaxNoneStrError, ('molecule name', mol_name)
+        # The argument checks.
+        check.is_int(spin_num, 'spin number', can_be_none=True)
+        check.is_str(spin_name, 'spin name', can_be_none=True)
+        check.is_int(res_num, 'residue number', can_be_none=True)
+        check.is_str(res_name, 'residue name', can_be_none=True)
+        check.is_str(mol_name, 'molecule name', can_be_none=True)
 
         # Execute the functional code.
         create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
@@ -225,41 +192,19 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.create_pseudo("
-            text = text + "spin_name=" + `spin_name`
-            text = text + ", spin_num=" + `spin_num`
-            text = text + ", res_id=" + `res_id`
-            text = text + ", members=" + `members`
-            text = text + ", averaging=" + `averaging` + ")"
-            print text
+            text = text + "spin_name=" + repr(spin_name)
+            text = text + ", spin_num=" + repr(spin_num)
+            text = text + ", res_id=" + repr(res_id)
+            text = text + ", members=" + repr(members)
+            text = text + ", averaging=" + repr(averaging) + ")"
+            print(text)
 
-        # Spin name.
-        if type(spin_name) != str:
-            raise RelaxStrError, ('spin name', spin_name)
-
-        # Spin number.
-        if spin_num != None and type(spin_num) != int:
-            raise RelaxNoneIntError, ('spin number', spin_num)
-
-        # The residue ID.
-        if res_id != None and type(res_id) != str:
-            raise RelaxNoneStrError, ('residue identification string', res_id)
-
-        # Member atoms.
-        if type(members) != list:
-            raise RelaxListStrError, ('members', members)
-        else:
-            # Empty list.
-            if members == []:
-                raise RelaxListStrError, ('members', members)
-
-            # Check the values.
-            for i in xrange(len(members)):
-                if type(members[i]) != str:
-                    raise RelaxListStrError, ('members', members)
-
-        # The positional averaging technique.
-        if averaging != None and type(averaging) != str:
-            raise RelaxNoneStrError, ('positional averaging technique', averaging)
+        # The argument checks.
+        check.is_str(spin_name, 'spin name')
+        check.is_int(spin_num, 'spin number', can_be_none=True)
+        check.is_str(res_id, 'residue identification string', can_be_none=True)
+        check.is_str_list(members, 'members')
+        check.is_str(averaging, 'positional averaging technique')
 
         # Execute the functional code.
         create_pseudo_spin(spin_num=spin_num, spin_name=spin_name, res_id=res_id, members=members, averaging=averaging)
@@ -284,12 +229,11 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.delete("
-            text = text + "spin_id=" + `spin_id` + ")"
-            print text
+            text = text + "spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        # The spin identifier argument.
-        if type(spin_id) != str:
-            raise RelaxStrError, ('spin identifier', spin_id)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string')
 
         # Execute the functional code.
         delete_spin(spin_id=spin_id)
@@ -307,12 +251,11 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.display("
-            text = text + "spin_id=" + `spin_id` + ")"
-            print text
+            text = text + "spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        # The spin_id argument.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         display_spin(spin_id=spin_id)
@@ -351,22 +294,15 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.name("
-            text = text + "spin_id=" + `spin_id`
-            text = text + ", name=" + `name`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", name=" + repr(name)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
-
-        # New spin name.
-        if type(name) != str:
-            raise RelaxStrError, ('new spin name', name)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_str(name, 'new spin name')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         name_spin(spin_id=spin_id, name=name, force=force)
@@ -407,22 +343,15 @@ class Spin:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spin.number("
-            text = text + "spin_id=" + `spin_id`
-            text = text + ", number=" + `number`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", number=" + repr(number)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
-
-        # New spin number.
-        if number != None and  type(number) != int:
-            raise RelaxNoneIntError, ('new spin number', number)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_int(number, 'new spin number', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         number_spin(spin_id=spin_id, number=number, force=force)

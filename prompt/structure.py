@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006-2008 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2006-2009 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,24 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
+from base_class import User_fn_class
+import check
 import generic_fns.structure.geometric
 import generic_fns.structure.main
-import help
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNoneStrListStrError, RelaxNumError, RelaxStrError
 
 
-class Structure:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class containing the structural related functions."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Structure(User_fn_class):
+    """Class containing the structural related functions."""
 
     def create_diff_tensor_pdb(self, scale=1.8e-6, file='tensor.pdb', dir=None, force=False):
         """Create a PDB file to represent the diffusion tensor.
@@ -145,27 +135,17 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.create_diff_tensor_pdb("
-            text = text + "scale=" + `scale`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "scale=" + repr(scale)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Scaling.
-        if type(scale) != float and type(scale) != int:
-            raise RelaxNumError, ('scaling factor', scale)
-
-        # File name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_num(scale, 'scaling factor')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_diff_tensor_pdb(scale=scale, file=file, dir=dir, force=force)
@@ -206,32 +186,19 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.create_vector_dist("
-            text = text + "length=" + `length`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", symmetry=" + `symmetry`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "length=" + repr(length)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", symmetry=" + repr(symmetry)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # Vector length.
-        if type(length) != float:
-            raise RelaxFloatError, ('vector length', length)
-
-        # File name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The symmetry flag.
-        if type(symmetry) != bool:
-            raise RelaxBoolError, ('symmetry flag', symmetry)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_num(length, 'vector length')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(symmetry, 'symmetry flag')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
@@ -290,22 +257,15 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.load_spins("
-            text = text + "spin_id=" + `spin_id`
-            text = text + ", combine_models=" + `combine_models`
-            text = text + ", ave_pos=" + `ave_pos` + ")"
-            print text
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", combine_models=" + repr(combine_models)
+            text = text + ", ave_pos=" + repr(ave_pos) + ")"
+            print(text)
 
-        # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
-
-        # The model combining flag.
-        if type(combine_models) != bool:
-            raise RelaxBoolError, ('model combining flag', combine_models)
-
-        # The average position flag.
-        if type(ave_pos) != bool:
-            raise RelaxBoolError, ('average position flag', ave_pos)
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_bool(combine_models, 'model combining flag')
+        check.is_bool(ave_pos, 'average position flag')
 
         # Execute the functional code.
         generic_fns.structure.main.load_spins(spin_id=spin_id, combine_models=combine_models, ave_pos=ave_pos)
@@ -407,58 +367,23 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.read_pdb("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", read_mol=" + `read_mol`
-            text = text + ", set_mol_name=" + `set_mol_name`
-            text = text + ", read_model=" + `read_model`
-            text = text + ", set_model_num=" + `set_model_num`
-            text = text + ", parser=" + `parser` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", read_mol=" + repr(read_mol)
+            text = text + ", set_mol_name=" + repr(set_mol_name)
+            text = text + ", read_model=" + repr(read_model)
+            text = text + ", set_model_num=" + repr(set_model_num)
+            text = text + ", parser=" + repr(parser) + ")"
+            print(text)
 
-        # File name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The read_mol, read_models, and set_model_num arguments.
-        arg_list = [read_mol, read_model, set_model_num]
-        arg_desc = ['read molecule number', 'read model', 'set model numbers']
-        for i in range(len(arg_list)):
-            # Basic type check.
-            if arg_list[i] != None and type(arg_list[i]) != int and type(arg_list[i]) != list:
-                raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
-
-            # List check.
-            if type(arg_list[i]) == list:
-                # Zero size list.
-                if len(arg_list[i]) == 0:
-                    raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
-
-                # Element check.
-                for j in range(len(arg_list[i])):
-                    if type(arg_list[i][j]) != int:
-                        raise RelaxNoneIntListIntError, (arg_desc[i], arg_list[i])
-
-        # The set_mol_name arguments.
-        if set_mol_name != None and type(set_mol_name) != str and type(set_mol_name) != list:
-            raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
-        if type(set_mol_name) == list:
-            # Zero size list.
-            if len(set_mol_name) == 0:
-                raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
-
-            # Element check.
-            for i in range(len(set_mol_name)):
-                if type(set_mol_name[i]) != str:
-                    raise RelaxNoneStrListStrError, ('set molecule names', set_mol_name)
-
-        # PDB parser.
-        if type(parser) != str:
-            raise RelaxStrError, ('PDB parser', parser)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int_or_int_list(read_mol, 'read molecule number', can_be_none=True)
+        check.is_int_or_int_list(read_model, 'read model', can_be_none=True)
+        check.is_int_or_int_list(set_model_num, 'set model numbers', can_be_none=True)
+        check.is_str_or_str_list(set_mol_name, 'set molecule names', can_be_none=True)
+        check.is_str(parser, 'PDB parser')
 
         # Execute the functional code.
         generic_fns.structure.main.read_pdb(file=file, dir=dir, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, parser=parser)
@@ -550,37 +475,21 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.vectors("
-            text = text + "attached=" + `attached`
-            text = text + ", spin_id=" + `spin_id`
-            text = text + ", model=" + `model`
-            text = text + ", verbosity=" + `verbosity`
-            text = text + ", ave=" + `ave`
-            text = text + ", unit=" + `unit` + ")"
-            print text
+            text = text + "attached=" + repr(attached)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", model=" + repr(model)
+            text = text + ", verbosity=" + repr(verbosity)
+            text = text + ", ave=" + repr(ave)
+            text = text + ", unit=" + repr(unit) + ")"
+            print(text)
 
-        # The attached atom argument.
-        if type(attached) != str:
-            raise RelaxStrError, ('the attached atom', attached)
-
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
-
-        # The model argument.
-        if model != None and type(model) != int:
-            raise RelaxNoneIntError, ('model', model)
-
-        # The verbosity level.
-        if type(verbosity) != int:
-            raise RelaxIntError, ('verbosity level', verbosity)
-
-        # The average vector flag.
-        if type(ave) != bool:
-            raise RelaxBoolError, ('average vector flag', ave)
-
-        # The unit vector flag.
-        if type(unit) != bool:
-            raise RelaxBoolError, ('unit vector flag', unit)
+        # The argument checks.
+        check.is_str(attached, 'attached atom')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_int(model, 'model', can_be_none=True)
+        check.is_int(verbosity, 'verbosity level')
+        check.is_bool(ave, 'average vector flag')
+        check.is_bool(unit, 'unit vector flag')
 
         # Execute the functional code.
         generic_fns.structure.main.vectors(attached=attached, spin_id=spin_id, model=model, verbosity=verbosity, ave=ave, unit=unit)
@@ -626,27 +535,17 @@ class Structure:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "structure.write_pdb("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", model_num=" + `model_num`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", model_num=" + repr(model_num)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # File name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The model_num argument.
-        if model_num != None and type(model_num) != int:
-            raise RelaxNoneIntError, ('model number', model_num)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(model_num, 'model number', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         generic_fns.structure.main.write_pdb(file=file, dir=dir, model_num=model_num, force=force)

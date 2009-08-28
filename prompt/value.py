@@ -28,31 +28,21 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-from doc_string import regexp_doc
-import help
+from doc_string import docs
+from base_class import User_fn_class
+import check
 from generic_fns import diffusion_tensor
 from generic_fns import value
-from num_types import int_list, float_list
-from relax_errors import RelaxError, RelaxFloatError, RelaxIntError, RelaxListFloatStrError, RelaxListStrError, RelaxNoneFloatStrListError, RelaxNoneIntError, RelaxNoneStrError, RelaxNoneStrListError, RelaxStrError
-from specific_fns.model_free import Model_free
+from relax_errors import RelaxError
 from specific_fns.jw_mapping import Jw_mapping
+from specific_fns.model_free import Model_free
 from specific_fns.relax_fit import Relax_fit
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 
 
-class Value:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for setting data values."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Value(User_fn_class):
+    """Class for setting data values."""
 
     def copy(self, pipe_from=None, pipe_to=None, param=None):
         """Copy spin specific data values from one data pipe to another.
@@ -88,22 +78,15 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to`
-            text = text + ", param=" + `param` + ")"
-            print text
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to)
+            text = text + ", param=" + repr(param) + ")"
+            print(text)
 
-        # The pipe_from argument.
-        if type(pipe_from) != str:
-            raise RelaxStrError, ('pipe_from', pipe_from)
-
-        # The pipe_to argument.
-        if type(pipe_to) != str:
-            raise RelaxStrError, ('pipe_to', pipe_to)
-
-        # The parameter.
-        if type(param) != str:
-            raise RelaxStrError, ('parameter', param)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from')
+        check.is_str(pipe_to, 'pipe to')
+        check.is_str(param, 'parameter')
 
         # Execute the functional code.
         self.__relax__.generic.value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
@@ -135,12 +118,11 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.display("
-            text = text + "param=" + `param` + ")"
-            print text
+            text = text + "param=" + repr(param) + ")"
+            print(text)
 
-        # The parameter.
-        if type(param) != str:
-            raise RelaxStrError, ('parameter', param)
+        # The argument checks.
+        check.is_str(param, 'parameter')
 
         # Execute the functional code.
         self.__relax__.generic.value.display(param=param)
@@ -195,47 +177,25 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.read("
-            text = text + "param=" + `param`
-            text = text + ", scaling=" + `scaling`
-            text = text + ", file=" + `file`
-            text = text + ", num_col=" + `num_col`
-            text = text + ", name_col=" + `name_col`
-            text = text + ", data_col=" + `data_col`
-            text = text + ", error_col=" + `error_col`
-            text = text + ", sep=" + `sep` + ")"
-            print text
+            text = text + "param=" + repr(param)
+            text = text + ", scaling=" + repr(scaling)
+            text = text + ", file=" + repr(file)
+            text = text + ", num_col=" + repr(num_col)
+            text = text + ", name_col=" + repr(name_col)
+            text = text + ", data_col=" + repr(data_col)
+            text = text + ", error_col=" + repr(error_col)
+            text = text + ", sep=" + repr(sep) + ")"
+            print(text)
 
-        # The parameter.
-        if type(param) != str:
-            raise RelaxStrError, ('parameter', param)
-
-        # The scaling factor.
-        if type(scaling) not in float_list:
-            raise RelaxFloatError, ('scaling', scaling)
-
-        # The file name.
-        if type(file) != str:
-            raise RelaxStrError, ('file', file)
-
-        # The number column.
-        if type(num_col) not in int_list:
-            raise RelaxIntError, ('residue number column', num_col)
-
-        # The name column.
-        if name_col != None and type(name_col) not in int_list:
-            raise RelaxNoneIntError, ('residue name column', name_col)
-
-        # The data column.
-        if type(data_col) not in int_list:
-            raise RelaxIntError, ('data column', data_col)
-
-        # The error column.
-        if error_col != None and type(error_col) not in int_list:
-            raise RelaxNoneIntError, ('error column', error_col)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+        # The argument checks.
+        check.is_str(param, 'parameter')
+        check.is_float(scaling, 'scaling')
+        check.is_str(file, 'file name')
+        check.is_int(num_col, 'residue number column')
+        check.is_int(name_col, 'residue name column')
+        check.is_int(data_col, 'data column')
+        check.is_int(error_col, 'residue name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
@@ -363,53 +323,27 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.set("
-            text = text + "val=" + `val`
-            text = text + ", param=" + `param`
-            text = text + ", spin_id=" + `spin_id` + ")"
-            print text
+            text = text + "val=" + repr(val)
+            text = text + ", param=" + repr(param)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        # The value.
-        if val != None and type(val) not in float_list and type(val) not in int_list and type(val) != str and type(val) != list:
-            raise RelaxNoneFloatStrListError, ('value', val)
-        if type(val) == list:
-            # Empty list.
-            if val == []:
-                raise RelaxListFloatStrError, ('value', val)
-
-            # Check for values.
-            for i in xrange(len(val)):
-                if type(val[i]) not in float_list and type(val[i]) not in int_list:
-                    print type(val[i])
-                    raise RelaxListFloatStrError, ('value', val)
-
-        # The parameter.
-        if param != None and type(param) != str and type(param) != list:
-            raise RelaxNoneStrListError, ('parameter', param)
-        if type(param) == list:
-            # Empty list.
-            if param == []:
-                raise RelaxListStrError, ('parameter', param)
-
-            # Check for strings.
-            for i in xrange(len(param)):
-                if type(param[i]) != str:
-                    raise RelaxListStrError, ('parameter', param)
+        # The argument checks.
+        check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
+        check.is_str_or_str_list(param, 'parameter', can_be_none=True)
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # The invalid combination of a single value and no param argument.
-        if (type(val) == float or type(val) == int) and param == None:
-            raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
+        if (isinstance(val, float) or isinstance(val, int)) and param == None:
+            raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
 
         # The invalid combination of an array of values and a single param string.
-        if type(val) == list and type(param) == str:
-            raise RelaxError, "Invalid value and parameter argument combination, for details by type 'help(value.set)'"
+        if isinstance(val, list) and isinstance(param, str):
+            raise RelaxError("Invalid value and parameter argument combination, for details by type 'help(value.set)'")
 
         # Value array and parameter array of equal length.
-        if type(val) == list and type(param) == list and len(val) != len(param):
-            raise RelaxError, "Both the value array and parameter array must be of equal length."
-
-        # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
+        if isinstance(val, list) and isinstance(param, list) and len(val) != len(param):
+            raise RelaxError("Both the value array and parameter array must be of equal length.")
 
         # Execute the functional code.
         value.set(val=val, param=param, spin_id=spin_id)
@@ -458,27 +392,17 @@ class Value:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "value.write("
-            text = text + "param=" + `param`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "param=" + repr(param)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # The parameter.
-        if type(param) != str:
-            raise RelaxStrError, ('parameter', param)
-
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(param, 'parameter')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         value.write(param=param, file=file, dir=dir, force=force)
@@ -488,56 +412,56 @@ class Value:
     #########################
 
     # Copy function.
-    copy.__doc__ = copy.__doc__ + "\n\n" + regexp_doc() + "\n"
-    copy.__doc__ = copy.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
-    copy.__doc__ = copy.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + N_state_model.set_doc.__doc__ + "\n"
-    copy.__doc__ = copy.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    copy.__doc__ = copy.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    copy.__doc__ = copy.__doc__ + Model_free.set_doc + "\n\n"
+    copy.__doc__ = copy.__doc__ + Model_free.return_data_name_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.set_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Relax_fit.set_doc + "\n"
+    copy.__doc__ = copy.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    copy.__doc__ = copy.__doc__ + N_state_model.set_doc + "\n"
+    copy.__doc__ = copy.__doc__ + N_state_model.return_data_name_doc + "\n"
 
     # Display function.
-    display.__doc__ = display.__doc__ + "\n\n" + regexp_doc() + "\n"
-    display.__doc__ = display.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
-    display.__doc__ = display.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    display.__doc__ = display.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    display.__doc__ = display.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    display.__doc__ = display.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    display.__doc__ = display.__doc__ + Model_free.return_data_name_doc + "\n\n"
+    display.__doc__ = display.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    display.__doc__ = display.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    display.__doc__ = display.__doc__ + N_state_model.return_data_name_doc + "\n"
 
     # Read function.
-    read.__doc__ = read.__doc__ + "\n\n" + regexp_doc() + "\n"
-    read.__doc__ = read.__doc__ + Model_free.set_doc.__doc__ + "\n\n"
-    read.__doc__ = read.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + N_state_model.set_doc.__doc__ + "\n"
-    read.__doc__ = read.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    read.__doc__ = read.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    read.__doc__ = read.__doc__ + Model_free.set_doc + "\n\n"
+    read.__doc__ = read.__doc__ + Model_free.return_data_name_doc + "\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.set_doc + "\n"
+    read.__doc__ = read.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    read.__doc__ = read.__doc__ + Relax_fit.set_doc + "\n"
+    read.__doc__ = read.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    read.__doc__ = read.__doc__ + N_state_model.set_doc + "\n"
+    read.__doc__ = read.__doc__ + N_state_model.return_data_name_doc + "\n"
 
     # Set function.
-    set.__doc__ = set.__doc__ + "\n\n" + regexp_doc() + "\n"
-    set.__doc__ = set.__doc__ + Model_free.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Model_free.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Jw_mapping.default_value.__doc__ + "\n"
+    set.__doc__ = set.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    set.__doc__ = set.__doc__ + Model_free.set_doc + "\n"
+    set.__doc__ = set.__doc__ + Model_free.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + Model_free.default_value_doc + "\n\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.set_doc + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + Jw_mapping.default_value_doc + "\n"
     set.__doc__ = set.__doc__ + diffusion_tensor.__set_prompt_doc__ + "\n"
     set.__doc__ = set.__doc__ + diffusion_tensor.__return_data_name_prompt_doc__ + "\n"
     set.__doc__ = set.__doc__ + diffusion_tensor.__default_value_prompt_doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + Relax_fit.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + Relax_fit.default_value.__doc__ + "\n\n"
-    set.__doc__ = set.__doc__ + N_state_model.set_doc.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
-    set.__doc__ = set.__doc__ + N_state_model.default_value.__doc__ + "\n\n"
+    set.__doc__ = set.__doc__ + Relax_fit.set_doc + "\n"
+    set.__doc__ = set.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + Relax_fit.default_value_doc + "\n\n"
+    set.__doc__ = set.__doc__ + N_state_model.set_doc + "\n"
+    set.__doc__ = set.__doc__ + N_state_model.return_data_name_doc + "\n"
+    set.__doc__ = set.__doc__ + N_state_model.default_value_doc + "\n\n"
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
-    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + N_state_model.return_data_name.__doc__ + "\n"
+    write.__doc__ = write.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    write.__doc__ = write.__doc__ + Model_free.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Noe.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + N_state_model.return_data_name_doc + "\n"

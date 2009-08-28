@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -29,24 +29,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxStrError
+from base_class import User_fn_class
+import check
 from specific_fns.setup import consistency_tests_obj
 
 
-class Consistency_tests:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class containing functions specific to consistency tests for datasets from different
-        fields."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Consistency_tests(User_fn_class):
+    """Class containing functions specific to consistency tests for datasets from different fields."""
 
     def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the consistency tests.
@@ -74,12 +63,11 @@ class Consistency_tests:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "consistency_tests.set_frq("
-            text = text + "frq=" + `frq` + ")"
-            print text
+            text = text + "frq=" + repr(frq) + ")"
+            print(text)
 
-        # The frq argument.
-        if type(frq) != float:
-            raise RelaxStrError, ('frq', frq)
+        # The argument checks.
+        check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         consistency_tests_obj.set_frq(frq=frq)

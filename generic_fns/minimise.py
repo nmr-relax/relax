@@ -136,7 +136,7 @@ def calc(verbosity=1):
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print "Simulation " + `i+1`
+                print("Simulation " + repr(i+1))
             calculate(verbosity=verbosity-1, sim_index=i)
 
     # Minimisation.
@@ -183,7 +183,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print "Simulation " + `i+1`
+                print("Simulation " + repr(i+1))
             grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
     # Grid search.
@@ -240,7 +240,7 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print "Simulation " + `i+1`
+                print("Simulation " + repr(i+1))
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
     # Standard minimisation.
@@ -262,8 +262,7 @@ def return_conversion_factor(stat_type, spin):
     return 1.0
 
 
-def return_data_name(name):
-    """
+return_data_name_doc = """
         Minimisation statistic data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -283,8 +282,16 @@ def return_data_name(name):
         | Hessian call count     | 'h_count'    | '^[Hh].*[ -_][Cc]ount'                           |
         |________________________|______________|__________________________________________________|
 
+"""
+
+def return_data_name(name):
+    """Return a unique identifying string for the minimisation parameter.
+
+    @param name:    The minimisation parameter.
+    @type name:     str
+    @return:        The unique parameter identifying string.
+    @rtype:         str
     """
-    __docformat__ = "plaintext"
 
     # Chi-squared.
     if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
@@ -377,7 +384,7 @@ def return_value(spin=None, stat_type=None, sim=None):
 
     # The statistic type does not exist.
     if not object_name:
-        raise RelaxError, "The statistic type " + `stat_type` + " does not exist."
+        raise RelaxError("The statistic type " + repr(stat_type) + " does not exist.")
 
     # The simulation object name.
     object_sim = object_name + '_sim'
@@ -418,12 +425,24 @@ def return_value(spin=None, stat_type=None, sim=None):
     return stat, None
 
 
-def set(value=None, error=None, param=None, scaling=None, spin=None):
-    """
+set_doc = """
         Minimisation statistic set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         This shouldn't really be executed by a user.
+"""
+
+def set(value=None, error=None, param=None, scaling=None, spin=None):
+    """Set global or spin specific minimisation parameters.
+
+    @keyword val:       The parameter values.
+    @type val:          number
+    @keyword param:     The parameter names.
+    @type param:        str
+    @keyword scaling:   Unused.
+    @type scaling:      float
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
     """
 
     # Alias the current data pipe.

@@ -65,7 +65,7 @@ class Frame_order(Common_functions):
 
         # Checks.
         if not hasattr(cdp, 'ref_domain'):
-            raise RelaxError, "The reference domain has not been set up."
+            raise RelaxError("The reference domain has not been set up.")
 
         # Initialise.
         n = len(cdp.align_tensors.reduction)
@@ -202,11 +202,11 @@ class Frame_order(Common_functions):
 
         # Catch infinite chi-squared values.
         if isInf(func):
-            raise RelaxInfError, 'chi-squared'
+            raise RelaxInfError('chi-squared')
 
         # Catch chi-squared values of NaN.
         if isNaN(func):
-            raise RelaxNaNError, 'chi-squared'
+            raise RelaxNaNError('chi-squared')
 
         # Isotropic cone model.
         if cdp.model == 'iso cone':
@@ -349,19 +349,19 @@ class Frame_order(Common_functions):
 
         # Test for the data structures.
         if not hasattr(cdp, 'theta_cone'):
-            raise RelaxError, "The cone angle theta_cone does not exist."
+            raise RelaxError("The cone angle theta_cone does not exist.")
         if not hasattr(cdp, 'theta_axis'):
-            raise RelaxError, "The cone polar angle theta_axis does not exist."
+            raise RelaxError("The cone polar angle theta_axis does not exist.")
         if not hasattr(cdp, 'phi_axis'):
-            raise RelaxError, "The cone azimuthal angle phi_axis does not exist."
+            raise RelaxError("The cone azimuthal angle phi_axis does not exist.")
         if not hasattr(cdp, 'pivot'):
-            raise RelaxError, "The pivot point for the cone motion has not been set."
+            raise RelaxError("The pivot point for the cone motion has not been set.")
 
         # The cone axis. 
         cone_axis = zeros(3, float64)
         generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
-        print "Cone axis: %s." % cone_axis
-        print "Cone angle: %s." % cdp.theta_cone
+        print("Cone axis: %s." % cone_axis)
+        print("Cone angle: %s." % cdp.theta_cone)
 
         # Cone axis from simulations.
         num_sim = 0
@@ -404,22 +404,22 @@ class Frame_order(Common_functions):
             mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
 
             # Generate the axis vectors.
-            print "\nGenerating the axis vectors."
+            print("\nGenerating the axis vectors.")
             res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
 
             # Generate the cone outer edge.
-            print "\nGenerating the cone outer edge."
+            print("\nGenerating the cone outer edge.")
             edge_start_atom = mol.atom_num[-1]+1
             cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
 
             # Generate the cone cap, and stitch it to the cone edge.
-            print "\nGenerating the cone cap."
+            print("\nGenerating the cone cap.")
             cone_start_atom = mol.atom_num[-1]+1
             generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
             stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
 
             # Create the PDB file.
-            print "\nGenerating the PDB file."
+            print("\nGenerating the PDB file.")
             pdb_file = open_write_file(prefix+file, dir, force=force)
             structure.write_pdb(pdb_file)
             pdb_file.close()
@@ -548,13 +548,13 @@ class Frame_order(Common_functions):
 
         # Test if the Frame Order model has been set up.
         if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError, 'Frame Order'
+            raise RelaxNoModelError('Frame Order')
 
         # The number of parameters.
         n = len(cdp.params)
 
         # If inc is an int, convert it into an array of that value.
-        if type(inc) == int:
+        if isinstance(inc, int):
             inc = [inc]*n
 
         # Initialise the grid_ops structure.
@@ -681,6 +681,38 @@ class Frame_order(Common_functions):
             cdp.pivot[i] = float(cdp.pivot[i])
 
 
+    def ref_domain(self, ref=None):
+        """Set the reference domain for the frame order, multi-domain models.
+
+        @param ref: The reference domain.
+        @type ref:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('Frame order')
+
+        # Test if the reference domain exists.
+        exists = False
+        for tensor_cont in cdp.align_tensors:
+            if tensor_cont.domain == ref:
+                exists = True
+        if not exists:
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
+
+        # Set the reference domain.
+        cdp.ref_domain = ref
+
+        # Update the model.
+        self.__update_model()
+
+
     def return_error(self, index):
         """Return the alignment tensor error structure.
 
@@ -712,11 +744,11 @@ class Frame_order(Common_functions):
 
         # Test if the model is already setup.
         if hasattr(cdp, 'model'):
-            raise RelaxModelError, 'Frame Order'
+            raise RelaxModelError('Frame Order')
 
         # Test if the model name exists.
         if not model in ['iso cone']:
-            raise RelaxError, "The model name " + `model` + " is invalid."
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
 
         # Set the model
         cdp.model = model
@@ -794,7 +826,7 @@ class Frame_order(Common_functions):
 
             # Test if the simulation object already exists.
             if hasattr(cdp, sim_object_name):
-                raise RelaxError, "Monte Carlo parameter values have already been set."
+                raise RelaxError("Monte Carlo parameter values have already been set.")
 
 
         # Set the Monte Carlo parameter values.

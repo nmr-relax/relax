@@ -8,11 +8,11 @@ pipes = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
 value.set('15N', 'heteronucleus')
 
 # Minimise the model-free parameters.
-print "\n\n\n\n\n"
-print "#####################################"
-print "# Minimising model-free parameters. #"
-print "#####################################"
-print "\n\n\n"
+print("\n\n\n\n\n")
+print("#####################################")
+print("# Minimising model-free parameters. #")
+print("#####################################")
+print("\n\n\n")
 
 for name in pipes:
     # Create the data pipe.
@@ -45,11 +45,11 @@ for name in pipes:
     minimise('newton')
 
 # Minimise the diffusion tensor parameters.
-print "\n\n\n\n\n"
-print "###########################################"
-print "# Minimising diffusion tensor parameters. #"
-print "###########################################"
-print "\n\n\n"
+print("\n\n\n\n\n")
+print("###########################################")
+print("# Minimising diffusion tensor parameters. #")
+print("###########################################")
+print("\n\n\n")
 
 # Loop over the data pipes.
 for name in pipes:

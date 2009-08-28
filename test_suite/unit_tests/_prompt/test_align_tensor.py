@@ -26,7 +26,7 @@ from unittest import TestCase
 # relax module imports.
 from generic_fns import align_tensor
 from prompt.align_tensor import Align_tensor
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListstrError, RelaxNoneStrError, RelaxNumTupleError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListStrError, RelaxNoneStrError, RelaxTupleNumError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -146,17 +146,12 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
         for data in DATA_TYPES:
             # Catch the tuple arguments.
             if data[0] == 'tuple' or data[0] == 'float tuple' or data[0] == 'str tuple':
-                # Incorrect tuple length.
-                if len(data[1]) != 5:
-                    self.assertRaises(RelaxError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
-
-                # Must be a number.
-                elif data[0] != 'float tuple':
-                    self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, params=data[1])
+                # Correct tuple length.
+                if len(data[1]) == 5:
+                    continue
 
             # The argument test.
-            else:
-                self.assertRaises(RelaxNumTupleError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
+            self.assertRaises(RelaxTupleNumError, self.align_tensor_fns.init, tensor='Pf1', params=data[1])
 
 
     def test_init_argfail_scale(self):
@@ -240,7 +235,7 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneListstrError, self.align_tensor_fns.matrix_angles, tensors=data[1])
+            self.assertRaises(RelaxNoneListStrError, self.align_tensor_fns.matrix_angles, tensors=data[1])
 
 
     def test_reduction_argfail_full_tensor(self):
@@ -323,6 +318,6 @@ class Test_align_tensor(Align_tensor_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneListstrError, self.align_tensor_fns.svd, tensors=data[1])
+            self.assertRaises(RelaxNoneListStrError, self.align_tensor_fns.svd, tensors=data[1])
 
 

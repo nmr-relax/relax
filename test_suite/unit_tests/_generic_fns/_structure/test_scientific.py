@@ -82,7 +82,7 @@ class Test_scientific(TestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+        self.assertEqual(list(res.atoms.keys()), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
 
 
     def test___residue_loop_selection(self):
@@ -106,7 +106,7 @@ class Test_scientific(TestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+        self.assertEqual(list(res.atoms.keys()), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
 
 
     def test___residue_loop_selection_no_match(self):

@@ -131,7 +131,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Simulation data.
     else:
         # Create the data structure if necessary.
-        if not hasattr(spin, 'relax_sim_data') or type(spin.relax_sim_data) != list:
+        if not hasattr(spin, 'relax_sim_data') or not isinstance(spin.relax_sim_data, list):
             spin.relax_sim_data = []
 
         # Append the simulation's relaxation data.
@@ -167,7 +167,7 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # Test the centre has already been set.
     if hasattr(cdp, 'paramagnetic_centre'):
-        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `cdp.paramagnetic_centre` + "."
+        raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
     # Get the positions.
     centre = zeros(3, float64)
@@ -179,7 +179,7 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
             continue
 
         # Spin position list.
-        if type(spin.pos[0]) == float or type(spin.pos[0]) == float64:
+        if isinstance(spin.pos[0], float) or isinstance(spin.pos[0], float64):
             pos_list = [spin.pos]
         else:
             pos_list = spin.pos
@@ -192,24 +192,24 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # No positional information!
     if not num_pos:
-        raise RelaxError, "No positional information could be found for the spin '%s'." % atom_id
+        raise RelaxError("No positional information could be found for the spin '%s'." % atom_id)
 
     # Averaging.
     centre = centre / float(num_pos)
 
     # Print out.
-    print "Paramagnetic centres located at:"
+    print("Paramagnetic centres located at:")
     for pos in full_pos_list:
-        print "    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])
-    print "\nAverage paramagnetic centre located at:"
-    print "    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])
+        print("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2]))
+    print("\nAverage paramagnetic centre located at:")
+    print("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2]))
 
     # Set the centre (place it into the current data pipe).
     if ave_pos:
-        print "\nUsing the average paramagnetic position."
+        print("\nUsing the average paramagnetic position.")
         cdp.paramagnetic_centre = centre
     else:
-        print "\nUsing all paramagnetic positions."
+        print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
 
 
@@ -230,7 +230,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -276,11 +276,11 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     else:
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
         if not test_labels(ri_label, frq_label, pipe=pipe_from):
-            raise RelaxNoRiError, (ri_label, frq_label)
+            raise RelaxNoRiError(ri_label, frq_label)
 
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
         if not test_labels(ri_label, frq_label, pipe=pipe_to):
-            raise RelaxRiError, (ri_label, frq_label)
+            raise RelaxRiError(ri_label, frq_label)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -483,7 +483,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
 
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:
-        raise RelaxError, "One of either the data or error column must be supplied."
+        raise RelaxError("One of either the data or error column must be supplied.")
 
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -534,14 +534,14 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             if error_col != None:
                 float(file_data[i][error_col])
         except ValueError:
-            raise RelaxError, "The PCS data in the line " + `file_data[i]` + " is invalid."
+            raise RelaxError("The PCS data in the line " + repr(file_data[i]) + " is invalid.")
 
         # Right, data is ok and exists.
         missing = False
 
     # Hmmm, no data!
     if missing:
-        raise RelaxError, "No corresponding data could be found within the file."
+        raise RelaxError("No corresponding data could be found within the file.")
 
 
     # Global (non-spin specific) data.
@@ -560,7 +560,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     #####################
 
     # Loop over the PCS data.
-    print "\n%-50s %-15s %-15s" % ("spin_id", "value", "error")
+    print("\n%-50s %-15s %-15s" % ("spin_id", "value", "error"))
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -579,12 +579,12 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
 
         # Test the error value (cannot be 0.0).
         if error == 0.0:
-            raise RelaxError, "An invalid error value of zero has been encountered."
+            raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the corresponding spin container.
         spin = return_spin([id, spin_id])
         if spin == None:
-            raise RelaxNoSpinError, id
+            raise RelaxNoSpinError(id)
 
         # Add the data.
         if data_col != None:
@@ -605,7 +605,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             spin.pcs_err.append(error)
 
         # Print out.
-        print "%-50s %15s %15s" % (id, value, error)
+        print("%-50s %15s %15s" % (id, value, error))
 
 
 def return_data_desc(name):
