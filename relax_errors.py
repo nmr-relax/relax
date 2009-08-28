@@ -41,9 +41,25 @@ from types import ClassType
 Debug = False
 
 # Text variables.
+BIN = 'a binary number (0 or 1)'
+BOOL = 'a Boolean (True or False)'
+INT = 'an integer'
+FILE = 'a file object'
+FLOAT = 'a floating point number'
+FUNC = 'a function'
+LIST = 'a list'
+LIST_FLOAT = 'a list of floating point numbers'
+LIST_INT = 'a list of integers'
+LIST_NUM = 'a list of numbers'
+LIST_STR = 'a list of strings'
 NONE = 'None'
 NUM = 'a number'
-NUM_TUPLE = 'a tuple of numbers'
+TUPLE = 'a tuple'
+TUPLE_FLOAT = 'a tuple of floating point numbers'
+TUPLE_INT = 'a tuple of integers'
+TUPLE_NUM = 'a tuple of numbers'
+TUPLE_STR = 'a tuple of strings'
+STR = 'a string'
 
 
 def save_state():
@@ -267,12 +283,12 @@ class RelaxProtonTypeError(BaseError):
 #~~~~~~
 
 # Invalid argument.
-class RelaxInvalidError(BaseError):
+class RelaxInvalidError(BaseArgError):
     def __init__(self, name, value):
         self.text = "The " + name + " argument " + repr(value) + " is invalid."
 
 # Argument not in the list.
-class RelaxArgNotInListError(BaseError):
+class RelaxArgNotInListError(BaseArgError):
     def __init__(self, name, value, list):
         self.text = "The " + name + " argument " + repr(value) + " is neither "
         for i in xrange(len(list)-1):
@@ -280,12 +296,12 @@ class RelaxArgNotInListError(BaseError):
         self.text = self.text + 'nor ' + repr(list[-1]) + "."
 
 # Length of the list.
-class RelaxLenError(BaseError):
+class RelaxLenError(BaseArgError):
     def __init__(self, name, len):
         self.text = "The " + name + " argument must be of length " + repr(len) + "."
 
 # None.
-class RelaxNoneError(BaseError):
+class RelaxNoneError(BaseArgError):
     def __init__(self, name):
         self.text = "The " + name + " argument has not been supplied."
 
@@ -294,81 +310,65 @@ class RelaxNoneError(BaseError):
 #~~~~~~~~~~~~~~
 
 # Boolean - the values True and False.
-class RelaxBoolError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " boolean argument " + repr(value) + " must either be True or False."
+class RelaxBoolError(BaseArgError):
+    simple_types = [BOOL]
 
 # Binary - integers 0 and 1.
-class RelaxBinError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be the integer 0 or 1."
+class RelaxBinError(BaseArgError):
+    simple_types = [BIN]
 
 # Float.
-class RelaxFloatError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a floating point number."
+class RelaxFloatError(BaseArgError):
+    simple_types = [FLOAT]
 
-class RelaxNoneFloatError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number or None."
+class RelaxNoneFloatError(BaseArgError):
+    simple_types = [NONE, FLOAT]
 
 # Number.
-class RelaxNumError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a number."
+class RelaxNumError(BaseArgError):
+    simple_types = [NUM]
 
-class RelaxNoneNumError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a number or None."
+class RelaxNoneNumError(BaseArgError):
+    simple_types = [NONE, NUM]
 
 # Function.
-class RelaxFunctionError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a function."
+class RelaxFunctionError(BaseArgError):
+    simple_types = [FUNC]
 
-class RelaxNoneFunctionError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a function or None."
+class RelaxNoneFunctionError(BaseArgError):
+    simple_types = [NONE, FUNC]
 
 # Integer.
-class RelaxIntError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be an integer."
+class RelaxIntError(BaseArgError):
+    simple_types = [INT]
 
-class RelaxNoneIntError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an integer or None."
+class RelaxNoneIntError(BaseArgError):
+    simple_types = [NONE, INT]
 
 # String.
-class RelaxStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a string."
+class RelaxStrError(BaseArgError):
+    simple_types = [STR]
 
-class RelaxNoneStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a string or None."
+class RelaxNoneStrError(BaseArgError):
+    simple_types = [NONE, STR]
 
 
 # Simple mixes.
 #~~~~~~~~~~~~~~
 
 # Integer or string.
-class RelaxIntStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an integer or a string."
+class RelaxIntStrError(BaseArgError):
+    simple_types = [INT, STR]
 
-class RelaxNoneIntStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an integer, a string, or None."
+class RelaxNoneIntStrError(BaseArgError):
+    simple_types = [NONE, INT, STR]
 
 # String or file descriptor.
-class RelaxStrFileError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a string or a file descriptor."
+class RelaxStrFileError(BaseArgError):
+    simple_types = [STR, FILE]
 
-class RelaxNoneStrFileError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a string, a file descriptor or None."
+class RelaxNoneStrFileError(BaseArgError):
+    simple_types = [NONE, STR, FILE]
 
 
 # List types.
@@ -376,160 +376,129 @@ class RelaxNoneStrFileError(BaseError):
 
 
 # List.
-class RelaxListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be an array."
+class RelaxListError(BaseArgError):
+    list_types = [LIST]
 
-class RelaxNoneListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an array or None."
+class RelaxNoneListError(BaseArgError):
+    simple_types = [NONE]
+    list_types = [LIST]
 
 # List of floating point numbers.
-class RelaxListFloatError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be an array of floating point numbers."
+class RelaxListFloatError(BaseArgError):
+    list_types = [LIST_FLOAT]
 
 # List of floating point numbers or strings.
-class RelaxListFloatStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be an array of floating point numbers or strings."
+class RelaxListFloatStrError(BaseArgError):
+    list_types = [LIST_FLOAT, LIST_STR]
 
 # List of integers.
-class RelaxListIntError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be an array of integers."
+class RelaxListIntError(BaseArgError):
+    list_types = [LIST_INT]
 
 # List of numbers.
-class RelaxListNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a list of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a list of numbers of length %s." % (name, value, length)
+class RelaxListNumError(BaseArgError):
+    list_types = [LIST_NUM]
 
-class RelaxNoneListNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must either be a list of numbers or None." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must either be a list of numbers of length %s or None." % (name, value, length)
+class RelaxNoneListNumError(BaseArgError):
+    simple_types = [NONE]
+    list_types = [LIST_NUM]
 
 # List of strings.
-class RelaxListStrError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a list of strings." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a list of strings of length %s." % (name, value, length)
+class RelaxListStrError(BaseArgError):
+    list_types = [LIST_STR]
 
-class RelaxNoneListStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an array of strings or None."
+class RelaxNoneListStrError(BaseArgError):
+    simple_types = [NONE]
+    list_types = [LIST_STR]
 
 
 # Simple or list types.
 #~~~~~~~~~~~~~~~~~~~~~~
 
 # Float or list.
-class RelaxNoneFloatListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number, a list, or None."
+class RelaxNoneFloatListError(BaseArgError):
+    simple_types = [NONE, FLOAT]
+    list_types = [LIST]
 
 # Float, str, or list.
-class RelaxNoneFloatStrListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a floating point number, a string, a list, or None."
+class RelaxNoneFloatStrListError(BaseArgError):
+    simple_types = [NONE, FLOAT, STR]
+    list_types = [LIST]
 
 # Integer or list of integers.
-class RelaxIntListIntError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an integer or an array of integers."
+class RelaxIntListIntError(BaseArgError):
+    simple_types = [INT]
+    list_types = [LIST_INT]
 
-class RelaxNoneIntListIntError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be None, an integer or an array of integers."
+class RelaxNoneIntListIntError(BaseArgError):
+    simple_types = [NONE, INT]
+    list_types = [LIST_INT]
 
 # Number, string, or list of numbers or strings.
-class RelaxNumStrListNumStrError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a number, a string, or a list of numbers or strings." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a number, a string, or a list of numbers or strings of length %s." % (name, value, length)
+class RelaxNumStrListNumStrError(BaseArgError):
+    simple_types = [NUM, STR]
+    list_types = [LIST_NUM, LIST_STR]
 
-class RelaxNoneNumStrListNumStrError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a number, a string, a list of numbers or strings, or None." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a number, a string, a list of numbers or strings of length %s, or None." % (name, value, length)
+class RelaxNoneNumStrListNumStrError(BaseArgError):
+    simple_types = [NONE, NUM, STR]
+    list_types = [LIST_NUM, LIST_STR]
 
 # String or list.
-class RelaxNoneStrListError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be None, a string or a list."
+class RelaxNoneStrListError(BaseArgError):
+    simple_types = [NONE, STR]
+    list_types = [LIST]
 
 # String or list of numbers.
-class RelaxStrListNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must either be a string or a list of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must either be a string or a list of numbers of length %s." % (name, value, length)
+class RelaxStrListNumError(BaseArgError):
+    simple_types = [STR]
+    list_types = [LIST_NUM]
 
-class RelaxNoneStrListNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must either be None, a string or a list of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must either be None, a string or a list of numbers of length %s." % (name, value, length)
+class RelaxNoneStrListNumError(BaseArgError):
+    simple_types = [NONE, STR]
+    list_types = [LIST_NUM]
 
 # String or list of strings.
-class RelaxStrListStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be an string or an array of strings."
+class RelaxStrListStrError(BaseArgError):
+    simple_types = [STR]
+    list_types = [LIST_STR]
 
-class RelaxNoneStrListStrError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be None, a string or a list of strings."
+class RelaxNoneStrListStrError(BaseArgError):
+    simple_types = [NONE, STR]
+    list_types = [LIST_STR]
 
 
 # Tuple types.
 #~~~~~~~~~~~~~
 
 # Tuple.
-class RelaxTupleError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must be a tuple."
+class RelaxTupleError(BaseArgError):
+    list_types = [TUPLE]
 
-class RelaxNoneTupleError(BaseError):
-    def __init__(self, name, value):
-        self.text = "The " + name + " argument " + repr(value) + " must either be a tuple or None."
+class RelaxNoneTupleError(BaseArgError):
+    simple_types = [NONE]
+    list_types = [TUPLE]
 
 # Tuple of numbers.
-class RelaxTupleNumError(BaseError):
-    def __init__(self, name, value, length=None):
-        if length == None:
-            self.text = "The %s argument '%s' must be a tuple of numbers." % (name, value)
-        else:
-            self.text = "The %s argument '%s' must be a tuple of numbers of length %s." % (name, value, length)
+class RelaxTupleNumError(BaseArgError):
+    list_types = [TUPLE_NUM]
 
 
 # Simple or tuple types.
 #~~~~~~~~~~~~~~~~~~~~~~~
 
 # Number or tuple.
-class RelaxNumTupleError(BaseError):
-    list_types = [NUM_TUPLE]
+class RelaxNumTupleError(BaseArgError):
+    simple_types = [NUM]
+    list_types = [TUPLE]
 
 # Number or tuple of numbers.
 class RelaxNumTupleNumError(BaseArgError):
     simple_types = [NUM]
-    list_types = [NUM_TUPLE]
+    list_types = [TUPLE_NUM]
 
 class RelaxNoneNumTupleNumError(BaseArgError):
     simple_types = [NONE, NUM]
-    list_types = [NUM_TUPLE]
+    list_types = [TUPLE_NUM]
 
 
 
