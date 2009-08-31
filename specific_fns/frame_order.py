@@ -28,6 +28,7 @@ from copy import deepcopy
 from math import pi
 from minfx.generic import generic_minimise
 from numpy import array, float64, ones, transpose, zeros
+from re import search
 from warnings import warn
 
 # relax module imports.
@@ -674,7 +675,15 @@ class Frame_order(Common_functions):
 
         # Constraints not implemented yet.
         if constraints:
+            # Turn the constraints off.
             constraints = False
+
+            # Remove the method of multipliers arg.
+            if not search('^[Gg]rid', min_algor):
+                min_algor = min_options[0]
+                min_options = min_options[1:]
+
+            # Throw a warning.
             warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
 
         # The rigid model.
