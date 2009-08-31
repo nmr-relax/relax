@@ -28,6 +28,7 @@ from copy import deepcopy
 from math import pi
 from minfx.generic import generic_minimise
 from numpy import array, float64, ones, transpose, zeros
+from warnings import warn
 
 # relax module imports.
 from float import isNaN, isInf
@@ -40,6 +41,7 @@ from maths_fns.frame_order_matrix_ops import generate_vector
 from maths_fns.rotation_matrix import R_2vect
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
+from relax_warnings import RelaxWarning
 from specific_fns.base_class import Common_functions
 
 
@@ -672,7 +674,8 @@ class Frame_order(Common_functions):
 
         # Constraints not implemented yet.
         if constraints:
-            raise RelaxError("Constraints are as of yet not implemented.")
+            constraints = False
+            warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
 
         # The rigid model.
         if cdp.model == 'rigid':
