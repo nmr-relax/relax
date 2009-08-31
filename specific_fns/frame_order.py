@@ -757,7 +757,7 @@ class Frame_order(Common_functions):
         # Test if the reference domain exists.
         exists = False
         for tensor_cont in cdp.align_tensors:
-            if tensor_cont.domain == ref:
+            if hasattr(tensor_cont, 'domain') and tensor_cont.domain == ref:
                 exists = True
         if not exists:
             raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
