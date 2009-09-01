@@ -513,6 +513,9 @@ class Frame_order(Common_functions):
         # Initialise.
         names = []
 
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
         # Generic.
         if set == 'all' or set == 'generic':
             names.append('params')
