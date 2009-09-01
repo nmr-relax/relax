@@ -303,6 +303,13 @@ class Interpreter:
     def script(self, file=None, quit=False):
         """Function for executing a script file."""
 
+        # Function intro text.
+        if self.intro:
+            text = sys.ps3 + "script("
+            text = text + "file=" + repr(file)
+            text = text + ", quit=" + repr(quit) + ")"
+            print(text)
+
         # File argument.
         if file == None:
             raise RelaxNoneError('file')
