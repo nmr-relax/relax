@@ -162,9 +162,6 @@ class Mf(TestCase):
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bugs_12582_12591_12607.py')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test for bug #12607 (S2 changes because it is in the grid search when it should not be).
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
 
@@ -174,9 +171,6 @@ class Mf(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'create_m4.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -196,14 +190,14 @@ class Mf(TestCase):
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'omp_model_free.py')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe('final')
+        # Alias the final data pipe.
+        dp = pipes.get_pipe('final')
 
         # Some checks.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim, [True, False, True])
-        self.assertEqual(cdp.mol[0].res[1].spin[0].select_sim, [True, True, False])
-        self.assertEqual(cdp.mol[0].res[2].spin[0].select_sim, [True, True, True])
-        self.assert_(not hasattr(cdp.mol[0].res[3].spin[0], 'select_sim'))
+        self.assertEqual(dp.mol[0].res[0].spin[0].select_sim, [True, False, True])
+        self.assertEqual(dp.mol[0].res[1].spin[0].select_sim, [True, True, False])
+        self.assertEqual(dp.mol[0].res[2].spin[0].select_sim, [True, True, True])
+        self.assert_(not hasattr(dp.mol[0].res[3].spin[0], 'select_sim'))
 
 
     def test_opendx_s2_te_rex(self):
@@ -292,9 +286,6 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -352,9 +343,6 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -389,9 +377,6 @@ class Mf(TestCase):
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -408,9 +393,6 @@ class Mf(TestCase):
             te  = 2048 ps
             Rex = 0.149 s^-1
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
@@ -454,9 +436,6 @@ class Mf(TestCase):
             te  = 2048 ps
             Rex = 0.149 s^-1
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
@@ -510,9 +489,6 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -560,9 +536,6 @@ class Mf(TestCase):
             te  = 2048 ps
             Rex = 0.149 s^-1
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
@@ -623,9 +596,6 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -669,9 +639,6 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -713,9 +680,6 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
@@ -754,9 +718,6 @@ class Mf(TestCase):
         # Read the relaxation data.
         self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the data and error.
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_error[0], 0.027749955318795365)
@@ -767,9 +728,6 @@ class Mf(TestCase):
 
         # Read the results.
         self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Debugging print out.
         print(cdp)
@@ -971,9 +929,6 @@ class Mf(TestCase):
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='m4')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['S2', 'te', 'Rex'])
@@ -991,9 +946,6 @@ class Mf(TestCase):
         # Set the CSA value.
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
 
@@ -1010,9 +962,6 @@ class Mf(TestCase):
         # Set the CSA value.
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
 
@@ -1028,9 +977,6 @@ class Mf(TestCase):
 
         # Set the CSA value and bond length simultaneously.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)

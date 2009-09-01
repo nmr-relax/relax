@@ -61,9 +61,6 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if the structure exists.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
         raise RelaxNoPdbError
@@ -214,9 +211,6 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # The file path.
     file_path = get_file_path(file, dir)
 
@@ -284,9 +278,6 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
                             vectors.
     @type unit:             bool
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -436,9 +427,6 @@ def write_pdb(file=None, dir=None, model_num=None, force=False):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Check if the structural object exists.
     if not hasattr(cdp, 'structure'):

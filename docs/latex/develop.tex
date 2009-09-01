@@ -153,9 +153,6 @@ For both variables and functions lower case with underscores between words is al
         if not model_type:
             model_type = self.determine_param_set_type()
 
-        # Alias the current data pipe.
-        cdp = relax_data_store[relax_data_store.current_pipe]
-
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
             # Normal parameters.

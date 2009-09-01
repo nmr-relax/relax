@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -46,9 +46,6 @@ def eliminate(function=None, args=None):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
     eliminate = get_specific_fn('eliminate', cdp.pipe_type)

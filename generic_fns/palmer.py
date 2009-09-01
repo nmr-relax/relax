@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -88,9 +88,6 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
 
     # Test if the current pipe exists.
     pipes.test()
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -249,9 +246,6 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
     @type frq:              list of float
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Set the diffusion tensor specific values.
     if cdp.diff_tensor.type == 'sphere':
         diff = 'isotropic'
@@ -353,9 +347,6 @@ def create_mfmodel(file, spin=None, spin_id=None, steps=None, constraints=None):
     @keyword constraints:   A flag which if True will result in constrained optimisation.
     @type constraints:      bool
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Spin title.
     file.write("\nspin     " + spin_id + "\n")
@@ -459,9 +450,6 @@ def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=
     @type atom2:        str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Spin title.
     file.write("\nspin     " + spin_id + "\n")
 
@@ -489,9 +477,6 @@ def create_run(file, binary=None, dir=None):
     @type dir:          str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     file.write("#! /bin/sh\n")
     file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
     if cdp.diff_tensor.type != 'sphere':
@@ -517,9 +502,6 @@ def execute(dir, force, binary):
                     binary.
     @type binary:   str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # The current directory.
     orig_dir = getcwd()
@@ -604,9 +586,6 @@ def extract(dir, spin_id=None):
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str or None
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

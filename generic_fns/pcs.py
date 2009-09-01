@@ -61,9 +61,6 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
@@ -159,7 +156,6 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # Get the data pipes.
     source_dp = pipes.get_pipe(pipe)
-    cdp = pipes.get_pipe()
 
     # Test if the structure has been loaded.
     if not hasattr(source_dp, 'structure'):
@@ -477,9 +473,6 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:

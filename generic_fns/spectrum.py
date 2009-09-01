@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2007-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2007-2009 Edward d'Auvergne                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -67,9 +67,6 @@ def __errors_repl(verbosity=0):
                         verbosity.
     @type verbosity:    int
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # replicated spectra.
     repl = [False] * len(cdp.spectrum_ids)
@@ -287,9 +284,6 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test the spectrum id string.
     if spectrum_id not in cdp.spectrum_ids:
         raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
@@ -362,9 +356,6 @@ def error_analysis():
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):
@@ -749,9 +740,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test that the intensity measures are identical.
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
         raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
@@ -878,9 +866,6 @@ def replicated(spectrum_ids=None):
 
     # Test if the current pipe exists
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):

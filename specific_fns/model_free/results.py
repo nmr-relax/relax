@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -84,9 +84,6 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Extract the model type if it exists, otherwise return.
         if spin_line[col['param_set']] != 'None':
@@ -224,9 +221,6 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set up the model-free models.
         if data_set == 'value':
@@ -609,9 +603,6 @@ class Results:
         @type verbosity:    int
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Extract and remove the header.
         header = file_data[0]
         file_data = file_data[1:]
@@ -882,9 +873,6 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # The diffusion tensor type.
         diff_type = spin_line[col['diff_type']]

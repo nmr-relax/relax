@@ -158,9 +158,6 @@ class Model_free_main:
         # Initialise.
         param_names = []
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
             # Spherical diffusion.
@@ -221,9 +218,6 @@ class Model_free_main:
         # Determine the model type.
         if not model_type:
             model_type = self.determine_model_type()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -386,9 +380,6 @@ class Model_free_main:
         @return:                The diagonal and square scaling matrix.
         @rtype:                 numpy diagonal matrix
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise.
         if num_params == 0:
@@ -960,9 +951,6 @@ class Model_free_main:
 
             # Simulation deselection.
             else:
-                # Get the current data pipe.
-                cdp = pipes.get_pipe()
-
                 # Deselect.
                 cdp.select_sim[sim_index] = False
 
@@ -974,9 +962,6 @@ class Model_free_main:
                     'local_tm'.
         @rtype:     str
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1256,9 +1241,6 @@ class Model_free_main:
         @rtype:             bool
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Default values.
         c1 = 50.0 * 1e-9
         c2 = 1.5
@@ -1501,9 +1483,6 @@ class Model_free_main:
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Upper limit flag for correlation times.
         upper_time_limit = 1
@@ -1778,9 +1757,6 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Global models.
         if model_type == 'all':
             return "Global model - all diffusion tensor parameters and spin specific model-free parameters."
@@ -1892,9 +1868,6 @@ class Model_free_main:
             raise RelaxError("Either the model_info or spin_id argument must be supplied.")
         elif model_info != None and spin_id != None:
             raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -2021,9 +1994,6 @@ class Model_free_main:
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Is structural data required?
         need_vect = False
         if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
@@ -2059,9 +2029,6 @@ class Model_free_main:
 
         # Test if the current data pipe exists.
         pipes.test()
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the pipe type is 'mf'.
         function_type = pipes.get_type()
@@ -2756,9 +2723,6 @@ class Model_free_main:
         # Parameter increment counter.
         inc = 0
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Determine the model type.
         model_type = self.determine_model_type()
 
@@ -2882,9 +2846,6 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Global model.
         if model_type == 'all' or model_type == 'diff':
             cdp.select_sim = select_sim
@@ -2927,9 +2888,6 @@ class Model_free_main:
 
     def sim_init_values(self):
         """Initialise the Monte Carlo parameter values."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -3117,9 +3075,6 @@ class Model_free_main:
         # Determine the model type.
         model_type = self.determine_model_type()
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
             return cdp.chi2_sim
@@ -3146,9 +3101,6 @@ class Model_free_main:
 
         # Parameter increment counter.
         inc = 0
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -3259,9 +3211,6 @@ class Model_free_main:
 
         # Determine the model type.
         model_type = self.determine_model_type()
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Single instance.
         if model_type == 'all' or model_type == 'diff':

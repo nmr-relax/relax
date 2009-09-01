@@ -77,7 +77,6 @@ minimise('simplex', constraints=False)
 monte_carlo.error_analysis()
 
 # Print out.
-cdp = get_pipe()
 print("\n# Min details #")
 print("grid increments: %s" % GRID_INCS)
 print("\n# Euler angles (deg) #")

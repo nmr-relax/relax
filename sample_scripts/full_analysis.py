@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -391,7 +391,6 @@ class Main:
         """Test for the convergence of the global model."""
 
         # Alias the data pipes.
-        cdp = pipes.get_pipe()
         prev_pipe = pipes.get_pipe('previous')
 
         # Print out.

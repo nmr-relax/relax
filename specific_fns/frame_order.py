@@ -63,9 +63,6 @@ class Frame_order(Common_functions):
         @rtype:             tuple of 3 numpy nx5D, rank-1 arrays
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Checks.
         if not hasattr(cdp, 'ref_domain'):
             raise RelaxError("The reference domain has not been set up.")
@@ -130,9 +127,6 @@ class Frame_order(Common_functions):
         @rtype:         (int, AlignTensorData instance)
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Number of tensor pairs.
         n = len(cdp.align_tensors.reduction)
 
@@ -153,9 +147,6 @@ class Frame_order(Common_functions):
 
     def __update_model(self):
         """Update the model parameters as necessary."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise the list of model parameters.
         if not hasattr(cdp, 'params'):
@@ -201,9 +192,6 @@ class Frame_order(Common_functions):
                             optimisation.
         @type sim_index:    None or int
          """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Disassemble the results.
         param_vector, func, iter_count, f_count, g_count, h_count, warning = results
@@ -290,9 +278,6 @@ class Frame_order(Common_functions):
         @rtype:                     float
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # The rigid model initial parameter vector (the cone axis angles and the cone angle).
         if cdp.model == 'rigid':
             param_vector = array([cdp.alpha, cdp.beta, cdp.gamma], float64)
@@ -328,9 +313,6 @@ class Frame_order(Common_functions):
 
     def calculate(self, verbosity=None):
         """Calculate the chi-squared value for the current parameter values."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # The rigid model initial parameter vector (the cone axis angles and the cone angle).
         if cdp.model == 'rigid':
@@ -371,9 +353,6 @@ class Frame_order(Common_functions):
 
         # Test if the current data pipe exists.
         pipes.test()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the model.
         if not cdp.model in ['iso cone']:
@@ -513,9 +492,6 @@ class Frame_order(Common_functions):
         # Initialise.
         names = []
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Generic.
         if set == 'all' or set == 'generic':
             names.append('params')
@@ -589,9 +565,6 @@ class Frame_order(Common_functions):
                             value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the Frame Order model has been set up.
         if not hasattr(cdp, 'model'):
@@ -672,9 +645,6 @@ class Frame_order(Common_functions):
         @type sim_index:        None or int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Constraints not implemented yet.
         if constraints:
             # Turn the constraints off.
@@ -735,9 +705,6 @@ class Frame_order(Common_functions):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the pivot point.
         cdp.pivot = pivot
 
@@ -755,9 +722,6 @@ class Frame_order(Common_functions):
 
         # Test if the current data pipe exists.
         pipes.test()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
@@ -804,9 +768,6 @@ class Frame_order(Common_functions):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the model is already setup.
         if hasattr(cdp, 'model'):
             raise RelaxModelError('Frame Order')
@@ -836,9 +797,6 @@ class Frame_order(Common_functions):
         @type error:    float
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Parameter increment counter.
         inc = 0
 
@@ -861,9 +819,6 @@ class Frame_order(Common_functions):
         @type select_sim:   bool
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the array.
         cdp.select_sim = deepcopy(select_sim)
 
@@ -876,9 +831,6 @@ class Frame_order(Common_functions):
 
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
 
         # Test if Monte Carlo parameter values have already been set.
@@ -961,9 +913,6 @@ class Frame_order(Common_functions):
         @type index:        int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Parameter increment counter.
         inc = 0
 
@@ -985,9 +934,6 @@ class Frame_order(Common_functions):
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Return the array.
         return cdp.select_sim

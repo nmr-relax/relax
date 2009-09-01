@@ -168,9 +168,6 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Create an array of data pipes to loop over (hybrid support).
     if cdp.pipe_type == 'hybrid':
         pipe_list = cdp.hybrid_pipes
@@ -331,9 +328,6 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
 
     # Test if the current pipe exists.
     pipes.test()
-
-    # Get the data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() > 0:

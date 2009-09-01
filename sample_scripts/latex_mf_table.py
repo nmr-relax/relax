@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -91,9 +91,6 @@ class Latex:
 
     def headings(self):
         """Create the LaTeX table headings."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Spacing.
         self.file.write("\\\\[-5pt]\n")

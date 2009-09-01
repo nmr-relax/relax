@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -73,9 +73,6 @@ class Iso3D(Base_Map):
 
     def map_text(self, map_file):
         """Function for creating the text of a 3D map."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise.
         values = zeros(3, float64)

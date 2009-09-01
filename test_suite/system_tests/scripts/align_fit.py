@@ -15,7 +15,6 @@ STRUCT_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
 # Create the data pipe.
 pipe.create('rdc', 'N-state')
-cdp = pipes.get_pipe()
 
 # Set the mode, if not specified by the system test.
 if not hasattr(ds, 'mode'):

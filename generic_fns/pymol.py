@@ -64,9 +64,6 @@ class Pymol:
         if not self.pipe_open_test():
             return
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Reinitialise PyMOL.
         self.pipe_write("reinitialize")
 
@@ -92,9 +89,6 @@ class Pymol:
 
     def pipe_open(self):
         """Function for opening a PyMOL pipe."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test that the PyMOL binary exists.
         test_binary('pymol')
@@ -159,9 +153,6 @@ def cartoon():
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test for the structure.
     if not hasattr(cdp, 'structure'):
@@ -287,9 +278,6 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     @return:                The list of PyMOL commands.
     @rtype:                 list of str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Specific PyMOL macro creation function.
     pymol_macro = get_specific_fn('pymol_macro', cdp.pipe_type)

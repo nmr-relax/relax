@@ -68,9 +68,6 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
 
     # Global (non-spin specific) data.
     #####################################
@@ -154,9 +151,6 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
 
     # Test if the current pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -577,9 +571,6 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
     if len(spin_names) != N:
         raise RelaxError("The length of the spin_names arg (%s) does not match that of the value arg (%s)." % (len(spin_names), N))
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Initialise the global data for the current pipe if necessary.
     data_init(cdp, global_flag=True)
 
@@ -827,9 +818,6 @@ def update_data_structures_pipe(ri_label=None, frq_label=None, frq=None):
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Initialise the relaxation data structures (if needed).
     data_init(cdp, global_flag=True)

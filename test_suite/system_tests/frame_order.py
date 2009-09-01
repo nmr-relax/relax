@@ -31,7 +31,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 
@@ -115,9 +114,6 @@ class Frame_order(TestCase):
 
         # Execute the script.
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order_rigid_no_rot.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the values.
         self.assertEqual(cdp.iter, 92)

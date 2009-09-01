@@ -190,9 +190,6 @@ def delete(tensor):
     # Find the tensor index.
     index = get_tensor_index(tensor)
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Delete the alignment data.
     cdp.align_tensors.pop(index)
 
@@ -210,9 +207,6 @@ def display(tensor):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Construct the tensor list.
     tensor_list = []
@@ -319,9 +313,6 @@ def fold_angles(sim_index=None):
     @type sim_index:    int or None
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
 
     # Wrap the angles.
     ##################
@@ -416,9 +407,6 @@ def get_tensor_object(tensor, pipe=None):
     if pipe == None:
         pipe = pipes.cdp_name()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Init.
     data = None
 
@@ -452,9 +440,6 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if alignment tensor data already exists.
     if errors and not align_data_exists(tensor):
@@ -752,9 +737,6 @@ def matrix_angles(basis_set=0, tensors=None):
     @type tensors:      None or array of str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError('alignment')
@@ -849,9 +831,6 @@ def reduction(full_tensor=None, red_tensor=None):
     @param red_tensor:  The reduced alignment tensor.
     @type red_tensor:   str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Tensor information.
     match_full = False
@@ -1113,9 +1092,6 @@ def set(tensor=None, value=None, param=None, errors=False):
                         input.
     @type errors:       bool
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Initialise.
     geo_params = []
@@ -1548,9 +1524,6 @@ def set_domain(tensor=None, domain=None):
     @type domain:   str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Loop over the tensors.
     match = False
     for tensor_cont in cdp.align_tensors:
@@ -1602,9 +1575,6 @@ def svd(basis_set=0, tensors=None):
     @param tensors:     An array of tensors to apply SVD to.  If None, all tensors will be used.
     @type tensors:      None or array of str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:

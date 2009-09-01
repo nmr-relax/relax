@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,6 @@ from re import search
 
 # relax module imports.
 from colour import linear_gradient
-from generic_fns import pipes
 from generic_fns.mol_res_spin import spin_loop
 from relax_errors import RelaxStyleError, RelaxUnknownDataTypeError
 
@@ -537,9 +536,6 @@ class Molmol:
 
     def molmol_classic_rex(self, res_num, rex, colour_start, colour_end, colour_list):
         """Function for generating the bond width and colours for correlation times."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # The Rex value at the first field strength.
         rex = rex * (2.0 * pi * cdp.frq[0])**2
