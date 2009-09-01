@@ -318,13 +318,14 @@ class Interpreter:
             raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
+        orig_intro_state = self.intro
         self.intro = True
 
         # Execute the script.
         run_script(local=self.local, script_file=file, quit=quit)
 
-        # Turn off the function intro flag.
-        self.intro = False
+        # Return the function intro flag to the original value.
+        self.intro = orig_intro_state
 
 
 class _Exit:
