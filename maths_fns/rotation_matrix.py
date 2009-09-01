@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import acos, atan2, cos, pi, sin
+from math import acos, asin, atan2, cos, pi, sin
 from numpy import array, cross, dot, float64, hypot, zeros
 from numpy.linalg import norm
 from random import gauss, uniform
@@ -294,6 +294,57 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
     matrix[0,2] = -sin_b * cos_g
     matrix[1,2] =  sin_b * sin_g
     matrix[2,2] =  cos_b
+
+
+def R_to_euler_zyz(matrix):
+    """Calculate the z-y-z Euler angles from the given rotation matrix.
+
+    Unit vectors
+    ============
+
+    The unit mux vector is::
+
+                | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
+        mux  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
+                |                    cos(alpha) * sin(beta)                      |
+
+    The unit muy vector is::
+
+                | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
+        muy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
+                |                   sin(alpha) * sin(beta)                      |
+
+    The unit muz vector is::
+
+                | -sin(beta) * cos(gamma) |
+        muz  =  |  sin(beta) * sin(gamma) |.
+                |        cos(beta)        |
+
+    Rotation matrix
+    ===============
+
+    The rotation matrix is defined as the vector of unit vectors::
+
+        R = [mux, muy, muz].
+
+
+    @param matrix:  The 3x3 rotation matrix to update.
+    @type matrix:   3x3 numpy array
+    @return:        The alpha, beta, and gamma Euler angles in the z-y-z convention.
+    @rtype:         float, float, float
+    """
+
+    # The beta Euler angle.
+    beta = acos(matrix[2,2])
+
+    # The alpha Euler angle.
+    alpha = atan2(matrix[2,1], matrix[2,0])
+
+    # The gamma Euler angle.
+    gamma = atan2(matrix[1,2], -matrix[0,2])
+
+    # Return the angles.
+    return alpha, beta, gamma
 
 
 def R_random_axis(matrix, angle=0.0):
