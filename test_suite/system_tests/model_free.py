@@ -587,7 +587,7 @@ class Mf(TestCase):
         # h_count: 0
         # warning: None
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation values.
         select = True
         s2 = 0.9700000000000580
         te = 2048.000000011044449
@@ -1045,7 +1045,7 @@ class Mf(TestCase):
         # h_count: 22
         # warning: None 
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation values.
         select = True
         s2 = 0.9699999999999993
         te = 2048.000000000041837
@@ -1114,7 +1114,7 @@ class Mf(TestCase):
         # h_count:                                     0
         # warning:        Maximum number of iterations reached
         
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation values.
         select = True
         s2 = 0.91579220834688024
         te = 0.30568658722531733
@@ -1247,7 +1247,7 @@ class Mf(TestCase):
         # h_count:                                     0
         # warning:                                  None
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation values.
         select = True
         s2 = 1.0
         te = 0.0
