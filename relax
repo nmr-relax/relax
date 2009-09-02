@@ -41,7 +41,8 @@ import dep_check
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
 import platform
-import profile
+if dep_check.profile_module:
+    import profile
 import pstats
 from re import match
 from string import split, strip
@@ -411,14 +412,23 @@ class RelaxParser(OptionParser):
 
 
 if __name__ == "__main__":
-    # Change this flag to 1 for code profiling.
-    profile_flag = 0
+    # Change this flag to True for code profiling.
+    profile_flag = False
 
+    # Normal relax operation.
     if not profile_flag:
         Relax()
+
+    # relax in profiling mode.
     else:
         def print_stats(stats, status=0):
             pstats.Stats(stats).sort_stats('cumulative', 'name').print_stats()
 
+        # No profile module.
+        if not dep_check.profile_module:
+            sys.stderr.write("The profile module is not available, please install the Python development packages for profiling.\n\n")
+            sys.exit()
+
+        # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
         profile.run('Relax()')
