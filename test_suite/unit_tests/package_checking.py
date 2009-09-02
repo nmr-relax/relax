@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import listdir
+from os import F_OK, access, listdir, sep
 from re import search
 from unittest import TestCase
 
@@ -34,7 +34,7 @@ class PackageTestCase(TestCase):
 
         print("The %s.__all__ list: %s" % (self.package_name, self.package.__all__))
 
-        # Loop over all modules.
+        # Loop over all files.
         files = listdir(self.package_path)
         for file in files:
             # Only look at the '*.py' files.
@@ -50,7 +50,27 @@ class PackageTestCase(TestCase):
 
             # Print out.
             print("\nFile:   %s" % file)
-            print("Module: %s" % module)
+            print("Checking module: %s" % module)
 
             # Check if the module is in __all__.
             self.assert_(module in self.package.__all__)
+
+        # Loop over all modules.
+        for module in self.package.__all__:
+            # The file name.
+            file = module + '.py'
+
+            # Print out.
+            print("\nModule: %s" % module)
+            print("Checking file:   %s" % file)
+
+            # Check for the file.
+            if access(self.package_path + sep + file, F_OK):
+                continue
+
+            # Check for the package.
+            if access(self.package_path + sep + module, F_OK):
+                continue
+
+            # Doesn't exist, so fail.
+            self.fail()
