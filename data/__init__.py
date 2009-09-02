@@ -37,10 +37,15 @@ from relax_errors import RelaxPipeError
 from version import version
 
 
-__all__ = [ 'data_classes',
+__all__ = [ 'align_tensor',
+            'data_classes',
             'diff_tensor',
-            'diff_tensor_auto_objects',
-            'main' ]
+            'main',
+            'mol_res_spin',
+            'pipe_container',
+            'prototype',
+            'relax_xml'
+]
 
 
 class Relax_data_store(dict):
