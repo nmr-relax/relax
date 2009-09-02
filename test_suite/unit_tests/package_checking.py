@@ -21,20 +21,36 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
-import sys
-
-# relax module imports.
-from test_suite.unit_tests.package_checking import PackageTestCase
-from generic_fns import structure
+from os import listdir
+from re import search
+from unittest import TestCase
 
 
-class Test___init__(PackageTestCase):
-    """Unit tests for the generic_fns.structure package."""
+class PackageTestCase(TestCase):
+    """Base class for the unit tests of the relax packages."""
 
-    def setUp(self):
-        """Set up for the package checking."""
+    def test___all__(self):
+        """Check if all modules are located within the __all__ list."""
 
-        self.package = structure
-        self.package_name = 'generic_fns.structure'
-        self.package_path = sys.path[0] + sep + 'generic_fns' + sep + 'structure'
+        print("The %s.__all__ list: %s" % (self.package_name, self.package.__all__))
+
+        # Loop over all modules.
+        files = listdir(self.package_path)
+        for file in files:
+            # Only look at the '*.py' files.
+            if not search('.py$', file):
+                continue
+
+            # Skip the __init__.py file.
+            if file == '__init__.py':
+                continue
+
+            # Remove the '.py' part.
+            module = file[:-3]
+
+            # Print out.
+            print("\nFile:   %s" % file)
+            print("Module: %s" % module)
+
+            # Check if the module is in __all__.
+            self.assert_(module in self.package.__all__)
