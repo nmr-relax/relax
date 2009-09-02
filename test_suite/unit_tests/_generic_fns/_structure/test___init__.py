@@ -31,15 +31,15 @@ from generic_fns import structure
 
 
 class Test___init__(TestCase):
-    """Unit tests for the data.Data class."""
+    """Unit tests for the generic_fns.structure package."""
 
     def test___all__(self):
-        """Test if all package modules are located in the __all__ list."""
+        """Check if the generic_fns.structure modules are located within the __all__ list."""
 
         # Path to the files.
         path = sys.path[0] + sep + 'generic_fns' + sep + 'structure'
 
-        print("The __all__ list: %s" % structure.__all__)
+        print("The generic_fns.structure.__all__ list: %s" % structure.__all__)
 
         # Loop over all modules.
         files = listdir(path)
