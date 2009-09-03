@@ -23,6 +23,7 @@
 
 __all__ = [ 'align_tensor',
             'angles',
+            'chemical_shift',
             'dasha',
             'diffusion_tensor',
             'eliminate',
