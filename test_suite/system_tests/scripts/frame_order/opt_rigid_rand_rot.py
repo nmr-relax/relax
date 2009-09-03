@@ -24,4 +24,4 @@ grid_search(inc=4)
 minimise('simplex', constraints=False)
 
 # Write the results.
-results.write('results_rigid', dir=None, force=True)
+results.write('devnull', dir=None, force=True)
