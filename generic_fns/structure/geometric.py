@@ -102,7 +102,7 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
 
     # Get the rotation matrix.
     if axis != None:
-        R_2vect(R, array([0,0,1], float64), axis)
+        R_2vect(R, array([0, 0, 1], float64), axis)
 
     # Loop over each vector.
     for i in xrange(inc):

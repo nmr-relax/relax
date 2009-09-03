@@ -139,7 +139,7 @@ def file_root(file_path):
     @rtype:             str
     """
 
-    root,ext = splitext(file_path)
+    root, ext = splitext(file_path)
     return basename(root)
 
 

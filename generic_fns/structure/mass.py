@@ -111,6 +111,6 @@ def centre_of_mass(return_mass=False):
 
     # Return the centre of mass.
     if return_mass:
-        return R,M
+        return R, M
     else:
         return R

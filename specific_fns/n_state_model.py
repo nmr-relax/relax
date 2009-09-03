@@ -791,8 +791,8 @@ class N_state_model(Common_functions):
 
             # Normalisation factor of 2Da^2(4 + 3R)/5.
             D = dj * cdp.align_tensors[i].tensor_diag
-            Da = 1.0/3.0 * (D[2,2] - (D[0,0]+D[1,1])/2.0)
-            Dr = 1.0/3.0 * (D[0,0] - D[1,1])
+            Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
+            Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
             R = Dr / Da
             norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
             if Da == 0.0:
@@ -1050,8 +1050,8 @@ class N_state_model(Common_functions):
         unit_vect = cdp.pivot_CoM / norm(cdp.pivot_CoM)
 
         # Initilise some data structures.
-        R = zeros((3,3), float64)
-        vectors = zeros((cdp.N,3), float64)
+        R = zeros((3, 3), float64)
+        vectors = zeros((cdp.N, 3), float64)
 
         # Loop over the N states.
         for c in xrange(cdp.N):
@@ -1134,8 +1134,8 @@ class N_state_model(Common_functions):
         inc = 20
 
         # The rotation matrix.
-        R = zeros((3,3), float64)
-        R_2vect(R, array([0,0,1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM))
+        R = zeros((3, 3), float64)
+        R_2vect(R, array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM))
 
         # Create the structural object.
         structure = Internal()

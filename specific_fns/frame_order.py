@@ -394,8 +394,8 @@ class Frame_order(Common_functions):
                 prefix = 'neg_'
 
             # The rotation matrix (rotation from the z-axis to the cone axis).
-            R = zeros((3,3), float64)
-            R_2vect(R, array([0,0,1], float64), cone_axis)
+            R = zeros((3, 3), float64)
+            R_2vect(R, array([0, 0, 1], float64), cone_axis)
 
             # Mirroring.
             cone_axis_new = factor*cone_axis

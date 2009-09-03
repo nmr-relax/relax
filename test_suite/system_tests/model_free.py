@@ -1337,10 +1337,10 @@ class Mf(TestCase):
         self.assertEqual(cdp.warning, None)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1','R2','NOE','R1','R2','NOE','R1','R2','NOE'])
-        self.assertEqual(cdp.remap_table, [0,0,0,1,1,1,2,2,2])
-        self.assertEqual(cdp.frq_labels, ['500','600','750'])
-        self.assertEqual(cdp.frq, [500000000.0,600000000.0,750000000.0])
+        self.assertEqual(cdp.ri_labels, ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
+        self.assertEqual(cdp.remap_table, [0, 0, 0, 1, 1, 1, 2, 2, 2])
+        self.assertEqual(cdp.frq_labels, ['500', '600', '750'])
+        self.assertEqual(cdp.frq, [500000000.0, 600000000.0, 750000000.0])
         self.assertEqual(cdp.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
         self.assertEqual(cdp.num_frq, 3)
         self.assertEqual(cdp.num_ri, 9)
@@ -1402,10 +1402,10 @@ class Mf(TestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            self.assertEqual(spin.ri_labels, ['R1','R2','NOE','R1','R2','NOE','R1','R2','NOE'])
-            self.assertEqual(spin.remap_table, [0,0,0,1,1,1,2,2,2])
-            self.assertEqual(spin.frq_labels, ['500','600','750'])
-            self.assertEqual(spin.frq, [500000000.0,600000000.0,750000000.0])
+            self.assertEqual(spin.ri_labels, ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
+            self.assertEqual(spin.remap_table, [0, 0, 0, 1, 1, 1, 2, 2, 2])
+            self.assertEqual(spin.frq_labels, ['500', '600', '750'])
+            self.assertEqual(spin.frq, [500000000.0, 600000000.0, 750000000.0])
             self.assertEqual(spin.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
             self.assertEqual(spin.num_frq, 3)
             self.assertEqual(spin.num_ri, 9)

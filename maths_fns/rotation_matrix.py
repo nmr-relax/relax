@@ -123,15 +123,15 @@ def R_2vect(R, vector_orig, vector_fin):
     sa = sin(angle)
 
     # Calculate the rotation matrix elements.
-    R[0,0] = 1.0 + (1.0 - ca)*(x**2 - 1.0)
-    R[0,1] = -z*sa + (1.0 - ca)*x*y
-    R[0,2] = y*sa + (1.0 - ca)*x*z
-    R[1,0] = z*sa+(1.0 - ca)*x*y
-    R[1,1] = 1.0 + (1.0 - ca)*(y**2 - 1.0)
-    R[1,2] = -x*sa+(1.0 - ca)*y*z
-    R[2,0] = -y*sa+(1.0 - ca)*x*z
-    R[2,1] = x*sa+(1.0 - ca)*y*z
-    R[2,2] = 1.0 + (1.0 - ca)*(z**2 - 1.0)
+    R[0, 0] = 1.0 + (1.0 - ca)*(x**2 - 1.0)
+    R[0, 1] = -z*sa + (1.0 - ca)*x*y
+    R[0, 2] = y*sa + (1.0 - ca)*x*z
+    R[1, 0] = z*sa+(1.0 - ca)*x*y
+    R[1, 1] = 1.0 + (1.0 - ca)*(y**2 - 1.0)
+    R[1, 2] = -x*sa+(1.0 - ca)*y*z
+    R[2, 0] = -y*sa+(1.0 - ca)*x*z
+    R[2, 1] = x*sa+(1.0 - ca)*y*z
+    R[2, 2] = 1.0 + (1.0 - ca)*(z**2 - 1.0)
 
 
 def R_axis_angle(matrix, axis, angle):
@@ -213,13 +213,13 @@ def R_to_axis_angle(matrix):
 
     # Axes.
     axis = zeros(3, float64)
-    axis[0] = matrix[2,1] - matrix[1,2]
-    axis[1] = matrix[0,2] - matrix[2,0]
-    axis[2] = matrix[1,0] - matrix[0,1]
+    axis[0] = matrix[2, 1] - matrix[1, 2]
+    axis[1] = matrix[0, 2] - matrix[2, 0]
+    axis[2] = matrix[1, 0] - matrix[0, 1]
 
     # Angle.
     r = hypot(axis[0], hypot(axis[1], axis[2]))
-    t = matrix[0,0] + matrix[1,1] + matrix[2,2]
+    t = matrix[0, 0] + matrix[1, 1] + matrix[2, 2]
     theta = atan2(r, t-1)
 
     # Normalise the axis.
@@ -281,19 +281,19 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
     cos_g = cos(gamma)
 
     # The unit mux vector component of the rotation matrix.
-    matrix[0,0] = -sin_a * sin_g + cos_a * cos_b * cos_g
-    matrix[1,0] = -sin_a * cos_g - cos_a * cos_b * sin_g
-    matrix[2,0] =  cos_a * sin_b
+    matrix[0, 0] = -sin_a * sin_g + cos_a * cos_b * cos_g
+    matrix[1, 0] = -sin_a * cos_g - cos_a * cos_b * sin_g
+    matrix[2, 0] =  cos_a * sin_b
 
     # The unit muy vector component of the rotation matrix.
-    matrix[0,1] = cos_a * sin_g + sin_a * cos_b * cos_g
-    matrix[1,1] = cos_a * cos_g - sin_a * cos_b * sin_g
-    matrix[2,1] = sin_a * sin_b
+    matrix[0, 1] = cos_a * sin_g + sin_a * cos_b * cos_g
+    matrix[1, 1] = cos_a * cos_g - sin_a * cos_b * sin_g
+    matrix[2, 1] = sin_a * sin_b
 
     # The unit muz vector component of the rotation matrix.
-    matrix[0,2] = -sin_b * cos_g
-    matrix[1,2] =  sin_b * sin_g
-    matrix[2,2] =  cos_b
+    matrix[0, 2] = -sin_b * cos_g
+    matrix[1, 2] =  sin_b * sin_g
+    matrix[2, 2] =  cos_b
 
 
 def R_to_euler_zyz(matrix):
@@ -335,13 +335,13 @@ def R_to_euler_zyz(matrix):
     """
 
     # The beta Euler angle.
-    beta = acos(matrix[2,2])
+    beta = acos(matrix[2, 2])
 
     # The alpha Euler angle.
-    alpha = atan2(matrix[2,1], matrix[2,0])
+    alpha = atan2(matrix[2, 1], matrix[2, 0])
 
     # The gamma Euler angle.
-    gamma = atan2(matrix[1,2], -matrix[0,2])
+    gamma = atan2(matrix[1, 2], -matrix[0, 2])
 
     # Return the angles.
     return alpha, beta, gamma

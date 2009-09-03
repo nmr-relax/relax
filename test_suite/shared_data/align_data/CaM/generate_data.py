@@ -15,13 +15,13 @@ def convert_tensor(A):
     """Convert the rank-1, 5D tensor form into a rank-2, 3D tensor."""
 
     # Convert the tensor into numpy matrix form.
-    tensor = zeros((3,3), float64)
-    tensor[0,0] = A[0]
-    tensor[0,1] = tensor[1,0] = A[2]
-    tensor[0,2] = tensor[2,0] = A[3]
-    tensor[1,1] = A[1]
-    tensor[1,2] = tensor[2,1] = A[4]
-    tensor[2,2] = -A[0]-A[1]
+    tensor = zeros((3, 3), float64)
+    tensor[0, 0] = A[0]
+    tensor[0, 1] = tensor[1, 0] = A[2]
+    tensor[0, 2] = tensor[2, 0] = A[3]
+    tensor[1, 1] = A[1]
+    tensor[1, 2] = tensor[2, 1] = A[4]
+    tensor[2, 2] = -A[0]-A[1]
 
     # Return the tensor.
     return tensor

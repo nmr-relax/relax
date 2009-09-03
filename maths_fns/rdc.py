@@ -83,7 +83,7 @@ def ave_rdc_5D(dj, vect, K, A, weights=None):
                 c = weights[k]
 
         # Back-calculate the RDC.
-        val = val + c * (vect[k,0]**2 - vect[k,2]**2)*A[0] + (vect[k,1]**2 - vect[k,2]**2)*A[1] + 2.0*vect[k,0]*vect[k,1]*A[2] + 2.0*vect[k,0]*vect[k,2]*A[3] + 2.0*vect[k,1]*vect[k,2]*A[4]
+        val = val + c * (vect[k, 0]**2 - vect[k, 2]**2)*A[0] + (vect[k, 1]**2 - vect[k, 2]**2)*A[1] + 2.0*vect[k, 0]*vect[k, 1]*A[2] + 2.0*vect[k, 0]*vect[k, 2]*A[3] + 2.0*vect[k, 1]*vect[k, 2]*A[4]
 
     # Return the average RDC.
     return dj * val

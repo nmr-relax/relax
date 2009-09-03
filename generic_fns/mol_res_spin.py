@@ -1624,7 +1624,7 @@ def parse_token(token, verbosity=False):
 
         # Find all '-' characters (ignoring the first character, i.e. a negative number).
         indices= []
-        for i in xrange(1,len(element)):
+        for i in xrange(1, len(element)):
             if element[i] == '-':
                 indices.append(i)
 

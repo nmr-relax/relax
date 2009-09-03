@@ -162,7 +162,7 @@ class Test_kronecker_product(TestCase):
         """Check the 1,2 transpose of a rank-4, 3D tensor."""
 
         # Manually create the string rep of the transpose.
-        daegT = self.string_transpose(1,2)
+        daegT = self.string_transpose(1, 2)
         print("The real 1,2 transpose:")
         self.print_nice(daegT)
 
@@ -183,7 +183,7 @@ class Test_kronecker_product(TestCase):
         """Check the 1,3 transpose of a rank-4, 3D tensor."""
 
         # Manually create the string rep of the transpose.
-        daegT = self.string_transpose(1,3)
+        daegT = self.string_transpose(1, 3)
         print("The real 1,3 transpose:")
         self.print_nice(daegT)
 
@@ -204,7 +204,7 @@ class Test_kronecker_product(TestCase):
         """Check the 1,4 transpose of a rank-4, 3D tensor."""
 
         # Manually create the string rep of the transpose.
-        daegT = self.string_transpose(1,4)
+        daegT = self.string_transpose(1, 4)
         print("The real 1,4 transpose:")
         self.print_nice(daegT)
 
@@ -225,7 +225,7 @@ class Test_kronecker_product(TestCase):
         """Check the 2,3 transpose of a rank-4, 3D tensor."""
 
         # Manually create the string rep of the transpose.
-        daegT = self.string_transpose(2,3)
+        daegT = self.string_transpose(2, 3)
         print("The real 2,3 transpose:")
         self.print_nice(daegT)
 
@@ -246,7 +246,7 @@ class Test_kronecker_product(TestCase):
         """Check the 2,4 transpose of a rank-4, 3D tensor."""
 
         # Manually create the string rep of the transpose.
-        daegT = self.string_transpose(2,4)
+        daegT = self.string_transpose(2, 4)
         print("The real 2,4 transpose:")
         self.print_nice(daegT)
 
@@ -267,7 +267,7 @@ class Test_kronecker_product(TestCase):
         """Check the 3,4 transpose of a rank-4, 3D tensor."""
 
         # Manually create the string rep of the transpose.
-        daegT = self.string_transpose(3,4)
+        daegT = self.string_transpose(3, 4)
         print("The real 3,4 transpose:")
         self.print_nice(daegT)
 

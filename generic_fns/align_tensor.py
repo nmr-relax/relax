@@ -278,15 +278,15 @@ def display(tensor):
 
         # Eigenvalues.
         print("\nEigenvalues {Axx, Ayy, Azz}.")
-        print("%-15s%15.8f" % ("Axx:  ", data.tensor_diag[0,0]))
-        print("%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1,1]))
-        print("%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2,2]))
+        print("%-15s%15.8f" % ("Axx:  ", data.tensor_diag[0, 0]))
+        print("%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1, 1]))
+        print("%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2, 2]))
 
         # Eigenvalues.
         print("\nEigenvalues {Sxx, Syy, Szz}.")
-        print("%-15s%15.8f" % ("Sxx:  ", 3.0/2.0 * data.tensor_diag[0,0]))
-        print("%-15s%15.8f" % ("Syy:  ", 3.0/2.0 * data.tensor_diag[1,1]))
-        print("%-15s%15.8f" % ("Szz:  ", 3.0/2.0 * data.tensor_diag[2,2]))
+        print("%-15s%15.8f" % ("Sxx:  ", 3.0/2.0 * data.tensor_diag[0, 0]))
+        print("%-15s%15.8f" % ("Syy:  ", 3.0/2.0 * data.tensor_diag[1, 1]))
+        print("%-15s%15.8f" % ("Szz:  ", 3.0/2.0 * data.tensor_diag[2, 2]))
 
         # Some white space.
         print("\n\n\n")
@@ -761,20 +761,20 @@ def matrix_angles(basis_set=0, tensors=None):
         # Unitary basis set.
         if basis_set == 0:
             # Pack the elements.
-            matrix[i,0] = tensor.Sxx
-            matrix[i,1] = tensor.Syy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Syy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Geometric basis set.
         elif basis_set == 1:
             # Pack the elements.
-            matrix[i,0] = tensor.Szz
-            matrix[i,1] = tensor.Sxxyy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Szz
+            matrix[i, 1] = tensor.Sxxyy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Normalisation.
         norm = linalg.norm(matrix[i])
@@ -1599,19 +1599,19 @@ def svd(basis_set=0, tensors=None):
 
         # Unitary basis set.
         if basis_set == 0:
-            matrix[i,0] = tensor.Sxx
-            matrix[i,1] = tensor.Syy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Syy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Geometric basis set.
         elif basis_set == 1:
-            matrix[i,0] = tensor.Szz
-            matrix[i,1] = tensor.Sxxyy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Szz
+            matrix[i, 1] = tensor.Sxxyy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Increment the index.
         i = i + 1

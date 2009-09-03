@@ -53,7 +53,7 @@ class Test_rotation_matrix(TestCase):
         print("gamma: %s\n" % gamma)
 
         # Generate the rotation matrix.
-        R = zeros((3,3), float64)
+        R = zeros((3, 3), float64)
         R_euler_zyz(R, alpha, beta, gamma)
 
         # Get back the angles.

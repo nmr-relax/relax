@@ -1751,4 +1751,4 @@ class Test_mol_res_spin(TestCase):
         # Test:
         self.assertEqual(len(sel), 2)
         for res in sel:
-            self.assert_(res.num in [-4,4])
+            self.assert_(res.num in [-4, 4])

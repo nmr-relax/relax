@@ -52,7 +52,7 @@ version of relax that is dependant on python 2.5.
 TODO: Split out runner part from search part.
 '''
 
-import os,re,unittest,string,sys
+import os, re, unittest, string, sys
 from optparse import OptionParser
 from textwrap import dedent
 from copy import copy
@@ -173,7 +173,7 @@ def get_common_prefix(path1, path2):
     '''
 
     result_path = []
-    for elem1,elem2 in map(None, path1, path2):
+    for elem1, elem2 in map(None, path1, path2):
         if elem1 == None or elem2 == None:
             break
 
@@ -203,7 +203,7 @@ def segment_path(path, normalise=True):
     else:
         while head != '' and tail != '':
             result.append(tail)
-            head,tail = os.path.split(head)
+            head, tail = os.path.split(head)
         result.append(head+tail)
         result.reverse()
     return result
@@ -233,7 +233,7 @@ def join_path_segments(segments):
 
 
 class ExtendedException(Exception):
-    def __init__(self,e,module):
+    def __init__(self, e, module):
         self.e=e
         self.module=module
 
@@ -244,8 +244,8 @@ class ExtendedException(Exception):
         return result
 
 class ImportErrorTestCase(unittest.TestCase):
-    def __init__(self,module_name,syntax_error):
-        super(ImportErrorTestCase,self).__init__('testImportError')
+    def __init__(self, module_name, syntax_error):
+        super(ImportErrorTestCase, self).__init__('testImportError')
         self.syntax_error=syntax_error
 
 
@@ -282,10 +282,10 @@ def load_test_case(package_path,  module_name, class_name):
 #        result = unittest.TestSuite()
 #        bad_syntax = ImportErrorTestCase('testImportError',e)
 #        result.addTest(bad_syntax)
-    except Exception,e:
+    except Exception, e:
         result = unittest.TestSuite()
-        ee = ExtendedException(e,module_name)
-        bad_syntax = ImportErrorTestCase('testImportError',ee)
+        ee = ExtendedException(e, module_name)
+        bad_syntax = ImportErrorTestCase('testImportError', ee)
         result.addTest(bad_syntax)
 
 
@@ -717,14 +717,14 @@ class Unit_test_runner(object):
             print('system directory:   ', self.system_directory)
             print('unit test directory:', self.unit_test_directory)
             print('')
-            for i,elem in enumerate(module_paths):
-                print('module path %d:  %s'  % (i,elem))
+            for i, elem in enumerate(module_paths):
+                print('module path %d:  %s'  % (i, elem))
             print('')
 
 
         # add SystemDirectory to python path
         sys.path.pop(0)
-        sys.path.insert(0,self.system_directory)
+        sys.path.insert(0, self.system_directory)
 
 
 
@@ -805,7 +805,7 @@ if __name__ == '__main__':
     parser.add_option("-u", "--system", dest="system_directory",
                       help="path to relax top directory which contains test_suite", default=None)
 
-    parser.add_option("-s", "--utest", dest="unit_test_directory",help="default unit test directory",
+    parser.add_option("-s", "--utest", dest="unit_test_directory", help="default unit test directory",
                       default=None)
 
 #    parser.add_option("-g", "--gui", dest="gui",help="run with a gui",default=False, action='store_true')
