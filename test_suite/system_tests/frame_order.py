@@ -109,11 +109,11 @@ class Frame_order(TestCase):
         return string
 
 
-    def test_rigid_no_rot(self):
+    def test_opt_rigid_no_rot(self):
         """Test the 'rigid' model for unrotated tensors with no motion."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_no_rot.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
 
         # Test the values.
         self.assertEqual(cdp.iter, 92)
