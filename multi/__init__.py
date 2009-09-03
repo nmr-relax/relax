@@ -23,7 +23,7 @@
 
 __all__ = ['commands',
            'mpi4py_processor',
-           'multi_processor',
+           'multi_processor_base',
            'prependStringIO',
            'processor',
            'uni_processor']
