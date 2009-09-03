@@ -114,7 +114,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
                 spin.remap_table.pop(index)
 
         # Remove any data with error of None.
-        for index,error in enumerate(spin.relax_error):
+        for index, error in enumerate(spin.relax_error):
             if error == None:
                 spin.relax_data.pop(index)
                 spin.relax_error.pop(index)
@@ -133,7 +133,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Simulation data.
     else:
         # Create the data structure if necessary.
-        if not hasattr(spin, 'relax_sim_data') or type(spin.relax_sim_data) != list:
+        if not hasattr(spin, 'relax_sim_data') or not isinstance(spin.relax_sim_data, list):
             spin.relax_sim_data = []
 
         # Append the simulation's relaxation data.
