@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -67,7 +67,7 @@ class Results:
 
         # Print out.
         if verbosity:
-            print("relax " + version + " model-free results file.")
+            print(("relax " + version + " model-free results file."))
 
         # Return the version.
         return version
@@ -84,9 +84,6 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Extract the model type if it exists, otherwise return.
         if spin_line[col['param_set']] != 'None':
@@ -118,9 +115,9 @@ class Results:
         # Print out.
         if verbosity >= 2:
             print("\nFixing parameters based on the model type.")
-            print("Model type: " + model_type)
-            print("Diffusion tensor fixed: " + repr(diff_fixed))
-            print("Model-free parameters fixed: " + repr(mf_fixed))
+            print(("Model type: " + model_type))
+            print(("Diffusion tensor fixed: " + repr(diff_fixed)))
+            print(("Model-free parameters fixed: " + repr(mf_fixed)))
 
         # Set the diffusion tensor fixed flag.
         if model_type != 'local_tm' and diff_fixed != None:
@@ -224,9 +221,6 @@ class Results:
                             the value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set up the model-free models.
         if data_set == 'value':
@@ -609,9 +603,6 @@ class Results:
         @type verbosity:    int
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Extract and remove the header.
         header = file_data[0]
         file_data = file_data[1:]
@@ -883,9 +874,6 @@ class Results:
         @type verbosity:    int
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # The diffusion tensor type.
         diff_type = spin_line[col['diff_type']]
         if diff_type == 'None':
@@ -894,7 +882,7 @@ class Results:
         # Print out.
         if diff_type and data_set == 'value' and verbosity:
             print("\nSetting the diffusion tensor.")
-            print("Diffusion type: " + diff_type)
+            print(("Diffusion type: " + diff_type))
 
         # Sphere.
         if diff_type == 'sphere':

@@ -41,7 +41,8 @@ import dep_check
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
 import platform
-import profile
+if dep_check.profile_module:
+    import profile
 import pstats
 from re import match
 from string import split, strip
@@ -108,7 +109,7 @@ class Relax:
 
         # Show the version number and exit.
         if self.mode == 'version':
-            print('relax ' + self.version)
+            print(('relax ' + self.version))
             sys.exit()
 
         # Logging.
@@ -427,7 +428,7 @@ if __name__ == "__main__":
     # Change this flag to True for code profiling.
     profile_flag = False
 
-    # No profiling.
+    # Normal relax operation.
     if not profile_flag:
         # Instantiate the main class.
         relax_instance = Relax()
@@ -443,14 +444,18 @@ if __name__ == "__main__":
         # Execute relax in multi-processor mode (this includes the uni-processor for normal operation).
         multi_processor.run()
 
-    # Profiling activated.
+    # relax in profiling mode.
     else:
         def print_stats(stats, status=0):
-            """Profile statistics printing function."""
+            pstats.Stats(stats).sort_stats('cumulative', 'name').print_stats()
 
-            pstats.Stats(stats).sort_stats('time', 'name').print_stats()
-
+        # No profile module.
+        if not dep_check.profile_module:
+            sys.stderr.write("The profile module is not available, please install the Python development packages for profiling.\n\n")
+            sys.exit()
 
         #FIXME: profiling won't work with multi processors.
+
+        # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
         profile.run('Relax()')

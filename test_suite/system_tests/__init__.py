@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006, 2008 Edward d'Auvergne                                  #
+# Copyright (C) 2006, 2008-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -35,6 +35,7 @@ from angles import Angles
 from consistency_tests import Ct
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
+from frame_order import Frame_order
 from generic import Generic
 from jw_mapping import Jw
 from load_spins import Load_spins
@@ -59,6 +60,7 @@ __all__ = ['angles',
            'consistency_tests',
            'dasha'
            'diffusion_tensor',
+           'frame_order',
            'generic',
            'jw_mapping',
            'load_spins',
@@ -101,6 +103,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
         suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
         suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
         suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
         suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
         suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))

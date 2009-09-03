@@ -168,7 +168,7 @@ class Test_chi2(TestCase):
         """
 
         # Calculate the Hessian.
-        hess = zeros((2,2), float64)
+        hess = zeros((2, 2), float64)
         d2chi2(hess, 2, self.data, self.back_calc, self.back_calc_grad, self.back_calc_hess, self.errors)
 
         # Assert, to a precision of 13 decimal places, that the Hessian is [[38.0, 0], [0, 20]].

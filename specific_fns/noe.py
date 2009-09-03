@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005,2007-2008 Edward d'Auvergne                         #
+# Copyright (C) 2004-2005,2007-2009 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -75,9 +75,6 @@ class Noe(Common_functions):
 
         # Test if the current pipe exists.
         pipes.test()
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # The spectrum types have not been set.
         if not hasattr(cdp, 'spectrum_type'):
@@ -294,9 +291,6 @@ class Noe(Common_functions):
 
         # Test if the current pipe exists
         pipes.test()
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the spectrum id string.
         if spectrum_id not in cdp.spectrum_ids:

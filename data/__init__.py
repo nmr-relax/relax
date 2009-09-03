@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@
 
 
 # Python module imports.
+import __builtin__
 from re import search
 from string import split
 from time import asctime
@@ -36,10 +37,14 @@ from relax_errors import RelaxPipeError
 from version import version
 
 
-__all__ = [ 'data_classes',
+__all__ = [ 'align_tensor',
+            'data_classes',
             'diff_tensor',
-            'diff_tensor_auto_objects',
-            'main' ]
+            'mol_res_spin',
+            'pipe_container',
+            'prototype',
+            'relax_xml'
+]
 
 
 class Relax_data_store(dict):
@@ -47,6 +52,7 @@ class Relax_data_store(dict):
 
     # The current data pipe.
     current_pipe = None
+    __builtin__.cdp = None
 
     # Class variable for storing the class instance.
     instance = None
@@ -157,6 +163,7 @@ class Relax_data_store(dict):
 
         # Change the current data pipe.
         self.instance.current_pipe = pipe_name
+        __builtin__.cdp = self[pipe_name]
 
 
     def from_xml(self, file, dir=None, verbosity=1):
