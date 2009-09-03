@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2007-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2007-2009 Edward d'Auvergne                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -68,9 +68,6 @@ def __errors_repl(verbosity=0):
     @type verbosity:    int
     """
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # replicated spectra.
     repl = [False] * len(cdp.spectrum_ids)
     for i in xrange(len(cdp.replicates)):
@@ -117,9 +114,9 @@ def __errors_repl(verbosity=0):
             indices[j] = cdp.spectrum_ids.index(spectra[j])
 
         # Print out.
-        print("\nReplicated spectra:  " + repr(spectra))
+        print(("\nReplicated spectra:  " + repr(spectra)))
         if verbosity:
-            print("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD"))
+            print(("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")))
 
         # Calculate the mean value.
         count = 0
@@ -154,7 +151,7 @@ def __errors_repl(verbosity=0):
 
             # Print out.
             if verbosity:
-                print("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I)))
+                print(("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))))
 
             # Sum of variances (for average).
             cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
@@ -168,7 +165,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[indices[j]] = cdp.var_I[indices[0]]
 
         # Print out.
-        print("Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]]))
+        print(("Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]])))
 
 
     # Average across all spectra if there are time points with a single spectrum.
@@ -198,7 +195,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[i] = var_I
 
         # Print out.
-        print("Standard deviation for all spins:  " + repr(sqrt(var_I)))
+        print(("Standard deviation for all spins:  " + repr(sqrt(var_I))))
 
     # Loop over the spectra.
     for i in xrange(len(cdp.spectrum_ids)):
@@ -287,9 +284,6 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test the spectrum id string.
     if spectrum_id not in cdp.spectrum_ids:
         raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
@@ -362,9 +356,6 @@ def error_analysis():
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):
@@ -466,7 +457,7 @@ def intensity_generic(line, int_col):
 
     print('')
     print('The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).')
-    print('    ' + repr(res_num), h_name, x_name, intensity)
+    print(('    ' + repr(res_num), h_name, x_name, intensity))
 
     # Generate the spin identification string.
     spin_id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
@@ -493,9 +484,9 @@ def intensity_nmrview(line, int_col):
     # The residue number
     res_num = ''
     try:
-        res_num = string.strip(line[1],'{')
-        res_num = string.strip(res_num,'}')
-        res_num = string.split(res_num,'.')
+        res_num = string.strip(line[1], '{')
+        res_num = string.strip(res_num, '}')
+        res_num = string.split(res_num, '.')
         res_num = res_num[0]
     except ValueError:
         raise RelaxError("The peak list is invalid.")
@@ -503,15 +494,15 @@ def intensity_nmrview(line, int_col):
     # Nuclei names.
     x_name = ''
     if line[8]!='{}':
-        x_name = string.strip(line[8],'{')
-        x_name = string.strip(x_name,'}')
-        x_name = string.split(x_name,'.')
+        x_name = string.strip(line[8], '{')
+        x_name = string.strip(x_name, '}')
+        x_name = string.split(x_name, '.')
         x_name = x_name[1]
     h_name = ''
     if line[1]!='{}':
-        h_name = string.strip(line[1],'{')
-        h_name = string.strip(h_name,'}')
-        h_name = string.split(h_name,'.')
+        h_name = string.strip(line[1], '{')
+        h_name = string.strip(h_name, '}')
+        h_name = string.split(h_name, '.')
         h_name = h_name[1]
 
     # The peak intensity column.
@@ -749,9 +740,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test that the intensity measures are identical.
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
         raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
@@ -810,7 +798,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # Determine the number of header lines.
     num = number_of_header_lines(file_data, format, int_col, intensity_fn)
-    print("Number of header lines found: " + repr(num))
+    print(("Number of header lines found: " + repr(num)))
 
     # Remove the header.
     file_data = file_data[num:]
@@ -878,9 +866,6 @@ def replicated(spectrum_ids=None):
 
     # Test if the current pipe exists
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):

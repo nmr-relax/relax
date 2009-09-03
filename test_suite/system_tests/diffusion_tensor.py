@@ -68,7 +68,6 @@ class Diffusion_tensor(TestCase):
 
         # Some fake MC simulations (for the sphere).
         self.relax.interpreter._Pipe.switch('sphere')
-        cdp = get_pipe()
         cdp.diff_tensor.tm_err = 10e-11
         cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
         tm_sim = [8.98e-8, 8.99e-8, 9.00e-7, 9.01e-8, 9.02e-8]
@@ -81,7 +80,6 @@ class Diffusion_tensor(TestCase):
 
         # Some fake MC simulations (for the spheroid).
         self.relax.interpreter._Pipe.switch('spheroid')
-        cdp = get_pipe()
 
         # Initialise the data structures.
         cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
@@ -113,7 +111,6 @@ class Diffusion_tensor(TestCase):
 
         # Some fake MC simulations (for the ellipsoid).
         self.relax.interpreter._Pipe.switch('ellipsoid')
-        cdp = get_pipe()
 
         # Initialise the data structures.
         cdp.diff_tensor.tm_sim = DiffTensorSimList('tm', cdp.diff_tensor, elements=5)
@@ -235,7 +232,7 @@ class Diffusion_tensor(TestCase):
         self.assertEqual(len(real_data), len(new_data))
         for i in range(len(real_data)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print((real_data[i][0:-1]))
 
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])
@@ -267,7 +264,7 @@ class Diffusion_tensor(TestCase):
         self.assertEqual(len(real_data), len(new_data))
         for i in range(len(real_data)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print((real_data[i][0:-1]))
 
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])
@@ -299,7 +296,7 @@ class Diffusion_tensor(TestCase):
         self.assertEqual(len(real_data), len(new_data))
         for i in range(len(real_data)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print((real_data[i][0:-1]))
 
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])

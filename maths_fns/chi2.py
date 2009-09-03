@@ -208,9 +208,9 @@ def d2chi2(d2chi2, M, data, back_calc_vals, back_calc_grad, back_calc_hess, erro
     # Calculate the chi-squared Hessian.
     for j in xrange(M):
         for k in xrange(M):
-            d2chi2[j,k] = 0.0
+            d2chi2[j, k] = 0.0
             for i in xrange(len(data)):
-                d2chi2[j,k] = d2chi2[j,k] + 2.0 / (errors[i]**2) * (back_calc_grad[j,i] * back_calc_grad[k,i] - (data[i] - back_calc_vals[i]) * back_calc_hess[j,k,i])
+                d2chi2[j, k] = d2chi2[j, k] + 2.0 / (errors[i]**2) * (back_calc_grad[j, i] * back_calc_grad[k, i] - (data[i] - back_calc_vals[i]) * back_calc_hess[j, k, i])
 
 
 def d2chi2_element(data, back_calc_vals, back_calc_grad_j, back_calc_grad_k, back_calc_hess_jk, errors):

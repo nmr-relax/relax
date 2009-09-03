@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,22 +21,29 @@
 ###############################################################################
 
 # Python module imports.
-from unittest import TestCase
+from os import sep
+import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+import data; ds = data.Relax_data_store()
+from test_suite.unit_tests.package_checking import PackageTestCase
 
 
 class Empty_container:
     """An empty data container."""
 
 
-class Test___init__(TestCase):
+class Test___init__(PackageTestCase):
     """Unit tests for the data.Relax_data_store class."""
 
     def setUp(self):
         """Set up a complex relax data store."""
 
+        # Package info.
+        self.package = data
+        self.package_name = 'data'
+        self.package_path = sys.path[0] + sep + 'data'
+        
         # Add an empty data container as a new pipe.
         ds['empty'] = Empty_container()
 

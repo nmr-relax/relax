@@ -102,7 +102,7 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
 
     # Get the rotation matrix.
     if axis != None:
-        R_2vect(R, array([0,0,1], float64), axis)
+        R_2vect(R, array([0, 0, 1], float64), axis)
 
     # Loop over each vector.
     for i in xrange(inc):
@@ -168,9 +168,6 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Create an array of data pipes to loop over (hybrid support).
     if cdp.pipe_type == 'hybrid':
         pipe_list = cdp.hybrid_pipes
@@ -221,7 +218,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         atom_id_ext = '_' + chain_id
 
         # Print out.
-        print("\nChain " + chain_id + "\n")
+        print(("\nChain " + chain_id + "\n"))
 
 
         # Centre of mass.
@@ -257,7 +254,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         if pipe.diff_tensor.type == 'spheroid':
             # Print out.
             print("\nGenerating the unique axis of the diffusion tensor.")
-            print("    Scaling factor:                      " + repr(scale))
+            print(("    Scaling factor:                      " + repr(scale)))
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
@@ -275,7 +272,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         if pipe.diff_tensor.type == 'ellipsoid':
             # Print out.
             print("Generating the three axes of the ellipsoid.")
-            print("    Scaling factor:                      " + repr(scale))
+            print(("    Scaling factor:                      " + repr(scale)))
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
@@ -331,9 +328,6 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
 
     # Test if the current pipe exists.
     pipes.test()
-
-    # Get the data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() > 0:
@@ -617,7 +611,7 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
         mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N')
 
     # Print out.
-    print("    " + atom_name + " vector (scaled + shifted to origin): " + repr(origin+vector*scale))
+    print(("    " + atom_name + " vector (scaled + shifted to origin): " + repr(origin+vector*scale)))
     print("    Creating the MC simulation vectors.")
 
     # Monte Carlo simulations.

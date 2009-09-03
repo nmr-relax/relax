@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -39,9 +39,6 @@ class Jw_mapping(Common_functions):
 
     def calculate(self, verbosity=1, sim_index=None, spin_id=None):
         """Calculation of the spectral density values."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'jw_frq') or not isinstance(cdp.jw_frq, float):
@@ -430,9 +427,6 @@ class Jw_mapping(Common_functions):
 
     def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
         pipes.test()

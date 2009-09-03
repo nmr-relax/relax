@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -111,9 +111,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9)
 
@@ -130,9 +127,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='f_eta', val=2.3e-10)
@@ -151,9 +145,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='f_r2', val=1.7e-12)
 
@@ -170,9 +161,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10)
@@ -191,9 +179,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6)
 
@@ -210,9 +195,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C')
@@ -231,9 +213,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='orientation', val=17)
 
@@ -251,9 +230,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='tc', val=10)
 
@@ -270,9 +246,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12])
@@ -295,9 +268,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10)
 
@@ -319,9 +289,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
 
@@ -334,9 +301,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_eta')
@@ -351,9 +315,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='f_r2')
 
@@ -366,9 +327,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='bond-Length')
@@ -387,9 +345,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='csa')
 
@@ -406,9 +361,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus')
@@ -427,9 +379,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='orientation')
 
@@ -446,9 +395,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='tc')
@@ -467,9 +413,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['j0', 'f_eta', 'f_r2'])
 
@@ -482,9 +425,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
@@ -503,9 +443,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='f_eta', val=2.3e-10, spin_id='@112')
 
@@ -522,9 +459,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='f_r2', val=1.7e-12, spin_id='@112')
@@ -543,9 +477,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
 
@@ -562,9 +493,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
@@ -583,9 +511,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
 
@@ -602,9 +527,6 @@ class Value_base_class:
         
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='orientation', val=17, spin_id='@112')
@@ -623,9 +545,6 @@ class Value_base_class:
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='tc', val=10, spin_id='@112')
 
@@ -642,9 +561,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
@@ -666,9 +582,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'ct'.
         pipes.switch('ct')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['j0', 'f_eta', 'f_r2'], val=1.9e-10, spin_id='@112')
@@ -698,9 +611,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -719,9 +629,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -742,9 +649,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -760,9 +664,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -780,9 +681,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -798,9 +696,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -818,9 +713,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -836,9 +728,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -856,9 +745,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -874,9 +760,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -894,9 +777,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -912,9 +792,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -932,9 +809,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -950,9 +824,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -970,9 +841,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -988,9 +856,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1011,9 +876,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1032,9 +894,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1055,9 +914,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1073,9 +929,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1093,9 +946,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1111,9 +961,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1131,9 +978,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1150,9 +994,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1168,9 +1009,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1191,9 +1029,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1209,9 +1044,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1229,9 +1061,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1247,9 +1076,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1270,9 +1096,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1291,9 +1114,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1315,9 +1135,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1337,9 +1154,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1361,9 +1175,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1383,9 +1194,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -1407,9 +1215,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1430,9 +1235,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -1448,9 +1250,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1471,9 +1270,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1492,9 +1288,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1515,9 +1308,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1537,9 +1327,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1555,9 +1342,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1575,9 +1359,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1593,9 +1374,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1613,9 +1391,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1632,9 +1407,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1650,9 +1422,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1673,9 +1442,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1694,9 +1460,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -1717,9 +1480,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1736,9 +1496,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -1754,9 +1511,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -1779,9 +1533,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
 
@@ -1802,9 +1553,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -1827,9 +1575,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
 
@@ -1845,9 +1590,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1868,9 +1610,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -1890,9 +1629,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -1908,9 +1644,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1928,9 +1661,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -1946,9 +1676,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -1966,9 +1693,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -1984,9 +1708,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2004,9 +1725,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -2022,9 +1740,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2042,9 +1757,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -2060,9 +1772,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2080,9 +1789,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -2098,9 +1804,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
@@ -2118,9 +1821,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init(1e-9)
 
@@ -2136,9 +1836,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2159,9 +1856,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2180,9 +1874,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2203,9 +1894,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2221,9 +1909,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2241,9 +1926,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2259,9 +1941,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2279,9 +1958,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2298,9 +1974,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2316,9 +1989,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2339,9 +2009,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2357,9 +2024,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2377,9 +2041,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2395,9 +2056,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2418,9 +2076,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2439,9 +2094,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2463,9 +2115,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2485,9 +2134,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2509,9 +2155,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2531,9 +2174,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
@@ -2555,9 +2195,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2578,9 +2215,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0, 0))
 
@@ -2596,9 +2230,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2619,9 +2250,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2640,9 +2268,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2663,9 +2288,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2685,9 +2307,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2703,9 +2322,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2723,9 +2339,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2741,9 +2354,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2761,9 +2371,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2780,9 +2387,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2798,9 +2402,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2821,9 +2422,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2842,9 +2440,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
@@ -2865,9 +2460,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2884,9 +2476,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.2, 0, 0, 0))
 
@@ -2902,9 +2491,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -2927,9 +2513,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
 
@@ -2950,9 +2533,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -2975,9 +2555,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
 
@@ -2998,9 +2575,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise a diffusion tensor.
         diffusion_tensor.init((1e-9, 2e6, 0.4, 0, 0, 0))
@@ -3025,9 +2599,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9)
 
@@ -3044,9 +2615,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='jwx', val=2.3e-10)
@@ -3065,9 +2633,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='J(wH)', val=1.7e-12)
 
@@ -3084,9 +2649,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10)
@@ -3105,9 +2667,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6)
 
@@ -3125,9 +2684,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C')
 
@@ -3144,9 +2700,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12])
@@ -3169,9 +2722,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10)
 
@@ -3193,9 +2743,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='j0')
 
@@ -3208,9 +2755,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='jwx')
@@ -3225,9 +2769,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param='J(wH)')
 
@@ -3240,9 +2781,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='bond-Length')
@@ -3261,9 +2799,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='csa')
 
@@ -3280,9 +2815,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='heteronucleus')
@@ -3301,9 +2833,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.assertRaises(RelaxParamSetError, self.value_fns.set, param=['J(0)', 'jwx', 'J(wH)'])
 
@@ -3316,9 +2845,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='j0', val=4.5e-9, spin_id='@112')
@@ -3337,9 +2863,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='jwx', val=2.3e-10, spin_id='@112')
 
@@ -3356,9 +2879,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='J(wH)', val=1.7e-12, spin_id='@112')
@@ -3377,9 +2897,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Bond_length', val=1.04e-10, spin_id='@112')
 
@@ -3396,9 +2913,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='csa', val=-160e-6, spin_id='@112')
@@ -3417,9 +2931,6 @@ class Value_base_class:
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
 
@@ -3436,9 +2947,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=[6.4e-9, 3.5e-10, 2.3e-12], spin_id='@112')
@@ -3460,9 +2968,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'jw'.
         pipes.switch('jw')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['J(0)', 'jwx', 'J(wH)'], val=1.9e-10, spin_id='@112')
@@ -3491,9 +2996,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='local tm', val=1e-8)
 
@@ -3510,9 +3012,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='S2', val=0.8)
@@ -3531,9 +3030,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='S2f', val=0.45)
 
@@ -3550,9 +3046,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='S2s', val=0.1)
@@ -3571,9 +3064,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='te', val=12.5e-12)
 
@@ -3590,9 +3080,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='tf', val=20.1e-12)
@@ -3611,9 +3098,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='ts', val=1.23e-9)
 
@@ -3630,9 +3114,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='Rex', val=2.34)
@@ -3651,9 +3132,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Bond length', val=1.02e-10)
 
@@ -3670,9 +3148,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='CSA', val=-172e-6)
@@ -3691,9 +3166,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C')
 
@@ -3710,9 +3182,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9])
@@ -3733,9 +3202,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=0.7)
 
@@ -3755,9 +3221,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='local tm')
 
@@ -3774,9 +3237,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='S2')
@@ -3795,9 +3255,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='S2f')
 
@@ -3814,9 +3271,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='S2s')
@@ -3835,9 +3289,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='te')
 
@@ -3854,9 +3305,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='tf')
@@ -3875,9 +3323,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='ts')
 
@@ -3894,9 +3339,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='Rex')
@@ -3915,9 +3357,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Bond length')
 
@@ -3934,9 +3373,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='CSA')
@@ -3955,9 +3391,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='heteronucleus')
 
@@ -3974,9 +3407,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'])
@@ -3997,9 +3427,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='local tm', val=1e-8, spin_id='@112')
 
@@ -4016,9 +3443,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='S2', val=0.8, spin_id='@112')
@@ -4037,9 +3461,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='S2f', val=0.45, spin_id='@112')
 
@@ -4056,9 +3477,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='S2s', val=0.1, spin_id='@112')
@@ -4077,9 +3495,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='te', val=12.5e-12, spin_id='@112')
 
@@ -4096,9 +3511,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='tf', val=20.1e-12, spin_id='@112')
@@ -4117,9 +3529,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='ts', val=1.23e-9, spin_id='@112')
 
@@ -4136,9 +3545,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='Rex', val=2.34, spin_id='@112')
@@ -4157,9 +3563,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Bond length', val=1.02e-10, spin_id='@112')
 
@@ -4176,9 +3579,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='CSA', val=-172e-6, spin_id='@112')
@@ -4197,9 +3597,6 @@ class Value_base_class:
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='heteronucleus', val='13C', spin_id='@112')
 
@@ -4216,9 +3613,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=[0.7, 0.9], spin_id='@112')
@@ -4238,9 +3632,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'mf'.
         pipes.switch('mf')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['S2f', 'S2s'], val=0.7, spin_id='@112')
@@ -4267,9 +3658,6 @@ class Value_base_class:
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='rx', val=1.2)
 
@@ -4286,9 +3674,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='i0', val=520)
@@ -4307,9 +3692,6 @@ class Value_base_class:
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Iinf', val=-1.7)
 
@@ -4326,9 +3708,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7])
@@ -4349,9 +3728,6 @@ class Value_base_class:
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=0.0)
 
@@ -4371,9 +3747,6 @@ class Value_base_class:
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='rx')
 
@@ -4390,9 +3763,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='i0')
@@ -4411,9 +3781,6 @@ class Value_base_class:
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Iinf')
 
@@ -4430,9 +3797,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'])
@@ -4453,9 +3817,6 @@ class Value_base_class:
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='rx', val=1.2, spin_id='@112')
 
@@ -4472,9 +3833,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param='i0', val=520, spin_id='@112')
@@ -4493,9 +3851,6 @@ class Value_base_class:
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the parameter.
         self.value_fns.set(param='Iinf', val=-1.7, spin_id='@112')
 
@@ -4512,9 +3867,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=[123456, -1.7], spin_id='@112')
@@ -4534,9 +3886,6 @@ class Value_base_class:
 
         # Set the current data pipe to 'relax_fit'.
         pipes.switch('relax_fit')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Set the parameter.
         self.value_fns.set(param=['I0', 'iinf'], val=0.0, spin_id='@112')

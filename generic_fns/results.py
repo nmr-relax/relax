@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -77,9 +77,6 @@ def read(file='results', directory=None):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Make sure that the data pipe is empty.
     if not cdp.is_empty():

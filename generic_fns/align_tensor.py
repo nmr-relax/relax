@@ -190,9 +190,6 @@ def delete(tensor):
     # Find the tensor index.
     index = get_tensor_index(tensor)
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Delete the alignment data.
     cdp.align_tensors.pop(index)
 
@@ -210,9 +207,6 @@ def display(tensor):
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Construct the tensor list.
     tensor_list = []
@@ -232,67 +226,67 @@ def display(tensor):
         data = get_tensor_object(tensor)
 
         # Header.
-        print("Tensor: " + tensor + "\n")
+        print(("Tensor: " + tensor + "\n"))
 
         # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
         print("Parameters {Sxx, Syy, Sxy, Sxz, Syz}.")
-        print("%-15s%15.8f" % ("Sxx:  ", data.Sxx))
-        print("%-15s%15.8f" % ("Syy:  ", data.Syy))
-        print("%-15s%15.8f" % ("Sxy:  ", data.Sxy))
-        print("%-15s%15.8f" % ("Sxz:  ", data.Sxz))
-        print("%-15s%15.8f" % ("Syz:  ", data.Syz))
+        print(("%-15s%15.8f" % ("Sxx:  ", data.Sxx)))
+        print(("%-15s%15.8f" % ("Syy:  ", data.Syy)))
+        print(("%-15s%15.8f" % ("Sxy:  ", data.Sxy)))
+        print(("%-15s%15.8f" % ("Sxz:  ", data.Sxz)))
+        print(("%-15s%15.8f" % ("Syz:  ", data.Syz)))
 
         # The parameter set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
         print("\nParameters {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).")
-        print("%-15s%15.8f" % ("Szz:  ", data.Szz))
-        print("%-15s%15.8f" % ("Sxx-yy:  ", data.Sxxyy))
-        print("%-15s%15.8f" % ("Sxy:  ", data.Sxy))
-        print("%-15s%15.8f" % ("Sxz:  ", data.Sxz))
-        print("%-15s%15.8f" % ("Syz:  ", data.Syz))
+        print(("%-15s%15.8f" % ("Szz:  ", data.Szz)))
+        print(("%-15s%15.8f" % ("Sxx-yy:  ", data.Sxxyy)))
+        print(("%-15s%15.8f" % ("Sxy:  ", data.Sxy)))
+        print(("%-15s%15.8f" % ("Sxz:  ", data.Sxz)))
+        print(("%-15s%15.8f" % ("Syz:  ", data.Syz)))
 
         # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
         print("\nParameters {Axx, Ayy, Axy, Axz, Ayz}.")
-        print("%-15s%15.8f" % ("Axx:  ", data.Axx))
-        print("%-15s%15.8f" % ("Ayy:  ", data.Ayy))
-        print("%-15s%15.8f" % ("Axy:  ", data.Axy))
-        print("%-15s%15.8f" % ("Axz:  ", data.Axz))
-        print("%-15s%15.8f" % ("Ayz:  ", data.Ayz))
+        print(("%-15s%15.8f" % ("Axx:  ", data.Axx)))
+        print(("%-15s%15.8f" % ("Ayy:  ", data.Ayy)))
+        print(("%-15s%15.8f" % ("Axy:  ", data.Axy)))
+        print(("%-15s%15.8f" % ("Axz:  ", data.Axz)))
+        print(("%-15s%15.8f" % ("Ayz:  ", data.Ayz)))
 
         # The parameter set {Azz, Axx-yy, Axy, Axz, Ayz}.
         print("\nParameters {Azz, Axx-yy, Axy, Axz, Ayz}.")
-        print("%-15s%15.8f" % ("Azz:  ", data.Azz))
-        print("%-15s%15.8f" % ("Axx-yy:  ", data.Axxyy))
-        print("%-15s%15.8f" % ("Axy:  ", data.Axy))
-        print("%-15s%15.8f" % ("Axz:  ", data.Axz))
-        print("%-15s%15.8f" % ("Ayz:  ", data.Ayz))
+        print(("%-15s%15.8f" % ("Azz:  ", data.Azz)))
+        print(("%-15s%15.8f" % ("Axx-yy:  ", data.Axxyy)))
+        print(("%-15s%15.8f" % ("Axy:  ", data.Axy)))
+        print(("%-15s%15.8f" % ("Axz:  ", data.Axz)))
+        print(("%-15s%15.8f" % ("Ayz:  ", data.Ayz)))
 
         # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
         print("\nParameters {Pxx, Pyy, Pxy, Pxz, Pyz}.")
-        print("%-15s%15.8f" % ("Pxx:  ", data.Pxx))
-        print("%-15s%15.8f" % ("Pyy:  ", data.Pyy))
-        print("%-15s%15.8f" % ("Pxy:  ", data.Pxy))
-        print("%-15s%15.8f" % ("Pxz:  ", data.Pxz))
-        print("%-15s%15.8f" % ("Pyz:  ", data.Pyz))
+        print(("%-15s%15.8f" % ("Pxx:  ", data.Pxx)))
+        print(("%-15s%15.8f" % ("Pyy:  ", data.Pyy)))
+        print(("%-15s%15.8f" % ("Pxy:  ", data.Pxy)))
+        print(("%-15s%15.8f" % ("Pxz:  ", data.Pxz)))
+        print(("%-15s%15.8f" % ("Pyz:  ", data.Pyz)))
 
         # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
         print("\nParameters {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.")
-        print("%-15s%15.8f" % ("Pzz:  ", data.Pzz))
-        print("%-15s%15.8f" % ("Pxx-yy:  ", data.Pxxyy))
-        print("%-15s%15.8f" % ("Pxy:  ", data.Pxy))
-        print("%-15s%15.8f" % ("Pxz:  ", data.Pxz))
-        print("%-15s%15.8f" % ("Pyz:  ", data.Pyz))
+        print(("%-15s%15.8f" % ("Pzz:  ", data.Pzz)))
+        print(("%-15s%15.8f" % ("Pxx-yy:  ", data.Pxxyy)))
+        print(("%-15s%15.8f" % ("Pxy:  ", data.Pxy)))
+        print(("%-15s%15.8f" % ("Pxz:  ", data.Pxz)))
+        print(("%-15s%15.8f" % ("Pyz:  ", data.Pyz)))
 
         # Eigenvalues.
         print("\nEigenvalues {Axx, Ayy, Azz}.")
-        print("%-15s%15.8f" % ("Axx:  ", data.tensor_diag[0,0]))
-        print("%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1,1]))
-        print("%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2,2]))
+        print(("%-15s%15.8f" % ("Axx:  ", data.tensor_diag[0, 0])))
+        print(("%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1, 1])))
+        print(("%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2, 2])))
 
         # Eigenvalues.
         print("\nEigenvalues {Sxx, Syy, Szz}.")
-        print("%-15s%15.8f" % ("Sxx:  ", 3.0/2.0 * data.tensor_diag[0,0]))
-        print("%-15s%15.8f" % ("Syy:  ", 3.0/2.0 * data.tensor_diag[1,1]))
-        print("%-15s%15.8f" % ("Szz:  ", 3.0/2.0 * data.tensor_diag[2,2]))
+        print(("%-15s%15.8f" % ("Sxx:  ", 3.0/2.0 * data.tensor_diag[0, 0])))
+        print(("%-15s%15.8f" % ("Syy:  ", 3.0/2.0 * data.tensor_diag[1, 1])))
+        print(("%-15s%15.8f" % ("Szz:  ", 3.0/2.0 * data.tensor_diag[2, 2])))
 
         # Some white space.
         print("\n\n\n")
@@ -318,9 +312,6 @@ def fold_angles(sim_index=None):
                         rather than the simulation values.
     @type sim_index:    int or None
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
 
     # Wrap the angles.
@@ -416,9 +407,6 @@ def get_tensor_object(tensor, pipe=None):
     if pipe == None:
         pipe = pipes.cdp_name()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Init.
     data = None
 
@@ -452,9 +440,6 @@ def init(tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, 
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if alignment tensor data already exists.
     if errors and not align_data_exists(tensor):
@@ -752,9 +737,6 @@ def matrix_angles(basis_set=0, tensors=None):
     @type tensors:      None or array of str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError('alignment')
@@ -779,20 +761,20 @@ def matrix_angles(basis_set=0, tensors=None):
         # Unitary basis set.
         if basis_set == 0:
             # Pack the elements.
-            matrix[i,0] = tensor.Sxx
-            matrix[i,1] = tensor.Syy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Syy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Geometric basis set.
         elif basis_set == 1:
             # Pack the elements.
-            matrix[i,0] = tensor.Szz
-            matrix[i,1] = tensor.Sxxyy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Szz
+            matrix[i, 1] = tensor.Sxxyy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Normalisation.
         norm = linalg.norm(matrix[i])
@@ -849,9 +831,6 @@ def reduction(full_tensor=None, red_tensor=None):
     @param red_tensor:  The reduced alignment tensor.
     @type red_tensor:   str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Tensor information.
     match_full = False
@@ -1113,9 +1092,6 @@ def set(tensor=None, value=None, param=None, errors=False):
                         input.
     @type errors:       bool
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Initialise.
     geo_params = []
@@ -1548,9 +1524,6 @@ def set_domain(tensor=None, domain=None):
     @type domain:   str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Loop over the tensors.
     match = False
     for tensor_cont in cdp.align_tensors:
@@ -1603,9 +1576,6 @@ def svd(basis_set=0, tensors=None):
     @type tensors:      None or array of str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError('alignment')
@@ -1629,19 +1599,19 @@ def svd(basis_set=0, tensors=None):
 
         # Unitary basis set.
         if basis_set == 0:
-            matrix[i,0] = tensor.Sxx
-            matrix[i,1] = tensor.Syy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Syy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Geometric basis set.
         elif basis_set == 1:
-            matrix[i,0] = tensor.Szz
-            matrix[i,1] = tensor.Sxxyy
-            matrix[i,2] = tensor.Sxy
-            matrix[i,3] = tensor.Sxz
-            matrix[i,4] = tensor.Syz
+            matrix[i, 0] = tensor.Szz
+            matrix[i, 1] = tensor.Sxxyy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Increment the index.
         i = i + 1
@@ -1656,8 +1626,8 @@ def svd(basis_set=0, tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    print("\nData pipe: " + repr(pipes.cdp_name()))
+    print(("\nData pipe: " + repr(pipes.cdp_name())))
     print("\nSingular values:")
     for val in s:
-        print("\t" + repr(val))
-    print("\nCondition number: " + repr(cdp.align_tensors.cond_num))
+        print(("\t" + repr(val)))
+    print(("\nCondition number: " + repr(cdp.align_tensors.cond_num)))

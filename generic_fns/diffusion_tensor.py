@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -162,9 +162,6 @@ def delete():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
         raise RelaxNoTensorError('diffusion')
@@ -206,9 +203,6 @@ def display():
     if not diff_data_exists():
         raise RelaxNoTensorError('diffusion')
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Spherical diffusion.
     if cdp.diff_tensor.type == 'sphere':
         # Tensor type.
@@ -216,14 +210,14 @@ def display():
 
         # Parameters.
         print("\nParameters {tm}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
 
         # Alternate parameters.
         print("\nAlternate parameters {Diso}.")
-        print("Diso (1/s):  " + repr(cdp.diff_tensor.Diso))
+        print(("Diso (1/s):  " + repr(cdp.diff_tensor.Diso)))
 
         # Fixed flag.
-        print("\nFixed:  " + repr(cdp.diff_tensor.fixed))
+        print(("\nFixed:  " + repr(cdp.diff_tensor.fixed)))
 
     # Spheroidal diffusion.
     elif cdp.diff_tensor.type == 'spheroid':
@@ -232,34 +226,34 @@ def display():
 
         # Parameters.
         print("\nParameters {tm, Da, theta, phi}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Alternate parameters.
         print("\nAlternate parameters {Diso, Da, theta, phi}.")
-        print("Diso (1/s):  " + repr(cdp.diff_tensor.Diso))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
+        print(("Diso (1/s):  " + repr(cdp.diff_tensor.Diso)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Alternate parameters.
         print("\nAlternate parameters {Dpar, Dper, theta, phi}.")
-        print("Dpar (1/s):  " + repr(cdp.diff_tensor.Dpar))
-        print("Dper (1/s):  " + repr(cdp.diff_tensor.Dper))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
+        print(("Dpar (1/s):  " + repr(cdp.diff_tensor.Dpar)))
+        print(("Dper (1/s):  " + repr(cdp.diff_tensor.Dper)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Alternate parameters.
         print("\nAlternate parameters {tm, Dratio, theta, phi}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
-        print("Dratio:  " + repr(cdp.diff_tensor.Dratio))
-        print("theta (rad):  " + repr(cdp.diff_tensor.theta))
-        print("phi (rad):  " + repr(cdp.diff_tensor.phi))
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
+        print(("Dratio:  " + repr(cdp.diff_tensor.Dratio)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Fixed flag.
-        print("\nFixed:  " + repr(cdp.diff_tensor.fixed))
+        print(("\nFixed:  " + repr(cdp.diff_tensor.fixed)))
 
     # Ellipsoidal diffusion.
     elif cdp.diff_tensor.type == 'ellipsoid':
@@ -268,33 +262,33 @@ def display():
 
         # Parameters.
         print("\nParameters {tm, Da, Dr, alpha, beta, gamma}.")
-        print("tm (s):  " + repr(cdp.diff_tensor.tm))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("Dr:  " + repr(cdp.diff_tensor.Dr))
-        print("alpha (rad):  " + repr(cdp.diff_tensor.alpha))
-        print("beta (rad):  " + repr(cdp.diff_tensor.beta))
-        print("gamma (rad):  " + repr(cdp.diff_tensor.gamma))
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("Dr:  " + repr(cdp.diff_tensor.Dr)))
+        print(("alpha (rad):  " + repr(cdp.diff_tensor.alpha)))
+        print(("beta (rad):  " + repr(cdp.diff_tensor.beta)))
+        print(("gamma (rad):  " + repr(cdp.diff_tensor.gamma)))
 
         # Alternate parameters.
         print("\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}.")
-        print("Diso (1/s):  " + repr(cdp.diff_tensor.Diso))
-        print("Da (1/s):  " + repr(cdp.diff_tensor.Da))
-        print("Dr:  " + repr(cdp.diff_tensor.Dr))
-        print("alpha (rad):  " + repr(cdp.diff_tensor.alpha))
-        print("beta (rad):  " + repr(cdp.diff_tensor.beta))
-        print("gamma (rad):  " + repr(cdp.diff_tensor.gamma))
+        print(("Diso (1/s):  " + repr(cdp.diff_tensor.Diso)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("Dr:  " + repr(cdp.diff_tensor.Dr)))
+        print(("alpha (rad):  " + repr(cdp.diff_tensor.alpha)))
+        print(("beta (rad):  " + repr(cdp.diff_tensor.beta)))
+        print(("gamma (rad):  " + repr(cdp.diff_tensor.gamma)))
 
         # Alternate parameters.
         print("\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}.")
-        print("Dx (1/s):  " + repr(cdp.diff_tensor.Dx))
-        print("Dy (1/s):  " + repr(cdp.diff_tensor.Dy))
-        print("Dz (1/s):  " + repr(cdp.diff_tensor.Dz))
-        print("alpha (rad):  " + repr(cdp.diff_tensor.alpha))
-        print("beta (rad):  " + repr(cdp.diff_tensor.beta))
-        print("gamma (rad):  " + repr(cdp.diff_tensor.gamma))
+        print(("Dx (1/s):  " + repr(cdp.diff_tensor.Dx)))
+        print(("Dy (1/s):  " + repr(cdp.diff_tensor.Dy)))
+        print(("Dz (1/s):  " + repr(cdp.diff_tensor.Dz)))
+        print(("alpha (rad):  " + repr(cdp.diff_tensor.alpha)))
+        print(("beta (rad):  " + repr(cdp.diff_tensor.beta)))
+        print(("gamma (rad):  " + repr(cdp.diff_tensor.gamma)))
 
         # Fixed flag.
-        print("\nFixed:  " + repr(cdp.diff_tensor.fixed))
+        print(("\nFixed:  " + repr(cdp.diff_tensor.fixed)))
 
 
 def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
@@ -313,9 +307,6 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
                             Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.
     @type param_types:      int
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # The diffusion type.
     cdp.diff_tensor.type = 'ellipsoid'
@@ -402,9 +393,6 @@ def fold_angles(sim_index=None):
                         rather than the simulation values.
     @type sim_index:    int or None
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
 
     # Wrap the angles.
@@ -553,9 +541,6 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if diffusion tensor data already exists.
     if diff_data_exists():
@@ -926,9 +911,6 @@ def set(value=None, param=None):
     @keyword param:     The list of parameter names.
     @type param:        list of str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Set up the diffusion tensor data if it doesn't exist.
     if not diff_data_exists():
@@ -1386,9 +1368,6 @@ def sphere(params=None, time_scale=None, param_types=None):
     @type param_types:  int
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # The diffusion type.
     cdp.diff_tensor.type = 'sphere'
 
@@ -1432,9 +1411,6 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
                             restrict the tensor to either being 'oblate' or 'prolate'.
     @type spheroid_type:    str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # The diffusion type.
     cdp.diff_tensor.type = 'spheroid'
@@ -1518,9 +1494,6 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
 
 def test_params(num_params):
     """Function for testing the validity of the input parameters."""
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # An allowable error to account for machine precision, optimisation quality, etc.
     error = 1e-4

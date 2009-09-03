@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,9 +41,6 @@ def angle_diff_frame():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
@@ -71,9 +68,6 @@ def angle_diff_frame():
 
 def ellipsoid_frame():
     """Calculate the spherical angles of the bond vector in the ellipsoid frame."""
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Get the unit vectors Dx, Dy, and Dz of the diffusion tensor axes.
     Dx, Dy, Dz = diffusion_tensor.unit_axes()
@@ -104,9 +98,6 @@ def ellipsoid_frame():
 
 def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
