@@ -67,7 +67,7 @@ def broadcast_command(command):
 def ditch_all_results():
     for i in range(1, MPI.COMM_WORLD.size):
         if i != 0:
-            while 1:
+            while True:
                 result = MPI.COMM_WORLD.Recv(source=i)
                 if result.completed:
                     break
