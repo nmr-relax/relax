@@ -241,6 +241,17 @@ class Frame_order(Common_functions):
         beta  = wrap_angles(beta, 0.0, 2.0*pi)
         gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
+        # Fold beta to be between 0 and pi.
+        if beta >= pi:
+            alpha = alpha - pi
+            beta = 2*pi - beta
+            gamma = gamma - pi
+
+        # Wrap again.
+        alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+        beta  = wrap_angles(beta, 0.0, 2.0*pi)
+        gamma = wrap_angles(gamma, 0.0, 2.0*pi)
+
         # Monte Carlo simulation data structures.
         if sim_index != None:
             # Tensor rotation.
