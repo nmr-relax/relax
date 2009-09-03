@@ -163,7 +163,7 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
 
     # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
     if test_labels():
-        raise RelaxRiError, (ri_label, frq_label)
+        raise RelaxRiError(ri_label, frq_label)
 
 
     # Global (non-residue specific) data.
@@ -221,7 +221,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -267,11 +267,11 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     else:
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
         if not test_labels(ri_label, frq_label, pipe=pipe_from):
-            raise RelaxNoRiError, (ri_label, frq_label)
+            raise RelaxNoRiError(ri_label, frq_label)
 
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
         if not test_labels(ri_label, frq_label, pipe=pipe_to):
-            raise RelaxRiError, (ri_label, frq_label)
+            raise RelaxRiError(ri_label, frq_label)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -419,7 +419,7 @@ def delete(ri_label=None, frq_label=None):
 
     # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
     if not self.test_labels():
-        raise RelaxNoRiError, (self.ri_label, self.frq_label)
+        raise RelaxNoRiError(self.ri_label, self.frq_label)
 
     # Loop over the sequence.
     for i in xrange(len(ds.res[self.run])):
@@ -488,7 +488,7 @@ def display(ri_label=None, frq_label=None):
 
     # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
     if not self.test_labels():
-        raise RelaxNoRiError, (self.ri_label, self.frq_label)
+        raise RelaxNoRiError(self.ri_label, self.frq_label)
 
     # Print the data.
     self.relax.generic.value.write_data(run=self.run, param=(self.ri_label, self.frq_label), file=sys.stdout, return_value=self.return_value)
@@ -568,7 +568,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
 
     # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
     if test_labels(ri_label, frq_label):
-        raise RelaxRiError, (ri_label, frq_label)
+        raise RelaxRiError(ri_label, frq_label)
 
     # Minimum number of columns.
     min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
@@ -612,7 +612,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
                 float(file_data[i][data_col])
                 float(file_data[i][error_col])
             except ValueError:
-                raise RelaxError, "The relaxation data in the line " + `file_data[i]` + " is invalid."
+                raise RelaxError("The relaxation data in the line " + repr(file_data[i]) + " is invalid.")
 
 
     # Global (non-residue specific) data.
@@ -648,7 +648,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
         # Get the corresponding spin container.
         spin = return_spin(id)
         if spin == None:
-            raise RelaxNoSpinError, id
+            raise RelaxNoSpinError(id)
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
@@ -925,7 +925,7 @@ def write(ri_label=None, frq_label=None, file=None, dir=None, force=False):
 
     # Test if data corresponding to 'self.ri_label' and 'self.frq_label' exists.
     if not self.test_labels():
-        raise RelaxNoRiError, (self.ri_label, self.frq_label)
+        raise RelaxNoRiError(self.ri_label, self.frq_label)
 
     # Create the file name if none is given.
     if file == None:
