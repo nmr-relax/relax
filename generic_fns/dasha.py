@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -55,9 +55,6 @@ def create(algor='LM', dir=None, force=False):
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Determine the parameter set.
     model_type = model_free_obj.determine_model_type()
@@ -124,9 +121,6 @@ def create_script(file, model_type, algor):
                         algorithm 'LM' or the Newton-Raphson algorithm 'NR'.
     @type algor:        str
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Delete all data.
     file.write('# Delete all data.\n')
@@ -443,9 +437,6 @@ def extract(dir):
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # The directory.
     if dir == None:

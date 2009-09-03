@@ -9,7 +9,7 @@ Key
 ~~~
 
 + committed.
-- deadly for python 2.x.
+! deadly for python 2.x.
 ~ nothing to do.
 
 
@@ -21,7 +21,7 @@ The transformations
 ~buffer
 ~callable
 +dict
--except
+!except
 +exec
 +execfile
 ~filter
@@ -30,38 +30,66 @@ The transformations
 ~getcwdu
 +has_key
 +idioms
- import
- imports
- imports2
- input
- intern
- isinstance
- itertools
- itertools_imports
- long
- map
- metaclass
- methodattrs
- ne
- next
- nonzero
- numliterals
- paren
+!import
+!imports
+~imports2
+~input
+~intern
+~isinstance
+~itertools
+~itertools_imports
+!long    # This kills the method used for sanely stopping a ridiculous grid search.
+~map
+~metaclass
+~methodattrs
+~ne
+~next
+~nonzero
+!numliterals
+~paren
 +print
 +raise
- raw_input
- reduce
- renames
+~raw_input
+~reduce
+~renames
 +repr
- set_literal
- standarderror
- sys_exc
- throw
- tuple_params
+~set_literal
+~standarderror
+~sys_exc
+~throw
+~tuple_params
 ~types
- unicode
- urllib
- ws_comma
- xrange
- xreadlines
- zip
+~unicode
+~urllib
++ws_comma
+!xrange    # This will cause memory problems in certain parts of relax.
+~xreadlines
+~zip
+
+
+Non-dangerous 3.0 update command
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This needs to be carefully checked before committing.
+
+2to3 -w \
+-x except \
+-x import \
+-x imports \
+-x long \
+-x numliterals \
+-x xrange \
+relax .
+
+
+Deadly 3.0 update command
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+2to3 -w \
+-f except \
+-f import \
+-f imports \
+-f long \
+-f numliterals \
+-f xrange \
+relax .

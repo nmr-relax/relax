@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -106,7 +106,6 @@ class State_base_class:
 
         # Add a new data pipe and some data to it.
         ds.add('new', 'jw_mapping')
-        cdp = pipes.get_pipe()
         cdp.z = [None, None]
 
         # Get the data pipes.

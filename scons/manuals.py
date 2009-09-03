@@ -73,7 +73,7 @@ def clean_manual_files(target, source, env):
             else:
                 raise
         else:
-            print("Removing the file " + repr(file) + ".")
+            print(("Removing the file " + repr(file) + "."))
 
     # Final print out.
     print("\n\n\n")
@@ -272,7 +272,7 @@ def compile_api_manual_html(target, source, env):
     #################
 
     # Print out.
-    print("Running the command:\n$ " + epydoc_cmd + "\n\n\n")
+    print(("Running the command:\n$ " + epydoc_cmd + "\n\n\n"))
 
     # System call.
     system(epydoc_cmd)
@@ -313,7 +313,7 @@ def compile_user_manual_html(target, source, env):
     chdir(env['LATEX_DIR'])
 
     # Run the latex2html command.
-    print("Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex\n\n\n")
+    print(("Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex\n\n\n"))
     system("latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex")
 
     # Return to the base directory.

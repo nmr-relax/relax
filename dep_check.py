@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -70,6 +70,14 @@ try:
     readline_module = True
 except ImportError:
     readline_module = False
+
+# profile module (python development packages required).
+try:
+    import profile
+    del profile
+    profile_module = True
+except ImportError:
+    profile_module = False
 
 # BZ2 compression module.
 try:

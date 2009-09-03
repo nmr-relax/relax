@@ -15,13 +15,13 @@ def convert_tensor(A):
     """Convert the rank-1, 5D tensor form into a rank-2, 3D tensor."""
 
     # Convert the tensor into numpy matrix form.
-    tensor = zeros((3,3), float64)
-    tensor[0,0] = A[0]
-    tensor[0,1] = tensor[1,0] = A[2]
-    tensor[0,2] = tensor[2,0] = A[3]
-    tensor[1,1] = A[1]
-    tensor[1,2] = tensor[2,1] = A[4]
-    tensor[2,2] = -A[0]-A[1]
+    tensor = zeros((3, 3), float64)
+    tensor[0, 0] = A[0]
+    tensor[0, 1] = tensor[1, 0] = A[2]
+    tensor[0, 2] = tensor[2, 0] = A[3]
+    tensor[1, 1] = A[1]
+    tensor[1, 2] = tensor[2, 1] = A[4]
+    tensor[2, 2] = -A[0]-A[1]
 
     # Return the tensor.
     return tensor
@@ -130,14 +130,14 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     pales_file.write("%5d     %6s       %6s        %5d     %6s       %6s    %9.3f   %9.3f %.2f\n" % (res_num, res_name, spin.name, res_num, res_name, spin.attached_atom, rdc, 0.0, 1.0))
 
 # Print outs.
-print("\nAlignment tensor (A):\n" + repr(tensor))
-print("Eigenvalues: " + repr(eigvals(tensor)))
-print("Dipolar constant: " + repr(dip_const))
+print(("\nAlignment tensor (A):\n" + repr(tensor)))
+print(("Eigenvalues: " + repr(eigvals(tensor))))
+print(("Dipolar constant: " + repr(dip_const)))
 
-print("\nSaupe order matrix (S):\n" + repr(tensor * 1.5))
-print("Eigenvalues: " + repr(eigvals(tensor * 1.5)))
+print(("\nSaupe order matrix (S):\n" + repr(tensor * 1.5)))
+print(("Eigenvalues: " + repr(eigvals(tensor * 1.5))))
 
-print("\nMagnetic susceptibility tensor (Chi):\n" + repr(chi_tensor))
-print("Eigenvalues: " + repr(eigvals(chi_tensor)))
-print("PCS constant: " + repr(pcs_const))
-print("PCS centre: " + repr(centre))
+print(("\nMagnetic susceptibility tensor (Chi):\n" + repr(chi_tensor)))
+print(("Eigenvalues: " + repr(eigvals(chi_tensor))))
+print(("PCS constant: " + repr(pcs_const)))
+print(("PCS centre: " + repr(centre)))

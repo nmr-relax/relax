@@ -27,7 +27,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import count_spins
 
 
@@ -55,9 +54,6 @@ class Structure(TestCase):
 
         # Read the results file.
         self.relax.interpreter._Results.read(file='str_internal', dir=path)
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
@@ -119,9 +115,6 @@ class Structure(TestCase):
         # Read the results file.
         self.relax.interpreter._Results.read(file='str_scientific', dir=path)
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
         self.assert_(hasattr(cdp.structure, 'structural_data'))
@@ -158,9 +151,6 @@ class Structure(TestCase):
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='internal')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the molecule name.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1F35_N_H_molmol_mol1')
 
@@ -176,7 +166,7 @@ class Structure(TestCase):
 
         # Extract a N-Ca vector.
         self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:3@N')
-        print(cdp.mol[0].res[0].spin[0])
+        print((cdp.mol[0].res[0].spin[0]))
         self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
 
 
@@ -199,9 +189,6 @@ class Structure(TestCase):
 
     def test_read_pdb_internal3(self):
         """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the internal structural object PDB reader)."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Path of the files.
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -307,9 +294,6 @@ class Structure(TestCase):
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
         self.assert_(hasattr(cdp.structure, 'structural_data'))
@@ -340,9 +324,6 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -378,9 +359,6 @@ class Structure(TestCase):
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
         self.assert_(hasattr(cdp.structure, 'structural_data'))
@@ -411,9 +389,6 @@ class Structure(TestCase):
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='scientific')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Load a single atom and test it.
         self.relax.interpreter._Structure.load_spins('#1F35_N_H_molmol_mol1:3@N')
@@ -448,9 +423,6 @@ class Structure(TestCase):
 
     def test_read_pdb_scientific3(self):
         """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the Scientific python structural object PDB reader)."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Path of the files.
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -556,9 +528,6 @@ class Structure(TestCase):
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
         self.assert_(hasattr(cdp.structure, 'structural_data'))
@@ -589,9 +558,6 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -626,9 +592,6 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))

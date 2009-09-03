@@ -306,6 +306,13 @@ class Interpreter:
     def script(self, file=None, quit=False):
         """Function for executing a script file."""
 
+        # Function intro text.
+        if self.intro:
+            text = sys.ps3 + "script("
+            text = text + "file=" + repr(file)
+            text = text + ", quit=" + repr(quit) + ")"
+            print(text)
+
         # File argument.
         if file == None:
             raise RelaxNoneError('file')
@@ -321,13 +328,14 @@ class Interpreter:
             raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
+        orig_intro_state = self.intro
         self.intro = True
 
         # Execute the script.
         run_script(local=self.local, script_file=file, quit=quit)
 
-        # Turn off the function intro flag.
-        self.intro = False
+        # Return the function intro flag to the original value.
+        self.intro = orig_intro_state
 
 
 class _Exit:

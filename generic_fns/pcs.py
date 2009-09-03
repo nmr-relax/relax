@@ -61,9 +61,6 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
@@ -112,7 +109,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
                 spin.remap_table.pop(index)
 
         # Remove any data with error of None.
-        for index,error in enumerate(spin.relax_error):
+        for index, error in enumerate(spin.relax_error):
             if error == None:
                 spin.relax_data.pop(index)
                 spin.relax_error.pop(index)
@@ -159,7 +156,6 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # Get the data pipes.
     source_dp = pipes.get_pipe(pipe)
-    cdp = pipes.get_pipe()
 
     # Test if the structure has been loaded.
     if not hasattr(source_dp, 'structure'):
@@ -200,9 +196,9 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
     # Print out.
     print("Paramagnetic centres located at:")
     for pos in full_pos_list:
-        print("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2]))
+        print(("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])))
     print("\nAverage paramagnetic centre located at:")
-    print("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2]))
+    print(("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])))
 
     # Set the centre (place it into the current data pipe).
     if ave_pos:
@@ -478,9 +474,6 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:
         raise RelaxError("One of either the data or error column must be supplied.")
@@ -560,7 +553,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     #####################
 
     # Loop over the PCS data.
-    print("\n%-50s %-15s %-15s" % ("spin_id", "value", "error"))
+    print(("\n%-50s %-15s %-15s" % ("spin_id", "value", "error")))
     for i in xrange(len(file_data)):
         # Skip missing data.
         if len(file_data[i]) <= min_col_num:
@@ -605,7 +598,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
             spin.pcs_err.append(error)
 
         # Print out.
-        print("%-50s %15s %15s" % (id, value, error))
+        print(("%-50s %15s %15s" % (id, value, error)))
 
 
 def return_data_desc(name):

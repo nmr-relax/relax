@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -57,9 +57,6 @@ class Base_Map:
         self.dir = dir
         self.point_file = point_file
         self.remap = remap
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Specific function setup.
         self.calculate = get_specific_fn('calculate', cdp.pipe_type)

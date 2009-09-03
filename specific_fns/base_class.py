@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@ from copy import deepcopy
 
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
-from generic_fns import pipes
 from relax_errors import RelaxError, RelaxLenError, RelaxNoSequenceError
 
 
@@ -78,9 +77,6 @@ class Common_functions:
         @return:    The answer to the question of whether errors exist.
         @rtype:     bool
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Diffusion tensor errors.
         if hasattr(cdp, 'diff'):
@@ -226,7 +222,6 @@ class Common_functions:
         """
 
         # Initialise.
-        cdp = pipes.get_pipe()
         index = None
 
         # Get the object name.
@@ -365,9 +360,6 @@ class Common_functions:
 
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
 
         # Test if Monte Carlo parameter values have already been set.

@@ -192,9 +192,9 @@ class N_state_opt:
             # RT:  the transposes of the rotation matricies.
             # red_bc:  the back-calculated reduced alignment tensors.
             # red_bc_vector:  the back-calculated reduced alignment tensors in vector form {Sxx, Syy, Sxy, Sxz, Syz}.
-            self.R = zeros((self.N,3,3), float64)
-            self.RT = zeros((self.N,3,3), float64)
-            self.red_bc = zeros((self.num_tensors,3,3), float64)
+            self.R = zeros((self.N, 3, 3), float64)
+            self.RT = zeros((self.N, 3, 3), float64)
+            self.red_bc = zeros((self.num_tensors, 3, 3), float64)
             self.red_bc_vector = zeros(self.num_tensors*5, float64)
 
             # Set the target function.
@@ -378,11 +378,11 @@ class N_state_opt:
 
         # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
         for i in xrange(self.num_tensors):
-            self.red_bc_vector[5*i]   = self.red_bc[i,0,0]    # Sxx.
-            self.red_bc_vector[5*i+1] = self.red_bc[i,1,1]    # Syy.
-            self.red_bc_vector[5*i+2] = self.red_bc[i,0,1]    # Sxy.
-            self.red_bc_vector[5*i+3] = self.red_bc[i,0,2]    # Sxz.
-            self.red_bc_vector[5*i+4] = self.red_bc[i,1,2]    # Syz.
+            self.red_bc_vector[5*i]   = self.red_bc[i, 0, 0]    # Sxx.
+            self.red_bc_vector[5*i+1] = self.red_bc[i, 1, 1]    # Syy.
+            self.red_bc_vector[5*i+2] = self.red_bc[i, 0, 1]    # Sxy.
+            self.red_bc_vector[5*i+3] = self.red_bc[i, 0, 2]    # Sxz.
+            self.red_bc_vector[5*i+4] = self.red_bc[i, 1, 2]    # Syz.
 
         # Return the chi-squared value.
         return chi2(self.red_data, self.red_bc_vector, self.red_errors)

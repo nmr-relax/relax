@@ -143,9 +143,6 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Open the file.
     file = open_read_file(file_name=file, dir=dir)
     lines = file.readlines()
