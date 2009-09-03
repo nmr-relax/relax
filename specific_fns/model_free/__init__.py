@@ -25,10 +25,12 @@
 
 
 # The available modules.
-__all__ = [ 'main',
+__all__ = [ 'bmrb',
+            'main',
             'mf_minimise',
             'molmol',
-            'results']
+            'results'
+]
 
 # relax module imports.
 from bmrb import Bmrb
