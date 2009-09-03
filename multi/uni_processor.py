@@ -46,8 +46,8 @@ class Uni_processor(Processor):
         super(Uni_processor, self).__init__(processor_size=1, callback=callback)
 
         if processor_size > 1:
-            print 'warning: uniprocessor can only support 1 processor you requested %d' % processor_size
-            print 'continuing...\n'
+            print('warning: uniprocessor can only support 1 processor you requested %d' % processor_size)
+            print('continuing...\n')
 
         self.command_queue = []
         self.memo_map = {}

@@ -53,7 +53,7 @@ class Batched_result_command(Result_command):
     def run(self, processor, batched_memo):
         processor.assert_on_master()
         if batched_memo != None:
-            msg = "batched result commands shouldn't have memo values, memo: " + `batched_memo`
+            msg = "batched result commands shouldn't have memo values, memo: " + repr(batched_memo)
             raise ValueError(msg)
 
         for result_command in self.result_commands:
@@ -311,8 +311,8 @@ class Multi_processor(Processor):
 
                     if result.completed:
                         idle_set.add(result.rank)
-                        print 'idle set', `idle_set`
-                        print 'running_set', `running_set`
+                        print('idle set', repr(idle_set))
+                        print('running_set', repr(running_set))
                         running_set.remove(result.rank)
 
                     result_queue.put(result)

@@ -483,11 +483,11 @@ class Mf_minimise:
 
         # Catch infinite chi-squared values.
         if isInf(func):
-            raise RelaxInfError, 'chi-squared'
+            raise RelaxInfError('chi-squared')
 
         # Catch chi-squared values of NaN.
         if isNaN(func):
-            raise RelaxNaNError, 'chi-squared'
+            raise RelaxNaNError('chi-squared')
 
         # Scaling.
         if scaling:

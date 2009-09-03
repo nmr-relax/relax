@@ -116,7 +116,7 @@ class Mpi4py_processor(Multi_processor):
 
         msg = 'warning: mpi4py_processor is using 1 masters and %d slave processors you requested %d slaves\n'
         if processor_size != (mpi_processor_size):
-            print msg % (mpi_processor_size, processor_size)
+            print(msg % (mpi_processor_size, processor_size))
 
         super(Mpi4py_processor, self).__init__(processor_size=mpi_processor_size, callback=callback)
 

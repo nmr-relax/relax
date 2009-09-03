@@ -131,7 +131,7 @@ def import_module(module_path, verbose=False):
     #try:
     module = __import__(module_path, globals(), locals(), [])
     if verbose:
-        print 'loaded module %s' % module_path
+        print('loaded module %s' % module_path)
     #except Exception, e:
     #    if verbose:
     #        print 'failed to load module_path %s' % module_path
@@ -170,7 +170,7 @@ def load_multiprocessor(processor_name, callback, processor_size):
 
     # Check that the processor type is supported.
     if processor_name not in ['uni', 'mpi4py']:
-        raise RelaxError, "The processor type '%s' is not supported." % processor_name
+        raise RelaxError("The processor type '%s' is not supported." % processor_name)
 
     # The Processor details.
     processor_name = processor_name + '_processor'
@@ -203,21 +203,21 @@ def load_multiprocessor(processor_name, callback, processor_size):
 # FIXME useful debugging code but where to put it
 def print_file_lineno(range=xrange(1, 2)):
     for level in range:
-        print '<< ', level,
+        print('<< ', level)
         try:
             file_name = sys._getframe(level).f_code.co_filename
             function_name = sys._getframe(level).f_code.co_name
             line_number = sys._getframe(level).f_lineno
             msg = ': %s - %s - %d>>' % (file_name, function_name, line_number)
-            print msg
+            print(msg)
         except Exception, e:
-            print e
+            print(e)
             break
 
 
 #FIXME: useful for debugging but where to put it
 def print_message(processor, message):
-    f = open('error' + `processor.rank()` + '.txt', 'a')
+    f = open('error' + repr(processor.rank()) + '.txt', 'a')
     f.write(message + '\n')
     f.flush()
     f.close()
@@ -666,7 +666,7 @@ class Processor(object):
         if self.rank() == 0:
             end_time = time.time()
             time_delta_str = self.get_time_delta(self.start_time, end_time)
-            print '\nOverall runtime: ' + time_delta_str + '\n'
+            print('\nOverall runtime: ' + time_delta_str + '\n')
 
 
     def pre_run(self):

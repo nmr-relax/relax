@@ -92,21 +92,21 @@ class MF_grid_result_command(Result_command):
         grid_size = sgm.grid_size
 
         if sgm.first_time:
-            print
-            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+            print()
+            print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
             if verbosity:
                 if verbosity >= 2:
-                    print print_prefix
-                print print_prefix
-                print print_prefix + "Grid search"
-                print print_prefix + "~~~~~~~~~~~"
+                    print(print_prefix)
+                print(print_prefix)
+                print(print_prefix + "Grid search")
+                print(print_prefix + "~~~~~~~~~~~")
 
             # Linear constraints.
             if A != None and b != None:
                 if verbosity >= 3:
-                    print print_prefix + "Linear constraint matrices."
-                    print print_prefix + "A: " + `A`
-                    print print_prefix + "b: " + `b`
+                    print(print_prefix + "Linear constraint matrices.")
+                    print(print_prefix + "A: " + repr(A))
+                    print(print_prefix + "b: " + repr(b))
 
         # we don't want to prepend the masters stdout tag
         sys.__stdout__.write('\n'+self.result_string),
@@ -114,21 +114,21 @@ class MF_grid_result_command(Result_command):
         if sgm.completed:
             if verbosity and results != None:
                 if full_output:
-                    print ''
-                    print ''
-                    print print_prefix + "Parameter values: " + `sgm.xk`
-                    print print_prefix + "Function value:   " + `sgm.fk`
-                    print print_prefix + "Iterations:       " + `sgm.k`
-                    print print_prefix + "Function calls:   " + `sgm.f_count`
-                    print print_prefix + "Gradient calls:   " + `sgm.g_count`
-                    print print_prefix + "Hessian calls:    " + `sgm.h_count`
+                    print('')
+                    print('')
+                    print(print_prefix + "Parameter values: " + repr(sgm.xk))
+                    print(print_prefix + "Function value:   " + repr(sgm.fk))
+                    print(print_prefix + "Iterations:       " + repr(sgm.k))
+                    print(print_prefix + "Function calls:   " + repr(sgm.f_count))
+                    print(print_prefix + "Gradient calls:   " + repr(sgm.g_count))
+                    print(print_prefix + "Hessian calls:    " + repr(sgm.h_count))
                     if sgm.warning:
-                        print print_prefix + "Warning:          " + sgm.warning
+                        print(print_prefix + "Warning:          " + sgm.warning)
                     else:
-                        print print_prefix + "Warning:          None"
+                        print(print_prefix + "Warning:          None")
                 else:
-                    print print_prefix + "Parameter values: " + `sgm.short_results`
-                print ""
+                    print(print_prefix + "Parameter values: " + repr(sgm.short_results))
+                print("")
 
             m_f = sgm.model_free
             m_f.iter_count = 0
@@ -187,15 +187,15 @@ class MF_minimise_command(Slave_command):
         if self.minimise_map['print_flag'] >= 1:
             # Monte Carlo simulation print out.
             if self.info_map['sim_index'] != None and self.info_map['index'] == 0:
-                print 'Simulation '+ `self.info_map['sim_index']`+ '\n'
+                print('Simulation '+ repr(self.info_map['sim_index'])+ '\n')
 
             # Individual spin print out.
             if self.mf_map['model_type'] == 'mf' or self.mf_map['model_type'] == 'local_tm':
                 if self.minimise_map['print_flag'] >= 2:
-                    print "\n\n"
+                    print("\n\n")
                 string = "Fitting to spin: " + self.info_map['spin_id']
-                print "\n\n" + string
-                print len(string) * '~'
+                print("\n\n" + string)
+                print(len(string) * '~')
 
 
 #    def do_minimise(self, memo):

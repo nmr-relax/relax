@@ -59,7 +59,7 @@ class Set_processor_property_command(Slave_command):
 
 
     def run(self, processor, completed):
-        for property, value in self.property_map.items():
+        for property, value in list(self.property_map.items()):
             try:
                 setattr(processor, property, value)
                 processor.return_object(processor.NULL_RESULT)
