@@ -95,9 +95,6 @@ class Hybrid:
         # Create the data pipe.
         pipes.create(pipe_name=hybrid, pipe_type='hybrid')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Store the pipe list forming the hybrid.
         cdp.hybrid_pipes = pipe_list
 
@@ -158,9 +155,6 @@ class Hybrid:
             raise RelaxError("Either the model_info or spin_id argument must be supplied.")
         elif model_info != None and spin_id != None:
             raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise.
         k_total = 0

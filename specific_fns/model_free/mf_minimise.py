@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -78,9 +78,6 @@ class Mf_minimise:
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Determine the model type.
         model_type = self.determine_model_type()
@@ -227,9 +224,6 @@ class Mf_minimise:
 
         # Initialise.
         param_index = 0
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Diffusion tensor parameters of the Monte Carlo simulations.
         if sim_index != None and (model_type == 'diff' or model_type == 'all'):
@@ -522,9 +516,6 @@ class Mf_minimise:
         # Determine the model type.
         model_type = self.determine_model_type()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Minimisation options for diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
             # Get the diffusion tensor specific configuration.
@@ -575,9 +566,6 @@ class Mf_minimise:
         @return:            The index of the last parameter encountered (m).
         @rtype:             int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Spherical diffusion {tm}.
         if cdp.diff_tensor.type == 'sphere':
@@ -756,9 +744,6 @@ class Mf_minimise:
         @type inc:                  array of int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
@@ -894,8 +879,8 @@ class Mf_minimise:
                     if verbosity >= 2:
                         print("\n\n")
                     string = "Fitting to spin " + repr(spin_id)
-                    print("\n\n" + string)
-                    print(len(string) * '~')
+                    print(("\n\n" + string))
+                    print((len(string) * '~'))
 
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
@@ -1122,9 +1107,6 @@ class Mf_minimise:
         @rtype:                 tuple
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise the data structures for the model-free function.
         relax_data = []
         relax_error = []
@@ -1274,9 +1256,6 @@ class Mf_minimise:
         All global and spin specific values will be set to None.
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Global stats.
         if hasattr(cdp, 'chi2'):
             cdp.chi2 = None
@@ -1315,7 +1294,7 @@ class Mf_minimise:
 
         # Print out.
         if verbosity >= 1:
-            print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
+            print(("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"))
 
         # Too big.
         if isinstance(grid_size, long):

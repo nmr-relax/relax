@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -28,7 +28,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import spin_loop
 
 
@@ -50,9 +49,6 @@ class Peak_lists(TestCase):
 
     def test_read_peak_list_generic(self):
         """Test the reading of a generic peak intensity list."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(20)
@@ -80,9 +76,6 @@ class Peak_lists(TestCase):
 
     def test_read_peak_list_generic2(self):
         """Test the reading of a generic peak intensity list (test number 2)."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(20)
@@ -122,9 +115,6 @@ class Peak_lists(TestCase):
     def test_read_peak_list_nmrview(self):
         """Test the reading of an NMRView peak list."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(70)
         self.relax.interpreter._Residue.create(72)
@@ -140,9 +130,6 @@ class Peak_lists(TestCase):
 
     def test_read_peak_list_sparky(self):
         """Test the reading of an Sparky peak list."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(3)
@@ -163,9 +150,6 @@ class Peak_lists(TestCase):
 
     def test_read_peak_list_xeasy(self):
         """Test the reading of an XEasy peak list."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(15)
@@ -219,9 +203,6 @@ class Peak_lists(TestCase):
     def test_read_peak_list_xeasy_2(self):
         """Test the reading of an XEasy peak list (2)."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(79)
         self.relax.interpreter._Spin.name(name='NE1')
@@ -236,9 +217,6 @@ class Peak_lists(TestCase):
     def test_read_peak_list_xeasy_3(self):
         """Test the reading of an XEasy peak list (3)."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(100)
         self.relax.interpreter._Spin.name(name='C')
@@ -252,9 +230,6 @@ class Peak_lists(TestCase):
 
     def test_read_peak_list_xeasy_4(self):
         """Test the reading of an XEasy peak list (4)."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(107)

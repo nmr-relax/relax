@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,6 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
-from generic_fns import pipes
 from physical_constants import return_atomic_mass
 from relax_errors import RelaxError, RelaxNoPdbError
 from relax_warnings import RelaxWarning
@@ -43,9 +42,6 @@ def centre_of_mass(return_mass=False):
     @return:                The centre of mass vector, and additionally the mass.
     @rtype:                 list of 3 floats (or tuple of a list of 3 floats and one float)
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -110,11 +106,11 @@ def centre_of_mass(return_mass=False):
     R = R / M
 
     # Final print out.
-    print("    Total mass:      M = " + repr(M))
-    print("    Centre of mass:  R = " + repr(R))
+    print(("    Total mass:      M = " + repr(M)))
+    print(("    Centre of mass:  R = " + repr(R)))
 
     # Return the centre of mass.
     if return_mass:
-        return R,M
+        return R, M
     else:
         return R

@@ -62,9 +62,6 @@ class N_state_model(Common_functions):
         @rtype:                 numpy array
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the model is selected.
         if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
             raise RelaxNoModelError
@@ -137,9 +134,6 @@ class N_state_model(Common_functions):
         @rtype:                 numpy rank-2 array
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise.
         scaling_matrix = identity(self.param_num(), float64)
 
@@ -174,9 +168,6 @@ class N_state_model(Common_functions):
         @return:    A list of all the base data types.
         @rtype:     list of str
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Array of data types.
         list = []
@@ -225,9 +216,6 @@ class N_state_model(Common_functions):
                                 normal optimisation is desired.
         @type sim_index:        None or int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the model is selected.
         if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
@@ -353,9 +341,6 @@ class N_state_model(Common_functions):
                                     rank-1, size N array
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Starting point of the populations.
         pop_start = 0
         if 'rdc' in data_types or 'pcs' in data_types:
@@ -452,9 +437,6 @@ class N_state_model(Common_functions):
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
                     rank-1 array, numpy rank-1 array)
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Data setup tests.
         if not hasattr(cdp, 'paramagnetic_centre'):
@@ -585,9 +567,6 @@ class N_state_model(Common_functions):
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise.
         rdcs = []
         rdc_err = []
@@ -687,9 +666,6 @@ class N_state_model(Common_functions):
                             array)
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise.
         n = len(cdp.align_tensors.reduction)
         full_tensors = zeros(n*5, float64)
@@ -750,9 +726,6 @@ class N_state_model(Common_functions):
         @rtype:         (int, AlignTensorData instance)
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Number of tensor pairs.
         n = len(cdp.align_tensors.reduction)
 
@@ -773,9 +746,6 @@ class N_state_model(Common_functions):
 
     def __q_factors_rdc(self):
         """Calculate the Q-factors for the RDC data."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Q-factor list.
         cdp.q_factors_rdc = []
@@ -821,8 +791,8 @@ class N_state_model(Common_functions):
 
             # Normalisation factor of 2Da^2(4 + 3R)/5.
             D = dj * cdp.align_tensors[i].tensor_diag
-            Da = 1.0/3.0 * (D[2,2] - (D[0,0]+D[1,1])/2.0)
-            Dr = 1.0/3.0 * (D[0,0] - D[1,1])
+            Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
+            Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
             R = Dr / Da
             norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
             if Da == 0.0:
@@ -846,9 +816,6 @@ class N_state_model(Common_functions):
 
     def __q_factors_pcs(self):
         """Calculate the Q-factors for the PCS data."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Q-factor list.
         cdp.q_factors_pcs = []
@@ -889,9 +856,6 @@ class N_state_model(Common_functions):
 
     def __update_model(self):
         """Update the model parameters as necessary."""
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Initialise the list of model parameters.
         if not hasattr(cdp, 'params'):
@@ -1019,9 +983,6 @@ class N_state_model(Common_functions):
         @type verbosity:        int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('N-state')
@@ -1071,9 +1032,6 @@ class N_state_model(Common_functions):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the pivot point.
         cdp.pivot_point = pivot_point
 
@@ -1092,8 +1050,8 @@ class N_state_model(Common_functions):
         unit_vect = cdp.pivot_CoM / norm(cdp.pivot_CoM)
 
         # Initilise some data structures.
-        R = zeros((3,3), float64)
-        vectors = zeros((cdp.N,3), float64)
+        R = zeros((3, 3), float64)
+        vectors = zeros((cdp.N, 3), float64)
 
         # Loop over the N states.
         for c in xrange(cdp.N):
@@ -1127,18 +1085,18 @@ class N_state_model(Common_functions):
         cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
 
         # Print out.
-        print("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point)))
-        print("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM)))
-        print("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM)))
-        print("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect)))
-        print("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM)))
-        print("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM)))
-        print("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM)))
-        print("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red)))
-        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.))
-        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2))
-        print("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.))
-        print("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2))
+        print(("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))))
+        print(("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))))
+        print(("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))))
+        print(("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))))
+        print(("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))))
+        print(("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))))
+        print(("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))))
+        print(("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))))
+        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)))
+        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)))
+        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)))
+        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)))
         print("\n\n")
 
 
@@ -1162,9 +1120,6 @@ class N_state_model(Common_functions):
         @type force:        int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the cone models have been determined.
         if cone_type == 'diff in cone':
             if not hasattr(cdp, 'S_diff_in_cone'):
@@ -1179,8 +1134,8 @@ class N_state_model(Common_functions):
         inc = 20
 
         # The rotation matrix.
-        R = zeros((3,3), float64)
-        R_2vect(R, array([0,0,1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM))
+        R = zeros((3, 3), float64)
+        R_2vect(R, array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM))
 
         # Create the structural object.
         structure = Internal()
@@ -1259,9 +1214,6 @@ class N_state_model(Common_functions):
         @rtype:         float
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Split the parameter into its base name and index.
         name, index = self.return_data_name(param, index=True)
 
@@ -1297,9 +1249,6 @@ class N_state_model(Common_functions):
                             value, the greater the verbosity.
         @type verbosity:    int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
@@ -1403,9 +1352,6 @@ class N_state_model(Common_functions):
                                 normal optimisation is desired.
         @type sim_index:        None or int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the N-state model has been set up.
         if not hasattr(cdp, 'model'):
@@ -1570,9 +1516,6 @@ class N_state_model(Common_functions):
         @rtype:                 tuple of (int, int, float)
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Return the values.
         return self.param_num(), self.num_data_points(), cdp.chi2
 
@@ -1583,9 +1526,6 @@ class N_state_model(Common_functions):
         @return:    The number, n, of data points in the model.
         @rtype:     int
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Determine the data type.
         data_types = self.__base_data_types()
@@ -1631,9 +1571,6 @@ class N_state_model(Common_functions):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('N-state')
@@ -1654,9 +1591,6 @@ class N_state_model(Common_functions):
 
         # Test if the current data pipe exists.
         pipes.test()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the model is setup.
         if not hasattr(cdp, 'model'):
@@ -1687,9 +1621,6 @@ class N_state_model(Common_functions):
         @return:    The number of model parameters.
         @rtype:     int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Determine the data type.
         data_types = self.__base_data_types()
@@ -1847,9 +1778,6 @@ class N_state_model(Common_functions):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the model is setup.
         if hasattr(cdp, 'model'):
             raise RelaxModelError('N-state')
@@ -1889,9 +1817,6 @@ class N_state_model(Common_functions):
         @param param:   The parameter names.
         @type param:    None, str, or list of str
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Get the model parameters if param is None.
         if param == None:

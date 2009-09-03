@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -150,9 +150,6 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     @return:                The graph numerical data.
     @rtype:                 list of lists of float
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Initialise the data structure.
     data = []
@@ -428,9 +425,6 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
                                     string.
     @type y_return_grace_string:    function
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Graph G0.
     file.write("@with g0\n")

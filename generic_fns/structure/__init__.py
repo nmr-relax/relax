@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ independent of parser, writer, etc.
 
 __all__ = [ 'api_base',
             'geometric',
-            'internal_pdb',
+            'internal',
             'main',
             'mass',
             'scientific' ]

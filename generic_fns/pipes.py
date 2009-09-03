@@ -24,6 +24,9 @@
 """Module for manipulating data pipes."""
 
 
+# Python module imports
+import __builtin__
+
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_errors import RelaxError, RelaxNoPipeError, RelaxPipeError
@@ -127,17 +130,18 @@ def delete(pipe_name=None):
     # Set the current data pipe to None if it is the deleted data pipe.
     if ds.current_pipe == pipe_name:
         ds.current_pipe = None
+        __builtin__.cdp = None
 
 
 def display():
     """Print the details of all the data pipes."""
 
     # Heading.
-    print("%-20s%-20s" % ("Data pipe name", "Data pipe type"))
+    print(("%-20s%-20s" % ("Data pipe name", "Data pipe type")))
 
     # Loop over the data pipes.
     for pipe_name in ds:
-        print("%-20s%-20s" % (pipe_name, get_type(pipe_name)))
+        print(("%-20s%-20s" % (pipe_name, get_type(pipe_name))))
 
 
 def get_pipe(name=None):
@@ -237,6 +241,7 @@ def switch(pipe_name=None):
 
     # Switch the current data pipe.
     ds.current_pipe = pipe_name
+    __builtin__.cdp = get_pipe()
 
 
 def test(pipe_name=None):

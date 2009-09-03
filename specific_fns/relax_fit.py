@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -110,9 +110,6 @@ class Relax_fit(Common_functions):
         if not scaling:
             return scaling_matrix
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
             # Relaxation rate.
@@ -144,9 +141,6 @@ class Relax_fit(Common_functions):
         @return:                    The peak intensity for the desired relaxation time.
         @rtype:                     float
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(spin=spin)
@@ -194,9 +188,6 @@ class Relax_fit(Common_functions):
         # Test if the model is set.
         if not hasattr(spin, 'model') or not spin.model:
             raise RelaxNoModelError
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Loop over the spectral time points.
         for j in xrange(len(cdp.relax_times)):
@@ -359,9 +350,6 @@ class Relax_fit(Common_functions):
         @type sim_index:        int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Monte Carlo simulations.
         if sim_index != None:
             # The relaxation rate.
@@ -471,9 +459,6 @@ class Relax_fit(Common_functions):
             for j in xrange(n):
                 temp.append(inc)
             inc = temp
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Minimisation options initialisation.
         min_options = []
@@ -633,9 +618,6 @@ class Relax_fit(Common_functions):
         @type inc:                  array of int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
@@ -676,12 +658,12 @@ class Relax_fit(Common_functions):
                     print("\n\n")
 
                 string = "Fitting to spin " + repr(spin_id)
-                print("\n\n" + string)
-                print(len(string) * '~')
+                print(("\n\n" + string))
+                print((len(string) * '~'))
 
                 # Grid search print out.
                 if match('^[Gg]rid', min_algor):
-                    print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
+                    print(("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"))
 
 
             # Initialise the function to minimise.
@@ -787,9 +769,6 @@ class Relax_fit(Common_functions):
         @type params:   list of str
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the model.
         cdp.curve_type = model
 
@@ -835,9 +814,6 @@ class Relax_fit(Common_functions):
         @keyword spectrum_id:   The spectrum identification string.
         @type spectrum_id:      str
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the spectrum id exists.
         if spectrum_id not in cdp.spectrum_ids:
@@ -885,9 +861,6 @@ class Relax_fit(Common_functions):
         @return:        The standard deviation data structure.
         @rtype:         list of float
         """
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Get the spin container.
         spin = return_spin(spin_id)
@@ -1001,9 +974,6 @@ class Relax_fit(Common_functions):
 
         # Test if the current pipe exists.
         pipes.test()
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the pipe type is set to 'relax_fit'.
         function_type = cdp.pipe_type

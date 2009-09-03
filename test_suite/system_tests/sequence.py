@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,7 +27,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 
 
 class Sequence(TestCase):
@@ -54,9 +53,6 @@ class Sequence(TestCase):
 
         # Load all the ASP atoms (1 molecule, 1 ASP residue, and all atoms).
         self.relax.interpreter._Structure.load_spins(spin_id=':ASP')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -105,9 +101,6 @@ class Sequence(TestCase):
         # Append to the sequence the alpha carbon spins (1 molecule, all GLY residues, and only Ca spins).
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@CA')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
         self.assertEqual(cdp.mol[0].name, 'Ap4Aase_res1-12_mol1')
@@ -150,9 +143,6 @@ class Sequence(TestCase):
         # Generate the sequence (1 molecule, all GLY residues, and only N spins).
         self.relax.interpreter._Structure.load_spins(spin_id=':GLY@N')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
         self.assertEqual(cdp.mol[0].name, 'Ap4Aase_res1-12_mol1')
@@ -188,9 +178,6 @@ class Sequence(TestCase):
 
         # Generate the sequence (1 molecule, all residues, and only N spins).
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)

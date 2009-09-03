@@ -68,9 +68,6 @@ class Spin_base_class:
         # Set the current data pipe to 'orig'.
         pipes.switch('orig')
 
-        # Alias the 'orig' relax data store.
-        cdp = pipes.get_pipe('orig')
-
         # Name the first molecule.
         cdp.mol[0].name = 'Old mol'
 

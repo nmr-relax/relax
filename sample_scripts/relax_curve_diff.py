@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -44,7 +44,6 @@ from numpy import float64, array, identity, sqrt, zeros
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
-from generic_fns import pipes
 from maths_fns.relax_fit import back_calc_I, func, setup
 
 
@@ -57,9 +56,6 @@ def back_calc():
 
     The simple two parameter exponential curve (Rx, I0) is assumed.
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Loop over the spins.
     for spin in spin_loop():
@@ -92,9 +88,6 @@ def calc_ave_sd():
     where n is the total number of selected spins, Xi is the peak intensity difference for spin i,
     and Xav is the peak intensity difference averaged across all spins.
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Diff array, std deviation array, and number of spins.
     diff_array = zeros(sum(cdp.num_spectra), float64)
@@ -212,9 +205,6 @@ def grace_header(file, xmin, xmax, ymin, ymax):
 
 def grace_plot(ave, sd):
     """Grace plot of the intensity differences."""
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Open the file.
     file = open('differences.agr', 'w')

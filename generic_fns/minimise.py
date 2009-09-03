@@ -121,9 +121,6 @@ def calc(verbosity=1):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Specific calculate function setup.
     calculate = specific_fns.setup.get_specific_fn('calculate', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
@@ -136,7 +133,7 @@ def calc(verbosity=1):
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print("Simulation " + repr(i+1))
+                print(("Simulation " + repr(i+1)))
             calculate(verbosity=verbosity-1, sim_index=i)
 
     # Minimisation.
@@ -168,9 +165,6 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Specific grid search function.
     grid_search = specific_fns.setup.get_specific_fn('grid_search', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
@@ -183,7 +177,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print("Simulation " + repr(i+1))
+                print(("Simulation " + repr(i+1)))
             grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
     # Grid search.
@@ -222,9 +216,6 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Specific minimisation function.
     minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
@@ -240,7 +231,7 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         for i in xrange(cdp.sim_number):
             if verbosity:
-                print("Simulation " + repr(i+1))
+                print(("Simulation " + repr(i+1)))
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
     # Standard minimisation.
@@ -376,9 +367,6 @@ def return_value(spin=None, stat_type=None, sim=None):
     @type sim:          None or int
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Get the object name.
     object_name = return_data_name(stat_type)
 
@@ -444,9 +432,6 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
     @keyword spin:      The spin container.
     @type spin:         SpinContainer instance
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Get the parameter name.
     param_name = return_data_name(param)

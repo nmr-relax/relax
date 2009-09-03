@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,7 +27,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 
 
 class Unit_vectors(TestCase):
@@ -58,9 +57,6 @@ class Unit_vectors(TestCase):
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, 28)
@@ -86,9 +82,6 @@ class Unit_vectors(TestCase):
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
@@ -110,9 +103,6 @@ class Unit_vectors(TestCase):
 
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
@@ -138,9 +128,6 @@ class Unit_vectors(TestCase):
 
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))

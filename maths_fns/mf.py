@@ -266,8 +266,8 @@ class Mf:
                 self.data[i].frq_list[j, 4] = frqH + frqX
             self.data[i].frq_sqrd_list = self.data[i].frq_list ** 2
             for j in xrange(self.diff_data.num_indices):
-                self.data[i].frq_list_ext[:, :, j] = self.data[i].frq_list
-                self.data[i].frq_sqrd_list_ext[:, :, j] = self.data[i].frq_sqrd_list
+                self.data[i].frq_list_ext[:,:, j] = self.data[i].frq_list
+                self.data[i].frq_sqrd_list_ext[:,:, j] = self.data[i].frq_sqrd_list
 
             # Store supplied data in self.data
             self.data[i].gh = gh[i]

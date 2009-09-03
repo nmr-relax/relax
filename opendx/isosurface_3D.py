@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -74,14 +74,11 @@ class Iso3D(Base_Map):
     def map_text(self, map_file):
         """Function for creating the text of a 3D map."""
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Initialise.
         values = zeros(3, float64)
         percent = 0.0
         percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
-        print("%-10s%8.3f%-1s" % ("Progress:", percent, "%"))
+        print(("%-10s%8.3f%-1s" % ("Progress:", percent, "%")))
 
         # Fix the diffusion tensor.
         unfix = False
@@ -135,7 +132,7 @@ class Iso3D(Base_Map):
 
                 # Progress incrementation and print out.
                 percent = percent + percent_inc
-                print("%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + repr(values) + ",  f(x): ", chi2))
+                print(("%-10s%8.3f%-8s%-8g" % ("Progress:", percent, "%,  " + repr(values) + ",  f(x): ", chi2)))
 
                 # Increment the value of the second parameter.
                 values[1] = values[1] + self.step_size[1]
