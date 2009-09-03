@@ -49,7 +49,7 @@ def no_missing(data, name):
 
     # Fail.
     if missing:
-        raise NameError, "Data is missing from the " + name + '.'
+        raise NameError("Data is missing from the " + name + '.')
 
 
 def translate(data):

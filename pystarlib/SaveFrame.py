@@ -45,11 +45,11 @@ class SaveFrame (Lister):
         if recursive:
             for tagtable in self.tagtables:
                 if tagtable.check_integrity():
-                    print "ERROR: integrity check failed for tagtable"
+                    print("ERROR: integrity check failed for tagtable")
                     return 1
         if self.verbosity >= 9:
-            print 'Checked integrity of SaveFrame(%2s tagtables, recurs.=%s)  : OK [%s]' % (
-                len(self.tagtables), recursive, self.title )
+            print('Checked integrity of SaveFrame(%2s tagtables, recurs.=%s)  : OK [%s]' % (
+                len(self.tagtables), recursive, self.title ))
                 
     """
     Or print Warning and return None
@@ -58,19 +58,19 @@ class SaveFrame (Lister):
         possibleTagNamesSFCategory = [ '_Saveframe_category',  # 2.1
                                        '.Sf_category' ]        # 3
         if not self.tagtables:
-            print "WARNING: no tagtable found in Saveframe"
+            print("WARNING: no tagtable found in Saveframe")
             return None
         
         tT = self.tagtables[0] # assumed 0
         if not tT.tagvalues[0]: # assumed 0
-            print "WARNING: empty tagtable found in Saveframe"
+            print("WARNING: empty tagtable found in Saveframe")
             return None
         found = 0
         for possi in possibleTagNamesSFCategory:
             if tT.tagnames[0].endswith(possi):
                 found = 1
         if not found:
-            print "WARNING: first tag doesn't look like a Sf_category; taking value anyway"
+            print("WARNING: first tag doesn't look like a Sf_category; taking value anyway")
             
         return tT.tagvalues[0][0]
 

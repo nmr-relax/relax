@@ -544,7 +544,7 @@ def bmrb_write_entity(star):
 
     # Can't handle multiple molecules yet.
     if count_molecules() > 1:
-        raise RelaxError, "Multiple molecules are not yet supported."
+        raise RelaxError("Multiple molecules are not yet supported.")
 
     # Get the molecule names.
     mol_names = get_molecule_names()
@@ -553,7 +553,7 @@ def bmrb_write_entity(star):
     for i in range(len(mol_names)):
         # Test that the molecule has a name!
         if not mol_names[i]:
-            raise RelaxError, "All molecules must be named."
+            raise RelaxError("All molecules must be named.")
 
         # Get the residue names and numbers.
         res_names = get_residue_names("#" + mol_names[i])

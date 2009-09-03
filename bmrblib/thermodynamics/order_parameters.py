@@ -113,7 +113,7 @@ class OrderParameterSaveframe(BaseSaveframe):
         if rex:
             # Check.
             if not rex_frq:
-                raise NameError, "The rex_frq arg must be supplied if the rex values are supplied."
+                raise NameError("The rex_frq arg must be supplied if the rex values are supplied.")
 
             # Convert to MHz.
             self.rex_frq = str(rex_frq / 1e6)
@@ -139,7 +139,7 @@ class OrderParameterSaveframe(BaseSaveframe):
 
             # Check the length.
             if len(obj) != N:
-                raise NameError, "The number of elements in the '%s' arg does not match that of 'res_nums'." % name
+                raise NameError("The number of elements in the '%s' arg does not match that of 'res_nums'." % name)
 
             # Place the args into the namespace, translating for BMRB.
             setattr(self, name, translate(obj))
@@ -186,7 +186,7 @@ class OrderParameterList(TagCategory):
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # Model-free analysis ID number.
-        if self.tag_names.has_key('OrderParameterListID'):
+        if 'OrderParameterListID' in self.tag_names:
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['OrderParameterListID']], tagvalues=[['1']]))
 
         # Sample info.

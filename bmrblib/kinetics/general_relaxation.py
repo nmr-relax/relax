@@ -78,9 +78,9 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         """
 
         # Check the ID info.
-        no_missing(res_nums, 'residue numbers of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(res_names, 'residue names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(atom_names, 'atom names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
+        no_missing(res_nums, 'residue numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
+        no_missing(res_names, 'residue names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
+        no_missing(atom_names, 'atom names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
 
         # The number of elements.
         self.N = len(res_nums)
@@ -103,7 +103,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.specific_setup()
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.r1_inc`)
+        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+repr(self.r1_inc))
 
         # Create the tag categories.
         self.heteronuclRxlist.create()
@@ -135,7 +135,7 @@ class GeneralRelaxationList(HeteronuclRxList):
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # T1 ID number.
-        if self.tag_names.has_key('GeneralRelaxationListID'):
+        if 'GeneralRelaxationListID' in self.tag_names:
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['GeneralRelaxationListID']], tagvalues=[[str(self.sf.r1_inc)]]))
 
         # Sample info.

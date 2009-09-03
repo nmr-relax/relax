@@ -48,8 +48,8 @@ class BMRB:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.display("
-            text = text + "format=" + `format` + ")"
-            print text
+            text = text + "format=" + repr(format) + ")"
+            print(text)
 
         # Execute the functional code.
         bmrb.display(format=format)
@@ -75,17 +75,17 @@ class BMRB:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir) + ")"
+            print(text)
 
         # File.
         if type(file) != str:
-            raise RelaxStrError, ('file name', file)
+            raise RelaxStrError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # Execute the functional code.
         bmrb.read(file=file, directory=dir)
@@ -116,22 +116,22 @@ class BMRB:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.write("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
         # File.
         if type(file) != str and not hasattr(file, 'write'):
-            raise RelaxStrFileError, ('file name', file)
+            raise RelaxStrFileError('file name', file)
 
         # Directory.
         if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+            raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
         if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+            raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.
         bmrb.write(file=file, directory=dir, force=force)

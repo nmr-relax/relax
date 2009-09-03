@@ -110,13 +110,13 @@ class Bmrb:
 
             # Check the data for None (not allowed in BMRB!).
             if res_num == None:
-                raise RelaxError, "For the BMRB, the residue of spin '%s' must be numbered." % spin_id
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
             if res_name == None:
-                raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
             if spin.name == None:
-                raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+                raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
             if spin.heteronuc_type == None:
-                raise RelaxError, "For the BMRB, the spin isotope type of '%s' must be specified." % spin_id
+                raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
             # The molecule/residue/spin info.
             res_num_list.append(res_num)

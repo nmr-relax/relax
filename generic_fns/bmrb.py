@@ -56,14 +56,14 @@ def read(file=None, directory=None):
 
     # Make sure that the data pipe is empty.
     if not ds[ds.current_pipe].is_empty():
-        raise RelaxError, "The current data pipe is not empty."
+        raise RelaxError("The current data pipe is not empty.")
 
     # Get the full file path.
     file_path = get_file_path(file_name=file, dir=directory)
 
     # Fail if the file does not exist.
     if not access(file_path, F_OK):
-        raise RelaxFileError, file_path
+        raise RelaxFileError(file_path)
 
     # Specific results reading function.
     read_function = get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
@@ -91,10 +91,10 @@ def write(file=None, directory=None, force=False):
 
     # Fail if the file already exists and the force flag is False.
     if access(file_path, F_OK) and not force:
-        raise RelaxFileOverwriteError, (file_path, 'force flag')
+        raise RelaxFileOverwriteError(file_path, 'force flag')
 
     # Print out.
-    print "Opening the file '%s' for writing." % file_path
+    print("Opening the file '%s' for writing." % file_path)
 
     # Create the directories.
     mkdir_nofail(directory, verbosity=0)

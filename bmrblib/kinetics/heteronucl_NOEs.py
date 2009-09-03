@@ -78,9 +78,9 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         """
 
         # Check the ID info.
-        no_missing(res_nums, 'residue numbers of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(res_names, 'residue names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
-        no_missing(atom_names, 'atom names of the ' + `int(frq*1e-6)` + ' MHz NOE data')
+        no_missing(res_nums, 'residue numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
+        no_missing(res_names, 'residue names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
+        no_missing(atom_names, 'atom names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
 
         # The number of elements.
         self.N = len(res_nums)
@@ -103,7 +103,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.specific_setup()
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+`self.noe_inc`)
+        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+repr(self.noe_inc))
 
         # Create the tag categories.
         self.heteronuclRxlist.create()
@@ -135,7 +135,7 @@ class HeteronuclNOEList(HeteronuclRxList):
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # NOE ID number.
-        if self.tag_names.has_key('HeteronuclNOEListID'):
+        if 'HeteronuclNOEListID' in self.tag_names:
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['HeteronuclNOEListID']], tagvalues=[[str(self.sf.noe_inc)]]))
 
         # Sample info.

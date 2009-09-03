@@ -171,7 +171,7 @@ class ChemShiftAnisotropy(TagCategory):
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # CSA ID number.
-        if self.tag_names.has_key('ChemShiftAnisotropyID'):
+        if 'ChemShiftAnisotropyID' in self.tag_names:
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['ChemShiftAnisotropyID']], tagvalues=[['1']]))
 
         # Sample info.

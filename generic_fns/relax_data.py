@@ -221,7 +221,7 @@ def bmrb_read(star):
 
             # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
             if test_labels(ri_label, frq_label):
-                raise RelaxRiError, (ri_label, frq_label)
+                raise RelaxRiError(ri_label, frq_label)
 
             # Pack the data.
             pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
@@ -261,13 +261,13 @@ def bmrb_write(star):
 
         # Check the data for None (not allowed in BMRB!).
         if res_num == None:
-            raise RelaxError, "For the BMRB, the residue of spin '%s' must be numbered." % spin_id
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
         if res_name == None:
-            raise RelaxError, "For the BMRB, the residue of spin '%s' must be named." % spin_id
+            raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
         if spin.name == None:
-            raise RelaxError, "For the BMRB, the spin '%s' must be named." % spin_id
+            raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
         if spin.heteronuc_type == None:
-            raise RelaxError, "For the BMRB, the spin isotope type of '%s' must be specified." % spin_id
+            raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
         # The molecule/residue/spin info.
         res_num_list.append(str(res_num))
