@@ -121,3 +121,17 @@ class Frame_order(TestCase):
         self.assertEqual(cdp.alpha, 0.0)
         self.assertEqual(cdp.beta, 0.0)
         self.assertEqual(cdp.gamma, 0.0)
+
+
+    def test_opt_rigid_rand_rot(self):
+        """Test the 'rigid' model for randomly rotated tensors with no motion."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
+
+        # Test the values.
+        self.assertEqual(cdp.iter, 193)
+        self.assertAlmostEqual(cdp.chi2, 1.3670707561144306e-25)
+        self.assertAlmostEqual(cdp.alpha, 4.3547496410004598)
+        self.assertAlmostEqual(cdp.beta, 2.5615754007366123)
+        self.assertAlmostEqual(cdp.gamma, 2.4926381574781562)
