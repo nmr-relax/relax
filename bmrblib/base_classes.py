@@ -39,7 +39,7 @@ class BaseSaveframe:
         """
 
         # The data ID values.
-        self.data_ids = translate(range(1,N+1))
+        self.data_ids = translate(range(1, N+1))
 
 
 

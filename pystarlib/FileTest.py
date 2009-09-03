@@ -56,7 +56,7 @@ save_comment   _Saveframe_category  comment   loop_
 
 ;    BOGUS_CATEGORY     stop_ save_
 """
-            self.assertTrue(Utils.equalIgnoringWhiteSpace(exp,st))
+            self.assertTrue(Utils.equalIgnoringWhiteSpace(exp, st))
 
         def testread2(self):
             """STAR File read"""
@@ -77,7 +77,7 @@ def testEntry(entry):
     "&program=STAR&request_type=archive&subtype=full&type=entry") % (stage, stage, entry)
     fnamezip = entry+".zip"
 #    print "DEBUG: downloading url:", urlLocation
-    urllib.request.urlretrieve(urlLocation,fnamezip)
+    urllib.request.urlretrieve(urlLocation, fnamezip)
 #    print "DEBUG: opening local zip file:", fnamezip
     zfobj = zipfile.ZipFile(fnamezip)
     fname = None
@@ -122,12 +122,12 @@ def testEntry(entry):
                 cmd = "diff --ignore-all-space --ignore-blank-lines %s %s > %s" % ( pystarlibWrittenFile, wattosWrittenFile, diffPystarWattosFile)
                 os.system(cmd)
                 if not os.path.exists(diffPystarWattosFile):
-                    print("WARNING: failed to diff file: ",pystarlibWrittenFile, wattosWrittenFile)
+                    print("WARNING: failed to diff file: ", pystarlibWrittenFile, wattosWrittenFile)
     #            print "Most likely the below diff will fail because it depends on diff being installed"
                 cmd = "diff --ignore-all-space --ignore-blank-lines %s %s > %s" % ( orgWattosWrittenFile, wattosWrittenFile, diffOrgWattosWattosFile)
                 os.system(cmd)
                 if not os.path.exists(diffOrgWattosWattosFile):
-                    print("WARNING: failed to diff file: ",orgWattosWrittenFile, wattosWrittenFile)
+                    print("WARNING: failed to diff file: ", orgWattosWrittenFile, wattosWrittenFile)
         except:
     #        print "DEBUG: failed the rewrite or diff but as mentioned that's totally understandable."
             pass

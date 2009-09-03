@@ -37,7 +37,7 @@ def no_missing(data, name):
     missing = False
 
     # List data.
-    if type(data) == list:
+    if isinstance(data, list):
         # Loop over the data.
         for i in range(len(data)):
             if data[i] == None or data[i] == 'None':
@@ -60,7 +60,7 @@ def translate(data):
     """
 
     # List data.
-    if type(data) == list:
+    if isinstance(data, list):
         # Loop over the data.
         new_data = []
         for i in range(len(data)):

@@ -80,11 +80,11 @@ class BMRB:
             print(text)
 
         # File.
-        if type(file) != str:
+        if not isinstance(file, str):
             raise RelaxStrError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # Execute the functional code.
@@ -122,15 +122,15 @@ class BMRB:
             print(text)
 
         # File.
-        if type(file) != str and not hasattr(file, 'write'):
+        if not isinstance(file, str) and not hasattr(file, 'write'):
             raise RelaxStrFileError('file name', file)
 
         # Directory.
-        if dir != None and type(dir) != str:
+        if dir != None and not isinstance(dir, str):
             raise RelaxNoneStrError('directory name', dir)
 
         # The force flag.
-        if type(force) != bool:
+        if not isinstance(force, bool):
             raise RelaxBoolError('force flag', force)
 
         # Execute the functional code.

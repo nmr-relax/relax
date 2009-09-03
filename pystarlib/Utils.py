@@ -36,8 +36,7 @@ class Lister:
 
     def attrnames(self):
         result=''
-        keys = list(self.__dict__.keys())
-        keys.sort()
+        keys = sorted(self.__dict__.keys())
         for attr in keys:
             if attr[:2] == "__":
                 result = result + "\tname %s=<built-in>\n" % attr
@@ -71,15 +70,15 @@ before comparing. Doesn't remove final eol space.
 """
 def equalIgnoringWhiteSpace( a, b):
     pattern   = re.compile("\s+" )
-    a = re.sub(pattern, ' ',a)
-    b = re.sub(pattern, ' ',b)
+    a = re.sub(pattern, ' ', a)
+    b = re.sub(pattern, ' ', b)
 #    print "a["+a+"]"
 #    print "b["+b+"]"
     return a == b
 
 def dos2unix(text):
-    return re.sub('\r\n', '\n',text)
+    return re.sub('\r\n', '\n', text)
 def unix2dos(text):
-    return re.sub('([^\r])(\n)', '\1\r\n',text)
+    return re.sub('([^\r])(\n)', '\1\r\n', text)
 def mac2unix(text):
-    return re.sub('\r', '\n',text)
+    return re.sub('\r', '\n', text)

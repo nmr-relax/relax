@@ -172,12 +172,12 @@ class File (Lister):
                 print('Items looked for are a begin or end of a saveframe, or')
                 print('a begin of a tagtable(free or looped).')
                 print() 
-                print("At text (before pos=" , pos , "):")
+                print("At text (before pos=", pos, "):")
                 start = pos-70
                 if start < 0:
                     start = 0
                 print("[" + text[start:pos] + "]")
-                print("At text (starting pos=" , pos , "):")
+                print("At text (starting pos=", pos, "):")
                 print("[" + text[pos:pos+70]+ "]")
                 return None
             

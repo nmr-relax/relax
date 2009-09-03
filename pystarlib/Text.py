@@ -172,7 +172,7 @@ character in it before pos (not fully tested; perhaps possible).
 """
 
 def pattern_unquoted_find(text, pattern, pos=0):    
-    while 1:
+    while True:
         match = pattern.search( text, pos)
         if not match:
             ## No match at all
@@ -363,7 +363,7 @@ def semicolon_block_collapse( text ):
         print("ERROR in semicolon_block_collapse for text starting at: ["+ text[startpos:startpos+100]+ "]")            
         raise
     
-      text_replace = re.sub("\n", eol_string,text[startpos:endpos])
+      text_replace = re.sub("\n", eol_string, text[startpos:endpos])
 
       # This is bulky and not very elegant but works
       text= text[0:startpos] + text_replace + text[endpos:]
@@ -442,7 +442,7 @@ the second semicolon can not be the first char on a line.
 """
 def semicolons_add( text, possible_bad_char=None ):
     if possible_bad_char:
-        lines       = string.split(text,'\n')
+        lines       = string.split(text, '\n')
         text   = ''
         for line in lines:
             text = text + prepending_string + line + '\n'
@@ -493,7 +493,7 @@ def comments_strip( text ):
 
     if __init__.verbosity >= 9:
         print('Done [%s] comment subs' % count)
-    text = string.join(lines,"\n")
+    text = string.join(lines, "\n")
     return text
 
 """
