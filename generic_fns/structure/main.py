@@ -108,7 +108,7 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 # Rename the molecule container if the mol name is given and the sole container is unnamed.
                 if mol_cont.name == None and mol_name:
                     # Print out.
-                    print("Renaming the unnamed sole molecule container to '%s'." % mol_name)
+                    print(("Renaming the unnamed sole molecule container to '%s'." % mol_name))
 
                     # Set the name.
                     mol_cont.name = mol_name
@@ -295,9 +295,9 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
         # Multiple models loaded.
         if num_models > 1:
             if model:
-                print("Extracting vectors for model '%s'." % model)
+                print(("Extracting vectors for model '%s'." % model))
             else:
-                print("Extracting vectors for all %s models." % num_models)
+                print(("Extracting vectors for all %s models." % num_models))
                 if ave:
                     print("Averaging all vectors.")
 
@@ -403,7 +403,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
 
         # Print out of modified spins.
         if verbosity:
-            print("Extracted " + spin.name + "-" + attached_name + " vectors for " + repr(id) + '.')
+            print(("Extracted " + spin.name + "-" + attached_name + " vectors for " + repr(id) + '.'))
 
     # Right, catch the problem of missing vectors to prevent massive user confusion!
     if no_vectors:

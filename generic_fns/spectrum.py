@@ -114,9 +114,9 @@ def __errors_repl(verbosity=0):
             indices[j] = cdp.spectrum_ids.index(spectra[j])
 
         # Print out.
-        print("\nReplicated spectra:  " + repr(spectra))
+        print(("\nReplicated spectra:  " + repr(spectra)))
         if verbosity:
-            print("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD"))
+            print(("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD")))
 
         # Calculate the mean value.
         count = 0
@@ -151,7 +151,7 @@ def __errors_repl(verbosity=0):
 
             # Print out.
             if verbosity:
-                print("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I)))
+                print(("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I))))
 
             # Sum of variances (for average).
             cdp.var_I[indices[0]] = cdp.var_I[indices[0]] + var_I
@@ -165,7 +165,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[indices[j]] = cdp.var_I[indices[0]]
 
         # Print out.
-        print("Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]]))
+        print(("Standard deviation:  %s" % sqrt(cdp.var_I[indices[0]])))
 
 
     # Average across all spectra if there are time points with a single spectrum.
@@ -195,7 +195,7 @@ def __errors_repl(verbosity=0):
             cdp.var_I[i] = var_I
 
         # Print out.
-        print("Standard deviation for all spins:  " + repr(sqrt(var_I)))
+        print(("Standard deviation for all spins:  " + repr(sqrt(var_I))))
 
     # Loop over the spectra.
     for i in xrange(len(cdp.spectrum_ids)):
@@ -457,7 +457,7 @@ def intensity_generic(line, int_col):
 
     print('')
     print('The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).')
-    print('    ' + repr(res_num), h_name, x_name, intensity)
+    print(('    ' + repr(res_num), h_name, x_name, intensity))
 
     # Generate the spin identification string.
     spin_id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
@@ -798,7 +798,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # Determine the number of header lines.
     num = number_of_header_lines(file_data, format, int_col, intensity_fn)
-    print("Number of header lines found: " + repr(num))
+    print(("Number of header lines found: " + repr(num)))
 
     # Remove the header.
     file_data = file_data[num:]

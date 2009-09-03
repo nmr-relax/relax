@@ -48,9 +48,9 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("Original angles:")
-        print("alpha: %s" % alpha)
-        print("beta: %s" % beta)
-        print("gamma: %s\n" % gamma)
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
 
         # Generate the rotation matrix.
         R = zeros((3, 3), float64)
@@ -66,9 +66,9 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("New angles:")
-        print("alpha: %s" % alpha_new)
-        print("beta: %s" % beta_new)
-        print("gamma: %s\n" % gamma_new)
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
 
         # Checks.
         self.assertAlmostEqual(alpha, alpha_new)

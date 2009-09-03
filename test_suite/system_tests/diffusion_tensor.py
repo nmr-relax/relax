@@ -232,7 +232,7 @@ class Diffusion_tensor(TestCase):
         self.assertEqual(len(real_data), len(new_data))
         for i in range(len(real_data)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print((real_data[i][0:-1]))
 
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])
@@ -264,7 +264,7 @@ class Diffusion_tensor(TestCase):
         self.assertEqual(len(real_data), len(new_data))
         for i in range(len(real_data)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print((real_data[i][0:-1]))
 
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])
@@ -296,7 +296,7 @@ class Diffusion_tensor(TestCase):
         self.assertEqual(len(real_data), len(new_data))
         for i in range(len(real_data)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print((real_data[i][0:-1]))
 
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])

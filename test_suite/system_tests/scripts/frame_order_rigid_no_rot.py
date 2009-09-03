@@ -78,11 +78,11 @@ monte_carlo.error_analysis()
 
 # Print out.
 print("\n# Min details #")
-print("grid increments: %s" % GRID_INCS)
+print(("grid increments: %s" % GRID_INCS))
 print("\n# Euler angles (deg) #")
-print("alpha:      %20.8f+/-%-20.8f" % (cdp.alpha /2/pi*360, cdp.alpha_err /2/pi*360))
-print("beta:       %20.8f+/-%-20.8f" % (cdp.beta /2/pi*360, cdp.beta_err /2/pi*360))
-print("gamma:      %20.8f+/-%-20.8f" % (cdp.gamma /2/pi*360, cdp.gamma_err /2/pi*360))
+print(("alpha:      %20.8f+/-%-20.8f" % (cdp.alpha /2/pi*360, cdp.alpha_err /2/pi*360)))
+print(("beta:       %20.8f+/-%-20.8f" % (cdp.beta /2/pi*360, cdp.beta_err /2/pi*360)))
+print(("gamma:      %20.8f+/-%-20.8f" % (cdp.gamma /2/pi*360, cdp.gamma_err /2/pi*360)))
 
 # Write the results.
 results.write('devnull', dir=None, force=True)

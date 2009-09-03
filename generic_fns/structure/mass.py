@@ -106,8 +106,8 @@ def centre_of_mass(return_mass=False):
     R = R / M
 
     # Final print out.
-    print("    Total mass:      M = " + repr(M))
-    print("    Centre of mass:  R = " + repr(R))
+    print(("    Total mass:      M = " + repr(M)))
+    print(("    Centre of mass:  R = " + repr(R)))
 
     # Return the centre of mass.
     if return_mass:

@@ -373,8 +373,8 @@ class Frame_order(Common_functions):
         # The cone axis. 
         cone_axis = zeros(3, float64)
         generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
-        print("Cone axis: %s." % cone_axis)
-        print("Cone angle: %s." % cdp.theta_cone)
+        print(("Cone axis: %s." % cone_axis))
+        print(("Cone angle: %s." % cdp.theta_cone))
 
         # Cone axis from simulations.
         num_sim = 0

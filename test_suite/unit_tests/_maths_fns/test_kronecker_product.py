@@ -61,7 +61,7 @@ class Test_kronecker_product(TestCase):
         for i in range(9):
             # Empty row.
             if i != 0 and not i % 3:
-                print(' |' + '-'*17 + '|' + '-'*17 + '|' + '-'*17)
+                print((' |' + '-'*17 + '|' + '-'*17 + '|' + '-'*17))
 
             # Loop over the columns.
             line = ''
@@ -81,7 +81,7 @@ class Test_kronecker_product(TestCase):
                     string = '%s%s%s%s' % (string[0], string[1], string[2], string[3])
                     line = line + string + " "
 
-            print(line + '|')
+            print((line + '|'))
         print('')
 
 
@@ -175,7 +175,7 @@ class Test_kronecker_product(TestCase):
         self.print_nice(self.daeg)
         for i in range(9):
             for j in range(9):
-                print("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j]))
+                print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j])))
                 self.assertEqual(self.daeg[i, j], daegT[i, j])
 
 
@@ -196,7 +196,7 @@ class Test_kronecker_product(TestCase):
         self.print_nice(self.daeg)
         for i in range(9):
             for j in range(9):
-                print("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j]))
+                print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j])))
                 self.assertEqual(self.daeg[i, j], daegT[i, j])
 
 
@@ -217,7 +217,7 @@ class Test_kronecker_product(TestCase):
         self.print_nice(self.daeg)
         for i in range(9):
             for j in range(9):
-                print("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j]))
+                print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j])))
                 self.assertEqual(self.daeg[i, j], daegT[i, j])
 
 
@@ -238,7 +238,7 @@ class Test_kronecker_product(TestCase):
         self.print_nice(self.daeg)
         for i in range(9):
             for j in range(9):
-                print("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j]))
+                print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j])))
                 self.assertEqual(self.daeg[i, j], daegT[i, j])
 
 
@@ -259,7 +259,7 @@ class Test_kronecker_product(TestCase):
         self.print_nice(self.daeg)
         for i in range(9):
             for j in range(9):
-                print("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j]))
+                print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j])))
                 self.assertEqual(self.daeg[i, j], daegT[i, j])
 
 
@@ -280,5 +280,5 @@ class Test_kronecker_product(TestCase):
         self.print_nice(self.daeg)
         for i in range(9):
             for j in range(9):
-                print("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j]))
+                print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j])))
                 self.assertEqual(self.daeg[i, j], daegT[i, j])

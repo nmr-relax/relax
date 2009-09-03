@@ -879,8 +879,8 @@ class Mf_minimise:
                     if verbosity >= 2:
                         print("\n\n")
                     string = "Fitting to spin " + repr(spin_id)
-                    print("\n\n" + string)
-                    print(len(string) * '~')
+                    print(("\n\n" + string))
+                    print((len(string) * '~'))
 
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
@@ -1294,7 +1294,7 @@ class Mf_minimise:
 
         # Print out.
         if verbosity >= 1:
-            print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
+            print(("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"))
 
         # Too big.
         if isinstance(grid_size, long):

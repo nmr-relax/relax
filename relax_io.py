@@ -193,8 +193,8 @@ def log(file_name=None, dir=None, verbosity=1):
     # Print out.
     if verbosity:
         print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
-        print("Redirecting the sys.stdout IO stream to the log file '%s'." % file_path)
-        print("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path)
+        print(("Redirecting the sys.stdout IO stream to the log file '%s'." % file_path))
+        print(("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path))
 
     # Set the logging IO streams.
     log_stdout = log_file
@@ -224,7 +224,7 @@ def mkdir_nofail(dir=None, verbosity=1):
         makedirs(dir)
     except OSError:
         if verbosity:
-            print("Directory ." + sep + dir + " already exists.\n")
+            print(("Directory ." + sep + dir + " already exists.\n"))
 
 
 def open_read_file(file_name=None, dir=None, verbosity=1):
@@ -259,7 +259,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
     # Open the file for reading.
     try:
         if verbosity:
-            print("Opening the file " + repr(file_path) + " for reading.")
+            print(("Opening the file " + repr(file_path) + " for reading."))
         if compress_type == 0:
             file_obj = open(file_path, 'r')
         elif compress_type == 1:
@@ -358,7 +358,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     # Open the file for writing.
     try:
         if verbosity:
-            print("Opening the file " + repr(file_path) + " for writing.")
+            print(("Opening the file " + repr(file_path) + " for writing."))
         if compress_type == 0:
             file_obj = open(file_path, 'w')
         elif compress_type == 1:
@@ -431,8 +431,8 @@ def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
     # Print out.
     if verbosity:
         print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
-        print("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path)
-        print("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path)
+        print(("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path))
+        print(("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path))
 
     # Set the tee IO streams.
     tee_stdout.split(stdout, tee_file)

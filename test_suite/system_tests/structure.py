@@ -166,7 +166,7 @@ class Structure(TestCase):
 
         # Extract a N-Ca vector.
         self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:3@N')
-        print(cdp.mol[0].res[0].spin[0])
+        print((cdp.mol[0].res[0].spin[0]))
         self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
 
 

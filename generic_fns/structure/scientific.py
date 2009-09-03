@@ -701,7 +701,7 @@ class MolContainer:
         model = Scientific.IO.PDB.Structure(file_path, self.file_model)
 
         # Print out.
-        print("\n" + repr(model))
+        print(("\n" + repr(model)))
 
         # Counter for finding the molecule.
         mol_num = 1
