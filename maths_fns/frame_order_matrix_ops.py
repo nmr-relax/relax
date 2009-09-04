@@ -88,6 +88,7 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
     """
 
     # Convert to rank-4.
+    orig_shape = daeg.shape
     daeg.shape = (3, 3, 3, 3)
 
     # First column of the superoperator.
@@ -125,6 +126,8 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
     Rsuper[3, 4] = daeg[1, 0, 2, 2] + daeg[2, 0, 1, 2]
     Rsuper[4, 4] = daeg[1, 1, 2, 2] + daeg[2, 1, 1, 2]
 
+    # Revert the shape.
+    daeg.shape = orig_shape
 
 
 def generate_vector(vector, theta, phi):
