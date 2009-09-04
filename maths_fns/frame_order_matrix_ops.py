@@ -78,6 +78,55 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     return matrix
 
 
+def daeg_to_rotational_superoperator(daeg, Rsuper):
+    """Convert the frame order matrix (daeg) to the rotational superoperator.
+
+    @param daeg:    The second degree frame order matrix, daeg.
+    @type daeg:     numpy 9D, rank-2 array or numpy 3D, rank-4 array
+    @param Rsuper:  The rotational superoperator structure to be populated.
+    @type Rsuper:   numpy 5D, rank-2 array
+    """
+
+    # Convert to rank-4.
+    daeg.shape = (3, 3, 3, 3)
+
+    # First column of the superoperator.
+    Rsuper[0, 0] = daeg[0, 0, 0, 0] - daeg[2, 0, 2, 0]
+    Rsuper[1, 0] = daeg[0, 1, 0, 1] - daeg[2, 1, 2, 1]
+    Rsuper[2, 0] = daeg[0, 0, 0, 1] - daeg[2, 0, 2, 1]
+    Rsuper[3, 0] = daeg[0, 0, 0, 2] - daeg[2, 0, 2, 2]
+    Rsuper[4, 0] = daeg[0, 1, 0, 2] - daeg[2, 1, 2, 2]
+
+    # Second column of the superoperator.
+    Rsuper[0, 1] = daeg[1, 0, 1, 0] - daeg[2, 0, 2, 0]
+    Rsuper[1, 1] = daeg[1, 1, 1, 1] - daeg[2, 1, 2, 1]
+    Rsuper[2, 1] = daeg[1, 0, 1, 1] - daeg[2, 0, 2, 1]
+    Rsuper[3, 1] = daeg[1, 0, 1, 2] - daeg[2, 0, 2, 2]
+    Rsuper[4, 1] = daeg[1, 1, 1, 2] - daeg[2, 1, 2, 2]
+
+    # Third column of the superoperator.
+    Rsuper[0, 2] = daeg[0, 0, 1, 0] + daeg[1, 0, 0, 0]
+    Rsuper[1, 2] = daeg[0, 1, 1, 1] + daeg[1, 1, 0, 1]
+    Rsuper[2, 2] = daeg[0, 0, 1, 1] + daeg[1, 0, 0, 1]
+    Rsuper[3, 2] = daeg[0, 0, 1, 2] + daeg[1, 0, 0, 2]
+    Rsuper[4, 2] = daeg[0, 1, 1, 2] + daeg[1, 1, 0, 2]
+
+    # Fourth column of the superoperator.
+    Rsuper[0, 3] = daeg[0, 0, 2, 0] + daeg[2, 0, 0, 0]
+    Rsuper[1, 3] = daeg[0, 1, 2, 1] + daeg[2, 1, 0, 1]
+    Rsuper[2, 3] = daeg[0, 0, 2, 1] + daeg[2, 0, 0, 1]
+    Rsuper[3, 3] = daeg[0, 0, 2, 2] + daeg[2, 0, 0, 2]
+    Rsuper[4, 3] = daeg[0, 1, 2, 2] + daeg[2, 1, 0, 2]
+
+    # Fifth column of the superoperator.
+    Rsuper[0, 4] = daeg[1, 0, 2, 0] + daeg[2, 0, 1, 0]
+    Rsuper[1, 4] = daeg[1, 1, 2, 1] + daeg[2, 1, 1, 1]
+    Rsuper[2, 4] = daeg[1, 0, 2, 1] + daeg[2, 0, 1, 1]
+    Rsuper[3, 4] = daeg[1, 0, 2, 2] + daeg[2, 0, 1, 2]
+    Rsuper[4, 4] = daeg[1, 1, 2, 2] + daeg[2, 1, 1, 2]
+
+
+
 def generate_vector(vector, theta, phi):
     """Generate a unit vector from the polar angle theta and azimuthal angle phi.
 
