@@ -27,13 +27,15 @@
 from sys import stdout
 
 
-def print_frame_order_2nd_degree(matrix, name=None):
+def print_frame_order_2nd_degree(matrix, name=None, epsilon=1e-15):
     """Nicely print out the Frame Order matrix of the 2nd degree.
 
-    @param matrix:  The 3D, rank-4 Frame Order matrix.
-    @type matrix:   numpy 3D, rank-4 array
-    @keyword name:  The name of the matrix.
-    @type name:     None or str
+    @param matrix:      The 3D, rank-4 Frame Order matrix.
+    @type matrix:       numpy 3D, rank-4 array
+    @keyword name:      The name of the matrix.
+    @type name:         None or str
+    @keyword epsilon:   The minimum value, below which is considered zero.
+    @type epsilon:      float
     """
 
     # Default name.
@@ -63,7 +65,7 @@ def print_frame_order_2nd_degree(matrix, name=None):
                 char1 = ']%s\n' % char2
 
             # Write out the elements.
-            if matrix[i, j]:
+            if abs(matrix[i, j]) > epsilon:
                 stdout.write("%10.4f%s" % (matrix[i, j], char1))
             else:
                 stdout.write("%10s%s" % (0, char1))
