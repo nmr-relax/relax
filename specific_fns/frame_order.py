@@ -154,8 +154,13 @@ class Frame_order(Common_functions):
         if not hasattr(cdp, 'params'):
             cdp.params = []
 
-        # Set up the tensor rotation parameter arrays.
+        # Initialisation flag.
+        init = False
         if not len(cdp.params):
+            init = True
+
+        # Set up the tensor rotation parameter arrays.
+        if init:
             cdp.params.append('alpha')
             cdp.params.append('beta')
             cdp.params.append('gamma')
@@ -171,7 +176,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # Set up the parameter arrays.
-            if not len(cdp.params):
+            if init:
                 cdp.params.append('theta_axis')
                 cdp.params.append('phi_axis')
                 cdp.params.append('theta_cone')
