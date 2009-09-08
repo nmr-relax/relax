@@ -27,113 +27,6 @@ from numpy.linalg import norm
 from random import gauss, uniform
 
 
-def quaternion_to_R(quat, R):
-    """Convert a quaternion into rotation matrix form.
-
-    This is from Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion), where::
-
-            | 1 - 2y**2 - 2z**2      2xy - 2zw          2xz + 2yw     |
-        Q = |     2xy + 2zw      1 - 2x**2 - 2z**2      2yz - 2xw     |,
-            |     2xz - 2yw          2yz + 2xw      1 - 2x**2 - 2y**2 |
-
-    and where the quaternion is defined as q = (w, x, y, z).  This has been verified using Simo
-    Saerkkae's "Notes on Quaternions" at http://www.lce.hut.fi/~ssarkka/.
-
-
-    @param quat:    The quaternion.
-    @type quat:     numpy 4D, rank-1 array
-    @param R:       A 3D matrix to convert to the rotation matrix.
-    @type R:        numpy 3D, rank-2 array
-    """
-
-    # Alias.
-    (w, x, y, z) = quat
-
-    # Repetitive calculations.
-    x2 = 2.0 * x**2
-    y2 = 2.0 * y**2
-    z2 = 2.0 * z**2
-    xw = 2.0 * x*w
-    xy = 2.0 * x*y
-    xz = 2.0 * x*z
-    yw = 2.0 * y*w
-    yz = 2.0 * y*z
-    zw = 2.0 * z*w
-
-    # The diagonal.
-    R[0, 0] = 1.0 - y2 - z2
-    R[1, 1] = 1.0 - x2 - z2
-    R[2, 2] = 1.0 - x2 - y2
-
-    # The off-diagonal.
-    R[0, 1] = xy - zw
-    R[0, 2] = xz + yw
-    R[1, 2] = yz - xw
-
-    R[1, 0] = xy + zw
-    R[2, 0] = xz - yw
-    R[2, 1] = yz + xw
-
-
-def two_vect_to_R(vector_orig, vector_fin, R):
-    """Calculate the rotation matrix required to rotate from one vector to another.
-
-    For the rotation of one vector to another, there are an infinit series of rotation matrices
-    possible.  Due to axially symmetry, the rotation axis can be any vector lying in the symmetry
-    plane between the two vectors.  Hence the axis-angle convention will be used to construct the
-    matrix with the rotation axis defined as the cross product of the two vectors.  The rotation
-    angle is the arccosine of the dot product of the two unit vectors.
-
-    Given a unit vector parallel to the rotation axis, w = [x, y, z] and the rotation angle a,
-    the rotation matrix R is::
-
-              |  1 + (1-cos(a))*(x*x-1)   -z*sin(a)+(1-cos(a))*x*y   y*sin(a)+(1-cos(a))*x*z |
-        R  =  |  z*sin(a)+(1-cos(a))*x*y   1 + (1-cos(a))*(y*y-1)   -x*sin(a)+(1-cos(a))*y*z |
-              | -y*sin(a)+(1-cos(a))*x*z   x*sin(a)+(1-cos(a))*y*z   1 + (1-cos(a))*(z*z-1)  |
-
-
-    @param vector_orig: The unrotated vector defined in the reference frame.
-    @type vector_orig:  numpy array, len 3
-    @param vector_fin:  The rotated vector defined in the reference frame.
-    @type vector_fin:   numpy array, len 3
-    @param R:           The 3x3 rotation matrix to update.
-    @type R:            3x3 numpy array
-    """
-
-    # Convert the vectors to unit vectors.
-    vector_orig = vector_orig / norm(vector_orig)
-    vector_fin = vector_fin / norm(vector_fin)
-
-    # The rotation axis (normalised).
-    axis = cross(vector_orig, vector_fin)
-    axis_len = norm(axis)
-    if axis_len != 0.0:
-        axis = axis / axis_len
-
-    # Alias the axis coordinates.
-    x = axis[0]
-    y = axis[1]
-    z = axis[2]
-
-    # The rotation angle.
-    angle = acos(dot(vector_orig, vector_fin))
-
-    # Trig functions (only need to do this maths once!).
-    ca = cos(angle)
-    sa = sin(angle)
-
-    # Calculate the rotation matrix elements.
-    R[0, 0] = 1.0 + (1.0 - ca)*(x**2 - 1.0)
-    R[0, 1] = -z*sa + (1.0 - ca)*x*y
-    R[0, 2] = y*sa + (1.0 - ca)*x*z
-    R[1, 0] = z*sa+(1.0 - ca)*x*y
-    R[1, 1] = 1.0 + (1.0 - ca)*(y**2 - 1.0)
-    R[1, 2] = -x*sa+(1.0 - ca)*y*z
-    R[2, 0] = -y*sa+(1.0 - ca)*x*z
-    R[2, 1] = x*sa+(1.0 - ca)*y*z
-    R[2, 2] = 1.0 + (1.0 - ca)*(z**2 - 1.0)
-
-
 def axis_angle_to_R(axis, angle, R):
     """Generate the rotation matrix from the axis-angle notation.
 
@@ -188,46 +81,6 @@ def axis_angle_to_R(axis, angle, R):
     R[2, 0] = zxC - ys
     R[2, 1] = yzC + xs
     R[2, 2] = z*zC + ca
-
-
-def R_to_axis_angle(R):
-    """Convert the rotation matrix into the axis-angle notation.
-
-    Conversion equations
-    ====================
-
-    From Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix), the conversion is given by::
-
-        x = Qzy-Qyz
-        y = Qxz-Qzx
-        z = Qyx-Qxy
-        r = hypot(x,hypot(y,z))
-        t = Qxx+Qyy+Qzz
-        theta = atan2(r,t-1)
-
-    @param R:   The 3x3 rotation matrix to update.
-    @type R:    3x3 numpy array
-    @return:    The 3D rotation axis and angle.
-    @rtype:     numpy 3D rank-1 array, float
-    """
-
-    # Axes.
-    axis = zeros(3, float64)
-    axis[0] = R[2, 1] - R[1, 2]
-    axis[1] = R[0, 2] - R[2, 0]
-    axis[2] = R[1, 0] - R[0, 1]
-
-    # Angle.
-    r = hypot(axis[0], hypot(axis[1], axis[2]))
-    t = R[0, 0] + R[1, 1] + R[2, 2]
-    theta = atan2(r, t-1)
-
-    # Normalise the axis.
-    if r != 0.0:
-        axis = axis / r
-
-    # Return the data.
-    return axis, theta
 
 
 def euler_zyz_to_R(alpha, beta, gamma, R):
@@ -289,6 +142,46 @@ def euler_zyz_to_R(alpha, beta, gamma, R):
     R[0, 2] = sin_b * cos_g
     R[1, 2] = sin_b * sin_g
     R[2, 2] = cos_b
+
+
+def R_to_axis_angle(R):
+    """Convert the rotation matrix into the axis-angle notation.
+
+    Conversion equations
+    ====================
+
+    From Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix), the conversion is given by::
+
+        x = Qzy-Qyz
+        y = Qxz-Qzx
+        z = Qyx-Qxy
+        r = hypot(x,hypot(y,z))
+        t = Qxx+Qyy+Qzz
+        theta = atan2(r,t-1)
+
+    @param R:   The 3x3 rotation matrix to update.
+    @type R:    3x3 numpy array
+    @return:    The 3D rotation axis and angle.
+    @rtype:     numpy 3D rank-1 array, float
+    """
+
+    # Axes.
+    axis = zeros(3, float64)
+    axis[0] = R[2, 1] - R[1, 2]
+    axis[1] = R[0, 2] - R[2, 0]
+    axis[2] = R[1, 0] - R[0, 1]
+
+    # Angle.
+    r = hypot(axis[0], hypot(axis[1], axis[2]))
+    t = R[0, 0] + R[1, 1] + R[2, 2]
+    theta = atan2(r, t-1)
+
+    # Normalise the axis.
+    if r != 0.0:
+        axis = axis / r
+
+    # Return the data.
+    return axis, theta
 
 
 def R_to_euler_zyz(R):
@@ -396,3 +289,110 @@ def random_rot_axis(axis):
     axis[0] = cos(theta) * sin(phi)
     axis[1] = sin(theta) * sin(phi)
     axis[2] = cos(phi)
+
+
+def quaternion_to_R(quat, R):
+    """Convert a quaternion into rotation matrix form.
+
+    This is from Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion), where::
+
+            | 1 - 2y**2 - 2z**2      2xy - 2zw          2xz + 2yw     |
+        Q = |     2xy + 2zw      1 - 2x**2 - 2z**2      2yz - 2xw     |,
+            |     2xz - 2yw          2yz + 2xw      1 - 2x**2 - 2y**2 |
+
+    and where the quaternion is defined as q = (w, x, y, z).  This has been verified using Simo
+    Saerkkae's "Notes on Quaternions" at http://www.lce.hut.fi/~ssarkka/.
+
+
+    @param quat:    The quaternion.
+    @type quat:     numpy 4D, rank-1 array
+    @param R:       A 3D matrix to convert to the rotation matrix.
+    @type R:        numpy 3D, rank-2 array
+    """
+
+    # Alias.
+    (w, x, y, z) = quat
+
+    # Repetitive calculations.
+    x2 = 2.0 * x**2
+    y2 = 2.0 * y**2
+    z2 = 2.0 * z**2
+    xw = 2.0 * x*w
+    xy = 2.0 * x*y
+    xz = 2.0 * x*z
+    yw = 2.0 * y*w
+    yz = 2.0 * y*z
+    zw = 2.0 * z*w
+
+    # The diagonal.
+    R[0, 0] = 1.0 - y2 - z2
+    R[1, 1] = 1.0 - x2 - z2
+    R[2, 2] = 1.0 - x2 - y2
+
+    # The off-diagonal.
+    R[0, 1] = xy - zw
+    R[0, 2] = xz + yw
+    R[1, 2] = yz - xw
+
+    R[1, 0] = xy + zw
+    R[2, 0] = xz - yw
+    R[2, 1] = yz + xw
+
+
+def two_vect_to_R(vector_orig, vector_fin, R):
+    """Calculate the rotation matrix required to rotate from one vector to another.
+
+    For the rotation of one vector to another, there are an infinit series of rotation matrices
+    possible.  Due to axially symmetry, the rotation axis can be any vector lying in the symmetry
+    plane between the two vectors.  Hence the axis-angle convention will be used to construct the
+    matrix with the rotation axis defined as the cross product of the two vectors.  The rotation
+    angle is the arccosine of the dot product of the two unit vectors.
+
+    Given a unit vector parallel to the rotation axis, w = [x, y, z] and the rotation angle a,
+    the rotation matrix R is::
+
+              |  1 + (1-cos(a))*(x*x-1)   -z*sin(a)+(1-cos(a))*x*y   y*sin(a)+(1-cos(a))*x*z |
+        R  =  |  z*sin(a)+(1-cos(a))*x*y   1 + (1-cos(a))*(y*y-1)   -x*sin(a)+(1-cos(a))*y*z |
+              | -y*sin(a)+(1-cos(a))*x*z   x*sin(a)+(1-cos(a))*y*z   1 + (1-cos(a))*(z*z-1)  |
+
+
+    @param vector_orig: The unrotated vector defined in the reference frame.
+    @type vector_orig:  numpy array, len 3
+    @param vector_fin:  The rotated vector defined in the reference frame.
+    @type vector_fin:   numpy array, len 3
+    @param R:           The 3x3 rotation matrix to update.
+    @type R:            3x3 numpy array
+    """
+
+    # Convert the vectors to unit vectors.
+    vector_orig = vector_orig / norm(vector_orig)
+    vector_fin = vector_fin / norm(vector_fin)
+
+    # The rotation axis (normalised).
+    axis = cross(vector_orig, vector_fin)
+    axis_len = norm(axis)
+    if axis_len != 0.0:
+        axis = axis / axis_len
+
+    # Alias the axis coordinates.
+    x = axis[0]
+    y = axis[1]
+    z = axis[2]
+
+    # The rotation angle.
+    angle = acos(dot(vector_orig, vector_fin))
+
+    # Trig functions (only need to do this maths once!).
+    ca = cos(angle)
+    sa = sin(angle)
+
+    # Calculate the rotation matrix elements.
+    R[0, 0] = 1.0 + (1.0 - ca)*(x**2 - 1.0)
+    R[0, 1] = -z*sa + (1.0 - ca)*x*y
+    R[0, 2] = y*sa + (1.0 - ca)*x*z
+    R[1, 0] = z*sa+(1.0 - ca)*x*y
+    R[1, 1] = 1.0 + (1.0 - ca)*(y**2 - 1.0)
+    R[1, 2] = -x*sa+(1.0 - ca)*y*z
+    R[2, 0] = -y*sa+(1.0 - ca)*x*z
+    R[2, 1] = x*sa+(1.0 - ca)*y*z
+    R[2, 2] = 1.0 + (1.0 - ca)*(z**2 - 1.0)
