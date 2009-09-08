@@ -38,6 +38,280 @@ class Test_rotation_matrix(TestCase):
         """Set up data used by the unit tests."""
 
 
+    def test_R_euler_zyz_alpha_30(self):
+        """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        R_euler_zyz(R, pi/6, 0.0, 0.0)
+
+        # Axes.
+        x_axis = array([1, 0, 0], float64)
+        y_axis = array([0, 1, 0], float64)
+        z_axis = array([0, 0, 1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([cos(pi/6), sin(pi/6), 0], float64)
+        y_real = array([-sin(pi/6), cos(pi/6), 0], float64)
+        z_real = array([0, 0, 1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+            self.assertEqual(z_new[i], z_real[i])
+
+        # Axes (do everything again, this time negative!).
+        x_axis = array([-1, 0, 0], float64)
+        y_axis = array([0, -1, 0], float64)
+        z_axis = array([0, 0, -1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
+        y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
+        z_real = array([0, 0, 1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+            self.assertEqual(z_new[i], z_real[i])
+
+
+    def test_R_euler_zyz_beta_45(self):
+        """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        R_euler_zyz(R, 0.0, pi/4, 0.0)
+
+        # Axes.
+        x_axis = array([1, 0, 0], float64)
+        y_axis = array([0, 1, 0], float64)
+        z_axis = array([0, 0, 1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([cos(pi/4), 0, -sin(pi/4)], float64)
+        y_real = array([0, 1, 0], float64)
+        z_real = array([sin(pi/4), 0, cos(pi/4)], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+            self.assertEqual(z_new[i], z_real[i])
+
+        # Axes (do everything again, this time negative!).
+        x_axis = array([-1, 0, 0], float64)
+        y_axis = array([0, -1, 0], float64)
+        z_axis = array([0, 0, -1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([-cos(pi/4), 0, sin(pi/4)], float64)
+        y_real = array([0, -1, 0], float64)
+        z_real = array([-sin(pi/4), 0, -cos(pi/4)], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+            self.assertEqual(z_new[i], z_real[i])
+
+
+    def test_R_euler_zyz_gamma_15(self):
+        """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        R_euler_zyz(R, 0.0, 0.0, pi/12)
+
+        # Axes.
+        x_axis = array([1, 0, 0], float64)
+        y_axis = array([0, 1, 0], float64)
+        z_axis = array([0, 0, 1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([cos(pi/12), sin(pi/12), 0], float64)
+        y_real = array([-sin(pi/12), cos(pi/12), 0], float64)
+        z_real = array([0, 0, 1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+            self.assertEqual(z_new[i], z_real[i])
+
+        # Axes (do everything again, this time negative!).
+        x_axis = array([-1, 0, 0], float64)
+        y_axis = array([0, -1, 0], float64)
+        z_axis = array([0, 0, -1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([-cos(pi/12), -sin(pi/12), 0], float64)
+        y_real = array([sin(pi/12), -cos(pi/12), 0], float64)
+        z_real = array([0, 0, 1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+
+
+    def test_R_euler_zyz_alpha_15_gamma_15(self):
+        """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        R_euler_zyz(R, pi/12, 0.0, pi/12)
+
+        # Axes.
+        x_axis = array([1, 0, 0], float64)
+        y_axis = array([0, 1, 0], float64)
+        z_axis = array([0, 0, 1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([cos(pi/6), sin(pi/6), 0], float64)
+        y_real = array([-sin(pi/6), cos(pi/6), 0], float64)
+        z_real = array([0, 0, 1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+            self.assertEqual(z_new[i], z_real[i])
+
+        # Axes (do everything again, this time negative!).
+        x_axis = array([-1, 0, 0], float64)
+        y_axis = array([0, -1, 0], float64)
+        z_axis = array([0, 0, -1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
+        y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
+        z_real = array([0, 0, 1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertEqual(x_new[i], x_real[i])
+            self.assertEqual(y_new[i], y_real[i])
+            self.assertEqual(z_new[i], z_real[i])
+
+
+            self.assertEqual(z_new[i], z_real[i])
+
+
     def test_R_to_euler_zyz(self):
         """Test the rotation matrix to zyz Euler angle conversion."""
 
