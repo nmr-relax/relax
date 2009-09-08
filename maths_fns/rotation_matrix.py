@@ -293,33 +293,28 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
 def R_to_euler_zyz(matrix):
     """Calculate the z-y-z Euler angles from the given rotation matrix.
 
-    Unit vectors
-    ============
-
-    The unit mux vector is::
-
-                | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
-        mux  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
-                |                    cos(alpha) * sin(beta)                      |
-
-    The unit muy vector is::
-
-                | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
-        muy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
-                |                   sin(alpha) * sin(beta)                      |
-
-    The unit muz vector is::
-
-                | -sin(beta) * cos(gamma) |
-        muz  =  |  sin(beta) * sin(gamma) |.
-                |        cos(beta)        |
-
     Rotation matrix
     ===============
 
     The rotation matrix is defined as the vector of unit vectors::
 
         R = [mux, muy, muz].
+
+    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles), the rotation matrix for the
+    zyz convention is::
+
+              | -sa*sg + ca*cb*cg    -ca*sg - sa*cb*cg    sb*cg |
+        R  =  |  sa*cg + ca*cb*sg     ca*cg - sa*cb*sg    sb*sg |,
+              | -ca*sb                sa*sb               cb    |
+
+    where::
+
+        ca = cos(alpha),
+        sa = sin(alpha),
+        cb = cos(beta),
+        sb = sin(beta),
+        cg = cos(gamma),
+        sg = sin(gamma).
 
 
     @param matrix:  The 3x3 rotation matrix to update.
@@ -332,10 +327,10 @@ def R_to_euler_zyz(matrix):
     beta = acos(matrix[2, 2])
 
     # The alpha Euler angle.
-    alpha = atan2(matrix[2, 1], matrix[2, 0])
+    alpha = atan2(matrix[2, 1], -matrix[2, 0])
 
     # The gamma Euler angle.
-    gamma = atan2(matrix[1, 2], -matrix[0, 2])
+    gamma = atan2(matrix[1, 2], matrix[0, 2])
 
     # Return the angles.
     return alpha, beta, gamma
