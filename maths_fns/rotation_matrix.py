@@ -325,6 +325,41 @@ def random_rot_axis(axis):
     axis[2] = cos(phi)
 
 
+def quaternion_to_axis_angle(quat):
+    """Convert a quaternion into the axis-angle notation.
+
+    Conversion equations
+    ====================
+
+    From Wolfram MathWorld (http://mathworld.wolfram.com/Quaternion.html), the conversion is given by::
+
+        q = (cos(angle/2), n * sin(angle/2)),
+
+    where q is the quaternion and n is the unit vector representing the rotation axis.  Therfore::
+
+        angle = 2*acos(w),
+
+        axis = 2*asin([x, y, z])
+
+    @param quat:    The quaternion.
+    @type quat:     numpy 4D, rank-1 array
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # The angle.
+    angle = 2 * acos(quat[0])
+
+    # The axis.
+    if angle:
+        axis = quat[1:] / sin(angle/2)
+    else:
+        axis = quat[1:] * 0.0
+
+    # Return
+    return axis, angle
+
+
 def quaternion_to_R(quat, R):
     """Convert a quaternion into rotation matrix form.
 
