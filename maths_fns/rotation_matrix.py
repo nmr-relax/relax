@@ -223,7 +223,8 @@ def R_to_axis_angle(matrix):
     theta = atan2(r, t-1)
 
     # Normalise the axis.
-    axis = axis / r
+    if r != 0.0:
+        axis = axis / r
 
     # Return the data.
     return axis, theta
