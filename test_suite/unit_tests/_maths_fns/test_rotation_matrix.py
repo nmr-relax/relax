@@ -353,6 +353,46 @@ class Test_rotation_matrix(TestCase):
         self.assertAlmostEqual(gamma, gamma_new)
 
 
+    def test_R_to_quaternion_no_rot(self):
+        """Test the rotation matrix to quaternion conversion for a zero angle rotation."""
+
+        # Generate the rotation matrix.
+        R = array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], float64)
+
+        # The quaternion.
+        quat = zeros(4, float64)
+        R_to_quaternion(R, quat)
+        print("Quaternion:\n%s" % quat)
+
+        # The correct result.
+        quat_true = array([1, 0, 0, 0], float64)
+
+        # Checks.
+        self.assertEqual(norm(quat), 1)
+        for i in range(4):
+            self.assertAlmostEqual(quat[i], quat_true[i])
+
+
+    def test_R_to_quaternion_180_complex(self):
+        """Test the rotation matrix to quaternion conversion for a 180 degree rotation about [1, 1, 1]."""
+
+        # Generate the rotation matrix.
+        R = array([[0, 0, 1], [1, 0, 0], [0, 1, 0]], float64)
+
+        # The quaternion.
+        quat = zeros(4, float64)
+        R_to_quaternion(R, quat)
+        print("Quaternion:\n%s" % quat)
+
+        # The correct result.
+        quat_true = array([1, 1, 1, 1], float64) / 2
+
+        # Checks.
+        self.assertEqual(norm(quat), 1)
+        for i in range(4):
+            self.assertAlmostEqual(quat[i], quat_true[i])
+
+
     def test_quaternion_to_axis_angle_no_rot(self):
         """Test the quaternion to rotation matrix conversion for a zero angle rotation."""
 

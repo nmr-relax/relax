@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import acos, asin, atan2, cos, pi, sin
+from math import acos, asin, atan2, cos, pi, sin, sqrt
 from numpy import array, cross, dot, float64, hypot, zeros
 from numpy.linalg import norm
 from random import gauss, uniform
@@ -300,6 +300,61 @@ def R_random_hypersphere(R):
 
     # Convert the quaternion to a rotation matrix.
     quaternion_to_R(quat, R)
+
+
+def R_to_quaternion(R, quat):
+    """Convert a rotation matrix into quaternion form.
+
+    This is from Wikipedia (http://en.wikipedia.org/wiki/Rotation_matrix#Quaternion), where::
+
+        w = 0.5*sqrt(1+Qxx+Qyy+Qzz),
+        x = copysign(0.5*sqrt(1+Qxx-Qyy-Qzz),Qzy-Qyz),
+        y = copysign(0.5*sqrt(1-Qxx+Qyy-Qzz),Qxz-Qzx),
+        z = copysign(0.5*sqrt(1-Qxx-Qyy+Qzz),Qyx-Qxy),
+
+    where the quaternion is defined as q = (w, x, y, z), and the copysign function is x with the
+    sign of y::
+
+        copysign(x, y) = abs(x) / abs(y) * y
+
+
+    @param R:       The 3D rotation matrix.
+    @type R:        numpy 3D, rank-2 array
+    @param quat:    The quaternion.
+    @type quat:     numpy 4D, rank-1 array
+    """
+
+    # Elements.
+    quat[0] = 0.5 * sqrt(1.0 + R[0, 0] + R[1, 1] + R[2, 2])
+    quat[1] = R[2, 1] - R[1, 2]
+    if quat[1]:
+        quat[1] = copysign(0.5*sqrt(1 + R[0, 0] - R[1, 1] - R[2, 2]), quat[1])
+    quat[2] = R[0, 2] - R[2, 0]
+    if quat[2]:
+        quat[2] = copysign(0.5*sqrt(1 - R[0, 0] + R[1, 1] - R[2, 2]), quat[2])
+    quat[3] = R[1, 0] - R[0, 1]
+    if quat[3]:
+        quat[3] = copysign(0.5*sqrt(1 - R[0, 0] - R[1, 1] + R[2, 2]), quat[3])
+
+
+def copysign(x, y):
+    """Return x with the sign of y.
+
+    This is defined as::
+
+        copysign(x, y) = abs(x) / abs(y) * y
+
+
+    @param x:   The value.
+    @type x:    float
+    @param y:   The value.
+    @type y:    float
+    @return:    x with the sign of y.
+    @rtype:     float
+    """
+
+    # Return the value.
+    return abs(x) / abs(y) * y
 
 
 def random_rot_axis(axis):
