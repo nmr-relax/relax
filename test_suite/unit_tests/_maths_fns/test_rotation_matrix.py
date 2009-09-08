@@ -201,6 +201,67 @@ class Test_rotation_matrix(TestCase):
         self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
+    def test_euler_zyz_to_euler_zyz(self):
+        """Bounce around all the conversion functions to see if the original angles are returned."""
+
+        # Starting angles.
+        alpha = uniform(0, 2*pi)
+        beta =  uniform(0, pi)
+        gamma = uniform(0, 2*pi)
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Init.
+        axis = zeros(3, float64)
+        quat = zeros(4, float64)
+        R = zeros((3, 3), float64)
+
+        # 1) Euler angles to rotation matrix.
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # 2) Rotation matrix to axis-angle.
+        axis, angle = R_to_axis_angle(R)
+
+        # 3) Axis-angle to quaternion.
+        axis_angle_to_quaternion(axis, angle, quat)
+
+        # 4) Quaternion to axis-angle.
+        axis, angle = quaternion_to_axis_angle(quat)
+
+        # 5) Axis-angle to rotation matrix.
+        axis_angle_to_R(axis, angle, R)
+
+        # 6) Rotation matrix to quaternion.
+        R_to_quaternion(R, quat)
+
+        # 7) Quaternion to rotation matrix.
+        quaternion_to_R(quat, R)
+
+        # 8) Rotation matrix to Euler angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+
+        # Wrap the angles.
+        alpha_new = wrap_angles(alpha_new, 0, 2*pi)
+        beta_new = wrap_angles(beta_new, 0, 2*pi)
+        gamma_new = wrap_angles(gamma_new, 0, 2*pi)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
     def test_euler_zyz_to_R_alpha_30(self):
         """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
 
