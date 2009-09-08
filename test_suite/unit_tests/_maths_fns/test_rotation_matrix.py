@@ -83,7 +83,7 @@ class Test_rotation_matrix(TestCase):
         # Rotated axis (real values).
         x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
         y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        z_real = array([0, 0, -1], float64)
 
         # Rotation.
         x_new = dot(R, x_axis)
@@ -219,7 +219,7 @@ class Test_rotation_matrix(TestCase):
         # Rotated axis (real values).
         x_real = array([-cos(pi/12), -sin(pi/12), 0], float64)
         y_real = array([sin(pi/12), -cos(pi/12), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        z_real = array([0, 0, -1], float64)
 
         # Rotation.
         x_new = dot(R, x_axis)
@@ -286,7 +286,7 @@ class Test_rotation_matrix(TestCase):
         # Rotated axis (real values).
         x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
         y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        z_real = array([0, 0, -1], float64)
 
         # Rotation.
         x_new = dot(R, x_axis)
