@@ -260,6 +260,22 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
 
         R = [mux, muy, muz].
 
+    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles), the rotation matrix for the
+    zyz convention is::
+
+              | -sa*sg + ca*cb*cg    -ca*sg - sa*cb*cg    sb*cg |
+        R  =  |  sa*cg + ca*cb*sg     ca*cg - sa*cb*sg    sb*sg |,
+              | -ca*sb                sa*sb               cb    |
+
+    where::
+
+        ca = cos(alpha),
+        sa = sin(alpha),
+        cb = cos(beta),
+        sb = sin(beta),
+        cg = cos(gamma),
+        sg = sin(gamma).
+
 
     @param matrix:  The 3x3 rotation matrix to update.
     @type matrix:   3x3 numpy array
@@ -273,27 +289,26 @@ def R_euler_zyz(matrix, alpha, beta, gamma):
 
     # Trig.
     sin_a = sin(alpha)
-    sin_b = sin(beta)
-    sin_g = sin(gamma)
-
     cos_a = cos(alpha)
+    sin_b = sin(beta)
     cos_b = cos(beta)
+    sin_g = sin(gamma)
     cos_g = cos(gamma)
 
     # The unit mux vector component of the rotation matrix.
     matrix[0, 0] = -sin_a * sin_g + cos_a * cos_b * cos_g
-    matrix[1, 0] = -sin_a * cos_g - cos_a * cos_b * sin_g
-    matrix[2, 0] =  cos_a * sin_b
+    matrix[1, 0] =  sin_a * cos_g + cos_a * cos_b * sin_g
+    matrix[2, 0] = -cos_a * sin_b
 
     # The unit muy vector component of the rotation matrix.
-    matrix[0, 1] = cos_a * sin_g + sin_a * cos_b * cos_g
-    matrix[1, 1] = cos_a * cos_g - sin_a * cos_b * sin_g
-    matrix[2, 1] = sin_a * sin_b
+    matrix[0, 1] = -cos_a * sin_g - sin_a * cos_b * cos_g
+    matrix[1, 1] =  cos_a * cos_g - sin_a * cos_b * sin_g
+    matrix[2, 1] =  sin_a * sin_b
 
     # The unit muz vector component of the rotation matrix.
-    matrix[0, 2] = -sin_b * cos_g
-    matrix[1, 2] =  sin_b * sin_g
-    matrix[2, 2] =  cos_b
+    matrix[0, 2] = sin_b * cos_g
+    matrix[1, 2] = sin_b * sin_g
+    matrix[2, 2] = cos_b
 
 
 def R_to_euler_zyz(matrix):
