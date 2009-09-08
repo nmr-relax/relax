@@ -38,6 +38,55 @@ class Test_rotation_matrix(TestCase):
     def setUp(self):
         """Set up data used by the unit tests."""
 
+        # Axes.
+        self.x_axis_pos = array([1, 0, 0], float64)
+        self.y_axis_pos = array([0, 1, 0], float64)
+        self.z_axis_pos = array([0, 0, 1], float64)
+
+        # Axes (do everything again, this time negative!).
+        self.x_axis_neg = array([-1, 0, 0], float64)
+        self.y_axis_neg = array([0, -1, 0], float64)
+        self.z_axis_neg = array([0, 0, -1], float64)
+
+
+    def check_rotation(self, R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg):
+        """Check that the rotation matrix is correct."""
+
+        # Rotate the 6 axes.
+        x_new_pos = dot(R, self.x_axis_pos)
+        y_new_pos = dot(R, self.y_axis_pos)
+        z_new_pos = dot(R, self.z_axis_pos)
+
+        x_new_neg = dot(R, self.x_axis_neg)
+        y_new_neg = dot(R, self.y_axis_neg)
+        z_new_neg = dot(R, self.z_axis_neg)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x pos rot:  %s" % x_new_pos))
+        print(("x pos real: %s\n" % x_real_pos))
+        print(("y pos rot:  %s" % y_new_pos))
+        print(("y pos real: %s\n" % y_real_pos))
+        print(("z pos rot:  %s" % z_new_pos))
+        print(("z pos real: %s\n" % z_real_pos))
+
+        print(("x neg rot:  %s" % x_new_neg))
+        print(("x neg real: %s\n" % x_real_neg))
+        print(("y neg rot:  %s" % y_new_neg))
+        print(("y neg real: %s\n" % y_real_neg))
+        print(("z neg rot:  %s" % z_new_neg))
+        print(("z neg real: %s\n" % z_real_neg))
+
+        # Checks.
+        for i in range(3):
+            self.assertAlmostEqual(x_new_pos[i], x_real_pos[i])
+            self.assertAlmostEqual(y_new_pos[i], y_real_pos[i])
+            self.assertAlmostEqual(z_new_pos[i], z_real_pos[i])
+
+            self.assertAlmostEqual(x_new_neg[i], x_real_neg[i])
+            self.assertAlmostEqual(y_new_neg[i], y_real_neg[i])
+            self.assertAlmostEqual(z_new_neg[i], z_real_neg[i])
+
 
     def test_axis_angle_to_R_no_rot(self):
         """Test the quaternion to rotation matrix conversion for a zero angle rotation."""
@@ -72,65 +121,18 @@ class Test_rotation_matrix(TestCase):
         axis_angle_to_R(axis, angle, R)
         print("Rotation matrix:\n%s" % R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos_axes (real values).
+        x_real_pos = array([cos(pi/6), sin(pi/6), 0], float64)
+        y_real_pos = array([-sin(pi/6), cos(pi/6), 0], float64)
+        z_real_pos = array([0, 0, 1], float64)
 
-        # Rotated axis (real values).
-        x_real = array([cos(pi/6), sin(pi/6), 0], float64)
-        y_real = array([-sin(pi/6), cos(pi/6), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([-cos(pi/6), -sin(pi/6), 0], float64)
+        y_real_neg = array([sin(pi/6), -cos(pi/6), 0], float64)
+        z_real_neg = array([0, 0, -1], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
-        y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
-        z_real = array([0, 0, -1], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
     def test_axis_angle_to_R_180_complex(self):
@@ -145,65 +147,18 @@ class Test_rotation_matrix(TestCase):
         axis_angle_to_R(axis, angle, R)
         print("Rotation matrix:\n%s" % R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos axes (real values).
+        x_real_pos = array([0, 1, 0], float64)
+        y_real_pos = array([0, 0, 1], float64)
+        z_real_pos = array([1, 0, 0], float64)
 
-        # Rotated axis (real values).
-        x_real = array([0, 1, 0], float64)
-        y_real = array([0, 0, 1], float64)
-        z_real = array([1, 0, 0], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([0, -1, 0], float64)
+        y_real_neg = array([0, 0, -1], float64)
+        z_real_neg = array([-1, 0, 0], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([0, -1, 0], float64)
-        y_real = array([0, 0, -1], float64)
-        z_real = array([-1, 0, 0], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
     def test_euler_zyz_to_R_alpha_30(self):
@@ -213,65 +168,18 @@ class Test_rotation_matrix(TestCase):
         R = zeros((3, 3), float64)
         euler_zyz_to_R(pi/6, 0.0, 0.0, R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos axes (real values).
+        x_real_pos = array([cos(pi/6), sin(pi/6), 0], float64)
+        y_real_pos = array([-sin(pi/6), cos(pi/6), 0], float64)
+        z_real_pos = array([0, 0, 1], float64)
 
-        # Rotated axis (real values).
-        x_real = array([cos(pi/6), sin(pi/6), 0], float64)
-        y_real = array([-sin(pi/6), cos(pi/6), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([-cos(pi/6), -sin(pi/6), 0], float64)
+        y_real_neg = array([sin(pi/6), -cos(pi/6), 0], float64)
+        z_real_neg = array([0, 0, -1], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
-            self.assertEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
-        y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
-        z_real = array([0, 0, -1], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
-            self.assertEqual(z_new[i], z_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
     def test_euler_zyz_to_R_beta_45(self):
@@ -281,65 +189,18 @@ class Test_rotation_matrix(TestCase):
         R = zeros((3, 3), float64)
         euler_zyz_to_R(0.0, pi/4, 0.0, R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos axes (real values).
+        x_real_pos = array([cos(pi/4), 0, -sin(pi/4)], float64)
+        y_real_pos = array([0, 1, 0], float64)
+        z_real_pos = array([sin(pi/4), 0, cos(pi/4)], float64)
 
-        # Rotated axis (real values).
-        x_real = array([cos(pi/4), 0, -sin(pi/4)], float64)
-        y_real = array([0, 1, 0], float64)
-        z_real = array([sin(pi/4), 0, cos(pi/4)], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([-cos(pi/4), 0, sin(pi/4)], float64)
+        y_real_neg = array([0, -1, 0], float64)
+        z_real_neg = array([-sin(pi/4), 0, -cos(pi/4)], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
-            self.assertEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([-cos(pi/4), 0, sin(pi/4)], float64)
-        y_real = array([0, -1, 0], float64)
-        z_real = array([-sin(pi/4), 0, -cos(pi/4)], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
-            self.assertEqual(z_new[i], z_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
     def test_euler_zyz_to_R_gamma_15(self):
@@ -349,64 +210,18 @@ class Test_rotation_matrix(TestCase):
         R = zeros((3, 3), float64)
         euler_zyz_to_R(0.0, 0.0, pi/12, R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos axes (real values).
+        x_real_pos = array([cos(pi/12), sin(pi/12), 0], float64)
+        y_real_pos = array([-sin(pi/12), cos(pi/12), 0], float64)
+        z_real_pos = array([0, 0, 1], float64)
 
-        # Rotated axis (real values).
-        x_real = array([cos(pi/12), sin(pi/12), 0], float64)
-        y_real = array([-sin(pi/12), cos(pi/12), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([-cos(pi/12), -sin(pi/12), 0], float64)
+        y_real_neg = array([sin(pi/12), -cos(pi/12), 0], float64)
+        z_real_neg = array([0, 0, -1], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
-            self.assertEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([-cos(pi/12), -sin(pi/12), 0], float64)
-        y_real = array([sin(pi/12), -cos(pi/12), 0], float64)
-        z_real = array([0, 0, -1], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
     def test_euler_zyz_to_R_alpha_15_gamma_15(self):
@@ -416,68 +231,18 @@ class Test_rotation_matrix(TestCase):
         R = zeros((3, 3), float64)
         euler_zyz_to_R(pi/12, 0.0, pi/12, R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos axes (real values).
+        x_real_pos = array([cos(pi/6), sin(pi/6), 0], float64)
+        y_real_pos = array([-sin(pi/6), cos(pi/6), 0], float64)
+        z_real_pos = array([0, 0, 1], float64)
 
-        # Rotated axis (real values).
-        x_real = array([cos(pi/6), sin(pi/6), 0], float64)
-        y_real = array([-sin(pi/6), cos(pi/6), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([-cos(pi/6), -sin(pi/6), 0], float64)
+        y_real_neg = array([sin(pi/6), -cos(pi/6), 0], float64)
+        z_real_neg = array([0, 0, -1], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
-            self.assertEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
-        y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
-        z_real = array([0, 0, -1], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertEqual(x_new[i], x_real[i])
-            self.assertEqual(y_new[i], y_real[i])
-            self.assertEqual(z_new[i], z_real[i])
-
-
-            self.assertEqual(z_new[i], z_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
     def test_R_to_axis_angle_no_rot(self):
@@ -599,65 +364,18 @@ class Test_rotation_matrix(TestCase):
         quaternion_to_R(quat, R)
         print("Rotation matrix:\n%s" % R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos axes (real values).
+        x_real_pos = array([cos(pi/6), sin(pi/6), 0], float64)
+        y_real_pos = array([-sin(pi/6), cos(pi/6), 0], float64)
+        z_real_pos = array([0, 0, 1], float64)
 
-        # Rotated axis (real values).
-        x_real = array([cos(pi/6), sin(pi/6), 0], float64)
-        y_real = array([-sin(pi/6), cos(pi/6), 0], float64)
-        z_real = array([0, 0, 1], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([-cos(pi/6), -sin(pi/6), 0], float64)
+        y_real_neg = array([sin(pi/6), -cos(pi/6), 0], float64)
+        z_real_neg = array([0, 0, -1], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
-        y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
-        z_real = array([0, 0, -1], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
     def test_quaternion_to_R_180_complex(self):
@@ -691,62 +409,15 @@ class Test_rotation_matrix(TestCase):
         quaternion_to_R(quat, R)
         print("Rotation matrix:\n%s" % R)
 
-        # Axes.
-        x_axis = array([1, 0, 0], float64)
-        y_axis = array([0, 1, 0], float64)
-        z_axis = array([0, 0, 1], float64)
+        # Rotated pos axes (real values).
+        x_real_pos = array([0, 1, 0], float64)
+        y_real_pos = array([0, 0, 1], float64)
+        z_real_pos = array([1, 0, 0], float64)
 
-        # Rotated axis (real values).
-        x_real = array([0, 1, 0], float64)
-        y_real = array([0, 0, 1], float64)
-        z_real = array([1, 0, 0], float64)
+        # Rotated neg axes (real values).
+        x_real_neg = array([0, -1, 0], float64)
+        y_real_neg = array([0, 0, -1], float64)
+        z_real_neg = array([-1, 0, 0], float64)
 
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
-
-        # Axes (do everything again, this time negative!).
-        x_axis = array([-1, 0, 0], float64)
-        y_axis = array([0, -1, 0], float64)
-        z_axis = array([0, 0, -1], float64)
-
-        # Rotated axis (real values).
-        x_real = array([0, -1, 0], float64)
-        y_real = array([0, 0, -1], float64)
-        z_real = array([-1, 0, 0], float64)
-
-        # Rotation.
-        x_new = dot(R, x_axis)
-        y_new = dot(R, y_axis)
-        z_new = dot(R, z_axis)
-
-        # Print out.
-        print("Rotated and true axes (beta = pi/4):")
-        print(("x rot:  %s" % x_new))
-        print(("x real: %s\n" % x_real))
-        print(("y rot:  %s" % y_new))
-        print(("y real: %s\n" % y_real))
-        print(("z rot:  %s" % z_new))
-        print(("z real: %s\n" % z_real))
-
-        # Checks.
-        for i in range(3):
-            self.assertAlmostEqual(x_new[i], x_real[i])
-            self.assertAlmostEqual(y_new[i], y_real[i])
-            self.assertAlmostEqual(z_new[i], z_real[i])
+        # Check the rotation.
+        self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
