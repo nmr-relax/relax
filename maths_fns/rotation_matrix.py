@@ -232,27 +232,6 @@ def R_to_axis_angle(matrix):
 def R_euler_zyz(matrix, alpha, beta, gamma):
     """Function for calculating the z-y-z Euler angle convention rotation matrix.
 
-    Unit vectors
-    ============
-
-    The unit mux vector is::
-
-                | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
-        mux  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
-                |                    cos(alpha) * sin(beta)                      |
-
-    The unit muy vector is::
-
-                | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
-        muy  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
-                |                   sin(alpha) * sin(beta)                      |
-
-    The unit muz vector is::
-
-                | -sin(beta) * cos(gamma) |
-        muz  =  |  sin(beta) * sin(gamma) |.
-                |        cos(beta)        |
-
     Rotation matrix
     ===============
 
