@@ -243,6 +243,173 @@ class Test_rotation_matrix(TestCase):
             self.assertAlmostEqual(z_new[i], z_real[i])
 
 
+    def test_R_axis_angle_no_rot(self):
+        """Test the quaternion to rotation matrix conversion for a zero angle rotation."""
+
+        # Quaternion of zero angle.
+        axis = array([-1, 1, 1], float64) / sqrt(3)
+        angle = 0.0
+
+        # The rotation matrix.
+        R = zeros((3, 3), float64)
+        R_axis_angle(R, axis, angle)
+        print("Rotation matrix:\n%s" % R)
+
+        # The correct result.
+        R_true = eye(3)
+
+        # Checks.
+        for i in range(3):
+            for j in range(3):
+                self.assertEqual(R[i, j], R_true[i, j])
+
+
+    def test_R_axis_angle_z_30(self):
+        """Test the quaternion to rotation matrix conversion for a 30 degree rotation about z."""
+
+        # Axis-angle values.
+        axis = array([0, 0, 1], float64)
+        angle = pi / 6
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        R_axis_angle(R, axis, angle)
+        print("Rotation matrix:\n%s" % R)
+
+        # Axes.
+        x_axis = array([1, 0, 0], float64)
+        y_axis = array([0, 1, 0], float64)
+        z_axis = array([0, 0, 1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([cos(pi/6), sin(pi/6), 0], float64)
+        y_real = array([-sin(pi/6), cos(pi/6), 0], float64)
+        z_real = array([0, 0, 1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertAlmostEqual(x_new[i], x_real[i])
+            self.assertAlmostEqual(y_new[i], y_real[i])
+            self.assertAlmostEqual(z_new[i], z_real[i])
+
+        # Axes (do everything again, this time negative!).
+        x_axis = array([-1, 0, 0], float64)
+        y_axis = array([0, -1, 0], float64)
+        z_axis = array([0, 0, -1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([-cos(pi/6), -sin(pi/6), 0], float64)
+        y_real = array([sin(pi/6), -cos(pi/6), 0], float64)
+        z_real = array([0, 0, -1], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertAlmostEqual(x_new[i], x_real[i])
+            self.assertAlmostEqual(y_new[i], y_real[i])
+            self.assertAlmostEqual(z_new[i], z_real[i])
+
+
+    def test_R_axis_angle_180_complex(self):
+        """Test the quaternion to rotation matrix conversion for a 180 degree rotation about [1, 1, 1]."""
+
+        # Axis-angle values.
+        axis = array([1, 1, 1], float64) / sqrt(3)
+        angle = 2 * pi / 3
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        R_axis_angle(R, axis, angle)
+        print("Rotation matrix:\n%s" % R)
+
+        # Axes.
+        x_axis = array([1, 0, 0], float64)
+        y_axis = array([0, 1, 0], float64)
+        z_axis = array([0, 0, 1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([0, 1, 0], float64)
+        y_real = array([0, 0, 1], float64)
+        z_real = array([1, 0, 0], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertAlmostEqual(x_new[i], x_real[i])
+            self.assertAlmostEqual(y_new[i], y_real[i])
+            self.assertAlmostEqual(z_new[i], z_real[i])
+
+        # Axes (do everything again, this time negative!).
+        x_axis = array([-1, 0, 0], float64)
+        y_axis = array([0, -1, 0], float64)
+        z_axis = array([0, 0, -1], float64)
+
+        # Rotated axis (real values).
+        x_real = array([0, -1, 0], float64)
+        y_real = array([0, 0, -1], float64)
+        z_real = array([-1, 0, 0], float64)
+
+        # Rotation.
+        x_new = dot(R, x_axis)
+        y_new = dot(R, y_axis)
+        z_new = dot(R, z_axis)
+
+        # Print out.
+        print("Rotated and true axes (beta = pi/4):")
+        print(("x rot:  %s" % x_new))
+        print(("x real: %s\n" % x_real))
+        print(("y rot:  %s" % y_new))
+        print(("y real: %s\n" % y_real))
+        print(("z rot:  %s" % z_new))
+        print(("z real: %s\n" % z_real))
+
+        # Checks.
+        for i in range(3):
+            self.assertAlmostEqual(x_new[i], x_real[i])
+            self.assertAlmostEqual(y_new[i], y_real[i])
+            self.assertAlmostEqual(z_new[i], z_real[i])
+
+
     def test_R_euler_zyz_alpha_30(self):
         """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
 
