@@ -410,6 +410,19 @@ class Test_rotation_matrix(TestCase):
             self.assertAlmostEqual(z_new[i], z_real[i])
 
 
+    def test_R_to_axis_angle(self):
+        """Test the rotation matrix to axis-angle conversion."""
+
+        # Generate the rotation matrix.
+        R = array([[1, 0, 0], [0, 1, 0], [0, 0, 1]], float64)
+
+        # Get the axis and angle.
+        axis, angle = R_to_axis_angle(R)
+
+        # Test the angle.
+        self.assertEqual(angle, 0.0)
+
+
     def test_R_euler_zyz_alpha_30(self):
         """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
 
