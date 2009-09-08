@@ -83,6 +83,40 @@ def axis_angle_to_R(axis, angle, R):
     R[2, 2] = z*zC + ca
 
 
+def axis_angle_to_quaternion(axis, angle, quat, norm_flag=True):
+    """Generate the quaternion from the axis-angle notation.
+
+    Conversion equations
+    ====================
+
+    From Wolfram MathWorld (http://mathworld.wolfram.com/Quaternion.html), the conversion is given by::
+
+        q = (cos(angle/2), n * sin(angle/2)),
+
+    where q is the quaternion and n is the unit vector representing the rotation axis.
+
+
+    @param axis:        The 3D rotation axis.
+    @type axis:         numpy array, len 3
+    @param angle:       The rotation angle.
+    @type angle:        float
+    @param quat:        The quaternion structure.
+    @type quat:         numpy 4D, rank-1 array
+    @keyword norm_flag: A flag which if True forces the axis to be converted to a unit vector.
+    @type norm_flag:    bool
+    """
+
+    # Convert to unit vector.
+    if norm_flag:
+        axis = axis / norm(axis)
+
+    # The scalar component of q.
+    quat[0] = cos(angle/2)
+
+    # The vector component.
+    quat[1:] = axis * sin(angle/2)
+
+
 def euler_zyz_to_R(alpha, beta, gamma, R):
     """Function for calculating the z-y-z Euler angle convention rotation matrix.
 

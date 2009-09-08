@@ -109,6 +109,46 @@ class Test_rotation_matrix(TestCase):
                 self.assertEqual(R[i, j], R_true[i, j])
 
 
+    def test_axis_angle_to_quaternion_no_rot(self):
+        """Test the axis-angle to quaternion conversion for a zero angle rotation."""
+
+        # Random axis and zero angle.
+        axis = array([-1, 1, 1], float64) / sqrt(3)
+        angle = 0.0
+
+        # The quaternion matrix.
+        quat = zeros(4, float64)
+        axis_angle_to_quaternion(axis, angle, quat)
+        print("Quaternion:\n%s" % quat)
+
+        # The correct result.
+        quat_true = array([1, 0, 0, 0], float64)
+
+        # Checks.
+        for i in range(4):
+            self.assertEqual(quat[i], quat_true[i])
+
+
+    def test_axis_angle_to_quaternion_180_complex(self):
+        """Test the axis-angle to quaternion conversion for a 180 degree rotation about [1, 1, 1]."""
+
+        # Random axis and zero angle.
+        axis = array([1, 1, 1], float64) / sqrt(3)
+        angle = pi
+
+        # The quaternion matrix.
+        quat = zeros(4, float64)
+        axis_angle_to_quaternion(axis, angle, quat)
+        print("Quaternion:\n%s" % quat)
+
+        # The correct result.
+        quat_true = array([0, 1, 1, 1], float64) / sqrt(3)
+
+        # Checks.
+        for i in range(4):
+            self.assertAlmostEqual(quat[i], quat_true[i])
+
+
     def test_axis_angle_to_R_z_30(self):
         """Test the quaternion to rotation matrix conversion for a 30 degree rotation about z."""
 
