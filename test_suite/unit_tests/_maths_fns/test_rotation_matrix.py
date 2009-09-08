@@ -410,7 +410,7 @@ class Test_rotation_matrix(TestCase):
             self.assertAlmostEqual(z_new[i], z_real[i])
 
 
-    def test_R_to_axis_angle(self):
+    def test_R_to_axis_angle_no_rot(self):
         """Test the rotation matrix to axis-angle conversion."""
 
         # Generate the rotation matrix.
@@ -421,6 +421,23 @@ class Test_rotation_matrix(TestCase):
 
         # Test the angle.
         self.assertEqual(angle, 0.0)
+
+
+    def test_R_to_axis_angle_180_complex(self):
+        """Test the rotation matrix to axis-angle conversion."""
+
+        # Generate the rotation matrix.
+        R = array([[0, 0, 1], [1, 0, 0], [0, 1, 0]], float64)
+
+        # Get the axis and angle.
+        axis, angle = R_to_axis_angle(R)
+
+        # Test the angle.
+        self.assertEqual(angle, 2 * pi / 3)
+
+        # Test the vector.
+        for i in range(3):
+            self.assertAlmostEqual(axis[i], 1.0/sqrt(3))
 
 
     def test_R_euler_zyz_alpha_30(self):
