@@ -31,7 +31,7 @@ from numpy.linalg import norm
 # relax module imports.
 from float import isNaN
 from maths_fns.kronecker_product import kron_prod, transpose_14
-from maths_fns.rotation_matrix import R_2vect
+from maths_fns.rotation_matrix import two_vect_to_R
 
 
 def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, theta_cone):
@@ -57,7 +57,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     generate_vector(cone_axis, theta_axis, phi_axis)
 
     # Generate the rotation matrix.
-    R_2vect(R, z_axis, cone_axis)
+    two_vect_to_R(z_axis, cone_axis, R)
 
     # The outer product of R.
     R_kron = kron_prod(R, R)

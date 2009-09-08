@@ -39,7 +39,7 @@ from generic_fns.structure.geometric import cone_edge, generate_vector_dist, gen
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order_models
 from maths_fns.frame_order_matrix_ops import generate_vector
-from maths_fns.rotation_matrix import R_2vect
+from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
@@ -411,7 +411,7 @@ class Frame_order(Common_functions):
 
             # The rotation matrix (rotation from the z-axis to the cone axis).
             R = zeros((3, 3), float64)
-            R_2vect(R, array([0, 0, 1], float64), cone_axis)
+            two_vect_to_R(array([0, 0, 1], float64), cone_axis, R)
 
             # Mirroring.
             cone_axis_new = factor*cone_axis
