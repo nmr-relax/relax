@@ -191,7 +191,7 @@ class Relax_data_store(dict):
         self[self.instance.current_pipe].from_xml(relax_node, dir=dir)
 
 
-    def to_xml(self, file):
+    def to_xml(self, file, pipes=None):
         """Create a XML document representation of the current data pipe.
 
         This method creates the top level XML document including all the information needed
@@ -200,7 +200,18 @@ class Relax_data_store(dict):
 
         @param file:        The open file object.
         @type file:         file
+        @param pipes:       The name of the pipe, or list of pipes to place in the XML file.
+        @type pipes:        str or list of str
         """
+
+        # The pipes to include in the XML file.
+        if not pipes:
+            pipes = self.keys()
+        elif isinstance(pipes, str):
+            pipes = [pipes]
+
+        # Sort the pipes.
+        pipes.sort()
 
         # Create the XML document object.
         xmldoc = xml.dom.minidom.Document()
@@ -215,17 +226,19 @@ class Relax_data_store(dict):
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
 
-        # Create the pipe XML element and add it to the top level XML element.
-        pipe_element = xmldoc.createElement('pipe')
-        top_element.appendChild(pipe_element)
-
-        # Set the data pipe attributes.
-        pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
-        pipe_element.setAttribute('name', self.instance.current_pipe)
-        pipe_element.setAttribute('type', self[self.instance.current_pipe].pipe_type)
-
-        # Fill the data pipe XML element.
-        self[self.instance.current_pipe].to_xml(xmldoc, pipe_element)
-
+        # Loop over the pipes.
+        for pipe in pipes:
+            # Create the pipe XML element and add it to the top level XML element.
+            pipe_element = xmldoc.createElement('pipe')
+            top_element.appendChild(pipe_element)
+    
+            # Set the data pipe attributes.
+            pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
+            pipe_element.setAttribute('name', pipe)
+            pipe_element.setAttribute('type', self[pipe].pipe_type)
+    
+            # Fill the data pipe XML element.
+            self[pipe].to_xml(xmldoc, pipe_element)
+    
         # Write out the XML file.
         file.write(xmldoc.toprettyxml(indent='    '))

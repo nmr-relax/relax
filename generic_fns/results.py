@@ -131,7 +131,7 @@ def write(file="results", directory=None, force=False, compress_type=1, verbosit
     results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
 
     # Write the results.
-    ds.to_xml(results_file)
+    ds.to_xml(results_file, pipes=pipes.cdp_name())
 
     # Close the results file.
     results_file.close()
