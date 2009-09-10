@@ -25,6 +25,7 @@
 
 # Python module imports.
 from cPickle import dump, load
+from re import search
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -32,23 +33,40 @@ from relax_errors import RelaxError
 from relax_io import open_read_file, open_write_file
 
 
-def load_state(state=None, dir_name=None):
-    """Function for loading a saved program state.
+def determine_format(file):
+    """Determine the format of the state file.
 
-    @keyword state:     The saved state file.
-    @type state:        str
-    @keyword dir_name:  The path of the state file.
-    @type dir_name:     str
+    @keyword file:  The file object representing the state file.
+    @type file:     file object
+    @return:        The state format.  This can be 'xml' or 'pickle'.
+    @rtype:         str or None
     """
 
-    # Open the file for reading.
-    file = open_read_file(file_name=state, dir=dir_name)
+    # 1st line.
+    header = file.readline()
+    header = header[:-1]    # Strip the trailing newline.
+
+    # Be nice and go back to the start of the file.
+    file.seek(0)
+
+    # XML.
+    if search("<\?xml", header):
+        return 'xml'
+
+    # Pickle.
+    elif search("ccopy_reg", header):
+        return 'pickle'
+
+
+def load_pickle(file):
+    """Load the program state from the pickled file.
+
+    @param file:    The file object containing the relax state.
+    @type file:     file object
+    """
 
     # Unpickle the data class.
-    try:
-        state = load(file)
-    except:
-        raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
+    state = load(file)
 
     # Close the file.
     file.close()
@@ -78,6 +96,50 @@ def load_state(state=None, dir_name=None):
 
     # Delete the state object.
     del state
+
+    # Success.
+    return True
+
+
+def load_state(state=None, dir_name=None):
+    """Function for loading a saved program state.
+
+    @keyword state:     The saved state file.
+    @type state:        str
+    @keyword dir_name:  The path of the state file.
+    @type dir_name:     str
+    """
+
+    # Open the file for reading.
+    file = open_read_file(file_name=state, dir=dir_name)
+
+    # Determine the format of the file.
+    format = determine_format(file)
+
+    # XML state.
+    if format == 'xml':
+        load_xml(file)
+
+    # Pickled state.
+    elif format == 'pickle':
+        load_pickle(file)
+
+    # Bad state file.
+    else:
+        raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
+
+
+def load_xml(file):
+    """Load the program state from the XML file.
+
+    @param file:    The file object containing the relax state.
+    @type file:     file object
+    """
+
+    # Make sure that the data pipe is empty.
+    if not cdp.is_empty():
+        raise RelaxError("The current data pipe is not empty.")
+
 
 
 def save_state(state=None, dir_name=None, force=False, compress_type=1):
