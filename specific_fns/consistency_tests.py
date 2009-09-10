@@ -34,9 +34,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, 
 
 
 class Consistency_tests(Common_functions):
-    def __init__(self):
-        """Class containing functions specific to consistency testing."""
-
+    """Class containing functions specific to consistency testing."""
 
     def calculate(self, verbosity=1, sim_index=None, spin_id=None):
         """Calculation of the consistency functions."""
