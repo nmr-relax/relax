@@ -28,7 +28,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.pipes import VALID_TYPES
+from generic_fns.pipes import VALID_TYPES, get_pipe
 
 
 class State(TestCase):
@@ -99,8 +99,8 @@ class State(TestCase):
         for i in range(len(VALID_TYPES)):
             # Name.
             name = 'test' + repr(i)
-            self.assert_(haskey(ds, name))
+            self.assert_(name in ds)
 
             # Type.
             pipe = get_pipe(name)
-            self.assertEqual(pipe.name, VALID_TYPES[i])
+            self.assertEqual(pipe.pipe_type, VALID_TYPES[i])
