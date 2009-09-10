@@ -136,9 +136,12 @@ def load_xml(file):
     @type file:     file object
     """
 
-    # Make sure that the data pipe is empty.
-    if not cdp.is_empty():
-        raise RelaxError("The current data pipe is not empty.")
+    # Make sure that the data store is empty.
+    if not ds.is_empty():
+        raise RelaxError("The relax data store is not empty.")
+
+    # Load the XML.
+    ds.from_xml(file)
 
 
 def save_state(state=None, dir_name=None, compress_type=1, force=False, pickle=True):
