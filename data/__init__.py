@@ -57,7 +57,7 @@ class Relax_data_store(dict):
     # Class variable for storing the class instance.
     instance = None
 
-    def __new__(self, *args, **kargs): 
+    def __new__(self, *args, **kargs):
         """Replacement function for implementing the singleton design pattern."""
 
         # First initialisation.
@@ -67,7 +67,7 @@ class Relax_data_store(dict):
         # Already initialised, so return the instance.
         return self.instance
 
-    
+
     def __repr__(self):
         """The string representation of the object.
 
@@ -231,14 +231,14 @@ class Relax_data_store(dict):
             # Create the pipe XML element and add it to the top level XML element.
             pipe_element = xmldoc.createElement('pipe')
             top_element.appendChild(pipe_element)
-    
+
             # Set the data pipe attributes.
             pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
             pipe_element.setAttribute('name', pipe)
             pipe_element.setAttribute('type', self[pipe].pipe_type)
-    
+
             # Fill the data pipe XML element.
             self[pipe].to_xml(xmldoc, pipe_element)
-    
+
         # Write out the XML file.
         file.write(xmldoc.toprettyxml(indent='    '))
