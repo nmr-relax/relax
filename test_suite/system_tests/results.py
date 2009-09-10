@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,8 +21,9 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
+from os import remove, sep
 import sys
+from tempfile import mktemp
 from unittest import TestCase
 
 # relax module imports.
@@ -38,11 +39,21 @@ class Results(TestCase):
         # Create a data pipe.
         self.relax.interpreter._Pipe.create('test', 'relax_fit')
 
+        # Create a temporary file name.
+        self.tmpfile = mktemp()
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Reset the relax data storage object.
         ds.__reset__()
+
+        # Delete the temporary file (if needed).
+        try:
+            remove(self.tmpfile)
+        except OSError:
+            pass
 
 
     def test_read_empty_results(self):
@@ -56,4 +67,35 @@ class Results(TestCase):
         """Test the writing of an empty results file."""
 
         # Write the results.
-        self.relax.interpreter._Results.write(file="devnull")
+        self.relax.interpreter._Results.write(file=self.tmpfile, dir=None)
+
+
+    def test_write_read_pipes(self):
+        """Test the writing out, and re-reading of data pipes from the results file."""
+
+        # Remove the data pipe created by self.setUp().
+        ds.__reset__()
+
+        # Create a few data pipes.
+        pipe_types = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
+        for i in range(len(pipe_types)):
+            self.relax.interpreter._Pipe.create('test' + repr(i), pipe_types[i])
+
+        # Write the results.
+        self.relax.interpreter._Results.write(file=self.tmpfile, dir=None)
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # Re-read the results.
+        self.relax.interpreter._Results.read(file=self.tmpfile)
+
+        # Test the pipes.
+        for i in range(len(pipe_types)):
+            # Name.
+            name = 'test' + repr(i)
+            self.assert_(haskey(ds, name))
+
+            # Type.
+            pipe = get_pipe(name)
+            self.assertEqual(pipe.name, pipe_types[i])
