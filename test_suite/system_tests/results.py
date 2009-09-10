@@ -28,6 +28,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.pipes import VALID_TYPES
 
 
 class Results(TestCase):
@@ -77,9 +78,8 @@ class Results(TestCase):
         ds.__reset__()
 
         # Create a few data pipes.
-        pipe_types = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
-        for i in range(len(pipe_types)):
-            self.relax.interpreter._Pipe.create('test' + repr(i), pipe_types[i])
+        for i in range(len(VALID_TYPES)):
+            self.relax.interpreter._Pipe.create('test' + repr(i), VALID_TYPES[i])
 
         # Write the results.
         self.relax.interpreter._Results.write(file=self.tmpfile, dir=None)
@@ -91,11 +91,11 @@ class Results(TestCase):
         self.relax.interpreter._Results.read(file=self.tmpfile)
 
         # Test the pipes.
-        for i in range(len(pipe_types)):
+        for i in range(len(VALID_TYPES)):
             # Name.
             name = 'test' + repr(i)
             self.assert_(haskey(ds, name))
 
             # Type.
             pipe = get_pipe(name)
-            self.assertEqual(pipe.name, pipe_types[i])
+            self.assertEqual(pipe.name, VALID_TYPES[i])
