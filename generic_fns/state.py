@@ -141,8 +141,7 @@ def load_xml(file):
         raise RelaxError("The current data pipe is not empty.")
 
 
-
-def save_state(state=None, dir_name=None, force=False, compress_type=1):
+def save_state(state=None, dir_name=None, compress_type=1, force=False, pickle=True):
     """Function for saving the program state.
 
     @keyword state:         The saved state file.
@@ -161,7 +160,8 @@ def save_state(state=None, dir_name=None, force=False, compress_type=1):
     file = open_write_file(file_name=state, dir=dir_name, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
-    dump(ds, file, 1)
+    if pickle:
+        dump(ds, file, 1)
 
     # Close the file.
     file.close()
