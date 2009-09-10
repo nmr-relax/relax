@@ -166,6 +166,38 @@ class Relax_data_store(dict):
         __builtin__.cdp = self[pipe_name]
 
 
+    def is_empty(self):
+        """Method for testing if the relax data store is empty.
+
+        @return:    True if the data store is empty, False otherwise.
+        @rtype:     bool
+        """
+
+        # No pipes should exist.
+        if not self.keys() == []:
+            return False
+
+        # An object has been added to the data store.
+        for name in dir(self):
+            # Skip the data store methods.
+            if name in list(self.__class__.__dict__.keys()):
+                continue
+
+            # Skip the dict methods.
+            if name in list(dict.__dict__.keys()):
+                continue
+
+            # Skip special objects.
+            if search("^__", name):
+                continue
+
+            # An object has been added.
+            return False
+
+        # The data store is empty.
+        return True
+
+
     def from_xml(self, file, dir=None, verbosity=1):
         """Parse a XML document representation of a data pipe, and load it into the relax data store.
 
