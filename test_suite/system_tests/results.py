@@ -28,7 +28,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.pipes import VALID_TYPES
 
 
 class Results(TestCase):
@@ -69,33 +68,3 @@ class Results(TestCase):
 
         # Write the results.
         self.relax.interpreter._Results.write(file=self.tmpfile, dir=None)
-
-
-    def test_write_read_pipes(self):
-        """Test the writing out, and re-reading of data pipes from the results file."""
-
-        # Remove the data pipe created by self.setUp().
-        ds.__reset__()
-
-        # Create a few data pipes.
-        for i in range(len(VALID_TYPES)):
-            self.relax.interpreter._Pipe.create('test' + repr(i), VALID_TYPES[i])
-
-        # Write the results.
-        self.relax.interpreter._Results.write(file=self.tmpfile, dir=None)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-        # Re-read the results.
-        self.relax.interpreter._Results.read(file=self.tmpfile)
-
-        # Test the pipes.
-        for i in range(len(VALID_TYPES)):
-            # Name.
-            name = 'test' + repr(i)
-            self.assert_(haskey(ds, name))
-
-            # Type.
-            pipe = get_pipe(name)
-            self.assertEqual(pipe.name, VALID_TYPES[i])
