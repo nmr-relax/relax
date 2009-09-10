@@ -163,5 +163,9 @@ def save_state(state=None, dir_name=None, compress_type=1, force=False, pickle=T
     if pickle:
         dump(ds, file, 1)
 
+    # Otherwise save as XML.
+    else:
+        ds.to_xml(file)
+
     # Close the file.
     file.close()
