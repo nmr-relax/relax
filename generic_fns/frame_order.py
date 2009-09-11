@@ -87,7 +87,7 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
                 # Integer print out.
                 if integer:
                     val = int(daeg[i, j])
-                    format = "%3i%s"
+                    format = "%4i%s"
 
                 # Float print out.
                 else:
@@ -98,7 +98,7 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
             elif isNaN(daeg[i, j]):
                 val = 'NaN'
                 if integer:
-                    format = "%3i%s"
+                    format = "%4i%s"
                 else:
                     format = "%10s%s"
 
@@ -106,7 +106,7 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
             else:
                 # Integer print out.
                 if integer:
-                    format = "%3s%s"
+                    format = "%4s%s"
 
                 # Float print out.
                 else:
