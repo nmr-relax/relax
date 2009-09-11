@@ -27,6 +27,9 @@
 from numpy import array, matrix
 from sys import stdout
 
+# relax module imports.
+from float import isNaN
+
 
 def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, dot=False, comma=True):
     """Nicely print out the Frame Order matrix of the 2nd degree.
@@ -91,8 +94,13 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
                     val = daeg[i, j]
                     format = "%10.4f%s"
 
-                # Write.
-                stdout.write(format % (val, char1))
+            # NaN.
+            if isNaN(daeg[i, j]):
+                val = 'NaN'
+                if integer:
+                    format = "%3i%s"
+                else:
+                    format = "%10s%s"
 
             # Write out the zero elements.
             else:
@@ -110,5 +118,5 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
                 else:
                     val = '0'
 
-                # Write.
-                stdout.write(format % (val, char1))
+            # Write.
+            stdout.write(format % (val, char1))
