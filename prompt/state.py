@@ -114,8 +114,8 @@ class State(User_fn_class):
 
         This user function will place the program state - the relax data store - into a file for
         later reloading or reference.  The default format is an XML formatted file, but this can be
-        changed to a Python pickled object through the pickle flag (note, the pickle format is not
-        human readable).
+        changed to a Python pickled object through the pickle flag.  Note, the pickle format is not
+        human readable and often is not compatible with newer relax versions.
 
         The default behaviour of this function is to compress the file using bzip2 compression.  If
         the extension '.bz2' is not included in the file name, it will be added.  The compression
