@@ -90,7 +90,7 @@ class State(User_fn_class):
         load_state(state=state, dir_name=dir_name)
 
 
-    def save(self, state=None, dir_name=None, force=False, compress_type=1):
+    def save(self, state=None, dir_name=None, compress_type=1, force=False, pickle=True):
         """Function for saving the program state.
 
         Keyword Arguments
@@ -101,11 +101,21 @@ class State(User_fn_class):
 
         dir_name:  The name of the directory in which to place the file.
 
+        compress_type:  The type of compression to use when creating the file.
+
         force:  A boolean flag which if set to True will cause the file to be overwritten.
+
+        pickle:  A flag which if true will cause the state file to be a pickled object rather than
+            the default XML format.
 
 
         Description
         ~~~~~~~~~~~
+
+        This user function will place the program state - the relax data store - into a file for
+        later reloading or reference.  The default format is an XML formatted file, but this can be
+        changed to a Python pickled object through the pickle flag (note, the pickle format is not
+        human readable).
 
         The default behaviour of this function is to compress the file using bzip2 compression.  If
         the extension '.bz2' is not included in the file name, it will be added.  The compression
@@ -120,7 +130,7 @@ class State(User_fn_class):
         Examples
         ~~~~~~~~
 
-        The following commands will save the current program state into the file 'save':
+        The following commands will save the current program state, uncompressed, into the file 'save':
 
         relax> state.save('save', compress_type=0)
         relax> state.save(state='save', compress_type=0)
@@ -138,7 +148,7 @@ class State(User_fn_class):
         If the file 'save' already exists, the following commands will save the current program
         state by overwriting the file.
 
-        relax> state.save('save', True)
+        relax> state.save('save', force=True)
         relax> state.save(state='save', force=True)
         """
 
@@ -147,15 +157,17 @@ class State(User_fn_class):
             text = sys.ps3 + "state.save("
             text = text + "state=" + repr(state)
             text = text + ", dir_name=" + repr(dir_name)
+            text = text + ", compress_type=" + repr(compress_type)
             text = text + ", force=" + repr(force)
-            text = text + ", compress_type=" + repr(compress_type) + ")"
+            text = text + ", pickle=" + repr(pickle) + ")"
             print(text)
 
         # The argument checks.
         check.is_str_or_inst(state, 'file name')
         check.is_str(dir_name, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
         check.is_int(compress_type, 'compression type')
+        check.is_bool(force, 'force flag')
+        check.is_bool(pickle, 'pickle flag')
 
         # Execute the functional code.
-        save_state(state=state, dir_name=dir_name, force=force, compress_type=compress_type)
+        save_state(state=state, dir_name=dir_name, compress_type=compress_type, force=force, pickle=pickle)
