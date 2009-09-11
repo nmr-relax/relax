@@ -54,20 +54,39 @@ class State(TestCase):
             pass
 
 
-    def test_state(self):
-        """Test the saving, loading, and second saving and loading of the program state."""
+    def test_state_pickle(self):
+        """Test the saving, loading, and second saving and loading of the program state in pickled format."""
 
         # Create a data pipe.
         self.relax.interpreter._Pipe.create('test', 'mf')
 
         # Save the state.
-        self.relax.interpreter._State.save(self.tmpfile, force=True)
+        self.relax.interpreter._State.save(self.tmpfile, pickle=True, force=True)
 
         # Load the state.
         self.relax.interpreter._State.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.relax.interpreter._State.save(self.tmpfile, force=True)
+        self.relax.interpreter._State.save(self.tmpfile, pickle=True, force=True)
+
+        # Load the state.
+        self.relax.interpreter._State.load(self.tmpfile, force=True)
+
+
+    def test_state_xml(self):
+        """Test the saving, loading, and second saving and loading of the program state in XML format."""
+
+        # Create a data pipe.
+        self.relax.interpreter._Pipe.create('test', 'mf')
+
+        # Save the state.
+        self.relax.interpreter._State.save(self.tmpfile, pickle=False, force=True)
+
+        # Load the state.
+        self.relax.interpreter._State.load(self.tmpfile, force=True)
+
+        # Save the state.
+        self.relax.interpreter._State.save(self.tmpfile, pickle=False, force=True)
 
         # Load the state.
         self.relax.interpreter._State.load(self.tmpfile, force=True)
