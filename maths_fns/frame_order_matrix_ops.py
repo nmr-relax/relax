@@ -30,7 +30,7 @@ from numpy.linalg import norm
 
 # relax module imports.
 from float import isNaN
-from maths_fns.kronecker_product import kron_prod, transpose_14
+from maths_fns.kronecker_product import kron_prod, transpose_23
 from maths_fns.rotation_matrix import two_vect_to_R
 
 
@@ -65,14 +65,14 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone(matrix, theta_cone)
 
-    # Perform the T14 transpose to obtain the Kronecker product matrix!
-    transpose_14(matrix)
+    # Perform the T23 transpose to obtain the Kronecker product matrix!
+    transpose_23(matrix)
 
     # Rotate.
     matrix = dot(R_kron, dot(matrix, transpose(R_kron)))
 
-    # Perform T14 again to return back.
-    transpose_14(matrix)
+    # Perform T23 again to return back.
+    transpose_23(matrix)
 
     # Return the matrix.
     return matrix
