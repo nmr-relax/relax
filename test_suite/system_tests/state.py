@@ -64,13 +64,13 @@ class State(TestCase):
         self.relax.interpreter._State.save(self.tmpfile, force=True)
 
         # Load the state.
-        self.relax.interpreter._State.load(self.tmpfile)
+        self.relax.interpreter._State.load(self.tmpfile, force=True)
 
         # Save the state.
         self.relax.interpreter._State.save(self.tmpfile, force=True)
 
         # Load the state.
-        self.relax.interpreter._State.load(self.tmpfile)
+        self.relax.interpreter._State.load(self.tmpfile, force=True)
 
 
     def test_write_read_pipes(self):

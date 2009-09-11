@@ -36,7 +36,7 @@ from generic_fns.state import load_state, save_state
 class State(User_fn_class):
     """Class for saving or loading the program state."""
 
-    def load(self, state=None, dir_name=None):
+    def load(self, state=None, dir_name=None, force=False):
         """Function for loading a saved program state.
 
         Keyword Arguments
@@ -47,6 +47,8 @@ class State(User_fn_class):
 
         dir_name:  The name of the directory in which the file is found.
 
+        force:  A boolean flag which if True will cause the current program state to be overwritten.
+
 
         Description
         ~~~~~~~~~~~
@@ -54,8 +56,12 @@ class State(User_fn_class):
         This function is able to handle uncompressed, bzip2 compressed files, or gzip compressed
         files automatically.  The full file name including extension can be supplied, however, if
         the file cannot be found, this function will search for the file name with '.bz2' appended
-        followed by the file name with '.gz' appended.  For more advanced users, file descriptor
-        objects are also supported.
+        followed by the file name with '.gz' appended.
+        
+        Both the XML and pickled saved state formats are supported and automatically determined.
+        For more advanced users, file descriptor objects are also supported.  If the force flag is
+        set to True, then the relax data store will be reset prior to the loading of the saved
+        state.
 
 
         Examples
@@ -67,27 +73,30 @@ class State(User_fn_class):
         relax> state.load(state='save')
 
 
-        The following commands will load the state saved in the bzip2 compressed file 'save.bz2'.
+        Use one of the following commands to load the state saved in the bzip2 compressed file
+        'save.bz2':
 
         relax> state.load('save')
         relax> state.load(state='save')
         relax> state.load('save.bz2')
-        relax> state.load(state='save.bz2')
+        relax> state.load(state='save.bz2', force=True)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.load("
             text = text + "state=" + repr(state)
-            text = text + ", dir_name=" + repr(dir_name) + ")"
+            text = text + ", dir_name=" + repr(dir_name)
+            text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
         check.is_str_or_inst(state, 'file name')
         check.is_str(dir_name, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        load_state(state=state, dir_name=dir_name)
+        load_state(state=state, dir_name=dir_name, force=force)
 
 
     def save(self, state=None, dir_name=None, compress_type=1, force=False, pickle=True):

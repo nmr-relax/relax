@@ -101,13 +101,15 @@ def load_pickle(file):
     return True
 
 
-def load_state(state=None, dir_name=None):
+def load_state(state=None, dir_name=None, force=False):
     """Function for loading a saved program state.
 
     @keyword state:     The saved state file.
     @type state:        str
     @keyword dir_name:  The path of the state file.
     @type dir_name:     str
+    @keyword force:     If True, the relax data store will be reset prior to state loading.
+    @type force:        bool
     """
 
     # Open the file for reading.
@@ -115,6 +117,10 @@ def load_state(state=None, dir_name=None):
 
     # Determine the format of the file.
     format = determine_format(file)
+
+    # Reset.
+    if force:
+        ds.__reset__()
 
     # Make sure that the data store is empty.
     if not ds.is_empty():
