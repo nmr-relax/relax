@@ -93,7 +93,7 @@ def read(file='results', directory=None):
 
     # XML results.
     if format == 'xml':
-        read_function = ds.from_xml(file, dir=dirname(file_path))
+        ds.from_xml(file, dir=dirname(file_path), pipe_to=pipes.cdp_name())
 
     # Columnar results.
     elif format == 'columnar':

@@ -28,12 +28,14 @@
 import __builtin__
 from re import search
 from string import split
+from sys import stderr
 from time import asctime
 import xml.dom.minidom
 
 # relax module imports.
 from pipe_container import PipeContainer
-from relax_errors import RelaxPipeError
+import generic_fns
+from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from version import version
 
 
@@ -175,6 +177,7 @@ class Relax_data_store(dict):
 
         # No pipes should exist.
         if not self.keys() == []:
+            stderr.write("The relax data store contains the data pipes %s.\n" % self.keys())
             return False
 
         # An object has been added to the data store.
@@ -192,22 +195,36 @@ class Relax_data_store(dict):
                 continue
 
             # An object has been added.
+            stderr.write("The relax data store contains the object %s.\n" % name)
             return False
 
         # The data store is empty.
         return True
 
 
-    def from_xml(self, file, dir=None, verbosity=1):
+    def from_xml(self, file, dir=None, pipe_to=None, verbosity=1):
         """Parse a XML document representation of a data pipe, and load it into the relax data store.
 
-        @param file:        The open file object.
-        @type file:         file
-        @keyword dir:       The name of the directory containing the results file.
-        @type dir:          str
-        @keyword verbosity: A flag specifying the amount of information to print.  The higher the value,
-                            the greater the verbosity.
-        @type verbosity:    int
+        @param file:                The open file object.
+        @type file:                 file
+        @keyword dir:               The name of the directory containing the results file (needed
+                                    for loading external files).
+        @type dir:                  str
+        @keyword pipe_to:           The data pipe to load the XML data pipe into (the file must only
+                                    contain one data pipe).
+        @type pipe_to:              str
+        @keyword verbosity:         A flag specifying the amount of information to print.  The
+                                    higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @raises RelaxError:         If pipe_to is given and the file contains multiple pipe
+                                    elements;  or if the data pipes in the XML file already exist in
+                                    the relax data store;  or if the data pipe type is invalid;  or
+                                    if the target data pipe is not empty.
+        @raises RelaxNoPipeError:   If pipe_to is given but the data pipe does not exist.
+        @raises RelaxError:         If the data pipes in the XML file already exist in the relax
+                                    data store, or if the data pipe type is invalid.
+        @raises RelaxPipeError:     If the data pipes of the XML file are already present in the
+                                    relax data store.
         """
 
         # Create the XML document from the file.
@@ -219,8 +236,60 @@ class Relax_data_store(dict):
         # Get the relax version of the XML file.
         relax_version = str(relax_node.getAttribute('version'))
 
-        # Fill the pipe.
-        self[self.instance.current_pipe].from_xml(relax_node, dir=dir)
+        # Get the pipe nodes.
+        pipe_nodes = relax_node.getElementsByTagName('pipe')
+
+        # Target loading to a specific pipe (for pipe results reading).
+        if pipe_to:
+            # Check if there are multiple pipes in the XML file.
+            if len(pipe_nodes) > 1:
+                raise RelaxError("The pipe_to target pipe argument '%s' cannot be given as the file contains multiple pipe elements." % pipe_to)
+
+            # The pipe type.
+            pipe_type = pipe_nodes[0].getAttribute('type')
+
+            # Check that the pipe already exists.
+            if not pipe_to in self:
+                raise RelaxNoPipeError(pipe_to)
+
+            # Check if the pipe type matches.
+            if pipe_type != self[pipe_to].pipe_type:
+                raise RelaxError("The XML file pipe type '%s' does not match the pipe type '%s'" % (pipe_type, self[pipe_to].pipe_type))
+
+            # Check if the pipe is empty.
+            if not self[pipe_to].is_empty():
+                raise RelaxError("The data pipe '%s' is not empty." % pipe_to)
+
+            # Load the data.
+            self[pipe_to].from_xml(pipe_nodes[0], dir=dir)
+
+        # Load the state.
+        else:
+            # Checks.
+            for pipe_node in pipe_nodes:
+                # The pipe name and type.
+                pipe_name = pipe_node.getAttribute('name')
+                pipe_type = pipe_node.getAttribute('type')
+
+                # Existence check.
+                if pipe_name in self:
+                    raise RelaxPipeError(pipe_name)
+
+                # Valid type check.
+                if not pipe_type in generic_fns.pipes.VALID_TYPES:
+                    raise RelaxError("The data pipe type '%s' is invalid and must be one of the strings in the list %s." % (pipe_type, generic_fns.pipes.VALID_TYPES))
+
+            # Load the data pipes.
+            for pipe_node in pipe_nodes:
+                # The pipe name and type.
+                pipe_name = pipe_node.getAttribute('name')
+                pipe_type = pipe_node.getAttribute('type')
+
+                # Add the data pipe.
+                self.add(pipe_name, pipe_type)
+
+                # Fill the pipe.
+                self[pipe_name].from_xml(pipe_node, dir=dir)
 
 
     def to_xml(self, file, pipes=None):
