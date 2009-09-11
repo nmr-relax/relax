@@ -67,7 +67,7 @@ class State(TestCase):
         self.relax.interpreter._State.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.relax.interpreter._State.save(self.tmpfile, pickle=True, force=True)
+        self.relax.interpreter._State.save(self.tmpfile, dir=None, pickle=True, force=True)
 
         # Load the state.
         self.relax.interpreter._State.load(self.tmpfile, force=True)
