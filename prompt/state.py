@@ -99,7 +99,7 @@ class State(User_fn_class):
         load_state(state=state, dir_name=dir_name, force=force)
 
 
-    def save(self, state=None, dir_name=None, compress_type=1, force=False, pickle=True):
+    def save(self, state=None, dir_name=None, compress_type=1, force=False, pickle=False):
         """Function for saving the program state.
 
         Keyword Arguments
