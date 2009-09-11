@@ -75,7 +75,7 @@ def save_state():
 
     # Append the date and time to the save file.
     now = time.localtime()
-    file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], now[2], now[1], now[3], now[4], now[5])
+    file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], now[1], now[2], now[3], now[4], now[5])
 
     # Open the file for writing.
     if bz2:
