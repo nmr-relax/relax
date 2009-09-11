@@ -98,19 +98,19 @@ def load_pickle(file):
     return True
 
 
-def load_state(state=None, dir_name=None, force=False):
+def load_state(state=None, dir=None, force=False):
     """Function for loading a saved program state.
 
     @keyword state:     The saved state file.
     @type state:        str
-    @keyword dir_name:  The path of the state file.
-    @type dir_name:     str
+    @keyword dir:       The path of the state file.
+    @type dir:          str
     @keyword force:     If True, the relax data store will be reset prior to state loading.
     @type force:        bool
     """
 
     # Open the file for reading.
-    file = open_read_file(file_name=state, dir=dir_name)
+    file = open_read_file(file_name=state, dir=dir)
 
     # Determine the format of the file.
     format = determine_format(file)
@@ -136,13 +136,13 @@ def load_state(state=None, dir_name=None, force=False):
         raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
 
 
-def save_state(state=None, dir_name=None, compress_type=1, force=False, pickle=True):
+def save_state(state=None, dir=None, compress_type=1, force=False, pickle=True):
     """Function for saving the program state.
 
     @keyword state:         The saved state file.
     @type state:            str
-    @keyword dir_name:      The path of the state file.
-    @type dir_name:         str
+    @keyword dir:           The path of the state file.
+    @type dir:              str
     @keyword force:         Boolean argument which if True causes the file to be overwritten if it
                             already exists.
     @type force:            bool
@@ -152,7 +152,7 @@ def save_state(state=None, dir_name=None, compress_type=1, force=False, pickle=T
     """
 
     # Open the file for writing.
-    file = open_write_file(file_name=state, dir=dir_name, force=force, compress_type=compress_type)
+    file = open_write_file(file_name=state, dir=dir, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
     if pickle:

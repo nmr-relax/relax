@@ -36,7 +36,7 @@ from generic_fns.state import load_state, save_state
 class State(User_fn_class):
     """Class for saving or loading the program state."""
 
-    def load(self, state=None, dir_name=None, force=False):
+    def load(self, state=None, dir=None, force=False):
         """Function for loading a saved program state.
 
         Keyword Arguments
@@ -45,7 +45,7 @@ class State(User_fn_class):
         state:  The file name, which can be a string or a file descriptor object, of a saved program
                 state.
 
-        dir_name:  The name of the directory in which the file is found.
+        dir:  The name of the directory in which the file is found.
 
         force:  A boolean flag which if True will cause the current program state to be overwritten.
 
@@ -86,20 +86,20 @@ class State(User_fn_class):
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.load("
             text = text + "state=" + repr(state)
-            text = text + ", dir_name=" + repr(dir_name)
+            text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
         check.is_str_or_inst(state, 'file name')
-        check.is_str(dir_name, 'directory name', can_be_none=True)
+        check.is_str(dir, 'directory name', can_be_none=True)
         check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        load_state(state=state, dir_name=dir_name, force=force)
+        load_state(state=state, dir=dir, force=force)
 
 
-    def save(self, state=None, dir_name=None, compress_type=1, force=False, pickle=False):
+    def save(self, state=None, dir=None, compress_type=1, force=False, pickle=False):
         """Function for saving the program state.
 
         Keyword Arguments
@@ -108,7 +108,7 @@ class State(User_fn_class):
         state:  The file name, which can be a string or a file descriptor object, to save the
                 current program state in.
 
-        dir_name:  The name of the directory in which to place the file.
+        dir:  The name of the directory in which to place the file.
 
         compress_type:  The type of compression to use when creating the file.
 
@@ -165,7 +165,7 @@ class State(User_fn_class):
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "state.save("
             text = text + "state=" + repr(state)
-            text = text + ", dir_name=" + repr(dir_name)
+            text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)
             text = text + ", force=" + repr(force)
             text = text + ", pickle=" + repr(pickle) + ")"
@@ -173,10 +173,10 @@ class State(User_fn_class):
 
         # The argument checks.
         check.is_str_or_inst(state, 'file name')
-        check.is_str(dir_name, 'directory name', can_be_none=True)
+        check.is_str(dir, 'directory name', can_be_none=True)
         check.is_int(compress_type, 'compression type')
         check.is_bool(force, 'force flag')
         check.is_bool(pickle, 'pickle flag')
 
         # Execute the functional code.
-        save_state(state=state, dir_name=dir_name, compress_type=compress_type, force=force, pickle=pickle)
+        save_state(state=state, dir=dir, compress_type=compress_type, force=force, pickle=pickle)

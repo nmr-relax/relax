@@ -90,7 +90,7 @@ class Relax_fit(TestCase):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir_name=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'saved_states', force=True)
+        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'saved_states', force=True)
 
         # Create a new data pipe for the new data.
         self.relax.interpreter._Pipe.create('new', 'relax_fit')
