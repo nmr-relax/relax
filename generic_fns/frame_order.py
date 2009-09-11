@@ -95,7 +95,7 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
                     format = "%10.4f%s"
 
             # NaN.
-            if isNaN(daeg[i, j]):
+            elif isNaN(daeg[i, j]):
                 val = 'NaN'
                 if integer:
                     format = "%3i%s"
