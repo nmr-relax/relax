@@ -100,7 +100,8 @@ class PipeContainer(Prototype):
 
         @param relax_node:  The relax XML node.
         @type relax_node:   xml.dom.minidom.Element instance
-        @keyword dir:       The name of the directory containing the results file.
+        @keyword dir:       The name of the directory containing the results file (needed for
+                            loading external files).
         @type dir:          str
         """
 
