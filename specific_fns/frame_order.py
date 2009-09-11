@@ -68,6 +68,9 @@ class Frame_order(Common_functions):
             raise RelaxError("The reference domain has not been set up.")
         if not hasattr(cdp.align_tensors, 'reduction'):
             raise RelaxError("The tensor reductions have not been specified.")
+        for i, tensor in self.__tensor_loop():
+            if not hasattr(tensor, 'domain'):
+                raise RelaxError("The domain that the '%s' tensor is attached to has not been set" % tensor.name)
 
         # Initialise.
         n = len(cdp.align_tensors.reduction)
