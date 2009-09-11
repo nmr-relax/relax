@@ -116,9 +116,13 @@ def load_state(state=None, dir_name=None):
     # Determine the format of the file.
     format = determine_format(file)
 
+    # Make sure that the data store is empty.
+    if not ds.is_empty():
+        raise RelaxError("The relax data store is not empty.")
+
     # XML state.
     if format == 'xml':
-        load_xml(file)
+        ds.from_xml(file)
 
     # Pickled state.
     elif format == 'pickle':
@@ -127,21 +131,6 @@ def load_state(state=None, dir_name=None):
     # Bad state file.
     else:
         raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
-
-
-def load_xml(file):
-    """Load the program state from the XML file.
-
-    @param file:    The file object containing the relax state.
-    @type file:     file object
-    """
-
-    # Make sure that the data store is empty.
-    if not ds.is_empty():
-        raise RelaxError("The relax data store is not empty.")
-
-    # Load the XML.
-    ds.from_xml(file)
 
 
 def save_state(state=None, dir_name=None, compress_type=1, force=False, pickle=True):
