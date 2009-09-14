@@ -282,3 +282,25 @@ class Test_kronecker_product(TestCase):
             for j in range(9):
                 print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daegT[i, j])))
                 self.assertEqual(self.daeg[i, j], daegT[i, j])
+
+
+    def test_transpose_reversions(self):
+        """Check that the transposes revert back to the original matrix."""
+
+        # Make a copy of the frame order matrix.
+        daeg_orig = self.to_numpy(self.daeg_str)
+
+        # List of transpose functions.
+        Tij = [transpose_12, transpose_13, transpose_14, transpose_23, transpose_24, transpose_34]
+
+        # Check the transpose reversions.
+        for transpose in Tij:
+            # Transpose twice.
+            transpose(self.daeg)
+            transpose(self.daeg)
+
+            # Check.
+            for i in range(9):
+                for j in range(9):
+                    print(("i = %2s, j = %2s, daeg[i,j] = %s" % (i, j, daeg_orig[i, j])))
+                    self.assertEqual(self.daeg[i, j], daeg_orig[i, j])

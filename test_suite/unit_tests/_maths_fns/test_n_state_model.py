@@ -98,7 +98,7 @@ class Test_n_state_model(TestCase):
 
         # Init vals.
         N = 2
-        init_params = array([1.0, pi/2.0, 0.0, 0.0, 0.0, 0.0, 0.0], float64)
+        init_params = array([1.0, -pi/2.0, 0.0, 0.0, 0.0, 0.0, 0.0], float64)
         full_tensors = array([1.0, 0.5, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0, 0.0, 0.0, 1.0, 0.5, 0.0, 1.0, 0.0], float64)
         red_data     = array([0.5, 1.0, 0.0, 0.0, 0.0, 0.5, 1.0, -1.0, 0.0, 0.0, 0.5, 1.0, 0.0, 0.0, 1.0], float64)
         err = ones(3*5, float64)
@@ -126,7 +126,7 @@ class Test_n_state_model(TestCase):
 
         # Init vals.
         N = 2
-        init_params = array([0.5, pi/2.0, 0.0, 0.0, 0.0, 0.0, 0.0], float64)
+        init_params = array([0.5, -pi/2.0, 0.0, 0.0, 0.0, 0.0, 0.0], float64)
         full_tensors = array([1.0, 0.5, 0.0, 0.0, 0.0, 1.0, 0.5, 1.0, 0.0, 0.0, 1.0, 0.5, 0.0, 1.0, 0.0], float64)
         red_data     = array([0.75, 0.75, 0.0, 0.0, 0.0, 0.75, 0.75, 0.0, 0.0, 0.0, 0.75, 0.75, 0.0, 0.5, 0.5], float64)
         err = ones(3*5, float64)

@@ -37,9 +37,9 @@ from generic_fns import pipes
 from generic_fns.angles import wrap_angles
 from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
 from generic_fns.structure.internal import Internal
-from maths_fns import frame_order_models
+from maths_fns import frame_order
 from maths_fns.frame_order_matrix_ops import generate_vector
-from maths_fns.rotation_matrix import R_2vect
+from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
@@ -68,6 +68,9 @@ class Frame_order(Common_functions):
             raise RelaxError("The reference domain has not been set up.")
         if not hasattr(cdp.align_tensors, 'reduction'):
             raise RelaxError("The tensor reductions have not been specified.")
+        for i, tensor in self.__tensor_loop():
+            if not hasattr(tensor, 'domain'):
+                raise RelaxError("The domain that the '%s' tensor is attached to has not been set" % tensor.name)
 
         # Initialise.
         n = len(cdp.align_tensors.reduction)
@@ -154,8 +157,13 @@ class Frame_order(Common_functions):
         if not hasattr(cdp, 'params'):
             cdp.params = []
 
-        # Set up the tensor rotation parameter arrays.
+        # Initialisation flag.
+        init = False
         if not len(cdp.params):
+            init = True
+
+        # Set up the tensor rotation parameter arrays.
+        if init:
             cdp.params.append('alpha')
             cdp.params.append('beta')
             cdp.params.append('gamma')
@@ -171,7 +179,7 @@ class Frame_order(Common_functions):
         # Isotropic cone model.
         if cdp.model == 'iso cone':
             # Set up the parameter arrays.
-            if not len(cdp.params):
+            if init:
                 cdp.params.append('theta_axis')
                 cdp.params.append('phi_axis')
                 cdp.params.append('theta_cone')
@@ -241,6 +249,17 @@ class Frame_order(Common_functions):
         beta  = wrap_angles(beta, 0.0, 2.0*pi)
         gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
+        # Fold beta to be between 0 and pi.
+        if beta >= pi:
+            alpha = alpha - pi
+            beta = 2*pi - beta
+            gamma = gamma - pi
+
+        # Wrap again.
+        alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+        beta  = wrap_angles(beta, 0.0, 2.0*pi)
+        gamma = wrap_angles(gamma, 0.0, 2.0*pi)
+
         # Monte Carlo simulation data structures.
         if sim_index != None:
             # Tensor rotation.
@@ -292,7 +311,7 @@ class Frame_order(Common_functions):
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
         # Set up the optimisation function.
-        target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         target.func(param_vector)
@@ -328,7 +347,7 @@ class Frame_order(Common_functions):
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
 
         # Set up the optimisation function.
-        target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = target.func(param_vector)
@@ -395,7 +414,7 @@ class Frame_order(Common_functions):
 
             # The rotation matrix (rotation from the z-axis to the cone axis).
             R = zeros((3, 3), float64)
-            R_2vect(R, array([0, 0, 1], float64), cone_axis)
+            two_vect_to_R(array([0, 0, 1], float64), cone_axis, R)
 
             # Mirroring.
             cone_axis_new = factor*cone_axis
@@ -672,7 +691,7 @@ class Frame_order(Common_functions):
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index)
 
         # Set up the optimisation function.
-        target = frame_order_models.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
         # Minimisation.
         results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)

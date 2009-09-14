@@ -73,6 +73,10 @@ Non-dangerous 3.0 update command
 This needs to be carefully checked before committing.
 
 2to3 -w \
+-f buffer \
+-f idioms \
+-f set_literal \
+-f ws_comma \
 -x except \
 -x import \
 -x imports \

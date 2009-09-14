@@ -45,6 +45,8 @@ ARCH = platform.architecture()
 MACH = platform.machine()
 PROC = platform.processor()
 PY_VER = platform.python_version()
+NUMPY_VER = numpy.__version__
+LIBC_VER = platform.libc_ver()
 
 # Windows system name pain.
 if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
@@ -69,11 +71,9 @@ class Frame_order(TestCase):
         ds.__reset__()
 
 
-    def mesg_opt_debug(self, spin):
+    def mesg_opt_debug(self):
         """Method for returning a string to help debug the minimisation.
 
-        @param spin:    The SpinContainer of the optimised spin.
-        @type spin:     SpinContainer instance
         @return:        The debugging string.
         @rtype:         str
         """
@@ -82,42 +82,63 @@ class Frame_order(TestCase):
         string = 'Optimisation failure.\n\n'
 
         # Create the string.
-        string = string + "System: " + SYSTEM + "\n"
-        string = string + "Release: " + RELEASE + "\n"
-        string = string + "Version: " + VERSION + "\n"
-        string = string + "Win32 version: " + WIN32_VER[0] + " " + WIN32_VER[1] + " " + WIN32_VER[2] + " " + WIN32_VER[3] + "\n"
-        string = string + "Distribution: " + DIST[0] + " " + DIST[1] + " " + DIST[2] + "\n"
-        string = string + "Architecture: " + ARCH[0] + " " + ARCH[1] + "\n"
-        string = string + "Machine: " + MACH + "\n"
-        string = string + "Processor: " + PROC + "\n"
-        string = string + "Python version: " + PY_VER + "\n"
-        string = string + "numpy version: " + numpy.__version__ + "\n"
+        string = string + "%-18s%-25s\n" % ("System: ", SYSTEM)
+        string = string + "%-18s%-25s\n" % ("Release: ", RELEASE)
+        string = string + "%-18s%-25s\n" % ("Version: ", VERSION)
+        string = string + "%-18s%-25s\n" % ("Win32 version: ", (WIN32_VER[0] + " " + WIN32_VER[1] + " " + WIN32_VER[2] + " " + WIN32_VER[3]))
+        string = string + "%-18s%-25s\n" % ("Distribution: ", (DIST[0] + " " + DIST[1] + " " + DIST[2]))
+        string = string + "%-18s%-25s\n" % ("Architecture: ", (ARCH[0] + " " + ARCH[1]))
+        string = string + "%-18s%-25s\n" % ("Machine: ", MACH)
+        string = string + "%-18s%-25s\n" % ("Processor: ", PROC)
+        string = string + "%-18s%-25s\n" % ("Python version: ", PY_VER)
+        string = string + "%-18s%-25s\n" % ("Numpy version: ", NUMPY_VER)
+        string = string + "%-18s%-25s\n" % ("Libc version: ", (LIBC_VER[0] + " " + LIBC_VER[1]))
 
 
         # Minimisation info.
-        string = string + "\n\n%-10s%10.16f" % ('s2:', spin.s2)
-        string = string + "\n%-10s%10.13f" % ('te:', spin.te * 1e12)
-        string = string + "\n%-10s%10.17f" % ('rex:', spin.rex * (2.0 * pi * spin.frq[0])**2)
-        string = string + "\n%-10s%10.17g" % ('chi2:', spin.chi2)
-        string = string + "\n%-10s%-10i" % ('iter:', spin.iter)
-        string = string + "\n%-10s%-10i" % ('f_count:', spin.f_count)
-        string = string + "\n%-10s%-10i" % ('g_count:', spin.g_count)
-        string = string + "\n%-10s%-10i" % ('h_count:', spin.h_count)
-        string = string + "\n%-10s%-10s" % ('warning:', spin.warning)
+        string = string + "\n%-15s %30.17g\n" % ('alpha:',   cdp.alpha)
+        string = string +   "%-15s %30.17g\n" % ('beta:',    cdp.beta)
+        string = string +   "%-15s %30.17g\n" % ('gamma:',   cdp.gamma)
+        string = string +   "%-15s %30.17g\n" % ('chi2:',    cdp.chi2)
+        string = string +   "%-15s %30i\n" % ('iter:',    cdp.iter)
+        string = string +   "%-15s %30i\n" % ('f_count:', cdp.f_count)
+        string = string +   "%-15s %30i\n" % ('g_count:', cdp.g_count)
+        string = string +   "%-15s %30i\n" % ('h_count:', cdp.h_count)
+        string = string +   "%-15s %30s\n" % ('warning:', cdp.warning)
 
         # Return the string.
         return string
 
 
-    def test_rigid_no_rot(self):
+    def test_opt_rigid_no_rot(self):
         """Test the 'rigid' model for unrotated tensors with no motion."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order_rigid_no_rot.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
+
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
 
         # Test the values.
-        self.assertEqual(cdp.iter, 92)
-        self.assertEqual(cdp.chi2, 0.0)
-        self.assertEqual(cdp.alpha, 0.0)
-        self.assertEqual(cdp.beta, 0.0)
-        self.assertEqual(cdp.gamma, 0.0)
+        self.assertEqual(cdp.iter, 92, msg=self.mesg)
+        self.assertEqual(cdp.chi2, 0.0, msg=self.mesg)
+        self.assertEqual(cdp.alpha, 0.0, msg=self.mesg)
+        self.assertEqual(cdp.beta, 0.0, msg=self.mesg)
+        self.assertEqual(cdp.gamma, 0.0, msg=self.mesg)
+
+
+    def test_opt_rigid_rand_rot(self):
+        """Test the 'rigid' model for randomly rotated tensors with no motion."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
+
+        # Get the debugging message.
+        self.mesg = self.mesg_opt_debug()
+
+        # Test the values.
+        self.assertEqual(cdp.iter, 200, msg=self.mesg)
+        self.assertAlmostEqual(cdp.chi2, 4.7066782163499912e-26, msg=self.mesg)
+        self.assertAlmostEqual(cdp.alpha, 5.0700283197712777, msg=self.mesg)
+        self.assertAlmostEqual(cdp.beta, 2.5615753919522359, msg=self.mesg)
+        self.assertAlmostEqual(cdp.gamma, 0.64895449611163691, msg=self.mesg)

@@ -29,9 +29,7 @@ import setup
 
 
 class Hybrid:
-    def __init__(self):
-        """Class containing function specific to hybrid models."""
-
+    """Class containing function specific to hybrid models."""
 
     def duplicate_data(self, pipe_from=None, pipe_to=None):
         """Duplicate the data specific to a single hybrid data pipe.
