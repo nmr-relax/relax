@@ -146,6 +146,9 @@ class Frame_order:
         # Initialise the Frame Order matrices.
         self.frame_order_2nd = zeros((9, 9), float64)
 
+        # Alias the target function.
+        self.func = self.func_iso_cone
+
 
     def __init_iso_cone_elements(self, frame_order_2nd):
         """Set up isotropic cone optimisation against the 2nd degree Frame Order matrix elements.
