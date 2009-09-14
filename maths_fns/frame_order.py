@@ -104,9 +104,6 @@ class Frame_order:
             self.cone_axis = zeros(3, float64)
             self.z_axis = array([0, 0, 1], float64)
 
-            # Alias the target function.
-            self.func = self.func_iso_cone
-
 
     def __init_tensors(self, full_tensors, red_tensors, red_errors, full_in_ref_frame):
         """Set up isotropic cone optimisation against the alignment tensor data.
