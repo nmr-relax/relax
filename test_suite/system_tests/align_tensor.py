@@ -42,8 +42,8 @@ class Align_tensor(TestCase):
         self.tmpfile = mktemp()
 
         # Tensor name lists.
-        full_list = ['0 full', '1 full', '2 full', '3 full', '4 full']
-        red_list = ['0 red', '1 red', '2 red', '3 red', '4 red']
+        self.full_list = ['0 full', '1 full', '2 full', '3 full', '4 full']
+        self.red_list = ['0 red', '1 red', '2 red', '3 red', '4 red']
 
         # Error.
         error = 1.47411211147e-05
@@ -67,19 +67,19 @@ class Align_tensor(TestCase):
         # Set up the tensors.
         for i in range(5):
             # Load the tensor.
-            self.relax.interpreter._Align_tensor.init(tensor=full_list[i], params=self.tensors_full[i], param_types=0)
-            self.relax.interpreter._Align_tensor.init(tensor=red_list[i], params=self.tensors_red[i], param_types=0)
+            self.relax.interpreter._Align_tensor.init(tensor=self.full_list[i], params=self.tensors_full[i], param_types=0)
+            self.relax.interpreter._Align_tensor.init(tensor=self.red_list[i], params=self.tensors_red[i], param_types=0)
 
             # Errors.
-            self.relax.interpreter._Align_tensor.init(tensor=full_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
-            self.relax.interpreter._Align_tensor.init(tensor=red_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
+            self.relax.interpreter._Align_tensor.init(tensor=self.full_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
+            self.relax.interpreter._Align_tensor.init(tensor=self.red_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
 
             # Domain.
-            self.relax.interpreter._Align_tensor.set_domain(tensor=full_list[i], domain='full')
-            self.relax.interpreter._Align_tensor.set_domain(tensor=red_list[i], domain='red')
+            self.relax.interpreter._Align_tensor.set_domain(tensor=self.full_list[i], domain='full')
+            self.relax.interpreter._Align_tensor.set_domain(tensor=self.red_list[i], domain='red')
 
             # Tensor reductions.
-            self.relax.interpreter._Align_tensor.reduction(full_tensor=full_list[i], red_tensor=red_list[i])
+            self.relax.interpreter._Align_tensor.reduction(full_tensor=self.full_list[i], red_tensor=self.red_list[i])
 
         # Reset some values.
         cdp.align_tensors[2].Axx = 1
@@ -99,7 +99,7 @@ class Align_tensor(TestCase):
         """Test the conversion to and from XML."""
 
         # Save the data pipe.
-        self.relax.interpreter._Results.write(self.tmpfile, dir=None)
+        self.relax.interpreter._Results.write(self.tmpfile, dir=None, compress_type=0)
 
         # Create a new data pipe.
         self.relax.interpreter._Pipe.create('new', 'frame order')
@@ -108,18 +108,27 @@ class Align_tensor(TestCase):
         self.relax.interpreter._Results.read(self.tmpfile, dir=None)
 
         # Checks.
-        self.assertEqual(len(cdp.align_tensors), 5)
+        self.assertEqual(len(cdp.align_tensors), 10)
+        self.assert_(hasattr(cdp.align_tensors, 'reduction'))
         for i in range(5):
             # Full tensors.
-            self.assertEqual(cdp.align_tensors[i*2].Axx, self.tensors_full[i][0])
-            self.assertEqual(cdp.align_tensors[i*2].Ayy, self.tensors_full[i][1])
-            self.assertEqual(cdp.align_tensors[i*2].Axy, self.tensors_full[i][2])
-            self.assertEqual(cdp.align_tensors[i*2].Axz, self.tensors_full[i][3])
-            self.assertEqual(cdp.align_tensors[i*2].Ayz, self.tensors_full[i][4])
+            if i == 1:
+                self.assertAlmostEqual(cdp.align_tensors[i*2].Axx, 1.0)
+            else:
+                self.assertAlmostEqual(cdp.align_tensors[i*2].Sxx, self.tensors_full[i][0])
+            self.assertAlmostEqual(cdp.align_tensors[i*2].Syy, self.tensors_full[i][1])
+            self.assertAlmostEqual(cdp.align_tensors[i*2].Sxy, self.tensors_full[i][2])
+            self.assertAlmostEqual(cdp.align_tensors[i*2].Sxz, self.tensors_full[i][3])
+            self.assertAlmostEqual(cdp.align_tensors[i*2].Syz, self.tensors_full[i][4])
+            self.assertEqual(cdp.align_tensors[i*2].name, self.full_list[i])
 
             # Reduced tensors.
-            self.assertEqual(cdp.align_tensors[i*2+1].Axx, self.tensors_red[i][0])
-            self.assertEqual(cdp.align_tensors[i*2+1].Ayy, self.tensors_red[i][1])
-            self.assertEqual(cdp.align_tensors[i*2+1].Axy, self.tensors_red[i][2])
-            self.assertEqual(cdp.align_tensors[i*2+1].Axz, self.tensors_red[i][3])
-            self.assertEqual(cdp.align_tensors[i*2+1].Ayz, self.tensors_red[i][4])
+            self.assertAlmostEqual(cdp.align_tensors[i*2+1].Sxx, self.tensors_red[i][0])
+            self.assertAlmostEqual(cdp.align_tensors[i*2+1].Syy, self.tensors_red[i][1])
+            self.assertAlmostEqual(cdp.align_tensors[i*2+1].Sxy, self.tensors_red[i][2])
+            self.assertAlmostEqual(cdp.align_tensors[i*2+1].Sxz, self.tensors_red[i][3])
+            self.assertAlmostEqual(cdp.align_tensors[i*2+1].Syz, self.tensors_red[i][4])
+            self.assertEqual(cdp.align_tensors[i*2+1].name, self.red_list[i])
+
+            # Reduction.
+            self.assertEqual(cdp.align_tensors.reduction[i], [self.full_list[i], self.red_list[i]])
