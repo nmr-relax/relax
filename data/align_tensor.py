@@ -613,12 +613,18 @@ class AlignTensorList(ListType):
         self.append(AlignTensorData(name))
 
 
-    def from_xml(self, align_tensor_nodes):
+    def from_xml(self, align_tensor_super_node):
         """Recreate the alignment tensor data structure from the XML alignment tensor node.
 
-        @param align_tensor_nodes:  The alignment tensor XML nodes.
-        @type align_tensor_nodes:   list of xml.dom.minicompat.Element instances
+        @param align_tensor_super_node: The alignment tensor XML super node.
+        @type align_tensor_super_node:  list of xml.dom.minicompat.Element instances
         """
+
+        # Recreate all the alignment tensor data structures.
+        xml_to_object(align_tensor_super_node, self)
+
+        # Get the individual tensors.
+        align_tensor_nodes = align_tensor_super_node.getElementsByTagName('align_tensor')
 
         # Loop over the child nodes.
         for align_tensor_node in align_tensor_nodes:
