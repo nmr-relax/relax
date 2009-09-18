@@ -657,6 +657,9 @@ class AlignTensorList(ListType):
         # Set the alignment tensor attributes.
         tensor_list_element.setAttribute('desc', 'Alignment tensor list')
 
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
+
         # Loop over the tensors.
         for i in xrange(len(self)):
             # Create an XML element for a single tensor.
