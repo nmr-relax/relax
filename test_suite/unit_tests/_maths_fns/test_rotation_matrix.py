@@ -244,6 +244,11 @@ class Test_rotation_matrix(TestCase):
         # 8) Rotation matrix to Euler angles.
         alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
 
+        # 9) Euler angles to axis-angle.
+        axis, angle = euler_zyz_to_axis_angle(alpha_new, beta_new, gamma_new)
+
+        # 10) Axis-angle to Euler angles.
+        alpha_new, beta_new, gamma_new = axis_angle_to_euler_zyz(axis, angle)
 
         # Wrap the angles.
         alpha_new = wrap_angles(alpha_new, 0, 2*pi)

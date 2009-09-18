@@ -27,6 +27,30 @@ from numpy.linalg import norm
 from random import gauss, uniform
 
 
+def axis_angle_to_euler_zyz(axis, angle):
+    """Calculate the z-y-z Euler angles from the given axis-angle.
+
+    This first generates a rotation matrix via axis_angle_to_R() and then used this together with
+    R_to_euler_zyz() to obtain the Euler angles.
+
+    @param axis:    The 3D rotation axis.
+    @type axis:     numpy array, len 3
+    @param angle:   The rotation angle.
+    @type angle:    float
+    @return:        The alpha, beta, and gamma Euler angles in the z-y-z convention.
+    @rtype:         float, float, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    axis_angle_to_R(axis, angle, R)
+
+    # Return the Euler angles.
+    return R_to_euler_zyz(R)
+
+
 def axis_angle_to_R(axis, angle, R):
     """Generate the rotation matrix from the axis-angle notation.
 
