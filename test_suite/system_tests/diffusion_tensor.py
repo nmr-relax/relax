@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import pi
-from os import remove, sep
+from os import sep
 from unittest import TestCase
 import sys
 
@@ -30,6 +30,7 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
 from generic_fns.pipes import get_pipe
+from relax_io import delete
 from tempfile import mktemp
 
 
@@ -147,12 +148,9 @@ class Diffusion_tensor(TestCase):
         ds.__reset__()
 
         # Delete the temporary files.
-        try:
-            remove(self.tmpfile_sphere)
-            remove(self.tmpfile_spheroid)
-            remove(self.tmpfile_ellipsoid)
-        except OSError:
-            pass
+        delete(self.tmpfile_sphere, fail=False)
+        delete(self.tmpfile_spheroid, fail=False)
+        delete(self.tmpfile_ellipsoid, fail=False)
 
 
     def test_copy(self):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2009 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove, sep
+from os import sep
 import sys
 from tempfile import mktemp
 try:
@@ -32,6 +32,7 @@ except ImportError:
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from relax_io import delete
 
 
 
@@ -65,10 +66,7 @@ class Sequence_base_class:
         ds.__reset__()
 
         # Delete the temporary file.
-        try:
-            remove(self.tmpfile)
-        except OSError:
-            pass
+        delete(self.tmpfile, fail=False)
 
 
     def test_copy_protein_sequence(self):

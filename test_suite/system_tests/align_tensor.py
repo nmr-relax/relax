@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove
 from tempfile import mktemp
 from unittest import TestCase
 
