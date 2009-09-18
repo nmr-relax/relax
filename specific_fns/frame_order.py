@@ -524,7 +524,7 @@ class Frame_order(Common_functions):
             names.append('gamma')
 
             # The isotropic cone model.
-            if cdp.model == 'iso cone':
+            if hasattr(cdp, 'model') and cdp.model == 'iso cone':
                 names.append('theta_axis')
                 names.append('phi_axis')
                 names.append('theta_cone')
@@ -545,7 +545,7 @@ class Frame_order(Common_functions):
             names.append('gamma_err')
 
             # The isotropic cone model.
-            if cdp.model == 'iso cone':
+            if hasattr(cdp, 'model') and  cdp.model == 'iso cone':
                 names.append('theta_axis_err')
                 names.append('phi_axis_err')
                 names.append('theta_cone_err')
@@ -557,7 +557,7 @@ class Frame_order(Common_functions):
             names.append('gamma_sim')
 
             # The isotropic cone model.
-            if cdp.model == 'iso cone':
+            if hasattr(cdp, 'model') and  cdp.model == 'iso cone':
                 names.append('theta_axis_sim')
                 names.append('phi_axis_sim')
                 names.append('theta_cone_sim')
