@@ -50,6 +50,35 @@ from relax_warnings import RelaxWarning
 
 
 
+def delete(file_name, dir=None, fail=True):
+    """Deleting the given file, taking into account missing compression extensions.
+    
+    @param file_name:       The name of the file to delete.
+    @type file_name:        str
+    @keyword dir:           The directory containing the file.
+    @type dir:              None or str
+    @keyword fail:          A flag which if True will cause RelaxFileError to be raised.
+    @type fail:             bool
+    @raises RelaxFileError: If the file does not exist, and fail is set to true.
+    """
+
+    # File path.
+    file_path = get_file_path(file_name, dir)
+
+    # Test if the file exists and determine the compression type.
+    if access(file_path, F_OK):
+        pass
+    elif access(file_path + '.bz2', F_OK):
+        file_path = file_path + '.bz2'
+    elif access(file_path + '.gz', F_OK):
+        file_path = file_path + '.gz'
+    elif fail:
+        raise RelaxFileError(file_path)
+
+    # Remove the file.
+    remove(file_path)
+
+
 def determine_compression(file_path):
     """Function for determining the compression type, and for also testing if the file exists.
 
@@ -170,10 +199,25 @@ def get_file_path(file_name=None, dir=None):
     return file_path
 
 
-def log(file_name=None, dir=None, verbosity=1):
+def io_streams_restore():
+    """Restore all IO streams to the Python defaults."""
+
+    # Print out.
+    if verbosity:
+        print("Restoring the sys.stdin IO stream to the Python STDIN IO stream.")
+        print("Restoring the sys.stdout IO stream to the Python STDOUT IO stream.")
+        print("Restoring the sys.stderr IO stream to the Python STDERR IO stream.")
+
+    # Restore streams.
+    sys.stdin  = sys.__stdin__
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+
+
+def io_streams_log(file_name=None, dir=None, verbosity=1):
     """Turn on logging, sending both STDOUT and STDERR streams to a file.
 
-    @param file_name:   The name of the file to extract the data from.
+    @param file_name:   The name of the file.
     @type file_name:    str
     @param dir:         The path where the file is located.  If None, then the current directory is
                         assumed.
@@ -204,6 +248,45 @@ def log(file_name=None, dir=None, verbosity=1):
     sys.stdin  = log_stdin
     sys.stdout = log_stdout
     sys.stderr = log_stderr
+
+
+def io_streams_tee(file_name=None, dir=None, compress_type=0, verbosity=1):
+    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file.
+
+    @param file_name:       The name of the file.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current directory
+                            is assumed.
+    @type dir:              str
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @param verbosity:       The verbosity level.
+    @type verbosity:        int
+    """
+
+    # Tee file.
+    tee_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
+
+    # Tee IO streams.
+    tee_stdin  = stdin
+    tee_stdout = SplitIO()
+    tee_stderr = SplitIO()
+
+    # Print out.
+    if verbosity:
+        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
+        print(("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path))
+        print(("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path))
+
+    # Set the tee IO streams.
+    tee_stdout.split(stdout, tee_file)
+    tee_stderr.split(stderr, tee_file)
+
+    # IO stream redirection.
+    sys.stdin  = tee_stdin
+    sys.stdout = tee_stdout
+    sys.stderr = tee_stderr
 
 
 def mkdir_nofail(dir=None, verbosity=1):
@@ -405,45 +488,6 @@ def strip(data):
     return new
 
 
-def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
-    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file.
-
-    @param file_name:       The name of the file to extract the data from.
-    @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current directory
-                            is assumed.
-    @type dir:              str
-    @param compress_type:   The compression type.  The integer values correspond to the compression
-                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
-    @type compress_type:    int
-    @param verbosity:       The verbosity level.
-    @type verbosity:        int
-    """
-
-    # Tee file.
-    tee_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
-
-    # Tee IO streams.
-    tee_stdin  = stdin
-    tee_stdout = SplitIO()
-    tee_stderr = SplitIO()
-
-    # Print out.
-    if verbosity:
-        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
-        print(("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path))
-        print(("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path))
-
-    # Set the tee IO streams.
-    tee_stdout.split(stdout, tee_file)
-    tee_stderr.split(stderr, tee_file)
-
-    # IO stream redirection.
-    sys.stdin  = tee_stdin
-    sys.stdout = tee_stdout
-    sys.stderr = tee_stderr
-
-
 def test_binary(binary):
     """Function for testing that the binary string corresponds to a valid executable file.
 
@@ -540,85 +584,6 @@ class DummyFileObject:
         # Return the file lines (except the last as it is empty).
         return lines[:-1]
 
-
-
-class IO:
-    def __init__(self, relax):
-        """Class containing the file operations.
-
-        IO streams
-        ==========
-
-        Standard python IO streams:
-
-            - sys.stdin  = self.python_stdin
-            - sys.stdout = self.python_stdout
-            - sys.stderr = self.python_stderr
-
-        Logging IO streams:
-
-            - sys.stdin  = self.log_stdin  = self.python_stdin
-            - sys.stdout = self.log_stdout = self.log_file
-            - sys.stderr = self.log_stdout = (self.python_stderr, self.log_file)
-
-        Tee IO streams:
-
-            - sys.stdin  = self.tee_stdin  = self.python_stdin
-            - sys.stdout = self.tee_stdout = (self.python_stdout, self.tee_file)
-            - sys.stderr = self.tee_stdout = (self.python_stderr, self.tee_file)
-        """
-
-        self.relax = relax
-
-        # Standard python IO streams.
-        self.python_stdin  = stdin
-        self.python_stdout = stdout
-        self.python_stderr = stderr
-
-        # Logging IO streams.
-        self.log_stdin  = stdin
-        self.log_stdout = None
-        self.log_stderr = SplitIO()
-
-        # Tee IO streams.
-        self.tee_stdin  = stdin
-        self.tee_stdout = SplitIO()
-        self.tee_stderr = SplitIO()
-
-
-    def delete(self, file_name=None, dir=None):
-        """Function for deleting the given file."""
-
-        # File path.
-        file_path = get_file_path(file_name, dir)
-
-        # Test if the file exists and determine the compression type.
-        if access(file_path, F_OK):
-            pass
-        elif access(file_path + '.bz2', F_OK):
-            file_path = file_path + '.bz2'
-        elif access(file_path + '.gz', F_OK):
-            file_path = file_path + '.gz'
-        else:
-            raise RelaxFileError(file_path)
-
-        # Remove the file.
-        remove(file_path)
-
-
-    def logging_off(self, file_name=None, dir=None, verbosity=1):
-        """Function for turning logging and teeing off."""
-
-        # Print out.
-        if verbosity:
-            print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
-            print("Redirecting the sys.stdout IO stream to the python stdout IO stream.")
-            print("Redirecting the sys.stderr IO stream to the python stderr IO stream.")
-
-        # IO stream redirection.
-        sys.stdin  = self.python_stdin
-        sys.stdout = self.python_stdout
-        sys.stderr = self.python_stderr
 
 
 class SplitIO:
