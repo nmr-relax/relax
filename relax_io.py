@@ -74,6 +74,8 @@ def delete(file_name, dir=None, fail=True):
         file_path = file_path + '.gz'
     elif fail:
         raise RelaxFileError(file_path)
+    else:
+        return
 
     # Remove the file.
     remove(file_path)
