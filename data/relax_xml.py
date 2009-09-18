@@ -32,7 +32,7 @@ from string import strip
 from float import floatAsByteArray, packBytesAsPyFloat
 
 
-def fill_object_contents(doc, elem, object=None, blacklist=None):
+def fill_object_contents(doc, elem, object=None, blacklist=[]):
     """Place all simple python objects into the XML element namespace.
 
     @param doc:         The XML document object.
@@ -89,7 +89,7 @@ def node_value_to_python(elem):
     return eval(val)
 
 
-def xml_to_object(elem, base_object=None, set_fn=None, blacklist=None):
+def xml_to_object(elem, base_object=None, set_fn=None, blacklist=[]):
     """Convert the XML elements into python objects, and place these into the base object.
 
     @param elem:            The element to extract all python objects from.
