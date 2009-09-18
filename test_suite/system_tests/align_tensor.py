@@ -131,4 +131,4 @@ class Align_tensor(TestCase):
             self.assertEqual(cdp.align_tensors[i*2+1].name, self.red_list[i])
 
             # Reduction.
-            self.assertEqual(cdp.align_tensors.reduction[i], [self.full_list[i], self.red_list[i]])
+            self.assertEqual(cdp.align_tensors.reduction[i], [i*2, i*2+1])
