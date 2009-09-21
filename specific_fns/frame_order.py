@@ -25,10 +25,10 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi
+from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import array, float64, ones, transpose, zeros
+from numpy import arccos, array, float64, ones, transpose, zeros
 from re import search
 from warnings import warn
 
@@ -70,13 +70,26 @@ class Frame_order(Common_functions):
         # Init.
         row = []
 
-        # Loop over the increments.
-        for i in range(incs):
-            # The row.
-            row.append(lower + i * (upper - lower) / (incs - 1.0))
+        # Linear grid.
+        if dist_type == None:
+            # Loop over the increments.
+            for i in range(incs):
+                # The row.
+                row.append(lower + i * (upper - lower) / (incs - 1.0))
 
-        # Return the row.
-        return row
+        # Inverse cos distribution.
+        elif dist_type == 'acos':
+            # Generate the increment values of v from cos(upper) to cos(lower).
+            v = zeros(incs, float64)
+            val = (cos(lower) - cos(upper)) / (incs - 1.0)
+            for i in range(incs):
+                v[-i-1] = cos(upper) + float(i) * val
+        
+            # Generate the distribution.
+            row = arccos(v)
+
+        # Return the row (as a list).
+        return list(row)
 
 
     def __minimise_setup_tensors(self, sim_index=None):
@@ -645,8 +658,9 @@ class Frame_order(Common_functions):
 
         # Generate the grid.
         for i in range(n):
-            # Reset the distribution type.
+            # Reset the distribution type and row.
             dist_type = None
+            row = None
 
             # Alpha Euler angle.
             if cdp.params[i] == 'alpha':
@@ -659,7 +673,7 @@ class Frame_order(Common_functions):
             if cdp.params[i] == 'beta':
                 # Change the default increment numbers.
                 if not isinstance(inc, list):
-                    incs[i] = incs[i] / 2
+                    incs[i] = incs[i] / 2 + 1
 
                 # The distribution type.
                 dist_type = 'acos'
@@ -667,7 +681,13 @@ class Frame_order(Common_functions):
                 # Set the default bounds.
                 if default_bounds:
                     lower.append(0.0)
-                    upper.append(pi * (1.0 - 1.0/incs[i]))
+                    upper.append(pi)
+
+                # Get the grid row.
+                row = self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
+
+                # Remove the end point.
+                row = row[:-1]
 
             # Gamma Euler angle.
             if cdp.params[i] == 'gamma':
@@ -707,7 +727,11 @@ class Frame_order(Common_functions):
                         upper.append(pi * (1.0 - 1.0/incs[i]))
 
             # Get the grid row.
-            grid.append(self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type))
+            if not row:
+                row = self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
+
+            # Append the grid row.
+            grid.append(row)
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=grid, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
@@ -771,7 +795,6 @@ class Frame_order(Common_functions):
         # Grid search.
         if search('^[Gg]rid', min_algor):
             results = grid(func=target.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], verbosity=verbosity)
-            print results
 
         # Minimisation.
         else:
