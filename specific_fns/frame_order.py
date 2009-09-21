@@ -624,7 +624,7 @@ class Frame_order(Common_functions):
 
                 # The cone angle.
                 if cdp.params[i] == 'theta_cone':
-                    grid_ops.append([inc[i], 0.0, pi])
+                    grid_ops.append([inc[i], 0.0, pi * (1.0 - 1.0/inc[i])])
 
             # Lower bound (if supplied).
             if lower:
