@@ -27,6 +27,7 @@
 from copy import deepcopy
 from math import pi
 from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import array, float64, ones, transpose, zeros
 from re import search
 from warnings import warn
@@ -48,6 +49,35 @@ from specific_fns.base_class import Common_functions
 
 class Frame_order(Common_functions):
     """Class containing the specific methods of the Frame Order theories."""
+
+    def __grid_row(self, incs, lower, upper, dist_type=None):
+        """Set up a row of the grid search for a given parameter.
+
+        @param incs:        The number of increments.
+        @type incs:         int
+        @param lower:       The lower bounds.
+        @type lower:        float
+        @param upper:       The upper bounds.
+        @type upper:        float
+        @keyword dist_type: The spacing or distribution type between grid nodes.  If None, then a
+                            linear grid row is returned.  If 'acos', then an inverse cos
+                            distribution of points is returned (e.g. for uniform sampling in angular space).
+        @type dist_type:    None or str
+        @return:            The row of the grid.
+        @rtype:             list of float
+        """
+
+        # Init.
+        row = []
+
+        # Loop over the increments.
+        for i in range(incs):
+            # The row.
+            row.append(lower + i * (upper - lower) / (incs - 1.0))
+
+        # Return the row.
+        return row
+
 
     def __minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
@@ -389,7 +419,7 @@ class Frame_order(Common_functions):
         if not hasattr(cdp, 'pivot'):
             raise RelaxError("The pivot point for the cone motion has not been set.")
 
-        # The cone axis. 
+        # The cone axis.
         cone_axis = zeros(3, float64)
         generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
         print(("Cone axis: %s." % cone_axis))
@@ -566,25 +596,27 @@ class Frame_order(Common_functions):
         return names
 
 
-    def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
         """Perform a grid search.
 
-        @param lower:       The lower bounds of the grid search which must be equal to the number of
-                            parameters in the model.
-        @type lower:        array of numbers
-        @param upper:       The upper bounds of the grid search which must be equal to the number of
-                            parameters in the model.
-        @type upper:        array of numbers
-        @param inc:         The increments for each dimension of the space for the grid search.  The
-                            number of elements in the array must equal to the number of parameters
-                            in the model.
-        @type inc:          int or array of int
-        @param constraints: If True, constraints are applied during the grid search (eliminating
-                            parts of the grid).  If False, no constraints are used.
-        @type constraints:  bool
-        @param verbosity:   A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
-        @type verbosity:    int
+        @keyword lower:         The lower bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type lower:            list of float
+        @keyword upper:         The upper bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type upper:            list of float
+        @keyword inc:           The increments for each dimension of the space for the grid search.
+                                The number of elements in the array must equal to the number of
+                                parameters in the model.
+        @type inc:              int or list of int
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
+                                parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type verbosity:        int
+        @keyword sim_index:     The Monte Carlo simulation index.
+        @type sim_index:        None or int
         """
 
         # Test if the Frame Order model has been set up.
@@ -596,46 +628,89 @@ class Frame_order(Common_functions):
 
         # If inc is an int, convert it into an array of that value.
         if isinstance(inc, int):
-            inc = [inc]*n
+            incs = [inc]*n
+        else:
+            incs = inc
 
-        # Initialise the grid_ops structure.
-        grid_ops = []
+        # Initialise the grid increments structures.
+        default_bounds = False
+        if not lower:
+            lower = []
+            default_bounds = True
+        if not upper:
+            upper = []
+        grid = []
         """This structure is a list of lists.  The first dimension corresponds to the model
-        parameter.  The second dimension has the elements: 0, the number of increments in that
-        dimension; 1, the lower limit of the grid; 2, the upper limit of the grid."""
+        parameter.  The second dimension are the grid node positions."""
 
-        # Set the grid search options.
-        for i in xrange(n):
-            # Euler angles.
+        # Generate the grid.
+        for i in range(n):
+            # Reset the distribution type.
+            dist_type = None
+
+            # Alpha Euler angle.
             if cdp.params[i] == 'alpha':
-                grid_ops.append([inc[i], 0.0, 2*pi * (1.0 - 1.0/inc[i])])
+                # Set the default bounds.
+                if default_bounds:
+                    lower.append(0.0)
+                    upper.append(2*pi * (1.0 - 1.0/incs[i]))
+
+            # Beta Euler angle.
             if cdp.params[i] == 'beta':
-                grid_ops.append([inc[i]/2, 0.0, pi * (1.0 - 1.0/inc[i])])
+                # Change the default increment numbers.
+                if not isinstance(inc, list):
+                    incs[i] = incs[i] / 2
+
+                # The distribution type.
+                dist_type = 'acos'
+
+                # Set the default bounds.
+                if default_bounds:
+                    lower.append(0.0)
+                    upper.append(pi * (1.0 - 1.0/incs[i]))
+
+            # Gamma Euler angle.
             if cdp.params[i] == 'gamma':
-                grid_ops.append([inc[i], 0.0, 2*pi * (1.0 - 1.0/inc[i])])
+                # Set the default bounds.
+                if default_bounds:
+                    lower.append(0.0)
+                    upper.append(2*pi * (1.0 - 1.0/incs[i]))
 
             # The isotropic cone model.
             if cdp.model == 'iso cone':
-                # Cone axis angles and cone angle.
+                # Cone axis polar angle.
                 if cdp.params[i] == 'theta_axis':
-                    grid_ops.append([inc[i]/2, 0.0, pi * (1.0 - 1.0/inc[i])])
+                    # Change the default increment numbers.
+                    if not isinstance(inc, list):
+                        incs[i] = incs[i] / 2 + 1
+
+                    # The distribution type.
+                    dist_type = 'acos'
+
+                    # Set the default bounds.
+                    if default_bounds:
+                        lower.append(0.0)
+                        upper.append(pi)
+
+                # Cone axis azimuthal angle.
                 if cdp.params[i] == 'phi_axis':
-                    grid_ops.append([inc[i], 0.0, 2*pi * (1.0 - 1.0/inc[i])])
+                    # Set the default bounds.
+                    if default_bounds:
+                        lower.append(0.0)
+                        upper.append(2*pi * (1.0 - 1.0/incs[i]))
 
                 # The cone angle.
                 if cdp.params[i] == 'theta_cone':
-                    grid_ops.append([inc[i], 0.0, pi * (1.0 - 1.0/inc[i])])
+                    # Set the default bounds.
+                    if default_bounds:
+                        lower.append(0.0)
+                        upper.append(pi * (1.0 - 1.0/incs[i]))
 
-            # Lower bound (if supplied).
-            if lower:
-                grid_ops[i][1] = lower[i]
-
-            # Upper bound (if supplied).
-            if upper:
-                grid_ops[i][1] = upper[i]
+            # Get the grid row.
+            grid.append(self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type))
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', min_options=grid, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
@@ -693,8 +768,14 @@ class Frame_order(Common_functions):
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
 
+        # Grid search.
+        if search('^[Gg]rid', min_algor):
+            results = grid(func=target.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], verbosity=verbosity)
+            print results
+
         # Minimisation.
-        results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
+        else:
+            results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
         self.__unpack_opt_results(results, sim_index)
