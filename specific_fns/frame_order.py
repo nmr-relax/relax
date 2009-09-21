@@ -247,7 +247,14 @@ class Frame_order(Common_functions):
          """
 
         # Disassemble the results.
-        param_vector, func, iter_count, f_count, g_count, h_count, warning = results
+        if len(results) == 3:    # Grid search.
+            param_vector, func, iter_count = results
+            f_count = iter_count
+            g_count = 0.0
+            h_count = 0.0
+            warning = None
+        else:
+            param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
         # Catch infinite chi-squared values.
         if isInf(func):
