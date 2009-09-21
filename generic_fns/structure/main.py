@@ -216,12 +216,13 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
 
     # Try adding '.pdb' to the end of the file path, if the file can't be found.
     if not access(file_path, F_OK):
+        file_path_orig = file_path
         file_path = file_path + '.pdb'
 
     # Test if the file exists.
     if not access(file_path, F_OK):
         if fail:
-            raise RelaxFileError('PDB', file_path)
+            raise RelaxFileError('PDB', file_path_orig)
         else:
             warn(RelaxNoPDBFileWarning(file_path))
             return
