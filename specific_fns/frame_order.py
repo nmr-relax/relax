@@ -608,19 +608,19 @@ class Frame_order(Common_functions):
         for i in xrange(n):
             # Euler angles.
             if cdp.params[i] == 'alpha':
-                grid_ops.append([inc[i], 0.0, 2*pi])
+                grid_ops.append([inc[i], 0.0, 2*pi * (1.0 - 1.0/inc[i])])
             if cdp.params[i] == 'beta':
-                grid_ops.append([inc[i], 0.0, pi])
+                grid_ops.append([inc[i]/2, 0.0, pi * (1.0 - 1.0/inc[i])])
             if cdp.params[i] == 'gamma':
-                grid_ops.append([inc[i], 0.0, 2*pi])
+                grid_ops.append([inc[i], 0.0, 2*pi * (1.0 - 1.0/inc[i])])
 
             # The isotropic cone model.
             if cdp.model == 'iso cone':
                 # Cone axis angles and cone angle.
                 if cdp.params[i] == 'theta_axis':
-                    grid_ops.append([inc[i], 0.0, pi])
+                    grid_ops.append([inc[i], 0.0, pi * (1.0 - 1.0/inc[i])])
                 if cdp.params[i] == 'phi_axis':
-                    grid_ops.append([inc[i], 0.0, 2*pi])
+                    grid_ops.append([inc[i], 0.0, 2*pi * (1.0 - 1.0/inc[i])])
 
                 # The cone angle.
                 if cdp.params[i] == 'theta_cone':
