@@ -794,7 +794,7 @@ class Frame_order(Common_functions):
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
-            results = grid(func=target.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], verbosity=verbosity)
+            results = grid(func=target.func, args=(), incs=min_options, verbosity=verbosity)
 
         # Minimisation.
         else:
