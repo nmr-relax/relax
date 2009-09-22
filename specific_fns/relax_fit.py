@@ -627,6 +627,8 @@ class Relax_fit(Common_functions):
             # Linear constraints.
             if constraints:
                 A, b = self.linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+            else:
+                A, b = None, None
 
             # Print out.
             if verbosity >= 1:
@@ -679,36 +681,24 @@ class Relax_fit(Common_functions):
             # Minimisation.
             ###############
 
-            # Constrained optimisation.
-            if constraints:
-                # Grid search.
-                if search('^[Gg]rid', min_algor):
-                    results = grid(func=func, args=(), num_incs=inc, lower=lower, upper=upper, verbosity=verbosity)
-
-                # Minimisation.
-                else:
-                    results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
-
-            # Unconstrained optimisation.
-            else:
-                # Grid search.
-                if search('^[Gg]rid', min_algor):
-                    results = grid(func=target.func, args=(), incs=min_options, verbosity=verbosity)
-
-                # Minimisation.
-                else:
-                    results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
-
-            # Unpack the results.
-            if results == None:
-                return
+            # Grid search.
             if search('^[Gg]rid', min_algor):
+                results = grid(func=func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+
+                # Unpack the results.
                 param_vector, chi2, iter_count = results
                 f_count = iter_count
                 g_count = 0.0
                 h_count = 0.0
                 warning = None
+
+            # Minimisation.
             else:
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+
+                # Unpack the results.
+                if results == None:
+                    return
                 param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
