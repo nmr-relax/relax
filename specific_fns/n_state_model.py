@@ -26,6 +26,7 @@
 # Python module imports.
 from math import acos, cos, pi, sqrt
 from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import array, dot, float64, identity, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
@@ -1267,45 +1268,37 @@ class N_state_model(Common_functions):
 
         # If inc is a single int, convert it into an array of that value.
         if isinstance(inc, int):
-            temp = []
-            for j in xrange(n):
-                temp.append(inc)
-            inc = temp
+            inc = [inc]*n
 
-        # Initialise the grid_ops structure.
-        grid_ops = []
-        """This structure is a list of lists.  The first dimension corresponds to the model
-        parameter.  The second dimension has the elements: 0, the number of increments in that
-        dimension; 1, the lower limit of the grid; 2, the upper limit of the grid."""
+        # Setup the default bounds.
+        if not lower:
+            # Init.
+            lower = []
+            upper = []
 
-        # Set the grid search options.
-        for i in xrange(n):
-            # i is in the parameter array.
-            if i < len(cdp.params):
-                # Probabilities (default values).
-                if search('^p', cdp.params[i]):
-                    grid_ops.append([inc[i], 0.0, 1.0])
+            for i in range(n):
+                # i is in the parameter array.
+                if i < len(cdp.params):
+                    # Probabilities (default values).
+                    if search('^p', cdp.params[i]):
+                        lower.append(0.0)
+                        upper.append(1.0)
 
-                # Angles (default values).
-                if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
-                    grid_ops.append([inc[i], 0.0, 2*pi])
-                elif search('^beta', cdp.params[i]):
-                    grid_ops.append([inc[i], 0.0, pi])
-
-            # Otherwise this must be an alignment tensor component.
-            else:
-                grid_ops.append([inc[i], -1e-3, 1e-3])
-
-            # Lower bound (if supplied).
-            if lower:
-                grid_ops[i][1] = lower[i]
-
-            # Upper bound (if supplied).
-            if upper:
-                grid_ops[i][1] = upper[i]
+                    # Angles (default values).
+                    if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
+                        lower.append(0.0)
+                        upper.append(2*pi)
+                    elif search('^beta', cdp.params[i]):
+                        lower.append(0.0)
+                        upper.append(pi)
+    
+                # Otherwise this must be an alignment tensor component.
+                else:
+                    lower.append(-1e-3)
+                    upper.append(1e-3)
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', min_options=[inc, lower, upper], constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
@@ -1393,6 +1386,8 @@ class N_state_model(Common_functions):
         # Linear constraints.
         if constraints:
             A, b = self.__linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
+        else:
+            A, b = None, None
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
@@ -1412,16 +1407,26 @@ class N_state_model(Common_functions):
         # Set up the class instance containing the target function.
         model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
-        # Minimisation.
-        if constraints:
-            results = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
-        else:
-            results = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
-        if results == None:
-            return
+        # Grid search.
+        if search('^[Gg]rid', min_algor):
+            print min_options
+            results = grid(func=model.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], A=A, b=b, verbosity=verbosity)
 
-        # Disassemble the results.
-        param_vector, func, iter_count, f_count, g_count, h_count, warning = results
+            # Unpack the results.
+            param_vector, func, iter_count = results
+            f_count = iter_count
+            g_count = 0.0
+            h_count = 0.0
+            warning = None
+
+        # Minimisation.
+        else:
+            results = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+
+            # Unpack the results.
+            if results == None:
+                return
+            param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
         # Catch infinite chi-squared values.
         if isInf(func):
