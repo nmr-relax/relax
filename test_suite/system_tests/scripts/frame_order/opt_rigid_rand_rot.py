@@ -20,7 +20,7 @@ frame_order.select_model('rigid')
 frame_order.ref_domain('a')
 
 # Optimise.
-grid_search(inc=4)
+grid_search(inc=6)
 minimise('simplex', constraints=False)
 
 # Write the results.
