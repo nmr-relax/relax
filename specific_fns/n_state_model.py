@@ -1276,6 +1276,7 @@ class N_state_model(Common_functions):
             lower = []
             upper = []
 
+            # Loop over the parameters.
             for i in range(n):
                 # i is in the parameter array.
                 if i < len(cdp.params):
