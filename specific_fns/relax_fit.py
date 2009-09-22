@@ -466,16 +466,16 @@ class Relax_fit(Common_functions):
                 if spin.params[i] == 'Rx':
                     lower.append(0.0)
                     upper.append(20.0)
-    
+
                 # Intensity
                 elif search('^I', spin.params[i]):
                     # Find the position of the first time point.
                     pos = cdp.relax_times.index(min(cdp.relax_times))
-    
+
                     # Defaults.
                     lower.append(0.0)
                     upper.append(average(spin.intensities[pos]))
-    
+
         # Parameter scaling.
         for i in range(n):
             lower[i] = lower[i] / scaling_matrix[i, i]
