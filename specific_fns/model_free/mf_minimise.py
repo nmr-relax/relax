@@ -22,9 +22,13 @@
 
 # Python module imports.
 from math import pi
+from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import float64, array, dot, zeros
 from numpy.linalg import inv
-from re import match
+from re import match, search
+import sys
+from warnings import warn
 
 # relax module imports.
 from float import isNaN, isInf
@@ -32,9 +36,9 @@ from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
-from minfx.generic import generic_minimise
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_warnings import RelaxWarning
 
 
 
@@ -504,189 +508,165 @@ class Mf_minimise:
 
         # If inc is a single int, convert it into an array of that value.
         if isinstance(inc, int):
-            temp = []
-            for i in xrange(num_params):
-                temp.append(inc)
-            inc = temp
+            inc = [inc]*num_params
 
-        # Minimisation options initialisation.
-        min_options = []
-        m = 0
+        # Set up the default bounds.
+        if not lower:
+            # Init.
+            lower = []
+            upper = []
 
-        # Determine the model type.
-        model_type = self.determine_model_type()
+            # Determine the model type.
+            model_type = self.determine_model_type()
 
-        # Minimisation options for diffusion tensor parameters.
-        if model_type == 'diff' or model_type == 'all':
-            # Get the diffusion tensor specific configuration.
-            m = self.grid_search_config_diff(min_options, inc, m)
+            # Minimisation options for diffusion tensor parameters.
+            if model_type == 'diff' or model_type == 'all':
+                # Get the diffusion tensor specific configuration.
+                self.grid_search_diff_bounds(lower, upper)
 
-        # Model-free parameters (residue specific parameters).
-        if model_type != 'diff':
-            # The loop.
-            if spin:
-                loop = [spin]
-            else:
-                loop = spin_loop(spin_id)
+            # Model-free parameters (residue specific parameters).
+            if model_type != 'diff':
+                # The loop.
+                if spin:
+                    loop = [spin]
+                else:
+                    loop = spin_loop(spin_id)
 
-            # Loop over the spins.
-            for spin in loop:
-                # Skip deselected residues.
-                if not spin.select:
-                    continue
+                # Loop over the spins.
+                for spin in loop:
+                    # Skip deselected residues.
+                    if not spin.select:
+                        continue
 
-                # Get the spin specific configuration.
-                m = self.grid_search_config_spin(min_options, spin, inc, m)
+                    # Get the spin specific configuration.
+                    self.grid_search_spin_bounds(spin, lower, upper)
 
-        # Test if the grid is too large.
-        self.test_grid_size(min_options, verbosity=verbosity)
-
-        # Complete the grid search configuration.
-        self.grid_search_config_fin(min_options, lower, upper, scaling_matrix)
+        # Diagonal scaling of minimisation options.
+        for i in xrange(num_params):
+            lower[i] = lower[i] / scaling_matrix[i, i]
+            upper[i] = upper[i] / scaling_matrix[i, i]
 
         # Return the minimisation options.
-        return min_options
+        return inc, lower, upper
 
 
-    def grid_search_config_diff(self, min_options, inc, m):
-        """Set up of the grid search for the diffusion tensor.
+    def grid_search_diff_bounds(self, lower, upper):
+        """Set up the default grid search bounds the diffusion tensor.
 
-        This method appends the grid search configuration details to min_options list.  These
-        details are in the form of a list consisting of the number of increments, lower bound, and
-        upper bound for the corresponding residue.
+        This method appends the default bounds to the lower and upper lists.
 
-        @param min_options: An array to append the grid search configuration details to.
-        @type min_options:  list
-        @param inc:         The increments for each dimension of the space for the grid search.  The
-                            number of elements in the array must equal to the number of parameters
-                            in the model.
-        @type inc:          array of int
-        @param m:           The parameter index for the complete model.
-        @type m:            int
-        @return:            The index of the last parameter encountered (m).
-        @rtype:             int
+        @param lower:       The lower bound list to append to.
+        @type lower:        list
+        @param upper:       The upper bound list to append to.
+        @type upper:        list
         """
 
         # Spherical diffusion {tm}.
         if cdp.diff_tensor.type == 'sphere':
-            min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-            m = m + 1
+            lower.append(1.0 * 1e-9)
+            upper.append(12.0 * 1e-9)
 
         # Spheroidal diffusion {tm, Da, theta, phi}.
         if cdp.diff_tensor.type == 'spheroid':
-            min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
+            # tm.
+            lower.append(1.0 * 1e-9)
+            upper.append(12.0 * 1e-9)
+
+            # Da.
             if cdp.diff_tensor.spheroid_type == 'prolate':
-                min_options.append([inc[1], 0.0, 1e7])
+                lower.append(0.0)
+                upper.append(1e7)
             elif cdp.diff_tensor.spheroid_type == 'oblate':
-                min_options.append([inc[1], -1e7, 0.0])
+                lower.append(-1e7)
+                upper.append(0.0)
             else:
-                min_options.append([inc[1], -1e7, 1e7])
-            min_options.append([inc[2], 0.0, pi])
-            min_options.append([inc[3], 0.0, pi])
-            m = m + 4
+                lower.append(-1e7)
+                upper.append(1e7)
+
+            # theta.
+            lower.append(0.0)
+            upper.append(pi)
+
+            # phi.
+            lower.append(0.0)
+            upper.append(pi)
 
         # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
         elif cdp.diff_tensor.type == 'ellipsoid':
-            min_options.append([inc[0], 1.0 * 1e-9, 12.0 * 1e-9])
-            min_options.append([inc[1], 0.0, 1e7])
-            min_options.append([inc[2], 0.0, 1.0])
-            min_options.append([inc[3], 0.0, pi])
-            min_options.append([inc[4], 0.0, pi])
-            min_options.append([inc[5], 0.0, pi])
-            m = m + 6
+            # tm.
+            lower.append(1.0 * 1e-9)
+            upper.append(12.0 * 1e-9)
 
-        # Return the parameter index.
-        return m
+            # Da.
+            lower.append(0.0)
+            upper.append(1e7)
 
+            # Dr.
+            lower.append(0.0)
+            upper.append(1.0)
 
-    def grid_search_config_fin(self, min_options, lower, upper, scaling_matrix):
-        """Complete the grid search configuration.
+            # alpha.
+            lower.append(0.0)
+            upper.append(pi)
 
-        @param min_options:     The grid search configuration details.
-        @type min_options:      list of lists (n, 3)
-        @param lower:           The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-        @type lower:            array of numbers
-        @param upper:           The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-        @type upper:            array of numbers
-        @param scaling_matrix:  The scaling matrix.
-        @type scaling_matrix:   numpy matrix
-        """
+            # beta.
+            lower.append(0.0)
+            upper.append(pi)
 
-        # Set the lower and upper bounds if these are supplied.
-        if lower != None:
-            for i in xrange(n):
-                if lower[i] != None:
-                    min_options[i][1] = lower[i]
-        if upper != None:
-            for i in xrange(n):
-                if upper[i] != None:
-                    min_options[i][2] = upper[i]
-
-        # Diagonal scaling of minimisation options.
-        for i in xrange(len(min_options)):
-            min_options[i][1] = min_options[i][1] / scaling_matrix[i, i]
-            min_options[i][2] = min_options[i][2] / scaling_matrix[i, i]
+            # gamma.
+            lower.append(0.0)
+            upper.append(pi)
 
 
-    def grid_search_config_spin(self, min_options, spin, inc, m):
-        """Set up of the grid search for a single spin.
+    def grid_search_spin_bounds(self, spin, lower, upper):
+        """Set up the default grid search bounds for a single spin.
 
-        This method appends the grid search configuration details to min_options list.  These
-        details are in the form of a list consisting of the number of increments, lower bound, and
-        upper bound for the corresponding residue.  The ordering of the lists in min_options matches
-        that of the params list in the spin container.
+        This method appends the default bounds to the lower and upper lists.  The ordering of the
+        lists in min_options matches that of the params list in the spin container.
 
-        @param min_options: An array to append the grid search configuration details to.
-        @type min_options:  list
         @param spin:        A SpinContainer object.
         @type spin:         class instance
-        @param inc:         The increments for each dimension of the space for the grid search.  The
-                            number of elements in the array must equal to the number of parameters
-                            in the model.
-        @type inc:          array of int
-        @param m:           The parameter index for the complete model.
-        @type m:            int
-        @return:            The index of the last parameter encountered (m).
-        @rtype:             int
+        @param lower:       The lower bound list to append to.
+        @type lower:        list
+        @param upper:       The upper bound list to append to.
+        @type upper:        list
         """
 
         # Loop over the model-free parameters.
         for i in xrange(len(spin.params)):
             # Local tm.
             if spin.params[i] == 'local_tm':
-                min_options.append([inc[m], 1.0 * 1e-9, 12.0 * 1e-9])
+                lower.append(1.0 * 1e-9)
+                upper.append(12.0 * 1e-9)
 
             # {S2, S2f, S2s}.
             elif match('S2', spin.params[i]):
-                min_options.append([inc[m], 0.0, 1.0])
+                lower.append(0.0)
+                upper.append(1.0)
 
             # {te, tf, ts}.
             elif match('t', spin.params[i]):
-                min_options.append([inc[m], 0.0, 500.0 * 1e-12])
+                lower.append(0.0)
+                upper.append(500.0 * 1e-12)
 
             # Rex.
             elif spin.params[i] == 'Rex':
-                min_options.append([inc[m], 0.0, 5.0 / (2.0 * pi * spin.frq[0])**2])
+                lower.append(0.0)
+                upper.append(5.0 / (2.0 * pi * spin.frq[0])**2)
 
             # Bond length.
             elif spin.params[i] == 'r':
-                min_options.append([inc[m], 1.0 * 1e-10, 1.05 * 1e-10])
+                lower.append(1.0 * 1e-10)
+                upper.append(1.05 * 1e-10)
 
             # CSA.
             elif spin.params[i] == 'CSA':
-                min_options.append([inc[m], -120 * 1e-6, -200 * 1e-6])
+                lower.append(-120 * 1e-6)
+                upper.append(-200 * 1e-6)
 
             # Unknown option.
             else:
                 raise RelaxError("Unknown model-free parameter.")
-
-            # Increment m.
-            m = m + 1
-
-        # Return the parameter index.
-        return m
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -904,7 +884,7 @@ class Mf_minimise:
 
             # Configure the grid search.
             if match('^[Gg]rid', min_algor):
-                min_options = self.grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower, upper = self.grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
@@ -913,6 +893,8 @@ class Mf_minimise:
             # Linear constraints.
             if constraints:
                 A, b = self.linear_constraints(num_params, model_type=model_type, spin=spin, scaling_matrix=scaling_matrix)
+            else:
+                A, b = None, None
 
             # Initialise the iteration counter and function, gradient, and Hessian call counters.
             iter_count = 0
@@ -968,18 +950,26 @@ class Mf_minimise:
             # Minimisation.
             ###############
 
-            # Constrained optimisation.
-            if constraints:
+            # Grid search.
+            if search('^[Gg]rid', min_algor):
+                results = grid(func=self.mf.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+
+                # Unpack the results.
+                param_vector, func, iter, warning = results
+                fc = iter
+                gc = 0.0
+                hc = 0.0
+
+            # Minimisation.
+            else:
                 results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
 
-            # Unconstrained optimisation.
-            else:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
+                # Unpack the results.
+                if results == None:
+                    continue
+                param_vector, func, iter, fc, gc, hc, warning = results
 
-            # Disassemble the results.
-            if results == None:
-                continue
-            param_vector, func, iter, fc, gc, hc, warning = results
+            # Update the stats.
             iter_count = iter_count + iter
             f_count = f_count + fc
             g_count = g_count + gc
@@ -1274,28 +1264,3 @@ class Mf_minimise:
                 spin.g_count = None
                 spin.h_count = None
                 spin.warning = None
-
-
-    def test_grid_size(self, min_options, verbosity=1):
-        """Test the size of the grid search.
-
-        @param min_options: The grid search configuration.
-        @type min_options:  list
-        @keyword verbosity: A flag specifying the amount of information to print.  The higher the
-                            value, the greater the verbosity.
-        @type verbosity:    int
-        @raises RelaxError: If the grid size corresponds to a long int.
-        """
-
-        # Determine the grid size.
-        grid_size = 1
-        for i in xrange(len(min_options)):
-            grid_size = grid_size * min_options[i][0]
-
-        # Print out.
-        if verbosity >= 1:
-            print(("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"))
-
-        # Too big.
-        if isinstance(grid_size, long):
-            raise RelaxError("A grid search of size " + repr(grid_size) + " is too large.")
