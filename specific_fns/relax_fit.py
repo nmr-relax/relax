@@ -454,32 +454,30 @@ class Relax_fit(Common_functions):
         elif isinstance(inc, int):
             inc = [inc]*n
 
-        # Minimisation options initialisation.
-        default_bounds = False
+        # Set up the default bounds.
         if not lower:
+            # Init.
             lower = []
-            default_bounds = True
-        if not upper:
             upper = []
-        j = 0
 
-        # Loop over the parameters.
-        for i in xrange(len(spin.params)):
-            # Relaxation rate (from 0 to 20 s^-1).
-            if spin.params[i] == 'Rx' and default_bounds:
-                lower.append(0.0)
-                upper.append(20.0)
-
-            # Intensity
-            elif search('^I', spin.params[i]) and default_bounds:
-                # Find the position of the first time point.
-                pos = cdp.relax_times.index(min(cdp.relax_times))
-
-                # Defaults.
-                lower.append(0.0)
-                upper.append(average(spin.intensities[pos]))
-
-            # Parameter scaling.
+            # Loop over the parameters.
+            for i in range(n):
+                # Relaxation rate (from 0 to 20 s^-1).
+                if spin.params[i] == 'Rx':
+                    lower.append(0.0)
+                    upper.append(20.0)
+    
+                # Intensity
+                elif search('^I', spin.params[i]):
+                    # Find the position of the first time point.
+                    pos = cdp.relax_times.index(min(cdp.relax_times))
+    
+                    # Defaults.
+                    lower.append(0.0)
+                    upper.append(average(spin.intensities[pos]))
+    
+        # Parameter scaling.
+        for i in range(n):
             lower[i] = lower[i] / scaling_matrix[i, i]
             upper[i] = upper[i] / scaling_matrix[i, i]
 
