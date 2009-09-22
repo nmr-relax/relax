@@ -1414,11 +1414,10 @@ class N_state_model(Common_functions):
             results = grid(func=model.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], A=A, b=b, verbosity=verbosity)
 
             # Unpack the results.
-            param_vector, func, iter_count = results
+            param_vector, func, iter_count, warning = results
             f_count = iter_count
             g_count = 0.0
             h_count = 0.0
-            warning = None
 
         # Minimisation.
         else:

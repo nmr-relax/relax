@@ -684,11 +684,10 @@ class Relax_fit(Common_functions):
                 results = grid(func=func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
 
                 # Unpack the results.
-                param_vector, chi2, iter_count = results
+                param_vector, chi2, iter_count, warning = results
                 f_count = iter_count
                 g_count = 0.0
                 h_count = 0.0
-                warning = None
 
             # Minimisation.
             else:

@@ -247,12 +247,11 @@ class Frame_order(Common_functions):
          """
 
         # Disassemble the results.
-        if len(results) == 3:    # Grid search.
-            param_vector, func, iter_count = results
+        if len(results) == 4:    # Grid search.
+            param_vector, func, iter_count, warning = results
             f_count = iter_count
             g_count = 0.0
             h_count = 0.0
-            warning = None
         else:
             param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
