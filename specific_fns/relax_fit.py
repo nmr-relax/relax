@@ -24,6 +24,8 @@
 """The relaxation curve fitting specific code."""
 
 # Python module imports.
+from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, zeros
 from numpy.linalg import inv
 from re import match, search
@@ -33,7 +35,6 @@ from dep_check import C_module_exp_fn
 from base_class import Common_functions
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
-from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 
 # C modules.
@@ -440,70 +441,49 @@ class Relax_fit(Common_functions):
             raise RelaxError("Cannot run a grid search on a model with zero parameters.")
 
         # Lower bounds.
-        if lower != None:
-            if len(lower) != n:
-                raise RelaxLenError('lower bounds', n)
+        if lower != None and len(lower) != n:
+            raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
-        if upper != None:
-            if len(upper) != n:
-                raise RelaxLenError('upper bounds', n)
+        if upper != None and len(upper) != n:
+            raise RelaxLenError('upper bounds', n)
 
-        # Increment.
-        if isinstance(inc, list):
-            if len(inc) != n:
-                raise RelaxLenError('increment', n)
-            inc = inc
+        # Increments.
+        if isinstance(inc, list) and len(inc) != n:
+            raise RelaxLenError('increment', n)
         elif isinstance(inc, int):
-            temp = []
-            for j in xrange(n):
-                temp.append(inc)
-            inc = temp
+            inc = [inc]*n
 
         # Minimisation options initialisation.
-        min_options = []
+        default_bounds = False
+        if not lower:
+            lower = []
+            default_bounds = True
+        if not upper:
+            upper = []
         j = 0
 
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
             # Relaxation rate (from 0 to 20 s^-1).
-            if spin.params[i] == 'Rx':
-                min_options.append([inc[j], 0.0, 20.0])
+            if spin.params[i] == 'Rx' and default_bounds:
+                lower.append(0.0)
+                upper.append(20.0)
 
             # Intensity
-            elif search('^I', spin.params[i]):
+            elif search('^I', spin.params[i]) and default_bounds:
                 # Find the position of the first time point.
                 pos = cdp.relax_times.index(min(cdp.relax_times))
 
-                # Scaling.
-                min_options.append([inc[j], 0.0, average(spin.intensities[pos])])
+                # Defaults.
+                lower.append(0.0)
+                upper.append(average(spin.intensities[pos]))
 
-            # Increment j.
-            j = j + 1
+            # Parameter scaling.
+            lower[i] = lower[i] / scaling_matrix[i, i]
+            upper[i] = upper[i] / scaling_matrix[i, i]
 
-        # Set the lower and upper bounds if these are supplied.
-        if lower != None:
-            for j in xrange(n):
-                if lower[j] != None:
-                    min_options[j][1] = lower[j]
-        if upper != None:
-            for j in xrange(n):
-                if upper[j] != None:
-                    min_options[j][2] = upper[j]
-
-        # Test if the grid is too large.
-        grid_size = 1
-        for i in xrange(len(min_options)):
-            grid_size = grid_size * min_options[i][0]
-        if isinstance(grid_size, long):
-            raise RelaxError("A grid search of size " + repr(grid_size) + " is too large.")
-
-        # Diagonal scaling of minimisation options.
-        for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
-
-        return grid_size, min_options
+        return inc, lower, upper
 
 
     def linear_constraints(self, spin=None, scaling_matrix=None):
@@ -642,7 +622,7 @@ class Relax_fit(Common_functions):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                grid_size, min_options = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower, upper = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
@@ -660,10 +640,6 @@ class Relax_fit(Common_functions):
                 string = "Fitting to spin " + repr(spin_id)
                 print(("\n\n" + string))
                 print((len(string) * '~'))
-
-                # Grid search print out.
-                if match('^[Gg]rid', min_algor):
-                    print(("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"))
 
 
             # Initialise the function to minimise.
@@ -703,13 +679,37 @@ class Relax_fit(Common_functions):
             # Minimisation.
             ###############
 
+            # Constrained optimisation.
             if constraints:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+                # Grid search.
+                if search('^[Gg]rid', min_algor):
+                    results = grid(func=func, args=(), num_incs=inc, lower=lower, upper=upper, verbosity=verbosity)
+
+                # Minimisation.
+                else:
+                    results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+
+            # Unconstrained optimisation.
             else:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
+                # Grid search.
+                if search('^[Gg]rid', min_algor):
+                    results = grid(func=target.func, args=(), incs=min_options, verbosity=verbosity)
+
+                # Minimisation.
+                else:
+                    results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
+
+            # Unpack the results.
             if results == None:
                 return
-            param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+            if search('^[Gg]rid', min_algor):
+                param_vector, chi2, iter_count = results
+                f_count = iter_count
+                g_count = 0.0
+                h_count = 0.0
+                warning = None
+            else:
+                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
             if scaling:
