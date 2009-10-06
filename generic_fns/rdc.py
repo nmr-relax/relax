@@ -362,34 +362,47 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read the RDC data from file.
 
-    @param id:              The RDC identification string.
+    @keyword id:            The alignment tensor ID string.
     @type id:               str
-    @param file:            The name of the file to open.
+    @keyword file:          The name of the file to open.
     @type file:             str
-    @param dir:             The directory containing the file (defaults to the current directory
+    @keyword dir:           The directory containing the file (defaults to the current directory
                             if None).
     @type dir:              str or None
-    @param file_data:       An alternative opening a file, if the data already exists in the
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the
                             correct format.  The format is a list of lists where the first index
                             corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword spin_id:       The spin identification string.
-    @type spin_id:          None or str
-    @param mol_name_col:    The column containing the molecule name information.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
+                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
+                            arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
+                            spin_id_col must be None.
     @type mol_name_col:     int or None
-    @param res_name_col:    The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied,
+                            spin_id_col must be None.
     @type res_name_col:     int or None
-    @param res_num_col:     The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied,
+                            spin_id_col must be None.
     @type res_num_col:      int or None
-    @param spin_name_col:   The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied,
+                            spin_id_col must be None.
     @type spin_name_col:    int or None
-    @param spin_num_col:    The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
+                            spin_id_col must be None.
     @type spin_num_col:     int or None
-    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @keyword data_col:      The column containing the RDC data in Hz.
+    @type data_col:         int or None
+    @keyword error_col:     The column containing the RDC errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword spin_id:       The spin ID string.
+    @type spin_id:          None or str
     """
 
     # Test if the current data pipe exists.
@@ -403,63 +416,45 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     if data_col == None and error_col == None:
         raise RelaxError("One of either the data or error column must be supplied.")
 
-    # Minimum number of columns.
-    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
+    # Spin specific data.
+    #####################
 
-    # Extract the data from the file.
-    if not file_data:
-        # Extract.
-        file_data = extract_data(file, dir)
+    # Loop over the RDC data.
+    print(("\n%-50s %-15s %-15s" % ("spin_id", "value", "error")))
+    for data in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+        # Unpack.
+        if data_col and error_col:
+            id, value, error = data
+        elif data_col:
+            id, value = data
+        else:
+            id, error = data
 
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            try:
-                if data_col != None:
-                    float(file_data[i][data_col])
-                else:
-                    float(file_data[i][error_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
+        # Get the corresponding spin container.
+        spin = return_spin([id, spin_id])
+        if spin == None:
+            raise RelaxNoSpinError(id)
 
-        # Remove the header.
-        file_data = file_data[header_lines:]
+        # Add the data.
+        if data_col:
+            # Initialise.
+            if not hasattr(spin, 'rdc'):
+                spin.rdc = []
 
-        # Strip the data of all comments and empty lines.
-        file_data = strip(file_data)
+            # Append the value.
+            spin.rdc.append(value)
 
-    # Test the validity of the RDC data.
-    missing = True
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-        elif data_col != None and file_data[i][data_col] == 'None':
-            continue
-        elif error_col != None and file_data[i][error_col] == 'None':
-            continue
+        # Add the error.
+        if error_col:
+            # Initialise.
+            if not hasattr(spin, 'rdc_err'):
+                spin.rdc_err = []
 
-        # Test that the data are numbers.
-        try:
-            if res_num_col != None:
-                int(file_data[i][res_num_col])
-            if spin_num_col != None:
-                int(file_data[i][spin_num_col])
-            if data_col != None:
-                float(file_data[i][data_col])
-            if error_col != None:
-                float(file_data[i][error_col])
-        except ValueError:
-            raise RelaxError("The RDC data in the line " + repr(file_data[i]) + " is invalid.")
+            # Append the error.
+            spin.rdc_err.append(error)
 
-        # Right, data is ok and exists.
-        missing = False
-
-    # Hmmm, no data!
-    if missing:
-        raise RelaxError("No corresponding data could be found within the file.")
+        # Print out.
+        print(("%-50s %15s %15s" % (id, value, error)))
 
 
     # Global (non-spin specific) data.
@@ -472,58 +467,6 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     # Add the RDC id string.
     if id not in cdp.rdc_ids:
         cdp.rdc_ids.append(id)
-
-
-    # Spin specific data.
-    #####################
-
-    # Loop over the RDC data.
-    print(("\n%-50s %-15s %-15s" % ("spin_id", "value", "error")))
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-
-        # Generate the spin identification string.
-        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
-        # Convert the data.
-        value = None
-        if data_col != None:
-            value = eval(file_data[i][data_col])
-        error = None
-        if error_col != None:
-            error = eval(file_data[i][error_col])
-
-        # Test the error value (cannot be 0.0).
-        if error == 0.0:
-            raise RelaxError("An invalid error value of zero has been encountered.")
-
-        # Get the corresponding spin container.
-        spin = return_spin([id, spin_id])
-        if spin == None:
-            raise RelaxNoSpinError(id)
-
-        # Add the data.
-        if data_col != None:
-            # Initialise.
-            if not hasattr(spin, 'rdc'):
-                spin.rdc = []
-
-            # Append the value.
-            spin.rdc.append(value)
-
-        # Add the error.
-        if error_col != None:
-            # Initialise.
-            if not hasattr(spin, 'rdc_err'):
-                spin.rdc_err = []
-
-            # Append the error.
-            spin.rdc_err.append(error)
-
-        # Print out.
-        print(("%-50s %15s %15s" % (id, value, error)))
 
 
 def return_data_desc(name):
