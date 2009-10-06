@@ -531,8 +531,6 @@ def test_binary(binary):
 
 
 
-
-
 class DummyFileObject:
     def __init__(self):
         """Set up the dummy object to act as a file object."""
