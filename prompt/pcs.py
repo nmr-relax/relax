@@ -335,7 +335,7 @@ class PCS(User_fn_class):
         check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        pcs.read(id=id, file=file, dir=dir, spin_id=spin_id, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
+        pcs.read(id=id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
     def write(self, id=None, file=None, dir=None, force=False):
