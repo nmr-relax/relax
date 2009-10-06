@@ -32,7 +32,7 @@ from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
-from relax_io import extract_data, open_write_file, strip
+from relax_io import extract_data, open_write_file, read_spin_data_file, strip
 import specific_fns
 
 
