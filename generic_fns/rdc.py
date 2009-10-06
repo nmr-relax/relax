@@ -417,6 +417,7 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_nam
     if data_col == None and error_col == None:
         raise RelaxError("One of either the data or error column must be supplied.")
 
+
     # Spin specific data.
     #####################
 
@@ -428,8 +429,14 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_nam
             id, value, error = data
         elif data_col:
             id, value = data
+            error = None
         else:
             id, error = data
+            value = None
+
+        # Test the error value (cannot be 0.0).
+        if error == 0.0:
+            raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the corresponding spin container.
         spin = return_spin([id, spin_id])
