@@ -18,7 +18,7 @@ path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S
 for name in ['tm0', 'tm1']:
     # Setup.
     pipe.create(pipe_name=name, pipe_type='mf')
-    sequence.read(file='noe.500.out', dir=path, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None)
+    sequence.read(file='noe.500.out', dir=path, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, sep=None)
     relax_data.read(ri_label='R1', frq_label='500', frq=500208000.0, file='r1.500.out', dir=path, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None)
     relax_data.read(ri_label='R2', frq_label='500', frq=500208000.0, file='r2.500.out', dir=path, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None)
     relax_data.read(ri_label='NOE', frq_label='500', frq=500208000.0, file='noe.500.out', dir=path, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None)

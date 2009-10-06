@@ -38,7 +38,7 @@ structure.read_pdb('test.pdb', parser='scientific')
 structure.load_spins(spin_id='@N')
 
 # Select solely the NH vectors used in the analysis.
-select.read(file=pardir+sep+'rates.txt', change_all=True, res_num_col=1)
+select.read(file=pardir+sep+'rates.txt', change_all=True, res_num_col=2)
 
 # Extract the XH vectors.
 structure.vectors()

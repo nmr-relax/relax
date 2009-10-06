@@ -24,10 +24,10 @@
 """Module for handling the molecule, residue, and spin sequence."""
 
 # relax module imports.
-from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_id_to_data_list, spin_loop
 import pipes
 from relax_errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
-from relax_io import extract_data, open_write_file, strip
+from relax_io import extract_data, open_write_file, read_spin_data_file, strip
 import sys
 
 
@@ -170,15 +170,15 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     """Generate the sequence item-by-item by adding a single molecule/residue/spin container as necessary.
 
     @keyword mol_name:  The molecule name.
-    @type mol_name:     bool
+    @type mol_name:     str or None
     @keyword res_num:   The residue number.
-    @type res_num:      bool
+    @type res_num:      int or None
     @keyword res_name:  The residue name.
-    @type res_name:     bool
+    @type res_name:     str or None
     @keyword spin_num:  The spin number.
-    @type spin_num:     bool
+    @type spin_num:     int or None
     @keyword spin_name: The spin name.
-    @type spin_name:    bool
+    @type spin_name:    str or None
     @keyword pipe:      The data pipe in which to generate the sequence.  This defaults to the
                         current data pipe.
     @type pipe:         str
@@ -233,93 +233,58 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
 
-def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
-    """Function for reading molecule, residue, and/or spin sequence data.
+def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
+    """Read the molecule, residue, and/or spin sequence data from file.
 
     @param file:            The name of the file to open.
     @type file:             str
     @param dir:             The directory containing the file (defaults to the current directory if
                             None).
     @type dir:              str or None
-    @param mol_name_col:    The column containing the molecule name information.
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the
+                            correct format.  The format is a list of lists where the first index
+                            corresponds to the row and the second the column.
+    @type file_data:        list of lists
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
+                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
+                            arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
+                            spin_id_col must be None.
     @type mol_name_col:     int or None
-    @param res_name_col:    The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied,
+                            spin_id_col must be None.
     @type res_name_col:     int or None
-    @param res_num_col:     The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied,
+                            spin_id_col must be None.
     @type res_num_col:      int or None
-    @param spin_name_col:   The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied,
+                            spin_id_col must be None.
     @type spin_name_col:    int or None
-    @param spin_num_col:    The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
+                            spin_id_col must be None.
     @type spin_num_col:     int or None
-    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
+    @type spin_id:          None or str
     """
+
+    # Test if the current data pipe exists.
+    pipes.test()
 
     # Test if sequence data already exists.
     if exists_mol_res_spin_data():
         raise RelaxSequenceError
 
-    # Extract the data from the file.
-    file_data = extract_data(file, dir)
-
-    # Count the number of header lines.
-    header_lines = 0
-    for i in xrange(len(file_data)):
-        # Residue number.
-        if res_num_col != None:
-            try:
-                int(file_data[i][res_num_col])
-            except ValueError:
-                header_lines = header_lines + 1
-            else:
-                break
-
-        # Spin number.
-        elif spin_num_col != None:
-            try:
-                int(file_data[i][spin_num_col])
-            except ValueError:
-                header_lines = header_lines + 1
-            else:
-                break
-
-    # Remove the header.
-    file_data = file_data[header_lines:]
-
-    # Strip data.
-    file_data = strip(file_data)
-
-    # Do nothing if the file does not exist.
-    if not file_data:
-        raise RelaxFileEmptyError
-
-    # Test if the sequence data is valid.
-    validate_sequence(file_data, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
     # Header print out.
     write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
 
-    # Fill the molecule-residue-spin data.
-    for i in xrange(len(file_data)):
-        # The spin info.
-        mol_name = None
-        res_num = None
-        res_name = None
-        spin_num = None
-        spin_name = None
-        if mol_name_col != None:
-            mol_name = file_data[i][mol_name_col]
-        if res_num_col != None:
-            res_num = int(file_data[i][res_num_col])
-        if res_name_col != None:
-            res_name = file_data[i][res_name_col]
-        if spin_num_col != None:
-            spin_num = int(file_data[i][spin_num_col])
-        if spin_name_col != None:
-            spin_name = file_data[i][spin_name_col]
-
-        # Generate the sequence.
-        generate(mol_name, res_num, res_name, spin_num, spin_name)
+    # Generate the sequence.
+    for id in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
+        # Add the spin.
+        generate(tuple(spin_id_to_data_list(id)))
 
 
 def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
