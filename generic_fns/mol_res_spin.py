@@ -2098,7 +2098,7 @@ def spin_id_to_data_list(id):
     """
 
     # Split up the spin ID.
-    mol_token, res_token, spin_token = tokenise(select_string)
+    mol_token, res_token, spin_token = tokenise(id)
     mol_info = parse_token(mol_token)
     res_info = parse_token(res_token)
     spin_info = parse_token(spin_token)
