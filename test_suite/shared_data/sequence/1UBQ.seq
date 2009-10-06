@@ -1,4 +1,4 @@
-Mol_name   Res_num    Res_name   Spin_num   Spin_name  
+#Mol_name   Res_num    Res_name   Spin_num   Spin_name  
 A          1          MET        1          N          
 A          2          GLN        9          N          
 A          3          ILE        18         N          
