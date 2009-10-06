@@ -15,7 +15,7 @@ import sys
 path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
 # Load the sequence.
-sequence.read('noe.500.out', dir=path)
+sequence.read('noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
 # Load the relaxation data.
 relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)

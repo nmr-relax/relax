@@ -7,7 +7,7 @@ import sys
 pipe.create('NOE', 'noe')
 
 # Load the sequence.
-sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
+sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')

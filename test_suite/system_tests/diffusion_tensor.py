@@ -48,21 +48,21 @@ class Diffusion_tensor(TestCase):
         # Sphere tensor initialization.
         self.relax.interpreter._Pipe.switch('sphere')
         self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.relax.interpreter._Diffusion_tensor.init(10e-9, fixed=True)
         self.tmpfile_sphere = mktemp()
 
         # Spheroid tensor initialization.
         self.relax.interpreter._Pipe.switch('spheroid')
         self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.relax.interpreter._Diffusion_tensor.init((5e-09, -10000000., 1.6, 2.7), angle_units='rad', spheroid_type='oblate', fixed=True)
         self.tmpfile_spheroid = mktemp()
 
         # Ellipsoid tensor initialization.
         self.relax.interpreter._Pipe.switch('ellipsoid')
         self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep)
+        self.relax.interpreter._Sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.relax.interpreter._Diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
         self.tmpfile_ellipsoid = mktemp()
 

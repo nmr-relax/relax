@@ -55,7 +55,7 @@ class Modsel(TestCase):
             self.relax.interpreter._Pipe.create(pipe_list[i], 'mf')
 
             # Read the sequence.
-            self.relax.interpreter._Sequence.read(file='r1.600.out', dir=path)
+            self.relax.interpreter._Sequence.read(file='r1.600.out', dir=path, res_num_col=1, res_name_col=2)
 
             # Select the model.
             self.relax.interpreter._Model_free.select_model(model='m4')

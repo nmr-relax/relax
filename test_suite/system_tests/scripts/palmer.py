@@ -26,7 +26,7 @@ def exec_stage_1(pipes):
         pipe.create(name, 'mf')
 
         # Load the sequence.
-        sequence.read(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat')
+        sequence.read(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
 
         # Load the relaxation data.
         relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat')

@@ -71,7 +71,7 @@ class Ct(TestCase):
         f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -115,7 +115,7 @@ class Ct(TestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH

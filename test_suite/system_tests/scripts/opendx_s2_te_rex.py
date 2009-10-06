@@ -12,7 +12,7 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH
 path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
 # Read the sequence.
-sequence.read(file='noe.500.out', dir=path)
+sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
 # Read the relaxation data.
 relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)

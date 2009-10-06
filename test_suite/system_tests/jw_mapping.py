@@ -70,7 +70,7 @@ class Jw(TestCase):
         jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -108,7 +108,7 @@ class Jw(TestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
+        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH
