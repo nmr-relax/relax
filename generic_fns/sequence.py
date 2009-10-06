@@ -284,7 +284,6 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     # Generate the sequence.
     for id in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Add the spin.
-        print "id:", repr(id)
         generate(*spin_id_to_data_list(id))
 
 
