@@ -567,7 +567,7 @@ def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, m
     # Yield the data, spin by spin.
     for line in file_data:
         # Skip missing data.
-        if len(line) <= min_col_num:
+        if len(line) < min_col_num:
             continue
 
         # Generate the spin ID string.
