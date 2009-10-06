@@ -284,6 +284,7 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     # Generate the sequence.
     for id in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Add the spin.
+        print "id:", repr(id)
         generate(*spin_id_to_data_list(id))
 
 
@@ -310,7 +311,7 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
     # Molecule name data.
     if mol_name_col:
         try:
-            data[mol_name_col]
+            data[mol_name_col-1]
         except IndexError:
             raise RelaxInvalidSeqError(data)
 
@@ -318,20 +319,20 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
     if res_num_col:
         # No data in column.
         try:
-            data[res_num_col]
+            data[res_num_col-1]
         except IndexError:
             raise RelaxInvalidSeqError(data)
 
         # Bad data in column.
         try:
-            int(data[res_num_col])
+            int(data[res_num_col-1])
         except ValueError:
             raise RelaxInvalidSeqError(data)
 
     # Residue name data.
     if res_name_col:
         try:
-            data[res_name_col]
+            data[res_name_col-1]
         except IndexError:
             raise RelaxInvalidSeqError(data)
 
@@ -339,20 +340,20 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
     if spin_num_col:
         # No data in column.
         try:
-            data[spin_num_col]
+            data[spin_num_col-1]
         except IndexError:
             raise RelaxInvalidSeqError(data)
 
         # Bad data in column.
         try:
-            int(data[spin_num_col])
+            int(data[spin_num_col-1])
         except ValueError:
             raise RelaxInvalidSeqError(data)
 
     # Spin name data.
     if spin_name_col:
         try:
-            data[spin_name_col]
+            data[spin_name_col-1]
         except IndexError:
             raise RelaxInvalidSeqError(data)
 
