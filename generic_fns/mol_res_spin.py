@@ -885,7 +885,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
 
 def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None):
     """Add a pseudo-atom spin container into the relax data store.
-    
+
     @param spin_name:   The name of the new pseudo-spin.
     @type spin_name:    str
     @param spin_num:    The identification number of the new spin.
@@ -960,7 +960,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
 def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
     """Add a spin into the relax data store (and molecule and residue if necessary).
-    
+
     @keyword spin_num:  The number of the new spin.
     @type spin_num:     int
     @keyword spin_name: The name of the new spin.
@@ -1486,7 +1486,7 @@ def name_molecule(mol_id, name=None, force=False):
             warn(RelaxWarning("The molecule '%s' is already named.  Set the force flag to rename." % mol_id))
         else:
             mol.name = name
-        
+
 
 def name_residue(res_id, name=None, force=False):
     """Name the residues.
@@ -1613,70 +1613,78 @@ def parse_token(token, verbosity=False):
     if token == None:
         return []
 
-    # Split by the ',' character.
-    elements = split(',', token)
+    # Convert to a list.
+    if not isinstance(token, list):
+        tokens = [token]
+    else:
+        tokens = token
 
-    # Loop over the elements.
-    list = []
-    for element in elements:
-        # Strip all leading and trailing whitespace.
-        element = strip(element)
+    # Loop over the tokens.
+    id_list = []
+    for token in tokens:
+        # Split by the ',' character.
+        elements = split(',', token)
 
-        # Find all '-' characters (ignoring the first character, i.e. a negative number).
-        indices= []
-        for i in xrange(1, len(element)):
-            if element[i] == '-':
-                indices.append(i)
+        # Loop over the elements.
+        for element in elements:
+            # Strip all leading and trailing whitespace.
+            element = strip(element)
 
-        # Range.
-        valid_range = True
-        if indices:
-            # Invalid range element, only one range char '-' and one negative sign is allowed.
-            if len(indices) > 2:
-                if verbosity:
-                    print(("The range element " + repr(element) + " is invalid.  Assuming the '-' character does not specify a range."))
-                valid_range = False
+            # Find all '-' characters (ignoring the first character, i.e. a negative number).
+            indices= []
+            for i in xrange(1, len(element)):
+                if element[i] == '-':
+                    indices.append(i)
 
-            # Convert the two numbers to integers.
-            try:
-                start = int(element[:indices[0]])
-                end = int(element[indices[0]+1:])
-            except ValueError:
-                if verbosity:
-                    print(("The range element " + repr(element) + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."))
-                valid_range = False
+            # Range.
+            valid_range = True
+            if indices:
+                # Invalid range element, only one range char '-' and one negative sign is allowed.
+                if len(indices) > 2:
+                    if verbosity:
+                        print(("The range element " + repr(element) + " is invalid.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Test that the starting number is less than the end.
-            if valid_range and start >= end:
-                if verbosity:
-                    print(("The starting number of the range element " + repr(element) + " needs to be less than the end number.  Assuming the '-' character does not specify a range."))
-                valid_range = False
+                # Convert the two numbers to integers.
+                try:
+                    start = int(element[:indices[0]])
+                    end = int(element[indices[0]+1:])
+                except ValueError:
+                    if verbosity:
+                        print(("The range element " + repr(element) + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Create the range and append it to the list.
-            if valid_range:
-                for i in range(start, end+1):
-                    list.append(i)
+                # Test that the starting number is less than the end.
+                if valid_range and start >= end:
+                    if verbosity:
+                        print(("The starting number of the range element " + repr(element) + " needs to be less than the end number.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Just append the string (even though it might be junk).
+                # Create the range and append it to the list.
+                if valid_range:
+                    for i in range(start, end+1):
+                        id_list.append(i)
+
+                # Just append the string (even though it might be junk).
+                else:
+                    id_list.append(element)
+
+            # Number or name.
             else:
-                list.append(element)
+                # Try converting the element into an integer.
+                try:
+                    element = int(element)
+                except ValueError:
+                    pass
 
-        # Number or name.
-        else:
-            # Try converting the element into an integer.
-            try:
-                element = int(element)
-            except ValueError:
-                pass
-
-            # Append the element.
-            list.append(element)
+                # Append the element.
+                id_list.append(element)
 
     # Sort the list.
-    list.sort()
+    id_list.sort()
 
     # Return the identifying list.
-    return list
+    return id_list
 
 
 def residue_loop(selection=None, pipe=None, full_info=False):
@@ -2098,8 +2106,6 @@ def spin_id_to_data_list(id):
     """
 
     # Split up the spin ID.
-    print id
-    print tokenise(id)
     mol_token, res_token, spin_token = tokenise(id)
     mol_info = parse_token(mol_token)
     res_info = parse_token(res_token)
@@ -2376,9 +2382,6 @@ def tokenise(selection):
         if pos == 'spin':
             spin_info = spin_info + selection[i]
 
-    print("Mol info: %s" % mol_info)
-    print("Res info: %s" % res_info)
-    print("Spin info: %s" % spin_info)
 
     # Molecules.
     ############
