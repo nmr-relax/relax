@@ -578,15 +578,11 @@ def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, m
 
         # Convert the data.
         value = None
-        if data_col != None:
+        if data_col:
             value = eval(line[data_col-1])
         error = None
-        if error_col != None:
+        if error_col:
             error = eval(line[error_col-1])
-
-        # Test the error value (cannot be 0.0).
-        if error == 0.0:
-            raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Yield the data.
         if data_col and error_col:
