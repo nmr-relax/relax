@@ -266,7 +266,7 @@ class Spectrum(User_fn_class):
         spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method='height', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, ncproc=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method='height', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
@@ -282,21 +282,34 @@ class Spectrum(User_fn_class):
 
         proton:  The name of the proton as specified in the peak intensity file.
 
-        int_col:  The column(s) containing the peak intensity data (for a non-standard format).
+        int_col:  The column containing the peak intensity data (used by the generic intensity file
+            format).
 
         int_method:  The integration method.
 
-        mol_name_col:  The molecule name column used by the generic intensity file format.
+        spin_id_col:  The spin ID string column used by the generic intensity file format (an
+            alternative to the mol, res, and spin name and number columns).
 
-        res_num_col:  The residue number column used by the generic intensity file format.
+        mol_name_col:  The molecule name column used by the generic intensity file format
+            (alternative to the spid_id_col).
 
-        res_name_col:  The residue name column used by the generic intensity file format.
+        res_num_col:  The residue number column used by the generic intensity file format
+            (alternative to the spid_id_col).
 
-        spin_num_col:  The spin number column used by the generic intensity file format.
+        res_name_col:  The residue name column used by the generic intensity file format
+            (alternative to the spid_id_col).
 
-        spin_name_col:  The spin name column used by the generic intensity file format.
+        spin_num_col:  The spin number column used by the generic intensity file format
+            (alternative to the spid_id_col).
 
-        sep:  The column separator used by the generic intensity format (defaults to white space).
+        spin_name_col:  The spin name column used by the generic intensity file format
+            (alternative to the spid_id_col).
+
+        sep:  The column separator used by the generic intensity format (the default is white
+            space).
+
+        spin_id:  The spin ID string used by the generic intensity file format to restrict the
+            loading of data to certain spin subsets.
 
         ncproc:  The Bruker specific FID intensity scaling factor.
 
@@ -358,12 +371,14 @@ class Spectrum(User_fn_class):
         support non-supported peak lists.  It should contain in the first few columns enough
         information to identify the spin.  This can include columns for the molecule name, residue
         number, residue name, spin number, and spin name, with each optional type positioned with
-        the *name_col and *num_col arguments.  The peak intensities can be placed in another column
-        specified by the int_col argument.  Intensities from multiple spectra can be placed into
-        different columns, and these can then be specified simultaneously by setting the int_col
-        argument to a list of columns.  This list must be matched by setting the spectrum_id
-        argument to list of the same length.  If columns are delimited by a character other than
-        whitespace, this can be specified with the sep argument.
+        the *name_col and *num_col arguments.  Alternatively a spin ID string column can be used.
+        The peak intensities can be placed in another column specified by the int_col argument.
+        Intensities from multiple spectra can be placed into different columns, and these can then
+        be specified simultaneously by setting the int_col argument to a list of columns.  This list
+        must be matched by setting the spectrum_id argument to list of the same length.  If columns
+        are delimited by a character other than whitespace, this can be specified with the sep
+        argument.  The spin_id argument can be used to restrict the loading to specific spin
+        subsets.
 
 
         Examples
@@ -392,12 +407,15 @@ class Spectrum(User_fn_class):
             text = text + ", proton=" + repr(proton)
             text = text + ", int_col=" + repr(int_col)
             text = text + ", int_method=" + repr(int_method)
+            text = text + ", spin_id_col=" + repr(spin_id_col)
             text = text + ", mol_name_col=" + repr(mol_name_col)
             text = text + ", res_num_col=" + repr(res_num_col)
             text = text + ", res_name_col=" + repr(res_name_col)
             text = text + ", spin_num_col=" + repr(spin_num_col)
             text = text + ", spin_name_col=" + repr(spin_name_col)
-            text = text + ", sep=" + repr(sep) + ")"
+            text = text + ", sep=" + repr(sep)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", ncproc=" + repr(ncproc) + ")"
             print(text)
 
         # The argument checks.
@@ -408,16 +426,18 @@ class Spectrum(User_fn_class):
         check.is_str(proton, 'proton name')
         check.is_int_or_int_list(int_col, 'intensity column', can_be_none=True)
         check.is_str(int_method, 'integration method')
+        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
         check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
         check.is_int(res_num_col, 'residue number column', can_be_none=True)
         check.is_int(res_name_col, 'residue name column', can_be_none=True)
         check.is_int(spin_num_col, 'spin number column', can_be_none=True)
         check.is_int(spin_name_col, 'spin name column', can_be_none=True)
         check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_str(spin_id, 'spin ID string', can_be_none=True)
         check.is_int(ncproc, 'Bruker ncproc parameter', can_be_none=True)
 
         # Execute the functional code.
-        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, ncproc=ncproc)
+        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
     def replicated(self, spectrum_ids=None):

@@ -698,7 +698,7 @@ def number_of_header_lines(file_data, format, int_col, intensity):
         return header_lines
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, ncproc=None):
+def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -712,23 +712,35 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type heteronuc:        str
     @keyword proton:        The name of the proton as specified in the peak intensity file.
     @type proton:           str
-    @keyword int_col:       The column containing the peak intensity data (for a non-standard
-                            formatted file).
+    @keyword int_col:       The column containing the peak intensity data (used by the generic
+                            intensity file format).
     @type int_col:          int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
     @type int_method:       str
-    @keyword mol_name_col:  The column containing the molecule name information.
+    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity
+                            file format).  If supplied, the mol_name_col, res_name_col, res_num_col,
+                            spin_name_col, and spin_num_col arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information (used by the
+                            generic intensity file format).  If supplied, spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col: The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
+    @type spin_id:          None or str
     @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
     @type ncproc:           int or None
     """
@@ -761,10 +773,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if format == 'generic':
         # Print out.
         print("Generic formatted data file.\n")
-
-        # Test that column numbers have been given.
-        if max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col) == None:
-            raise RelaxError("No column numbers have been supplied.")
 
         # Set the intensity reading function.
         intensity_fn = intensity_generic
