@@ -323,7 +323,7 @@ def read(file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, 
 
 
 def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
-    """Function for testing if the sequence data is valid.
+    """Test if the sequence data is valid.
 
     The only function this performs is to raise a RelaxError if the data is invalid.
 
@@ -342,56 +342,54 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
     @type spin_num_col:     int or None
     """
 
-    # Loop over the data.
-    for i in xrange(len(data)):
-        # Molecule name data.
-        if mol_name_col != None:
-            try:
-                data[i][mol_name_col]
-            except IndexError:
-                raise RelaxInvalidSeqError(data[i])
+    # Molecule name data.
+    if mol_name_col:
+        try:
+            data[mol_name_col]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
 
-        # Residue number data.
-        if res_num_col != None:
-            # No data in column.
-            try:
-                data[i][res_num_col]
-            except IndexError:
-                raise RelaxInvalidSeqError(data[i])
+    # Residue number data.
+    if res_num_col:
+        # No data in column.
+        try:
+            data[res_num_col]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
 
-            # Bad data in column.
-            try:
-                int(data[i][res_num_col])
-            except ValueError:
-                raise RelaxInvalidSeqError(data[i])
+        # Bad data in column.
+        try:
+            int(data[res_num_col])
+        except ValueError:
+            raise RelaxInvalidSeqError(data)
 
-        # Residue name data.
-        if res_name_col != None:
-            try:
-                data[i][res_name_col]
-            except IndexError:
-                raise RelaxInvalidSeqError(data[i])
+    # Residue name data.
+    if res_name_col:
+        try:
+            data[res_name_col]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
 
-        # Spin number data.
-        if spin_num_col != None:
-            # No data in column.
-            try:
-                data[i][spin_num_col]
-            except IndexError:
-                raise RelaxInvalidSeqError(data[i])
+    # Spin number data.
+    if spin_num_col:
+        # No data in column.
+        try:
+            data[spin_num_col]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
 
-            # Bad data in column.
-            try:
-                int(data[i][spin_num_col])
-            except ValueError:
-                raise RelaxInvalidSeqError(data[i])
+        # Bad data in column.
+        try:
+            int(data[spin_num_col])
+        except ValueError:
+            raise RelaxInvalidSeqError(data)
 
-        # Spin name data.
-        if spin_name_col != None:
-            try:
-                data[i][spin_name_col]
-            except IndexError:
-                raise RelaxInvalidSeqError(data[i])
+    # Spin name data.
+    if spin_name_col:
+        try:
+            data[spin_name_col]
+        except IndexError:
+            raise RelaxInvalidSeqError(data)
 
 
 def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):

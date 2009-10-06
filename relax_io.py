@@ -45,6 +45,7 @@ import sys
 from sys import stdin, stdout, stderr
 
 # relax module imports.
+import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id_data_array
 from relax_errors import RelaxError, RelaxFileError, RelaxFileEmptyError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning
@@ -544,27 +545,17 @@ def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, m
     # Test the validity of the data.
     if data_col or error_col:
         missing = True
-        for i in xrange(len(file_data)):
+        for line in file_data:
             # Skip missing data.
-            if len(file_data[i]) < min_col_num:
+            if len(line) < min_col_num:
                 continue
-            elif data_col and file_data[i][data_col-1] == 'None':
+            elif data_col and line[data_col-1] == 'None':
                 continue
-            elif error_col and file_data[i][error_col-1] == 'None':
+            elif error_col and line[error_col-1] == 'None':
                 continue
 
-            # Test that the data are numbers.
-            try:
-                if res_num_col:
-                    int(file_data[i][res_num_col-1])
-                if spin_num_col:
-                    int(file_data[i][spin_num_col-1])
-                if data_col:
-                    float(file_data[i][data_col-1])
-                if error_col:
-                    float(file_data[i][error_col-1])
-            except ValueError:
-                raise RelaxError("The data in the line " + repr(file_data[i]) + " is invalid.")
+            # Validate the sequence.
+            generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
 
             # Right, data is OK and exists.
             missing = False
