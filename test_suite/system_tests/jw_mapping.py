@@ -74,7 +74,7 @@ class Jw(TestCase):
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
-            self.relax.interpreter._Relax_data.read(dataTypes[dataSet][0], dataTypes[dataSet][1], dataTypes[dataSet][2], dataPaths[dataSet])
+            self.relax.interpreter._Relax_data.read(dataTypes[dataSet][0], dataTypes[dataSet][1], dataTypes[dataSet][2], dataPaths[dataSet], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set r, csa, heteronucleus type, and proton type.
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
