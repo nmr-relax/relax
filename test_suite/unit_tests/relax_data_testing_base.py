@@ -75,7 +75,7 @@ class Relax_data_base_class:
             path = sys.path[-1]
 
         # First read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        sequence.read(file='Ap4Aase.Noe.600.bz2', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data')
+        sequence.read(file='Ap4Aase.Noe.600.bz2', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
 
         # Then read the data out of the same file.
         self.relax_data_fns.read(ri_label='NOE', frq_label='600', frq=600e6, file='Ap4Aase.Noe.600.bz2', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data')
