@@ -46,7 +46,7 @@ from sys import stdin, stdout, stderr
 
 # relax module imports.
 from generic_fns.mol_res_spin import generate_spin_id_data_array
-from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+from relax_errors import RelaxError, RelaxFileError, RelaxFileEmptyError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning
 
 
@@ -536,6 +536,10 @@ def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, m
 
         # Strip the data of all comments and empty lines.
         file_data = strip(file_data)
+
+    # No data!
+    if not file_data:
+        raise RelaxFileEmptyError
 
     # Test the validity of the data.
     if data_col or error_col:
