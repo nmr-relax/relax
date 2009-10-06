@@ -2087,6 +2087,79 @@ def same_sequence(pipe1, pipe2):
     return True
 
 
+def spin_id_to_data_list(id):
+    """Convert the single spin ID string into a list of the mol, res, and spin names and numbers.
+
+    @param id:  The spin ID string.
+    @type id:   str
+    @return:    A list of the molecule name, the residue number and name, and the spin number and
+                name.
+    @rtype:     list of str, int, str, int, str
+    """
+
+    # Split up the spin ID.
+    mol_token, res_token, spin_token = tokenise(select_string)
+    mol_info = parse_token(mol_token)
+    res_info = parse_token(res_token)
+    spin_info = parse_token(spin_token)
+
+    # Molecule name.
+    mol_name = None
+    if len(mol_info) > 1:
+        raise RelaxError("The single spin ID should only belong to one molecule, not %s." % mol_info)
+    if len(mol_info) == 1:
+        mol_name = mol_info[0]
+
+    # Residue info.
+    res_names = []
+    res_nums = []
+    for i in range(len(res_info)):
+        try:
+            res_nums.append(int(res_info[i]))
+        except NameError:
+            res_names.append(res_info[i])
+
+    # Residue number.
+    res_num = None
+    if len(res_num) > 1:
+        raise RelaxError("The single spin ID should only belong to one residue number, not %s." % res_info)
+    if len(res_info) == 1:
+        res_num = res_info[0]
+
+    # Residue name.
+    res_name = None
+    if len(res_name) > 1:
+        raise RelaxError("The single spin ID should only belong to one residue name, not %s." % res_info)
+    if len(res_info) == 1:
+        res_name = res_info[0]
+
+    # Spin info.
+    spin_names = []
+    spin_nums = []
+    for i in range(len(spin_info)):
+        try:
+            spin_nums.append(int(spin_info[i]))
+        except NameError:
+            spin_names.append(spin_info[i])
+
+    # Spin number.
+    spin_num = None
+    if len(spin_num) > 1:
+        raise RelaxError("The single spin ID should only belong to one spin number, not %s." % spin_info)
+    if len(spin_info) == 1:
+        spin_num = spin_info[0]
+
+    # Spin name.
+    spin_name = None
+    if len(spin_name) > 1:
+        raise RelaxError("The single spin ID should only belong to one spin name, not %s." % spin_info)
+    if len(spin_info) == 1:
+        spin_name = spin_info[0]
+
+    # Return the data.
+    return [mol_name, res_num, res_name, spin_num, spin_name]
+
+
 def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Function for determining if the spin is located within the list of spins.
 
