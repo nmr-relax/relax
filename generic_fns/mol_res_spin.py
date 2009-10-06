@@ -2124,19 +2124,19 @@ def spin_id_to_data_list(id):
     for i in range(len(res_info)):
         try:
             res_nums.append(int(res_info[i]))
-        except NameError:
+        except ValueError:
             res_names.append(res_info[i])
 
     # Residue number.
     res_num = None
-    if len(res_num) > 1:
+    if len(res_nums) > 1:
         raise RelaxError("The single spin ID should only belong to one residue number, not %s." % res_info)
     if len(res_info) == 1:
         res_num = res_info[0]
 
     # Residue name.
     res_name = None
-    if len(res_name) > 1:
+    if len(res_names) > 1:
         raise RelaxError("The single spin ID should only belong to one residue name, not %s." % res_info)
     if len(res_info) == 1:
         res_name = res_info[0]
@@ -2147,19 +2147,19 @@ def spin_id_to_data_list(id):
     for i in range(len(spin_info)):
         try:
             spin_nums.append(int(spin_info[i]))
-        except NameError:
+        except ValueError:
             spin_names.append(spin_info[i])
 
     # Spin number.
     spin_num = None
-    if len(spin_num) > 1:
+    if len(spin_nums) > 1:
         raise RelaxError("The single spin ID should only belong to one spin number, not %s." % spin_info)
     if len(spin_info) == 1:
         spin_num = spin_info[0]
 
     # Spin name.
     spin_name = None
-    if len(spin_name) > 1:
+    if len(spin_names) > 1:
         raise RelaxError("The single spin ID should only belong to one spin name, not %s." % spin_info)
     if len(spin_info) == 1:
         spin_name = spin_info[0]
