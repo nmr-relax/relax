@@ -38,7 +38,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array
 from re import split
-from string import strip
+from string import count, strip
 from textwrap import fill
 from warnings import warn
 
@@ -2098,6 +2098,8 @@ def spin_id_to_data_list(id):
     """
 
     # Split up the spin ID.
+    print id
+    print tokenise(id)
     mol_token, res_token, spin_token = tokenise(id)
     mol_info = parse_token(mol_token)
     res_info = parse_token(res_token)
@@ -2346,73 +2348,137 @@ def tokenise(selection):
         return None, None, None
 
 
-    # Atoms.
-    ########
+    # Walk along the ID string, separating the molecule, residue, and spin data.
+    mol_info = ''
+    res_info = ''
+    spin_info = ''
+    pos = 'mol'
+    for i in range(len(selection)):
+        # Find forbidden boolean operators.
+        if selection[i] == '|':
+            raise RelaxError("The boolean operator '|' is not supported for individual spin selections.")
 
-    # Split by '@'.
-    atom_split = split('@', selection)
+        # Hit the residue position.
+        if selection[i] == ':':
+            if pos == 'spin':
+                raise RelaxError("Invalid selection string '%s'." % selection)
+            pos = 'res'
 
-    # Test that only one '@' character was supplied.
-    if len(atom_split) > 2:
-        raise RelaxError("Only one '@' character is allowed within the selection identifier string.")
+        # Hit the spin position.
+        if selection[i] == '@':
+            pos = 'spin'
 
-    # No atom identifier.
-    if len(atom_split) == 1:
-        spin_token = None
+        # Append the data.
+        if pos == 'mol':
+            mol_info = mol_info + selection[i]
+        if pos == 'res':
+            res_info = res_info + selection[i]
+        if pos == 'spin':
+            spin_info = spin_info + selection[i]
+
+    print("Mol info: %s" % mol_info)
+    print("Res info: %s" % res_info)
+    print("Spin info: %s" % spin_info)
+
+    # Molecules.
+    ############
+
+    # Molecule identifier.
+    if mol_info:
+        # Find boolean operators.
+        if '&' in mol_info:
+            raise RelaxError("The boolean operator '&' is not supported for the molecule component of individual spin IDs.")
+
+        # Checks:
+        #   No residue identification characters are allowed.
+        #   No spin identification characters are allowed.
+        #   First character must be '#'.
+        #   Only 1 '#' allowed.
+        if ':' in mol_info or '@' in mol_info or mol_info[0] != '#' or count(mol_info, '#') != 1:
+            raise RelaxError("Invalid molecule selection '%s'." % mol_info)
+
+        # ID.
+        mol_token = mol_info[1:]
+
+    # No molecule identifier.
     else:
-        # Test for out of order identifiers.
-        if ':' in atom_split[1]:
-            raise RelaxError("The atom identifier '@' must come after the residue identifier ':'.")
-        elif '#' in atom_split[1]:
-            raise RelaxError("The atom identifier '@' must come after the molecule identifier '#'.")
-
-        # The token.
-        spin_token = atom_split[1]
+        mol_token = None
 
 
     # Residues.
     ###########
 
-    # Split by ':'.
-    res_split = split(':', atom_split[0])
+    # Residue identifier.
+    if res_info:
+        # Only max 1 '&' allowed.
+        if count(res_info, '&') > 1:
+            raise RelaxError("Only one '&' boolean operator is supported for the residue component of individual spin IDs.")
 
-    # Test that only one ':' character was supplied.
-    if len(res_split) > 2:
-        raise RelaxError("Only one ':' character is allowed within the selection identifier string.")
+        # Split by '&'.
+        res_token = split('&', res_info)
+
+        # Check and remove the ':' character.
+        for i in range(len(res_token)):
+            # Checks:
+            #   No molecule identification characters are allowed.
+            #   No spin identification characters are allowed.
+            #   First character must be ':'.
+            #   Only 1 ':' allowed.
+            if '#' in res_token[i] or '@' in res_token[i] or res_token[i][0] != ':' or count(res_token[i], ':') != 1:
+                raise RelaxError("Invalid residue selection '%s'." % res_info)
+
+            # Strip.
+            res_token[i] = res_token[i][1:]
+
+        # Convert to a string if only a single item.
+        if len(res_token) == 1:
+            res_token = res_token[0]
 
     # No residue identifier.
-    if len(res_split) == 1:
+    else:
         res_token = None
+
+
+    # Spins.
+    ########
+
+    # Spin identifier.
+    if spin_info:
+        # Only max 1 '&' allowed.
+        if count(spin_info, '&') > 1:
+            raise RelaxError("Only one '&' boolean operator is supported for the spin component of individual spin IDs.")
+
+        # Split by '&'.
+        spin_token = split('&', spin_info)
+
+        # Check and remove the ':' character.
+        for i in range(len(spin_token)):
+            # Checks:
+            #   No molecule identification characters are allowed.
+            #   No residue identification characters are allowed.
+            #   First character must be '@'.
+            #   Only 1 '@' allowed.
+            if '#' in spin_token[i] or ':' in spin_token[i] or spin_token[i][0] != '@' or count(spin_token[i], '@') != 1:
+                raise RelaxError("Invalid spin selection '%s'." % spin_info)
+
+            # Strip.
+            spin_token[i] = spin_token[i][1:]
+
+        # Convert to a string if only a single item.
+        if len(spin_token) == 1:
+            spin_token = spin_token[0]
+
+    # No spin identifier.
     else:
-        # Test for out of order identifiers.
-        if '#' in res_split[1]:
-            raise RelaxError("The residue identifier ':' must come after the molecule identifier '#'.")
-
-        # The token.
-        res_token = res_split[1]
+        spin_token = None
 
 
-
-    # Molecules.
-    ############
-
-    # Split by '#'.
-    mol_split = split('#', res_split[0])
-
-    # Test that only one '#' character was supplied.
-    if len(mol_split) > 2:
-        raise RelaxError("Only one '#' character is allowed within the selection identifier string.")
-
-    # No molecule identifier.
-    if len(mol_split) == 1:
-        mol_token = None
-    else:
-        mol_token = mol_split[1]
-
+    # End.
+    ######
 
     # Improper selection string.
     if mol_token == None and res_token == None and spin_token == None:
-        raise RelaxError("The selection string " + repr(selection) + " is invalid.")
+        raise RelaxError("The selection string '%s' is invalid." % selection)
 
     # Return the three tokens.
     return mol_token, res_token, spin_token
