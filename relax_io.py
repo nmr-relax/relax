@@ -45,6 +45,7 @@ import sys
 from sys import stdin, stdout, stderr
 
 # relax module imports.
+from generic_fns.mol_res_spin import generate_spin_id_data_array
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning
 
@@ -52,7 +53,7 @@ from relax_warnings import RelaxWarning
 
 def delete(file_name, dir=None, fail=True):
     """Deleting the given file, taking into account missing compression extensions.
-    
+
     @param file_name:       The name of the file to delete.
     @type file_name:        str
     @keyword dir:           The directory containing the file.
@@ -458,6 +459,149 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         return file_obj, file_path
     else:
         return file_obj
+
+
+def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+    """Generator function for reading the spin specific data from file.
+
+    Description
+    ===========
+
+    This function reads a columnar formatted file where each line corresponds to a spin system.
+    Spin identification is either through a spin ID string or through columns containing the
+    molecule name, residue name and number, and/or spin name and number.
+
+
+    @keyword id:            The alignment tensor ID string.
+    @type id:               str
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory
+                            if None).
+    @type dir:              str or None
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the
+                            correct format.  The format is a list of lists where the first index
+                            corresponds to the row and the second the column.
+    @type file_data:        list of lists
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
+                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
+                            arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
+                            spin_id_col must be None.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information.  If supplied,
+                            spin_id_col must be None.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information.  If supplied,
+                            spin_id_col must be None.
+    @type res_num_col:      int or None
+    @keyword spin_name_col: The column containing the spin name information.  If supplied,
+                            spin_id_col must be None.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
+                            spin_id_col must be None.
+    @type spin_num_col:     int or None
+    @keyword data_col:      The column containing the data.
+    @type data_col:         int or None
+    @keyword error_col:     The column containing the errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword spin_id:       The spin ID string.
+    @type spin_id:          None or str
+    @return:                A list of the spin specific data is yielded.  The format is a list
+                            consisting of the spin ID string, the data value (if data_col is give),
+                            and the error value (if error_col is given).  If both data_col and
+                            error_col are None, then the spin ID string is simply yielded.
+    @rtype:                 str, list of [str, float], or list of [str, float, float]
+    """
+
+    # Argument tests.
+    col_args = [spin_id_col, mol_name_col, res_name_col, res_num_col, spin_name_col, spin_num_col, data_col, error_col]
+    col_arg_names = ['spin_id_col', 'mol_name_col', 'res_name_col', 'res_num_col', 'spin_name_col', 'spin_num_col', 'data_col', 'error_col']
+    for i in range(len(col_args)):
+        if col_args[i] == 0:
+            raise RelaxError, "The '%s' argument cannot be zero, column numbering starts at one." % col_arg_names[i]
+    if spin_id_col and (mol_name_col or res_name_col or res_num_col or spin_name_col or spin_num_col):
+        raise RelaxError, "If the 'spin_id_col' argument has been supplied, then the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col must all be set to None."
+
+    # Minimum number of columns.
+    min_col_num = max(spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
+
+    # Extract the data from the file.
+    if not file_data:
+        # Extract.
+        file_data = extract_data(file, dir)
+
+        # Strip the data of all comments and empty lines.
+        file_data = strip(file_data)
+
+    # Test the validity of the data.
+    if data_col or error_col:
+        missing = True
+        for i in xrange(len(file_data)):
+            # Skip missing data.
+            if len(file_data[i]) <= min_col_num:
+                continue
+            elif data_col and file_data[i][data_col-1] == 'None':
+                continue
+            elif error_col and file_data[i][error_col-1] == 'None':
+                continue
+
+            # Test that the data are numbers.
+            try:
+                if res_num_col:
+                    int(file_data[i][res_num_col-1])
+                if spin_num_col:
+                    int(file_data[i][spin_num_col-1])
+                if data_col:
+                    float(file_data[i][data_col-1])
+                if error_col:
+                    float(file_data[i][error_col-1])
+            except ValueError:
+                raise RelaxError("The data in the line " + repr(file_data[i]) + " is invalid.")
+
+            # Right, data is OK and exists.
+            missing = False
+
+        # Hmmm, no data!
+        if missing:
+            raise RelaxError("No corresponding data could be found within the file.")
+
+    # Yield the data, spin by spin.
+    for line in file_data:
+        # Skip missing data.
+        if len(line) <= min_col_num:
+            continue
+
+        # Generate the spin ID string.
+        if spin_id_col:
+            id = line[spin_id_col-1]
+        else:
+            id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+
+        # Convert the data.
+        value = None
+        if data_col != None:
+            value = eval(line[data_col-1])
+        error = None
+        if error_col != None:
+            error = eval(line[error_col-1])
+
+        # Test the error value (cannot be 0.0).
+        if error == 0.0:
+            raise RelaxError("An invalid error value of zero has been encountered.")
+
+        # Yield the data.
+        if data_col and error_col:
+            yield [id, value, error]
+        elif data_col:
+            yield [id, value]
+        elif error_col:
+            yield [id, error]
+        else:
+            yield id
 
 
 def strip(data):
