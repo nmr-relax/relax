@@ -1355,7 +1355,7 @@ def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, 
     return id
 
 
-def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None):
+def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
     """Generate the spin selection string from the given data array.
 
     @param data:            An array containing the molecule, residue, and/or spin data.
@@ -1378,24 +1378,24 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res
     id = ""
 
     # Molecule data.
-    if mol_name_col != None and data[mol_name_col]:
-        id = id + "#" + data[mol_name_col]
+    if mol_name_col and data[mol_name_col-1]:
+        id = id + "#" + data[mol_name_col-1]
 
     # Residue data.
-    if res_num_col != None and data[res_num_col] != None:
-        id = id + ":" + str(data[res_num_col])
-    if (res_num_col != None and data[res_num_col] != None) and (res_name_col != None and data[res_name_col]):
-        id = id + "&:" + data[res_name_col]
-    elif res_name_col != None and data[res_name_col]:
-        id = id + ":" + data[res_name_col]
+    if res_num_col and data[res_num_col-1] != None:
+        id = id + ":" + str(data[res_num_col-1])
+    if (res_num_col and data[res_num_col-1] != None) and (res_name_col and data[res_name_col-1]):
+        id = id + "&:" + data[res_name_col-1]
+    elif res_name_col and data[res_name_col-1]:
+        id = id + ":" + data[res_name_col-1]
 
     # Spin data.
-    if spin_num_col != None and data[spin_num_col] != None:
-        id = id + "@" + str(data[spin_num_col])
-    if (spin_num_col != None and data[spin_num_col] != None) and (spin_name_col != None and data[spin_name_col]):
-        id = id + "&@" + data[spin_name_col]
-    elif spin_name_col != None and data[spin_name_col]:
-        id = id + "@" + data[spin_name_col]
+    if spin_num_col and data[spin_num_col-1] != None:
+        id = id + "@" + str(data[spin_num_col-1])
+    if (spin_num_col and data[spin_num_col-1] != None) and (spin_name_col and data[spin_name_col-1]):
+        id = id + "&@" + data[spin_name_col-1]
+    elif spin_name_col and data[spin_name_col-1]:
+        id = id + "@" + data[spin_name_col-1]
 
     # Return the spin id string.
     return id
