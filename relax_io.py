@@ -546,7 +546,7 @@ def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, m
         missing = True
         for i in xrange(len(file_data)):
             # Skip missing data.
-            if len(file_data[i]) <= min_col_num:
+            if len(file_data[i]) < min_col_num:
                 continue
             elif data_col and file_data[i][data_col-1] == 'None':
                 continue
