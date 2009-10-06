@@ -127,6 +127,14 @@ class Select(User_fn_class):
         Description
         ~~~~~~~~~~~
 
+        The spin system can be identified in the file using two different formats.  The first is the
+        spin ID string column which can include the molecule name, the residue name and number, and
+        the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
+        spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be
+        in separate columns.  Note that the numbering of columns starts at one.  The spin_id
+        argument can be used to restrict the reading to certain spin types, for example only 15N
+        spins when only residue information is in the file.
+
         Empty lines and lines beginning with a hash are ignored.
 
         The 'change_all' flag argument default is False meaning that all spins currently either
