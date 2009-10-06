@@ -43,7 +43,7 @@ class PCS(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
         """
 
         # Function intro text.
@@ -53,7 +53,7 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
 
         # Execute the functional code.
         pcs.back_calc(id=id)
@@ -65,7 +65,7 @@ class PCS(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        atom_id:  The atom identification string.
+        atom_id:  The atom ID string.
 
         pipe:  The data pipe containing the structures to extract the centre from.
 
@@ -114,7 +114,7 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(atom_id, 'atom identification string')
+        check.is_str(atom_id, 'atom ID string')
         check.is_str(pipe, 'data pipe', can_be_none=True)
         check.is_bool(ave_pos, 'average position flag')
 
@@ -132,7 +132,7 @@ class PCS(User_fn_class):
 
         pipe_to:  The name of the pipe to copy the PCS data to.
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
 
         Description
@@ -169,7 +169,7 @@ class PCS(User_fn_class):
         # The argument checks.
         check.is_str(pipe_from, 'pipe from', can_be_none=True)
         check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        check.is_str(id, 'alignment identification string', can_be_none=True)
+        check.is_str(id, 'alignment ID string', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -185,7 +185,7 @@ class PCS(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
 
         Examples
@@ -203,7 +203,7 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
 
         # Execute the functional code.
         pcs.delete(id=id)
@@ -215,7 +215,7 @@ class PCS(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
 
         Examples
@@ -233,48 +233,63 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
 
         # Execute the functional code.
         pcs.display(id=id)
 
 
-    def read(self, id=None, file=None, dir=None, spin_id=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+    def read(self, id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
         """Read the PCS data from file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
         file:  The name of the file containing the PCS data.
 
         dir:  The directory where the file is located.
 
-        spin_id:  The spin identification string.
+        spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
+            number columns).
 
-        mol_name_col:  The molecule name column (this defaults to no column).
+        mol_name_col:  The molecule name column (alternative to the spid_id_col).
 
-        res_num_col:  The residue number column (the default is 0, i.e. the first column).
+        res_num_col:  The residue number column (alternative to the spid_id_col).
 
-        res_name_col:  The residue name column (the default is 1, i.e. the second column).
+        res_name_col:  The residue name column (alternative to the spid_id_col).
 
-        spin_num_col:  The spin number column (this defaults to no column).
+        spin_num_col:  The spin number column (alternative to the spid_id_col).
 
-        spin_name_col:  The spin name column (this defaults to no column).
+        spin_name_col:  The spin name column (alternative to the spid_id_col).
 
-        data_col:  The PCS data column (the default is 2).
+        data_col:  The RDC data column.
 
-        error_col:  The experimental error column (the default is 3).
+        error_col:  The experimental error column.
 
         sep:  The column separator (the default is white space).
+
+        spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The spin system can be identified in the file using two different formats.  The first is the
+        spin ID string column which can include the molecule name, the residue name and number, and
+        the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
+        spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be
+        in separate columns.  Note that the numbering of columns starts at one.  The spin_id
+        argument can be used to restrict the reading to certain spin types, for example only 15N
+        spins when only residue information is in the file.
 
 
         Examples
         ~~~~~~~~
 
         The following commands will read the PCS data out of the file 'Tb.txt' where the columns are
-        separated by the symbol ',', and store the PCSs under the identifier 'Tb'.
+        separated by the symbol ',', and store the PCSs under the ID 'Tb'.
 
         relax> pcs.read('Tb', 'Tb.txt', sep=',')
 
@@ -282,8 +297,8 @@ class PCS(User_fn_class):
         To read the 15N and 1H PCSs from the file 'Eu.txt', where the 15N values are in the 4th
         column and the 1H in the 9th, type both the following:
 
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@N', res_num_col=0, data_col=3)
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@H', res_num_col=0, data_col=8)
+        relax> rdc.read('Tb', 'Tb.txt', spin_id='@N', res_num_col=1, data_col=4)
+        relax> rdc.read('Tb', 'Tb.txt', spin_id='@H', res_num_col=1, data_col=9)
         """
 
         # Function intro text.
@@ -292,7 +307,7 @@ class PCS(User_fn_class):
             text = text + "id=" + repr(id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
-            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", spin_id_col=" + repr(spin_id_col)
             text = text + ", mol_name_col=" + repr(mol_name_col)
             text = text + ", res_num_col=" + repr(res_num_col)
             text = text + ", res_name_col=" + repr(res_name_col)
@@ -300,14 +315,15 @@ class PCS(User_fn_class):
             text = text + ", spin_name_col=" + repr(spin_name_col)
             text = text + ", data_col=" + repr(data_col)
             text = text + ", error_col=" + repr(error_col)
-            text = text + ", sep=" + repr(sep) + ")"
+            text = text + ", sep=" + repr(sep)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
         check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
         check.is_int(res_num_col, 'residue number column', can_be_none=True)
         check.is_int(res_name_col, 'residue name column', can_be_none=True)
@@ -316,6 +332,7 @@ class PCS(User_fn_class):
         check.is_int(data_col, 'data column', can_be_none=True)
         check.is_int(error_col, 'error column', can_be_none=True)
         check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
         pcs.read(id=id, file=file, dir=dir, spin_id=spin_id, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep)
@@ -327,7 +344,7 @@ class PCS(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
         file:  The name of the file.
 
@@ -353,7 +370,7 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
         check.is_bool(force, 'force flag')

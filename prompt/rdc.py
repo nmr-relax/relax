@@ -43,7 +43,7 @@ class RDC(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
         """
 
         # Function intro text.
@@ -53,7 +53,7 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
 
         # Execute the functional code.
         rdc.back_calc(id=id)
@@ -69,7 +69,7 @@ class RDC(User_fn_class):
 
         pipe_to:  The name of the pipe to copy the RDC data to.
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
 
         Description
@@ -106,7 +106,7 @@ class RDC(User_fn_class):
         # The argument checks.
         check.is_str(pipe_from, 'pipe from', can_be_none=True)
         check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        check.is_str(id, 'alignment identification string', can_be_none=True)
+        check.is_str(id, 'alignment ID string', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -122,7 +122,7 @@ class RDC(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
 
         Examples
@@ -140,7 +140,7 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
 
         # Execute the functional code.
         rdc.delete(id=id)
@@ -152,7 +152,7 @@ class RDC(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
 
         Examples
@@ -170,7 +170,7 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
 
         # Execute the functional code.
         rdc.display(id=id)
@@ -182,14 +182,14 @@ class RDC(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
         file:  The name of the file containing the RDC data.
 
         dir:  The directory where the file is located.
 
-        spin_id_col:  The spin identification string column (an alternative to the mol, res, and
-            spin name and number columns).
+        spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
+            number columns).
 
         mol_name_col:  The molecule name column (alternative to the spid_id_col).
 
@@ -207,7 +207,7 @@ class RDC(User_fn_class):
 
         sep:  The column separator (the default is white space).
 
-        spin_id:  The spin identification string.
+        spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
 
 
         Description
@@ -217,14 +217,16 @@ class RDC(User_fn_class):
         spin ID string column which can include the molecule name, the residue name and number, and
         the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
         spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be
-        in separate columns.  Note that the numbering of columns starts at zero.
+        in separate columns.  Note that the numbering of columns starts at one.  The spin_id
+        argument can be used to restrict the reading to certain spin types, for example only 15N
+        spins when only residue information is in the file.
 
 
         Examples
         ~~~~~~~~
 
         The following commands will read the RDC data out of the file 'Tb.txt' where the columns are
-        separated by the symbol ',', and store the RDCs under the identifier 'Tb'.
+        separated by the symbol ',', and store the RDCs under the ID 'Tb'.
 
         relax> rdc.read('Tb', 'Tb.txt', sep=',')
 
@@ -232,11 +234,12 @@ class RDC(User_fn_class):
         If the individual spin RDC errors are located in the file 'rdc_err.txt' in column number 5,
         then to read these values into relax, type one of:
 
-        relax> rdc.read('phage', 'rdc_err.txt', error_col=4)
-        relax> rdc.read(id='phage', file='rdc_err.txt', error_col=4)
+        relax> rdc.read('phage', 'rdc_err.txt', error_col=5)
+        relax> rdc.read(id='phage', file='rdc_err.txt', error_col=5)
 
 
-        If the RDCs correspond to the 'N' spin and other spins are loaded into relax, then type:
+        If the RDCs correspond to the 'N' spin and other spin types such as 1H, 13C, etc. are loaded
+        into relax, then type:
 
         relax> rdc.read('Tb', 'Tb.txt', spin_id='@N')
         """
@@ -260,10 +263,10 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(spin_id_col, 'spin identification string column', can_be_none=True)
+        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
         check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
         check.is_int(res_num_col, 'residue number column', can_be_none=True)
         check.is_int(res_name_col, 'residue name column', can_be_none=True)
@@ -272,7 +275,7 @@ class RDC(User_fn_class):
         check.is_int(data_col, 'data column', can_be_none=True)
         check.is_int(error_col, 'error column', can_be_none=True)
         check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
         rdc.read(id=id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
@@ -284,7 +287,7 @@ class RDC(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment identification string.
+        id:  The alignment ID string.
 
         file:  The name of the file.
 
@@ -310,7 +313,7 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment identification string')
+        check.is_str(id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
         check.is_bool(force, 'force flag')
