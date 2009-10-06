@@ -63,7 +63,7 @@ spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
 spectrum.error_analysis()
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path)
+deselect.read(file='unresolved', dir=data_path, res_num_col=1)
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp')
