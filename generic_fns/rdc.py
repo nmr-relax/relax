@@ -401,7 +401,8 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_nam
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
     @type spin_id:          None or str
     """
 
