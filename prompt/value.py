@@ -128,7 +128,7 @@ class Value(User_fn_class):
         self.__relax__.generic.value.display(param=param)
 
 
-    def read(self, param=None, scaling=1.0, file=None, num_col=0, name_col=1, data_col=2, error_col=3, sep=None):
+    def read(self, param=None, scaling=1.0, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
         """Read spin specific data values from a file.
 
         Keyword Arguments
@@ -138,40 +138,60 @@ class Value(User_fn_class):
 
         scaling:  The factor to scale parameters by.
 
-        file:  The name of the file containing the relaxation data.
+        file:  The name of the file containing the values.
 
-        num_col:  The residue number column (the default is 0, ie the first column).
+        dir:  The directory where the file is located.
 
-        name_col:  The residue name column (the default is 1).
+        spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
+            number columns).
 
-        data_col:  The relaxation data column (the default is 2).
+        mol_name_col:  The molecule name column (alternative to the spid_id_col).
 
-        error_col:  The experimental error column (the default is 3).
+        res_num_col:  The residue number column (alternative to the spid_id_col).
+
+        res_name_col:  The residue name column (alternative to the spid_id_col).
+
+        spin_num_col:  The spin number column (alternative to the spid_id_col).
+
+        spin_name_col:  The spin name column (alternative to the spid_id_col).
+
+        data_col:  The RDC data column.
+
+        error_col:  The experimental error column.
 
         sep:  The column separator (the default is white space).
+
+        spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
 
 
         Description
         ~~~~~~~~~~~
 
-        Only one parameter may be selected, therefore the 'param' argument should be a string.  If
-        the file only contains values and no errors, set the error column argument to None.
+        The spin system can be identified in the file using two different formats.  The first is the
+        spin ID string column which can include the molecule name, the residue name and number, and
+        the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
+        spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be
+        in separate columns.  Note that the numbering of columns starts at one.  The spin_id
+        argument can be used to restrict the reading to certain spin types, for example only 15N
+        spins when only residue information is in the file.
+
+        Only one parameter may be selected, therefore the 'param' argument should be a string.
 
         If this function is used to change values of previously minimised parameters, then the
         minimisation statistics (chi-squared value, iteration count, function count, gradient count,
-        and Hessian count) will be reset to None.
+        and Hessian count) will be reset.
 
 
         Examples
         ~~~~~~~~
 
-        To load CSA values from the file 'csa_values' in the directory 'data', type one of the
-        following:
+        To load 15N CSA values from the file 'csa_values' in the directory 'data', where spins are
+        only identified by residue name and number, type one of the following:
 
-        relax> value.read('CSA', 'data/csa_value')
-        relax> value.read('CSA', 'data/csa_value', 0, 1, 2, 3, None, 1)
-        relax> value.read(param='CSA', file='data/csa_value', num_col=0, name_col=1,
-                          data_col=2, error_col=3, sep=None)
+        relax> value.read('CSA', 'data/csa_value', spin_id='@N')
+        relax> value.read('CSA', 'csa_value', dir='data', spin_id='@N')
+        relax> value.read(param='CSA', file='csa_value', dir='data', res_num_col=1, res_name_col=2,
+                          data_col=3, error_col=4, spin_id='@N')
         """
 
         # Function intro text.
@@ -180,25 +200,37 @@ class Value(User_fn_class):
             text = text + "param=" + repr(param)
             text = text + ", scaling=" + repr(scaling)
             text = text + ", file=" + repr(file)
-            text = text + ", num_col=" + repr(num_col)
-            text = text + ", name_col=" + repr(name_col)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", spin_id_col=" + repr(spin_id_col)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
             text = text + ", data_col=" + repr(data_col)
             text = text + ", error_col=" + repr(error_col)
-            text = text + ", sep=" + repr(sep) + ")"
+            text = text + ", sep=" + repr(sep)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)
 
         # The argument checks.
         check.is_str(param, 'parameter')
         check.is_float(scaling, 'scaling')
         check.is_str(file, 'file name')
-        check.is_int(num_col, 'residue number column')
-        check.is_int(name_col, 'residue name column')
-        check.is_int(data_col, 'data column')
-        check.is_int(error_col, 'residue name column', can_be_none=True)
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_int(data_col, 'data column', can_be_none=True)
+        check.is_int(error_col, 'error column', can_be_none=True)
         check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, num_col=num_col, name_col=name_col, data_col=data_col, error_col=error_col, sep=sep)
+        self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
     def set(self, val=None, param=None, spin_id=None):

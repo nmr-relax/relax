@@ -492,7 +492,7 @@ def extract(dir):
             scaling = 1.0
 
         # Set the values.
-        value.read(param=param, scaling=scaling, file=file_name, res_num_col=0, res_name_col=None, data_col=1, error_col=2)
+        value.read(param=param, scaling=scaling, file=file_name, res_num_col=1, res_name_col=None, data_col=2, error_col=3)
 
         # Clean up of non-existant parameters (set the parameter to None!).
         for spin in spin_loop():
@@ -515,4 +515,4 @@ def extract(dir):
         raise RelaxFileError('Dasha', file_name)
 
     # Set the values.
-    value.read(param='chi2', file=file_name, res_num_col=0, res_name_col=None, data_col=1, error_col=2)
+    value.read(param='chi2', file=file_name, res_num_col=1, res_name_col=None, data_col=2, error_col=3)

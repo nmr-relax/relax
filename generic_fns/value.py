@@ -31,7 +31,7 @@ import sys
 from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns.sequence import write_header, write_line
-from relax_errors import RelaxError, RelaxFileEmptyError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
+from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
 from relax_io import extract_data, open_write_file, strip
 import specific_fns
 
@@ -191,7 +191,7 @@ def partition_params(val, param):
     return spin_params, spin_values, other_params, other_values
 
 
-def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read spin specific data values from a file.
 
     @keyword param:         The name of the parameter to read.
@@ -203,22 +203,37 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
     @keyword dir:           The directory containing the file (defaults to the current directory if
                             None).
     @type dir:              str or None
-    @keyword mol_name_col:  The column containing the molecule name information.
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the
+                            correct format.  The format is a list of lists where the first index
+                            corresponds to the row and the second the column.
+    @type file_data:        list of lists
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
+                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
+                            arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
+                            spin_id_col must be None.
     @type mol_name_col:     int or None
-    @keyword res_name_col:  The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied,
+                            spin_id_col must be None.
     @type res_name_col:     int or None
-    @keyword res_num_col:   The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied,
+                            spin_id_col must be None.
     @type res_num_col:      int or None
-    @keyword spin_name_col  The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied,
+                            spin_id_col must be None.
     @type spin_name_col:    int or None
-    @keyword spin_num_col:  The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
+                            spin_id_col must be None.
     @type spin_num_col:     int or None
-    @keyword data_col:      The column containing the values.
-    @type data_col:         int
-    @keyword error_col:     The column containing the errors.
+    @keyword data_col:      The column containing the RDC data in Hz.
+    @type data_col:         int or None
+    @keyword error_col:     The column containing the RDC errors.
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword spin_id:       The spin ID string.
+    @type spin_id:          None or str
     """
 
     # Test if the current pipe exists.
@@ -263,77 +278,18 @@ def read(param=None, scaling=1.0, file=None, dir=None, mol_name_col=None, res_nu
         if value != None or error != None:
             raise RelaxValueError(param)
 
-    # Extract the data from the file.
-    file_data = extract_data(file, dir=dir, sep=sep)
-
-    # Count the number of header lines.
-    header_lines = 0
-    num_col = max(res_num_col, spin_num_col)
-    for i in xrange(len(file_data)):
-        try:
-            int(file_data[i][num_col])
-        except:
-            header_lines = header_lines + 1
-        else:
-            break
-
-    # Remove the header.
-    file_data = file_data[header_lines:]
-
-    # Strip the data.
-    file_data = strip(file_data)
-
-    # Do nothing if the file does not exist.
-    if not file_data:
-        raise RelaxFileEmptyError
-
-    # Minimum number of columns.
-    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
-
-    # Test the validity of the data.
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-
-        try:
-            # Value column.
-            if file_data[i][data_col] != 'None':
-                float(file_data[i][data_col])
-
-            # Error column.
-            if error_col != None and file_data[i][error_col] != 'None':
-                float(file_data[i][error_col])
-
-        except ValueError:
-            if error_col != None:
-                raise RelaxError("The data is invalid (data=" + file_data[i][data_col] + ", error=" + file_data[i][error_col] + ").")
-            else:
-                raise RelaxError("The data is invalid (data=" + file_data[i][data_col] + ").")
-
     # Loop over the data.
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-
-        # Generate the spin identification string.
-        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
-        # Value.
-        if file_data[i][data_col] != 'None':
-            value = float(file_data[i][data_col])
+    for data in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+        # Unpack.
+        if data_col and error_col:
+            id, value, error = data
+        elif data_col:
+            id, value = data
         else:
-            value = None
-
-        # Error.
-        if error_col != None and file_data[i][error_col] != 'None':
-            error = float(file_data[i][error_col])
-        else:
-            error = None
+            id, error = data
 
         # Get the corresponding spin container.
-        spin = return_spin(id)
+        spin = return_spin([id, spin_id])
         if spin == None:
             raise RelaxNoSpinError(id)
 
