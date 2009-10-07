@@ -138,6 +138,10 @@ class Internal(Base_struct_API):
 
         # Atom loop.
         for i in xrange(len(mol.atom_num)):
+            # Skip proton to proton bonds!
+            if mol.element[index] == 'H' and mol.element[i] == 'H':
+                continue
+
             # The atom's position.
             pos = array([mol.x[i], mol.y[i], mol.z[i]], float64)
 
