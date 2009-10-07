@@ -437,11 +437,11 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read the PCS data from file.
 
-    @param id:              The alignment tensor ID string.
-    @type id:               str
+    @param align_id:        The alignment tensor ID string.
+    @type align_id:         str
     @param file:            The name of the file to open.
     @type file:             str
     @param dir:             The directory containing the file (defaults to the current directory
@@ -550,8 +550,8 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_nam
         cdp.pcs_ids = []
 
     # Add the PCS id string.
-    if id not in cdp.pcs_ids:
-        cdp.pcs_ids.append(id)
+    if align_id not in cdp.pcs_ids:
+        cdp.pcs_ids.append(align_id)
 
 
 def return_data_desc(name):

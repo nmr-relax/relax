@@ -362,11 +362,11 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read the RDC data from file.
 
-    @keyword id:            The alignment tensor ID string.
-    @type id:               str
+    @keyword align_id:      The alignment tensor ID string.
+    @type align_id:         str
     @keyword file:          The name of the file to open.
     @type file:             str
     @keyword dir:           The directory containing the file (defaults to the current directory
@@ -473,8 +473,8 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_nam
         cdp.rdc_ids = []
 
     # Add the RDC id string.
-    if id not in cdp.rdc_ids:
-        cdp.rdc_ids.append(id)
+    if align_id not in cdp.rdc_ids:
+        cdp.rdc_ids.append(align_id)
 
 
 def return_data_desc(name):
