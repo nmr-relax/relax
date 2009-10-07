@@ -413,7 +413,7 @@ class N_state_model(Common_functions):
                     spin.pcs_bc[i] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
-                if hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect'):
+                if hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
                         spin.rdc_bc = [None] * model.num_align
@@ -422,7 +422,7 @@ class N_state_model(Common_functions):
                     spin.rdc_bc[i] = model.Dij_theta[i, data_index]
 
                 # Increment the spin index if it contains data.
-                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect')):
+                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
                     data_index = data_index + 1
 
 
