@@ -30,7 +30,7 @@ from warnings import warn
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
-from relax_io import read_spin_data_file
+from relax_io import read_spin_data
 from relax_warnings import RelaxNoSpinWarning
 
 
@@ -114,7 +114,7 @@ def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_c
             spin.select = True
 
     # Then deselect the spins in the file.
-    for id in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
+    for id in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
         spin = return_spin(id)
 
@@ -304,7 +304,7 @@ def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col
             spin.select = False
 
     # Then deselect the spins in the file.
-    for id in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
+    for id in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
         spin = return_spin(id)
 

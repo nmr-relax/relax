@@ -462,7 +462,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         return file_obj
 
 
-def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Generator function for reading the spin specific data from file.
 
     Description
@@ -664,7 +664,7 @@ def test_binary(binary):
         raise RelaxNoInPathError(binary)
 
 
-def write_spin_data_file(file=sys.stdout, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, data_length=20, data_format=None, error=None, error_name=None, error_length=20, error_format=None):
+def write_spin_data(file=sys.stdout, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, data_length=20, data_format=None, error=None, error_name=None, error_length=20, error_format=None):
     """Generator function for reading the spin specific data from file.
 
     Description

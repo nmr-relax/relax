@@ -31,7 +31,7 @@ import sys
 from generic_fns import minimise, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxParamSetError, RelaxValueError
-from relax_io import open_write_file, read_spin_data_file, write_spin_data_file
+from relax_io import open_write_file, read_spin_data, write_spin_data
 import specific_fns
 
 
@@ -278,7 +278,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
             raise RelaxValueError(param)
 
     # Loop over the data.
-    for data in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
         # Unpack.
         if data_col and error_col:
             id, value, error = data

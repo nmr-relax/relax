@@ -33,7 +33,7 @@ from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, gene
 from generic_fns import pipes
 from generic_fns import value
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
-from relax_io import read_spin_data_file
+from relax_io import read_spin_data
 import specific_fns
 
 
@@ -631,7 +631,7 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     values = []
     errors = []
     ids = []
-    for data in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
         # Unpack.
         if data_col and error_col:
             id, value, error = data

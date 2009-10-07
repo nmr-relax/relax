@@ -36,7 +36,7 @@ from generic_fns import pipes
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
 from relax_errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxPdbError
-from relax_io import get_file_path, open_write_file, write_spin_data_file
+from relax_io import get_file_path, open_write_file, write_spin_data
 from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 
 

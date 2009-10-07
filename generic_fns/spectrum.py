@@ -35,7 +35,7 @@ from warnings import warn
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError
-from relax_io import extract_data, read_spin_data_file, strip
+from relax_io import extract_data, read_spin_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
@@ -467,7 +467,7 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
 
     # Loop over the data.
     data = []
-    for id, value in read_spin_data_file(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
+    for id, value in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
         data.append([None, None, id, value])
 
     # Return the data.
