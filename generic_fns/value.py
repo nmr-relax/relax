@@ -544,6 +544,8 @@ def write(param=None, file=None, dir=None, force=False, return_value=None):
 def write_data(param=None, file=None, return_value=None):
     """The function which actually writes the data.
 
+    @keyword param:         The parameter to write.
+    @type param:            str
     @keyword file:          The file to write the data to.
     @type file:             str
     @keyword dir:           The name of the directory to place the file into (defaults to the
@@ -561,13 +563,28 @@ def write_data(param=None, file=None, return_value=None):
     # Format string.
     format = "%-30s%-30s"
 
-    # Write a header line.
-    write_header(file, extra_format=format, extra_values=('Value', 'Error'), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+    # Init the data.
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
+    values = []
+    errors = []
 
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Get the value and error.
         value, error = return_value(spin, param)
 
-        # Write the data.
-        write_line(file, mol_name, res_num, res_name, spin.num, spin.name, extra_format=format, extra_values=(repr(value), repr(error)), mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+        # Append the data.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin.num)
+        spin_names.append(spin.name)
+        values.append(value)
+        errors.append(error)
+
+    # Write the data.
+    write_spin_data(file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='value', error=errors, error_name='error')
