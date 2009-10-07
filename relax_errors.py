@@ -305,6 +305,11 @@ class RelaxNoneError(BaseArgError):
     def __init__(self, name):
         self.text = "The " + name + " argument has not been supplied."
 
+# Not None.
+class RelaxArgNotNoneError(BaseArgError):
+    def __init__(self, name, value):
+        self.text = "The %s argument of '%s' must be None."
+
 
 # Simple types.
 #~~~~~~~~~~~~~~
