@@ -66,7 +66,13 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
 
     # Print out.
     print("Adding the following spins to the relax data store.\n")
-    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+
+    # Init the data for printing out.
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
 
     # Loop over all atoms of the spin_id selection.
     model_index = -1
@@ -148,8 +154,12 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
             # Get the container.
             spin_cont = res_cont.spin[-1]
 
-            # Print out when a spin is appended.
-            write_line(sys.stdout, mol_name, res_num, res_name, atom_num, atom_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+            # Append all the spin ID info.
+            mol_names.append(mol_name)
+            res_nums.append(res_num)
+            res_names.append(res_name)
+            spin_nums.append(atom_num)
+            spin_names.append(atom_name)
 
         # Add the position vector and element type to the spin container.
         if ave_pos:
@@ -159,6 +169,9 @@ def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
                 spin_cont.pos = []
             spin_cont.pos.append(pos)
         spin_cont.element = element
+
+    # Print out.
+    write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
 def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, parser='internal', verbosity=1, fail=True):
