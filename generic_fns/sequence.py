@@ -303,7 +303,7 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
             spin_names.append(new_spin[4])
 
     # Write the data.
-    write_spin_data(mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
+    write_spin_data(sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
 def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
