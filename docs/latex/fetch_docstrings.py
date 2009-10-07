@@ -635,7 +635,7 @@ class Fetch_docstrings:
         #############
 
         # Print the function name to sys.stdout
-        sys.stdout.write("Function: " + repr(function) + "\n")
+        sys.stdout.write("User function: %s().\n" % function)
 
         # Get the docstring.
         docstring = getdoc(object)
