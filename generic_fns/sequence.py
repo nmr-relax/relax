@@ -134,9 +134,9 @@ def compare_sequence(pipe1=None, pipe2=None, fail=True):
 
 
 def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False):
-    """Function for displaying the molecule, residue, and/or spin sequence data.
+    """Display the molecule, residue, and/or spin sequence data.
 
-    This calls the write_body() function to do most of the work.
+    This calls the write() function to do most of the work.
 
 
     @keyword sep:               The column seperator which, if None, defaults to whitespace.
@@ -163,7 +163,7 @@ def display(sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=Fal
         raise RelaxNoSequenceError
 
     # Write the data.
-    write_body(file=sys.stdout, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
+    write(file=sys.stdout, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
 def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, pipe=None, select=True, verbose=True):
@@ -218,6 +218,7 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
     curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
 
     # A new spin.
+    new_data = False
     if not curr_spin:
         # Add the spin.
         curr_res.spin.add_item(spin_name=spin_name, spin_num=spin_num)
@@ -225,12 +226,15 @@ def generate(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_nam
         # Get the spin.
         curr_spin = return_spin(generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name), pipe=pipe)
 
+        # New data.
+        new_data = True
+
     # Set the selection flag.
     curr_spin.select = select
 
     # Print out of all the spins.
-    if verbose:
-        write_line(sys.stdout, mol_name, res_num, res_name, spin_num, spin_name, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+    if new_data:
+        return mol_name, res_num, res_name, spin_num, spin_name
 
 
 def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
@@ -278,13 +282,28 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     if exists_mol_res_spin_data():
         raise RelaxSequenceError
 
-    # Header print out.
-    write_header(sys.stdout, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+    # Init the data.
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
 
     # Generate the sequence.
     for id in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Add the spin.
-        generate(*spin_id_to_data_list(id))
+        new_spin = generate(*spin_id_to_data_list(id))
+
+        # Append the new spin.
+        if new_spin:
+            mol_names.append(new_spin[0])
+            res_nums.append(new_spin[1])
+            res_names.append(new_spin[2])
+            spin_nums.append(new_spin[3])
+            spin_names.append(new_spin[4])
+
+    # Write the data.
+    write_spin_data(mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
 def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
@@ -358,9 +377,9 @@ def validate_sequence(data, mol_name_col=None, res_num_col=None, res_name_col=No
 
 
 def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):
-    """Function for writing molecule, residue, and/or sequence data.
+    """Write the molecule, residue, and/or sequence data.
 
-    This calls the write_body() function to do most of the work.
+    This calls the relax_io.write_spin_data() function to do most of the work.
 
 
     @param file:                The name of the file to write the data to.
@@ -391,11 +410,32 @@ def write(file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res
     if not count_spins():
         raise RelaxNoSequenceError
 
-    # Open the file for writing.
-    seq_file = open_write_file(file, dir, force)
+    # Init the data.
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
+
+    # Spin loop.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin.num)
+        spin_names.append(spin.name)
+
+    # Remove unwanted data.
+    if not mol_name_flag:
+        mol_names = None
+    if not res_num_flag:
+        res_nums = None
+    if not res_name_flag:
+        res_names = None
+    if not spin_num_flag:
+        spin_nums = None
+    if not spin_name_flag:
+        spin_names = None
 
     # Write the data.
-    write_body(file=seq_file, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
-
-    # Close the results file.
-    seq_file.close()
+    write_spin_data(file=file, dir=dir, sep=sep, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
