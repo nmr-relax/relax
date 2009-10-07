@@ -73,10 +73,10 @@ class Peak_lists(TestCase):
         # Load the data.
         for i in range(10):
             # Read the peak intensities.
-            self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+2, res_num_col=2, res_name_col=3, spin_name_col=5)
+            self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+3, res_num_col=1, res_name_col=2)
 
             # Set the relaxation times.
-            relax_fit.relax_time(time=delays[i], spectrum_id=repr(i))
+            self.relax.interpreter._Relax_fit.relax_time(time=delays[i], spectrum_id=repr(i))
 
         # The actual intensities.
         heights = [[1.0000, 0.9714, 0.9602, 0.9626, 0.8839, 0.8327, 0.7088, 0.5098, 0.2410, 0.1116],
