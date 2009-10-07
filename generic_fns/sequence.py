@@ -27,7 +27,7 @@
 from generic_fns.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_id_to_data_list, spin_loop
 import pipes
 from relax_errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
-from relax_io import extract_data, open_write_file, read_spin_data_file, strip
+from relax_io import open_write_file, read_spin_data_file
 import sys
 
 
