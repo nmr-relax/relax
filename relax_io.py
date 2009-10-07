@@ -812,12 +812,14 @@ def write_spin_data(file=sys.stdout, dir=None, sep=None, spin_ids=None, mol_name
     # Init.
     file.write("\n")
     prefix = '# '
+    shift = -2
 
     # The spin ID info.
     for i in range(len(args)):
         if args[i]:
-            file.write(("%s%%-%ss%s" % (prefix, len_args[i], sep)) % arg_names[i])
+            file.write(("%s%%-%ss%s" % (prefix, len_args[i]+shift, sep)) % arg_names[i])
             prefix = ' '
+            shift = 0
 
     # The data.
     if data:
