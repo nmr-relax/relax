@@ -473,8 +473,6 @@ def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, m
     molecule name, residue name and number, and/or spin name and number.
 
 
-    @keyword id:            The alignment tensor ID string.
-    @type id:               str
     @keyword file:          The name of the file to open.
     @type file:             str
     @keyword dir:           The directory containing the file (defaults to the current directory
@@ -509,7 +507,8 @@ def read_spin_data_file(file=None, dir=None, file_data=None, spin_id_col=None, m
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
     @type spin_id:          None or str
     @return:                A list of the spin specific data is yielded.  The format is a list
                             consisting of the spin ID string, the data value (if data_col is give),
@@ -663,6 +662,249 @@ def test_binary(binary):
 
         # The binary is not located in the system path!
         raise RelaxNoInPathError(binary)
+
+
+def write_spin_data_file(file=sys.stdout, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, data_length=20, data_format=None, error=None, error_name=None, error_length=20, error_format=None):
+    """Generator function for reading the spin specific data from file.
+
+    Description
+    ===========
+
+    This function writes a columnar formatted file where each line corresponds to a spin system.
+    Spin identification is either through a spin ID string or through columns containing the
+    molecule name, residue name and number, and/or spin name and number.
+
+
+    @keyword file:          The name of the file to write the data to (or alternatively an already opened file object).
+    @type file:             str or file object
+    @keyword dir:           The directory to place the file into (defaults to the current directory if None and the file argument is not a file object).
+    @type dir:              str or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword spin_ids:      The list of spin ID strings.
+    @type spin_ids:         None or list of str
+    @keyword mol_names:     The list of molecule names.
+    @type mol_names:        None or list of str
+    @keyword res_nums:      The list of residue numbers.
+    @type res_nums:         None or list of int
+    @keyword res_names:     The list of residue names.
+    @type res_names:        None or list of str
+    @keyword spin_nums:     The list of spin numbers.
+    @type spin_nums:        None or list of int
+    @keyword spin_names:    The list of spin names.
+    @type spin_names:       None or list of str
+    @keyword force:         A flag which if True will cause an existing file to be overwritten.
+    @type force:            bool
+    @keyword data:          A list of the data to write out.  The first dimension corresponds to the spins.  A second dimension can also be given if multiple data sets across multiple columns are desired.
+    @type data:             list or list of lists
+    @keyword data_name:     A name corresponding to the data argument.  If the data argument is a list of lists, then this must also be a list with the same length as the second dimension of the data arg.
+    @type data_name:        str or list of str
+    @keyword data_length:   The length of the data columns.
+    @type data_length:      int
+    @keyword data_format:   The optional python formatting string for the data columns, e.g. "%-30s".
+    @type data_format:      None or str
+    @keyword error:         A list of the errors to write out.  The first dimension corresponds to the spins.  A second dimension can also be given if multiple data sets across multiple columns are desired.  These will be inter-dispersed between the data columns, if the data is given.  If the data arg is not None, then this must have the same dimensions as that object.
+    @type error:            list or list of lists
+    @keyword error_name:    A name corresponding to the error argument.  If the error argument is a list of lists, then this must also be a list with the same length at the second dimension of the error arg.
+    @type error_name:       str or list of str
+    @keyword error_length:  The length of the error columns.
+    @type error_length:     int
+    @keyword error_format:  The optional python formatting string for the error columns, e.g. "%-30s".
+    @type error_format:     None or str
+    """
+
+    # Data argument tests.
+    if data:
+        # Data is a list of lists.
+        if isinstance(data[0], list):
+            # Data and data_name don't match.
+            if not isinstance(data_name, list):
+                raise RelaxError("The data_name arg '%s' must be a list as the data argument is a list of lists." % data_name)
+
+            # Error doesn't match.
+            if error and (len(data) != len(error) or len(data[0]) != len(error[0])):
+                raise RelaxError("The data arg:\n%s\n\ndoes not have the same dimensions as the error arg:\n%s." % (data, error))
+
+        # Data is a simple list.
+        else:
+            # Data and data_name don't match.
+            if not isinstance(data_name, str):
+                raise RelaxError("The data_name arg '%s' must be a string as the data argument is a simple list." % data_name)
+
+            # Error doesn't match.
+            if error and len(data) != len(error):
+                raise RelaxError("The data arg:\n%s\n\ndoes not have the same dimensions as the error arg:\n%s." % (data, error))
+
+    # Error argument tests.
+    if error:
+        # Error is a list of lists.
+        if isinstance(error[0], list):
+            # Error and error_name don't match.
+            if not isinstance(error_name, list):
+                raise RelaxError("The error_name arg '%s' must be a list as the error argument is a list of lists." % error_name)
+
+        # Error is a simple list.
+        else:
+            # Error and error_name don't match.
+            if not isinstance(error_name, str):
+                raise RelaxError("The error_name arg '%s' must be a string as the error argument is a simple list." % error_name)
+
+    # Number of spins check.
+    args = [spin_ids, mol_names, res_nums, res_names, spin_nums, spin_names]
+    arg_names = ['spin_ids', 'mol_names', 'res_nums', 'res_names', 'spin_nums', 'spin_names']
+    N = None
+    first_arg = None
+    first_arg_name = None
+    for i in range(len(args)):
+        if isinstance(args[i], list):
+            # First list match.
+            if N == None:
+                N = len(args[i])
+                first_arg = args[i]
+                first_arg_name = arg_names[i]
+
+            # Length check.
+            if len(args[i]) != N:
+                raise RelaxError("The %s and %s arguments do not have the same number of spins ('%s' vs. '%s' respectively)." % (first_arg_name, arg_names[i], len(first_arg), len(args[i])))
+
+    # Nothing?!?
+    if N == None:
+        raise RelaxError("No spin ID data is present.")
+
+    # Data and error length check.
+    if data and len(data) != N:
+        raise RelaxError("The %s and data arguments do not have the same number of spins ('%s' vs. '%s' respectively)." % (first_arg_name, len(first_arg), len(data)))
+    if error and len(error) != N:
+        raise RelaxError("The %s and error arguments do not have the same number of spins ('%s' vs. '%s' respectively)." % (first_arg_name, len(first_arg), len(error)))
+
+    # No special separator character.
+    if sep == None:
+        sep = ''
+
+    # Open the file.
+    file = open_write_file(file_name=file, dir=dir)
+
+    # The column lengths.
+    len_spin_id = 10
+    len_mol_name = 10
+    len_res_num = 10
+    len_res_name = 10
+    len_spin_num = 10
+    len_spin_name = 10
+    len_args = [len_spin_id, len_mol_name, len_res_num, len_res_name, len_spin_num, len_spin_name]
+
+    # Data and error formatting strings.
+    data_head_format = "%%-%ss" % data_length
+    if not data_format:
+        data_format = "%%%ss" % data_length
+    error_head_format = "%%-%ss" % error_length
+    if not error_format:
+        error_format = "%%%ss" % error_length
+
+    # The spin arguments.
+    args = [spin_ids, mol_names, res_nums, res_names, spin_nums, spin_names]
+    arg_names = ['spin_id', 'mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name']
+
+
+    # Header.
+    #########
+
+    # Init.
+    file.write("\n")
+    prefix = '# '
+
+    # The spin ID info.
+    for i in range(len(args)):
+        if args[i]:
+            file.write(("%s%%-%ss%s" % (prefix, len_args[i], sep)) % arg_names[i])
+            prefix = ' '
+
+    # The data.
+    if data:
+        # List of lists.
+        if isinstance(data[0], list):
+            # Loop over the list.
+            for i in range(len(data[0])):
+                # The data.
+                file.write((prefix+data_head_format+sep) % data_name[i])
+
+                # The error.
+                if error:
+                    file.write((prefix+error_head_format+sep) % error_name[i])
+
+        # Simple list.
+        else:
+            # The data.
+            file.write((prefix+data_head_format+sep) % data_name)
+
+            # The error.
+            if error:
+                file.write((prefix+error_head_format+sep) % error_name)
+
+    # Only errors.
+    elif error:
+        # List of lists.
+        if isinstance(error[0], list):
+            for i in range(len(error[0])):
+                file.write((prefix+error_head_format+sep) % error_name[i])
+
+        # Simple list.
+        else:
+            file.write((prefix+error_head_format+sep) % error_name)
+
+    # Terminate the line.
+    file.write("\n")
+
+
+    # Spin specific data.
+    #####################
+
+    # Loop over the spins.
+    for spin_index in range(N):
+        # The prefix.
+        prefix = ''
+
+        # The spin ID info.
+        for i in range(len(args)):
+            if args[i]:
+                file.write(("%s%%-%ss%s" % (prefix, len_args[i], sep)) % args[i][spin_index])
+                prefix = ' '
+
+        # The data.
+        if data:
+            # List of lists.
+            if isinstance(data[0], list):
+                # Loop over the list.
+                for i in range(len(data[0])):
+                    # The data.
+                    file.write((prefix+data_format+sep) % data[spin_index][i])
+
+                    # The error.
+                    if error:
+                        file.write((prefix+error_format+sep) % error[spin_index][i])
+
+            # Simple list.
+            else:
+                # The data.
+                file.write((prefix+data_format+sep) % data[spin_index])
+
+                # The error.
+                if error:
+                    file.write((prefix+error_format+sep) % error[spin_index])
+
+        # Only errors.
+        elif error:
+            # List of lists.
+            if isinstance(error[0], list):
+                for i in range(len(error[0])):
+                    file.write((prefix+error_format+sep) % error[spin_index][i])
+
+            # Simple list.
+            else:
+                file.write((prefix+error_format+sep) % error[spin_index])
+
+        # End of the line.
+        file.write("\n")
 
 
 

@@ -30,7 +30,7 @@ from copy import deepcopy
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
-from relax_io import read_spin_data_file
+from relax_io import read_spin_data_file, write_spin_data_file
 
 
 def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
@@ -422,7 +422,9 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     #####################
 
     # Loop over the RDC data.
-    print(("\n%-50s %-15s %-15s" % ("spin_id", "value", "error")))
+    spin_ids = []
+    values = []
+    errors = []
     for data in read_spin_data_file(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
         # Unpack.
         if data_col and error_col:
@@ -461,8 +463,13 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             # Append the error.
             spin.rdc_err.append(error)
 
-        # Print out.
-        print(("%-50s %15s %15s" % (id, value, error)))
+        # Append the data for print out.
+        spin_ids.append(id)
+        values.append(value)
+        errors.append(error)
+
+    # Print out.
+    write_spin_data_file(spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
 
 
     # Global (non-spin specific) data.
