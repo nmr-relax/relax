@@ -563,7 +563,7 @@ class N_state_model(Common_functions):
         @return:    The assembled data structures for using RDCs as the base data for optimisation.
                     These include:
                         - rdcs, the RDC values.
-                        - xh_vectors, the heteronucleus to proton vectors.
+                        - vectors, the heteronucleus to proton vectors.
                         - dj, the dipolar constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
@@ -571,7 +571,7 @@ class N_state_model(Common_functions):
         # Initialise.
         rdcs = []
         rdc_err = []
-        xh_vectors = []
+        vectors = []
         dj = []
 
         # Spin loop.
@@ -586,14 +586,14 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
                     rdc_err.append([None]*len(cdp.align_tensors))
-                    xh_vectors.append([None]*3)
+                    vectors.append([None]*3)
                     dj.append(None)
 
                 # Jump to the next spin.
                 continue
 
             # RDC data exists but the XH bond vectors are missing?
-            if not hasattr(spin, 'xh_vect'):
+            if not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect'):
                 # Throw a warning.
                 warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin " + spin_id))
 
@@ -601,18 +601,22 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
                     rdc_err.append([None]*len(cdp.align_tensors))
-                    xh_vectors.append([None]*3)
+                    vectors.append([None]*3)
                     dj.append(None)
 
                 # Jump to the next spin.
                 continue
 
             # Append the RDC and XH vectors to the lists.
-            rdcs.append(spin.rdc)
-            if isinstance(spin.xh_vect[0], float):
-                xh_vectors.append([spin.xh_vect])
+            if hasattr(spin, 'xh_vect'):
+                obj = getattr(spin, 'xh_vect')
             else:
-                xh_vectors.append(spin.xh_vect)
+                obj = getattr(spin, 'bond_vect')
+            rdcs.append(spin.rdc)
+            if isinstance(obj[0], float):
+                vectors.append([obj])
+            else:
+                vectors.append(obj)
 
             # Append the PCS errors (or a list of None).
             if hasattr(spin, 'rdc_err'):
@@ -630,7 +634,7 @@ class N_state_model(Common_functions):
         # Initialise the numpy objects (the rdc matrix is transposed!).
         rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
         rdc_err_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        xh_vect_numpy = zeros((len(xh_vectors), len(xh_vectors[0]), 3), float64)
+        vect_numpy = zeros((len(vectors), len(vectors[0]), 3), float64)
 
         # Loop over the spins.
         for spin_index in xrange(len(rdcs)):
@@ -641,12 +645,12 @@ class N_state_model(Common_functions):
                 rdc_err_numpy[align_index, spin_index] = rdc_err[spin_index][align_index]
 
             # Loop over the N states.
-            for state_index in xrange(len(xh_vectors[spin_index])):
+            for state_index in xrange(len(vectors[spin_index])):
                 # Store the unit vector.
-                xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
+                vect_numpy[spin_index, state_index] = vectors[spin_index][state_index]
 
         # Return the data structures.
-        return rdcs_numpy, rdc_err_numpy, xh_vect_numpy, array(dj, float64)
+        return rdcs_numpy, rdc_err_numpy, vect_numpy, array(dj, float64)
 
 
     def __minimise_setup_tensors(self, sim_index=None):
