@@ -39,12 +39,12 @@ for name in pipes:
     #structure.read_pdb('example.pdb')
 
     # Load the relaxation data.
-    relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out')
-    relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out')
-    relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out')
-    relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out')
-    relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out')
-    relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out')
+    relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', res_num_col=1, data_col=3, error_col=4)
+    relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', res_num_col=1, data_col=3, error_col=4)
+    relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', res_num_col=1, data_col=3, error_col=4)
+    relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', res_num_col=1, data_col=3, error_col=4)
+    relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', res_num_col=1, data_col=3, error_col=4)
+    relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
     # Setup other values.
     diffusion_tensor.init(1e-8, fixed=True)
