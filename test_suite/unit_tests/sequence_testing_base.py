@@ -184,4 +184,7 @@ class Sequence_base_class:
         file_md5.update(file.read())
 
         # Test the md5sum.
-        self.assertEqual(file_md5.digest(), 'O1\xb3D\x0e8\xd1\xe7_Q\x9c\xd1\xd6v\xc8\xde')
+        self.assertEqual(file_md5.digest(), '\x98\x7f\xb9\xe0\xb9\x96\x90\x87\x07-\xe3\x87Z\x0b~\xb1')
+
+        # Close the file.
+        file.close()
