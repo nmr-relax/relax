@@ -462,7 +462,7 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         return file_obj
 
 
-def read_spin_data(file, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Generator function for reading the spin specific data from file.
 
     Description
@@ -473,7 +473,7 @@ def read_spin_data(file, dir=None, file_data=None, spin_id_col=None, mol_name_co
     molecule name, residue name and number, and/or spin name and number.
 
 
-    @param file:            The name of the file to open.
+    @keyword file:          The name of the file to open.
     @type file:             str
     @keyword dir:           The directory containing the file (defaults to the current directory
                             if None).
