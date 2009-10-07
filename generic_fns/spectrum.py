@@ -34,9 +34,62 @@ from warnings import warn
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
-from relax_errors import RelaxError, RelaxImplementError, RelaxNoSequenceError
+from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError
 from relax_io import extract_data, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
+
+
+def __check_args(spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
+    """Check that the arguments have not been set.
+
+    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity
+                            file format).  If supplied, the mol_name_col, res_name_col, res_num_col,
+                            spin_name_col, and spin_num_col arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information (used by the
+                            generic intensity file format).  If supplied, spin_id_col must be None.
+    @type res_num_col:      int or None
+    @keyword spin_name_col: The column containing the spin name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type spin_num_col:     int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
+    @type spin_id:          None or str
+    """
+
+    # Args and names.
+    args = [spin_id_col,
+            mol_name_col,
+            res_num_col,
+            res_name_col,
+            spin_num_col,
+            spin_name_col,
+            sep,
+            spin_id]
+    names = ['spin_id_col',
+             'mol_name_col',
+             'res_num_col',
+             'res_name_col',
+             'spin_num_col',
+             'spin_name_col',
+             'sep',
+             'spin_id']
+
+    # Check the arguments are None.
+    for i in range(len(args)):
+        if args[i] != None:
+            raise RelaxArgNotNoneError(names[i], args[i])
 
 
 def __errors_height_no_repl():
@@ -313,40 +366,6 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
         spin.baseplane_rmsd[spect_index] = float(error) * scale
 
 
-def det_dimensions(file_data, proton, heteronuc, int_col):
-    """Determine which are the proton and heteronuclei dimensions of the XEasy text file.
-
-    @return:    None
-    """
-
-    # Loop over the lines of the file until the proton and heteronucleus is reached.
-    for i in xrange(len(file_data)):
-        # Extract the data.
-        w1_name, w2_name, spin_id, intensity = intensity_xeasy(file_data[i], int_col)
-
-        # Proton in w1, heteronucleus in w2.
-        if w1_name == proton and w2_name == heteronuc:
-            # Set the proton dimension.
-            H_dim = 'w1'
-
-            # Print out.
-            print("The proton dimension is w1")
-
-            # Don't continue (waste of time).
-            break
-
-        # Heteronucleus in w1, proton in w2.
-        if w1_name == heteronuc and w2_name == proton:
-            # Set the proton dimension.
-            H_dim = 'w2'
-
-            # Print out.
-            print("The proton dimension is w2")
-
-            # Don't continue (waste of time).
-            break
-
-
 def error_analysis():
     """Determine the peak intensity standard deviation."""
 
@@ -402,18 +421,45 @@ def error_analysis():
             __errors_repl()
 
 
-def intensity_generic(line, int_col):
-    """Function for returning relevant data from the generic peak intensity line.
+def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, sep=None, spin_id=None):
+    """Return the process data from the generic peak intensity file.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
 
 
-    @param line:        The single line of information from the intensity file.
-    @type line:         list of str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
-                        file).
-    @type int_col:      int
-    @raises RelaxError: When the expected peak intensity is not a float.
+    @keyword file_data:     The data extracted from the file converted into a list of lists.
+    @type file_data:        list of lists of str
+    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity
+                            file format).  If supplied, the mol_name_col, res_name_col, res_num_col,
+                            spin_name_col, and spin_num_col arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information (used by the
+                            generic intensity file format).  If supplied, spin_id_col must be None.
+    @type res_num_col:      int or None
+    @keyword spin_name_col: The column containing the spin name information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information (used by the generic
+                            intensity file format).  If supplied, spin_id_col must be None.
+    @type spin_num_col:     int or None
+    @keyword data_col:      The column containing the peak intensities.
+    @type data_col:         int
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
+    @type spin_id:          None or str
+    @raises RelaxError:     When the expected peak intensity is not a float.
+    @return:                The extracted data as a list of lists.  The first dimension corresponds
+                            to the spin.  The second dimension consists of the proton name,
+                            heteronucleus name, spin ID string, and the intensity value.
+    @rtype:                 list of lists of str, str, str, float
     """
 
     # Determine the number of delays (and associated intensities).
@@ -466,44 +512,34 @@ def intensity_generic(line, int_col):
     return h_name, x_name, spin_id, intensity
 
 
-def intensity_nmrview(line, int_col):
-    """Function for returning relevant data from the NMRView peak intensity line.
+def intensity_nmrview(file_data=None, int_col=None):
+    """Return the process data from the NMRView peak intensity file.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
 
 
-    @param line:        The single line of information from the intensity file.
-    @type line:         list of str
+    @keyword file_data: The data extracted from the file converted into a list of lists.
+    @type file_data:    list of lists of str
     @keyword int_col:   The column containing the peak intensity data. The default is 16 for
                         intensities. Setting the int_col argument to 15 will use the volumes (or
                         evolumes). For a non-standard formatted file, use a different value.
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to
+                        the spin.  The second dimension consists of the proton name, heteronucleus
+                        name, spin ID string, and the intensity value.
+    @rtype:             list of lists of str, str, str, float
     """
 
-    # The residue number
-    res_num = ''
-    try:
-        res_num = string.strip(line[1], '{')
-        res_num = string.strip(res_num, '}')
-        res_num = string.split(res_num, '.')
-        res_num = res_num[0]
-    except ValueError:
-        raise RelaxError("The peak list is invalid.")
+    # Assume the NMRView file has six header lines!
+    num = 6
+    print(("Number of header lines: " + repr(num)))
 
-    # Nuclei names.
-    x_name = ''
-    if line[8]!='{}':
-        x_name = string.strip(line[8], '{')
-        x_name = string.strip(x_name, '}')
-        x_name = string.split(x_name, '.')
-        x_name = x_name[1]
-    h_name = ''
-    if line[1]!='{}':
-        h_name = string.strip(line[1], '{')
-        h_name = string.strip(h_name, '}')
-        h_name = string.split(h_name, '.')
-        h_name = h_name[1]
+    # Remove the header.
+    file_data = file_data[num:]
+
+    # Strip the data.
+    file_data = strip(file_data)
 
     # The peak intensity column.
     if int_col == None:
@@ -513,64 +549,32 @@ def intensity_nmrview(line, int_col):
     if int_col == 15:
         print('Using peak volumes (or evolumes).')
 
-    # Intensity.
-    try:
-        intensity = float(line[int_col])
-    except ValueError:
-        raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
-
-    # Generate the spin_id.
-    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
-
-    # Return the data.
-    return h_name, x_name, spin_id, intensity
-
-
-def intensity_sparky(line, int_col):
-    """Function for returning relevant data from the Sparky peak intensity line.
-
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
-    @param line:        The single line of information from the intensity file.
-    @type line:         list of str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
-                        file).
-    @type int_col:      int
-    @raises RelaxError: When the expected peak intensity is not a float.
-    """
-
-
-    # The Sparky assignment.
-    assignment = ''
-    res_num = ''
-    h_name = ''
-    x_name = ''
-    intensity = ''
-    if line[0]!='?-?':
-        assignment = split('([A-Z]+)', line[0])
-        if assignment[0] == '':
-            assignment = assignment[1:]
-        if assignment[-1] == '':
-            assignment = assignment[:-1]
+    # Loop over the file data.
+    data = []
+    for line in file_data:
+        # The residue number
+        res_num = ''
         try:
-            int(assignment[0])
+            res_num = string.strip(line[1], '{')
+            res_num = string.strip(res_num, '}')
+            res_num = string.split(res_num, '.')
+            res_num = res_num[0]
         except ValueError:
-            assignment = assignment[1:]
-
-        # The residue number.
-        try:
-            res_num = int(assignment[0])
-        except:
-            raise RelaxError("Improperly formatted Sparky file.")
+            raise RelaxError("The peak list is invalid.")
 
         # Nuclei names.
-        x_name = assignment[1]
-        h_name = assignment[3]
-
-        # The peak intensity column.
-        if int_col == None:
-            int_col = 3
+        x_name = ''
+        if line[8]!='{}':
+            x_name = string.strip(line[8], '{')
+            x_name = string.strip(x_name, '}')
+            x_name = string.split(x_name, '.')
+            x_name = x_name[1]
+        h_name = ''
+        if line[1]!='{}':
+            h_name = string.strip(line[1], '{')
+            h_name = string.strip(h_name, '}')
+            h_name = string.split(h_name, '.')
+            h_name = h_name[1]
 
         # Intensity.
         try:
@@ -578,124 +582,204 @@ def intensity_sparky(line, int_col):
         except ValueError:
             raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
-    # Generate the spin_id.
-    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+        # Generate the spin_id.
+        spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+
+        # Append the data.
+        data.append([h_name, x_name, spin_id, intensity])
 
     # Return the data.
-    return h_name, x_name, spin_id, intensity
+    return data
 
 
-def intensity_xeasy(line, int_col, H_dim='w1'):
-    """Function for returning relevant data from the XEasy peak intensity line.
+def intensity_sparky(file_data=None, int_col=None):
+    """Return the process data from the Sparky peak intensity file.
 
     The residue number, heteronucleus and proton names, and peak intensity will be returned.
 
 
-    @param line:        The single line of information from the intensity file.
-    @type line:         list of str
+    @keyword file_data: The data extracted from the file converted into a list of lists.
+    @type file_data:    list of lists of str
     @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
                         file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to
+                        the spin.  The second dimension consists of the proton name, heteronucleus
+                        name, spin ID string, and the intensity value.
+    @rtype:             list of lists of str, str, str, float
     """
 
-    # Test for invalid assignment lines which have the column numbers changed and return empty data.
-    if line[4] == 'inv.':
-        return None, None, None, 0.0
+    # Assume the Sparky file has two header lines!
+    num = 2
+    print(("Number of header lines found: " + repr(num)))
 
-    # The residue number.
-    try:
-        res_num = int(line[5])
-    except:
-        raise RelaxError("Improperly formatted XEasy file.")
+    # Remove the header.
+    file_data = file_data[num:]
 
-    # Nuclei names.
-    if H_dim == 'w1':
-        h_name = line[4]
-        x_name = line[7]
-    else:
-        x_name = line[4]
-        h_name = line[7]
+    # Strip the data.
+    file_data = strip(file_data)
 
-    # The peak intensity column.
+    # Loop over the file data.
+    data = []
+    for line in file_data:
+        # The Sparky assignment.
+        assignment = ''
+        res_num = ''
+        h_name = ''
+        x_name = ''
+        intensity = ''
+        if line[0]!='?-?':
+            assignment = split('([A-Z]+)', line[0])
+            if assignment[0] == '':
+                assignment = assignment[1:]
+            if assignment[-1] == '':
+                assignment = assignment[:-1]
+            try:
+                int(assignment[0])
+            except ValueError:
+                assignment = assignment[1:]
+
+            # The residue number.
+            try:
+                res_num = int(assignment[0])
+            except:
+                raise RelaxError("Improperly formatted Sparky file.")
+
+            # Nuclei names.
+            x_name = assignment[1]
+            h_name = assignment[3]
+
+            # The peak intensity column.
+            if int_col == None:
+                int_col = 3
+
+            # Intensity.
+            try:
+                intensity = float(line[int_col])
+            except ValueError:
+                raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
+
+        # Generate the spin_id.
+        spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+
+        # Append the data.
+        data.append([h_name, x_name, spin_id, intensity])
+
+    # Return the data.
+    return data
+
+
+def intensity_xeasy(file_data=None, heteronuc=None, proton=None, int_col=None):
+    """Return the process data from the XEasy peak intensity file.
+
+    The residue number, heteronucleus and proton names, and peak intensity will be returned.
+
+
+    @keyword file_data: The data extracted from the file converted into a list of lists.
+    @type file_data:    list of lists of str
+    @keyword heteronuc: The name of the heteronucleus as specified in the peak intensity file.
+    @type heteronuc:    str
+    @keyword proton:    The name of the proton as specified in the peak intensity file.
+    @type proton:       str
+    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted
+                        file).
+    @type int_col:      int
+    @raises RelaxError: When the expected peak intensity is not a float.
+    @return:            The extracted data as a list of lists.  The first dimension corresponds to
+                        the spin.  The second dimension consists of the proton name, heteronucleus
+                        name, spin ID string, and the intensity value.
+    @rtype:             list of lists of str, str, str, float
+    """
+
+    # The columns.
+    w1_col = 4
+    w2_col = 7
     if int_col == None:
         int_col = 10
 
-    # Intensity.
-    try:
-        intensity = float(line[int_col])
-    except ValueError:
-        raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
+    # Set the default proton dimension.
+    H_dim = 'w1'
 
-    # Generate the spin_id.
-    spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+    # Determine the number of header lines.
+    num = 0
+    for line in file_data:
+        # Try to see if the intensity can be extracted.
+        try:
+            intensity = float(line[int_col])
+        except ValueError:
+            num = num + 1
+        except IndexError:
+            num = num + 1
+        else:
+            break
+    print(("Number of header lines found: " + repr(num)))
+
+    # Remove the header.
+    file_data = file_data[num:]
+
+    # Strip the data.
+    file_data = strip(file_data)
+
+    # Determine the proton and heteronucleus dimensions.
+    for line in file_data:
+        # Proton in w1, heteronucleus in w2.
+        if line[w1_col] == proton and line[w2_col] == heteronuc:
+            # Set the proton dimension.
+            H_dim = 'w1'
+
+            # Print out.
+            print("The proton dimension is w1")
+
+            # Don't continue (waste of time).
+            break
+
+        # Heteronucleus in w1, proton in w2.
+        if line[w1_col] == heteronuc and line[w2_col] == proton:
+            # Set the proton dimension.
+            H_dim = 'w2'
+
+            # Print out.
+            print("The proton dimension is w2")
+
+            # Don't continue (waste of time).
+            break
+
+    # Loop over the file data.
+    data = []
+    for line in file_data:
+        # Test for invalid assignment lines which have the column numbers changed and return empty data.
+        if line[w1_col] == 'inv.':
+            continue
+
+        # The residue number.
+        try:
+            res_num = int(line[5])
+        except:
+            raise RelaxError("Improperly formatted XEasy file.")
+
+        # Nuclei names.
+        if H_dim == 'w1':
+            h_name = line[w1_col]
+            x_name = line[w2_col]
+        else:
+            x_name = line[w1_col]
+            h_name = line[w2_col]
+
+        # Intensity.
+        try:
+            intensity = float(line[int_col])
+        except ValueError:
+            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
+
+        # Generate the spin_id.
+        spin_id = generate_spin_id(res_num=res_num, spin_name=x_name)
+
+        # Append the data.
+        data.append([h_name, x_name, spin_id, intensity])
 
     # Return the data.
-    return h_name, x_name, spin_id, intensity
-
-
-def number_of_header_lines(file_data, format, int_col, intensity):
-    """Function for determining how many header lines are in the intensity file.
-
-    @param file_data:   The processed results file data.
-    @type file_data:    list of lists of str
-    @param format:      The type of file containing peak intensities.  This can currently be one of
-                        'generic', 'nmrview', 'sparky' or 'xeasy'.
-    @type format:       str
-    @param int_col:     The column containing the peak intensity data (for a non-standard
-                        formatted file).
-    @type int_col:      int
-    @param intensity:   The intensity extraction function.
-    @type intensity:    func
-    @return:            The number of header lines.
-    @rtype:             int
-    """
-
-    # Generic.
-    ##########
-
-    # Assume the generic file has two header lines!
-    if format == 'generic':
-        return 2
-
-    # NMRView.
-    ##########
-
-    # Assume the NMRView file has six header lines!
-    elif format == 'nmrview':
-        return 6
-
-
-    # Sparky.
-    #########
-
-    # Assume the Sparky file has two header lines!
-    elif format == 'sparky':
-        return 2
-
-
-    # XEasy.
-    ########
-
-    # Loop over the lines of the file until a peak intensity value is reached.
-    elif format == 'xeasy':
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            # Try to see if the intensity can be extracted.
-            try:
-                if int_col:
-                    intensity(file_data[i], int_col)
-                else:
-                    intensity(file_data[i], int_col)
-            except RelaxError:
-                header_lines = header_lines + 1
-            except IndexError:
-                header_lines = header_lines + 1
-            else:
-                break
-
-        # Return the number of lines.
-        return header_lines
+    return data
 
 
 def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
@@ -774,49 +858,41 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Print out.
         print("Generic formatted data file.\n")
 
-        # Set the intensity reading function.
-        intensity_fn = intensity_generic
+        # Extract the data.
+        intensity_data = intensity_generic(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=int_col, sep=sep, spin_id=spin_id)
 
     # NMRView.
     elif format == 'nmrview':
         # Print out.
         print("NMRView formatted data file.\n")
 
-        # Set the intensity reading function.
-        intensity_fn = intensity_nmrview
+        # Check that certain args have not been set:
+        __check_args(spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+
+        # Extract the data.
+        intensity_data = intensity_nmrview(file_data=file_data)
 
     # Sparky.
     elif format == 'sparky':
         # Print out.
         print("Sparky formatted data file.\n")
 
-        # Set the intensity reading function.
-        intensity_fn = intensity_sparky
+        # Check that certain args have not been set:
+        __check_args(spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+
+        # Extract the data.
+        intensity_data = intensity_sparky(file_data=file_data, int_col=int_col)
 
     # XEasy.
     elif format == 'xeasy':
         # Print out.
         print("XEasy formatted data file.\n")
 
-        # Set the default proton dimension.
-        H_dim = 'w1'
+        # Check that certain args have not been set:
+        __check_args(spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
-        # Set the intensity reading function.
-        intensity_fn = intensity_xeasy
-
-    # Determine the number of header lines.
-    num = number_of_header_lines(file_data, format, int_col, intensity_fn)
-    print(("Number of header lines found: " + repr(num)))
-
-    # Remove the header.
-    file_data = file_data[num:]
-
-    # Strip the data.
-    file_data = strip(file_data)
-
-    # Determine the proton and heteronucleus dimensions in the XEasy text file.
-    if format == 'xeasy':
-        det_dimensions(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
+        # Extract the data.
+        intensity_data = intensity_xeasy(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
 
     # Add the spectrum id (and ncproc) to the relax data store.
     if not hasattr(cdp, 'spectrum_ids'):
@@ -831,12 +907,13 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             cdp.ncproc[spectrum_id] = ncproc
 
     # Loop over the peak intensity data.
-    for i in xrange(len(file_data)):
+    for i in xrange(len(intensity_data)):
         # Extract the data.
-        H_name, X_name, spin_id, intensity = intensity_fn(file_data[i], int_col)
+        H_name, X_name, spin_id, intensity = intensity_data[i]
+        print intensity_data[i]
 
         # Skip data.
-        if X_name != heteronuc or H_name != proton:
+        if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
             warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % repr(file_data[i])))
             continue
 
@@ -859,10 +936,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             intensity = intensity / float(2**ncproc)
 
         # Add the data.
-        if format == 'generic':
-            spin.intensities = intensity
-        else:
-            spin.intensities.append(intensity)
+        spin.intensities.append(intensity)
 
 
 def replicated(spectrum_ids=None):
