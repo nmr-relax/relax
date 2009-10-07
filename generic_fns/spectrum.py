@@ -35,7 +35,7 @@ from warnings import warn
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxArgNotNoneError, RelaxError, RelaxImplementError, RelaxNoSequenceError
-from relax_io import extract_data, strip
+from relax_io import extract_data, read_spin_data_file, strip
 from relax_warnings import RelaxWarning, RelaxNoSpinWarning
 
 
@@ -462,54 +462,16 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     @rtype:                 list of lists of str, str, str, float
     """
 
-    # Determine the number of delays (and associated intensities).
-    i = 6
-    while True:
-        i = i + 1
-        try:
-            current_field = line[i-1]
-        except:
-            num_delays = int(i - 7)
-            if num_delays == 0:
-                raise RelaxError("Generic file with no associated delays (and intensities).")
-            break
+    # Strip the data.
+    file_data = strip(file_data)
 
-    # The residue number.
-    res_num = ''
-    try:
-        res_num = int(line[1])
-    except:
-        raise RelaxError("Improperly formatted generic file.")
-
-    # Nuclei names.
-    x_name = ''
-    x_name = line[4]
-    h_name = ''
-    h_name = line[5]
-
-    # Extract intensities.
-    try:
-        intensity = [float(line[6])]
-    except ValueError:
-        raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
-
-    i = 1
-    while i < num_delays:
-        i = i + 1
-        try:
-            intensity.append(float(line[i + 5]))
-        except ValueError:
-            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
-
-    print('')
-    print('The following information was extracted from the intensity file (res_num, h_name, x_name, intensities).')
-    print(('    ' + repr(res_num), h_name, x_name, intensity))
-
-    # Generate the spin identification string.
-    spin_id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+    # Loop over the data.
+    data = []
+    for id, value in read_spin_data_file(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
+        data.append([None, None, id, value])
 
     # Return the data.
-    return h_name, x_name, spin_id, intensity
+    return data
 
 
 def intensity_nmrview(file_data=None, int_col=None):
