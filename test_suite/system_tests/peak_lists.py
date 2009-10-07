@@ -58,20 +58,38 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Residue.create(36)
         self.relax.interpreter._Spin.name(name='N')
 
-        # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        # Relaxation delays.
+        delays = [0.0109016,
+                  0.0218032,
+                  0.0436064,
+                  0.0436064,
+                  0.0872128,
+                  0.1744260,
+                  0.3488510,
+                  0.6977020,
+                  1.3954000,
+                  1.9949900]
+
+        # Load the data.
+        for i in range(10):
+            # Read the peak intensities.
+            self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+2, res_num_col=2, res_name_col=3, spin_name_col=5)
+
+            # Set the relaxation times.
+            relax_fit.relax_time(time=delays[i], spectrum_id=repr(i))
+
+        # The actual intensities.
+        heights = [[1.0000, 0.9714, 0.9602, 0.9626, 0.8839, 0.8327, 0.7088, 0.5098, 0.2410, 0.1116],
+                   [1.0000, 0.9789, 0.9751, 0.9762, 0.9074, 0.8532, 0.7089, 0.5170, 0.2444, 0.1537],
+                   [1.0000, 0.9659, 0.9580, 0.9559, 0.9325, 0.8460, 0.7187, 0.5303, 0.2954, 0.1683],
+                   [1.0000, 0.9657, 0.9389, 0.9366, 0.9331, 0.8683, 0.7169, 0.5357, 0.2769, 0.1625],
+                   [1.0000, 1.0060, 0.9556, 0.9456, 0.9077, 0.8411, 0.6788, 0.4558, 0.2448, 0.1569]
+        ]
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[1], 0.9714)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[2], 0.9602)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[3], 0.9626)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[4], 0.8839)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[5], 0.8327)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[6], 0.7088)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[7], 0.5098)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[8], 0.2410)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[9], 0.1116)
+        for i in range(10):
+            for j in range(5):
+                self.assertEqual(cdp.mol[0].res[0].spin[j].intensities[i], heights[j][i])
 
 
     def test_read_peak_list_generic2(self):
