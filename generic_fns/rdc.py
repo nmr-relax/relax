@@ -25,6 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
+import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
@@ -469,7 +470,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         errors.append(error)
 
     # Print out.
-    write_spin_data(spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
+    write_spin_data(file=sys.stdout, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
 
 
     # Global (non-spin specific) data.
