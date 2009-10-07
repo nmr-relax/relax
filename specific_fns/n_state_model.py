@@ -1414,7 +1414,6 @@ class N_state_model(Common_functions):
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
-            print min_options
             results = grid(func=model.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], A=A, b=b, verbosity=verbosity)
 
             # Unpack the results.
