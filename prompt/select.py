@@ -101,15 +101,15 @@ class Select(User_fn_class):
         spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
             number columns).
 
-        mol_name_col:  The molecule name column (alternative to the spid_id_col).
+        mol_name_col:  The molecule name column (alternative to the spin_id_col).
 
-        res_num_col:  The residue number column (alternative to the spid_id_col).
+        res_num_col:  The residue number column (alternative to the spin_id_col).
 
-        res_name_col:  The residue name column (alternative to the spid_id_col).
+        res_name_col:  The residue name column (alternative to the spin_id_col).
 
-        spin_num_col:  The spin number column (alternative to the spid_id_col).
+        spin_num_col:  The spin number column (alternative to the spin_id_col).
 
-        spin_name_col:  The spin name column (alternative to the spid_id_col).
+        spin_name_col:  The spin name column (alternative to the spin_id_col).
 
         data_col:  The RDC data column.
 

@@ -291,19 +291,19 @@ class Spectrum(User_fn_class):
             alternative to the mol, res, and spin name and number columns).
 
         mol_name_col:  The molecule name column used by the generic intensity file format
-            (alternative to the spid_id_col).
+            (alternative to the spin_id_col).
 
         res_num_col:  The residue number column used by the generic intensity file format
-            (alternative to the spid_id_col).
+            (alternative to the spin_id_col).
 
         res_name_col:  The residue name column used by the generic intensity file format
-            (alternative to the spid_id_col).
+            (alternative to the spin_id_col).
 
         spin_num_col:  The spin number column used by the generic intensity file format
-            (alternative to the spid_id_col).
+            (alternative to the spin_id_col).
 
         spin_name_col:  The spin name column used by the generic intensity file format
-            (alternative to the spid_id_col).
+            (alternative to the spin_id_col).
 
         sep:  The column separator used by the generic intensity format (the default is white
             space).
