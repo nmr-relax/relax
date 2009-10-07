@@ -37,29 +37,29 @@ from relax_errors import RelaxError
 class RDC(User_fn_class):
     """Class for handling residual dipolar coulpings."""
 
-    def back_calc(self, id=None):
+    def back_calc(self, align_id=None):
         """Back calculate RDCs.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.back_calc("
-            text = text + "id=" + repr(id) + ")"
+            text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
 
         # Execute the functional code.
-        rdc.back_calc(id=id)
+        rdc.back_calc(align_id=align_id)
 
 
-    def copy(self, pipe_from=None, pipe_to=None, id=None):
+    def copy(self, pipe_from=None, pipe_to=None, align_id=None):
         """Copy RDC data from pipe_from to pipe_to.
 
         Keyword Arguments
@@ -69,14 +69,14 @@ class RDC(User_fn_class):
 
         pipe_to:  The name of the pipe to copy the RDC data to.
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy RDC data from 'pipe_from' to 'pipe_to'.  If id is not given then all
-        RDC data will be copied, otherwise only a specific data set will be.
+        This function will copy RDC data from 'pipe_from' to 'pipe_to'.  If align_id is not given
+        then all RDC data will be copied, otherwise only a specific data set will be.
 
 
         Examples
@@ -87,12 +87,12 @@ class RDC(User_fn_class):
         relax> rdc.copy('m1', 'm9')
         relax> rdc.copy(pipe_from='m1', pipe_to='m9')
         relax> rdc.copy('m1', 'm9', None)
-        relax> rdc.copy(pipe_from='m1', pipe_to='m9', id=None)
+        relax> rdc.copy(pipe_from='m1', pipe_to='m9', align_id=None)
 
         To copy only the 'Th' RDC data from 'm3' to 'm6', type one of:
 
         relax> rdc.copy('m3', 'm6', 'Th')
-        relax> rdc.copy(pipe_from='m3', pipe_to='m6', id='Th')
+        relax> rdc.copy(pipe_from='m3', pipe_to='m6', align_id='Th')
         """
 
         # Function intro text.
@@ -100,35 +100,35 @@ class RDC(User_fn_class):
             text = sys.ps3 + "rdc.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
-            text = text + ", id=" + repr(id) + ")"
+            text = text + ", align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
         check.is_str(pipe_from, 'pipe from', can_be_none=True)
         check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        check.is_str(id, 'alignment ID string', can_be_none=True)
+        check.is_str(align_id, 'alignment ID string', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
             raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
-        rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id)
+        rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, align_id=align_id)
 
 
-    def delete(self, id=None):
-        """Delete the RDC data corresponding to the alignment id.
+    def delete(self, align_id=None):
+        """Delete the RDC data corresponding to the alignment ID.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
 
         Examples
         ~~~~~~~~
 
-        To delete the RDC data corresponding to id='PH_gel', type:
+        To delete the RDC data corresponding to align_id='PH_gel', type:
 
         relax> rdc.delete('PH_gel')
         """
@@ -136,23 +136,23 @@ class RDC(User_fn_class):
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.delete("
-            text = text + "id=" + repr(id) + ")"
+            text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
 
         # Execute the functional code.
-        rdc.delete(id=id)
+        rdc.delete(align_id=align_id)
 
 
-    def display(self, id=None):
-        """Display the RDC data corresponding to the alignment id.
+    def display(self, align_id=None):
+        """Display the RDC data corresponding to the alignment ID.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
 
         Examples
@@ -166,23 +166,23 @@ class RDC(User_fn_class):
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.display("
-            text = text + "id=" + repr(id) + ")"
+            text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
 
         # Execute the functional code.
-        rdc.display(id=id)
+        rdc.display(align_id=align_id)
 
 
-    def read(self, id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+    def read(self, align_id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
         """Read the RDC data from file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
         file:  The name of the file containing the RDC data.
 
@@ -235,7 +235,7 @@ class RDC(User_fn_class):
         then to read these values into relax, type one of:
 
         relax> rdc.read('phage', 'rdc_err.txt', error_col=5)
-        relax> rdc.read(id='phage', file='rdc_err.txt', error_col=5)
+        relax> rdc.read(align_id='phage', file='rdc_err.txt', error_col=5)
 
 
         If the RDCs correspond to the 'N' spin and other spin types such as 1H, 13C, etc. are loaded
@@ -247,7 +247,7 @@ class RDC(User_fn_class):
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.read("
-            text = text + "id=" + repr(id)
+            text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -263,7 +263,7 @@ class RDC(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
         check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
@@ -278,16 +278,16 @@ class RDC(User_fn_class):
         check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        rdc.read(id=id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+        rdc.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
-    def write(self, id=None, file=None, dir=None, force=False):
+    def write(self, align_id=None, file=None, dir=None, force=False):
         """Write the RDC data to file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
         file:  The name of the file.
 
@@ -300,23 +300,23 @@ class RDC(User_fn_class):
         ~~~~~~~~~~~
 
         If no directory name is given, the file will be placed in the current working directory.
-        The 'id' argument are required for selecting which RDC data set will be written to file.
+        The 'align_id' argument are required for selecting which RDC data set will be written to file.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "rdc.write("
-            text = text + "id=" + repr(id)
+            text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
         check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        rdc.write(id=id, file=file, dir=dir, force=force)
+        rdc.write(align_id=align_id, file=file, dir=dir, force=force)

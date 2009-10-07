@@ -37,26 +37,26 @@ from relax_errors import RelaxError
 class PCS(User_fn_class):
     """Class for handling pseudo-contact shifts."""
 
-    def back_calc(self, id=None):
-        """Back calculate the pseudocontact shifts.
+    def back_calc(self, align_id=None):
+        """Back calculate the pseudo-contact shifts.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.back_calc("
-            text = text + "id=" + repr(id) + ")"
+            text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
 
         # Execute the functional code.
-        pcs.back_calc(id=id)
+        pcs.back_calc(align_id=align_id)
 
 
     def centre(self, atom_id=None, pipe=None, ave_pos=True):
@@ -122,7 +122,7 @@ class PCS(User_fn_class):
         pcs.centre(atom_id=atom_id, pipe=pipe, ave_pos=ave_pos)
 
 
-    def copy(self, pipe_from=None, pipe_to=None, id=None):
+    def copy(self, pipe_from=None, pipe_to=None, align_id=None):
         """Copy PCS data from pipe_from to pipe_to.
 
         Keyword Arguments
@@ -132,14 +132,14 @@ class PCS(User_fn_class):
 
         pipe_to:  The name of the pipe to copy the PCS data to.
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
 
         Description
         ~~~~~~~~~~~
 
-        This function will copy PCS data from 'pipe_from' to 'pipe_to'.  If id is not given then all
-        PCS data will be copied, otherwise only a specific data set will be.
+        This function will copy PCS data from 'pipe_from' to 'pipe_to'.  If align_id is not given
+        then all PCS data will be copied, otherwise only a specific data set will be.
 
 
         Examples
@@ -150,12 +150,12 @@ class PCS(User_fn_class):
         relax> pcs.copy('m1', 'm9')
         relax> pcs.copy(pipe_from='m1', pipe_to='m9')
         relax> pcs.copy('m1', 'm9', None)
-        relax> pcs.copy(pipe_from='m1', pipe_to='m9', id=None)
+        relax> pcs.copy(pipe_from='m1', pipe_to='m9', align_id=None)
 
         To copy only the 'Th' PCS data from 'm3' to 'm6', type one of:
 
         relax> pcs.copy('m3', 'm6', 'Th')
-        relax> pcs.copy(pipe_from='m3', pipe_to='m6', id='Th')
+        relax> pcs.copy(pipe_from='m3', pipe_to='m6', align_id='Th')
         """
 
         # Function intro text.
@@ -163,35 +163,35 @@ class PCS(User_fn_class):
             text = sys.ps3 + "pcs.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
-            text = text + ", id=" + repr(id) + ")"
+            text = text + ", align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
         check.is_str(pipe_from, 'pipe from', can_be_none=True)
         check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        check.is_str(id, 'alignment ID string', can_be_none=True)
+        check.is_str(align_id, 'alignment ID string', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
             raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
-        pcs.copy(pipe_from=pipe_from, pipe_to=pipe_to, id=id)
+        pcs.copy(pipe_from=pipe_from, pipe_to=pipe_to, align_id=align_id)
 
 
-    def delete(self, id=None):
-        """Delete the PCS data corresponding to the alignment id.
+    def delete(self, align_id=None):
+        """Delete the PCS data corresponding to the alignment ID.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
 
         Examples
         ~~~~~~~~
 
-        To delete the PCS data corresponding to id='PH_gel', type:
+        To delete the PCS data corresponding to align_id='PH_gel', type:
 
         relax> pcs.delete('PH_gel')
         """
@@ -199,23 +199,23 @@ class PCS(User_fn_class):
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.delete("
-            text = text + "id=" + repr(id) + ")"
+            text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
 
         # Execute the functional code.
-        pcs.delete(id=id)
+        pcs.delete(align_id=align_id)
 
 
-    def display(self, id=None):
-        """Display the PCS data corresponding to the alignment id.
+    def display(self, align_id=None):
+        """Display the PCS data corresponding to the alignment ID.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
 
         Examples
@@ -229,23 +229,23 @@ class PCS(User_fn_class):
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.display("
-            text = text + "id=" + repr(id) + ")"
+            text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
 
         # Execute the functional code.
-        pcs.display(id=id)
+        pcs.display(align_id=align_id)
 
 
-    def read(self, id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+    def read(self, align_id=None, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
         """Read the PCS data from file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
         file:  The name of the file containing the PCS data.
 
@@ -304,7 +304,7 @@ class PCS(User_fn_class):
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.read("
-            text = text + "id=" + repr(id)
+            text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -320,7 +320,7 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
         check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
@@ -335,16 +335,16 @@ class PCS(User_fn_class):
         check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        pcs.read(id=id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+        pcs.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
-    def write(self, id=None, file=None, dir=None, force=False):
+    def write(self, align_id=None, file=None, dir=None, force=False):
         """Write the PCS data to file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        id:  The alignment ID string.
+        align_id:  The alignment ID string.
 
         file:  The name of the file.
 
@@ -357,23 +357,23 @@ class PCS(User_fn_class):
         ~~~~~~~~~~~
 
         If no directory name is given, the file will be placed in the current working directory.
-        The 'id' argument are required for selecting which PCS data set will be written to file.
+        The 'align_id' argument are required for selecting which PCS data set will be written to file.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.write("
-            text = text + "id=" + repr(id)
+            text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'alignment ID string')
+        check.is_str(align_id, 'alignment ID string')
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
         check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        pcs.write(id=id, file=file, dir=dir, force=force)
+        pcs.write(align_id=align_id, file=file, dir=dir, force=force)
