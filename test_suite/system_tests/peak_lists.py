@@ -51,11 +51,11 @@ class Peak_lists(TestCase):
         """Test the reading of a generic peak intensity list."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(20)
-        self.relax.interpreter._Residue.create(23)
-        self.relax.interpreter._Residue.create(34)
-        self.relax.interpreter._Residue.create(35)
-        self.relax.interpreter._Residue.create(36)
+        self.relax.interpreter._Residue.create(20, 'GLY')
+        self.relax.interpreter._Residue.create(23, 'ALA')
+        self.relax.interpreter._Residue.create(34, 'CYS')
+        self.relax.interpreter._Residue.create(35, 'MET')
+        self.relax.interpreter._Residue.create(36, 'LYS')
         self.relax.interpreter._Spin.name(name='N')
 
         # Relaxation delays.
@@ -89,7 +89,8 @@ class Peak_lists(TestCase):
         # Test the data.
         for i in range(10):
             for j in range(5):
-                self.assertEqual(cdp.mol[0].res[0].spin[j].intensities[i], heights[j][i])
+                print cdp.mol[0].res[j].spin[0]
+                self.assertEqual(cdp.mol[0].res[j].spin[0].intensities[i], heights[j][i])
 
 
     def test_read_peak_list_nmrview(self):
