@@ -33,7 +33,7 @@ for name in pipes:
     pipe.create(name, 'mf')
 
     # Load the sequence.
-    sequence.read('noe.500.out')
+    sequence.read('noe.500.out', res_num_col=1)
 
     # Load a PDB file.
     #structure.read_pdb('example.pdb')

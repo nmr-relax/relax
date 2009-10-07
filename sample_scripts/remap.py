@@ -32,7 +32,7 @@ value.set('15N', 'heteronucleus')
 pipe.create(name, 'mf')
 
 # Load the sequence.
-sequence.read(name, 'noe.500.out')
+sequence.read(name, 'noe.500.out', res_num_col=1)
 
 # Load the relaxation data.
 relax_data.read(name, 'R1', '600', 600.0 * 1e6, 'r1.600.out')

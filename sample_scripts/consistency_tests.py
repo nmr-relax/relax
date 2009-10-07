@@ -28,7 +28,7 @@ name = 'consistency'
 pipe.create(name, 'ct')
 
 # Load the sequence.
-sequence.read('noe.600.out')
+sequence.read('noe.600.out', res_num_col=1)
 
 # Load the relaxation data.
 relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out')

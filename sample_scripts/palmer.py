@@ -49,7 +49,7 @@ def exec_stage_1(pipes):
         pipe.create(name, 'mf')
 
         # Load the sequence.
-        sequence.read('noe.500.out')
+        sequence.read('noe.500.out', res_num_col=1)
 
         # PDB.
         #structure.read_pdb('Ap4Aase_new_3.pdb')
