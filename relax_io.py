@@ -777,6 +777,10 @@ def write_spin_data(file=sys.stdout, dir=None, sep=None, spin_ids=None, mol_name
     if error and len(error) != N:
         raise RelaxError("The %s and error arguments do not have the same number of spins ('%s' vs. '%s' respectively)." % (first_arg_name, len(first_arg), len(error)))
 
+    # The spin arguments.
+    args = [spin_ids, mol_names, res_nums, res_names, spin_nums, spin_names]
+    arg_names = ['spin_id', 'mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name']
+
     # No special separator character.
     if sep == None:
         sep = ''
@@ -784,14 +788,17 @@ def write_spin_data(file=sys.stdout, dir=None, sep=None, spin_ids=None, mol_name
     # Open the file.
     file = open_write_file(file_name=file, dir=dir)
 
-    # The column lengths.
-    len_spin_id = 10
-    len_mol_name = 10
-    len_res_num = 10
-    len_res_name = 10
-    len_spin_num = 10
-    len_spin_name = 10
-    len_args = [len_spin_id, len_mol_name, len_res_num, len_res_name, len_spin_num, len_spin_name]
+    # The spin ID column lengths.
+    len_args = [10] * 6
+    for i in range(len(args)):
+        # Minimum width of the header name lengths.
+        if args[i] and len(arg_names[i]) > len_args[i]:
+            len_args[i] = len(arg_names[i]) + 2
+
+        # Minimum width of the spin ID data.
+        for spin_index in range(N):
+            if args[i] and len(repr(args[i][spin_index])) > len_args[i]:
+                len_args[i] = len(repr(args[i][spin_index])) + 1
 
     # Data and error formatting strings.
     data_head_format = "%%-%ss" % data_length
@@ -800,10 +807,6 @@ def write_spin_data(file=sys.stdout, dir=None, sep=None, spin_ids=None, mol_name
     error_head_format = "%%-%ss" % error_length
     if not error_format:
         error_format = "%%%ss" % error_length
-
-    # The spin arguments.
-    args = [spin_ids, mol_names, res_nums, res_names, spin_nums, spin_names]
-    arg_names = ['spin_id', 'mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name']
 
 
     # Header.
