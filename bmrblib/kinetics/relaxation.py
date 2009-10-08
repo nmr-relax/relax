@@ -80,7 +80,7 @@ class Relaxation_v3_1(Relaxation_v3_0):
     """
 
 
-class Relaxation_v3_2(Relaxation_v3_0):
+class Relaxation_v3_2(Relaxation_v3_1):
     """Class for the relaxation data part of the BMRB API (v3.2)."""
 
     def __init__(self, datanodes):
