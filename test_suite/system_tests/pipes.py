@@ -27,7 +27,7 @@ from unittest import TestCase
 from data import Relax_data_store; ds = Relax_data_store()
 
 
-class Pipe_create(TestCase):
+class Pipes(TestCase):
     """TestCase class for the functional tests of relax data pipes."""
 
 

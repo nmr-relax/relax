@@ -44,11 +44,11 @@ value.set('1H', 'proton', spin_id="@N")
 
 # RDCs.
 if ds.mode in ['rdc', 'all']:
-    rdc.read(id='synth', file=rdc_file, dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
+    rdc.read(align_id='synth', file=rdc_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
 
 # PCSs.
 if ds.mode in ['pcs', 'all']:
-    pcs.read(id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
+    pcs.read(align_id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
 
     # Set the paramagnetic centre.
     pcs.centre(atom_id=':1000@CA')

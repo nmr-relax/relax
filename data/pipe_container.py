@@ -100,7 +100,8 @@ class PipeContainer(Prototype):
 
         @param relax_node:  The relax XML node.
         @type relax_node:   xml.dom.minidom.Element instance
-        @keyword dir:       The name of the directory containing the results file.
+        @keyword dir:       The name of the directory containing the results file (needed for
+                            loading external files).
         @type dir:          str
         """
 
@@ -127,16 +128,13 @@ class PipeContainer(Prototype):
             self.diff_tensor.from_xml(diff_tensor_nodes[0])
 
         # Get the alignment tensor data nodes and, if they exist, fill the contents.
-        align_tensor_super_node = relax_node.getElementsByTagName('align_tensors')
-        if align_tensor_super_node:
-            # Get the individual tensors.
-            align_tensor_nodes = align_tensor_super_node[0].getElementsByTagName('align_tensor')
-
+        align_tensor_nodes = relax_node.getElementsByTagName('align_tensors')
+        if align_tensor_nodes:
             # Create the diffusion tensor object.
             self.align_tensors = AlignTensorList()
 
             # Fill its contents.
-            self.align_tensors.from_xml(align_tensor_nodes)
+            self.align_tensors.from_xml(align_tensor_nodes[0])
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = relax_node.getElementsByTagName('mol')

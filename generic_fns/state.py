@@ -25,6 +25,7 @@
 
 # Python module imports.
 from cPickle import dump, load
+from re import search
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -32,32 +33,46 @@ from relax_errors import RelaxError
 from relax_io import open_read_file, open_write_file
 
 
-def load_state(state=None, dir_name=None):
-    """Function for loading a saved program state.
+def determine_format(file):
+    """Determine the format of the state file.
 
-    @keyword state:     The saved state file.
-    @type state:        str
-    @keyword dir_name:  The path of the state file.
-    @type dir_name:     str
+    @keyword file:  The file object representing the state file.
+    @type file:     file object
+    @return:        The state format.  This can be 'xml' or 'pickle'.
+    @rtype:         str or None
     """
 
-    # Open the file for reading.
-    file = open_read_file(file_name=state, dir=dir_name)
+    # 1st line.
+    header = file.readline()
+    header = header[:-1]    # Strip the trailing newline.
+
+    # Be nice and go back to the start of the file.
+    file.seek(0)
+
+    # XML.
+    if search("<\?xml", header):
+        return 'xml'
+
+    # Pickle.
+    elif search("ccopy_reg", header):
+        return 'pickle'
+
+
+def load_pickle(file):
+    """Load the program state from the pickled file.
+
+    @param file:    The file object containing the relax state.
+    @type file:     file object
+    """
 
     # Unpickle the data class.
-    try:
-        state = load(file)
-    except:
-        raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
+    state = load(file)
 
     # Close the file.
     file.close()
 
-    # Reset the relax data storage object.
-    ds.__reset__()
-
     # Black list of objects (all dict objects, non-modifiable objects, data store specific methods, and other special objects).
-    black_list = dir(dict) + ['__weakref__', '__dict__', '__module__', '__reset__', 'add', 'from_xml', 'to_xml']
+    black_list = dir(dict) + ['__weakref__', '__dict__', '__module__', '__reset__', 'add', 'from_xml', 'is_empty', 'to_xml']
 
     # Loop over the objects in the saved state, and dump them into the relax data store.
     for name in dir(state):
@@ -79,14 +94,55 @@ def load_state(state=None, dir_name=None):
     # Delete the state object.
     del state
 
+    # Success.
+    return True
 
-def save_state(state=None, dir_name=None, force=False, compress_type=1):
+
+def load_state(state=None, dir=None, force=False):
+    """Function for loading a saved program state.
+
+    @keyword state:     The saved state file.
+    @type state:        str
+    @keyword dir:       The path of the state file.
+    @type dir:          str
+    @keyword force:     If True, the relax data store will be reset prior to state loading.
+    @type force:        bool
+    """
+
+    # Open the file for reading.
+    file = open_read_file(file_name=state, dir=dir)
+
+    # Determine the format of the file.
+    format = determine_format(file)
+
+    # Reset.
+    if force:
+        ds.__reset__()
+
+    # Make sure that the data store is empty.
+    if not ds.is_empty():
+        raise RelaxError("The relax data store is not empty.")
+
+    # XML state.
+    if format == 'xml':
+        ds.from_xml(file)
+
+    # Pickled state.
+    elif format == 'pickle':
+        load_pickle(file)
+
+    # Bad state file.
+    else:
+        raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
+
+
+def save_state(state=None, dir=None, compress_type=1, force=False, pickle=True):
     """Function for saving the program state.
 
     @keyword state:         The saved state file.
     @type state:            str
-    @keyword dir_name:      The path of the state file.
-    @type dir_name:         str
+    @keyword dir:           The path of the state file.
+    @type dir:              str
     @keyword force:         Boolean argument which if True causes the file to be overwritten if it
                             already exists.
     @type force:            bool
@@ -96,10 +152,15 @@ def save_state(state=None, dir_name=None, force=False, compress_type=1):
     """
 
     # Open the file for writing.
-    file = open_write_file(file_name=state, dir=dir_name, force=force, compress_type=compress_type)
+    file = open_write_file(file_name=state, dir=dir, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
-    dump(ds, file, 1)
+    if pickle:
+        dump(ds, file, 1)
+
+    # Otherwise save as XML.
+    else:
+        ds.to_xml(file)
 
     # Close the file.
     file.close()

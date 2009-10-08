@@ -39,6 +39,10 @@ except ImportError:
     C_module_exp_fn = False
 
 
+# List of valid data pipe types.
+VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
+
+
 def copy(pipe_from=None, pipe_to=None):
     """Copy the contents of the source data pipe to a new target data pipe.
 
@@ -88,12 +92,9 @@ def create(pipe_name=None, pipe_type=None, switch=True):
     @type switch:       bool
     """
 
-    # List of valid data pipe types.
-    valid = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit', 'relax_disp', 'srls']
-
     # Test if pipe_type is valid.
-    if not pipe_type in valid:
-        raise RelaxError("The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(valid) + ".")
+    if not pipe_type in VALID_TYPES:
+        raise RelaxError("The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(VALID_TYPES) + ".")
 
     # Test that the C modules have been loaded.
     if pipe_type == 'relax_fit' and not C_module_exp_fn:

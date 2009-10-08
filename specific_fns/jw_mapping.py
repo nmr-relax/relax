@@ -33,9 +33,7 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, 
 
 
 class Jw_mapping(Common_functions):
-    def __init__(self):
-        """Class containing functions specific to reduced spectral density mapping."""
-
+    """Class containing functions specific to reduced spectral density mapping."""
 
     def calculate(self, verbosity=1, sim_index=None, spin_id=None):
         """Calculation of the spectral density values."""

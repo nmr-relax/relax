@@ -34,9 +34,7 @@ from relax_warnings import RelaxDeselectWarning
 
 
 class Noe(Common_functions):
-    def __init__(self):
-        """Class containing functions for relaxation data."""
-
+    """Class containing functions for relaxation data."""
 
     def assign_function(self, spin=None, intensity=None, spectrum_type=None):
         """Place the peak intensity data into the spin container.

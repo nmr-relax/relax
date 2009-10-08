@@ -40,6 +40,33 @@ from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
 
 
+def __deselect_spins():
+    """Deselect spins with no or too little data, that are overfitting, etc."""
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Is structural data required?
+    need_vect = False
+    if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
+        need_vect = True
+
+    # Loop over the sequence.
+    for spin in spin_loop():
+        # Relaxation data must exist!
+        if not hasattr(spin, 'relax_data'):
+            spin.select = False
+
+        # Require 3 or more relaxation data points.
+        elif len(spin.relax_data) < 3:
+            spin.select = False
+
+        # Require at least as many data points as params to prevent over-fitting.
+        elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
+            spin.select = False
+
+
 def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, trim=None, steps=None, heteronuc_type=None, atom1=None, atom2=None, spin_id=None, force=False, constraints=True):
     """Create the Modelfree4 input files.
 
@@ -96,6 +123,9 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     # Test if the PDB file is loaded (for the spheroid and ellipsoid).
     if hasattr(cdp, 'diff_tensor') and not cdp.diff_tensor.type == 'sphere' and not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
+
+    # Deselect certain spins.
+    __deselect_spins()
 
     # Directory creation.
     if dir == None:

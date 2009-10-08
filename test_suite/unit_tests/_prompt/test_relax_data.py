@@ -356,7 +356,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', sep=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', data_col=0, error_col=0, sep=data[1])
 
 
     def test_write_argfail_ri_label(self):

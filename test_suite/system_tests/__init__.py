@@ -31,6 +31,7 @@ from unittest import TestLoader, TestSuite
 from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax system/functional test module imports.
+from align_tensor import Align_tensor
 from angles import Angles
 from bmrb import Bmrb
 from consistency_tests import Ct
@@ -48,7 +49,7 @@ from noe import Noe
 from noe_restraints import Noe_restraints
 from palmer import Palmer
 from peak_lists import Peak_lists
-from pipe_create import Pipe_create
+from pipes import Pipes
 from relax_fit import Relax_fit
 from results import Results
 from sequence import Sequence
@@ -57,7 +58,8 @@ from structure import Structure
 from unit_vectors import Unit_vectors
 
 
-__all__ = ['angles',
+__all__ = ['align_tensor',
+           'angles',
            'brmb',
            'consistency_tests',
            'dasha'
@@ -74,7 +76,7 @@ __all__ = ['angles',
            'noe_restraints',
            'palmer',
            'peak_lists'
-           'pipe_create',
+           'pipes',
            'relax_fit',
            'results',
            'sequence',
@@ -101,6 +103,7 @@ class System_test_runner:
 
         # Create an array of test suites (add your new TestCase classes here).
         suite_array = []
+        suite_array.append(TestLoader().loadTestsFromTestCase(Align_tensor))
         suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
         suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
         suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
@@ -118,7 +121,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
         suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
         suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
         suite_array.append(TestLoader().loadTestsFromTestCase(Results))
         suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))

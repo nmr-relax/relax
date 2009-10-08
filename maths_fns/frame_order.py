@@ -32,7 +32,7 @@ from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, reduce_alignment_tensor
-from maths_fns.rotation_matrix import R_euler_zyz
+from maths_fns.rotation_matrix import euler_zyz_to_R
 from relax_errors import RelaxError
 
 
@@ -104,9 +104,6 @@ class Frame_order:
             self.cone_axis = zeros(3, float64)
             self.z_axis = array([0, 0, 1], float64)
 
-            # Alias the target function.
-            self.func = self.func_iso_cone
-
 
     def __init_tensors(self, full_tensors, red_tensors, red_errors, full_in_ref_frame):
         """Set up isotropic cone optimisation against the alignment tensor data.
@@ -148,6 +145,9 @@ class Frame_order:
 
         # Initialise the Frame Order matrices.
         self.frame_order_2nd = zeros((9, 9), float64)
+
+        # Alias the target function.
+        self.func = self.func_iso_cone
 
 
     def __init_iso_cone_elements(self, frame_order_2nd):
@@ -196,7 +196,7 @@ class Frame_order:
         alpha, beta, gamma = params
 
         # Alignment tensor rotation.
-        R_euler_zyz(self.rot, alpha, beta, gamma)
+        euler_zyz_to_R(alpha, beta, gamma, self.rot)
 
         # Back calculate the rotated tensors.
         for i in range(self.num_tensors):
@@ -244,7 +244,7 @@ class Frame_order:
         self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
 
         # Reduced alignment tensor rotation.
-        R_euler_zyz(self.rot, alpha, beta, gamma)
+        euler_zyz_to_R(alpha, beta, gamma, self.rot)
 
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):

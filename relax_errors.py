@@ -75,7 +75,7 @@ def save_state():
 
     # Append the date and time to the save file.
     now = time.localtime()
-    file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], now[2], now[1], now[3], now[4], now[5])
+    file_name = "relax_state_%i%02i%02i_%02i%02i%02i" % (now[0], now[1], now[2], now[3], now[4], now[5])
 
     # Open the file for writing.
     if bz2:
@@ -304,6 +304,11 @@ class RelaxLenError(BaseArgError):
 class RelaxNoneError(BaseArgError):
     def __init__(self, name):
         self.text = "The " + name + " argument has not been supplied."
+
+# Not None.
+class RelaxArgNotNoneError(BaseArgError):
+    def __init__(self, name, value):
+        self.text = "The %s argument of '%s' must be None."
 
 
 # Simple types.
@@ -557,7 +562,7 @@ class RelaxNoSpinError(BaseError):
 # The sequence data is not valid.
 class RelaxInvalidSeqError(BaseError):
     def __init__(self, line):
-        self.text = "The line " + repr(line) + " of the sequence data is invalid."
+        self.text = "The sequence data in the line %s is invalid." % line
 
 # The spins have not been loaded
 class RelaxSpinsNotLoadedError(BaseError):

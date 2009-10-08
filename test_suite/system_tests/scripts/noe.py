@@ -7,7 +7,7 @@ import sys
 pipe.create('NOE', 'noe')
 
 # Load the sequence.
-sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data')
+sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
@@ -32,7 +32,7 @@ spectrum.baseplane_rmsd(error=8500, spectrum_id='sat_ave', spin_id=":5")
 spectrum.error_analysis()
 
 # Deselect unresolved residues.
-deselect.read(file='unresolved', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting')
+deselect.read(file='unresolved', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', res_num_col=1)
 
 # Calculate the NOEs.
 calc()

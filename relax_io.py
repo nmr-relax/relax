@@ -43,11 +43,45 @@ from re import match, search
 from string import split
 import sys
 from sys import stdin, stdout, stderr
+from warnings import warn
 
 # relax module imports.
-from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+import generic_fns
+from generic_fns.mol_res_spin import generate_spin_id_data_array
+from relax_errors import RelaxError, RelaxFileError, RelaxFileEmptyError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning
 
+
+
+def delete(file_name, dir=None, fail=True):
+    """Deleting the given file, taking into account missing compression extensions.
+
+    @param file_name:       The name of the file to delete.
+    @type file_name:        str
+    @keyword dir:           The directory containing the file.
+    @type dir:              None or str
+    @keyword fail:          A flag which if True will cause RelaxFileError to be raised.
+    @type fail:             bool
+    @raises RelaxFileError: If the file does not exist, and fail is set to true.
+    """
+
+    # File path.
+    file_path = get_file_path(file_name, dir)
+
+    # Test if the file exists and determine the compression type.
+    if access(file_path, F_OK):
+        pass
+    elif access(file_path + '.bz2', F_OK):
+        file_path = file_path + '.bz2'
+    elif access(file_path + '.gz', F_OK):
+        file_path = file_path + '.gz'
+    elif fail:
+        raise RelaxFileError(file_path)
+    else:
+        return
+
+    # Remove the file.
+    remove(file_path)
 
 
 def determine_compression(file_path):
@@ -170,10 +204,25 @@ def get_file_path(file_name=None, dir=None):
     return file_path
 
 
-def log(file_name=None, dir=None, verbosity=1):
+def io_streams_restore():
+    """Restore all IO streams to the Python defaults."""
+
+    # Print out.
+    if verbosity:
+        print("Restoring the sys.stdin IO stream to the Python STDIN IO stream.")
+        print("Restoring the sys.stdout IO stream to the Python STDOUT IO stream.")
+        print("Restoring the sys.stderr IO stream to the Python STDERR IO stream.")
+
+    # Restore streams.
+    sys.stdin  = sys.__stdin__
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+
+
+def io_streams_log(file_name=None, dir=None, verbosity=1):
     """Turn on logging, sending both STDOUT and STDERR streams to a file.
 
-    @param file_name:   The name of the file to extract the data from.
+    @param file_name:   The name of the file.
     @type file_name:    str
     @param dir:         The path where the file is located.  If None, then the current directory is
                         assumed.
@@ -204,6 +253,45 @@ def log(file_name=None, dir=None, verbosity=1):
     sys.stdin  = log_stdin
     sys.stdout = log_stdout
     sys.stderr = log_stderr
+
+
+def io_streams_tee(file_name=None, dir=None, compress_type=0, verbosity=1):
+    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file.
+
+    @param file_name:       The name of the file.
+    @type file_name:        str
+    @param dir:             The path where the file is located.  If None, then the current directory
+                            is assumed.
+    @type dir:              str
+    @param compress_type:   The compression type.  The integer values correspond to the compression
+                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @param verbosity:       The verbosity level.
+    @type verbosity:        int
+    """
+
+    # Tee file.
+    tee_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
+
+    # Tee IO streams.
+    tee_stdin  = stdin
+    tee_stdout = SplitIO()
+    tee_stderr = SplitIO()
+
+    # Print out.
+    if verbosity:
+        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
+        print(("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path))
+        print(("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path))
+
+    # Set the tee IO streams.
+    tee_stdout.split(stdout, tee_file)
+    tee_stderr.split(stderr, tee_file)
+
+    # IO stream redirection.
+    sys.stdin  = tee_stdin
+    sys.stdout = tee_stdout
+    sys.stderr = tee_stderr
 
 
 def mkdir_nofail(dir=None, verbosity=1):
@@ -375,6 +463,144 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         return file_obj
 
 
+def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+    """Generator function for reading the spin specific data from file.
+
+    Description
+    ===========
+
+    This function reads a columnar formatted file where each line corresponds to a spin system.
+    Spin identification is either through a spin ID string or through columns containing the
+    molecule name, residue name and number, and/or spin name and number.
+
+
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory
+                            if None).
+    @type dir:              str or None
+    @keyword file_data:     An alternative to opening a file, if the data already exists in the
+                            correct format.  The format is a list of lists where the first index
+                            corresponds to the row and the second the column.
+    @type file_data:        list of lists
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
+                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
+                            arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
+                            spin_id_col must be None.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information.  If supplied,
+                            spin_id_col must be None.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information.  If supplied,
+                            spin_id_col must be None.
+    @type res_num_col:      int or None
+    @keyword spin_name_col: The column containing the spin name information.  If supplied,
+                            spin_id_col must be None.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
+                            spin_id_col must be None.
+    @type spin_num_col:     int or None
+    @keyword data_col:      The column containing the data.
+    @type data_col:         int or None
+    @keyword error_col:     The column containing the errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
+    @type spin_id:          None or str
+    @return:                A list of the spin specific data is yielded.  The format is a list
+                            consisting of the spin ID string, the data value (if data_col is give),
+                            and the error value (if error_col is given).  If both data_col and
+                            error_col are None, then the spin ID string is simply yielded.
+    @rtype:                 str, list of [str, float], or list of [str, float, float]
+    """
+
+    # Argument tests.
+    col_args = [spin_id_col, mol_name_col, res_name_col, res_num_col, spin_name_col, spin_num_col, data_col, error_col]
+    col_arg_names = ['spin_id_col', 'mol_name_col', 'res_name_col', 'res_num_col', 'spin_name_col', 'spin_num_col', 'data_col', 'error_col']
+    for i in range(len(col_args)):
+        if col_args[i] == 0:
+            raise RelaxError, "The '%s' argument cannot be zero, column numbering starts at one." % col_arg_names[i]
+    if spin_id_col and (mol_name_col or res_name_col or res_num_col or spin_name_col or spin_num_col):
+        raise RelaxError, "If the 'spin_id_col' argument has been supplied, then the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col must all be set to None."
+
+    # Minimum number of columns.
+    min_col_num = max(spin_id_col, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
+
+    # Extract the data from the file.
+    if not file_data:
+        # Extract.
+        file_data = extract_data(file, dir)
+
+        # Strip the data of all comments and empty lines.
+        file_data = strip(file_data)
+
+    # No data!
+    if not file_data:
+        raise RelaxFileEmptyError
+
+    # Yield the data, spin by spin.
+    missing_data = True
+    for line in file_data:
+        # Skip missing data.
+        if len(line) < min_col_num:
+            continue
+
+        # Skip invalid data.
+        if data_col or error_col:
+            if data_col and line[data_col-1] == 'None':
+                continue
+            elif error_col and line[error_col-1] == 'None':
+                continue
+
+        # Validate the sequence.
+        try:
+            generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+        except RelaxInvalidSeqError, msg:
+            # Extract the message string, without the RelaxError bit.
+            string = msg.__str__()[12:-1]
+
+            # Give a warning.
+            warn(RelaxWarning(string))
+
+            # Skip the line.
+            continue
+
+        # Generate the spin ID string.
+        if spin_id_col:
+            id = line[spin_id_col-1]
+        else:
+            id = generate_spin_id_data_array(data=line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+
+        # Convert the data.
+        value = None
+        if data_col:
+            value = eval(line[data_col-1])
+        error = None
+        if error_col:
+            error = eval(line[error_col-1])
+
+        # Right, data is OK and exists.
+        missing_data = False
+
+        # Yield the data.
+        if data_col and error_col:
+            yield [id, value, error]
+        elif data_col:
+            yield [id, value]
+        elif error_col:
+            yield [id, error]
+        else:
+            yield id
+
+    # Hmmm, no data!
+    if missing_data:
+        raise RelaxError("No corresponding data could be found within the file.")
+
+
 def strip(data):
     """Function to remove all comment and empty lines from the file data structure.
 
@@ -403,45 +629,6 @@ def strip(data):
 
     # Return the new data structure.
     return new
-
-
-def tee(file_name=None, dir=None, compress_type=0, verbosity=1):
-    """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file.
-
-    @param file_name:       The name of the file to extract the data from.
-    @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current directory
-                            is assumed.
-    @type dir:              str
-    @param compress_type:   The compression type.  The integer values correspond to the compression
-                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
-    @type compress_type:    int
-    @param verbosity:       The verbosity level.
-    @type verbosity:        int
-    """
-
-    # Tee file.
-    tee_file, file_path = open_write_file(file_name=file_name, dir=dir, force=True, compress_type=compress_type, verbosity=verbosity, return_path=1)
-
-    # Tee IO streams.
-    tee_stdin  = stdin
-    tee_stdout = SplitIO()
-    tee_stderr = SplitIO()
-
-    # Print out.
-    if verbosity:
-        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
-        print(("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path))
-        print(("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path))
-
-    # Set the tee IO streams.
-    tee_stdout.split(stdout, tee_file)
-    tee_stderr.split(stderr, tee_file)
-
-    # IO stream redirection.
-    sys.stdin  = tee_stdin
-    sys.stdout = tee_stdout
-    sys.stderr = tee_stderr
 
 
 def test_binary(binary):
@@ -484,6 +671,252 @@ def test_binary(binary):
         raise RelaxNoInPathError(binary)
 
 
+def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, data_length=20, data_format=None, error=None, error_name=None, error_length=20, error_format=None):
+    """Generator function for reading the spin specific data from file.
+
+    Description
+    ===========
+
+    This function writes a columnar formatted file where each line corresponds to a spin system.
+    Spin identification is either through a spin ID string or through columns containing the
+    molecule name, residue name and number, and/or spin name and number.
+
+
+    @param file:            The name of the file to write the data to (or alternatively an already opened file object).
+    @type file:             str or file object
+    @keyword dir:           The directory to place the file into (defaults to the current directory if None and the file argument is not a file object).
+    @type dir:              str or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword spin_ids:      The list of spin ID strings.
+    @type spin_ids:         None or list of str
+    @keyword mol_names:     The list of molecule names.
+    @type mol_names:        None or list of str
+    @keyword res_nums:      The list of residue numbers.
+    @type res_nums:         None or list of int
+    @keyword res_names:     The list of residue names.
+    @type res_names:        None or list of str
+    @keyword spin_nums:     The list of spin numbers.
+    @type spin_nums:        None or list of int
+    @keyword spin_names:    The list of spin names.
+    @type spin_names:       None or list of str
+    @keyword force:         A flag which if True will cause an existing file to be overwritten.
+    @type force:            bool
+    @keyword data:          A list of the data to write out.  The first dimension corresponds to the spins.  A second dimension can also be given if multiple data sets across multiple columns are desired.
+    @type data:             list or list of lists
+    @keyword data_name:     A name corresponding to the data argument.  If the data argument is a list of lists, then this must also be a list with the same length as the second dimension of the data arg.
+    @type data_name:        str or list of str
+    @keyword data_length:   The length of the data columns.
+    @type data_length:      int
+    @keyword data_format:   The optional python formatting string for the data columns, e.g. "%-30s".
+    @type data_format:      None or str
+    @keyword error:         A list of the errors to write out.  The first dimension corresponds to the spins.  A second dimension can also be given if multiple data sets across multiple columns are desired.  These will be inter-dispersed between the data columns, if the data is given.  If the data arg is not None, then this must have the same dimensions as that object.
+    @type error:            list or list of lists
+    @keyword error_name:    A name corresponding to the error argument.  If the error argument is a list of lists, then this must also be a list with the same length at the second dimension of the error arg.
+    @type error_name:       str or list of str
+    @keyword error_length:  The length of the error columns.
+    @type error_length:     int
+    @keyword error_format:  The optional python formatting string for the error columns, e.g. "%-30s".
+    @type error_format:     None or str
+    """
+
+    # Data argument tests.
+    if data:
+        # Data is a list of lists.
+        if isinstance(data[0], list):
+            # Data and data_name don't match.
+            if not isinstance(data_name, list):
+                raise RelaxError("The data_name arg '%s' must be a list as the data argument is a list of lists." % data_name)
+
+            # Error doesn't match.
+            if error and (len(data) != len(error) or len(data[0]) != len(error[0])):
+                raise RelaxError("The data arg:\n%s\n\ndoes not have the same dimensions as the error arg:\n%s." % (data, error))
+
+        # Data is a simple list.
+        else:
+            # Data and data_name don't match.
+            if not isinstance(data_name, str):
+                raise RelaxError("The data_name arg '%s' must be a string as the data argument is a simple list." % data_name)
+
+            # Error doesn't match.
+            if error and len(data) != len(error):
+                raise RelaxError("The data arg:\n%s\n\ndoes not have the same dimensions as the error arg:\n%s." % (data, error))
+
+    # Error argument tests.
+    if error:
+        # Error is a list of lists.
+        if isinstance(error[0], list):
+            # Error and error_name don't match.
+            if not isinstance(error_name, list):
+                raise RelaxError("The error_name arg '%s' must be a list as the error argument is a list of lists." % error_name)
+
+        # Error is a simple list.
+        else:
+            # Error and error_name don't match.
+            if not isinstance(error_name, str):
+                raise RelaxError("The error_name arg '%s' must be a string as the error argument is a simple list." % error_name)
+
+    # Number of spins check.
+    args = [spin_ids, mol_names, res_nums, res_names, spin_nums, spin_names]
+    arg_names = ['spin_ids', 'mol_names', 'res_nums', 'res_names', 'spin_nums', 'spin_names']
+    N = None
+    first_arg = None
+    first_arg_name = None
+    for i in range(len(args)):
+        if isinstance(args[i], list):
+            # First list match.
+            if N == None:
+                N = len(args[i])
+                first_arg = args[i]
+                first_arg_name = arg_names[i]
+
+            # Length check.
+            if len(args[i]) != N:
+                raise RelaxError("The %s and %s arguments do not have the same number of spins ('%s' vs. '%s' respectively)." % (first_arg_name, arg_names[i], len(first_arg), len(args[i])))
+
+    # Nothing?!?
+    if N == None:
+        raise RelaxError("No spin ID data is present.")
+
+    # Data and error length check.
+    if data and len(data) != N:
+        raise RelaxError("The %s and data arguments do not have the same number of spins ('%s' vs. '%s' respectively)." % (first_arg_name, len(first_arg), len(data)))
+    if error and len(error) != N:
+        raise RelaxError("The %s and error arguments do not have the same number of spins ('%s' vs. '%s' respectively)." % (first_arg_name, len(first_arg), len(error)))
+
+    # The spin arguments.
+    args = [spin_ids, mol_names, res_nums, res_names, spin_nums, spin_names]
+    arg_names = ['spin_id', 'mol_name', 'res_num', 'res_name', 'spin_num', 'spin_name']
+
+    # No special separator character.
+    if sep == None:
+        sep = ''
+
+    # Open the file.
+    file = open_write_file(file_name=file, dir=dir)
+
+    # The spin ID column lengths.
+    len_args = [10] * 6
+    for i in range(len(args)):
+        # Minimum width of the header name lengths.
+        if args[i] and len(arg_names[i]) > len_args[i]:
+            len_args[i] = len(arg_names[i]) + 2
+
+        # Minimum width of the spin ID data.
+        for spin_index in range(N):
+            if args[i] and len(repr(args[i][spin_index])) > len_args[i]:
+                len_args[i] = len(repr(args[i][spin_index])) + 1
+
+    # Data and error formatting strings.
+    data_head_format = "%%-%ss" % data_length
+    if not data_format:
+        data_format = "%%%ss" % data_length
+    error_head_format = "%%-%ss" % error_length
+    if not error_format:
+        error_format = "%%%ss" % error_length
+
+
+    # Header.
+    #########
+
+    # Init.
+    file.write("\n")
+    prefix = '# '
+    shift = -2
+
+    # The spin ID info.
+    for i in range(len(args)):
+        if args[i]:
+            file.write(("%s%%-%ss%s" % (prefix, len_args[i]+shift, sep)) % arg_names[i])
+            prefix = ' '
+            shift = 0
+
+    # The data.
+    if data:
+        # List of lists.
+        if isinstance(data[0], list):
+            # Loop over the list.
+            for i in range(len(data[0])):
+                # The data.
+                file.write((prefix+data_head_format+sep) % data_name[i])
+
+                # The error.
+                if error:
+                    file.write((prefix+error_head_format+sep) % error_name[i])
+
+        # Simple list.
+        else:
+            # The data.
+            file.write((prefix+data_head_format+sep) % data_name)
+
+            # The error.
+            if error:
+                file.write((prefix+error_head_format+sep) % error_name)
+
+    # Only errors.
+    elif error:
+        # List of lists.
+        if isinstance(error[0], list):
+            for i in range(len(error[0])):
+                file.write((prefix+error_head_format+sep) % error_name[i])
+
+        # Simple list.
+        else:
+            file.write((prefix+error_head_format+sep) % error_name)
+
+    # Terminate the line.
+    file.write("\n")
+
+
+    # Spin specific data.
+    #####################
+
+    # Loop over the spins.
+    for spin_index in range(N):
+        # The prefix.
+        prefix = ''
+
+        # The spin ID info.
+        for i in range(len(args)):
+            if args[i]:
+                file.write(("%s%%-%ss%s" % (prefix, len_args[i], sep)) % args[i][spin_index])
+                prefix = ' '
+
+        # The data.
+        if data:
+            # List of lists.
+            if isinstance(data[0], list):
+                # Loop over the list.
+                for i in range(len(data[0])):
+                    # The data.
+                    file.write((prefix+data_format+sep) % data[spin_index][i])
+
+                    # The error.
+                    if error:
+                        file.write((prefix+error_format+sep) % error[spin_index][i])
+
+            # Simple list.
+            else:
+                # The data.
+                file.write((prefix+data_format+sep) % data[spin_index])
+
+                # The error.
+                if error:
+                    file.write((prefix+error_format+sep) % error[spin_index])
+
+        # Only errors.
+        elif error:
+            # List of lists.
+            if isinstance(error[0], list):
+                for i in range(len(error[0])):
+                    file.write((prefix+error_format+sep) % error[spin_index][i])
+
+            # Simple list.
+            else:
+                file.write((prefix+error_format+sep) % error[spin_index])
+
+        # End of the line.
+        file.write("\n")
 
 
 
@@ -540,85 +973,6 @@ class DummyFileObject:
         # Return the file lines (except the last as it is empty).
         return lines[:-1]
 
-
-
-class IO:
-    def __init__(self, relax):
-        """Class containing the file operations.
-
-        IO streams
-        ==========
-
-        Standard python IO streams:
-
-            - sys.stdin  = self.python_stdin
-            - sys.stdout = self.python_stdout
-            - sys.stderr = self.python_stderr
-
-        Logging IO streams:
-
-            - sys.stdin  = self.log_stdin  = self.python_stdin
-            - sys.stdout = self.log_stdout = self.log_file
-            - sys.stderr = self.log_stdout = (self.python_stderr, self.log_file)
-
-        Tee IO streams:
-
-            - sys.stdin  = self.tee_stdin  = self.python_stdin
-            - sys.stdout = self.tee_stdout = (self.python_stdout, self.tee_file)
-            - sys.stderr = self.tee_stdout = (self.python_stderr, self.tee_file)
-        """
-
-        self.relax = relax
-
-        # Standard python IO streams.
-        self.python_stdin  = stdin
-        self.python_stdout = stdout
-        self.python_stderr = stderr
-
-        # Logging IO streams.
-        self.log_stdin  = stdin
-        self.log_stdout = None
-        self.log_stderr = SplitIO()
-
-        # Tee IO streams.
-        self.tee_stdin  = stdin
-        self.tee_stdout = SplitIO()
-        self.tee_stderr = SplitIO()
-
-
-    def delete(self, file_name=None, dir=None):
-        """Function for deleting the given file."""
-
-        # File path.
-        file_path = get_file_path(file_name, dir)
-
-        # Test if the file exists and determine the compression type.
-        if access(file_path, F_OK):
-            pass
-        elif access(file_path + '.bz2', F_OK):
-            file_path = file_path + '.bz2'
-        elif access(file_path + '.gz', F_OK):
-            file_path = file_path + '.gz'
-        else:
-            raise RelaxFileError(file_path)
-
-        # Remove the file.
-        remove(file_path)
-
-
-    def logging_off(self, file_name=None, dir=None, verbosity=1):
-        """Function for turning logging and teeing off."""
-
-        # Print out.
-        if verbosity:
-            print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
-            print("Redirecting the sys.stdout IO stream to the python stdout IO stream.")
-            print("Redirecting the sys.stderr IO stream to the python stderr IO stream.")
-
-        # IO stream redirection.
-        sys.stdin  = self.python_stdin
-        sys.stdout = self.python_stdout
-        sys.stderr = self.python_stderr
 
 
 class SplitIO:

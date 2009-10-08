@@ -12,15 +12,15 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH
 path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
 # Read the sequence.
-sequence.read(file='noe.500.out', dir=path)
+sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
 # Read the relaxation data.
-relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
 # Setup other values.
 diffusion_tensor.init(1e-8, fixed=True)

@@ -24,16 +24,28 @@
 """Module containing functions related to the Frame Order theories."""
 
 # Python module imports.
+from numpy import array, matrix
 from sys import stdout
 
+# relax module imports.
+from float import isNaN
 
-def print_frame_order_2nd_degree(matrix, name=None):
+
+def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, dot=False, comma=True):
     """Nicely print out the Frame Order matrix of the 2nd degree.
 
-    @param matrix:  The 3D, rank-4 Frame Order matrix.
-    @type matrix:   numpy 3D, rank-4 array
-    @keyword name:  The name of the matrix.
-    @type name:     None or str
+    @param daeg:        The 3D, rank-4 Frame Order matrix.
+    @type daeg:         numpy 3D, rank-4 array
+    @keyword name:      The name of the matrix.
+    @type name:         None or str
+    @keyword epsilon:   The minimum value, below which is considered zero.
+    @type epsilon:      float
+    @keyword integer:   A flag which if true will only print the integer part of the number.
+    @type integer:      bool
+    @keyword dot:       A flag which if true replaces all zeros with dot characters.
+    @type dot:          bool
+    @keyword comma:     A flag which if true causes commas to be printed between the elements.
+    @type comma:        bool
     """
 
     # Default name.
@@ -44,26 +56,67 @@ def print_frame_order_2nd_degree(matrix, name=None):
     stdout.write("\n%s:\n" % name)
     stdout.write('[[')
 
+    # Convert to an array, if necessary.
+    if isinstance(daeg, matrix):
+        daeg = array(daeg)
+
     # Loop over the rows.
-    for i in range(len(matrix)):
+    for i in range(len(daeg)):
         # 2nd to last row start.
         if i != 0:
             stdout.write(' [')
 
         # Row end character.
-        char2 = ','
-        if i == len(matrix) - 1:
+        char2 = ''
+        if comma:
+            char2 = ','
+        if i == len(daeg) - 1:
             char2 = ']'
 
         # Loop over the columns.
-        for j in range(len(matrix[i])):
+        for j in range(len(daeg[i])):
             # Column end character.
-            char1 = ','
-            if j == len(matrix[i]) - 1:
+            char1 = ''
+            if comma:
+                char1 = ','
+            if j == len(daeg[i]) - 1:
                 char1 = ']%s\n' % char2
 
             # Write out the elements.
-            if matrix[i, j]:
-                stdout.write("%10.4f%s" % (matrix[i, j], char1))
+            if abs(daeg[i, j]) > epsilon:
+                # Integer print out.
+                if integer:
+                    val = int(daeg[i, j])
+                    format = "%4i%s"
+
+                # Float print out.
+                else:
+                    val = daeg[i, j]
+                    format = "%10.4f%s"
+
+            # NaN.
+            elif isNaN(daeg[i, j]):
+                val = 'NaN'
+                if integer:
+                    format = "%4i%s"
+                else:
+                    format = "%10s%s"
+
+            # Write out the zero elements.
             else:
-                stdout.write("%10s%s" % (0, char1))
+                # Integer print out.
+                if integer:
+                    format = "%4s%s"
+
+                # Float print out.
+                else:
+                    format = "%10s%s"
+
+                # The character.
+                if dot:
+                    val = '.'
+                else:
+                    val = '0'
+
+            # Write.
+            stdout.write(format % (val, char1))
