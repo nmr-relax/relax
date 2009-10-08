@@ -74,7 +74,14 @@ class Relaxation_v3_0(Relaxation):
 
 
 class Relaxation_v3_1(Relaxation_v3_0):
-    """Class for the relaxation data part of the BMRB API (v3.1)."""
+    """Class for the relaxation data part of the BMRB API (v3.1).
+    
+    Currently this is the same as for v3.0.
+    """
+
+
+class Relaxation_v3_2(Relaxation_v3_0):
+    """Class for the relaxation data part of the BMRB API (v3.2)."""
 
     def __init__(self, datanodes):
         """Initialise the class, placing the pystarlib data nodes into the namespace.
