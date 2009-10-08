@@ -43,11 +43,12 @@ from re import match, search
 from string import split
 import sys
 from sys import stdin, stdout, stderr
+from warnings import warn
 
 # relax module imports.
 import generic_fns
 from generic_fns.mol_res_spin import generate_spin_id_data_array
-from relax_errors import RelaxError, RelaxFileError, RelaxFileEmptyError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+from relax_errors import RelaxError, RelaxFileError, RelaxFileEmptyError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from relax_warnings import RelaxWarning
 
 
@@ -554,7 +555,14 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
                 continue
 
             # Validate the sequence.
-            generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+            try:
+                generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+            except RelaxInvalidSeqError, msg:
+                # Extract the message string, without the RelaxError bit.
+                string = msg.__str__()[12:-1]
+
+                # Give a warning.
+                warn(RelaxWarning(string))
 
             # Right, data is OK and exists.
             missing = False
