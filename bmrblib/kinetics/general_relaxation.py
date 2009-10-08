@@ -58,9 +58,11 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
+    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
+        @keyword data_type:     The relaxation data type (one of 'R1' or 'R2').
+        @type data_type:        str
         @keyword frq:           The spectrometer proton frequency, in Hz.
         @type frq:              float
         @keyword res_nums:      The residue number list.
@@ -98,6 +100,14 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.r1_inc = self.r1_inc + 1
         self.rx_inc_list = translate([self.r1_inc] * self.N)
         self.generate_data_ids(self.N)
+
+        # The operators of the relaxation superoperator.
+        operator_pair = []
+        for i in range(cdp.num_ri):
+            if cdp.ri_labels[i] == 'R1':
+                operator_pair.append(['Iz', 'Iz'])
+            elif cdp.ri_labels[i] == 'R2':
+                operator_pair.append(['I+', 'I+'])
 
         # Set up the version specific variables.
         self.specific_setup()
