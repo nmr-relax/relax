@@ -100,4 +100,4 @@ def write(file=None, directory=None, force=False):
     mkdir_nofail(directory, verbosity=0)
 
     # Execute the specific BMRB writing code.
-    write_function(file_path)
+    write_function(file_path, version='3.1')

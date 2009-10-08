@@ -26,6 +26,7 @@ import string
 
 # relax module imports.
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
+from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
 from generic_fns import mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import spin_loop
 
@@ -33,7 +34,7 @@ from generic_fns.mol_res_spin import spin_loop
 class Bmrb:
     """Class containing methods related to BMRB STAR file reading and writing."""
 
-    def bmrb_read(self, file_path):
+    def bmrb_read(self, file_path, version='3.1'):
         """Read the model-free results from a BMRB NMR-STAR v3.1 formatted file.
 
         @param file_path:   The full file path.
@@ -41,7 +42,10 @@ class Bmrb:
         """
 
         # Initialise the NMR-STAR data object.
-        star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+        if version == '3.2':
+            star = NMR_STAR_v3_2('relax_model_free_results', file_path)
+        elif version == '3.1':
+            star = NMR_STAR_v3_1('relax_model_free_results', file_path)
 
         # Read the contents of the STAR formatted file.
         star.read()
@@ -53,24 +57,29 @@ class Bmrb:
         relax_data.bmrb_read(star)
 
 
-    def bmrb_write(self, file_path):
+    def bmrb_write(self, file_path, version=None):
         """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
 
         @param file_path:   The full file path.
         @type file_path:    str
+        @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+        @type version:      str
         """
 
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
         # Initialise the NMR-STAR data object.
-        star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+        if version == '3.2':
+            star = NMR_STAR_v3_2('relax_model_free_results', file_path)
+        elif version == '3.1':
+            star = NMR_STAR_v3_1('relax_model_free_results', file_path)
 
         # Generate the entity saveframe.
-        mol_res_spin.bmrb_write_entity(star)
+        mol_res_spin.bmrb_write_entity(star, version=version)
 
         # Generate the relaxation data saveframes.
-        relax_data.bmrb_write(star)
+        relax_data.bmrb_write(star, version=version)
 
         # Rex frq.
         rex_frq = cdp.frq[0]

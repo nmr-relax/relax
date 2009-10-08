@@ -228,11 +228,13 @@ def bmrb_read(star):
 
 
 
-def bmrb_write(star):
+def bmrb_write(star, version='3.1'):
     """Generate the relaxation data saveframes for the NMR-STAR dictionary object.
 
-    @param star:    The NMR-STAR dictionary object.
-    @type star:     NMR_STAR instance
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+    @type version:      str
     """
 
     # Get the current data pipe.
@@ -294,13 +296,21 @@ def bmrb_write(star):
 
     # Add the relaxation data.
     for i in range(cdp.num_ri):
-        star.relaxation.add(operator_pair=operator_pair[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
-        #if cdp.ri_labels[i] == 'R1':
-        #    star.heteronucl_T1_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
-        #elif cdp.ri_labels[i] == 'R2':
-        #    star.heteronucl_T2_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
-        #elif cdp.ri_labels[i] == 'NOE':
-        #    star.heteronucl_NOEs.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+        # The general relaxation saveframe versions.
+        if version in ['3.2']:
+            if cdp.ri_labels[i] in ['R1', 'R2']:
+                star.relaxation.add(operator_pair=operator_pair[i], frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+            elif cdp.ri_labels[i] == 'NOE':
+                star.heteronucl_NOEs.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+
+        # Older versions.
+        if version in ['3.0', '3.1']:
+            if cdp.ri_labels[i] == 'R1':
+                star.heteronucl_T1_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+            elif cdp.ri_labels[i] == 'R2':
+                star.heteronucl_T2_relaxation.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
+            elif cdp.ri_labels[i] == 'NOE':
+                star.heteronucl_NOEs.add(frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i])
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):

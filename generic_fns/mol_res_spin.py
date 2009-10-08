@@ -535,11 +535,13 @@ def bmrb_read(star):
             create_residue(res_nums[i], res_names[i], mol_name=mol_name)
 
 
-def bmrb_write_entity(star):
+def bmrb_write_entity(star, version=None):
     """Generate the entity saveframe records for the NMR-STAR dictionary object.
 
-    @param star:    The NMR-STAR dictionary object.
-    @type star:     NMR_STAR instance
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+    @type version:      str
     """
 
     # Can't handle multiple molecules yet.
