@@ -64,7 +64,7 @@ class Relaxation_v3_0(Relaxation):
         """
 
         # Execute the base class __init__() method.
-        Relaxation(self, datanodes)
+        Relaxation(datanodes)
 
         # Initialise the kinetic saveframe supergroups.
         self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_0(self.__datanodes)
@@ -84,7 +84,7 @@ class Relaxation_v3_1(Relaxation_v3_0):
         """
 
         # Execute the base class __init__() method.
-        Relaxation_v3_0(self, datanodes)
+        Relaxation_v3_0(datanodes)
 
         # Initialise the kinetic saveframe supergroups.
         self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(self.__datanodes)
@@ -133,7 +133,7 @@ class Relaxation_v3_2(Relaxation_v3_1):
         """
 
         # Execute the base class __init__() method.
-        Relaxation_v3_1(self, datanodes)
+        Relaxation_v3_1(datanodes)
 
         # Initialise the kinetic saveframe supergroups.
         self.__general_relaxation = GeneralRelaxationSaveframe(self.__datanodes)
