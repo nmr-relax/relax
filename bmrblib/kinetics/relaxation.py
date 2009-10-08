@@ -50,6 +50,22 @@ class Relaxation:
         self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe(datanodes)
 
 
+    def loop(self):
+        """Generator method for looping over and returning all relaxation data."""
+
+        # The NOE data.
+        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_NOEs.loop():
+            yield "NOE", frq, res_nums, res_names, spin_names, val, err
+
+        # The R1 data.
+        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_T1_relaxation.loop():
+            yield "R1", frq, res_nums, res_names, spin_names, val, err
+
+        # The R2 data.
+        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_T2_relaxation.loop():
+            yield "R2", frq, res_nums, res_names, spin_names, val, err
+
+
 class Relaxation_v3_0(Relaxation):
     """Class for the relaxation data part of the BMRB API (v3.0)."""
 
