@@ -210,7 +210,7 @@ def bmrb_read(star):
     # Loop over the data types.
     for i in range(3):
         # Get the relaxation data.
-        for data_type, frq, res_nums, res_names, spin_names, val, err in star.relaxation_data.loop():
+        for data_type, frq, res_nums, res_names, spin_names, val, err in star.relaxation.loop():
             # Create the labels.
             ri_label = data_type
             frq_label = str(int(frq*1e-6))
