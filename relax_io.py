@@ -542,39 +542,31 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     if not file_data:
         raise RelaxFileEmptyError
 
-    # Test the validity of the data.
-    if data_col or error_col:
-        missing = True
-        for line in file_data:
-            # Skip missing data.
-            if len(line) < min_col_num:
-                continue
-            elif data_col and line[data_col-1] == 'None':
+    # Yield the data, spin by spin.
+    missing_data = True
+    for line in file_data:
+        # Skip missing data.
+        if len(line) < min_col_num:
+            continue
+
+        # Skip invalid data.
+        if data_col or error_col:
+            if data_col and line[data_col-1] == 'None':
                 continue
             elif error_col and line[error_col-1] == 'None':
                 continue
 
-            # Validate the sequence.
-            try:
-                generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-            except RelaxInvalidSeqError, msg:
-                # Extract the message string, without the RelaxError bit.
-                string = msg.__str__()[12:-1]
+        # Validate the sequence.
+        try:
+            generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
+        except RelaxInvalidSeqError, msg:
+            # Extract the message string, without the RelaxError bit.
+            string = msg.__str__()[12:-1]
 
-                # Give a warning.
-                warn(RelaxWarning(string))
+            # Give a warning.
+            warn(RelaxWarning(string))
 
-            # Right, data is OK and exists.
-            missing = False
-
-        # Hmmm, no data!
-        if missing:
-            raise RelaxError("No corresponding data could be found within the file.")
-
-    # Yield the data, spin by spin.
-    for line in file_data:
-        # Skip missing data.
-        if len(line) < min_col_num:
+            # Skip the line.
             continue
 
         # Generate the spin ID string.
@@ -591,6 +583,9 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         if error_col:
             error = eval(line[error_col-1])
 
+        # Right, data is OK and exists.
+        missing_data = False
+
         # Yield the data.
         if data_col and error_col:
             yield [id, value, error]
@@ -600,6 +595,10 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
             yield [id, error]
         else:
             yield id
+
+    # Hmmm, no data!
+    if missing_data:
+        raise RelaxError("No corresponding data could be found within the file.")
 
 
 def strip(data):
