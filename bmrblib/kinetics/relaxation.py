@@ -66,12 +66,6 @@ class Relaxation_v3_0(Relaxation):
         # Execute the base class __init__() method.
         Relaxation(datanodes)
 
-        # Initialise the kinetic saveframe supergroups.
-        self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_0(self.__datanodes)
-        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_0(self.__datanodes)
-        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_0(self.__datanodes)
-
-
 
 class Relaxation_v3_1(Relaxation_v3_0):
     """Class for the relaxation data part of the BMRB API (v3.1)."""
