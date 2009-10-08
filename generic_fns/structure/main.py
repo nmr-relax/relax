@@ -41,6 +41,13 @@ from relax_warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorW
 
 
 
+def delete():
+    """Simple function for deleting all structural data."""
+
+    # Run the object method.
+    cdp.structure.delete()
+
+    
 def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
 

@@ -32,7 +32,7 @@ from string import digits, split, strip, upper
 from warnings import warn
 
 # relax module imports.
-from api_base import Base_struct_API
+from api_base import Base_struct_API, ModelList
 from data.relax_xml import fill_object_contents, xml_to_object
 from generic_fns import pipes, relax_re
 from generic_fns.mol_res_spin import Selection
@@ -565,6 +565,20 @@ class Internal(Base_struct_API):
 
         # Return the data.
         return data
+
+
+    def delete(self):
+        """Delete all the structural information."""
+
+        # Print out.
+        print("Deleting the following structural data:\n")
+        print(self.structural_data)
+
+        # Delete the structural data.
+        del self.structural_data
+
+        # Initialise the empty model list.
+        self.structural_data = ModelList()
 
 
     def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, verbosity=False):
