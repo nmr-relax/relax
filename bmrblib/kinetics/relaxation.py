@@ -63,8 +63,8 @@ class Relaxation_v3_0(Relaxation):
         @type datanodes:    list
         """
 
-        # Place the data nodes into the namespace.
-        self.__datanodes = datanodes
+        # Execute the base class __init__() method.
+        Relaxation(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
         self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_0(self.__datanodes)
@@ -83,8 +83,8 @@ class Relaxation_v3_1(Relaxation_v3_0):
         @type datanodes:    list
         """
 
-        # Place the data nodes into the namespace.
-        self.__datanodes = datanodes
+        # Execute the base class __init__() method.
+        Relaxation_v3_0(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
         self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(self.__datanodes)
@@ -132,8 +132,8 @@ class Relaxation_v3_2(Relaxation_v3_1):
         @type datanodes:    list
         """
 
-        # Place the data nodes into the namespace.
-        self.__datanodes = datanodes
+        # Execute the base class __init__() method.
+        Relaxation_v3_1(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
         self.__general_relaxation = GeneralRelaxationSaveframe(self.__datanodes)
