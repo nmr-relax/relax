@@ -76,10 +76,10 @@ class Bmrb:
             star = NMR_STAR_v3_1('relax_model_free_results', file_path)
 
         # Generate the entity saveframe.
-        mol_res_spin.bmrb_write_entity(star, version=version)
+        mol_res_spin.bmrb_write_entity(star)
 
         # Generate the relaxation data saveframes.
-        relax_data.bmrb_write(star, version=version)
+        relax_data.bmrb_write(star)
 
         # Rex frq.
         rex_frq = cdp.frq[0]
