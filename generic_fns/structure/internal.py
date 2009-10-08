@@ -137,6 +137,9 @@ class Internal(Base_struct_API):
         centre = array([mol.x[index], mol.y[index], mol.z[index]], float64)
 
         # Atom loop.
+        dist_list = []
+        connect_list = {}
+        element_list = {}
         for i in xrange(len(mol.atom_num)):
             # Skip proton to proton bonds!
             if mol.element[index] == 'H' and mol.element[i] == 'H':
@@ -148,9 +151,34 @@ class Internal(Base_struct_API):
             # The distance from the centre.
             dist = linalg.norm(centre-pos)
 
-            # Connect the atoms if within the radius value.
+            # The atom is within the radius.
             if dist < radius:
-                mol.atom_connect(index, i)
+                # Store the distance.
+                dist_list.append(dist)
+
+                # Store the atom index.
+                connect_list[dist] = i
+
+                # Store the element type.
+                element_list[dist] = mol.element[i]
+
+        # The maximum number of allowed covalent bonds.
+        max_conn = 1000   # Ridiculous default!
+        if mol.element[index] == 'H':
+            max_conn = 1
+        elif mol.element[index] == 'O':
+            max_conn = 2
+        elif mol.element[index] == 'N':
+            max_conn = 3
+        elif mol.element[index] == 'C':
+            max_conn = 4
+
+        # Sort.
+        dist_list.sort()
+
+        # Loop over the max number of connections.
+        for i in range(max_conn):
+            mol.atom_connect(index, connect_list[dist_list[i]])
 
 
     def __get_chemical_name(self, hetID):
