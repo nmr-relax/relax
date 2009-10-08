@@ -54,7 +54,7 @@ from multi.processor import Application_callback, Processor
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
-from relax_io import log, tee
+from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
 import version
@@ -114,11 +114,11 @@ class Relax:
 
         # Logging.
         if self.log_file:
-            log(self.log_file)
+            io_streams_log(self.log_file)
 
         # Tee.
         elif self.tee_file:
-            tee(self.tee_file)
+            io_streams_tee(self.tee_file)
 
         # Create a string to pass to the interpreter to print.
         intro_string = self.get_intro_string()

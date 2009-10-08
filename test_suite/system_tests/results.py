@@ -21,13 +21,14 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove, sep
+from os import sep
 import sys
 from tempfile import mktemp
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_io import delete
 
 
 class Results(TestCase):
@@ -50,10 +51,7 @@ class Results(TestCase):
         ds.__reset__()
 
         # Delete the temporary file (if needed).
-        try:
-            remove(self.tmpfile)
-        except OSError:
-            pass
+        delete(self.tmpfile, fail=False)
 
 
     def test_read_empty_results(self):

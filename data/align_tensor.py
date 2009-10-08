@@ -613,12 +613,18 @@ class AlignTensorList(ListType):
         self.append(AlignTensorData(name))
 
 
-    def from_xml(self, align_tensor_nodes):
+    def from_xml(self, align_tensor_super_node):
         """Recreate the alignment tensor data structure from the XML alignment tensor node.
 
-        @param align_tensor_nodes:  The alignment tensor XML nodes.
-        @type align_tensor_nodes:   list of xml.dom.minicompat.Element instances
+        @param align_tensor_super_node:     The alignment tensor XML nodes.
+        @type align_tensor_super_node:      xml.dom.minicompat.Element instance
         """
+
+        # Recreate all the alignment tensor data structures.
+        xml_to_object(align_tensor_super_node, self, blacklist=['align_tensor'])
+
+        # Get the individual tensors.
+        align_tensor_nodes = align_tensor_super_node.getElementsByTagName('align_tensor')
 
         # Loop over the child nodes.
         for align_tensor_node in align_tensor_nodes:
@@ -656,6 +662,9 @@ class AlignTensorList(ListType):
 
         # Set the alignment tensor attributes.
         tensor_list_element.setAttribute('desc', 'Alignment tensor list')
+
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
 
         # Loop over the tensors.
         for i in xrange(len(self)):

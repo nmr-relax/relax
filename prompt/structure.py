@@ -204,6 +204,33 @@ class Structure(User_fn_class):
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
+    def delete(self):
+        """Delete all structural information from the current data pipe.
+
+        Description
+        ~~~~~~~~~~~
+
+        This function will delete all the structural information.
+
+
+        Example
+        ~~~~~~~
+
+        Simply type:
+
+        relax> structure.delete()
+
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "structure.delete()"
+            print(text)
+
+        # Execute the functional code.
+        generic_fns.structure.main.delete()
+
+
     def load_spins(self, spin_id=None, combine_models=True, ave_pos=True):
         """Load spins from the structure into the relax data store.
 

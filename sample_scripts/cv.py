@@ -30,7 +30,7 @@ for i in xrange(len(pipes)):
         pipe.create(cv_pipes[i][j], 'mf')
 
         # Load the sequence.
-        sequence.read('noe.500.out')
+        sequence.read('noe.500.out', res_num_col=1)
 
         # Create the calibration set by loading all relaxation data except the index 'i'.
         for k in xrange(len(ri_labels)):

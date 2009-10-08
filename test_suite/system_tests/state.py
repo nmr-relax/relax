@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove
 import sys
 from tempfile import mktemp
 from unittest import TestCase
@@ -29,6 +28,7 @@ from unittest import TestCase
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import VALID_TYPES, get_pipe
+from relax_io import delete
 
 
 class State(TestCase):
@@ -48,10 +48,7 @@ class State(TestCase):
         ds.__reset__()
 
         # Delete the temporary file.
-        try:
-            remove(self.tmpfile)
-        except OSError:
-            pass
+        delete(self.tmpfile, fail=False)
 
 
     def test_state_pickle(self):

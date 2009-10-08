@@ -37,9 +37,36 @@ from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
 
 
+def __deselect_spins():
+    """Deselect spins with no or too little data, that are overfitting, etc."""
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Is structural data required?
+    need_vect = False
+    if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
+        need_vect = True
+
+    # Loop over the sequence.
+    for spin in spin_loop():
+        # Relaxation data must exist!
+        if not hasattr(spin, 'relax_data'):
+            spin.select = False
+
+        # Require 3 or more relaxation data points.
+        elif len(spin.relax_data) < 3:
+            spin.select = False
+
+        # Require at least as many data points as params to prevent over-fitting.
+        elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
+            spin.select = False
+
+
 def create(algor='LM', dir=None, force=False):
     """Create the Dasha script file 'dasha_script' for controlling the program.
-    
+
     @keyword algor: The optimisation algorithm to use.  This can be the Levenberg-Marquardt
                     algorithm 'LM' or the Newton-Raphson algorithm 'NR'.
     @type algor:    str
@@ -76,6 +103,9 @@ def create(algor='LM', dir=None, force=False):
         # Test the number of spins.
         if len(residue.spin) > 1:
             raise RelaxError("More than one spin per residue is not supported.")
+
+    # Deselect certain spins.
+    __deselect_spins()
 
     # Directory creation.
     if dir == None:
@@ -462,7 +492,7 @@ def extract(dir):
             scaling = 1.0
 
         # Set the values.
-        value.read(param=param, scaling=scaling, file=file_name, res_num_col=0, res_name_col=None, data_col=1, error_col=2)
+        value.read(param=param, scaling=scaling, file=file_name, res_num_col=1, res_name_col=None, data_col=2, error_col=3)
 
         # Clean up of non-existant parameters (set the parameter to None!).
         for spin in spin_loop():
@@ -485,4 +515,4 @@ def extract(dir):
         raise RelaxFileError('Dasha', file_name)
 
     # Set the values.
-    value.read(param='chi2', file=file_name, res_num_col=0, res_name_col=None, data_col=1, error_col=2)
+    value.read(param='chi2', file=file_name, res_num_col=1, res_name_col=None, data_col=2, error_col=3)

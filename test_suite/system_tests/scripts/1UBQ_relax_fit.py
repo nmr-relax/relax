@@ -22,7 +22,7 @@ seq_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'sequence'
 list_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
 
 # Load the sequence.
-sequence.read('1UBQ.seq', dir=seq_path, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+sequence.read('1UBQ.seq', dir=seq_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
 # Spectrum names.
 names = [

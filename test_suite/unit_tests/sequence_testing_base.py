@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2009 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import remove, sep
+from os import sep
 import sys
 from tempfile import mktemp
 try:
@@ -32,6 +32,7 @@ except ImportError:
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
+from relax_io import delete
 
 
 
@@ -65,10 +66,7 @@ class Sequence_base_class:
         ds.__reset__()
 
         # Delete the temporary file.
-        try:
-            remove(self.tmpfile)
-        except OSError:
-            pass
+        delete(self.tmpfile, fail=False)
 
 
     def test_copy_protein_sequence(self):
@@ -147,7 +145,7 @@ class Sequence_base_class:
             path = sys.path[-1]
 
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data')
+        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -186,4 +184,7 @@ class Sequence_base_class:
         file_md5.update(file.read())
 
         # Test the md5sum.
-        self.assertEqual(file_md5.digest(), 'O1\xb3D\x0e8\xd1\xe7_Q\x9c\xd1\xd6v\xc8\xde')
+        self.assertEqual(file_md5.digest(), '\x98\x7f\xb9\xe0\xb9\x96\x90\x87\x07-\xe3\x87Z\x0b~\xb1')
+
+        # Close the file.
+        file.close()

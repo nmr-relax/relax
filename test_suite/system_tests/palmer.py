@@ -83,14 +83,14 @@ class Palmer(TestCase):
         params = [['S2'], ['S2', 'te'], ['S2', 'Rex']]
         spin_names = [':-2&:Gly', ':-1&:Gly', ':0&:Gly']
         if compiler == 'gcc':
-            s2 = [[0.869, 0.732, 0.802], [0.869, 0.730, 0.755], [0.715, 0.643, 0.734]]
-            te = [[None, None, None], [0.0, 1.951, 1319.171], [None, None, None]]    # Gnu gcc modelfree4 version.
-            rex = [[None, None, None], [None, None, None], [4.308, 4.278, 1.017]]
+            s2 = [[0.869, 0.732, None], [0.869, 0.730, None], [0.715, 0.643, None]]
+            te = [[None, None, None], [0.0, 1.951, None], [None, None, None]]    # Gnu gcc modelfree4 version.
+            rex = [[None, None, None], [None, None, None], [4.308, 4.278, None]]
         else:
-            s2 = [[0.869, 0.732, 0.802], [0.869, 0.730, 0.755], [0.715, 0.643, 0.732]]
-            te = [[None, None, None], [0.0, 1.952, 1319.172], [None, None, None]]    # Portland C compiler modelfree4 version.
-            rex = [[None, None, None], [None, None, None], [4.308, 4.278, 1.050]]
-        chi2 = [[36.6223, 20.3954, 5.2766], [36.6223, 20.3299, 0.0], [1.9763, 0.6307, 5.2766]]
+            s2 = [[0.869, 0.732, None], [0.869, 0.730, None], [0.715, 0.643, None]]
+            te = [[None, None, None], [0.0, 1.952, None], [None, None, None]]    # Portland C compiler modelfree4 version.
+            rex = [[None, None, None], [None, None, None], [4.308, 4.278, None]]
+        chi2 = [[36.6223, 20.3954, None], [36.6223, 20.3299, None], [1.9763, 0.6307, None]]
         for model_index in xrange(3):
             print(("Model " + repr(models[model_index])))
             for spin_index in xrange(3):
@@ -121,15 +121,19 @@ class Palmer(TestCase):
                 self.assertEqual(spin.chi2, chi2[model_index][spin_index])
 
         # Checks for the final mfout file reading.
-        models = ['m3', 'm3', 'm2']
-        params = [['S2', 'Rex'], ['S2', 'Rex'], ['S2', 'te']]
-        s2 = [0.844, 0.760, 0.592]
-        te = [None, None, 1809.287]
-        rex = [0.0, 0.394, None]
-        chi2 = [1.7964, 0.7391, 0.0000]
+        models = ['m3', 'm3']
+        params = [['S2', 'Rex'], ['S2', 'Rex']]
+        s2 = [0.844, 0.760]
+        te = [None, None]
+        rex = [0.005, 0.404]
+        chi2 = [1.7966, 0.7389]
         for spin_index in xrange(3):
             # Get the spin.
             spin = return_spin(spin_names[spin_index], pipe='aic')
+
+            # Deselected spin.
+            if not spin.select:
+                continue
 
             # Conversions.
             if te[spin_index]:
@@ -151,8 +155,8 @@ class Palmer(TestCase):
 
         # Final global values.
         final_pipe = pipes.get_pipe('aic')
-        self.assertEqual(final_pipe.chi2, 2.5355)
-        self.assertEqual(final_pipe.diff_tensor.tm, 12.050)
+        self.assertEqual(final_pipe.chi2, 2.5356)
+        self.assertEqual(final_pipe.diff_tensor.tm, 12.045)
 
 
     def test_palmer_omp(self):

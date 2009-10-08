@@ -217,7 +217,7 @@ class Mf(TestCase):
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the PDF file and set the vectors.
         self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, read_model=1)
@@ -225,12 +225,12 @@ class Mf(TestCase):
         self.relax.interpreter._Structure.vectors(attached='H')
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
@@ -253,15 +253,15 @@ class Mf(TestCase):
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
@@ -1271,10 +1271,10 @@ class Mf(TestCase):
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the data and error.
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
@@ -1482,7 +1482,7 @@ class Mf(TestCase):
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='m4')
@@ -1499,7 +1499,7 @@ class Mf(TestCase):
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value.
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
@@ -1515,7 +1515,7 @@ class Mf(TestCase):
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value.
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
@@ -1531,7 +1531,7 @@ class Mf(TestCase):
         path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value and bond length simultaneously.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])

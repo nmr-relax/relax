@@ -305,6 +305,11 @@ class RelaxNoneError(BaseArgError):
     def __init__(self, name):
         self.text = "The " + name + " argument has not been supplied."
 
+# Not None.
+class RelaxArgNotNoneError(BaseArgError):
+    def __init__(self, name, value):
+        self.text = "The %s argument of '%s' must be None."
+
 
 # Simple types.
 #~~~~~~~~~~~~~~
@@ -557,7 +562,7 @@ class RelaxNoSpinError(BaseError):
 # The sequence data is not valid.
 class RelaxInvalidSeqError(BaseError):
     def __init__(self, line):
-        self.text = "The line " + repr(line) + " of the sequence data is invalid."
+        self.text = "The sequence data in the line %s is invalid." % line
 
 # The spins have not been loaded
 class RelaxSpinsNotLoadedError(BaseError):

@@ -73,6 +73,7 @@ class Fetch_docstrings:
             if hasattr(object, '__relax_help__'):
                 # Document the user class.
                 self.doc_user_class(name, object)
+                continue
 
             # Skip the object if there is no docstring.
             if not hasattr(object, '__doc__') or not object.__doc__:
@@ -634,7 +635,7 @@ class Fetch_docstrings:
         #############
 
         # Print the function name to sys.stdout
-        sys.stdout.write("Function: " + repr(function) + "\n")
+        sys.stdout.write("User function: %s().\n" % function)
 
         # Get the docstring.
         docstring = getdoc(object)

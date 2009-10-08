@@ -27,6 +27,30 @@ from numpy.linalg import norm
 from random import gauss, uniform
 
 
+def axis_angle_to_euler_zyz(axis, angle):
+    """Calculate the z-y-z Euler angles from the given axis-angle.
+
+    This first generates a rotation matrix via axis_angle_to_R() and then used this together with
+    R_to_euler_zyz() to obtain the Euler angles.
+
+    @param axis:    The 3D rotation axis.
+    @type axis:     numpy array, len 3
+    @param angle:   The rotation angle.
+    @type angle:    float
+    @return:        The alpha, beta, and gamma Euler angles in the z-y-z convention.
+    @rtype:         float, float, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    axis_angle_to_R(axis, angle, R)
+
+    # Return the Euler angles.
+    return R_to_euler_zyz(R)
+
+
 def axis_angle_to_R(axis, angle, R):
     """Generate the rotation matrix from the axis-angle notation.
 
@@ -115,6 +139,32 @@ def axis_angle_to_quaternion(axis, angle, quat, norm_flag=True):
 
     # The vector component.
     quat[1:] = axis * sin(angle/2)
+
+
+def euler_zyz_to_axis_angle(alpha, beta, gamma):
+    """Function for calculating the z-y-z Euler angle convention rotation matrix.
+
+    This function first generates a rotation matrix via euler_zyz_to_R() and then uses this together
+    with R_to_axis_angle() to get the axis and angle.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_zyz_to_R(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
 
 
 def euler_zyz_to_R(alpha, beta, gamma, R):

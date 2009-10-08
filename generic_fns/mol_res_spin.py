@@ -38,7 +38,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array
 from re import split
-from string import strip
+from string import count, strip
 from textwrap import fill
 from warnings import warn
 
@@ -885,7 +885,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
 
 def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None):
     """Add a pseudo-atom spin container into the relax data store.
-    
+
     @param spin_name:   The name of the new pseudo-spin.
     @type spin_name:    str
     @param spin_num:    The identification number of the new spin.
@@ -960,7 +960,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
 def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
     """Add a spin into the relax data store (and molecule and residue if necessary).
-    
+
     @keyword spin_num:  The number of the new spin.
     @type spin_num:     int
     @keyword spin_name: The name of the new spin.
@@ -1355,7 +1355,7 @@ def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, 
     return id
 
 
-def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None):
+def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
     """Generate the spin selection string from the given data array.
 
     @param data:            An array containing the molecule, residue, and/or spin data.
@@ -1378,24 +1378,24 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res
     id = ""
 
     # Molecule data.
-    if mol_name_col != None and data[mol_name_col]:
-        id = id + "#" + data[mol_name_col]
+    if mol_name_col and data[mol_name_col-1]:
+        id = id + "#" + data[mol_name_col-1]
 
     # Residue data.
-    if res_num_col != None and data[res_num_col] != None:
-        id = id + ":" + str(data[res_num_col])
-    if (res_num_col != None and data[res_num_col] != None) and (res_name_col != None and data[res_name_col]):
-        id = id + "&:" + data[res_name_col]
-    elif res_name_col != None and data[res_name_col]:
-        id = id + ":" + data[res_name_col]
+    if res_num_col and data[res_num_col-1] != None:
+        id = id + ":" + str(data[res_num_col-1])
+    if (res_num_col and data[res_num_col-1] != None) and (res_name_col and data[res_name_col-1]):
+        id = id + "&:" + data[res_name_col-1]
+    elif res_name_col and data[res_name_col-1]:
+        id = id + ":" + data[res_name_col-1]
 
     # Spin data.
-    if spin_num_col != None and data[spin_num_col] != None:
-        id = id + "@" + str(data[spin_num_col])
-    if (spin_num_col != None and data[spin_num_col] != None) and (spin_name_col != None and data[spin_name_col]):
-        id = id + "&@" + data[spin_name_col]
-    elif spin_name_col != None and data[spin_name_col]:
-        id = id + "@" + data[spin_name_col]
+    if spin_num_col and data[spin_num_col-1] != None:
+        id = id + "@" + str(data[spin_num_col-1])
+    if (spin_num_col and data[spin_num_col-1] != None) and (spin_name_col and data[spin_name_col-1]):
+        id = id + "&@" + data[spin_name_col-1]
+    elif spin_name_col and data[spin_name_col-1]:
+        id = id + "@" + data[spin_name_col-1]
 
     # Return the spin id string.
     return id
@@ -1486,7 +1486,7 @@ def name_molecule(mol_id, name=None, force=False):
             warn(RelaxWarning("The molecule '%s' is already named.  Set the force flag to rename." % mol_id))
         else:
             mol.name = name
-        
+
 
 def name_residue(res_id, name=None, force=False):
     """Name the residues.
@@ -1613,70 +1613,78 @@ def parse_token(token, verbosity=False):
     if token == None:
         return []
 
-    # Split by the ',' character.
-    elements = split(',', token)
+    # Convert to a list.
+    if not isinstance(token, list):
+        tokens = [token]
+    else:
+        tokens = token
 
-    # Loop over the elements.
-    list = []
-    for element in elements:
-        # Strip all leading and trailing whitespace.
-        element = strip(element)
+    # Loop over the tokens.
+    id_list = []
+    for token in tokens:
+        # Split by the ',' character.
+        elements = split(',', token)
 
-        # Find all '-' characters (ignoring the first character, i.e. a negative number).
-        indices= []
-        for i in xrange(1, len(element)):
-            if element[i] == '-':
-                indices.append(i)
+        # Loop over the elements.
+        for element in elements:
+            # Strip all leading and trailing whitespace.
+            element = strip(element)
 
-        # Range.
-        valid_range = True
-        if indices:
-            # Invalid range element, only one range char '-' and one negative sign is allowed.
-            if len(indices) > 2:
-                if verbosity:
-                    print(("The range element " + repr(element) + " is invalid.  Assuming the '-' character does not specify a range."))
-                valid_range = False
+            # Find all '-' characters (ignoring the first character, i.e. a negative number).
+            indices= []
+            for i in xrange(1, len(element)):
+                if element[i] == '-':
+                    indices.append(i)
 
-            # Convert the two numbers to integers.
-            try:
-                start = int(element[:indices[0]])
-                end = int(element[indices[0]+1:])
-            except ValueError:
-                if verbosity:
-                    print(("The range element " + repr(element) + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."))
-                valid_range = False
+            # Range.
+            valid_range = True
+            if indices:
+                # Invalid range element, only one range char '-' and one negative sign is allowed.
+                if len(indices) > 2:
+                    if verbosity:
+                        print(("The range element " + repr(element) + " is invalid.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Test that the starting number is less than the end.
-            if valid_range and start >= end:
-                if verbosity:
-                    print(("The starting number of the range element " + repr(element) + " needs to be less than the end number.  Assuming the '-' character does not specify a range."))
-                valid_range = False
+                # Convert the two numbers to integers.
+                try:
+                    start = int(element[:indices[0]])
+                    end = int(element[indices[0]+1:])
+                except ValueError:
+                    if verbosity:
+                        print(("The range element " + repr(element) + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Create the range and append it to the list.
-            if valid_range:
-                for i in range(start, end+1):
-                    list.append(i)
+                # Test that the starting number is less than the end.
+                if valid_range and start >= end:
+                    if verbosity:
+                        print(("The starting number of the range element " + repr(element) + " needs to be less than the end number.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Just append the string (even though it might be junk).
+                # Create the range and append it to the list.
+                if valid_range:
+                    for i in range(start, end+1):
+                        id_list.append(i)
+
+                # Just append the string (even though it might be junk).
+                else:
+                    id_list.append(element)
+
+            # Number or name.
             else:
-                list.append(element)
+                # Try converting the element into an integer.
+                try:
+                    element = int(element)
+                except ValueError:
+                    pass
 
-        # Number or name.
-        else:
-            # Try converting the element into an integer.
-            try:
-                element = int(element)
-            except ValueError:
-                pass
-
-            # Append the element.
-            list.append(element)
+                # Append the element.
+                id_list.append(element)
 
     # Sort the list.
-    list.sort()
+    id_list.sort()
 
     # Return the identifying list.
-    return list
+    return id_list
 
 
 def residue_loop(selection=None, pipe=None, full_info=False):
@@ -2087,6 +2095,78 @@ def same_sequence(pipe1, pipe2):
     return True
 
 
+def spin_id_to_data_list(id):
+    """Convert the single spin ID string into a list of the mol, res, and spin names and numbers.
+
+    @param id:  The spin ID string.
+    @type id:   str
+    @return:    The molecule name, the residue number and name, and the spin number and name.
+    @rtype:     str, int, str, int, str
+    """
+
+    # Split up the spin ID.
+    mol_token, res_token, spin_token = tokenise(id)
+    mol_info = parse_token(mol_token)
+    res_info = parse_token(res_token)
+    spin_info = parse_token(spin_token)
+
+    # Molecule name.
+    mol_name = None
+    if len(mol_info) > 1:
+        raise RelaxError("The single spin ID should only belong to one molecule, not %s." % mol_info)
+    if len(mol_info) == 1:
+        mol_name = mol_info[0]
+
+    # Residue info.
+    res_names = []
+    res_nums = []
+    for i in range(len(res_info)):
+        try:
+            res_nums.append(int(res_info[i]))
+        except ValueError:
+            res_names.append(res_info[i])
+
+    # Residue number.
+    res_num = None
+    if len(res_nums) > 1:
+        raise RelaxError("The single spin ID should only belong to one residue number, not %s." % res_info)
+    elif len(res_nums) == 1:
+        res_num = res_nums[0]
+
+    # Residue name.
+    res_name = None
+    if len(res_names) > 1:
+        raise RelaxError("The single spin ID should only belong to one residue name, not %s." % res_info)
+    elif len(res_names) == 1:
+        res_name = res_names[0]
+
+    # Spin info.
+    spin_names = []
+    spin_nums = []
+    for i in range(len(spin_info)):
+        try:
+            spin_nums.append(int(spin_info[i]))
+        except ValueError:
+            spin_names.append(spin_info[i])
+
+    # Spin number.
+    spin_num = None
+    if len(spin_nums) > 1:
+        raise RelaxError("The single spin ID should only belong to one spin number, not %s." % spin_info)
+    elif len(spin_nums) == 1:
+        spin_num = spin_nums[0]
+
+    # Spin name.
+    spin_name = None
+    if len(spin_names) > 1:
+        raise RelaxError("The single spin ID should only belong to one spin name, not %s." % spin_info)
+    elif len(spin_names) == 1:
+        spin_name = spin_names[0]
+
+    # Return the data.
+    return mol_name, res_num, res_name, spin_num, spin_name
+
+
 def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Function for determining if the spin is located within the list of spins.
 
@@ -2273,73 +2353,134 @@ def tokenise(selection):
         return None, None, None
 
 
-    # Atoms.
-    ########
+    # Walk along the ID string, separating the molecule, residue, and spin data.
+    mol_info = ''
+    res_info = ''
+    spin_info = ''
+    pos = 'mol'
+    for i in range(len(selection)):
+        # Find forbidden boolean operators.
+        if selection[i] == '|':
+            raise RelaxError("The boolean operator '|' is not supported for individual spin selections.")
 
-    # Split by '@'.
-    atom_split = split('@', selection)
+        # Hit the residue position.
+        if selection[i] == ':':
+            if pos == 'spin':
+                raise RelaxError("Invalid selection string '%s'." % selection)
+            pos = 'res'
 
-    # Test that only one '@' character was supplied.
-    if len(atom_split) > 2:
-        raise RelaxError("Only one '@' character is allowed within the selection identifier string.")
+        # Hit the spin position.
+        if selection[i] == '@':
+            pos = 'spin'
 
-    # No atom identifier.
-    if len(atom_split) == 1:
-        spin_token = None
-    else:
-        # Test for out of order identifiers.
-        if ':' in atom_split[1]:
-            raise RelaxError("The atom identifier '@' must come after the residue identifier ':'.")
-        elif '#' in atom_split[1]:
-            raise RelaxError("The atom identifier '@' must come after the molecule identifier '#'.")
-
-        # The token.
-        spin_token = atom_split[1]
-
-
-    # Residues.
-    ###########
-
-    # Split by ':'.
-    res_split = split(':', atom_split[0])
-
-    # Test that only one ':' character was supplied.
-    if len(res_split) > 2:
-        raise RelaxError("Only one ':' character is allowed within the selection identifier string.")
-
-    # No residue identifier.
-    if len(res_split) == 1:
-        res_token = None
-    else:
-        # Test for out of order identifiers.
-        if '#' in res_split[1]:
-            raise RelaxError("The residue identifier ':' must come after the molecule identifier '#'.")
-
-        # The token.
-        res_token = res_split[1]
-
+        # Append the data.
+        if pos == 'mol':
+            mol_info = mol_info + selection[i]
+        if pos == 'res':
+            res_info = res_info + selection[i]
+        if pos == 'spin':
+            spin_info = spin_info + selection[i]
 
 
     # Molecules.
     ############
 
-    # Split by '#'.
-    mol_split = split('#', res_split[0])
+    # Molecule identifier.
+    if mol_info:
+        # Find boolean operators.
+        if '&' in mol_info:
+            raise RelaxError("The boolean operator '&' is not supported for the molecule component of individual spin IDs.")
 
-    # Test that only one '#' character was supplied.
-    if len(mol_split) > 2:
-        raise RelaxError("Only one '#' character is allowed within the selection identifier string.")
+        # Checks:
+        #   No residue identification characters are allowed.
+        #   No spin identification characters are allowed.
+        #   First character must be '#'.
+        #   Only 1 '#' allowed.
+        if ':' in mol_info or '@' in mol_info or mol_info[0] != '#' or count(mol_info, '#') != 1:
+            raise RelaxError("Invalid molecule selection '%s'." % mol_info)
+
+        # ID.
+        mol_token = mol_info[1:]
 
     # No molecule identifier.
-    if len(mol_split) == 1:
-        mol_token = None
     else:
-        mol_token = mol_split[1]
+        mol_token = None
 
+
+    # Residues.
+    ###########
+
+    # Residue identifier.
+    if res_info:
+        # Only max 1 '&' allowed.
+        if count(res_info, '&') > 1:
+            raise RelaxError("Only one '&' boolean operator is supported for the residue component of individual spin IDs.")
+
+        # Split by '&'.
+        res_token = split('&', res_info)
+
+        # Check and remove the ':' character.
+        for i in range(len(res_token)):
+            # Checks:
+            #   No molecule identification characters are allowed.
+            #   No spin identification characters are allowed.
+            #   First character must be ':'.
+            #   Only 1 ':' allowed.
+            if '#' in res_token[i] or '@' in res_token[i] or res_token[i][0] != ':' or count(res_token[i], ':') != 1:
+                raise RelaxError("Invalid residue selection '%s'." % res_info)
+
+            # Strip.
+            res_token[i] = res_token[i][1:]
+
+        # Convert to a string if only a single item.
+        if len(res_token) == 1:
+            res_token = res_token[0]
+
+    # No residue identifier.
+    else:
+        res_token = None
+
+
+    # Spins.
+    ########
+
+    # Spin identifier.
+    if spin_info:
+        # Only max 1 '&' allowed.
+        if count(spin_info, '&') > 1:
+            raise RelaxError("Only one '&' boolean operator is supported for the spin component of individual spin IDs.")
+
+        # Split by '&'.
+        spin_token = split('&', spin_info)
+
+        # Check and remove the ':' character.
+        for i in range(len(spin_token)):
+            # Checks:
+            #   No molecule identification characters are allowed.
+            #   No residue identification characters are allowed.
+            #   First character must be '@'.
+            #   Only 1 '@' allowed.
+            if '#' in spin_token[i] or ':' in spin_token[i] or spin_token[i][0] != '@' or count(spin_token[i], '@') != 1:
+                raise RelaxError("Invalid spin selection '%s'." % spin_info)
+
+            # Strip.
+            spin_token[i] = spin_token[i][1:]
+
+        # Convert to a string if only a single item.
+        if len(spin_token) == 1:
+            spin_token = spin_token[0]
+
+    # No spin identifier.
+    else:
+        spin_token = None
+
+
+    # End.
+    ######
 
     # Improper selection string.
     if mol_token == None and res_token == None and spin_token == None:
-        raise RelaxError("The selection string " + repr(selection) + " is invalid.")
+        raise RelaxError("The selection string '%s' is invalid." % selection)
 
     # Return the three tokens.
     return mol_token, res_token, spin_token
