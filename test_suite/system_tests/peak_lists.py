@@ -89,7 +89,6 @@ class Peak_lists(TestCase):
         # Test the data.
         for i in range(10):
             for j in range(5):
-                print cdp.mol[0].res[j].spin[0]
                 self.assertEqual(cdp.mol[0].res[j].spin[0].intensities[i], heights[j][i])
 
 

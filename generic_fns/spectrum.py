@@ -872,7 +872,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     for i in xrange(len(intensity_data)):
         # Extract the data.
         H_name, X_name, spin_id, intensity = intensity_data[i]
-        print intensity_data[i]
 
         # Skip data.
         if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
