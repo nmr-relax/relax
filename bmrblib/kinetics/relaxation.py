@@ -74,10 +74,23 @@ class Relaxation_v3_0(Relaxation):
 
 
 class Relaxation_v3_1(Relaxation_v3_0):
-    """Class for the relaxation data part of the BMRB API (v3.1).
-    
-    Currently this is the same as for v3.0.
-    """
+    """Class for the relaxation data part of the BMRB API (v3.1)."""
+
+    def __init__(self, datanodes):
+        """Initialise the class, placing the pystarlib data nodes into the namespace.
+
+        @param datanodes:   The pystarlib data nodes object.
+        @type datanodes:    list
+        """
+
+        # Place the data nodes into the namespace.
+        self.__datanodes = datanodes
+
+        # Initialise the kinetic saveframe supergroups.
+        self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(self.__datanodes)
+        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_1(self.__datanodes)
+        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_1(self.__datanodes)
+
 
 
 class Relaxation_v3_2(Relaxation_v3_1):
