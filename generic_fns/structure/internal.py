@@ -176,8 +176,8 @@ class Internal(Base_struct_API):
         # Sort.
         dist_list.sort()
 
-        # Loop over the max number of connections.
-        for i in range(max_conn):
+        # Loop over the max number of connections (or the number of connected atoms, if less).
+        for i in range(min(max_conn, len(dist_list))):
             mol.atom_connect(index, connect_list[dist_list[i]])
 
 
