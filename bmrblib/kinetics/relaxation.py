@@ -44,13 +44,10 @@ class Relaxation:
         @type datanodes:    list
         """
 
-        # Place the data nodes into the namespace.
-        self.__datanodes = datanodes
-
         # Initialise the kinetic saveframe supergroups.
-        self.__heteronucl_NOEs = HeteronuclNOESaveframe(self.__datanodes)
-        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe(self.__datanodes)
-        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe(self.__datanodes)
+        self.__heteronucl_NOEs = HeteronuclNOESaveframe(datanodes)
+        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe(datanodes)
+        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe(datanodes)
 
 
 class Relaxation_v3_0(Relaxation):
@@ -64,7 +61,7 @@ class Relaxation_v3_0(Relaxation):
         """
 
         # Execute the base class __init__() method.
-        Relaxation(datanodes)
+        Relaxation.__init__(self, datanodes)
 
 
 class Relaxation_v3_1(Relaxation_v3_0):
@@ -78,12 +75,12 @@ class Relaxation_v3_1(Relaxation_v3_0):
         """
 
         # Execute the base class __init__() method.
-        Relaxation_v3_0(datanodes)
+        Relaxation_v3_0.__init__(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
-        self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(self.__datanodes)
-        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_1(self.__datanodes)
-        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_1(self.__datanodes)
+        self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(datanodes)
+        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_1(datanodes)
+        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_1(datanodes)
 
 
     def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
@@ -127,10 +124,10 @@ class Relaxation_v3_2(Relaxation_v3_1):
         """
 
         # Execute the base class __init__() method.
-        Relaxation_v3_1(datanodes)
+        Relaxation_v3_1.__init__(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
-        self.__general_relaxation = GeneralRelaxationSaveframe(self.__datanodes)
+        self.__general_relaxation = GeneralRelaxationSaveframe(datanodes)
 
 
     def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
