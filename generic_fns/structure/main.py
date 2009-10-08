@@ -47,6 +47,18 @@ def delete():
     # Run the object method.
     cdp.structure.delete()
 
+    # Then remove any spin specific structural info.
+    for spin in spin_loop():
+        # Delete positional information.
+        if hasattr(spin, 'pos'):
+            del spin.pos
+
+        # Delete bond vectors.
+        if hasattr(spin, 'bond_vect'):
+            del spin.bond_vect
+        if hasattr(spin, 'xh_vect'):
+            del spin.xh_vect
+
     
 def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
