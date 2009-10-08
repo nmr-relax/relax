@@ -48,9 +48,9 @@ class Relaxation:
         self.__datanodes = datanodes
 
         # Initialise the kinetic saveframe supergroups.
-        self.__heteronucl_NOEs = HeteronuclNOESaveframe(self.datanodes)
-        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe(self.datanodes)
-        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe(self.datanodes)
+        self.__heteronucl_NOEs = HeteronuclNOESaveframe(self.__datanodes)
+        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe(self.__datanodes)
+        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe(self.__datanodes)
 
 
 class Relaxation_v3_0(Relaxation):
@@ -67,9 +67,9 @@ class Relaxation_v3_0(Relaxation):
         self.__datanodes = datanodes
 
         # Initialise the kinetic saveframe supergroups.
-        self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_0(self.datanodes)
-        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_0(self.datanodes)
-        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_0(self.datanodes)
+        self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_0(self.__datanodes)
+        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_0(self.__datanodes)
+        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_0(self.__datanodes)
 
 
 
