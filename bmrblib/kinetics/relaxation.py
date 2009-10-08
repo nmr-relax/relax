@@ -87,4 +87,4 @@ class Relaxation_v3_1(Relaxation_v3_0):
         self.__datanodes = datanodes
 
         # Initialise the kinetic saveframe supergroups.
-        self.__general_relaxation = GeneralRelaxationSaveframe(self.datanodes)
+        self.__general_relaxation = GeneralRelaxationSaveframe(self.__datanodes)
