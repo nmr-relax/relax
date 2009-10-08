@@ -108,9 +108,9 @@ class Relaxation_v3_1(Relaxation_v3_0):
         if data_type == 'R1':
             self.__heteronucl_T1_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'R2':
-            star.__heteronucl_T2_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.__heteronucl_T2_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'NOE':
-            star.__heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.__heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
 
 
 class Relaxation_v3_2(Relaxation_v3_1):
@@ -155,6 +155,6 @@ class Relaxation_v3_2(Relaxation_v3_1):
         if data_type in ['R1', 'R2']:
             self.__general_relaxation.add(data_type=data_type, frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'NOE':
-            star.__heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.__heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
 
 
