@@ -174,3 +174,13 @@ class Relaxation_v3_2(Relaxation_v3_1):
             self.__heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
 
 
+    def loop(self):
+        """Generator method for looping over and returning all relaxation data."""
+
+        # The NOE data.
+        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_NOEs.loop():
+            yield "NOE", frq, res_nums, res_names, spin_names, val, err
+
+        # The R1 and R2 data.
+        for data in self.__general_relaxation.loop():
+            yield data
