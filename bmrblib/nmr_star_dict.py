@@ -29,6 +29,7 @@ http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 
 # relax module imports.
 from bmrblib.assembly_supercategory.entity import EntitySaveframe
+from bmrblib.kinetics.relaxation import Relaxation
 from bmrblib.NMR_parameters.chem_shift_anisotropy import ChemShiftAnisotropy
 from bmrblib.thermodynamics.order_parameters import OrderParameterSaveframe
 from pystarlib.File import File

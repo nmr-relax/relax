@@ -25,6 +25,7 @@ from math import pi
 import string
 
 # relax module imports.
+from bmrblib.nmr_star_dict import NMR_STAR
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
 from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
 from generic_fns import mol_res_spin, pipes, relax_data
@@ -46,6 +47,8 @@ class Bmrb:
             star = NMR_STAR_v3_2('relax_model_free_results', file_path)
         elif version == '3.1':
             star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+        else:
+            star = NMR_STAR('relax_model_free_results', file_path)
 
         # Read the contents of the STAR formatted file.
         star.read()
@@ -74,6 +77,8 @@ class Bmrb:
             star = NMR_STAR_v3_2('relax_model_free_results', file_path)
         elif version == '3.1':
             star = NMR_STAR_v3_1('relax_model_free_results', file_path)
+        else:
+            star = NMR_STAR('relax_model_free_results', file_path)
 
         # Generate the entity saveframe.
         mol_res_spin.bmrb_write_entity(star)
