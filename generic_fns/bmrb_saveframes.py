@@ -21,42 +21,18 @@
 ###############################################################################
 
 # Module docstring.
-"""The NMR-STAR dictionary API for version 3.2.
-
-The v3.2 NMR-STAR dictionary is documented at
-http://www.bmrb.wisc.edu/dictionary/3.2html/SuperGroupPage.html.
-"""
+"""Module containing read/write functions for miscellaneous BMRB NMR-STAR saveframes."""
 
 # relax module imports.
-from bmrblib.assembly_supercategory.entity_v3_1 import EntitySaveframe_v3_1
-from bmrblib.experimental_details.software import SoftwareSaveframe
-from bmrblib.kinetics.relaxation import Relaxation_v3_2
-from bmrblib.NMR_parameters.chem_shift_anisotropy_v3_1 import ChemShiftAnisotropySaveframe_v3_1
-from bmrblib.thermodynamics.order_parameters_v3_1 import OrderParameterSaveframe_v3_1
-from bmrblib.nmr_star_dict import NMR_STAR
+from version import version
 
 
-class NMR_STAR_v3_2(NMR_STAR):
-    """The v3.2 NMR-STAR dictionary."""
+def write_relax(star):
+    """Generate the Software saveframe records for relax.
 
-    # Class extension string.
-    ext = ''
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    """
 
-
-    def create_saveframes(self):
-        """Create all the saveframe objects."""
-
-        # Initialise Supergroup 3 : The molecular assembly saveframe API.
-        self.entity = EntitySaveframe_v3_1(self.data.datanodes)
-
-        # Initialise Supergroup 4:  The experimental descriptions saveframe API.
-        self.software = SoftwareSaveframe(self.data.datanodes)
-
-        # Initialise Supergroup 5 : The NMR parameters saveframe API.
-        self.chem_shift_anisotropy = ChemShiftAnisotropySaveframe_v3_1(self.data.datanodes)
-
-        # Initialise Supergroup 6 : The kinetic data saveframe API.
-        self.relaxation = Relaxation_v3_2(self.data.datanodes)
-
-        # Initialise Supergroup 7 : The thermodynamics saveframe API.
-        self.order_parameters = OrderParameterSaveframe_v3_1(self.data.datanodes)
+    # The relax info.
+    star.software.add(name='relax', version=version, vendor_name='The relax development team', vendor_eaddress='http://nmr-relax.com')
