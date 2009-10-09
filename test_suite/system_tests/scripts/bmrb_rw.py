@@ -8,9 +8,12 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 
 # Missing temp file (allow this script to run outside of the system test framework).
+state_file = 'devnull'
 if not hasattr(ds, 'tmpfile'):
+    stand_alone = True
     ds.tmpfile = 'temp_bmrb'
     ds.version = '3.1'
+    state_file = 'temp_bmrb_state'
 
 # Create the data pipe.
 pipe.create(pipe_name='results', pipe_type='mf')
@@ -38,3 +41,6 @@ bmrb.read(file=ds.tmpfile, version=ds.version)
 # Display tests.
 sequence.display()
 relax_data.display(ri_label='R1', frq_label='800')
+
+# Save the program state.
+state.save(state_file)
