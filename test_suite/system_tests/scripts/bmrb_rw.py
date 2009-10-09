@@ -10,7 +10,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 # Missing temp file (allow this script to run outside of the system test framework).
 if not hasattr(ds, 'tmpfile'):
     ds.tmpfile = 'temp_bmrb'
-    ds.version = '3.1'
+    ds.version = '3.2'
 
 # Create the data pipe.
 pipe.create(pipe_name='results', pipe_type='mf')
