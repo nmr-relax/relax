@@ -32,7 +32,7 @@ from bmrblib.assembly_supercategory.entity import EntitySaveframe
 from bmrblib.kinetics.relaxation import Relaxation
 from bmrblib.NMR_parameters.chem_shift_anisotropy import ChemShiftAnisotropySaveframe
 from bmrblib.thermodynamics.order_parameters import OrderParameterSaveframe
-from pystarlib.File import File
+from bmrblib.pystarlib.File import File
 
 
 class NMR_STAR:

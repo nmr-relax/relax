@@ -25,7 +25,7 @@
 
 # relax module imports.
 from bmrblib.misc import translate
-from pystarlib.TagTable import TagTable
+from bmrblib.pystarlib.TagTable import TagTable
 
 
 class BaseSaveframe:

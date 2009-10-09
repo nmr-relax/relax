@@ -29,8 +29,8 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html_frame/frame_SaveFra
 # relax module imports.
 from bmrblib.base_classes import BaseSaveframe, TagCategory
 from bmrblib.misc import no_missing, translate
-from pystarlib.SaveFrame import SaveFrame
-from pystarlib.TagTable import TagTable
+from bmrblib.pystarlib.SaveFrame import SaveFrame
+from bmrblib.pystarlib.TagTable import TagTable
 
 
 class ChemShiftAnisotropySaveframe(BaseSaveframe):
