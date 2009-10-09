@@ -31,7 +31,7 @@ molecule.name(name='OMP')
 relax_data.display(ri_label='R1', frq_label='800')
 
 # Write, then read the data to a new data pipe.
-bmrb.write(file=ds.tmpfile, dir=None, force=True)
+bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)
 pipe.create(pipe_name='new', pipe_type='mf')
 bmrb.read(file=ds.tmpfile)
 
