@@ -24,7 +24,7 @@
 """Module containing read/write functions for miscellaneous BMRB NMR-STAR saveframes."""
 
 # relax module imports.
-from version import version, get_revision
+from version import version, get_revision, get_url
 
 
 def write_relax(star):
@@ -37,12 +37,15 @@ def write_relax(star):
     # The relax version.
     ver = version
     if ver == 'repository checkout':
-        # Get the SVN revision.
+        # Get the SVN revision and URL.
         rev = get_revision()
+        url = get_url()
 
         # Change the version string.
         if rev:
             ver = version + " r" + rev
+        if url:
+            ver = ver + " " + url
 
     # The relax info.
     star.software.add(name='relax', version=ver, vendor_name='The relax development team', vendor_eaddress='http://nmr-relax.com', task='data processing')
