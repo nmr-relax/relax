@@ -52,7 +52,7 @@ class NMR_STAR_v3_2(NMR_STAR):
         self.chem_shift_anisotropy = ChemShiftAnisotropySaveframe_v3_1(self.data.datanodes)
 
         # Initialise the kinetic saveframe supergroup API.
-        self.relaxation = Relaxation_v3_1(self.data.datanodes)
+        self.relaxation = Relaxation_v3_2(self.data.datanodes)
 
         # Initialise the thermodynamics saveframe supergroup.
         self.order_parameters = OrderParameterSaveframe_v3_1(self.data.datanodes)
