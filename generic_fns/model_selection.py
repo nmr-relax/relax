@@ -73,7 +73,12 @@ def aicc(chi2, k, n):
     @rtype:         float
     """
 
-    return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
+    if n > (k+1):
+        return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
+    elif n == (k+1):
+        raise RelaxError("The size of the dataset, n=%s, is too small for this model of size k=%s.  This situation causes a fatal division by zero as:\n    AICc = chi2 + 2k + 2k*(k + 1) / (n - k - 1).\n\nPlease use AIC model selection instead." % (n, k))
+    elif n < (k+1):
+        raise RelaxError("The size of the dataset, n=%s, is too small for this model of size k=%s.  This situation produces a negative, and hence nonsense, AICc score as:\n    AICc = chi2 + 2k + 2k*(k + 1) / (n - k - 1).\n\nPlease use AIC model selection instead." % (n, k))
 
 
 def bic(chi2, k, n):
