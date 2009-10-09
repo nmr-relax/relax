@@ -58,3 +58,31 @@ def get_revision():
         # The revision.
         if row[0] == 'Revision:':
             return row[1]
+
+
+def get_url():
+    """Attempt to retrieve the SVN URL, if this is a checked out copy.
+
+    @return:    The SVN URL, or None if unsuccessful.
+    @rtype:     None or str
+    """
+
+    # Does the base directory exist (i.e. is this a checked out copy).
+    if not access('.svn', F_OK):
+        return
+
+    # Try to run 'svn info'.
+    pipe = Popen('svn info', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+
+    # Errors.
+    if pipe.stderr.readlines():
+        return
+
+    # Loop over the output lines.
+    for line in pipe.stdout.readlines():
+        # Split up the line.
+        row = split(line)
+
+        # The revision.
+        if row[0] == 'URL:':
+            return row[1]
