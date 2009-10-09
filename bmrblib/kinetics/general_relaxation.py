@@ -234,11 +234,12 @@ class GeneralRelaxationList(HeteronuclRxList):
         """
 
         # Execute the base class tag_setup() method.
-        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+        TagCategory.tag_setup(self, tag_category_label='General_Relaxation_list', sep=sep)
 
         # Tag names for the relaxation data.
-        self.tag_names['SfCategory'] = 'Saveframe_category'
-        self.tag_names['SampleConditionListLabel'] = 'Sample_conditions_label'
+        self.tag_names['SfCategory'] = 'Sf_category'
+        self.tag_names['GeneralRelaxationListID'] = 'ID'
+        self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
         self.tag_names['RxCoherenceType'] = 'Rx_coherence_type'
         self.tag_names['RxValUnits'] = 'Rx_value_units'
@@ -265,7 +266,7 @@ class GeneralRelaxationExperiment(TagCategory):
         """
 
         # Execute the base class tag_setup() method.
-        TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+        TagCategory.tag_setup(self, tag_category_label='General_Relaxation_experiment', sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['SampleLabel'] = 'Sample_label'
@@ -276,6 +277,18 @@ class GeneralRelaxationSoftware(TagCategory):
 
     def create(self):
         """Create the GeneralRelaxationSoftware tag category."""
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label='General_Relaxation_software', sep=sep)
 
 
 class GeneralRelaxation(Rx):
@@ -314,7 +327,13 @@ class GeneralRelaxation(Rx):
         """
 
         # Execute the base class tag_setup() method.
-        Rx.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
+        Rx.tag_setup(self, tag_category_label='General_Relaxation', sep=sep)
 
         # Tag names for the general relaxation data.
-        self.tag_names['GeneralRelaxationListID'] = 'GeneralRelaxation_list_ID'
+        self.tag_names['RxID'] = 'ID'
+        self.tag_names['CompIndexID'] = 'Comp_index_ID'
+        self.tag_names['CompID'] = 'Comp_ID'
+        self.tag_names['AtomID'] = 'Atom_ID'
+        self.tag_names['Val'] = 'Val'
+        self.tag_names['ValErr'] = 'Val_err'
+        self.tag_names['GeneralRelaxationListID'] = 'General_Relaxation_list_ID'
