@@ -45,24 +45,24 @@ class Relaxation:
         """
 
         # Initialise the kinetic saveframe supergroups.
-        self.__heteronucl_NOEs = HeteronuclNOESaveframe(datanodes)
-        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe(datanodes)
-        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe(datanodes)
+        self.heteronucl_NOEs = HeteronuclNOESaveframe(datanodes)
+        self.heteronucl_T1_relaxation = HeteronuclT1Saveframe(datanodes)
+        self.heteronucl_T2_relaxation = HeteronuclT2Saveframe(datanodes)
 
 
     def loop(self):
         """Generator method for looping over and returning all relaxation data."""
 
         # The NOE data.
-        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_NOEs.loop():
+        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_NOEs.loop():
             yield "NOE", frq, res_nums, res_names, spin_names, val, err
 
         # The R1 data.
-        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_T1_relaxation.loop():
+        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_T1_relaxation.loop():
             yield "R1", frq, res_nums, res_names, spin_names, val, err
 
         # The R2 data.
-        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_T2_relaxation.loop():
+        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_T2_relaxation.loop():
             yield "R2", frq, res_nums, res_names, spin_names, val, err
 
 
@@ -94,9 +94,9 @@ class Relaxation_v3_1(Relaxation_v3_0):
         Relaxation_v3_0.__init__(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
-        self.__heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(datanodes)
-        self.__heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_1(datanodes)
-        self.__heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_1(datanodes)
+        self.heteronucl_NOEs = HeteronuclNOESaveframe_v3_1(datanodes)
+        self.heteronucl_T1_relaxation = HeteronuclT1Saveframe_v3_1(datanodes)
+        self.heteronucl_T2_relaxation = HeteronuclT2Saveframe_v3_1(datanodes)
 
 
     def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
@@ -122,11 +122,11 @@ class Relaxation_v3_1(Relaxation_v3_0):
 
         # Pack specific the data.
         if data_type == 'R1':
-            self.__heteronucl_T1_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.heteronucl_T1_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'R2':
-            self.__heteronucl_T2_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.heteronucl_T2_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'NOE':
-            self.__heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
 
 
 class Relaxation_v3_2(Relaxation_v3_1):
@@ -143,7 +143,7 @@ class Relaxation_v3_2(Relaxation_v3_1):
         Relaxation_v3_1.__init__(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
-        self.__general_relaxation = GeneralRelaxationSaveframe(datanodes)
+        self.general_relaxation = GeneralRelaxationSaveframe(datanodes)
 
 
     def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
@@ -169,18 +169,18 @@ class Relaxation_v3_2(Relaxation_v3_1):
 
         # Pack specific the data.
         if data_type in ['R1', 'R2']:
-            self.__general_relaxation.add(data_type=data_type, frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.general_relaxation.add(data_type=data_type, frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'NOE':
-            self.__heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
 
 
     def loop(self):
         """Generator method for looping over and returning all relaxation data."""
 
         # The NOE data.
-        for frq, res_nums, res_names, spin_names, val, err in self.__heteronucl_NOEs.loop():
+        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_NOEs.loop():
             yield "NOE", frq, res_nums, res_names, spin_names, val, err
 
         # The R1 and R2 data.
-        for data in self.__general_relaxation.loop():
+        for data in self.general_relaxation.loop():
             yield data
