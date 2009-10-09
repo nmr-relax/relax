@@ -28,6 +28,7 @@ from os import F_OK, access
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from data.exp_info import ExpInfo
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
@@ -81,9 +82,17 @@ def software_select(name, version=None):
     @type version:      str
     """
 
+    # Unknown program.
+    if name not in ['NMRPipe', 'Sparky']:
+        raise RelaxError("The software '%s' is unknown.  Please use the user function for manually specifying software details instead." % name)
+
+    # Set up the experimental info data container, if needed.
+    if not hasattr(cdp, 'exp_info'):
+        cdp.exp_info = ExpInfo()
+
     # NMRPipe.
     if name == 'NMRPipe':
-        pass
+        cdp.exp_info.software_setup('NMRPipe', version=version, url='http://spin.niddk.nih.gov/NMRPipe/')
 
     # Sparky.
     elif name == 'Sparky':
@@ -91,11 +100,8 @@ def software_select(name, version=None):
         if not version:
             raise RelaxError("The Sparky version number has not been supplied.")
 
-        # The data.
-
-    # Unknown program.
-    else:
-        raise RelaxError("The software '%s' is unknown.  Please use the user function for manually specifying software details instead." % name)
+        # Add the data.
+        cdp.exp_info.software_setup('Sparky', version=version, url='http://www.cgl.ucsf.edu/home/sparky/')
 
 
 def write(file=None, directory=None, version='3.1', force=False):
