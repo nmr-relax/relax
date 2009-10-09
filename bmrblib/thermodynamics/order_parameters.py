@@ -311,3 +311,4 @@ class OrderParameter(TagCategory):
         self.tag_names['S2fValErr'] = 'S2f_value_fit_error'
         self.tag_names['S2sVal'] = 'S2s_value'
         self.tag_names['S2sValErr'] = 'S2s_value_fit_error'
+        self.tag_names['ChiSquaredVal'] = 'Chi_squared_val'
