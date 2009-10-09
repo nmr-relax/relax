@@ -84,6 +84,54 @@ class BMRB(User_fn_class):
         bmrb.read(file=file, directory=dir, version=version)
 
 
+    def software_select(self, name=None, version=None):
+        """Select the software used in the analysis.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        name:  The name of the software program utilised.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Rather than specifying all the information directly, this user function allows the software
+        packaged used in the analysis to be selected by name.  The programs currently supported are:
+
+            'NMRPipe' - http://spin.niddk.nih.gov/NMRPipe/
+            'Sparky' - http://www.cgl.ucsf.edu/home/sparky/
+
+        More can be added if all relevant information (program name, description, website, original
+        citation, purpose, etc.) is emailed to relax-users@gna.org.
+
+        Note that relax is automatically added to the BMRB file.
+
+
+        Examples
+        ~~~~~~~~
+
+        For BMRB deposition, to say that both NMRPipe and Sparky were used prior to relax, type:
+
+        relax> bmrb.software_select('NMRPipe')
+        relax> bmrb.software_select('Sparky', version='3.113')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "bmrb.software_select("
+            text = text + "name=" + repr(name)
+            text = text + ", version=" + repr(version) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str(name, 'program name')
+        check.is_str(version, 'version', can_be_none=True)
+
+        # Execute the functional code.
+        bmrb.software_select(name=name, version=version)
+
+
     def write(self, file=None, dir='pipe_name', version='3.1', force=False):
         """Write the results to a BMRB NMR-STAR formatted file.
 

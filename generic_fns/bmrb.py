@@ -72,6 +72,32 @@ def read(file=None, directory=None, version='3.1'):
     read_function(file_path, version=version)
 
 
+def software_select(name, version=None):
+    """Select by name the software used in the analysis.
+
+    @param name:        The name of the software program.
+    @type name:         str
+    @keyword version:   The program version.
+    @type version:      str
+    """
+
+    # NMRPipe.
+    if name == 'NMRPipe':
+        pass
+
+    # Sparky.
+    elif name == 'Sparky':
+        # Check if the version information has been supplied.
+        if not version:
+            raise RelaxError("The Sparky version number has not been supplied.")
+
+        # The data.
+
+    # Unknown program.
+    else:
+        raise RelaxError("The software '%s' is unknown.  Please use the user function for manually specifying software details instead." % name)
+
+
 def write(file=None, directory=None, version='3.1', force=False):
     """Create a BMRB NMR-STAR formatted file."""
 

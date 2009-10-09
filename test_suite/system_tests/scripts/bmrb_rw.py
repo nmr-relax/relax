@@ -33,6 +33,10 @@ molecule.name(name='OMP')
 # Display the data (as a test).
 relax_data.display(ri_label='R1', frq_label='800')
 
+# Set up all the BMRB information.
+bmrb.software_select('NMRPipe')
+bmrb.software_select('Sparky', version='3.106')
+
 # Write, then read the data to a new data pipe.
 bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)
 pipe.create(pipe_name='new', pipe_type='mf')
