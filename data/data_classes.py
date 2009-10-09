@@ -22,6 +22,7 @@
 
 # Python module imports.
 from re import search
+from types import ListType
 
 # relax module imports.
 from relax_xml import fill_object_contents, xml_to_object
@@ -92,7 +93,7 @@ class Element(object):
     def to_xml(self, doc, element):
         """Create an XML element for the container.
 
-        The variables self.name and self.desc must exist.
+        The variables self.element_name and self.element_desc must exist.
 
 
         @param doc:     The XML document object.
@@ -102,11 +103,87 @@ class Element(object):
         """
 
         # Create the container element and add it to the higher level element.
-        tensor_element = doc.createElement(self.name)
-        element.appendChild(tensor_element)
+        container_element = doc.createElement(self.element_name)
+        element.appendChild(container_element)
 
         # Set the container attributes.
-        tensor_element.setAttribute('desc', self.desc)
+        container_element.setAttribute('desc', self.element_desc)
 
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, tensor_element, object=self, blacklist=['type'] + list(self.__class__.__dict__.keys()))
+        fill_object_contents(doc, container_element, object=self, blacklist=['type'] + list(self.__class__.__dict__.keys()))
+
+
+
+# Empty data container.
+#######################
+
+class ContainerList(ListType):
+    """List type data container for basic Element data containers.
+
+    The elements of this list should be Element instances.
+    """
+
+    def __repr__(self):
+        """Replacement function for displaying an instance of this class."""
+
+        text = "Container list.\n\n"
+        text = text + "%-8s%-20s\n" % ("Index", "Name")
+        for i in xrange(len(self)):
+            text = text + "%-8i%-20s\n" % (i, self[i].name)
+        return text
+
+
+    def add_item(self):
+        """Function for appending a new Element instance to the list."""
+
+        self.append(Element())
+
+
+    def from_xml(self, container_list_super_node):
+        """Recreate the container list data structure from the XML container list node.
+
+        @param container_list_super_node:     The container list XML nodes.
+        @type container_list_super_node:      xml.dom.minicompat.Element instance
+        """
+
+        # Recreate all the container list data structures.
+        xml_to_object(container_list_super_node, self, blacklist=[self.container_name])
+
+        # Get the individual containers.
+        container_list_nodes = container_list_super_node.getElementsByTagName(self.container_name)
+
+        # Loop over the child nodes.
+        for container_node in container_nodes:
+            # Add the container list data container.
+            self.add_item(container_node.getAttribute('name'))
+
+            # Recreate all the other data structures.
+            xml_to_object(container_node, self[-1])
+
+
+    def to_xml(self, doc, element):
+        """Create an XML element for the container list.
+
+        The variables self.container_name and self.container_desc must exist.
+
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the container list XML element to.
+        @type element:  XML element object
+        """
+
+        # Create the container list element and add it to the higher level element.
+        container_list_element = doc.createElement(self.container_name)
+        element.appendChild(container_list_element)
+
+        # Set the container list attributes.
+        container_list_element.setAttribute('desc', self.container_desc)
+
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, container_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
+
+        # Loop over the elements.
+        for i in xrange(len(self)):
+            # Add the element.
+            self[i].to_xml(doc, container_list_element)
