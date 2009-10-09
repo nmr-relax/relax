@@ -24,7 +24,7 @@
 """Module holding the experimental information data container."""
 
 # relax module imports.
-from data_classes import Element
+from data_classes import ContainerList, Element
 
 
 class ExpInfo(Element):
@@ -34,7 +34,59 @@ class ExpInfo(Element):
         """Initialise the data container."""
 
         # The name of the container.
-        self.name = 'exp_info'
+        self.element_name = 'exp_info'
 
         # The description of the container.
-        self.desc = 'Experimental information'
+        self.element_desc = 'Experimental information'
+
+        # Blacklisted objects.
+        self.blacklist = ['software']
+
+
+    def software_setup(self, name, url=None, version=None):
+        """Set up the software information."""
+
+        # Initialise the container if needed.
+        if not hasattr(self, 'software'):
+            self.software = SoftwareList()
+
+        # Append a container.
+        self.software.append(Software())
+
+        # Set the attributes.
+        self.software[-1].name = name
+        if url:
+            self.software[-1].url = url
+        if version:
+            self.software[-1].version = version
+
+
+
+class SoftwareList(ContainerList):
+    """The software data container list."""
+
+    def __init__(self):
+        """Initialise the data container."""
+
+        # The name of the container.
+        self.container_name = 'software_list'
+
+        # The description of the container.
+        self.container_desc = 'List of software programs used in the analysis'
+
+
+
+class Software(Element):
+    """The individual software data container."""
+
+    def __init__(self):
+        """Initialise the data container."""
+
+        # The name of the container.
+        self.element_name = 'software'
+
+        # The description of the container.
+        self.element_desc = 'Software program used in the analysis'
+
+
+
