@@ -53,7 +53,7 @@ class SoftwareSaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, name, version=None, vendor_name=None, vendor_address=None, vendor_eaddress=None):
+    def add(self, name, version=None, vendor_name=None, vendor_address=None, vendor_eaddress=None, task=None):
         """Add the software info to the data nodes.
 
         @param name:                The name of the software program.
@@ -66,7 +66,13 @@ class SoftwareSaveframe(BaseSaveframe):
         @type vendor_address:       None or str
         @keyword vendor_eaddress:   The vendor electronic address.
         @type vendor_eaddress:      None or str
+        @keyword task:              The task of the software.
+        @type task:                 str
         """
+
+        # Check.
+        if not isinstance(task, str):
+            raise NameError, "The task argument '%s' is invalid." % task
 
         # Place the args into the namespace.
         self.program_name = name
@@ -74,6 +80,7 @@ class SoftwareSaveframe(BaseSaveframe):
         self.vendor_name = [translate(vendor_name)]
         self.vendor_address = [translate(vendor_address)]
         self.vendor_eaddress = [translate(vendor_eaddress)]
+        self.task = [translate(task)]
 
         # Increment the ID number.
         self.software_num = self.software_num + 1
@@ -88,6 +95,7 @@ class SoftwareSaveframe(BaseSaveframe):
         # Create the tag categories.
         self.Software.create()
         self.Vendor.create()
+        self.Task.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
@@ -149,6 +157,38 @@ class SoftwareCitation(TagCategory):
 
 class Task(TagCategory):
     """Base class for the Task tag category."""
+
+    def create(self):
+        """Create the Task tag category."""
+
+        # Keys and objects.
+        info = [
+            ['Task',                'task'],
+            ['SoftwareID',          'software_id_num']
+        ]
+
+        # Get the TabTable.
+        table = self.create_tag_table(info)
+
+        # Add the tagtable to the save frame.
+        self.sf.frame.tagtables.append(table)
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        TagCategory.tag_setup(self, tag_category_label='Task', sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['Task'] = 'Task'
+        self.tag_names['SoftwareID'] = 'SoftwareID'
 
 
 class Vendor(TagCategory):

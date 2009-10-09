@@ -35,4 +35,4 @@ def write_relax(star):
     """
 
     # The relax info.
-    star.software.add(name='relax', version=version, vendor_name='The relax development team', vendor_eaddress='http://nmr-relax.com')
+    star.software.add(name='relax', version=version, vendor_name='The relax development team', vendor_eaddress='http://nmr-relax.com', task='data processing')
