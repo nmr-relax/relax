@@ -47,4 +47,4 @@ sequence.display()
 relax_data.display(ri_label='R1', frq_label='800')
 
 # Save the program state.
-state.save(state_file)
+state.save(state_file, force=True)
