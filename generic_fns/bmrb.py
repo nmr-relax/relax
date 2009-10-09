@@ -33,8 +33,8 @@ from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
 
 
-def display():
-    """Display the results in the BMRB NMR-STAR v3.1 format."""
+def display(version='3.1'):
+    """Display the results in the BMRB NMR-STAR format."""
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
@@ -44,7 +44,7 @@ def display():
     write_function = get_specific_fn('bmrb_write', ds[ds.current_pipe].pipe_type, raise_error=False)
 
     # Write the results.
-    write_function(sys.stdout)
+    write_function(sys.stdout, version=version)
 
 
 def read(file=None, directory=None):
@@ -72,7 +72,7 @@ def read(file=None, directory=None):
     read_function(file_path)
 
 
-def write(file=None, directory=None, force=False):
+def write(file=None, directory=None, version='3.1', force=False):
     """Create a BMRB NMR-STAR v3.1 formatted file."""
 
     # Test if the current data pipe exists.
@@ -100,4 +100,4 @@ def write(file=None, directory=None, force=False):
     mkdir_nofail(directory, verbosity=0)
 
     # Execute the specific BMRB writing code.
-    write_function(file_path, version='3.1')
+    write_function(file_path, version=version)
