@@ -43,7 +43,7 @@ class ExpInfo(Element):
         self.blacklist = ['software']
 
 
-    def software_setup(self, name, version=None, url=None, vendor_name=None, cite=None):
+    def software_setup(self, name, version=None, url=None, vendor_name=None, cite=None, tasks=None):
         """Set up the software information.
 
         @param name:            The name of the software program.
@@ -56,6 +56,8 @@ class ExpInfo(Element):
         @type vendor_name:      str
         @keyword cite:          The literature citation.
         @type cite:             None or str
+        @keyword tasks:         The tasks performed by the program.
+        @type tasks:            list of str
         """
 
         # Initialise the container if needed.
@@ -63,7 +65,7 @@ class ExpInfo(Element):
             self.software = SoftwareList()
 
         # Append a container.
-        self.software.append(Software(name, version=version, url=url, vendor_name=vendor_name, cite=cite))
+        self.software.append(Software(name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks))
 
 
 
@@ -84,7 +86,7 @@ class SoftwareList(ContainerList):
 class Software(Element):
     """The individual software data container."""
 
-    def __init__(self, name, version=None, url=None, vendor_name=None, cite=None):
+    def __init__(self, name, version=None, url=None, vendor_name=None, cite=None, tasks=None):
         """Initialise the data container.
 
         @param name:            The name of the software program.
@@ -97,6 +99,8 @@ class Software(Element):
         @type vendor_name:      str
         @keyword cite:          The literature citation.
         @type cite:             None or str
+        @keyword tasks:         The tasks performed by the program.
+        @type tasks:            list of str
         """
 
         # The name of the container.
@@ -115,7 +119,5 @@ class Software(Element):
             self.vendor_name = vendor_name
         if cite:
             self.cite = cite
-
-
-
-
+        if tasks:
+            self.tasks = tasks

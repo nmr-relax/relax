@@ -92,7 +92,7 @@ def software_select(name, version=None):
 
     # NMRPipe.
     if name == 'NMRPipe':
-        cdp.exp_info.software_setup('NMRPipe', version=version, url="http://spin.niddk.nih.gov/NMRPipe/", vendor_name="Delaglio, F.", cite="Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293.")
+        cdp.exp_info.software_setup('NMRPipe', version=version, url="http://spin.niddk.nih.gov/NMRPipe/", vendor_name="Delaglio, F.", cite="Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293.", tasks=["processing"])
 
     # Sparky.
     elif name == 'Sparky':
@@ -101,8 +101,7 @@ def software_select(name, version=None):
             raise RelaxError("The Sparky version number has not been supplied.")
 
         # Add the data.
-        cdp.exp_info.software_setup('Sparky', version=version, url="http://www.cgl.ucsf.edu/home/sparky/", vendor_name="Goddard, T. D.", cite="Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
-)
+        cdp.exp_info.software_setup('Sparky', version=version, url="http://www.cgl.ucsf.edu/home/sparky/", vendor_name="Goddard, T. D.", cite="Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco.", tasks=["spectral analysis"])
 
 
 def write(file=None, directory=None, version='3.1', force=False):
