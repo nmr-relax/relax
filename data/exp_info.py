@@ -43,22 +43,27 @@ class ExpInfo(Element):
         self.blacklist = ['software']
 
 
-    def software_setup(self, name, url=None, version=None):
-        """Set up the software information."""
+    def software_setup(self, name, version=None, url=None, vendor_name=None, cite=None):
+        """Set up the software information.
+
+        @param name:            The name of the software program.
+        @type name:             str
+        @keyword version:       The program version.
+        @type version:          None or str
+        @keyword url:           The program's URL.
+        @type url:              None or str
+        @keyword vendor_name:   The name of the company or person behind the program.
+        @type vendor_name:      str
+        @keyword cite:          The literature citation.
+        @type cite:             None or str
+        """
 
         # Initialise the container if needed.
         if not hasattr(self, 'software'):
             self.software = SoftwareList()
 
         # Append a container.
-        self.software.append(Software())
-
-        # Set the attributes.
-        self.software[-1].name = name
-        if url:
-            self.software[-1].url = url
-        if version:
-            self.software[-1].version = version
+        self.software.append(Software(name, version=version, url=url, vendor_name=vendor_name, cite=cite))
 
 
 
@@ -79,14 +84,38 @@ class SoftwareList(ContainerList):
 class Software(Element):
     """The individual software data container."""
 
-    def __init__(self):
-        """Initialise the data container."""
+    def __init__(self, name, version=None, url=None, vendor_name=None, cite=None):
+        """Initialise the data container.
+
+        @param name:            The name of the software program.
+        @type name:             str
+        @keyword version:       The program version.
+        @type version:          None or str
+        @keyword url:           The program's URL.
+        @type url:              None or str
+        @keyword vendor_name:   The name of the company or person behind the program.
+        @type vendor_name:      str
+        @keyword cite:          The literature citation.
+        @type cite:             None or str
+        """
 
         # The name of the container.
         self.element_name = 'software'
 
         # The description of the container.
         self.element_desc = 'Software program used in the analysis'
+
+        # Set the attributes.
+        self.name = name
+        if url:
+            self.url = url
+        if version:
+            self.version = version
+        if vendor_name:
+            self.vendor_name = vendor_name
+        if cite:
+            self.cite = cite
+
 
 
 
