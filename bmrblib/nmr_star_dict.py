@@ -30,7 +30,7 @@ http://www.bmrb.wisc.edu/dictionary/3.1html/SuperGroupPage.html.
 # relax module imports.
 from bmrblib.assembly_supercategory.entity import EntitySaveframe
 from bmrblib.kinetics.relaxation import Relaxation
-from bmrblib.NMR_parameters.chem_shift_anisotropy import ChemShiftAnisotropy
+from bmrblib.NMR_parameters.chem_shift_anisotropy import ChemShiftAnisotropySaveframe
 from bmrblib.thermodynamics.order_parameters import OrderParameterSaveframe
 from pystarlib.File import File
 
@@ -65,7 +65,7 @@ class NMR_STAR:
         self.entity = EntitySaveframe(self.data.datanodes)
 
         # Initialise the NMR parameters saveframe supergroup.
-        self.chem_shift_anisotropy = ChemShiftAnisotropy(self.data.datanodes)
+        self.chem_shift_anisotropy = ChemShiftAnisotropySaveframe(self.data.datanodes)
 
         # Initialise the kinetic saveframe supergroup API.
         self.relaxation = Relaxation(self.data.datanodes)
