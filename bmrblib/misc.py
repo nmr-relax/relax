@@ -70,8 +70,12 @@ def translate(data):
                 new_data.append(str(data[i]))
 
     # None.
-    if data == None:
+    elif data == None:
         new_data = '?'
+
+    # Otherwise don't do anything.
+    else:
+        new_data = data
 
     # Return the translated result.
     return new_data
