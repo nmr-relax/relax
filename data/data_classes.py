@@ -109,8 +109,26 @@ class Element(object):
         # Set the container attributes.
         container_element.setAttribute('desc', self.element_desc)
 
-        # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, container_element, object=self, blacklist=['type'] + list(self.__class__.__dict__.keys()))
+        # Blacklist.
+        blacklist = ['element_name', 'element_desc'] + list(Element.__dict__.keys()) + list(self.__class__.__dict__.keys())
+        if hasattr(self, 'blacklist'):
+            blacklist = blacklist + self.blacklist + ['blacklist']
+
+        # Add all simple python objects within.
+        fill_object_contents(doc, container_element, object=self, blacklist=blacklist)
+
+        # Run any object to_xml() methods.
+        for name in dir(self):
+            # Skip certain objects.
+            if search("^_", name):
+                continue
+
+            # Get the object.
+            obj = getattr(self, name)
+
+            # Test for and run to_xml().
+            if hasattr(obj, 'to_xml'):
+                obj.to_xml(doc, container_element)
 
 
 
@@ -180,8 +198,13 @@ class ContainerList(ListType):
         # Set the container list attributes.
         container_list_element.setAttribute('desc', self.container_desc)
 
-        # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, container_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
+        # Blacklist.
+        blacklist = ['container_name', 'container_desc'] + list(ListType.__dict__.keys()) + list(ContainerList.__dict__.keys()) + list(self.__class__.__dict__.keys())
+        if hasattr(self, 'blacklist'):
+            blacklist = blacklist + self.blacklist + ['blacklist']
+
+        # Add all simple python objects.
+        fill_object_contents(doc, container_list_element, object=self, blacklist=blacklist)
 
         # Loop over the elements.
         for i in xrange(len(self)):
