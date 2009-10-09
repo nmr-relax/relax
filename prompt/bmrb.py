@@ -50,8 +50,8 @@ class BMRB(User_fn_class):
         bmrb.display(version=version)
 
 
-    def read(self, file=None, dir=None):
-        """Read BMRB files in the NMR-STAR v3.1 format.
+    def read(self, file=None, dir=None, version='3.1'):
+        """Read BMRB files in the NMR-STAR format.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -71,15 +71,17 @@ class BMRB(User_fn_class):
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.read("
             text = text + "file=" + repr(file)
-            text = text + ", dir=" + repr(dir) + ")"
+            text = text + ", dir=" + repr(dir)
+            text = text + ", version=" + repr(version) + ")"
             print(text)
 
         # The argument checks.
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(version, 'NMR-STAR dictionary version')
 
         # Execute the functional code.
-        bmrb.read(file=file, directory=dir)
+        bmrb.read(file=file, directory=dir, version=version)
 
 
     def write(self, file=None, dir='pipe_name', version='3.1', force=False):

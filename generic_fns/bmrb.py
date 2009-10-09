@@ -47,8 +47,8 @@ def display(version='3.1'):
     write_function(sys.stdout, version=version)
 
 
-def read(file=None, directory=None):
-    """Read the contents of a BMRB NMR-STAR v3.1 formatted file."""
+def read(file=None, directory=None, version='3.1'):
+    """Read the contents of a BMRB NMR-STAR formatted file."""
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
@@ -69,11 +69,11 @@ def read(file=None, directory=None):
     read_function = get_specific_fn('bmrb_read', ds[ds.current_pipe].pipe_type)
 
     # Read the results.
-    read_function(file_path)
+    read_function(file_path, version=version)
 
 
 def write(file=None, directory=None, version='3.1', force=False):
-    """Create a BMRB NMR-STAR v3.1 formatted file."""
+    """Create a BMRB NMR-STAR formatted file."""
 
     # Test if the current data pipe exists.
     if not ds.current_pipe:
