@@ -63,12 +63,29 @@ def software_select(name, version=None):
     """
 
     # Unknown program.
-    if name not in ['NMRPipe', 'Sparky']:
+    if name not in ['relax', 'NMRPipe', 'Sparky']:
         raise RelaxError("The software '%s' is unknown.  Please use the user function for manually specifying software details instead." % name)
 
     # Set up the experimental info data container, if needed.
     if not hasattr(cdp, 'exp_info'):
         cdp.exp_info = ExpInfo()
+
+    # relax.
+    if name == 'relax':
+        # The relax version.
+        ver = version
+        if ver == 'repository checkout':
+            # Get the SVN revision and URL.
+            rev = get_revision()
+            url = get_url()
+
+            # Change the version string.
+            if rev:
+                ver = version + " r" + rev
+            if url:
+                ver = ver + " " + url
+
+        cdp.exp_info.software_setup(name='relax', version=ver, vendor_name='The relax development team', vendor_eaddress='http://nmr-relax.com', cite="d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119;  d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133.", task='data processing')
 
     # NMRPipe.
     if name == 'NMRPipe':
