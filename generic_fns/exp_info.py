@@ -68,8 +68,9 @@ def bmrb_write_software(star):
             # The program info.
             star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks)
 
-    # Throw a warning.
+    # relax cannot be the only program used!
     else:
+        raise RelaxError("relax cannot be the only program used in the analysis - spectral analysis programs, etc. must also have been used.  Please use the relevant BMRB user functions to specify these.")
 
 
 def software(name=None, version=None, url=None, vendor_name=None, cite=None, tasks=None):
