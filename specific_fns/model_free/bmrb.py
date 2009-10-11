@@ -136,7 +136,10 @@ class Bmrb:
             csa_list.append(spin.csa * 1e6)    # In ppm.
             r_list.append(spin.r)
             isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
-            element_list.append(spin.element)
+            if hasattr(spin, 'element'):
+                element_list.append(spin.element)
+            else:
+                element_list.append(None)
 
             # Model-free data.
             s2_list.append(spin.s2)
@@ -183,7 +186,7 @@ class Bmrb:
         ######################################################
 
         # Generate the CSA saveframe.
-        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_type=element_list, isotope=isotope_list, csa=csa_list)
+        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, csa=csa_list)
 
 
         # Create Supergroup 6 : The kinetic data saveframes.
@@ -197,7 +200,7 @@ class Bmrb:
         ######################################################
 
         # Generate the model-free data saveframe.
-        star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_type=element_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list)
+        star.order_parameters.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list)
 
 
         # Write the contents to the STAR formatted file.
