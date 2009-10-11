@@ -26,6 +26,7 @@
 # relax module imports.
 from data.exp_info import ExpInfo
 from relax_errors import RelaxError
+from version import version_full
 
 
 # relax fixed info.
@@ -57,6 +58,9 @@ def bmrb_write_software(star):
     @param star:        The NMR-STAR dictionary object.
     @type star:         NMR_STAR instance
     """
+
+    # First add relax.
+    star.software.add(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, vendor_eaddress=RELAX_URL, task=RELAX_TASKS)
 
     # Loop over the software.
     for software in cdp.exp_info.software:
