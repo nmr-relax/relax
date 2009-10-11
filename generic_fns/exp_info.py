@@ -63,9 +63,13 @@ def bmrb_write_software(star):
     star.software.add(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, vendor_eaddress=RELAX_URL, task=RELAX_TASKS)
 
     # Loop over the software.
-    for software in cdp.exp_info.software:
-        # The relax info.
-        star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks)
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'software'):
+        for software in cdp.exp_info.software:
+            # The program info.
+            star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks)
+
+    # Throw a warning.
+    else:
 
 
 def software(name=None, version=None, url=None, vendor_name=None, cite=None, tasks=None):
