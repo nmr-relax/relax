@@ -33,10 +33,11 @@ molecule.name(name='OMP')
 # Display the data (as a test).
 relax_data.display(ri_label='R1', frq_label='800')
 
-# Set up all the BMRB information.
+# Set up some BMRB information.
 bmrb.software_select('NMRPipe')
 bmrb.software_select('Sparky', version='3.106')
 bmrb.software(name='X', url='http://X.X.X', vendor_name='me', cite='Nothing!', tasks=['procrastinating', 'nothing much', 'wasting time'])
+bmrb.citation(authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]], doi="http://dx.doi.org/10.1039/b702202f", pubmed_id="17579774", full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm.", status="published", type="journal", journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems", volume=3, issue=7, page_first=483, page_last=498, year=2007)
 
 # Write, then read the data to a new data pipe.
 bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)
