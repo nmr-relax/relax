@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 from base_class import User_fn_class
 import check
-from generic_fns import bmrb
+from generic_fns import bmrb, exp_info
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
@@ -153,7 +153,7 @@ class BMRB(User_fn_class):
         check.is_str_list(tasks, 'tasks', can_be_none=True)
 
         # Execute the functional code.
-        bmrb.software(name=name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks)
+        exp_info.software(name=name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks)
 
 
     def software_select(self, name=None, version=None):
@@ -203,7 +203,7 @@ class BMRB(User_fn_class):
         check.is_str(version, 'version', can_be_none=True)
 
         # Execute the functional code.
-        bmrb.software_select(name=name, version=version)
+        exp_info.software_select(name=name, version=version)
 
 
     def write(self, file=None, dir='pipe_name', version='3.1', force=False):

@@ -73,62 +73,6 @@ def read(file=None, directory=None, version='3.1'):
     read_function(file_path, version=version)
 
 
-def software(name=None, version=None, url=None, vendor_name=None, cite=None, tasks=None):
-    """Select by name the software used in the analysis.
-
-    @param name:            The name of the software program.
-    @type name:             str
-    @keyword version:       The program version.
-    @type version:          None or str
-    @keyword url:           The program's URL.
-    @type url:              None or str
-    @keyword vendor_name:   The name of the company or person behind the program.
-    @type vendor_name:      str
-    @keyword cite:          The literature citation.
-    @type cite:             None or str
-    @keyword tasks:         The tasks performed by the program.
-    @type tasks:            list of str
-    """
-
-    # Set up the experimental info data container, if needed.
-    if not hasattr(cdp, 'exp_info'):
-        cdp.exp_info = ExpInfo()
-
-    # Place the data in the container.
-    cdp.exp_info.software_setup(name=name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks)
-
-
-def software_select(name, version=None):
-    """Select by name the software used in the analysis.
-
-    @param name:        The name of the software program.
-    @type name:         str
-    @keyword version:   The program version.
-    @type version:      None or str
-    """
-
-    # Unknown program.
-    if name not in ['NMRPipe', 'Sparky']:
-        raise RelaxError("The software '%s' is unknown.  Please use the user function for manually specifying software details instead." % name)
-
-    # Set up the experimental info data container, if needed.
-    if not hasattr(cdp, 'exp_info'):
-        cdp.exp_info = ExpInfo()
-
-    # NMRPipe.
-    if name == 'NMRPipe':
-        cdp.exp_info.software_setup('NMRPipe', version=version, url="http://spin.niddk.nih.gov/NMRPipe/", vendor_name="Delaglio, F.", cite="Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293.", tasks=["processing"])
-
-    # Sparky.
-    elif name == 'Sparky':
-        # Check if the version information has been supplied.
-        if not version:
-            raise RelaxError("The Sparky version number has not been supplied.")
-
-        # Add the data.
-        cdp.exp_info.software_setup('Sparky', version=version, url="http://www.cgl.ucsf.edu/home/sparky/", vendor_name="Goddard, T. D.", cite="Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco.", tasks=["spectral analysis"])
-
-
 def write(file=None, directory=None, version='3.1', force=False):
     """Create a BMRB NMR-STAR formatted file."""
 
