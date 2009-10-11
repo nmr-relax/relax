@@ -28,6 +28,19 @@ from data.exp_info import ExpInfo
 from relax_errors import RelaxError
 
 
+def bmrb_write_software(star):
+    """Generate the Software saveframe records.
+
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    """
+
+    # Loop over the software.
+    for software in cdp.exp_info.software:
+        # The relax info.
+        star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks)
+
+
 def software(name=None, version=None, url=None, vendor_name=None, cite=None, tasks=None):
     """Select by name the software used in the analysis.
 
