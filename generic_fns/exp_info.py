@@ -28,6 +28,29 @@ from data.exp_info import ExpInfo
 from relax_errors import RelaxError
 
 
+# relax fixed info.
+RELAX_NAME = "relax"
+RELAX_AUTHORS = "The relax development team"
+RELAX_REF = "d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119;  d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133."
+RELAX_URL = "http://nmr-relax.com"
+RELAX_TASKS = ["data processing"]
+
+# NMRPipe fixed info.
+NMRPIPE_NAME = "NMRPipe"
+NMRPIPE_AUTHORS = "Delaglio, F."
+NMRPIPE_REF = "Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293."
+NMRPIPE_URL = "http://spin.niddk.nih.gov/NMRPipe/"
+NMRPIPE_TASKS = ["processing"]
+
+# Sparky fixed info.
+SPARKY_NAME = "Sparky"
+SPARKY_AUTHORS = "Goddard, T. D."
+SPARKY_REF = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
+SPARKY_URL = "http://www.cgl.ucsf.edu/home/sparky/"
+SPARKY_TASKS = ["spectral analysis"]
+
+
+
 def bmrb_write_software(star):
     """Generate the Software saveframe records.
 
@@ -85,11 +108,11 @@ def software_select(name, version=None):
 
     # relax.
     if name == 'relax':
-        cdp.exp_info.software_setup(name='relax', version=version_full(), vendor_name='The relax development team', vendor_eaddress='http://nmr-relax.com', cite="d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119;  d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133.", task='data processing')
+        cdp.exp_info.software_setup(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, url=RELAX_URL, cite=RELAX_REF, tasks=RELAX_TASKS)
 
     # NMRPipe.
     if name == 'NMRPipe':
-        cdp.exp_info.software_setup('NMRPipe', version=version, url="http://spin.niddk.nih.gov/NMRPipe/", vendor_name="Delaglio, F.", cite="Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293.", tasks=["processing"])
+        cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite=NMRPIPE_REF, tasks=NMRPIPE_TASKS)
 
     # Sparky.
     elif name == 'Sparky':
@@ -98,4 +121,4 @@ def software_select(name, version=None):
             raise RelaxError("The Sparky version number has not been supplied.")
 
         # Add the data.
-        cdp.exp_info.software_setup('Sparky', version=version, url="http://www.cgl.ucsf.edu/home/sparky/", vendor_name="Goddard, T. D.", cite="Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco.", tasks=["spectral analysis"])
+        cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite=SPARKY_REF, tasks=SPARKY_TASKS)
