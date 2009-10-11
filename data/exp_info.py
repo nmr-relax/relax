@@ -111,13 +111,8 @@ class Software(Element):
 
         # Set the attributes.
         self.name = name
-        if url:
-            self.url = url
-        if version:
-            self.version = version
-        if vendor_name:
-            self.vendor_name = vendor_name
-        if cite:
-            self.cite = cite
-        if tasks:
-            self.tasks = tasks
+        self.url = url
+        self.version = version
+        self.vendor_name = vendor_name
+        self.cite = cite
+        self.tasks = tasks
