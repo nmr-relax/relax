@@ -71,16 +71,16 @@ class SoftwareSaveframe(BaseSaveframe):
         """
 
         # Check.
-        if not isinstance(task, str):
+        if not isinstance(task, list):
             raise NameError, "The task argument '%s' is invalid." % task
 
         # Place the args into the namespace.
         self.program_name = name
         self.program_version = version
-        self.vendor_name = [translate(vendor_name)]
-        self.vendor_address = [translate(vendor_address)]
-        self.vendor_eaddress = [translate(vendor_eaddress)]
-        self.task = [translate(task)]
+        self.vendor_name = translate(vendor_name)
+        self.vendor_address = translate(vendor_address)
+        self.vendor_eaddress = translate(vendor_eaddress)
+        self.task = translate(task)
 
         # Increment the ID number.
         self.software_num = self.software_num + 1
