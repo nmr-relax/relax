@@ -50,7 +50,7 @@ class OrderParameterSaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, res_nums=None, res_names=None, atom_names=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None, rex_frq=None, chi2=None):
+    def add(self, res_nums=None, res_names=None, atom_names=None, atom_types=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None, rex_frq=None, chi2=None):
         """Add relaxation data to the data nodes.
 
         Note that units of 1/s are actually rad/s in NMR.  This is the hidden radian unit, which if
@@ -64,6 +64,8 @@ class OrderParameterSaveframe(BaseSaveframe):
         @type res_names:        list of str
         @keyword atom_names:    The atom name list.
         @type atom_names:       list of str
+        @keyword atom_types:    The atom types as IUPAC element abbreviations.
+        @type atom_types:       list of str
         @keyword s2:            The S2 values.
         @type s2:               list of float
         @keyword s2_err:        The S2 errors.
@@ -126,7 +128,7 @@ class OrderParameterSaveframe(BaseSaveframe):
         N = len(res_nums)
 
         # Object names.
-        names = ['res_nums', 'res_names', 'atom_names', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err', 'chi2']
+        names = ['res_nums', 'res_names', 'atom_names', 'atom_types', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err', 'chi2']
 
         # Loop over the objects.
         for name in names:
@@ -256,6 +258,7 @@ class OrderParameter(TagCategory):
             ['CompIndexID',     'res_nums'],
             ['CompID',          'res_names'],
             ['AtomID',          'atom_names'],
+            ['AtomType',        'atom_types'],
             ['S2Val',           's2'],
             ['S2ValErr',        's2_err'],
             ['S2fVal',          's2f'],
@@ -297,6 +300,7 @@ class OrderParameter(TagCategory):
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
+        self.tag_names['AtomType'] = 'Atom_type'
         self.tag_names['S2Val'] = 'S2_value'
         self.tag_names['S2ValErr'] = 'S2_value_fit_error'
         self.tag_names['TauEVal'] = 'Tau_e_value'
