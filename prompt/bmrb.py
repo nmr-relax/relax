@@ -37,6 +37,130 @@ from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, Relax
 class BMRB(User_fn_class):
     """Class for interfacing with the BMRB (http://www.bmrb.wisc.edu/)."""
 
+    def citation(self, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status='published', type='journal', journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
+        """Specify a citation to be added the BMRB data file.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        authors:  The list of authors.  Each author element is a list of four elements: the first
+            name, last name, first initial, and middle initials.
+
+        doi:  The DOI number, e.g. "10.1000/182".
+
+        pubmed_id:  The identification code assigned to the publication by PubMed.
+
+        full_citation:  The full citation as given in a reference list.
+
+        title:  The title of the publication.
+
+        status:  The publication status.
+
+        journal_abbrev:  The standard journal abbreviation.
+        
+        journal_full:  The full journal name.
+
+        volume:  The volume number.
+
+        issue:  The issue number.
+
+        page_first:  The first page number.
+
+        page_last:  The last page number.
+
+        year:  The publication year.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The full_citation should be in a format similar to that used in a journal article by either
+        cutting and pasting from another document or by typing. Please include author names, title,
+        journal, page numbers, and year or equivalent information for the type of publication given.
+
+        The journal status can only be one of:
+
+            "preparation",
+            "in press",
+            "published",
+            "retracted",
+            "submitted".
+
+        The citation type can only be one of:
+
+            "abstract",
+            "BMRB only",
+            "book",
+            "book chapter",
+            "internet",
+            "journal",
+            "personal communication",
+            "thesis".
+
+        The standard journal abbreviation is that defined by the Chemical Abstract Services for the
+        journal where the data are or will be published.  If the data in the deposition are related
+        to a J. Biomol. NMR paper, the value must be 'J. Biomol. NMR' to alert the BMRB annotators
+        so that the deposition is properly processed.  If the depositor truly does not know the
+        journal, a value of 'not known' or 'na' is acceptable.
+
+
+        Examples
+        ~~~~~~~~
+
+        To add the citation "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the
+        model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7),
+        483-494.", type:
+
+        relax> bmrb.citation(authors=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.",
+                             "R."]], doi="10.1039/b702202f", pubmed_id="17579774",
+                             full_citation="d'Auvergne E. J., Gooley P. R. (2007). Set theory
+                             formulation of the model-free problem and the diffusion seeded
+                             model-free paradigm. Mol. Biosyst., 3(7), 483-494.", title="Set theory
+                             formulation of the model-free problem and the diffusion seeded
+                             model-free paradigm.", status="published", type="journal",
+                             journal_abbrev="Mol. Biosyst.", journal_full="Molecular Biosystems",
+                             volume=3, issue=7, page_first=483, page_last=498, year=2007)
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "bmrb.citation("
+            text = text + "authors=" + repr(authors)
+            text = text + ", doi=" + repr(doi)
+            text = text + ", pubmed_id=" + repr(pubmed_id)
+            text = text + ", full_citation=" + repr(full_citation)
+            text = text + ", title=" + repr(title)
+            text = text + ", status=" + repr(status)
+            text = text + ", type=" + repr(type)
+            text = text + ", journal_abbrev=" + repr(journal_abbrev)
+            text = text + ", journal_full=" + repr(journal_full)
+            text = text + ", volume=" + repr(volume)
+            text = text + ", issue=" + repr(issue)
+            text = text + ", page_first=" + repr(page_first)
+            text = text + ", page_last=" + repr(page_last)
+            text = text + ", year=" + repr(year) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str_list(authors, 'authors', list_of_lists=True)
+        check.is_str(doi, 'DOI number', can_be_none=True)
+        check.is_str(pubmed_id, 'Pubmed ID number', can_be_none=True)
+        check.is_str(full_citation, 'full citation')
+        check.is_str(title, 'title')
+        check.is_str(status, 'status')
+        check.is_str(type, 'type')
+        check.is_str(journal_abbrev, 'journal abbreviation', can_be_none=True)
+        check.is_str(journal_full, 'full journal name', can_be_none=True)
+        check.is_int(volume, 'volume', can_be_none=True)
+        check.is_int(issue, 'issue', can_be_none=True)
+        check.is_int(page_first, 'first page number', can_be_none=True)
+        check.is_int(page_last, 'last page number', can_be_none=True)
+        check.is_int(year, 'publication year')
+
+        # Execute the functional code.
+        exp_info.citation(authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
+
+
     def display(self, version='3.1'):
         """Display the BMRB data in NMR-STAR format."""
 
