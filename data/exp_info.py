@@ -34,13 +34,86 @@ class ExpInfo(Element):
         """Initialise the data container."""
 
         # The name of the container.
-        self.element_name = 'exp_info'
+        self.element_name = "exp_info"
 
         # The description of the container.
-        self.element_desc = 'Experimental information'
+        self.element_desc = "Experimental information"
 
         # Blacklisted objects.
-        self.blacklist = ['software']
+        self.blacklist = ["software"]
+
+
+    def add_citation(self, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
+        """Store a citation.
+
+        @keyword authors:           The list of authors.  Each author element is a list of four elements: the first name, last name, first initial, and middle initials.
+        @type authors:              list of lists of str
+        @keyword doi:               The DOI number, e.g. "10.1000/182".
+        @type doi:                  None or str
+        @keyword pubmed_id:         The identification code assigned to the publication by PubMed.
+        @type pubmed_id:            None or int
+        @keyword full_citation:     A full citation in a format similar to that used in a journal article by either cutting and pasting from another document or by typing. Please include author names, title, journal, page numbers, and year or equivalent information for the type of publication given.
+        @type full_citation:        str
+        @keyword title:             The title of the publica tion.
+        @type title:                str
+        @keyword status:            The publication status.  Can be one of in "preparation", "in press", "published", "retracted", or "submitted".
+        @type status:               str
+        @keyword type:              The publication type.  Can be one of "abstract", "BMRB only", "book", "book chapter", "internet", "journal", "personal communication", or "thesis".
+        @type type:                 str
+        @keyword journal_abbrev:    A standard journal abbreviation as defined by the Chemical Abstract Services for the journal where the data are or will be published.  If the data in the deposition are related to a J. Biomol. NMR paper, the value must be 'J. Biomol. NMR' to alert the BMRB annotators so that the deposition is properly processed.  If the depositor truly does not know the journal, a value of 'not known' or 'na' is acceptable.
+        @type journal_abbrev:       str
+        @keyword journal_full:      The full journal name.
+        @type journal_full:         str
+        @keyword volume:            The volume number.
+        @type volume:               int
+        @keyword issue:             The issue number.
+        @type issue:                int
+        @keyword page_first:        The first page number.
+        @type page_first:           int
+        @keyword page_last:         The last page number.
+        @type page_last:            int
+        @keyword year:              The publication year.
+        @type year:                 int
+        """
+
+        # Initialise the list container if needed.
+        if not hasattr(self, "citations"):
+            # The list.
+            self.citations = ContainerList()
+
+            # The name of the container.
+            self.citations.container_name = "citation_list"
+
+            # The description of the container.
+            self.citations.container_desc = "List of citations"
+
+        # Init the container.
+        cite = Element()
+
+        # The name of the container.
+        cite.element_name = "citation"
+
+        # The description of the container.
+        cite.element_desc = "Literature citation"
+
+        # Set the attributes.
+        cite.authors = authors
+        cite.doi = doi
+        cite.pubmed_id = pubmed_id
+        cite.full_citation = full_citation
+        cite.title = title
+        cite.status = status
+        cite.type = type
+        cite.journal_abbrev = journal_abbrev
+        cite.journal_full = journal_full
+        cite.volume = volume
+        cite.issue = issue
+        cite.page_first = page_first
+        cite.page_last = page_last
+        cite.year = year
+
+        # Append the container.
+        self.citations.append(cite)
 
 
     def software_setup(self, name, version=None, url=None, vendor_name=None, cite=None, tasks=None):
@@ -61,25 +134,11 @@ class ExpInfo(Element):
         """
 
         # Initialise the container if needed.
-        if not hasattr(self, 'software'):
+        if not hasattr(self, "software"):
             self.software = SoftwareList()
 
         # Append a container.
         self.software.append(Software(name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks))
-
-
-
-class SoftwareList(ContainerList):
-    """The software data container list."""
-
-    def __init__(self):
-        """Initialise the data container."""
-
-        # The name of the container.
-        self.container_name = 'software_list'
-
-        # The description of the container.
-        self.container_desc = 'List of software programs used in the analysis'
 
 
 
@@ -104,10 +163,10 @@ class Software(Element):
         """
 
         # The name of the container.
-        self.element_name = 'software'
+        self.element_name = "software"
 
         # The description of the container.
-        self.element_desc = 'Software program used in the analysis'
+        self.element_desc = "Software program used in the analysis"
 
         # Set the attributes.
         self.name = name
@@ -116,3 +175,17 @@ class Software(Element):
         self.vendor_name = vendor_name
         self.cite = cite
         self.tasks = tasks
+
+
+
+class SoftwareList(ContainerList):
+    """The software data container list."""
+
+    def __init__(self):
+        """Initialise the data container."""
+
+        # The name of the container.
+        self.container_name = "software_list"
+
+        # The description of the container.
+        self.container_desc = "List of software programs used in the analysis"
