@@ -40,7 +40,7 @@ class ExpInfo(Element):
         self.element_desc = "Experimental information"
 
         # Blacklisted objects.
-        self.blacklist = ["software"]
+        self.blacklist = ["citations", "software"]
 
 
     def add_citation(self, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
@@ -54,7 +54,7 @@ class ExpInfo(Element):
         @type pubmed_id:            None or int
         @keyword full_citation:     A full citation in a format similar to that used in a journal article by either cutting and pasting from another document or by typing. Please include author names, title, journal, page numbers, and year or equivalent information for the type of publication given.
         @type full_citation:        str
-        @keyword title:             The title of the publica tion.
+        @keyword title:             The title of the publication.
         @type title:                str
         @keyword status:            The publication status.  Can be one of in "preparation", "in press", "published", "retracted", or "submitted".
         @type status:               str
@@ -139,10 +139,10 @@ class ExpInfo(Element):
             self.software = ContainerList()
 
             # The name of the container.
-            self.container_name = "software_list"
+            self.software.container_name = "software_list"
 
             # The description of the container.
-            self.container_desc = "List of software programs used in the analysis"
+            self.software.container_desc = "List of software programs used in the analysis"
 
         # Init the container.
         software = Element()
