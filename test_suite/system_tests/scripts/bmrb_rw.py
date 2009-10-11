@@ -36,6 +36,7 @@ relax_data.display(ri_label='R1', frq_label='800')
 # Set up all the BMRB information.
 bmrb.software_select('NMRPipe')
 bmrb.software_select('Sparky', version='3.106')
+bmrb.software(name='X', url='http://X.X.X', vendor_name='me', cite='Nothing!', tasks=['procrastinating', 'nothing much', 'wasting time'])
 
 # Write, then read the data to a new data pipe.
 bmrb.write(file=ds.tmpfile, dir=None, version=ds.version, force=True)

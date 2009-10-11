@@ -84,6 +84,78 @@ class BMRB(User_fn_class):
         bmrb.read(file=file, directory=dir, version=version)
 
 
+    def software(self, name=None, version=None, url=None, vendor_name=None, cite=None, tasks=None):
+        """Specify the software used in the analysis.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        name:  The name of the software program utilised.
+
+        version:  The version of the software, if applicable.
+
+        url:  The web address of the software.
+
+        vendor_name:  The name of the company or person behind the program.
+
+        cite:  The literature citation for the software.
+
+        tasks:  A list of all the tasks performed by the software.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This user function allows the software used in the analysis to be specified in full detail.
+
+        For the tasks list, this should be a python list of strings (eg. ['spectral processing']).
+        Although not restricted to these, the values suggested by the BMRB are:
+
+            'chemical shift assignment',
+            'chemical shift calculation',
+            'collection',
+            'data analysis',
+            'geometry optimization',
+            'peak picking',
+            'processing',
+            'refinement',
+            'structure solution'
+
+
+        Examples
+        ~~~~~~~~
+
+        For BMRB deposition, to say that Sparky was used in the analysis, type:
+
+        relax> bmrb.software('Sparky', version='3.110', url="http://www.cgl.ucsf.edu/home/sparky/",
+                             vendor_name="Goddard, T. D.", cite="Goddard, T. D. and Kneller, D. G.,
+                             SPARKY 3, University of California, San Francisco.",
+                             tasks=["spectral analysis"])
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "bmrb.software_select("
+            text = text + "name=" + repr(name)
+            text = text + ", version=" + repr(version)
+            text = text + ", url=" + repr(url)
+            text = text + ", vendor_name=" + repr(vendor_name)
+            text = text + ", cite=" + repr(cite)
+            text = text + ", tasks=" + repr(tasks) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str(name, 'program name')
+        check.is_str(version, 'version', can_be_none=True)
+        check.is_str(url, 'url', can_be_none=True)
+        check.is_str(vendor_name, 'vendor_name', can_be_none=True)
+        check.is_str(cite, 'cite', can_be_none=True)
+        check.is_str_list(tasks, 'tasks', can_be_none=True)
+
+        # Execute the functional code.
+        bmrb.software(name=name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks)
+
+
     def software_select(self, name=None, version=None):
         """Select the software used in the analysis.
 
@@ -91,6 +163,8 @@ class BMRB(User_fn_class):
         ~~~~~~~~~~~~~~~~~
 
         name:  The name of the software program utilised.
+
+        version:  The version of the software, if applicable.
 
 
         Description
