@@ -28,7 +28,7 @@ import string
 from bmrblib.nmr_star_dict import NMR_STAR
 from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
 from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
-from generic_fns import bmrb_saveframes, mol_res_spin, pipes, relax_data
+from generic_fns import exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import spin_loop
 
 
@@ -174,7 +174,7 @@ class Bmrb:
         #################################################################
 
         # Generate the software saveframe.
-        bmrb_saveframes.write_relax(star)
+        exp_info.bmrb_write_software(star)
 
 
         # Create Supergroup 5 : The NMR parameters saveframes.
