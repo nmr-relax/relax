@@ -135,57 +135,31 @@ class ExpInfo(Element):
 
         # Initialise the container if needed.
         if not hasattr(self, "software"):
-            self.software = SoftwareList()
+            # The list.
+            self.software = ContainerList()
 
-        # Append a container.
-        self.software.append(Software(name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks))
+            # The name of the container.
+            self.container_name = "software_list"
 
+            # The description of the container.
+            self.container_desc = "List of software programs used in the analysis"
 
-
-class Software(Element):
-    """The individual software data container."""
-
-    def __init__(self, name, version=None, url=None, vendor_name=None, cite=None, tasks=None):
-        """Initialise the data container.
-
-        @param name:            The name of the software program.
-        @type name:             str
-        @keyword version:       The program version.
-        @type version:          None or str
-        @keyword url:           The program's URL.
-        @type url:              None or str
-        @keyword vendor_name:   The name of the company or person behind the program.
-        @type vendor_name:      str
-        @keyword cite:          The literature citation.
-        @type cite:             None or str
-        @keyword tasks:         The tasks performed by the program.
-        @type tasks:            list of str
-        """
+        # Init the container.
+        software = Element()
 
         # The name of the container.
-        self.element_name = "software"
+        software.element_name = "software"
 
         # The description of the container.
-        self.element_desc = "Software program used in the analysis"
+        software.element_desc = "Software program used in the analysis"
 
         # Set the attributes.
-        self.name = name
-        self.url = url
-        self.version = version
-        self.vendor_name = vendor_name
-        self.cite = cite
-        self.tasks = tasks
+        software.name = name
+        software.url = url
+        software.version = version
+        software.vendor_name = vendor_name
+        software.cite = cite
+        software.tasks = tasks
 
-
-
-class SoftwareList(ContainerList):
-    """The software data container list."""
-
-    def __init__(self):
-        """Initialise the data container."""
-
-        # The name of the container.
-        self.container_name = "software_list"
-
-        # The description of the container.
-        self.container_desc = "List of software programs used in the analysis"
+        # Append the container.
+        self.software.append(software)
