@@ -101,14 +101,14 @@ def version_full():
     # Repository version.
     if ver == 'repository checkout':
         # Get the SVN revision and URL.
-        rev = revision()
-        url = url()
+        svn_rev = revision()
+        svn_url = url()
 
         # Change the version string.
-        if rev:
-            ver = version + " r" + rev
-        if url:
-            ver = ver + " " + url
+        if svn_rev:
+            ver = version + " r" + svn_rev
+        if svn_url:
+            ver = ver + " " + svn_url
 
     # Return the version.
     return ver
