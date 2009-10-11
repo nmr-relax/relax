@@ -24,6 +24,7 @@
 __all__ = [ 'align_tensor',
             'angles',
             'bmrb',
+            'bmrb_saveframes',
             'dasha',
             'diffusion_tensor',
             'eliminate',
