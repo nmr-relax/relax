@@ -158,7 +158,7 @@ class BMRB(User_fn_class):
         check.is_int(year, 'publication year')
 
         # Execute the functional code.
-        exp_info.citation(authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
+        return exp_info.citation(authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
 
 
     def display(self, version='3.1'):
@@ -208,7 +208,7 @@ class BMRB(User_fn_class):
         bmrb.read(file=file, directory=dir, version=version)
 
 
-    def software(self, name=None, version=None, url=None, vendor_name=None, cite=None, tasks=None):
+    def software(self, name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
         """Specify the software used in the analysis.
 
         Keyword Arguments
@@ -222,7 +222,7 @@ class BMRB(User_fn_class):
 
         vendor_name:  The name of the company or person behind the program.
 
-        cite:  The literature citation for the software.
+        cite_ids:  A list of the citation ID numbers.
 
         tasks:  A list of all the tasks performed by the software.
 
@@ -251,10 +251,11 @@ class BMRB(User_fn_class):
 
         For BMRB deposition, to say that Sparky was used in the analysis, type:
 
+        relax> cite_id = bmrb.citation(authors=[['Tom', 'Goddard', 'T.', 'D.'], ['D', 'Kneller',
+                    'D.', 'G.']], title=""Goddard, T. D. and Kneller, D. G., SPARKY 3, University of
+                    California, San Francisco."
         relax> bmrb.software('Sparky', version='3.110', url="http://www.cgl.ucsf.edu/home/sparky/",
-                             vendor_name="Goddard, T. D.", cite="Goddard, T. D. and Kneller, D. G.,
-                             SPARKY 3, University of California, San Francisco.",
-                             tasks=["spectral analysis"])
+                    vendor_name="Goddard, T. D.", cite_ids=[cite_id], tasks=["spectral analysis"])
         """
 
         # Function intro text.
@@ -264,7 +265,7 @@ class BMRB(User_fn_class):
             text = text + ", version=" + repr(version)
             text = text + ", url=" + repr(url)
             text = text + ", vendor_name=" + repr(vendor_name)
-            text = text + ", cite=" + repr(cite)
+            text = text + ", cite_ids=" + repr(cite_ids)
             text = text + ", tasks=" + repr(tasks) + ")"
             print(text)
 
@@ -273,11 +274,11 @@ class BMRB(User_fn_class):
         check.is_str(version, 'version', can_be_none=True)
         check.is_str(url, 'url', can_be_none=True)
         check.is_str(vendor_name, 'vendor_name', can_be_none=True)
-        check.is_str(cite, 'cite', can_be_none=True)
+        check.is_int_list(cite_ids, 'citation ID numbers', can_be_none=True)
         check.is_str_list(tasks, 'tasks', can_be_none=True)
 
         # Execute the functional code.
-        exp_info.software(name=name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks)
+        exp_info.software(name=name, version=version, url=url, vendor_name=vendor_name, cite_ids=cite_ids, tasks=tasks)
 
 
     def software_select(self, name=None, version=None):

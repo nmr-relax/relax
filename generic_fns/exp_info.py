@@ -87,10 +87,6 @@ def bmrb_write_citations(star):
     @type star:         NMR_STAR instance
     """
 
-    # First add relax.
-    cite1 = cdp.exp_info.add_citation(authors=RELAX_CITE1_AUTHORS, doi=RELAX_CITE1_DOI, pubmed_id=RELAX_CITE1_PUBMED_ID, full_citation=RELAX_CITE1_FULL_CITATION, title=RELAX_CITE1_TITLE, status=RELAX_CITE1_STATUS, type=RELAX_CITE1_TYPE, journal_abbrev=RELAX_CITE1_JOURNAL_ABBREV, journal_full=RELAX_CITE1_JOURNAL_FULL, volume=RELAX_CITE1_VOLUME, issue=RELAX_CITE1_ISSUE, page_first=RELAX_CITE1_PAGE_FIRST, page_last=RELAX_CITE1_PAGE_LAST, year=RELAX_CITE1_YEAR)
-    cite2 = cdp.exp_info.add_citation(authors=RELAX_CITE2_AUTHORS, doi=RELAX_CITE2_DOI, pubmed_id=RELAX_CITE2_PUBMED_ID, full_citation=RELAX_CITE2_FULL_CITATION, title=RELAX_CITE2_TITLE, status=RELAX_CITE2_STATUS, type=RELAX_CITE2_TYPE, journal_abbrev=RELAX_CITE2_JOURNAL_ABBREV, journal_full=RELAX_CITE2_JOURNAL_FULL, volume=RELAX_CITE2_VOLUME, issue=RELAX_CITE2_ISSUE, page_first=RELAX_CITE2_PAGE_FIRST, page_last=RELAX_CITE2_PAGE_LAST, year=RELAX_CITE2_YEAR)
-    
     # Loop over the citations.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'citations'):
         for citations in cdp.exp_info.citations:
@@ -104,14 +100,11 @@ def bmrb_write_software(star):
     @type star:         NMR_STAR instance
     """
 
-    # First add relax.
-    star.software.add(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, vendor_eaddress=RELAX_URL, task=RELAX_TASKS)
-
     # Loop over the software.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'software'):
         for software in cdp.exp_info.software:
             # The program info.
-            star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks)
+            star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks, cite_ids=software.cite_ids)
 
     # relax cannot be the only program used!
     else:
@@ -156,10 +149,10 @@ def citation(authors=None, doi=None, pubmed_id=None, full_citation=None, title=N
         cdp.exp_info = ExpInfo()
 
     # Place the data in the container.
-    cdp.exp_info.add_citation(authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
+    return cdp.exp_info.add_citation(authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
 
 
-def software(name=None, version=None, url=None, vendor_name=None, cite=None, tasks=None):
+def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
     """Select by name the software used in the analysis.
 
     @param name:            The name of the software program.
@@ -170,8 +163,8 @@ def software(name=None, version=None, url=None, vendor_name=None, cite=None, tas
     @type url:              None or str
     @keyword vendor_name:   The name of the company or person behind the program.
     @type vendor_name:      str
-    @keyword cite:          The literature citation.
-    @type cite:             None or str
+    @keyword cite_ids:      The citation ID numbers.
+    @type cite:_ids         None or str
     @keyword tasks:         The tasks performed by the program.
     @type tasks:            list of str
     """
@@ -181,7 +174,7 @@ def software(name=None, version=None, url=None, vendor_name=None, cite=None, tas
         cdp.exp_info = ExpInfo()
 
     # Place the data in the container.
-    cdp.exp_info.software_setup(name=name, version=version, url=url, vendor_name=vendor_name, cite=cite, tasks=tasks)
+    cdp.exp_info.software_setup(name=name, version=version, url=url, vendor_name=vendor_name, cite_ids=cite_ids, tasks=tasks)
 
 
 def software_select(name, version=None):
@@ -208,7 +201,7 @@ def software_select(name, version=None):
         cite2 = cdp.exp_info.add_citation(authors=RELAX_CITE2_AUTHORS, doi=RELAX_CITE2_DOI, pubmed_id=RELAX_CITE2_PUBMED_ID, full_citation=RELAX_CITE2_FULL_CITATION, title=RELAX_CITE2_TITLE, status=RELAX_CITE2_STATUS, type=RELAX_CITE2_TYPE, journal_abbrev=RELAX_CITE2_JOURNAL_ABBREV, journal_full=RELAX_CITE2_JOURNAL_FULL, volume=RELAX_CITE2_VOLUME, issue=RELAX_CITE2_ISSUE, page_first=RELAX_CITE2_PAGE_FIRST, page_last=RELAX_CITE2_PAGE_LAST, year=RELAX_CITE2_YEAR)
 
         # Add the software info.
-        cdp.exp_info.software_setup(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, url=RELAX_URL, cite=[cite1, cite2], tasks=RELAX_TASKS)
+        cdp.exp_info.software_setup(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, url=RELAX_URL, cite_ids=[cite1, cite2], tasks=RELAX_TASKS)
 
     # NMRPipe.
     if name == 'NMRPipe':
@@ -216,7 +209,7 @@ def software_select(name, version=None):
         #cite_index = cdp.exp_info.add_citation(authors=[["The relax development team", None, None, None]])
         cite_index = 1
 
-        cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite=cite_index, tasks=NMRPIPE_TASKS)
+        cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite_ids=[cite_index], tasks=NMRPIPE_TASKS)
 
     # Sparky.
     elif name == 'Sparky':
@@ -229,4 +222,4 @@ def software_select(name, version=None):
         cite_index = 1
 
         # Add the data.
-        cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite=cite_index, tasks=SPARKY_TASKS)
+        cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite_ids=[cite_index], tasks=SPARKY_TASKS)

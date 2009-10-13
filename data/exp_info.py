@@ -121,7 +121,7 @@ class ExpInfo(Element):
         return len(self.citations)
 
 
-    def software_setup(self, name, version=None, url=None, vendor_name=None, cite=None, tasks=None):
+    def software_setup(self, name, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
         """Set up the software information.
 
         @param name:            The name of the software program.
@@ -132,8 +132,8 @@ class ExpInfo(Element):
         @type url:              None or str
         @keyword vendor_name:   The name of the company or person behind the program.
         @type vendor_name:      str
-        @keyword cite:          The literature citation.
-        @type cite:             None or str
+        @keyword cite_ids:      The citation ID numbers.
+        @type cite_ids:         None or str
         @keyword tasks:         The tasks performed by the program.
         @type tasks:            list of str
         """
@@ -163,7 +163,7 @@ class ExpInfo(Element):
         software.url = url
         software.version = version
         software.vendor_name = vendor_name
-        software.cite = cite
+        software.cite_ids = cite_ids
         software.tasks = tasks
 
         # Append the container.
