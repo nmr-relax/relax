@@ -168,6 +168,13 @@ class Bmrb:
             chi2_list.append(spin.chi2)
 
 
+        # Create Supergroup 2 : The citations.
+        ######################################
+
+        # Generate the citations saveframe.
+        exp_info.bmrb_write_citations(star)
+
+
         # Create Supergroup 3 : The molecular assembly saveframes.
         ##########################################################
 

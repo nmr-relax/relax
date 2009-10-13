@@ -29,6 +29,7 @@ http://www.bmrb.wisc.edu/dictionary/3.2html/SuperGroupPage.html.
 
 # relax module imports.
 from bmrblib.assembly_supercategory.entity_v3_1 import EntitySaveframe_v3_1
+from bmrblib.citations.citations import CitationsSaveframe
 from bmrblib.experimental_details.software import SoftwareSaveframe
 from bmrblib.kinetics.relaxation import Relaxation_v3_2
 from bmrblib.NMR_parameters.chem_shift_anisotropy_v3_1 import ChemShiftAnisotropySaveframe_v3_1
@@ -45,6 +46,9 @@ class NMR_STAR_v3_2(NMR_STAR):
 
     def create_saveframes(self):
         """Create all the saveframe objects."""
+
+        # Initialise Supergroup 2:  The citations.
+        self.citations = CitationsSaveframe(self.data.datanodes)
 
         # Initialise Supergroup 3:  The molecular assembly saveframe API.
         self.entity = EntitySaveframe_v3_1(self.data.datanodes)

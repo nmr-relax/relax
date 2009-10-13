@@ -52,6 +52,20 @@ SPARKY_TASKS = ["spectral analysis"]
 
 
 
+def bmrb_write_citations(star):
+    """Generate the Citations saveframe records.
+
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    """
+
+    # Loop over the citations.
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'citations'):
+        for citations in cdp.exp_info.citations:
+            print citations
+            star.citations.add(authors=citations.authors, doi=citations.doi, pubmed_id=citations.pubmed_id, full_citation=citations.full_citation, title=citations.title, status=citations.status, type=citations.type, journal_abbrev=citations.journal_abbrev, journal_full=citations.journal_full, volume=citations.volume, issue=citations.issue, page_first=citations.page_first, page_last=citations.page_last, year=citations.year)
+
+
 def bmrb_write_software(star):
     """Generate the Software saveframe records.
 
