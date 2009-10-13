@@ -115,6 +115,9 @@ class ExpInfo(Element):
         # Append the container.
         self.citations.append(cite)
 
+        # Return the index of this citation.
+        return len(self.citations) - 1
+
 
     def software_setup(self, name, version=None, url=None, vendor_name=None, cite=None, tasks=None):
         """Set up the software information.

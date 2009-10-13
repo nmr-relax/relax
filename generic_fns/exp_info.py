@@ -32,9 +32,37 @@ from version import version_full
 # relax fixed info.
 RELAX_NAME = "relax"
 RELAX_AUTHORS = "The relax development team"
-RELAX_REF = "d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119;  d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133."
 RELAX_URL = "http://nmr-relax.com"
 RELAX_TASKS = ["data processing"]
+RELAX_CITE1_AUTHORS=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
+RELAX_CITE1_DOI="10.1007/s10858-007-9214-2"
+RELAX_CITE1_PUBMED_ID="18085410"
+RELAX_CITE1_FULL_CITATION="d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119."
+RELAX_CITE1_TITLE="Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces."
+RELAX_CITE1_STATUS="published"
+RELAX_CITE1_TYPE="journal"
+RELAX_CITE1_JOURNAL_ABBREV="J. Biomol. NMR"
+RELAX_CITE1_JOURNAL_FULL="Journal of Biomolecular NMR"
+RELAX_CITE1_VOLUME=40
+RELAX_CITE1_ISSUE=2
+RELAX_CITE1_PAGE_FIRST=107
+RELAX_CITE1_PAGE_LAST=119
+RELAX_CITE1_YEAR=2008
+RELAX_CITE2_AUTHORS=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
+RELAX_CITE2_DOI="10.1007/s10858-007-9213-3"
+RELAX_CITE2_PUBMED_ID="18085411"
+RELAX_CITE2_FULL_CITATION="d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133."
+RELAX_CITE2_TITLE="Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor."
+RELAX_CITE2_STATUS="published"
+RELAX_CITE2_TYPE="journal"
+RELAX_CITE2_JOURNAL_ABBREV="J. Biomol. NMR"
+RELAX_CITE2_JOURNAL_FULL="Journal of Biomolecular NMR"
+RELAX_CITE2_VOLUME=40
+RELAX_CITE2_ISSUE=2
+RELAX_CITE2_PAGE_FIRST=121
+RELAX_CITE2_PAGE_LAST=133
+RELAX_CITE2_YEAR=2008
+
 
 # NMRPipe fixed info.
 NMRPIPE_NAME = "NMRPipe"
@@ -59,6 +87,10 @@ def bmrb_write_citations(star):
     @type star:         NMR_STAR instance
     """
 
+    # First add relax.
+    cite1 = cdp.exp_info.add_citation(authors=RELAX_CITE1_AUTHORS, doi=RELAX_CITE1_DOI, pubmed_id=RELAX_CITE1_PUBMED_ID, full_citation=RELAX_CITE1_FULL_CITATION, title=RELAX_CITE1_TITLE, status=RELAX_CITE1_STATUS, type=RELAX_CITE1_TYPE, journal_abbrev=RELAX_CITE1_JOURNAL_ABBREV, journal_full=RELAX_CITE1_JOURNAL_FULL, volume=RELAX_CITE1_VOLUME, issue=RELAX_CITE1_ISSUE, page_first=RELAX_CITE1_PAGE_FIRST, page_last=RELAX_CITE1_PAGE_LAST, year=RELAX_CITE1_YEAR)
+    cite2 = cdp.exp_info.add_citation(authors=RELAX_CITE2_AUTHORS, doi=RELAX_CITE2_DOI, pubmed_id=RELAX_CITE2_PUBMED_ID, full_citation=RELAX_CITE2_FULL_CITATION, title=RELAX_CITE2_TITLE, status=RELAX_CITE2_STATUS, type=RELAX_CITE2_TYPE, journal_abbrev=RELAX_CITE2_JOURNAL_ABBREV, journal_full=RELAX_CITE2_JOURNAL_FULL, volume=RELAX_CITE2_VOLUME, issue=RELAX_CITE2_ISSUE, page_first=RELAX_CITE2_PAGE_FIRST, page_last=RELAX_CITE2_PAGE_LAST, year=RELAX_CITE2_YEAR)
+    
     # Loop over the citations.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'citations'):
         for citations in cdp.exp_info.citations:
@@ -172,11 +204,20 @@ def software_select(name, version=None):
 
     # relax.
     if name == 'relax':
-        cdp.exp_info.software_setup(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, url=RELAX_URL, cite=RELAX_REF, tasks=RELAX_TASKS)
+        # Add the citations.
+        cite1 = cdp.exp_info.add_citation(authors=RELAX_CITE1_AUTHORS, doi=RELAX_CITE1_DOI, pubmed_id=RELAX_CITE1_PUBMED_ID, full_citation=RELAX_CITE1_FULL_CITATION, title=RELAX_CITE1_TITLE, status=RELAX_CITE1_STATUS, type=RELAX_CITE1_TYPE, journal_abbrev=RELAX_CITE1_JOURNAL_ABBREV, journal_full=RELAX_CITE1_JOURNAL_FULL, volume=RELAX_CITE1_VOLUME, issue=RELAX_CITE1_ISSUE, page_first=RELAX_CITE1_PAGE_FIRST, page_last=RELAX_CITE1_PAGE_LAST, year=RELAX_CITE1_YEAR)
+        cite2 = cdp.exp_info.add_citation(authors=RELAX_CITE2_AUTHORS, doi=RELAX_CITE2_DOI, pubmed_id=RELAX_CITE2_PUBMED_ID, full_citation=RELAX_CITE2_FULL_CITATION, title=RELAX_CITE2_TITLE, status=RELAX_CITE2_STATUS, type=RELAX_CITE2_TYPE, journal_abbrev=RELAX_CITE2_JOURNAL_ABBREV, journal_full=RELAX_CITE2_JOURNAL_FULL, volume=RELAX_CITE2_VOLUME, issue=RELAX_CITE2_ISSUE, page_first=RELAX_CITE2_PAGE_FIRST, page_last=RELAX_CITE2_PAGE_LAST, year=RELAX_CITE2_YEAR)
+
+        # Add the software info.
+        cdp.exp_info.software_setup(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, url=RELAX_URL, cite=[cite1, cite2], tasks=RELAX_TASKS)
 
     # NMRPipe.
     if name == 'NMRPipe':
-        cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite=NMRPIPE_REF, tasks=NMRPIPE_TASKS)
+        # Add the citations.
+        #cite_index = cdp.exp_info.add_citation(authors=[["The relax development team", None, None, None]])
+        cite_index = 1
+
+        cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite=cite_index, tasks=NMRPIPE_TASKS)
 
     # Sparky.
     elif name == 'Sparky':
@@ -184,5 +225,9 @@ def software_select(name, version=None):
         if not version:
             raise RelaxError("The Sparky version number has not been supplied.")
 
+        # Add the citations.
+        #cite_index = cdp.exp_info.add_citation(authors=[["The relax development team", None, None, None]])
+        cite_index = 1
+
         # Add the data.
-        cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite=SPARKY_REF, tasks=SPARKY_TASKS)
+        cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite=cite_index, tasks=SPARKY_TASKS)
