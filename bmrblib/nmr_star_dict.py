@@ -62,19 +62,19 @@ class NMR_STAR:
     def create_saveframes(self):
         """Create all the saveframe objects."""
 
-        # Initialise Supergroup 3 : The molecular assembly saveframe API.
+        # Initialise Supergroup 3:  The molecular assembly saveframe API.
         self.entity = EntitySaveframe(self.data.datanodes)
 
         # Initialise Supergroup 4:  The experimental descriptions saveframe API.
         self.software = SoftwareSaveframe(self.data.datanodes)
 
-        # Initialise Supergroup 5 : The NMR parameters saveframe API.
+        # Initialise Supergroup 5:  The NMR parameters saveframe API.
         self.chem_shift_anisotropy = ChemShiftAnisotropySaveframe(self.data.datanodes)
 
-        # Initialise Supergroup 6 : The kinetic data saveframe API.
+        # Initialise Supergroup 6:  The kinetic data saveframe API.
         self.relaxation = Relaxation(self.data.datanodes)
 
-        # Initialise Supergroup 7 : The thermodynamics saveframe API.
+        # Initialise Supergroup 7:  The thermodynamics saveframe API.
         self.model_free = ModelFreeSaveframe(self.data.datanodes)
 
 
