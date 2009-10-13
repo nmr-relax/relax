@@ -33,6 +33,9 @@ from bmrblib.thermodynamics.model_free_v3_1 import ModelFreeSaveframe_v3_1, Mode
 class ModelFreeSaveframe_v3_2(ModelFreeSaveframe_v3_1):
     """The v3.2 Model_free data saveframe class."""
 
+    # Saveframe variables.
+    title = 'model_free'
+
     def add_tag_categories(self):
         """Create the v3.2 tag categories."""
 
@@ -52,8 +55,20 @@ class ModelFreeList_v3_2(ModelFreeList_v3_1):
     """v3.2 ModelFreeList tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Model_free_list'
+
         # Execute the base class tag_setup() method.
-        ModelFreeList_v3_1.tag_setup(self, tag_category_label='Model_free_list', sep=sep)
+        ModelFreeList_v3_1.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
@@ -65,24 +80,60 @@ class ModelFreeExperiment_v3_2(ModelFreeExperiment_v3_1):
     """v3.2 ModelFreeExperiment tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Model_free_experiment'
+
         # Execute the base class tag_setup() method.
-        ModelFreeExperiment_v3_1.tag_setup(self, tag_category_label='Model_free_experiment', sep=sep)
+        ModelFreeExperiment_v3_1.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
 
 class ModelFreeSoftware_v3_2(ModelFreeSoftware_v3_1):
     """v3.2 ModelFreeSoftware tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Model_free_software'
+
         # Execute the base class tag_setup() method.
-        ModelFreeSoftware_v3_1.tag_setup(self, tag_category_label='Model_free_software', sep=sep)
+        ModelFreeSoftware_v3_1.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
 
 class ModelFree_v3_2(ModelFree_v3_1):
     """v3.2 ModelFree tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Model_free'
+
         # Execute the base class tag_setup() method.
-        ModelFree_v3_1.tag_setup(self, tag_category_label='Mode_free', sep=sep)
+        ModelFree_v3_1.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['ModelFreeID'] = 'ID'

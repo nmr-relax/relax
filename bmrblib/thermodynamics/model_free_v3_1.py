@@ -52,8 +52,20 @@ class ModelFreeList_v3_1(ModelFreeList):
     """v3.1 ModelFreeList tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Order_parameter_list'
+
         # Execute the base class tag_setup() method.
-        ModelFreeList.tag_setup(self, tag_category_label='Order_parameter_list', sep=sep)
+        ModelFreeList.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
@@ -65,24 +77,60 @@ class ModelFreeExperiment_v3_1(ModelFreeExperiment):
     """v3.1 ModelFreeExperiment tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Order_parameter_experiment'
+
         # Execute the base class tag_setup() method.
-        ModelFreeExperiment.tag_setup(self, tag_category_label='Order_parameter_experiment', sep=sep)
+        ModelFreeExperiment.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
 
 class ModelFreeSoftware_v3_1(ModelFreeSoftware):
     """v3.1 ModelFreeSoftware tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Order_parameter_software'
+
         # Execute the base class tag_setup() method.
-        ModelFreeSoftware.tag_setup(self, tag_category_label='Order_parameter_software', sep=sep)
+        ModelFreeSoftware.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
 
 class ModelFree_v3_1(ModelFree):
     """v3.1 ModelFree tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
+        """Replacement method for setting up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Category label.
+        if not tag_category_label:
+            tag_category_label='Order_param'
+
         # Execute the base class tag_setup() method.
-        ModelFree.tag_setup(self, tag_category_label='Order_param', sep=sep)
+        ModelFree.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['ModelFreeID'] = 'ID'

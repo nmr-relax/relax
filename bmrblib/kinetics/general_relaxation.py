@@ -40,7 +40,6 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
     # Saveframe variables.
     label = 'general'
 
-
     def __init__(self, datanodes):
         """Initialise the class, placing the pystarlib data nodes into the namespace.
 

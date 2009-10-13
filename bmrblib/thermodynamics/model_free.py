@@ -36,6 +36,9 @@ from bmrblib.pystarlib.TagTable import TagTable
 class ModelFreeSaveframe(BaseSaveframe):
     """The Order parameters saveframe class."""
 
+    # Saveframe variables.
+    title = 'order_parameters'
+
     def __init__(self, datanodes):
         """Initialise the class, placing the pystarlib data nodes into the namespace.
 
@@ -150,7 +153,7 @@ class ModelFreeSaveframe(BaseSaveframe):
         self.generate_data_ids(N)
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='order_parameters')
+        self.frame = SaveFrame(title=self.title)
 
         # Create the tag categories.
         self.model_free_list.create()
