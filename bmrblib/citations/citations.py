@@ -96,9 +96,9 @@ class CitationsSaveframe(BaseSaveframe):
         self.doi = translate(doi)
         self.pubmed_id = translate(pubmed_id)
         self.full_citation = full_citation
-        self.title = title
-        self.status = status
-        self.type = type
+        self.title = translate(title)
+        self.status = translate(status)
+        self.type = translate(type)
         self.journal_abbrev = translate(journal_abbrev)
         self.journal_full = translate(journal_full)
         self.volume = translate(volume)

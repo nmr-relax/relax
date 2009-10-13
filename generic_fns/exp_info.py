@@ -34,49 +34,67 @@ RELAX_NAME = "relax"
 RELAX_AUTHORS = "The relax development team"
 RELAX_URL = "http://nmr-relax.com"
 RELAX_TASKS = ["data processing"]
-RELAX_CITE1_AUTHORS=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
-RELAX_CITE1_DOI="10.1007/s10858-007-9214-2"
-RELAX_CITE1_PUBMED_ID="18085410"
-RELAX_CITE1_FULL_CITATION="d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119."
-RELAX_CITE1_TITLE="Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces."
-RELAX_CITE1_STATUS="published"
-RELAX_CITE1_TYPE="journal"
-RELAX_CITE1_JOURNAL_ABBREV="J. Biomol. NMR"
-RELAX_CITE1_JOURNAL_FULL="Journal of Biomolecular NMR"
-RELAX_CITE1_VOLUME=40
-RELAX_CITE1_ISSUE=2
-RELAX_CITE1_PAGE_FIRST=107
-RELAX_CITE1_PAGE_LAST=119
-RELAX_CITE1_YEAR=2008
-RELAX_CITE2_AUTHORS=[["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
-RELAX_CITE2_DOI="10.1007/s10858-007-9213-3"
-RELAX_CITE2_PUBMED_ID="18085411"
-RELAX_CITE2_FULL_CITATION="d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133."
-RELAX_CITE2_TITLE="Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor."
-RELAX_CITE2_STATUS="published"
-RELAX_CITE2_TYPE="journal"
-RELAX_CITE2_JOURNAL_ABBREV="J. Biomol. NMR"
-RELAX_CITE2_JOURNAL_FULL="Journal of Biomolecular NMR"
-RELAX_CITE2_VOLUME=40
-RELAX_CITE2_ISSUE=2
-RELAX_CITE2_PAGE_FIRST=121
-RELAX_CITE2_PAGE_LAST=133
-RELAX_CITE2_YEAR=2008
+RELAX_CITE1_AUTHORS = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
+RELAX_CITE1_DOI = "10.1007/s10858-007-9214-2"
+RELAX_CITE1_PUBMED_ID = "18085410"
+RELAX_CITE1_FULL_CITATION = "d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119."
+RELAX_CITE1_TITLE = "Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces."
+RELAX_CITE1_STATUS = "published"
+RELAX_CITE1_TYPE = "journal"
+RELAX_CITE1_JOURNAL_ABBREV = "J. Biomol. NMR"
+RELAX_CITE1_JOURNAL_FULL = "Journal of Biomolecular NMR"
+RELAX_CITE1_VOLUME = 40
+RELAX_CITE1_ISSUE = 2
+RELAX_CITE1_PAGE_FIRST = 107
+RELAX_CITE1_PAGE_LAST = 119
+RELAX_CITE1_YEAR = 2008
+RELAX_CITE2_AUTHORS = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
+RELAX_CITE2_DOI = "10.1007/s10858-007-9213-3"
+RELAX_CITE2_PUBMED_ID = "18085411"
+RELAX_CITE2_FULL_CITATION = "d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133."
+RELAX_CITE2_TITLE = "Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor."
+RELAX_CITE2_STATUS = "published"
+RELAX_CITE2_TYPE = "journal"
+RELAX_CITE2_JOURNAL_ABBREV = "J. Biomol. NMR"
+RELAX_CITE2_JOURNAL_FULL = "Journal of Biomolecular NMR"
+RELAX_CITE2_VOLUME = 40
+RELAX_CITE2_ISSUE = 2
+RELAX_CITE2_PAGE_FIRST = 121
+RELAX_CITE2_PAGE_LAST = 133
+RELAX_CITE2_YEAR = 2008
 
 
 # NMRPipe fixed info.
 NMRPIPE_NAME = "NMRPipe"
-NMRPIPE_AUTHORS = "Delaglio, F."
-NMRPIPE_REF = "Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293."
+NMRPIPE_AUTHORS = "Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A"
 NMRPIPE_URL = "http://spin.niddk.nih.gov/NMRPipe/"
 NMRPIPE_TASKS = ["processing"]
+NMRPIPE_CITE_AUTHORS = [["Frank", "Delaglio", "F.", None], ["Stephan", "Grzesiek", "S.", None], ["Geerten", "Vuister", "G.", "W."], ["Guang", "Zhu", "G.", None], ["John", "Pfeifer", "J.", None], ["Ad", "Bax", "A.", None]]
+NMRPIPE_CITE_DOI = "10.1007/BF00197809"
+NMRPIPE_CITE_PUBMED_ID = "8520220"
+NMRPIPE_CITE_FULL_CITATION = "Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293."
+NMRPIPE_CITE_TITLE = "NMRPipe: a multidimensional spectral processing system based on UNIX pipes." 
+NMRPIPE_CITE_STATUS = "published"
+NMRPIPE_CITE_TYPE = "journal"
+NMRPIPE_CITE_JOURNAL_ABBREV = "J. Biomol. NMR"
+NMRPIPE_CITE_JOURNAL_FULL = "Journal of Biomolecular NMR"
+NMRPIPE_CITE_VOLUME = 6
+NMRPIPE_CITE_PAGE_FIRST = 277
+NMRPIPE_CITE_PAGE_LAST = 293
+NMRPIPE_CITE_YEAR = 1995
+
 
 # Sparky fixed info.
 SPARKY_NAME = "Sparky"
-SPARKY_AUTHORS = "Goddard, T. D."
+SPARKY_AUTHORS = "Goddard, T. D. and Kneller, D. G."
 SPARKY_REF = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
 SPARKY_URL = "http://www.cgl.ucsf.edu/home/sparky/"
 SPARKY_TASKS = ["spectral analysis"]
+SPARKY_CITE_AUTHORS = [["Tom", "Goddard", "T.", "D."], ["Donald", "Kneller", "D.", "G."]]
+SPARKY_CITE_FULL_CITATION = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
+SPARKY_CITE_STATUS = "unpublished"
+SPARKY_CITE_TYPE = "internet"
+
 
 
 
@@ -206,9 +224,9 @@ def software_select(name, version=None):
     # NMRPipe.
     if name == 'NMRPipe':
         # Add the citations.
-        #cite_index = cdp.exp_info.add_citation(authors=[["The relax development team", None, None, None]])
-        cite_index = 1
+        cite_index = cdp.exp_info.add_citation(authors=NMRPIPE_CITE_AUTHORS, doi=NMRPIPE_CITE_DOI, pubmed_id=NMRPIPE_CITE_PUBMED_ID, full_citation=NMRPIPE_CITE_FULL_CITATION, title=NMRPIPE_CITE_TITLE, status=NMRPIPE_CITE_STATUS, type=NMRPIPE_CITE_TYPE, journal_abbrev=NMRPIPE_CITE_JOURNAL_ABBREV, journal_full=NMRPIPE_CITE_JOURNAL_FULL, volume=NMRPIPE_CITE_VOLUME, page_first=NMRPIPE_CITE_PAGE_FIRST, page_last=NMRPIPE_CITE_PAGE_LAST, year=NMRPIPE_CITE_YEAR)
 
+        # Add the software info.
         cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite_ids=[cite_index], tasks=NMRPIPE_TASKS)
 
     # Sparky.
@@ -218,8 +236,7 @@ def software_select(name, version=None):
             raise RelaxError("The Sparky version number has not been supplied.")
 
         # Add the citations.
-        #cite_index = cdp.exp_info.add_citation(authors=[["The relax development team", None, None, None]])
-        cite_index = 1
+        cite_index = cdp.exp_info.add_citation(authors=SPARKY_CITE_AUTHORS, full_citation=SPARKY_CITE_FULL_CITATION, status=SPARKY_CITE_STATUS, type=SPARKY_CITE_TYPE)
 
-        # Add the data.
+        # Add the software info.
         cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite_ids=[cite_index], tasks=SPARKY_TASKS)
