@@ -21,26 +21,26 @@
 ###############################################################################
 
 # Module docstring.
-"""The v3.1 Heteronuclear NOE data saveframe category.
+"""The v3.2 Heteronuclear NOE data saveframe category.
 
-See http://www.bmrb.wisc.edu/dictionary/3.1html/SaveFramePage.html#heteronucl_NOEs.
+See http://www.bmrb.wisc.edu/dictionary/3.2html/SaveFramePage.html#heteronucl_NOEs.
 """
 
 # relax module imports.
-from bmrblib.thermodynamics.model_free import ModelFreeSaveframe, ModelFreeList, ModelFreeExperiment, ModelFreeSoftware, ModelFree
+from bmrblib.thermodynamics.model_free_v3_1 import ModelFreeSaveframe_v3_1, ModelFreeList_v3_1, ModelFreeExperiment_v3_1, ModelFreeSoftware_v3_1, ModelFree_v3_1
 
 
-class ModelFreeSaveframe_v3_1(ModelFreeSaveframe):
-    """The v3.1 Model_free data saveframe class."""
+class ModelFreeSaveframe_v3_2(ModelFreeSaveframe_v3_1):
+    """The v3.2 Model_free data saveframe class."""
 
     def add_tag_categories(self):
-        """Create the v3.1 tag categories."""
+        """Create the v3.2 tag categories."""
 
         # The tag category objects.
-        self.model_free_list = ModelFreeList_v3_1(self)
-        self.model_free_experiment = ModelFreeExperiment_v3_1(self)
-        self.model_free_software = ModelFreeSoftware_v3_1(self)
-        self.model_free = ModelFree_v3_1(self)
+        self.model_free_list = ModelFreeList_v3_2(self)
+        self.model_free_experiment = ModelFreeExperiment_v3_2(self)
+        self.model_free_software = ModelFreeSoftware_v3_2(self)
+        self.model_free = ModelFree_v3_2(self)
 
     def specific_setup(self):
         """Method called by self.add() to set up any version specific data."""
@@ -48,12 +48,12 @@ class ModelFreeSaveframe_v3_1(ModelFreeSaveframe):
         self.cat_name = ['model_free']
 
 
-class ModelFreeList_v3_1(ModelFreeList):
-    """v3.1 ModelFreeList tag category."""
+class ModelFreeList_v3_2(ModelFreeList_v3_1):
+    """v3.2 ModelFreeList tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
-        ModelFreeList.tag_setup(self, tag_category_label='Order_parameter_list', sep=sep)
+        ModelFreeList_v3_1.tag_setup(self, tag_category_label='Model_free_list', sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
@@ -61,28 +61,28 @@ class ModelFreeList_v3_1(ModelFreeList):
         self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
 
 
-class ModelFreeExperiment_v3_1(ModelFreeExperiment):
-    """v3.1 ModelFreeExperiment tag category."""
+class ModelFreeExperiment_v3_2(ModelFreeExperiment_v3_1):
+    """v3.2 ModelFreeExperiment tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
-        ModelFreeExperiment.tag_setup(self, tag_category_label='Order_parameter_experiment', sep=sep)
+        ModelFreeExperiment_v3_1.tag_setup(self, tag_category_label='Model_free_experiment', sep=sep)
 
 
-class ModelFreeSoftware_v3_1(ModelFreeSoftware):
-    """v3.1 ModelFreeSoftware tag category."""
-
-    def tag_setup(self, tag_category_label=None, sep=None):
-        # Execute the base class tag_setup() method.
-        ModelFreeSoftware.tag_setup(self, tag_category_label='Order_parameter_software', sep=sep)
-
-
-class ModelFree_v3_1(ModelFree):
-    """v3.1 ModelFree tag category."""
+class ModelFreeSoftware_v3_2(ModelFreeSoftware_v3_1):
+    """v3.2 ModelFreeSoftware tag category."""
 
     def tag_setup(self, tag_category_label=None, sep=None):
         # Execute the base class tag_setup() method.
-        ModelFree.tag_setup(self, tag_category_label='Order_param', sep=sep)
+        ModelFreeSoftware_v3_1.tag_setup(self, tag_category_label='Model_free_software', sep=sep)
+
+
+class ModelFree_v3_2(ModelFree_v3_1):
+    """v3.2 ModelFree tag category."""
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        # Execute the base class tag_setup() method.
+        ModelFree_v3_1.tag_setup(self, tag_category_label='Mode_free', sep=sep)
 
         # Tag names for the relaxation data.
         self.tag_names['ModelFreeID'] = 'ID'

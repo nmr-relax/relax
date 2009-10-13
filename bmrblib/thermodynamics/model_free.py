@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The order parameter saveframe category.
+"""The model_free saveframe category (used to be called order_parameters).
 
 For example, see http://www.bmrb.wisc.edu/dictionary/3.1html_frame/frame_SaveFramePage.html#order_parameters
 """
@@ -153,10 +153,10 @@ class ModelFreeSaveframe(BaseSaveframe):
         self.frame = SaveFrame(title='order_parameters')
 
         # Create the tag categories.
-        self.order_parameter_list.create()
-        self.order_parameter_experiment.create()
-        self.order_parameter_software.create()
-        self.order_parameter.create()
+        self.model_free_list.create()
+        self.model_free_experiment.create()
+        self.model_free_software.create()
+        self.model_free.create()
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
@@ -166,10 +166,10 @@ class ModelFreeSaveframe(BaseSaveframe):
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.order_parameter_list = ModelFreeList(self)
-        self.order_parameter_experiment = ModelFreeExperiment(self)
-        self.order_parameter_software = ModelFreeSoftware(self)
-        self.order_parameter = ModelFree(self)
+        self.model_free_list = ModelFreeList(self)
+        self.model_free_experiment = ModelFreeExperiment(self)
+        self.model_free_software = ModelFreeSoftware(self)
+        self.model_free = ModelFree(self)
 
 
     def specific_setup(self):
