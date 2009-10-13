@@ -32,7 +32,7 @@ from bmrblib.assembly_supercategory.entity import EntitySaveframe
 from bmrblib.experimental_details.software import SoftwareSaveframe
 from bmrblib.kinetics.relaxation import Relaxation
 from bmrblib.NMR_parameters.chem_shift_anisotropy import ChemShiftAnisotropySaveframe
-from bmrblib.thermodynamics.order_parameters import OrderParameterSaveframe
+from bmrblib.thermodynamics.model_free import ModelFreeSaveframe
 from bmrblib.pystarlib.File import File
 
 
@@ -75,7 +75,7 @@ class NMR_STAR:
         self.relaxation = Relaxation(self.data.datanodes)
 
         # Initialise Supergroup 7 : The thermodynamics saveframe API.
-        self.order_parameters = OrderParameterSaveframe(self.data.datanodes)
+        self.model_free = ModelFreeSaveframe(self.data.datanodes)
 
 
     def read(self):

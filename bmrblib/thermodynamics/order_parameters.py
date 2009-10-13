@@ -33,7 +33,7 @@ from bmrblib.pystarlib.SaveFrame import SaveFrame
 from bmrblib.pystarlib.TagTable import TagTable
 
 
-class OrderParameterSaveframe(BaseSaveframe):
+class ModelFreeSaveframe(BaseSaveframe):
     """The Order parameters saveframe class."""
 
     def __init__(self, datanodes):
@@ -166,10 +166,10 @@ class OrderParameterSaveframe(BaseSaveframe):
         """Create the v3.1 tag categories."""
 
         # The tag category objects.
-        self.order_parameter_list = OrderParameterList(self)
-        self.order_parameter_experiment = OrderParameterExperiment(self)
-        self.order_parameter_software = OrderParameterSoftware(self)
-        self.order_parameter = OrderParameter(self)
+        self.order_parameter_list = ModelFreeList(self)
+        self.order_parameter_experiment = ModelFreeExperiment(self)
+        self.order_parameter_software = ModelFreeSoftware(self)
+        self.order_parameter = ModelFree(self)
 
 
     def specific_setup(self):
@@ -178,18 +178,18 @@ class OrderParameterSaveframe(BaseSaveframe):
         self.cat_name = ['S2_parameters']
 
 
-class OrderParameterList(TagCategory):
-    """Base class for the OrderParameterList tag category."""
+class ModelFreeList(TagCategory):
+    """Base class for the ModelFreeList tag category."""
 
     def create(self):
-        """Create the OrderParameterList tag category."""
+        """Create the ModelFreeList tag category."""
 
         # The save frame category.
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
 
         # Model-free analysis ID number.
-        if 'OrderParameterListID' in self.tag_names:
-            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['OrderParameterListID']], tagvalues=[['1']]))
+        if 'ModelFreeListID' in self.tag_names:
+            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['ModelFreeListID']], tagvalues=[['1']]))
 
         # Sample info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
@@ -213,11 +213,11 @@ class OrderParameterList(TagCategory):
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
 
 
-class OrderParameterExperiment(TagCategory):
-    """Base class for the OrderParameterExperiment tag category."""
+class ModelFreeExperiment(TagCategory):
+    """Base class for the ModelFreeExperiment tag category."""
 
     def create(self):
-        """Create the OrderParameterExperiment tag category."""
+        """Create the ModelFreeExperiment tag category."""
 
         # Sample info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleLabel']], tagvalues=[['$sample_1']]))
@@ -239,22 +239,22 @@ class OrderParameterExperiment(TagCategory):
         self.tag_names['SampleLabel'] = 'Sample_label'
 
 
-class OrderParameterSoftware(TagCategory):
-    """Base class for the OrderParameterSoftware tag category."""
+class ModelFreeSoftware(TagCategory):
+    """Base class for the ModelFreeSoftware tag category."""
 
     def create(self):
-        """Create the OrderParameterSoftware tag category."""
+        """Create the ModelFreeSoftware tag category."""
 
 
-class OrderParameter(TagCategory):
-    """Base class for the OrderParameter tag category."""
+class ModelFree(TagCategory):
+    """Base class for the ModelFree tag category."""
 
     def create(self):
-        """Create the OrderParameter tag category."""
+        """Create the ModelFree tag category."""
 
         # Keys and objects.
         info = [
-            ['OrderParamID',    'data_ids'],
+            ['ModelFreeID',     'data_ids'],
             ['CompIndexID',     'res_nums'],
             ['CompID',          'res_names'],
             ['AtomID',          'atom_names'],
@@ -296,7 +296,7 @@ class OrderParameter(TagCategory):
         TagCategory.tag_setup(self, tag_category_label=tag_category_label, sep=sep)
 
         # Tag names for the relaxation data.
-        self.tag_names['OrderParamID'] = None
+        self.tag_names['ModelFreeID'] = None
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
