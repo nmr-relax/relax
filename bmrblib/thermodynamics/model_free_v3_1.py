@@ -45,7 +45,7 @@ class ModelFreeSaveframe_v3_1(ModelFreeSaveframe):
     def specific_setup(self):
         """Method called by self.add() to set up any version specific data."""
 
-        self.cat_name = ['model_free']
+        self.cat_name = ['order_parameters']
 
 
 class ModelFreeList_v3_1(ModelFreeList):
