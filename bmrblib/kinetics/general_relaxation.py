@@ -117,10 +117,10 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         # The operators of the relaxation superoperator.
         if data_type == 'R1':
             self.GeneralRelaxationlist.variables['coherence'] = 'Iz'
-            self.GeneralRelaxationlist.variables['coherence_common_name'] = 'R1 longitudinal'
+            self.GeneralRelaxationlist.variables['coherence_common_name'] = 'R1'
         elif data_type == 'R2':
             self.GeneralRelaxationlist.variables['coherence'] = 'I+'
-            self.GeneralRelaxationlist.variables['coherence_common_name'] = 'R2 transverse'
+            self.GeneralRelaxationlist.variables['coherence_common_name'] = 'R2'
         else:
             raise NameError("The data type '%s' is not one of ['R1', 'R2']." % data_type)
 
