@@ -278,7 +278,7 @@ class BMRB(User_fn_class):
         check.is_str(version, 'version', can_be_none=True)
         check.is_str(url, 'url', can_be_none=True)
         check.is_str(vendor_name, 'vendor_name', can_be_none=True)
-        check.is_int_list(cite_ids, 'citation ID numbers', can_be_none=True)
+        check.is_str_list(cite_ids, 'citation ID numbers', can_be_none=True)
         check.is_str_list(tasks, 'tasks', can_be_none=True)
 
         # Execute the functional code.

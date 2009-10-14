@@ -121,8 +121,13 @@ def bmrb_write_software(star):
     # Loop over the software.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'software'):
         for software in cdp.exp_info.software:
+            # Get the citation ID numbers.
+            cite_id_nums = []
+            for cite in software.cite_ids:
+                cite_id_nums.append(cdp.exp_info.get_cite_id_num(cite))
+
             # The program info.
-            star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks, cite_ids=software.cite_ids)
+            star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks, cite_ids=cite_id_nums)
 
     # relax cannot be the only program used!
     else:
@@ -217,19 +222,19 @@ def software_select(name, version=None):
     # relax.
     if name == 'relax':
         # Add the citations.
-        cite1 = cdp.exp_info.add_citation(authors=RELAX_CITE1_AUTHORS, doi=RELAX_CITE1_DOI, pubmed_id=RELAX_CITE1_PUBMED_ID, full_citation=RELAX_CITE1_FULL_CITATION, title=RELAX_CITE1_TITLE, status=RELAX_CITE1_STATUS, type=RELAX_CITE1_TYPE, journal_abbrev=RELAX_CITE1_JOURNAL_ABBREV, journal_full=RELAX_CITE1_JOURNAL_FULL, volume=RELAX_CITE1_VOLUME, issue=RELAX_CITE1_ISSUE, page_first=RELAX_CITE1_PAGE_FIRST, page_last=RELAX_CITE1_PAGE_LAST, year=RELAX_CITE1_YEAR)
-        cite2 = cdp.exp_info.add_citation(authors=RELAX_CITE2_AUTHORS, doi=RELAX_CITE2_DOI, pubmed_id=RELAX_CITE2_PUBMED_ID, full_citation=RELAX_CITE2_FULL_CITATION, title=RELAX_CITE2_TITLE, status=RELAX_CITE2_STATUS, type=RELAX_CITE2_TYPE, journal_abbrev=RELAX_CITE2_JOURNAL_ABBREV, journal_full=RELAX_CITE2_JOURNAL_FULL, volume=RELAX_CITE2_VOLUME, issue=RELAX_CITE2_ISSUE, page_first=RELAX_CITE2_PAGE_FIRST, page_last=RELAX_CITE2_PAGE_LAST, year=RELAX_CITE2_YEAR)
+        cdp.exp_info.add_citation(cite_id='relax_ref1', authors=RELAX_CITE1_AUTHORS, doi=RELAX_CITE1_DOI, pubmed_id=RELAX_CITE1_PUBMED_ID, full_citation=RELAX_CITE1_FULL_CITATION, title=RELAX_CITE1_TITLE, status=RELAX_CITE1_STATUS, type=RELAX_CITE1_TYPE, journal_abbrev=RELAX_CITE1_JOURNAL_ABBREV, journal_full=RELAX_CITE1_JOURNAL_FULL, volume=RELAX_CITE1_VOLUME, issue=RELAX_CITE1_ISSUE, page_first=RELAX_CITE1_PAGE_FIRST, page_last=RELAX_CITE1_PAGE_LAST, year=RELAX_CITE1_YEAR)
+        cdp.exp_info.add_citation(cite_id='relax_ref2', authors=RELAX_CITE2_AUTHORS, doi=RELAX_CITE2_DOI, pubmed_id=RELAX_CITE2_PUBMED_ID, full_citation=RELAX_CITE2_FULL_CITATION, title=RELAX_CITE2_TITLE, status=RELAX_CITE2_STATUS, type=RELAX_CITE2_TYPE, journal_abbrev=RELAX_CITE2_JOURNAL_ABBREV, journal_full=RELAX_CITE2_JOURNAL_FULL, volume=RELAX_CITE2_VOLUME, issue=RELAX_CITE2_ISSUE, page_first=RELAX_CITE2_PAGE_FIRST, page_last=RELAX_CITE2_PAGE_LAST, year=RELAX_CITE2_YEAR)
 
         # Add the software info.
-        cdp.exp_info.software_setup(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, url=RELAX_URL, cite_ids=[cite1, cite2], tasks=RELAX_TASKS)
+        cdp.exp_info.software_setup(name=RELAX_NAME, version=version_full(), vendor_name=RELAX_AUTHORS, url=RELAX_URL, cite_ids=['relax_ref1', 'relax_ref2'], tasks=RELAX_TASKS)
 
     # NMRPipe.
     if name == 'NMRPipe':
         # Add the citations.
-        cite_index = cdp.exp_info.add_citation(authors=NMRPIPE_CITE_AUTHORS, doi=NMRPIPE_CITE_DOI, pubmed_id=NMRPIPE_CITE_PUBMED_ID, full_citation=NMRPIPE_CITE_FULL_CITATION, title=NMRPIPE_CITE_TITLE, status=NMRPIPE_CITE_STATUS, type=NMRPIPE_CITE_TYPE, journal_abbrev=NMRPIPE_CITE_JOURNAL_ABBREV, journal_full=NMRPIPE_CITE_JOURNAL_FULL, volume=NMRPIPE_CITE_VOLUME, page_first=NMRPIPE_CITE_PAGE_FIRST, page_last=NMRPIPE_CITE_PAGE_LAST, year=NMRPIPE_CITE_YEAR)
+        cdp.exp_info.add_citation(cite_id='nmrpipe_ref', authors=NMRPIPE_CITE_AUTHORS, doi=NMRPIPE_CITE_DOI, pubmed_id=NMRPIPE_CITE_PUBMED_ID, full_citation=NMRPIPE_CITE_FULL_CITATION, title=NMRPIPE_CITE_TITLE, status=NMRPIPE_CITE_STATUS, type=NMRPIPE_CITE_TYPE, journal_abbrev=NMRPIPE_CITE_JOURNAL_ABBREV, journal_full=NMRPIPE_CITE_JOURNAL_FULL, volume=NMRPIPE_CITE_VOLUME, page_first=NMRPIPE_CITE_PAGE_FIRST, page_last=NMRPIPE_CITE_PAGE_LAST, year=NMRPIPE_CITE_YEAR)
 
         # Add the software info.
-        cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite_ids=[cite_index], tasks=NMRPIPE_TASKS)
+        cdp.exp_info.software_setup(name=NMRPIPE_NAME, version=version, vendor_name=NMRPIPE_AUTHORS, url=NMRPIPE_URL, cite_ids=['nmrpipe_ref'], tasks=NMRPIPE_TASKS)
 
     # Sparky.
     elif name == 'Sparky':
@@ -238,7 +243,7 @@ def software_select(name, version=None):
             raise RelaxError("The Sparky version number has not been supplied.")
 
         # Add the citations.
-        cite_index = cdp.exp_info.add_citation(authors=SPARKY_CITE_AUTHORS, full_citation=SPARKY_CITE_FULL_CITATION, status=SPARKY_CITE_STATUS, type=SPARKY_CITE_TYPE)
+        cite_index = cdp.exp_info.add_citation(cite_id='sparky_ref', authors=SPARKY_CITE_AUTHORS, full_citation=SPARKY_CITE_FULL_CITATION, status=SPARKY_CITE_STATUS, type=SPARKY_CITE_TYPE)
 
         # Add the software info.
-        cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite_ids=[cite_index], tasks=SPARKY_TASKS)
+        cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite_ids=['sparky_ref'], tasks=SPARKY_TASKS)
