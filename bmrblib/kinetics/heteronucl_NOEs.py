@@ -58,29 +58,39 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
+    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
-        @keyword frq:           The spectrometer proton frequency, in Hz.
-        @type frq:              float
-        @keyword res_nums:      The residue number list.
-        @type res_nums:         list of int
-        @keyword res_names:     The residue name list.
-        @type res_names:        list of str
-        @keyword atom_names:    The atom name list.
-        @type atom_names:       list of str
-        @keyword isotope:       The isotope type list, ie 15 for '15N'.
-        @type isotope:          list of int
-        @keyword data:          The relaxation data.
-        @type data:             list of float
-        @keyword errors:        The errors associated with the relaxation data.
-        @type errors:           list of float
+        @keyword frq:               The spectrometer proton frequency, in Hz.
+        @type frq:                  float
+        @keyword res_nums:          The residue number list.
+        @type res_nums:             list of int
+        @keyword res_names:         The residue name list.
+        @type res_names:            list of str
+        @keyword atom_names:        The atom name list.
+        @type atom_names:           list of str
+        @keyword isotope:           The isotope type list, ie 15 for '15N'.
+        @type isotope:              list of int
+        @keyword data:              The relaxation data.
+        @type data:                 list of float
+        @keyword errors:            The errors associated with the relaxation data.
+        @type errors:               list of float
+        @keyword temp_calibration:  The temperature calibration method.
+        @type temp_calibration:     str
+        @keyword temp_control:      The temperature control method.
+        @type temp_control:         str
         """
 
         # Check the ID info.
         no_missing(res_nums, 'residue numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(res_names, 'residue names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(atom_names, 'atom names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
+
+        # Check the args.
+        if not temp_calibration:
+            raise NameError("The temperature calibration method has not been specified.")
+        if not temp_control:
+            raise NameError("The temperature control method has not been specified.")
 
         # The number of elements.
         self.N = len(res_nums)
@@ -93,6 +103,8 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.isotope = translate(isotope)
         self.data = translate(data)
         self.errors = translate(errors)
+        self.temp_calibration = translate(temp_calibration)
+        self.temp_control = translate(temp_control)
 
         # Set up the NOE specific variables.
         self.noe_inc = self.noe_inc + 1
@@ -142,6 +154,8 @@ class HeteronuclNOEList(HeteronuclRxList):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
 
         # NMR info.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_control]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
 
 
@@ -160,6 +174,8 @@ class HeteronuclNOEList(HeteronuclRxList):
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Saveframe_category'
         self.tag_names['SampleConditionListLabel'] = 'Sample_conditions_label'
+        self.tag_names['TempCalibrationMethod'] = 'Temp_calibration_method'
+        self.tag_names['TempControlMethod'] = 'Temp_control_method'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
 
 

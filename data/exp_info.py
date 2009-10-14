@@ -40,7 +40,7 @@ class ExpInfo(Element):
         self.element_desc = "Experimental information"
 
         # Blacklisted objects.
-        self.blacklist = ["citations", "software"]
+        self.blacklist = ["citations", "software", "temp_calibration", "temp_control"]
 
 
     def add_citation(self, cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
@@ -135,6 +135,40 @@ class ExpInfo(Element):
                 return i + 1
 
 
+    def get_temp_calibration(self, ri_label, frq_label):
+        """Return the temperature calibration method.
+
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @return:            The temperature calibration method.
+        @rtype:             str
+        """
+
+        # Find the matching container.
+        for i in range(len(self.temp_calibration)):
+            if self.temp_calibration[i].ri_label == ri_label and self.temp_calibration[i].frq_label == frq_label:
+                return self.temp_calibration[i].method
+
+
+    def get_temp_control(self, ri_label, frq_label):
+        """Return the temperature control method.
+
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @return:            The temperature control method.
+        @rtype:             str
+        """
+
+        # Find the matching container.
+        for i in range(len(self.temp_control)):
+            if self.temp_control[i].ri_label == ri_label and self.temp_control[i].frq_label == frq_label:
+                return self.temp_control[i].method
+
+
     def software_setup(self, name, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
         """Set up the software information.
 
@@ -182,3 +216,93 @@ class ExpInfo(Element):
 
         # Append the container.
         self.software.append(software)
+
+
+    def temp_calibration_setup(self, ri_label, frq_label, method):
+        """Store the temperature calibration method.
+
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @param method:      The temperature calibration method.
+        @type method:       str
+        """
+
+        # Initialise the container if needed.
+        if not hasattr(self, "temp_calibration"):
+            # The list.
+            self.temp_calibration = ContainerList()
+
+            # The name of the container.
+            self.temp_calibration.container_name = "temp_calibration_list"
+
+            # The description of the container.
+            self.temp_calibration.container_desc = "List of temperature calibration methods."
+
+        # Find if the method has already been set.
+        for i in range(len(self.temp_calibration)):
+            if self.temp_calibration[i].ri_label == ri_label and self.temp_calibration[i].frq_label == frq_label:
+                raise RelaxError("The temperature calibration method for the '%s' ri_label and '%s' frq_label has already been set.")
+
+        # Init the container.
+        temp_calibration = Element()
+
+        # The name of the container.
+        temp_calibration.element_name = "temp_calibration"
+
+        # The description of the container.
+        temp_calibration.element_desc = "Temperature calibration methods for the relaxation data."
+
+        # Set the attributes.
+        temp_calibration.ri_label = ri_label
+        temp_calibration.frq_label = frq_label
+        temp_calibration.method = method
+
+        # Append the container.
+        self.temp_calibration.append(temp_calibration)
+
+
+    def temp_control_setup(self, ri_label, frq_label, method):
+        """Store the temperature control method.
+
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @param method:      The temperature control method.
+        @type method:       str
+        """
+
+        # Initialise the container if needed.
+        if not hasattr(self, "temp_control"):
+            # The list.
+            self.temp_control = ContainerList()
+
+            # The name of the container.
+            self.temp_control.container_name = "temp_control_list"
+
+            # The description of the container.
+            self.temp_control.container_desc = "List of temperature control methods."
+
+        # Find if the method has already been set.
+        for i in range(len(self.temp_control)):
+            if self.temp_control[i].ri_label == ri_label and self.temp_control[i].frq_label == frq_label:
+                raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label has already been set.")
+
+        # Init the container.
+        temp_control = Element()
+
+        # The name of the container.
+        temp_control.element_name = "temp_control"
+
+        # The description of the container.
+        temp_control.element_desc = "Temperature control methods for the relaxation data."
+
+        # Set the attributes.
+        temp_control.ri_label = ri_label
+        temp_control.frq_label = frq_label
+        temp_control.method = method
+
+        # Append the container.
+        self.temp_control.append(temp_control)

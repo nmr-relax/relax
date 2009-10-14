@@ -147,7 +147,7 @@ class ContainerList(ListType):
         text = "Container list.\n\n"
         text = text + "%-8s%-20s\n" % ("Index", "Name")
         for i in xrange(len(self)):
-            text = text + "%-8i%-20s\n" % (i, self[i].name)
+            text = text + "%-8i%-20s\n" % (i, self[i].element_name)
         return text
 
 

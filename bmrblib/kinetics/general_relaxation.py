@@ -60,22 +60,26 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
     def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
-        @keyword data_type:     The relaxation data type (one of 'R1' or 'R2').
-        @type data_type:        str
-        @keyword frq:           The spectrometer proton frequency, in Hz.
-        @type frq:              float
-        @keyword res_nums:      The residue number list.
-        @type res_nums:         list of int
-        @keyword res_names:     The residue name list.
-        @type res_names:        list of str
-        @keyword atom_names:    The atom name list.
-        @type atom_names:       list of str
-        @keyword isotope:       The isotope type list, ie 15 for '15N'.
-        @type isotope:          list of int
-        @keyword data:          The relaxation data.
-        @type data:             list of float
-        @keyword errors:        The errors associated with the relaxation data.
-        @type errors:           list of float
+        @keyword data_type:         The relaxation data type (one of 'R1' or 'R2').
+        @type data_type:            str
+        @keyword frq:               The spectrometer proton frequency, in Hz.
+        @type frq:                  float
+        @keyword res_nums:          The residue number list.
+        @type res_nums:             list of int
+        @keyword res_names:         The residue name list.
+        @type res_names:            list of str
+        @keyword atom_names:        The atom name list.
+        @type atom_names:           list of str
+        @keyword isotope:           The isotope type list, ie 15 for '15N'.
+        @type isotope:              list of int
+        @keyword data:              The relaxation data.
+        @type data:                 list of float
+        @keyword errors:            The errors associated with the relaxation data.
+        @type errors:               list of float
+        @keyword temp_calibration:  The temperature calibration method.
+        @type temp_calibration:     str
+        @keyword temp_control:      The temperature control method.
+        @type temp_control:         str
         """
 
         # Check the ID info.
@@ -202,7 +206,7 @@ class GeneralRelaxationList(HeteronuclRxList):
 
         # NMR info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_calibration]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_control]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RxCoherenceType']], tagvalues=[[self.variables['coherence']]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RxValUnits']], tagvalues=[['1/s']]))
