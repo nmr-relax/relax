@@ -38,7 +38,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
     """The General Relaxation data saveframe class."""
 
     # Saveframe variables.
-    label = 'general'
+    label = 'general_relaxation'
 
     def __init__(self, datanodes):
         """Initialise the class, placing the pystarlib data nodes into the namespace.
@@ -120,7 +120,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.specific_setup()
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title=self.label+'_relaxation_list_'+repr(self.rx_inc))
+        self.frame = SaveFrame(title=self.label+'_list_'+repr(self.rx_inc))
 
         # Create the tag categories.
         self.GeneralRelaxationlist.create()
