@@ -57,7 +57,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', temp_calibration=None, temp_control=None):
+    def add(self, data_type=None, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', temp_calibration=None, temp_control=None, frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, data=None, errors=None, rex_val=None, rex_err=None):
         """Add relaxation data to the data nodes.
 
         @keyword data_type:         The relaxation data type (one of 'R1' or 'R2').
@@ -70,6 +70,8 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         @type res_names:            list of str
         @keyword atom_names:        The atom name list.
         @type atom_names:           list of str
+        @keyword atom_types:        The atom types as IUPAC element abbreviations.
+        @type atom_types:           list of str
         @keyword isotope:           The isotope type list, ie 15 for '15N'.
         @type isotope:              list of int
         @keyword data:              The relaxation data.
@@ -80,6 +82,8 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         @type temp_calibration:     str
         @keyword temp_control:      The temperature control method.
         @type temp_control:         str
+        @keyword details:           The details tag.
+        @type details:              None or str
         """
 
         # Check the ID info.
@@ -94,25 +98,36 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
             raise NameError("The temperature control method has not been specified.")
 
         # The number of elements.
-        self.N = len(res_nums)
+        N = len(res_nums)
 
         # Place the args into the namespace.
-        self.frq = frq
-        self.res_nums = translate(res_nums)
-        self.res_names = translate(res_names)
-        self.atom_names = translate(atom_names)
-        self.isotope = translate(isotope)
-        self.data = translate(data)
-        self.errors = translate(errors)
         self.sample_cond_list_id = translate(sample_cond_list_id)
         self.sample_cond_list_label = translate(sample_cond_list_label)
         self.temp_calibration = translate(temp_calibration)
         self.temp_control = translate(temp_control)
+        self.frq = frq
+        self.details = translate(details)
+
+        # Convert to lists and check the lengths.
+        for name in ['assembly_atom_ids', 'entity_assembly_ids', 'res_nums', 'seq_id', 'res_names', 'atom_names', 'atom_types', 'isotope', 'data', 'errors', 'rex_val', 'rex_err']:
+            # Get the object.
+            obj = locals()[name]
+
+            # None objects.
+            if obj == None:
+                obj = [None] * N
+
+            # Check the length.
+            if len(obj) != N:
+                raise NameError("The number of elements in the '%s' arg does not match that of 'res_nums'." % name)
+
+            # Place the args into the namespace, translating for BMRB.
+            setattr(self, name, translate(obj))
 
         # Set up the Rx specific variables.
         self.rx_inc = self.rx_inc + 1
-        self.rx_inc_list = translate([self.rx_inc] * self.N)
-        self.generate_data_ids(self.N)
+        self.rx_inc_list = translate([self.rx_inc] * N)
+        self.generate_data_ids(N)
 
         # The operators of the relaxation superoperator.
         if data_type == 'R1':
@@ -216,6 +231,7 @@ class GeneralRelaxationList(HeteronuclRxList):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RelaxationCoherenceType']], tagvalues=[[self.variables['coherence']]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RelaxationTypeCommonName']], tagvalues=[[self.variables['coherence_common_name']]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RelaxationValUnits']], tagvalues=[['s-1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['Details']], tagvalues=[[self.sf.details]]))
 
 
     def read(self, tagtable):
@@ -266,6 +282,7 @@ class GeneralRelaxationList(HeteronuclRxList):
         self.tag_names['RelaxationCoherenceType'] = 'Relaxation_coherence_type'
         self.tag_names['RelaxationTypeCommonName'] = 'Relaxation_type_common_name'
         self.tag_names['RelaxationValUnits'] = 'Relaxation_val_units'
+        self.tag_names['Details'] = 'Details'
 
 
 
@@ -323,12 +340,18 @@ class GeneralRelaxation(Rx):
         # Keys and objects.
         info = [
             ['RxID',                    'data_ids'],
+            ['AssemblyAtomID',          'assembly_atom_ids'],
+            ['EntityAssemblyID',        'entity_assembly_ids'],
             ['CompIndexID',             'res_nums'],
+            ['SeqID',                   'seq_id'],
             ['CompID',                  'res_names'],
             ['AtomID',                  'atom_names'],
+            ['AtomType',                'atom_types'],
             ['AtomIsotopeNumber',       'isotope'],
-            ['Val',                     'data'],
-            ['ValErr',                  'errors'],
+            ['Val',    'data'],
+            ['ValErr', 'errors'],
+            ['RexVal',                  'rex_val'],
+            ['RexErr',                  'rex_err'],
             ['GeneralRelaxationListID', 'rx_inc_list']
         ]
 
@@ -354,9 +377,17 @@ class GeneralRelaxation(Rx):
 
         # Tag names for the general relaxation data.
         self.tag_names['RxID'] = 'ID'
+        self.tag_names['AssemblyAtomID'] = 'Assembly_atom_ID'
+        self.tag_names['EntityAssemblyID'] = 'Entity_assembly_ID'
+        self.tag_names['EntityID'] = 'Entity_ID'
         self.tag_names['CompIndexID'] = 'Comp_index_ID'
+        self.tag_names['SeqID'] = 'Seq_ID'
         self.tag_names['CompID'] = 'Comp_ID'
         self.tag_names['AtomID'] = 'Atom_ID'
-        self.tag_names['Val'] = 'Val'
-        self.tag_names['ValErr'] = 'Val_err'
-        self.tag_names['GeneralRelaxationListID'] = 'General_Relaxation_list_ID'
+        self.tag_names['AtomType'] = 'Atom_type'
+        self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number'
+        self.tag_names['Val'] = 'General_relaxation_val'
+        self.tag_names['ValErr'] = 'General_relaxation_val_err'
+        self.tag_names['RexVal'] = 'Rex_val'
+        self.tag_names['RexErr'] = 'Rex_err'
+        self.tag_names['GeneralRelaxationListID'] = 'General_relaxation_list_ID'
