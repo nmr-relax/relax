@@ -37,8 +37,8 @@ relax_data.display(ri_label='R1', frq_label='800')
 ri_labels = ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE']
 frq_labels = ['600', '600', '600', '800', '800', '800']
 for i in range(6):
-    relax_data.temp_calibration(ri_label=ri_labels[i], frq_labels=[i], method='methanol')
-    relax_data.temp_control(ri_label=ri_labels[i], frq_labels=[i], method='single scan interleaving')
+    relax_data.temp_calibration(ri_label=ri_labels[i], frq_label=frq_labels[i], method='methanol')
+    relax_data.temp_control(ri_label=ri_labels[i], frq_label=frq_labels[i], method='single scan interleaving')
 
 # Set up some BMRB information.
 bmrb.software_select('NMRPipe')
