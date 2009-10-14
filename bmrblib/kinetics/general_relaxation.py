@@ -57,7 +57,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
+    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
         @keyword data_type:         The relaxation data type (one of 'R1' or 'R2').
@@ -104,6 +104,8 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.isotope = translate(isotope)
         self.data = translate(data)
         self.errors = translate(errors)
+        self.sample_cond_list_id = translate(sample_cond_list_id)
+        self.sample_cond_list_label = translate(sample_cond_list_label)
         self.temp_calibration = translate(temp_calibration)
         self.temp_control = translate(temp_control)
 
@@ -202,7 +204,8 @@ class GeneralRelaxationList(HeteronuclRxList):
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['GeneralRelaxationListID']], tagvalues=[[str(self.sf.rx_inc)]]))
 
         # Sample info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListID']], tagvalues=[[self.sf.sample_cond_list_id]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[[self.sf.sample_cond_list_label]]))
 
         # NMR info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
@@ -254,6 +257,7 @@ class GeneralRelaxationList(HeteronuclRxList):
         self.tag_names['GeneralRelaxationListID'] = 'ID'
         self.tag_names['TempCalibrationMethod'] = 'Temp_calibration_method'
         self.tag_names['TempControlMethod'] = 'Temp_control_method'
+        self.tag_names['SampleConditionListID'] = 'Sample_condition_list_ID'
         self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
         self.tag_names['RxCoherenceType'] = 'Rx_coherence_type'
