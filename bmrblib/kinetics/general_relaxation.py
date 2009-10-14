@@ -117,8 +117,10 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         # The operators of the relaxation superoperator.
         if data_type == 'R1':
             self.GeneralRelaxationlist.variables['coherence'] = 'Iz'
+            self.GeneralRelaxationlist.variables['coherence_common_name'] = 'R1 longitudinal'
         elif data_type == 'R2':
             self.GeneralRelaxationlist.variables['coherence'] = 'I+'
+            self.GeneralRelaxationlist.variables['coherence_common_name'] = 'R2 transverse'
         else:
             raise NameError("The data type '%s' is not one of ['R1', 'R2']." % data_type)
 
@@ -211,8 +213,9 @@ class GeneralRelaxationList(HeteronuclRxList):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_control]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RxCoherenceType']], tagvalues=[[self.variables['coherence']]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RxValUnits']], tagvalues=[['1/s']]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RelaxationCoherenceType']], tagvalues=[[self.variables['coherence']]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RelaxationTypeCommonName']], tagvalues=[[self.variables['coherence_common_name']]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RelaxationValUnits']], tagvalues=[['1/s']]))
 
 
     def read(self, tagtable):
@@ -225,7 +228,7 @@ class GeneralRelaxationList(HeteronuclRxList):
         """
 
         # The general info.
-        coherence = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['RxCoherenceType'])][0]
+        coherence = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['RelaxationCoherenceType'])][0]
         frq = float(tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['SpectrometerFrequency1H'])][0]) * 1e6
 
         # Determine the data type.
@@ -260,8 +263,9 @@ class GeneralRelaxationList(HeteronuclRxList):
         self.tag_names['SampleConditionListID'] = 'Sample_condition_list_ID'
         self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
-        self.tag_names['RxCoherenceType'] = 'Rx_coherence_type'
-        self.tag_names['RxValUnits'] = 'Rx_value_units'
+        self.tag_names['RelaxationCoherenceType'] = 'Relaxation_coherence_type'
+        self.tag_names['RelaxationTypeCommonName'] = 'Relaxation_type_common_name'
+        self.tag_names['RelaxationValUnits'] = 'Relaxation_val_units'
 
 
 
