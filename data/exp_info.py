@@ -76,8 +76,6 @@ class ExpInfo(Element):
         @type page_last:            int
         @keyword year:              The publication year.
         @type year:                 int
-        @return:                    The citation ID number.
-        @rtype:                     int
         """
 
         # Initialise the list container if needed.
@@ -120,8 +118,21 @@ class ExpInfo(Element):
         # Append the container.
         self.citations.append(cite)
 
-        # Return the citation ID.
-        return len(self.citations)
+
+    def get_cite_id_num(self, cite_id):
+        """Return the citation ID number for the given citation ID string.
+
+        @param cite_id: The citation ID string.
+        @type cite_id:  str
+        @return:        The citation ID number.
+        @rtype:         int
+        """
+
+        # Loop over the citations.
+        for i in range(len(self.citations)):
+            # Match.
+            if self.citations[i].cite_id == cite_id:
+                return i + 1
 
 
     def software_setup(self, name, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
