@@ -43,9 +43,11 @@ class ExpInfo(Element):
         self.blacklist = ["citations", "software"]
 
 
-    def add_citation(self, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
+    def add_citation(self, cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
         """Store a citation.
 
+        @keyword cite_id:           The citation ID string.
+        @type cite_id:              str
         @keyword authors:           The list of authors.  Each author element is a list of four elements: the first name, last name, first initial, and middle initials.
         @type authors:              list of lists of str
         @keyword doi:               The DOI number, e.g. "10.1000/182".
@@ -99,6 +101,7 @@ class ExpInfo(Element):
         cite.element_desc = "Literature citation"
 
         # Set the attributes.
+        cite.cite_id = cite_id
         cite.authors = authors
         cite.doi = doi
         cite.pubmed_id = pubmed_id

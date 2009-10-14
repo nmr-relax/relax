@@ -37,11 +37,13 @@ from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, Relax
 class BMRB(User_fn_class):
     """Class for interfacing with the BMRB (http://www.bmrb.wisc.edu/)."""
 
-    def citation(self, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status='published', type='journal', journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
+    def citation(self, cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status='published', type='journal', journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
         """Specify a citation to be added the BMRB data file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        cite_id:  The citation ID string.
 
         authors:  The list of authors.  Each author element is a list of four elements: the first
             name, last name, first initial, and middle initials.
@@ -125,7 +127,8 @@ class BMRB(User_fn_class):
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "bmrb.citation("
-            text = text + "authors=" + repr(authors)
+            text = text + "cite_id=" + repr(cite_id)
+            text = text + ", authors=" + repr(authors)
             text = text + ", doi=" + repr(doi)
             text = text + ", pubmed_id=" + repr(pubmed_id)
             text = text + ", full_citation=" + repr(full_citation)
@@ -142,6 +145,7 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
+        check.is_str(cite_id, 'citation ID string')
         check.is_str_list(authors, 'authors', list_of_lists=True)
         check.is_str(doi, 'DOI number', can_be_none=True)
         check.is_str(pubmed_id, 'Pubmed ID number', can_be_none=True)
@@ -158,7 +162,7 @@ class BMRB(User_fn_class):
         check.is_int(year, 'publication year')
 
         # Execute the functional code.
-        return exp_info.citation(authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
+        exp_info.citation(cite_id=cite_id, authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
 
 
     def display(self, version='3.1'):

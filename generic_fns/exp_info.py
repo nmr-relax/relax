@@ -129,9 +129,11 @@ def bmrb_write_software(star):
         raise RelaxError("relax cannot be the only program used in the analysis - spectral analysis programs, etc. must also have been used.  Please use the relevant BMRB user functions to specify these.")
 
 
-def citation(authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
+def citation(cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
     """Store a citation.
 
+    @keyword cite_id:           The citation ID string.
+    @type cite_id:              str
     @keyword authors:           The list of authors.  Each author element is a list of four elements: the first name, last name, first initial, and middle initials.
     @type authors:              list of lists of str
     @keyword doi:               The DOI number, e.g. "10.1000/182".
@@ -167,7 +169,7 @@ def citation(authors=None, doi=None, pubmed_id=None, full_citation=None, title=N
         cdp.exp_info = ExpInfo()
 
     # Place the data in the container.
-    return cdp.exp_info.add_citation(authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
+    cdp.exp_info.add_citation(cite_id=cite_id, authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
 
 
 def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
