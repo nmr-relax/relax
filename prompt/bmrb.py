@@ -264,7 +264,7 @@ class BMRB(User_fn_class):
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.software_select("
+            text = sys.ps3 + "bmrb.software("
             text = text + "name=" + repr(name)
             text = text + ", version=" + repr(version)
             text = text + ", url=" + repr(url)
