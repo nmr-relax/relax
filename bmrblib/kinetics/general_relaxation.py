@@ -57,7 +57,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
+    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
         @keyword data_type:     The relaxation data type (one of 'R1' or 'R2').
@@ -83,6 +83,12 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         no_missing(res_names, 'residue names of the %s MHz %s relaxation data' % (int(frq*1e-6), data_type))
         no_missing(atom_names, 'atom names of the %s MHz %s relaxation data' % (int(frq*1e-6), data_type))
 
+        # Check the args.
+        if not temp_calibration:
+            raise NameError("The temperature calibration method has not been specified.")
+        if not temp_control:
+            raise NameError("The temperature control method has not been specified.")
+
         # The number of elements.
         self.N = len(res_nums)
 
@@ -94,6 +100,8 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.isotope = translate(isotope)
         self.data = translate(data)
         self.errors = translate(errors)
+        self.temp_calibration = translate(temp_calibration)
+        self.temp_control = translate(temp_control)
 
         # Set up the Rx specific variables.
         self.rx_inc = self.rx_inc + 1
@@ -193,6 +201,8 @@ class GeneralRelaxationList(HeteronuclRxList):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
 
         # NMR info.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_calibration]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RxCoherenceType']], tagvalues=[[self.variables['coherence']]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['RxValUnits']], tagvalues=[['1/s']]))
@@ -238,6 +248,8 @@ class GeneralRelaxationList(HeteronuclRxList):
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
         self.tag_names['GeneralRelaxationListID'] = 'ID'
+        self.tag_names['TempCalibrationMethod'] = 'Temp_calibration_method'
+        self.tag_names['TempControlMethod'] = 'Temp_control_method'
         self.tag_names['SampleConditionListLabel'] = 'Sample_condition_list_label'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
         self.tag_names['RxCoherenceType'] = 'Rx_coherence_type'
