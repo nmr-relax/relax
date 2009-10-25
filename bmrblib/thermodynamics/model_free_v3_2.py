@@ -119,6 +119,46 @@ class ModelFreeSoftware_v3_2(ModelFreeSoftware_v3_1):
 class ModelFree_v3_2(ModelFree_v3_1):
     """v3.2 ModelFree tag category."""
 
+    def create(self):
+        """Create the v3.2 ModelFree tag category."""
+
+        # Keys and objects.
+        info = [
+            ['ModelFreeID',         'data_ids'],
+            ['AssemblyAtomID',      'assembly_atom_ids'],
+            ['EntityAssemblyID',    'entity_assembly_ids'],
+            ['EntityID',            'entity_id'],
+            ['CompIndexID',         'res_nums'],
+            ['CompID',              'res_names'],
+            ['AtomID',              'atom_names'],
+            ['AtomType',            'atom_types'],
+            ['S2Val',               's2'],
+            ['S2ValErr',            's2_err'],
+            ['S2fVal',              's2f'],
+            ['S2fValErr',           's2f_err'],
+            ['S2sVal',              's2s'],
+            ['S2sValErr',           's2s_err'],
+            ['LocalTauCVal',        'local_tc'],
+            ['LocalTauCValErr',     'local_tc_err'],
+            ['TauEVal',             'te'],
+            ['TauEValErr',          'te_err'],
+            ['TauFVal',             'tf'],
+            ['TauFValErr',          'tf_err'],
+            ['TauSVal',             'ts'],
+            ['TauSValErr',          'ts_err'],
+            ['RexVal',              'rex'],
+            ['RexValErr',           'rex_err'],
+            ['ChiSquaredVal',       'chi2'],
+            ['ModelFit',            'model_fit']
+        ]
+
+        # Get the TabTable.
+        table = self.create_tag_table(info)
+
+        # Add the tagtable to the save frame.
+        self.sf.frame.tagtables.append(table)
+
+
     def tag_setup(self, tag_category_label=None, sep=None):
         """Replacement method for setting up the tag names.
 
@@ -137,6 +177,9 @@ class ModelFree_v3_2(ModelFree_v3_1):
 
         # Tag names for the relaxation data.
         self.tag_names['ModelFreeID'] = 'ID'
+        self.tag_names['AssemblyAtomID'] = 'Assembly_atom_ID'
+        self.tag_names['EntityAssemblyID'] = 'Entity_assembly_ID'
+        self.tag_names['EntityID'] = 'Entity_ID'
         self.tag_names['CompIndexID'] = 'Comp_index_ID'
         self.tag_names['CompID'] = 'Comp_ID'
         self.tag_names['AtomID'] = 'Atom_ID'
@@ -146,6 +189,8 @@ class ModelFree_v3_2(ModelFree_v3_1):
         self.tag_names['S2fValErr'] = 'S2f_val_err'
         self.tag_names['S2sVal'] = 'S2s_val'
         self.tag_names['S2sValErr'] = 'S2s_val_err'
+        self.tag_names['LocalTauCVal'] = 'Local_tau_c_val'
+        self.tag_names['LocalTauCValErr'] = 'Local_tau_c_val_err'
         self.tag_names['TauEVal'] = 'Tau_e_val'
         self.tag_names['TauEValErr'] = 'Tau_e_val_err'
         self.tag_names['TauFVal'] = 'Tau_f_val'
