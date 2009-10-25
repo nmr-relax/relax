@@ -60,30 +60,43 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
     def add(self, data_type=None, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', temp_calibration=None, temp_control=None, frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, data=None, errors=None, rex_val=None, rex_err=None):
         """Add relaxation data to the data nodes.
 
-        @keyword data_type:         The relaxation data type (one of 'R1' or 'R2').
-        @type data_type:            str
-        @keyword frq:               The spectrometer proton frequency, in Hz.
-        @type frq:                  float
-        @keyword res_nums:          The residue number list.
-        @type res_nums:             list of int
-        @keyword res_names:         The residue name list.
-        @type res_names:            list of str
-        @keyword atom_names:        The atom name list.
-        @type atom_names:           list of str
-        @keyword atom_types:        The atom types as IUPAC element abbreviations.
-        @type atom_types:           list of str
-        @keyword isotope:           The isotope type list, ie 15 for '15N'.
-        @type isotope:              list of int
-        @keyword data:              The relaxation data.
-        @type data:                 list of float
-        @keyword errors:            The errors associated with the relaxation data.
-        @type errors:               list of float
-        @keyword temp_calibration:  The temperature calibration method.
-        @type temp_calibration:     str
-        @keyword temp_control:      The temperature control method.
-        @type temp_control:         str
-        @keyword details:           The details tag.
-        @type details:              None or str
+        Note that units of 1/s are actually rad/s in NMR.  This is the hidden radian unit, which if not present would mean that the units would be Hz.  For more details, see https://mail.gna.org/public/relax-users/2009-01/msg00000.html.
+
+
+        @keyword sample_cond_list_id:       The sample conditions list ID number.
+        @type sample_cond_list_id:          str
+        @keyword sample_cond_list_label:    The sample conditions list label.
+        @type sample_cond_list_label:       str
+        @keyword data_type:                 The relaxation data type (one of 'R1' or 'R2').
+        @type data_type:                    str
+        @keyword frq:                       The spectrometer proton frequency, in Hz.
+        @type frq:                          float
+        @keyword assembly_atom_ids:         The assembly atom ID numbers.
+        @type assembly_atom_ids:            list of int
+        @keyword entity_assembly_ids:       The entity assembly ID numbers.
+        @type entity_assembly_ids:          list of int
+        @keyword entity_id:                 The entity ID number.
+        @type entity_id:                    int
+        @keyword res_nums:                  The residue number list.
+        @type res_nums:                     list of int
+        @keyword res_names:                 The residue name list.
+        @type res_names:                    list of str
+        @keyword atom_names:                The atom name list.
+        @type atom_names:                   list of str
+        @keyword atom_types:                The atom types as IUPAC element abbreviations.
+        @type atom_types:                   list of str
+        @keyword isotope:                   The isotope type list, ie 15 for '15N'.
+        @type isotope:                      list of int
+        @keyword data:                      The relaxation data.
+        @type data:                         list of float
+        @keyword errors:                    The errors associated with the relaxation data.
+        @type errors:                       list of float
+        @keyword temp_calibration:          The temperature calibration method.
+        @type temp_calibration:             str
+        @keyword temp_control:              The temperature control method.
+        @type temp_control:                 str
+        @keyword details:                   The details tag.
+        @type details:                      None or str
         """
 
         # Check the ID info.
