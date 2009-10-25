@@ -70,6 +70,8 @@ class SoftwareSaveframe(BaseSaveframe):
         @type task:                 str
         @keyword cite_ids:          The citation ID numbers.
         @type cite_ids:             None or list of int
+        @return:                    The software ID number.
+        @rtype:                     int
         """
 
         # Check.
@@ -103,6 +105,9 @@ class SoftwareSaveframe(BaseSaveframe):
 
         # Add the saveframe to the data nodes.
         self.datanodes.append(self.frame)
+
+        # Return the software ID number.
+        return self.software_num
 
 
     def add_tag_categories(self):

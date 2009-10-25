@@ -80,8 +80,36 @@ class Bmrb:
         else:
             star = NMR_STAR('relax_model_free_results', file_path)
 
+        # Global minimisation stats.
+        global_chi2 = None
+        if hasattr(cdp, 'chi2'):
+            global_chi2 = cdp.chi2
+
         # Rex frq.
         rex_frq = cdp.frq[0]
+
+        # The relax to BMRB model-free model name map.
+        model_map = {'m0':  '',
+                     'm1':  'S2',
+                     'm2':  'S2, te',
+                     'm3':  'S2, Rex',
+                     'm4':  'S2, te, Rex',
+                     'm5':  'S2f, S2, ts',
+                     'm6':  'S2f, tf, S2, ts',
+                     'm7':  'S2f, S2, ts, Rex',
+                     'm8':  'S2f, tf, S2, ts, Rex',
+                     'm9':  'Rex',
+                     'tm0': 'tm',
+                     'tm1': 'tm, S2',
+                     'tm2': 'tm, S2, te',
+                     'tm3': 'tm, S2, Rex',
+                     'tm4': 'tm, S2, te, Rex',
+                     'tm5': 'tm, S2f, S2, ts',
+                     'tm6': 'tm, S2f, tf, S2, ts',
+                     'tm7': 'tm, S2f, S2, ts, Rex',
+                     'tm8': 'tm, S2f, tf, S2, ts, Rex',
+                     'tm9': 'tm, Rex'
+        }
 
         # Initialise the spin specific data lists.
         res_num_list = []
@@ -93,6 +121,7 @@ class Bmrb:
         isotope_list = []
         element_list = []
 
+        local_tm_list = []
         s2_list = []
         s2f_list = []
         s2s_list = []
@@ -101,6 +130,7 @@ class Bmrb:
         ts_list = []
         rex_list = []
 
+        local_tm_err_list = []
         s2_err_list = []
         s2f_err_list = []
         s2s_err_list = []
@@ -110,6 +140,7 @@ class Bmrb:
         rex_err_list = []
 
         chi2_list = []
+        model_list = []
 
         # Store the spin specific data in lists for later use.
         for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
@@ -141,6 +172,10 @@ class Bmrb:
             else:
                 element_list.append(None)
 
+            # Diffusion tensor.
+            local_tm_list.append(spin.local_tm)
+            local_tm_err_list.append(spin.local_tm_err)
+
             # Model-free data.
             s2_list.append(spin.s2)
             s2f_list.append(spin.s2f)
@@ -167,6 +202,9 @@ class Bmrb:
             # Opt stats.
             chi2_list.append(spin.chi2)
 
+            # Model-free model.
+            model_list.append(model_map[spin.model])
+
 
         # Create Supergroup 2 : The citations.
         ######################################
@@ -186,7 +224,7 @@ class Bmrb:
         #################################################################
 
         # Generate the software saveframe.
-        exp_info.bmrb_write_software(star)
+        software_ids, software_labels = exp_info.bmrb_write_software(star)
 
 
         # Create Supergroup 5 : The NMR parameters saveframes.
@@ -206,8 +244,13 @@ class Bmrb:
         # Create Supergroup 7 : The thermodynamics saveframes.
         ######################################################
 
+        # Get the relax software id.
+        for i in range(len(software_ids)):
+            if software_labels[i] == 'relax':
+                software_id = software_ids[i]
+
         # Generate the model-free data saveframe.
-        star.model_free.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list)
+        star.model_free.add(global_chi2=global_chi2, software_ids=[software_id], software_labels=['relax'], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, local_tc=local_tm_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, local_tc_err=local_tm_err_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list, model_fit=model_list)
 
 
         # Write the contents to the STAR formatted file.

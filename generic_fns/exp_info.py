@@ -116,9 +116,13 @@ def bmrb_write_software(star):
 
     @param star:        The NMR-STAR dictionary object.
     @type star:         NMR_STAR instance
+    @return:            A list BMRB software IDs and a list of software labels.
+    @rtype:             tuple of list of int and list of str
     """
 
     # Loop over the software.
+    software_ids = []
+    software_labels = []
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'software'):
         for software in cdp.exp_info.software:
             # Get the citation ID numbers.
@@ -127,11 +131,18 @@ def bmrb_write_software(star):
                 cite_id_nums.append(cdp.exp_info.get_cite_id_num(cite))
 
             # The program info.
-            star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks, cite_ids=cite_id_nums)
+            id = star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks, cite_ids=cite_id_nums)
+
+            # Append the software info.
+            software_ids.append(id)
+            software_labels.append(software.name)
 
     # relax cannot be the only program used!
     else:
         raise RelaxError("relax cannot be the only program used in the analysis - spectral analysis programs, etc. must also have been used.  Please use the relevant BMRB user functions to specify these.")
+
+    # Return the software info.
+    return software_ids, software_labels
 
 
 def citation(cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
