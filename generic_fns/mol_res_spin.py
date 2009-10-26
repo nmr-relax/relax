@@ -491,36 +491,6 @@ class Selection(object):
 
 
 
-def __linear_ave(positions):
-    """Perform linear averaging of the atomic positions.
-
-    @param positions:   The atomic positions.  The first index is that of the positions to be
-                        averaged over.  The second index is over the different models.  The last
-                        index is over the x, y, and z coordinates.
-    @type positions:    list of lists of numpy float arrays
-    @return:            The averaged positions as a list of vectors.
-    @rtype:             list of numpy float arrays
-    """
-
-    # Loop over the multiple models.
-    ave = []
-    for model_index in range(len(positions[0])):
-        # Append an empty vector.
-        ave.append(array([0.0, 0.0, 0.0]))
-
-        # Loop over the x, y, and z coordinates.
-        for coord_index in range(3):
-            # Loop over the atomic positions.
-            for atom_index in range(len(positions)):
-                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
-
-            # Average.
-            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
-
-    # Return the averaged positions.
-    return ave
-
-
 def bmrb_read(star):
     """Generate the molecule and residue spin containers from the entity saveframe records.
 
@@ -1006,7 +976,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
     spin.averaging = averaging
     spin.members = members
     if averaging == 'linear':
-        spin.pos = __linear_ave(positions)
+        spin.pos = linear_ave(positions)
 
 
 def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
@@ -1564,6 +1534,36 @@ def molecule_loop(selection=None, pipe=None):
 
         # Yield the molecule data container.
         yield mol
+
+
+def linear_ave(positions):
+    """Perform linear averaging of the atomic positions.
+
+    @param positions:   The atomic positions.  The first index is that of the positions to be
+                        averaged over.  The second index is over the different models.  The last
+                        index is over the x, y, and z coordinates.
+    @type positions:    list of lists of numpy float arrays
+    @return:            The averaged positions as a list of vectors.
+    @rtype:             list of numpy float arrays
+    """
+
+    # Loop over the multiple models.
+    ave = []
+    for model_index in range(len(positions[0])):
+        # Append an empty vector.
+        ave.append(array([0.0, 0.0, 0.0]))
+
+        # Loop over the x, y, and z coordinates.
+        for coord_index in range(3):
+            # Loop over the atomic positions.
+            for atom_index in range(len(positions)):
+                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
+
+            # Average.
+            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
+
+    # Return the averaged positions.
+    return ave
 
 
 def name_molecule(mol_id, name=None, force=False):

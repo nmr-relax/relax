@@ -144,7 +144,7 @@ class PipeContainer(Prototype):
         # Get the alignment tensor data nodes and, if they exist, fill the contents.
         align_tensor_nodes = relax_node.getElementsByTagName('align_tensors')
         if align_tensor_nodes:
-            # Create the diffusion tensor object.
+            # Create the alignment tensor object.
             self.align_tensors = AlignTensorList()
 
             # Fill its contents.
