@@ -142,8 +142,6 @@ class HeteronuclNOEList(HeteronuclRxList):
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
 
         # NMR info.
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_control]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
 
 
@@ -162,8 +160,6 @@ class HeteronuclNOEList(HeteronuclRxList):
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Saveframe_category'
         self.tag_names['SampleConditionListLabel'] = 'Sample_conditions_label'
-        self.tag_names['TempCalibrationMethod'] = 'Temp_calibration_method'
-        self.tag_names['TempControlMethod'] = 'Temp_control_method'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
 
 

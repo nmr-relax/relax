@@ -29,6 +29,7 @@ See http://www.bmrb.wisc.edu/dictionary/3.2html/SaveFramePage.html#heteronucl_NO
 # relax module imports.
 from bmrblib.misc import translate
 from bmrblib.kinetics.heteronucl_NOEs_v3_1 import HeteronuclNOESaveframe_v3_1, HeteronuclNOEList_v3_1, HeteronuclNOEExperiment_v3_1, HeteronuclNOESoftware_v3_1, HeteronuclNOE_v3_1
+from bmrblib.pystarlib.TagTable import TagTable
 
 
 class HeteronuclNOESaveframe_v3_2(HeteronuclNOESaveframe_v3_1):
@@ -75,7 +76,50 @@ class HeteronuclNOESaveframe_v3_2(HeteronuclNOESaveframe_v3_1):
         """Create the v3.2 tag categories."""
 
         # The tag category objects.
-        self.heteronuclRxlist = HeteronuclNOEList_v3_1(self)
+        self.heteronuclRxlist = HeteronuclNOEList_v3_2(self)
         self.heteronuclRxexperiment = HeteronuclNOEExperiment_v3_1(self)
         self.heteronuclRxsoftware = HeteronuclNOESoftware_v3_1(self)
         self.Rx = HeteronuclNOE_v3_1(self)
+
+
+
+class HeteronuclNOEList_v3_2(HeteronuclNOEList_v3_1):
+    """v3.1 HeteronuclNOEList tag category."""
+
+    def create(self):
+        """Create the HeteronuclNOEList tag category."""
+
+        # The save frame category.
+        self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
+
+        # NOE ID number.
+        if 'HeteronuclNOEListID' in self.tag_names:
+            self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['HeteronuclNOEListID']], tagvalues=[[str(self.sf.noe_inc)]]))
+
+        # Sample info.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
+
+        # NMR info.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_control]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
+
+
+    def tag_setup(self, tag_category_label=None, sep=None):
+        """Set up the tag names.
+
+        @keyword tag_category_label:    The tag name prefix specific for the tag category.
+        @type tag_category_label:       None or str
+        @keyword sep:                   The string separating the tag name prefix and suffix.
+        @type sep:                      str
+        """
+
+        # Execute the base class tag_setup() method.
+        HeteronuclNOEList_v3_1.tag_setup(self, tag_category_label='Heteronucl_NOE_list', sep=sep)
+
+        # Tag names for the relaxation data.
+        self.tag_names['TempCalibrationMethod'] = 'Temp_calibration_method'
+        self.tag_names['TempControlMethod'] = 'Temp_control_method'
+
+
+
