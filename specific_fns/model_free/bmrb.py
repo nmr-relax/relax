@@ -157,6 +157,8 @@ class Bmrb:
                 raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
             if spin.heteronuc_type == None:
                 raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
+            if not hasattr(spin, 'element') or spin.element == None:
+                raise RelaxError("For the BMRB, the spin element type of '%s' must be specified.  Please use the spin user function for setting the element type." % spin_id)
 
             # The molecule/residue/spin info.
             res_num_list.append(res_num)
@@ -167,10 +169,7 @@ class Bmrb:
             csa_list.append(spin.csa * 1e6)    # In ppm.
             r_list.append(spin.r)
             isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
-            if hasattr(spin, 'element'):
-                element_list.append(spin.element)
-            else:
-                element_list.append(None)
+            element_list.append(spin.element)
 
             # Diffusion tensor.
             local_tm_list.append(spin.local_tm)
