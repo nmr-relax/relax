@@ -28,6 +28,7 @@ select.spin(':9')
 select.spin(':10')
 select.spin(':11')
 spin.name(name='N')
+spin.element(element='N')
 molecule.name(name='OMP')
 
 # Display the data (as a test).
