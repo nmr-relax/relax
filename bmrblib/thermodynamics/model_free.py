@@ -452,6 +452,9 @@ class ModelFree(TagCategory):
 
         # Tag names for the model-free data.
         self.tag_names['ModelFreeID'] = None
+        self.tag_names['AssemblyAtomID'] = 'Assembly_atom_ID'
+        self.tag_names['EntityAssemblyID'] = 'Entity_assembly_ID'
+        self.tag_names['EntityID'] = 'Entity_ID'
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
