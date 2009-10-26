@@ -28,6 +28,7 @@
 from bmrblib.kinetics.general_relaxation import GeneralRelaxationSaveframe
 from bmrblib.kinetics.heteronucl_NOEs import HeteronuclNOESaveframe
 from bmrblib.kinetics.heteronucl_NOEs_v3_1 import HeteronuclNOESaveframe_v3_1
+from bmrblib.kinetics.heteronucl_NOEs_v3_2 import HeteronuclNOESaveframe_v3_2
 from bmrblib.kinetics.heteronucl_T1_relaxation import HeteronuclT1Saveframe
 from bmrblib.kinetics.heteronucl_T1_relaxation_v3_1 import HeteronuclT1Saveframe_v3_1
 from bmrblib.kinetics.heteronucl_T2_relaxation import HeteronuclT2Saveframe
@@ -50,7 +51,7 @@ class Relaxation:
         self.heteronucl_T2_relaxation = HeteronuclT2Saveframe(datanodes)
 
 
-    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
+    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
         @keyword data_type:         The relaxation data type (one of 'NOE', 'R1', or 'R2').
@@ -69,10 +70,6 @@ class Relaxation:
         @type data:                 list of float
         @keyword errors:            The errors associated with the relaxation data.
         @type errors:               list of float
-        @keyword temp_calibration:  The temperature calibration method.
-        @type temp_calibration:     str
-        @keyword temp_control:      The temperature control method.
-        @type temp_control:         str
         """
 
         # Pack specific the data.
@@ -147,6 +144,7 @@ class Relaxation_v3_2(Relaxation_v3_1):
         Relaxation_v3_1.__init__(self, datanodes)
 
         # Initialise the kinetic saveframe supergroups.
+        self.heteronucl_NOEs = HeteronuclNOESaveframe_v3_2(datanodes)
         self.general_relaxation = GeneralRelaxationSaveframe(datanodes)
 
 

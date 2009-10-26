@@ -58,7 +58,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
+    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
         @keyword frq:               The spectrometer proton frequency, in Hz.
@@ -75,22 +75,12 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         @type data:                 list of float
         @keyword errors:            The errors associated with the relaxation data.
         @type errors:               list of float
-        @keyword temp_calibration:  The temperature calibration method.
-        @type temp_calibration:     str
-        @keyword temp_control:      The temperature control method.
-        @type temp_control:         str
         """
 
         # Check the ID info.
         no_missing(res_nums, 'residue numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(res_names, 'residue names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(atom_names, 'atom names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
-
-        # Check the args.
-        if not temp_calibration:
-            raise NameError("The temperature calibration method has not been specified.")
-        if not temp_control:
-            raise NameError("The temperature control method has not been specified.")
 
         # The number of elements.
         self.N = len(res_nums)
@@ -103,8 +93,6 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.isotope = translate(isotope)
         self.data = translate(data)
         self.errors = translate(errors)
-        self.temp_calibration = translate(temp_calibration)
-        self.temp_control = translate(temp_control)
 
         # Set up the NOE specific variables.
         self.noe_inc = self.noe_inc + 1
