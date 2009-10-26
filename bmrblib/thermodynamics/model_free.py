@@ -53,7 +53,7 @@ class ModelFreeSaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', te_units='s', tf_units='s', ts_units='s', global_chi2=None, details=None, software_ids=None, software_labels=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_id=None, res_nums=None, res_names=None, atom_names=None, atom_types=None, local_tc=None, local_tc_err=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None, rex_frq=None, chi2=None, model_fit=None):
+    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', te_units='s', tf_units='s', ts_units='s', global_chi2=None, details=None, software_ids=None, software_labels=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_id=None, res_nums=None, res_names=None, atom_names=None, atom_types=None, isotope=None, local_tc=None, local_tc_err=None, s2=None, s2_err=None, s2f=None, s2f_err=None, s2s=None, s2s_err=None, te=None, te_err=None, tf=None, tf_err=None, ts=None, ts_err=None, rex=None, rex_err=None, rex_frq=None, chi2=None, model_fit=None):
         """Add model-free data to the data nodes.
 
         Note the te, tf, and ts units include the hidden radian unit as these are angular correlation times, e.g. the default of 's' is really 's/rad', the average time it take to rotate 1 radian.
@@ -114,6 +114,8 @@ class ModelFreeSaveframe(BaseSaveframe):
         @type atom_names:                   list of str
         @keyword atom_types:                The atom types as IUPAC element abbreviations for each spin.
         @type atom_types:                   list of str
+        @keyword isotope:                   The isotope type list, ie 15 for '15N'.
+        @type isotope:                      list of int
         @keyword local_tc:                  The spin specific diffusional correlation time.
         @type local_tc:                     lost of float
         @keyword local_tc_err:              The spin specific diffusional correlation time errors.
@@ -227,7 +229,7 @@ class ModelFreeSaveframe(BaseSaveframe):
         N = len(res_nums)
 
         # Convert and translate all the spin specific args.
-        names = ['assembly_atom_ids', 'entity_assembly_ids', 'entity_id', 'res_nums', 'res_names', 'atom_names', 'atom_types', 'local_tc', 'local_tc_err', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err', 'chi2', 'model_fit']
+        names = ['assembly_atom_ids', 'entity_assembly_ids', 'entity_id', 'res_nums', 'res_names', 'atom_names', 'atom_types', 'isotope', 'local_tc', 'local_tc_err', 's2', 's2_err', 's2f', 's2f_err', 's2s', 's2s_err', 'te', 'te_err', 'tf', 'tf_err', 'ts', 'ts_err', 'rex', 'rex_err', 'chi2', 'model_fit']
         for name in names:
             # Get the object.
             obj = locals()[name]
@@ -414,6 +416,7 @@ class ModelFree(TagCategory):
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
             ['AtomType',            'atom_types'],
+            ['AtomIsotopeNumber',   'isotope'],
             ['S2Val',               's2'],
             ['S2ValErr',            's2_err'],
             ['S2fVal',              's2f'],
@@ -459,6 +462,7 @@ class ModelFree(TagCategory):
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
         self.tag_names['AtomType'] = 'Atom_type'
+        self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number'
         self.tag_names['S2Val'] = 'S2_value'
         self.tag_names['S2ValErr'] = 'S2_value_fit_error'
         self.tag_names['TauEVal'] = 'Tau_e_value'

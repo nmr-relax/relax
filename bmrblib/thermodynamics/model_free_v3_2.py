@@ -132,6 +132,7 @@ class ModelFree_v3_2(ModelFree_v3_1):
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
             ['AtomType',            'atom_types'],
+            ['AtomIsotopeNumber',   'isotope'],
             ['S2Val',               's2'],
             ['S2ValErr',            's2_err'],
             ['S2fVal',              's2f'],
@@ -182,7 +183,9 @@ class ModelFree_v3_2(ModelFree_v3_1):
         self.tag_names['EntityID'] = 'Entity_ID'
         self.tag_names['CompIndexID'] = 'Comp_index_ID'
         self.tag_names['CompID'] = 'Comp_ID'
-        self.tag_names['AtomID'] = 'Atom_ID'
+        self.tag_names['AtomID'] = 'Obs_atom_ID'
+        self.tag_names['AtomType'] = 'Obs_atom_type'
+        self.tag_names['AtomIsotopeNumber'] = 'Obs_atom_isotope_number'
         self.tag_names['S2Val'] = 'S2_val'
         self.tag_names['S2ValErr'] = 'S2_val_err'
         self.tag_names['S2fVal'] = 'S2f_val'
