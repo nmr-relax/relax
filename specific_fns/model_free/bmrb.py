@@ -30,6 +30,7 @@ from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
 from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
 from generic_fns import exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import spin_loop
+from relax_errors import RelaxError
 
 
 class Bmrb:
