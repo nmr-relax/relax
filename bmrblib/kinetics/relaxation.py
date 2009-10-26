@@ -51,7 +51,7 @@ class Relaxation:
         self.heteronucl_T2_relaxation = HeteronuclT2Saveframe(datanodes)
 
 
-    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
+    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
         @keyword data_type:         The relaxation data type (one of 'NOE', 'R1', or 'R2').
@@ -70,6 +70,10 @@ class Relaxation:
         @type data:                 list of float
         @keyword errors:            The errors associated with the relaxation data.
         @type errors:               list of float
+        @keyword temp_calibration:  The temperature calibration method (unused).
+        @type temp_calibration:     str
+        @keyword temp_control:      The temperature control method (unused).
+        @type temp_control:         str
         """
 
         # Pack specific the data.
