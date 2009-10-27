@@ -25,6 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from numpy import ones
 import string
 import sys
 from warnings import warn
@@ -246,6 +247,11 @@ def bmrb_write(star):
         relax_data_list.append([])
         relax_error_list.append([])
 
+    # Relax data labels.
+    labels = []
+    for i in range(cdp.num_ri):
+        labels.append(cdp.ri_labels[i] + '_' + cdp.frq_labels[cdp.remap_table[i]])
+
     # Store the spin specific data in lists for later use.
     for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
         # Skip deselected spins.
@@ -272,9 +278,29 @@ def bmrb_write(star):
         atom_name_list.append(str(spin.name))
 
         # The relaxation data.
+        used_index = -ones(spin.num_ri)
+        for i in range(len(spin.ri_labels)):
+            # Labels.
+            label = spin.ri_labels[i] + '_' + spin.frq_labels[spin.remap_table[i]]
+
+            # Find the global index.
+            index = None
+            for j in range(cdp.num_ri):
+                if label == labels[j] and j not in used_index:
+                    index = j
+                    used_index[i] = j
+                    break
+
+            # Data exists.
+            if index != None:
+                relax_data_list[index].append(str(spin.relax_data[i]))
+                relax_error_list[index].append(str(spin.relax_error[i]))
+
+        # No relaxation data.
         for i in range(cdp.num_ri):
-            relax_data_list[i].append(str(spin.relax_data[i]))
-            relax_error_list[i].append(str(spin.relax_error[i]))
+            if i not in used_index:
+                relax_data_list[i].append(None)
+                relax_error_list[i].append(None)
 
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
