@@ -83,7 +83,7 @@ class HeteronuclNOESaveframe_v3_2(HeteronuclNOESaveframe_v3_1):
         self.temp_control = translate(temp_control)
 
         # Execute the v3.1 add method.
-        HeteronuclNOESaveframe_v3_1.add(self, frq=frq, entity_ids=entity_ids, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+        HeteronuclNOESaveframe_v3_1.add(self, sample_cond_list_id=sample_cond_list_id, sample_cond_list_label=sample_cond_list_label, frq=frq, details=details, assembly_atom_ids=assembly_atom_ids, entity_assembly_ids=entity_assembly_ids, entity_ids=entity_ids, res_nums=res_nums, seq_id=seq_id, res_names=res_names, atom_names=atom_names, atom_types=atom_types, isotope=isotope, data=data, errors=errors)
 
 
     def add_tag_categories(self):
