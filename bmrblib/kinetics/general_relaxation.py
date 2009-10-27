@@ -71,6 +71,8 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         @type data_type:                    str
         @keyword frq:                       The spectrometer proton frequency, in Hz.
         @type frq:                          float
+        @keyword details:                   The details tag.
+        @type details:                      None or str
         @keyword assembly_atom_ids:         The assembly atom ID numbers.
         @type assembly_atom_ids:            list of int
         @keyword entity_assembly_ids:       The entity assembly ID numbers.
@@ -95,11 +97,10 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         @type temp_calibration:             str
         @keyword temp_control:              The temperature control method.
         @type temp_control:                 str
-        @keyword details:                   The details tag.
-        @type details:                      None or str
         """
 
         # Check the ID info.
+        no_missing(entity_ids, 'entity ID numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(res_nums, 'residue numbers of the %s MHz %s relaxation data' % (int(frq*1e-6), data_type))
         no_missing(res_names, 'residue names of the %s MHz %s relaxation data' % (int(frq*1e-6), data_type))
         no_missing(atom_names, 'atom names of the %s MHz %s relaxation data' % (int(frq*1e-6), data_type))
@@ -362,8 +363,8 @@ class GeneralRelaxation(Rx):
             ['AtomID',                  'atom_names'],
             ['AtomType',                'atom_types'],
             ['AtomIsotopeNumber',       'isotope'],
-            ['Val',    'data'],
-            ['ValErr', 'errors'],
+            ['Val',                     'data'],
+            ['ValErr',                  'errors'],
             ['RexVal',                  'rex_val'],
             ['RexErr',                  'rex_err'],
             ['GeneralRelaxationListID', 'rx_inc_list']

@@ -58,25 +58,37 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, frq=None, entity_ids=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
+    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
-        @keyword frq:               The spectrometer proton frequency, in Hz.
-        @type frq:                  float
-        @keyword entity_ids:        The entity ID numbers.
-        @type entity_ids:           int
-        @keyword res_nums:          The residue number list.
-        @type res_nums:             list of int
-        @keyword res_names:         The residue name list.
-        @type res_names:            list of str
-        @keyword atom_names:        The atom name list.
-        @type atom_names:           list of str
-        @keyword isotope:           The isotope type list, ie 15 for '15N'.
-        @type isotope:              list of int
-        @keyword data:              The relaxation data.
-        @type data:                 list of float
-        @keyword errors:            The errors associated with the relaxation data.
-        @type errors:               list of float
+        @keyword sample_cond_list_id:       The sample conditions list ID number.
+        @type sample_cond_list_id:          str
+        @keyword sample_cond_list_label:    The sample conditions list label.
+        @type sample_cond_list_label:       str
+        @keyword frq:                       The spectrometer proton frequency, in Hz.
+        @type frq:                          float
+        @keyword details:                   The details tag.
+        @type details:                      None or str
+        @keyword assembly_atom_ids:         The assembly atom ID numbers.
+        @type assembly_atom_ids:            list of int
+        @keyword entity_assembly_ids:       The entity assembly ID numbers.
+        @type entity_assembly_ids:          list of int
+        @keyword entity_ids:                The entity ID numbers.
+        @type entity_ids:                   int
+        @keyword res_nums:                  The residue number list.
+        @type res_nums:                     list of int
+        @keyword res_names:                 The residue name list.
+        @type res_names:                    list of str
+        @keyword atom_names:                The atom name list.
+        @type atom_names:                   list of str
+        @keyword atom_types:                The atom types as IUPAC element abbreviations.
+        @type atom_types:                   list of str
+        @keyword isotope:                   The isotope type list, ie 15 for '15N'.
+        @type isotope:                      list of int
+        @keyword data:                      The relaxation data.
+        @type data:                         list of float
+        @keyword errors:                    The errors associated with the relaxation data.
+        @type errors:                       list of float
         """
 
         # Check the ID info.
@@ -89,14 +101,26 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.N = len(res_nums)
 
         # Place the args into the namespace.
+        self.sample_cond_list_id = translate(sample_cond_list_id)
+        self.sample_cond_list_label = translate(sample_cond_list_label)
         self.frq = frq
-        self.entity_ids = translate(entity_ids)
-        self.res_nums = translate(res_nums)
-        self.res_names = translate(res_names)
-        self.atom_names = translate(atom_names)
-        self.isotope = translate(isotope)
-        self.data = translate(data)
-        self.errors = translate(errors)
+        self.details = translate(details)
+
+        # Convert to lists and check the lengths.
+        for name in ['assembly_atom_ids', 'entity_assembly_ids', 'entity_ids', 'res_nums', 'seq_id', 'res_names', 'atom_names', 'atom_types', 'isotope', 'data', 'errors']:
+            # Get the object.
+            obj = locals()[name]
+
+            # None objects.
+            if obj == None:
+                obj = [None] * self.N
+
+            # Check the length.
+            if len(obj) != self.N:
+                raise NameError("The number of elements in the '%s' arg does not match that of 'res_nums'." % name)
+
+            # Place the args into the namespace, translating for BMRB.
+            setattr(self, name, translate(obj))
 
         # Set up the NOE specific variables.
         self.noe_inc = self.noe_inc + 1
@@ -143,10 +167,12 @@ class HeteronuclNOEList(HeteronuclRxList):
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['HeteronuclNOEListID']], tagvalues=[[str(self.sf.noe_inc)]]))
 
         # Sample info.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListID']], tagvalues=[[self.sf.sample_cond_list_id]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
 
         # NMR info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['Details']], tagvalues=[[self.sf.details]]))
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -163,8 +189,10 @@ class HeteronuclNOEList(HeteronuclRxList):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Saveframe_category'
+        self.tag_names['SampleConditionListID'] = 'Sample_condition_list_ID'
         self.tag_names['SampleConditionListLabel'] = 'Sample_conditions_label'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
+        self.tag_names['Details'] = 'Details'
 
 
 class HeteronuclNOEExperiment(TagCategory):

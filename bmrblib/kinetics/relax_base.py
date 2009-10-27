@@ -106,10 +106,14 @@ class Rx(TagCategory):
         # Keys and objects.
         info = [
             ['RxID',                'data_ids'],
+            ['AssemblyAtomID',      'assembly_atom_ids'],
+            ['EntityAssemblyID',    'entity_assembly_ids'],
             ['EntityID',            'entity_ids'],
             ['CompIndexID',         'res_nums'],
+            ['SeqID',               'seq_id'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
+            ['AtomType',            'atom_types'],
             ['AtomIsotopeNumber',   'isotope'],
             ['Val',                 'data'],
             ['ValErr',              'errors'],
@@ -171,10 +175,14 @@ class Rx(TagCategory):
 
         # Tag names for the relaxation data.
         self.tag_names['RxID'] = None
+        self.tag_names['AssemblyAtomID'] = 'Assembly_atom_ID'
+        self.tag_names['EntityAssemblyID'] = 'Entity_assembly_ID'
         self.tag_names['EntityID'] = 'Entity_ID'
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
+        self.tag_names['SeqID'] = 'Seq_ID'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
+        self.tag_names['AtomType'] = 'Atom_type'
         self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number'
         self.tag_names['Val'] = self.sf.label+'_value'
         self.tag_names['ValErr'] = self.sf.label+'_value_error'

@@ -35,29 +35,41 @@ from bmrblib.pystarlib.TagTable import TagTable
 class HeteronuclNOESaveframe_v3_2(HeteronuclNOESaveframe_v3_1):
     """The v3.2 Heteronuclear NOE data saveframe class."""
 
-    def add(self, frq=None, entity_ids=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
+    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
-        @keyword frq:               The spectrometer proton frequency, in Hz.
-        @type frq:                  float
-        @keyword entity_ids:        The entity ID numbers.
-        @type entity_ids:           int
-        @keyword res_nums:          The residue number list.
-        @type res_nums:             list of int
-        @keyword res_names:         The residue name list.
-        @type res_names:            list of str
-        @keyword atom_names:        The atom name list.
-        @type atom_names:           list of str
-        @keyword isotope:           The isotope type list, ie 15 for '15N'.
-        @type isotope:              list of int
-        @keyword data:              The relaxation data.
-        @type data:                 list of float
-        @keyword errors:            The errors associated with the relaxation data.
-        @type errors:               list of float
-        @keyword temp_calibration:  The temperature calibration method.
-        @type temp_calibration:     str
-        @keyword temp_control:      The temperature control method.
-        @type temp_control:         str
+        @keyword sample_cond_list_id:       The sample conditions list ID number.
+        @type sample_cond_list_id:          str
+        @keyword sample_cond_list_label:    The sample conditions list label.
+        @type sample_cond_list_label:       str
+        @keyword frq:                       The spectrometer proton frequency, in Hz.
+        @type frq:                          float
+        @keyword details:                   The details tag.
+        @type details:                      None or str
+        @keyword assembly_atom_ids:         The assembly atom ID numbers.
+        @type assembly_atom_ids:            list of int
+        @keyword entity_assembly_ids:       The entity assembly ID numbers.
+        @type entity_assembly_ids:          list of int
+        @keyword entity_ids:                The entity ID numbers.
+        @type entity_ids:                   int
+        @keyword res_nums:                  The residue number list.
+        @type res_nums:                     list of int
+        @keyword res_names:                 The residue name list.
+        @type res_names:                    list of str
+        @keyword atom_names:                The atom name list.
+        @type atom_names:                   list of str
+        @keyword atom_types:                The atom types as IUPAC element abbreviations.
+        @type atom_types:                   list of str
+        @keyword isotope:                   The isotope type list, ie 15 for '15N'.
+        @type isotope:                      list of int
+        @keyword data:                      The relaxation data.
+        @type data:                         list of float
+        @keyword errors:                    The errors associated with the relaxation data.
+        @type errors:                       list of float
+        @keyword temp_calibration:          The temperature calibration method.
+        @type temp_calibration:             str
+        @keyword temp_control:              The temperature control method.
+        @type temp_control:                 str
         """
 
         # Check the args.
@@ -99,12 +111,14 @@ class HeteronuclNOEList_v3_2(HeteronuclNOEList_v3_1):
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['HeteronuclNOEListID']], tagvalues=[[str(self.sf.noe_inc)]]))
 
         # Sample info.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListID']], tagvalues=[[self.sf.sample_cond_list_id]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
 
         # NMR info.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempCalibrationMethod']], tagvalues=[[self.sf.temp_calibration]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['TempControlMethod']], tagvalues=[[self.sf.temp_control]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SpectrometerFrequency1H']], tagvalues=[[str(self.sf.frq/1e6)]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['Details']], tagvalues=[[self.sf.details]]))
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
