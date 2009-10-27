@@ -153,11 +153,14 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         else:
             raise NameError("The data type '%s' is not one of ['R1', 'R2']." % data_type)
 
+        # The label.
+        self.sf_label = 'general relaxation ' + repr(self.rx_inc)
+
         # Set up the version specific variables.
         self.specific_setup()
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title=self.label+'_list_'+repr(self.rx_inc))
+        self.frame = SaveFrame(title=self.label)
 
         # Create the tag categories.
         self.GeneralRelaxationlist.create()
@@ -229,6 +232,7 @@ class GeneralRelaxationList(HeteronuclRxList):
 
         # The save frame category.
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfFramecode']], tagvalues=[[self.sf.sf_label]]))
 
         # GeneralRelaxation ID number.
         if 'GeneralRelaxationListID' in self.tag_names:
@@ -287,6 +291,7 @@ class GeneralRelaxationList(HeteronuclRxList):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Sf_category'
+        self.tag_names['SfFramecode'] = 'Sf_framecode'
         self.tag_names['GeneralRelaxationListID'] = 'ID'
         self.tag_names['TempCalibrationMethod'] = 'Temp_calibration_method'
         self.tag_names['TempControlMethod'] = 'Temp_control_method'
