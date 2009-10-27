@@ -127,11 +127,14 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.rx_inc_list = translate([self.noe_inc] * self.N)
         self.generate_data_ids(self.N)
 
+        # The label.
+        self.label = 'heteronuclear NOE ' + repr(self.noe_inc)
+
         # Set up the version specific variables.
         self.specific_setup()
 
         # Initialise the save frame.
-        self.frame = SaveFrame(title='heteronuclear_'+self.label+'_list_'+repr(self.noe_inc))
+        self.frame = SaveFrame(title='heteronuclear_NOEs')
 
         # Create the tag categories.
         self.heteronuclRxlist.create()
@@ -161,6 +164,7 @@ class HeteronuclNOEList(HeteronuclRxList):
 
         # The save frame category.
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfFramecode']], tagvalues=[[self.sf.label]]))
 
         # NOE ID number.
         if 'HeteronuclNOEListID' in self.tag_names:
@@ -189,6 +193,7 @@ class HeteronuclNOEList(HeteronuclRxList):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Saveframe_category'
+        self.tag_names['SfFramecode'] = 'Sf_framecode'
         self.tag_names['SampleConditionListID'] = 'Sample_condition_list_ID'
         self.tag_names['SampleConditionListLabel'] = 'Sample_conditions_label'
         self.tag_names['SpectrometerFrequency1H'] = 'Spectrometer_frequency_1H'
