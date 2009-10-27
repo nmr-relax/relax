@@ -213,10 +213,10 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
             data_type, frq = self.GeneralRelaxationlist.read(datanode.tagtables[0])
 
             # Get the Rx info.
-            res_nums, res_names, atom_names, values, errors = self.GeneralRelaxation.read(datanode.tagtables[1])
+            entity_ids, res_nums, res_names, atom_names, values, errors = self.GeneralRelaxation.read(datanode.tagtables[1])
 
             # Yield the data.
-            yield data_type, frq, res_nums, res_names, atom_names, values, errors
+            yield data_type, frq, entity_ids, res_nums, res_names, atom_names, values, errors
 
 
 
