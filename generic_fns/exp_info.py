@@ -108,7 +108,7 @@ def bmrb_write_citations(star):
     # Loop over the citations.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'citations'):
         for citations in cdp.exp_info.citations:
-            star.citations.add(authors=citations.authors, doi=citations.doi, pubmed_id=citations.pubmed_id, full_citation=citations.full_citation, title=citations.title, status=citations.status, type=citations.type, journal_abbrev=citations.journal_abbrev, journal_full=citations.journal_full, volume=citations.volume, issue=citations.issue, page_first=citations.page_first, page_last=citations.page_last, year=citations.year)
+            star.citations.add(citation_label=citations.cite_id, authors=citations.authors, doi=citations.doi, pubmed_id=citations.pubmed_id, full_citation=citations.full_citation, title=citations.title, status=citations.status, type=citations.type, journal_abbrev=citations.journal_abbrev, journal_full=citations.journal_full, volume=citations.volume, issue=citations.issue, page_first=citations.page_first, page_last=citations.page_last, year=citations.year)
 
 
 def bmrb_write_software(star):
