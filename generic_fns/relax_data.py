@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import ones
+from numpy import int32, ones, zeros
 import string
 import sys
 from warnings import warn
@@ -33,7 +33,7 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
-from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
@@ -212,7 +212,7 @@ def bmrb_read(star):
     """
 
     # Get the relaxation data.
-    for data_type, frq, res_nums, res_names, spin_names, val, err in star.relaxation.loop():
+    for data_type, frq, entity_ids, res_nums, res_names, spin_names, val, err in star.relaxation.loop():
         # Create the labels.
         ri_label = data_type
         frq_label = str(int(frq*1e-6))
@@ -221,8 +221,14 @@ def bmrb_read(star):
         if test_labels(ri_label, frq_label):
             raise RelaxRiError(ri_label, frq_label)
 
+        # Convert entity IDs to molecule names.
+        mol_names = []
+        names = get_molecule_names()
+        for id in entity_ids:
+            mol_names.append(names[int(id)-1])
+
         # Pack the data.
-        pack_data(ri_label, frq_label, frq, val, err, mol_names=None, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
+        pack_data(ri_label, frq_label, frq, val, err, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=None, spin_names=spin_names, gen_seq=True)
 
 
 
@@ -237,6 +243,7 @@ def bmrb_write(star):
     cdp = pipes.get_pipe()
 
     # Initialise the spin specific data lists.
+    mol_name_list = []
     res_num_list = []
     res_name_list = []
     atom_name_list = []
@@ -273,6 +280,7 @@ def bmrb_write(star):
             raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
 
         # The molecule/residue/spin info.
+        mol_name_list.append(mol_name)
         res_num_list.append(str(res_num))
         res_name_list.append(str(res_name))
         atom_name_list.append(str(spin.name))
@@ -305,6 +313,14 @@ def bmrb_write(star):
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
 
+    # Convert the molecule names into the entity IDs.
+    entity_ids = zeros(len(mol_name_list), int32)
+    mol_names = get_molecule_names()
+    for i in range(len(mol_name_list)):
+        for j in range(len(mol_names)):
+            if mol_name_list[i] == mol_names[j]:
+                entity_ids[i] = j+1
+
     # Check the temperature control methods.
     if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration'):
         raise RelaxError("The temperature calibration methods have not been specified.")
@@ -328,7 +344,7 @@ def bmrb_write(star):
             raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
 
         # Add the relaxation data.
-        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
+        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
