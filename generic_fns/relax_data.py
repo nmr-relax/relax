@@ -217,10 +217,6 @@ def bmrb_read(star):
         ri_label = data_type
         frq_label = str(int(frq*1e-6))
 
-        # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
-        if test_labels(ri_label, frq_label):
-            raise RelaxRiError(ri_label, frq_label)
-
         # Convert entity IDs to molecule names.
         mol_names = []
         names = get_molecule_names()
