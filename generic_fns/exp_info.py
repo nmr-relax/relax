@@ -92,6 +92,7 @@ SPARKY_URL = "http://www.cgl.ucsf.edu/home/sparky/"
 SPARKY_TASKS = ["spectral analysis"]
 SPARKY_CITE_AUTHORS = [["Tom", "Goddard", "T.", "D."], ["Donald", "Kneller", "D.", "G."]]
 SPARKY_CITE_FULL_CITATION = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
+SPARKY_CITE_TITLE = "Sparky."
 SPARKY_CITE_STATUS = "unpublished"
 SPARKY_CITE_TYPE = "internet"
 
@@ -254,7 +255,7 @@ def software_select(name, version=None):
             raise RelaxError("The Sparky version number has not been supplied.")
 
         # Add the citations.
-        cite_index = cdp.exp_info.add_citation(cite_id='sparky_ref', authors=SPARKY_CITE_AUTHORS, full_citation=SPARKY_CITE_FULL_CITATION, status=SPARKY_CITE_STATUS, type=SPARKY_CITE_TYPE)
+        cite_index = cdp.exp_info.add_citation(cite_id='sparky_ref', authors=SPARKY_CITE_AUTHORS, full_citation=SPARKY_CITE_FULL_CITATION, title=SPARKY_CITE_TITLE, status=SPARKY_CITE_STATUS, type=SPARKY_CITE_TYPE)
 
         # Add the software info.
         cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite_ids=['sparky_ref'], tasks=SPARKY_TASKS)
