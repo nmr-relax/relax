@@ -46,30 +46,46 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         # Place the data nodes into the namespace.
         self.datanodes = datanodes
 
+        # The number of CSA data sets.
+        self.csa_inc = 0
+
         # Add the specific tag category objects.
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, atom_types=None, isotope=None, csa=None, units='ppm'):
+    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, csa=None, csa_error=None, units='ppm'):
         """Add relaxation data to the data nodes.
 
-        @keyword frq:           The spectrometer proton frequency, in Hz.
-        @type frq:              float
-        @keyword res_nums:      The residue number list.
-        @type res_nums:         list of int
-        @keyword res_names:     The residue name list.
-        @type res_names:        list of str
-        @keyword atom_names:    The atom name list.
-        @type atom_names:       list of str
-        @keyword atom_types:    The atom types as IUPAC element abbreviations.
-        @type atom_types:       list of str
-        @keyword isotope:       The isotope type list, ie 15 for '15N'.
-        @type isotope:          list of int
-        @keyword csa:           The CSA values in ppm.
-        @type csa:              list of float
+        @keyword sample_cond_list_id:       The sample conditions list ID number.
+        @type sample_cond_list_id:          str
+        @keyword sample_cond_list_label:    The sample conditions list label.
+        @type sample_cond_list_label:       str
+        @keyword frq:                       The spectrometer proton frequency, in Hz.
+        @type frq:                          float
+        @keyword details:                   The details tag.
+        @type details:                      None or str
+        @keyword assembly_atom_ids:         The assembly atom ID numbers.
+        @type assembly_atom_ids:            list of int
+        @keyword entity_assembly_ids:       The entity assembly ID numbers.
+        @type entity_assembly_ids:          list of int
+        @keyword entity_ids:                The entity ID numbers.
+        @type entity_ids:                   int
+        @keyword res_nums:                  The residue number list.
+        @type res_nums:                     list of int
+        @keyword res_names:                 The residue name list.
+        @type res_names:                    list of str
+        @keyword atom_names:                The atom name list.
+        @type atom_names:                   list of str
+        @keyword atom_types:                The atom types as IUPAC element abbreviations.
+        @type atom_types:                   list of str
+        @keyword isotope:                   The isotope type list, ie 15 for '15N'.
+        @type isotope:                      list of int
+        @keyword csa:                       The CSA values in ppm.
+        @type csa:                          list of float
         """
 
         # Check the ID info.
+        no_missing(entity_ids, 'entity ID numbers')
         no_missing(res_nums, 'residue numbers')
         no_missing(res_names, 'residue names')
         no_missing(atom_names, 'atom names')
@@ -87,7 +103,25 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         self.isotope = translate(isotope)
         self.csa = translate(csa)
 
+        # Convert to lists and check the lengths.
+        for name in ['assembly_atom_ids', 'entity_assembly_ids', 'entity_ids', 'res_nums', 'seq_id', 'res_names', 'atom_names', 'atom_types', 'isotope', 'csa', 'csa_error']:
+            # Get the object.
+            obj = locals()[name]
+
+            # None objects.
+            if obj == None:
+                obj = [None] * N
+
+            # Check the length.
+            if len(obj) != N:
+                raise NameError("The number of elements in the '%s' arg does not match that of 'res_nums'." % name)
+
+            # Place the args into the namespace, translating for BMRB.
+            setattr(self, name, translate(obj))
+
         # Set up the CSA specific variables.
+        self.csa_inc = self.csa_inc + 1
+        self.csa_inc_list = translate([self.csa_inc] * N)
         self.generate_data_ids(N)
 
         # Set up the version specific variables.
@@ -243,13 +277,19 @@ class CSAnisotropy(TagCategory):
 
         # Keys and objects.
         info = [
-            ['CSAnisotropyID',      'data_ids'],
-            ['CompIndexID',         'res_nums'],
-            ['CompID',              'res_names'],
-            ['AtomID',              'atom_names'],
-            ['AtomType',            'atom_types'],
-            ['AtomIsotopeNumber',   'isotope'],
-            ['Val',                 'csa']
+            ['CSAnisotropyID',          'data_ids'],
+            ['AssemblyAtomID',          'assembly_atom_ids'],
+            ['EntityAssemblyID',        'entity_assembly_ids'],
+            ['EntityID',                'entity_ids'],
+            ['CompIndexID',             'res_nums'],
+            ['SeqID',                   'seq_id'],
+            ['CompID',                  'res_names'],
+            ['AtomID',                  'atom_names'],
+            ['AtomType',                'atom_types'],
+            ['AtomIsotopeNumber',       'isotope'],
+            ['Val',                     'csa'],
+            ['ValErr',                  'csa_error'],
+            ['ChemShiftAnisotropyID',   'csa_inc_list']
         ]
 
         # Get the TabTable.
@@ -300,10 +340,15 @@ class CSAnisotropy(TagCategory):
 
         # Tag names for the relaxation data.
         self.tag_names['CSAnisotropyID'] = None
+        self.tag_names['AssemblyAtomID'] = 'Assembly_atom_ID'
+        self.tag_names['EntityAssemblyID'] = 'Entity_assembly_ID'
+        self.tag_names['EntityID'] = 'Entity_ID'
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
+        self.tag_names['SeqID'] = 'Seq_ID'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'
         self.tag_names['AtomType'] = 'Atom_type'
         self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number'
         self.tag_names['Val'] = 'value'
         self.tag_names['ValErr'] = 'value_error'
+        self.tag_names['ChemShiftAnisotropyID'] = 'Chem_shift_anisotropy_ID'
