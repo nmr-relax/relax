@@ -53,9 +53,11 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, csa=None, csa_error=None, units='ppm'):
+    def add(self, data_file_name=None, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, csa=None, csa_error=None, units='ppm'):
         """Add relaxation data to the data nodes.
 
+        @keyword data_file_name:            The name of the data file submitted with the deposition containing this data (should probably be left to None).
+        @type data_file_name:               None or str
         @keyword sample_cond_list_id:       The sample conditions list ID number.
         @type sample_cond_list_id:          str
         @keyword sample_cond_list_label:    The sample conditions list label.
@@ -94,6 +96,7 @@ class ChemShiftAnisotropySaveframe(BaseSaveframe):
         N = len(res_nums)
 
         # Place the args into the namespace.
+        self.file_name = translate(data_file_name)
         self.frq = frq
         self.units = units
         self.res_nums = translate(res_nums)
@@ -212,6 +215,7 @@ class ChemShiftAnisotropy(TagCategory):
             self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['ChemShiftAnisotropyID']], tagvalues=[['1']]))
 
         # Sample info.
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['DataFileName']], tagvalues=[[self.sf.file_name]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SampleConditionListLabel']], tagvalues=[['$conditions_1']]))
 
         # NMR info.
@@ -232,6 +236,7 @@ class ChemShiftAnisotropy(TagCategory):
 
         # Tag names for the relaxation data.
         self.tag_names['SfCategory'] = 'Saveframe_category'
+        self.tag_names['DataFileName'] = 'Data_file_name'
         self.tag_names['SampleConditionListLabel'] = 'Sample_conditions_label'
         self.tag_names['ValUnits'] = 'Val_units'
 
