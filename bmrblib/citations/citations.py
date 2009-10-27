@@ -60,7 +60,7 @@ class CitationsSaveframe(BaseSaveframe):
     def add(self, citation_label='citation', authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status='published', type='journal', journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
         """Add the citation information to the data nodes.
 
-        @keyword citation_label:    A label to call the saveframe.
+        @keyword citation_label:    A label to call the saveframe.  If left at 'citation', then the citation ID number will be appended.
         @type citation_label:       str
         @keyword authors:           The list of authors.  Each author element is a list of four elements: the first name, last name, first initial, and middle initials.
         @type authors:              list of lists of str
@@ -131,6 +131,8 @@ class CitationsSaveframe(BaseSaveframe):
         self.citation_id_num = [str(translate(self.citation_num))]
 
         # Initialise the save frame.
+        if citation_label == 'citation':
+            citation_label = 'citation_' + repr(self.citation_num)
         self.frame = SaveFrame(title=citation_label)
 
         # Create the tag categories.
