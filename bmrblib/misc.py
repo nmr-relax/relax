@@ -23,6 +23,9 @@
 # Module docstring.
 """Functions for manipulating NMR-STAR dictionary data."""
 
+# Python module imports.
+from numpy import ndarray
+
 
 def no_missing(data, name):
     """Check that there are no None values in the data.
@@ -59,8 +62,8 @@ def translate(data):
     @type data:     anything
     """
 
-    # List data.
-    if isinstance(data, list):
+    # List data (including numpy arrays).
+    if isinstance(data, list) or isinstance(data, ndarray):
         # Loop over the data.
         new_data = []
         for i in range(len(data)):
