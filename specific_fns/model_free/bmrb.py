@@ -206,8 +206,9 @@ class Bmrb:
                     val = getattr(spin, param+'_err')
 
                     # Scaling.
-                    if param == 'rex':
+                    if param == 'rex' and val != None:
                         val = val / (2.0*pi*rex_frq**2)
+
                     # Append.
                     err_list.append(val)
 
