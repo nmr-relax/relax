@@ -51,13 +51,15 @@ class Relaxation:
         self.heteronucl_T2_relaxation = HeteronuclT2Saveframe(datanodes)
 
 
-    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
+    def add(self, data_type=None, frq=None, entity_ids=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
         @keyword data_type:         The relaxation data type (one of 'NOE', 'R1', or 'R2').
         @type data_type:            str
         @keyword frq:               The spectrometer proton frequency, in Hz.
         @type frq:                  float
+        @keyword entity_ids:        The entity ID numbers.
+        @type entity_ids:           int
         @keyword res_nums:          The residue number list.
         @type res_nums:             list of int
         @keyword res_names:         The residue name list.
@@ -78,27 +80,27 @@ class Relaxation:
 
         # Pack specific the data.
         if data_type == 'R1':
-            self.heteronucl_T1_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.heteronucl_T1_relaxation.add(frq=frq, entity_ids=entity_ids, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'R2':
-            self.heteronucl_T2_relaxation.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.heteronucl_T2_relaxation.add(frq=frq, entity_ids=entity_ids, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
         elif data_type == 'NOE':
-            self.heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+            self.heteronucl_NOEs.add(frq=frq, entity_ids=entity_ids, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
 
 
     def loop(self):
         """Generator method for looping over and returning all relaxation data."""
 
         # The NOE data.
-        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_NOEs.loop():
-            yield "NOE", frq, res_nums, res_names, spin_names, val, err
+        for frq, entity_ids, res_nums, res_names, spin_names, val, err in self.heteronucl_NOEs.loop():
+            yield "NOE", frq, entity_ids, res_nums, res_names, spin_names, val, err
 
         # The R1 data.
-        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_T1_relaxation.loop():
-            yield "R1", frq, res_nums, res_names, spin_names, val, err
+        for frq, entity_ids, res_nums, res_names, spin_names, val, err in self.heteronucl_T1_relaxation.loop():
+            yield "R1", frq, entity_ids, res_nums, res_names, spin_names, val, err
 
         # The R2 data.
-        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_T2_relaxation.loop():
-            yield "R2", frq, res_nums, res_names, spin_names, val, err
+        for frq, entity_ids, res_nums, res_names, spin_names, val, err in self.heteronucl_T2_relaxation.loop():
+            yield "R2", frq, entity_ids, res_nums, res_names, spin_names, val, err
 
 
 class Relaxation_v3_0(Relaxation):
@@ -152,13 +154,15 @@ class Relaxation_v3_2(Relaxation_v3_1):
         self.general_relaxation = GeneralRelaxationSaveframe(datanodes)
 
 
-    def add(self, data_type=None, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
+    def add(self, data_type=None, frq=None, entity_ids=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
         @keyword data_type:         The relaxation data type (one of 'NOE', 'R1', or 'R2').
         @type data_type:            str
         @keyword frq:               The spectrometer proton frequency, in Hz.
         @type frq:                  float
+        @keyword entity_ids:        The entity ID numbers.
+        @type entity_ids:           int
         @keyword res_nums:          The residue number list.
         @type res_nums:             list of int
         @keyword res_names:         The residue name list.
@@ -179,17 +183,17 @@ class Relaxation_v3_2(Relaxation_v3_1):
 
         # Pack specific the data.
         if data_type in ['R1', 'R2']:
-            self.general_relaxation.add(data_type=data_type, frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors, temp_calibration=temp_calibration, temp_control=temp_control)
+            self.general_relaxation.add(data_type=data_type, frq=frq, entity_ids=entity_ids, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors, temp_calibration=temp_calibration, temp_control=temp_control)
         elif data_type == 'NOE':
-            self.heteronucl_NOEs.add(frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors, temp_calibration=temp_calibration, temp_control=temp_control)
+            self.heteronucl_NOEs.add(frq=frq, entity_ids=entity_ids, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors, temp_calibration=temp_calibration, temp_control=temp_control)
 
 
     def loop(self):
         """Generator method for looping over and returning all relaxation data."""
 
         # The NOE data.
-        for frq, res_nums, res_names, spin_names, val, err in self.heteronucl_NOEs.loop():
-            yield "NOE", frq, res_nums, res_names, spin_names, val, err
+        for frq, entity_ids, res_nums, res_names, spin_names, val, err in self.heteronucl_NOEs.loop():
+            yield "NOE", frq, entity_ids, res_nums, res_names, spin_names, val, err
 
         # The R1 and R2 data.
         for data in self.general_relaxation.loop():

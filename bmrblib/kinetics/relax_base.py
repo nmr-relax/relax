@@ -65,10 +65,10 @@ class RelaxSaveframe(BaseSaveframe):
             frq = self.heteronuclRxlist.read(datanode.tagtables[0])
 
             # Get the Rx info.
-            res_nums, res_names, atom_names, values, errors = self.Rx.read(datanode.tagtables[1])
+            entity_ids, res_nums, res_names, atom_names, values, errors = self.Rx.read(datanode.tagtables[1])
 
             # Yield the data.
-            yield frq, res_nums, res_names, atom_names, values, errors
+            yield frq, entity_ids, res_nums, res_names, atom_names, values, errors
 
 
     def specific_setup(self):
@@ -106,6 +106,7 @@ class Rx(TagCategory):
         # Keys and objects.
         info = [
             ['RxID',                'data_ids'],
+            ['EntityID',            'entity_ids'],
             ['CompIndexID',         'res_nums'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],
@@ -133,6 +134,7 @@ class Rx(TagCategory):
         """
 
         # The entity info.
+        entity_ids = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['EntityID'])]
         res_nums = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['CompIndexID'])]
         res_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['CompID'])]
         atom_names = tagtable.tagvalues[tagtable.tagnames.index(self.tag_names_full['AtomID'])]
@@ -152,7 +154,7 @@ class Rx(TagCategory):
                 errors[i] = float(errors[i])
 
         # Return the data.
-        return res_nums, res_names, atom_names, values, errors
+        return entity_ids, res_nums, res_names, atom_names, values, errors
 
 
     def tag_setup(self, tag_category_label=None, sep=None):
@@ -169,6 +171,7 @@ class Rx(TagCategory):
 
         # Tag names for the relaxation data.
         self.tag_names['RxID'] = None
+        self.tag_names['EntityID'] = 'Entity_ID'
         self.tag_names['CompIndexID'] = 'Residue_seq_code'
         self.tag_names['CompID'] = 'Residue_label'
         self.tag_names['AtomID'] = 'Atom_name'

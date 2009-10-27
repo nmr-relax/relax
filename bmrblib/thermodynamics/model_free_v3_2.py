@@ -127,7 +127,7 @@ class ModelFree_v3_2(ModelFree_v3_1):
             ['ModelFreeID',         'data_ids'],
             ['AssemblyAtomID',      'assembly_atom_ids'],
             ['EntityAssemblyID',    'entity_assembly_ids'],
-            ['EntityID',            'entity_id'],
+            ['EntityID',            'entity_ids'],
             ['CompIndexID',         'res_nums'],
             ['CompID',              'res_names'],
             ['AtomID',              'atom_names'],

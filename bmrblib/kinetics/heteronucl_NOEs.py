@@ -58,11 +58,13 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
+    def add(self, frq=None, entity_ids=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
         @keyword frq:               The spectrometer proton frequency, in Hz.
         @type frq:                  float
+        @keyword entity_ids:        The entity ID numbers.
+        @type entity_ids:           int
         @keyword res_nums:          The residue number list.
         @type res_nums:             list of int
         @keyword res_names:         The residue name list.
@@ -78,6 +80,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         """
 
         # Check the ID info.
+        no_missing(entity_ids, 'entity ID numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(res_nums, 'residue numbers of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(res_names, 'residue names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
         no_missing(atom_names, 'atom names of the ' + repr(int(frq*1e-6)) + ' MHz NOE data')
@@ -87,6 +90,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
 
         # Place the args into the namespace.
         self.frq = frq
+        self.entity_ids = translate(entity_ids)
         self.res_nums = translate(res_nums)
         self.res_names = translate(res_names)
         self.atom_names = translate(atom_names)

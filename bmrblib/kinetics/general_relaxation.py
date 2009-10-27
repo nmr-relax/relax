@@ -57,7 +57,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, data_type=None, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', temp_calibration=None, temp_control=None, frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_id=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, data=None, errors=None, rex_val=None, rex_err=None):
+    def add(self, data_type=None, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', temp_calibration=None, temp_control=None, frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, data=None, errors=None, rex_val=None, rex_err=None):
         """Add relaxation data to the data nodes.
 
         Note that units of 1/s are actually rad/s in NMR.  This is the hidden radian unit, which if not present would mean that the units would be Hz.  For more details, see https://mail.gna.org/public/relax-users/2009-01/msg00000.html.
@@ -75,10 +75,8 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         @type assembly_atom_ids:            list of int
         @keyword entity_assembly_ids:       The entity assembly ID numbers.
         @type entity_assembly_ids:          list of int
-        @keyword entity_id:                 The entity ID number.
-        @type entity_id:                    int
-        @keyword entity_id:                 The entity ID number.
-        @type entity_id:                    int
+        @keyword entity_ids:                The entity ID numbers.
+        @type entity_ids:                   int
         @keyword res_nums:                  The residue number list.
         @type res_nums:                     list of int
         @keyword res_names:                 The residue name list.
@@ -124,7 +122,7 @@ class GeneralRelaxationSaveframe(RelaxSaveframe):
         self.details = translate(details)
 
         # Convert to lists and check the lengths.
-        for name in ['assembly_atom_ids', 'entity_assembly_ids', 'entity_id', 'res_nums', 'seq_id', 'res_names', 'atom_names', 'atom_types', 'isotope', 'data', 'errors', 'rex_val', 'rex_err']:
+        for name in ['assembly_atom_ids', 'entity_assembly_ids', 'entity_ids', 'res_nums', 'seq_id', 'res_names', 'atom_names', 'atom_types', 'isotope', 'data', 'errors', 'rex_val', 'rex_err']:
             # Get the object.
             obj = locals()[name]
 
@@ -357,7 +355,7 @@ class GeneralRelaxation(Rx):
             ['RxID',                    'data_ids'],
             ['AssemblyAtomID',          'assembly_atom_ids'],
             ['EntityAssemblyID',        'entity_assembly_ids'],
-            ['EntityID',                'entity_id'],
+            ['EntityID',                'entity_ids'],
             ['CompIndexID',             'res_nums'],
             ['SeqID',                   'seq_id'],
             ['CompID',                  'res_names'],

@@ -35,11 +35,13 @@ from bmrblib.pystarlib.TagTable import TagTable
 class HeteronuclNOESaveframe_v3_2(HeteronuclNOESaveframe_v3_1):
     """The v3.2 Heteronuclear NOE data saveframe class."""
 
-    def add(self, frq=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
+    def add(self, frq=None, entity_ids=None, res_nums=None, res_names=None, atom_names=None, isotope=None, data=None, errors=None, temp_calibration=None, temp_control=None):
         """Add relaxation data to the data nodes.
 
         @keyword frq:               The spectrometer proton frequency, in Hz.
         @type frq:                  float
+        @keyword entity_ids:        The entity ID numbers.
+        @type entity_ids:           int
         @keyword res_nums:          The residue number list.
         @type res_nums:             list of int
         @keyword res_names:         The residue name list.
@@ -69,7 +71,7 @@ class HeteronuclNOESaveframe_v3_2(HeteronuclNOESaveframe_v3_1):
         self.temp_control = translate(temp_control)
 
         # Execute the v3.1 add method.
-        HeteronuclNOESaveframe_v3_1.add(self, frq=frq, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
+        HeteronuclNOESaveframe_v3_1.add(self, frq=frq, entity_ids=entity_ids, res_nums=res_nums, res_names=res_names, atom_names=atom_names, isotope=isotope, data=data, errors=errors)
 
 
     def add_tag_categories(self):
