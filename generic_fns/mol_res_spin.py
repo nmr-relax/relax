@@ -514,10 +514,6 @@ def bmrb_write_entity(star, version=None):
     @type version:      str
     """
 
-    # Can't handle multiple molecules yet.
-    if count_molecules() > 1:
-        raise RelaxError("Multiple molecules are not yet supported.")
-
     # Get the molecule names.
     mol_names = get_molecule_names()
 
