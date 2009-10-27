@@ -37,7 +37,7 @@ class CitationsSaveframe(BaseSaveframe):
     """The citations saveframe class."""
 
     # Saveframe variables.
-    label = 'citations'
+    label = 'citation'
 
 
     def __init__(self, datanodes):
@@ -106,6 +106,7 @@ class CitationsSaveframe(BaseSaveframe):
         self.page_first = translate(page_first)
         self.page_last = translate(page_last)
         self.year = translate(year)
+        self.citation_label = translate(citation_label)
 
         # The author info.
         self.author_given_name = []
@@ -130,10 +131,12 @@ class CitationsSaveframe(BaseSaveframe):
         self.citation_num = self.citation_num + 1
         self.citation_id_num = [str(translate(self.citation_num))]
 
+        # Modify the citation label.
+        if self.citation_label == 'citation':
+            self.citation_label = 'citation ' + repr(self.citation_num)
+
         # Initialise the save frame.
-        if citation_label == 'citation':
-            citation_label = 'citation_' + repr(self.citation_num)
-        self.frame = SaveFrame(title=citation_label)
+        self.frame = SaveFrame(title=self.label)
 
         # Create the tag categories.
         self.citations.create()
@@ -163,6 +166,7 @@ class Citations(TagCategory):
 
         # All the tags.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[[self.label]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfFramecode']], tagvalues=[[self.sf.citation_label]]))
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['CitationID']], tagvalues=[[str(self.sf.citation_num)]]))
         #self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['CASAbstractCode']], tagvalues=[[self.sf.cas_abstract_code]]))
         #self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['MEDLINEUICode']], tagvalues=[[self.sf.medline_ui_code]]))
@@ -199,6 +203,7 @@ class Citations(TagCategory):
 
         # Tag names for the citations.
         self.tag_names['SfCategory'] =                  'Sf_category'
+        self.tag_names['SfFramecode'] =                 'Sf_framecode'
         self.tag_names['CitationID'] =                  'ID'
         self.tag_names['CASAbstractCode'] =             'CAS_abstract_code'
         self.tag_names['MEDLINEUICode'] =               'MEDLINE_UI_code'
