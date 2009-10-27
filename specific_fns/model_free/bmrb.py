@@ -257,7 +257,7 @@ class Bmrb:
         ######################################################
 
         # Generate the CSA saveframe.
-        star.chem_shift_anisotropy.add(res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, csa=csa_list)
+        star.chem_shift_anisotropy.add(entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, csa=csa_list)
 
 
         # Create Supergroup 6 : The kinetic data saveframes.
