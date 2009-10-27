@@ -273,5 +273,5 @@ class Vendor(TagCategory):
         # Tag names for the relaxation data.
         self.tag_names['Name'] = 'Name'
         self.tag_names['Address'] = 'Address'
-        self.tag_names['ElectronicAddress'] = 'ElectronicAddress'
+        self.tag_names['ElectronicAddress'] = 'Electronic_address'
         self.tag_names['SoftwareID'] = 'SoftwareID'
