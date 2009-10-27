@@ -31,7 +31,7 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns import molmol, relax_re
-from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, spin_loop
+from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, linear_ave, return_molecule, return_residue, return_spin, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.internal import Internal
 from generic_fns.structure.scientific import Scientific_data
@@ -59,7 +59,89 @@ def delete():
         if hasattr(spin, 'xh_vect'):
             del spin.xh_vect
 
-    
+
+def get_pos(spin_id=None, str_id=None, ave_pos=False):
+    """Load the spins from the structural object into the relax data store.
+
+    @keyword spin_id:           The molecule, residue, and spin identifier string.
+    @type spin_id:              str
+    @keyword str_id:            The structure identifier.  This can be the file name, model number,
+                                or structure number.
+    @type str_id:               int or str
+    @keyword ave_pos:           A flag specifying if the average atom position or the atom position
+                                from all loaded structures is loaded into the SpinContainer.
+    @type ave_pos:              bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
+        raise RelaxNoPdbError
+
+    # Loop over all atoms of the spin_id selection.
+    model_index = -1
+    last_model = None
+    for model_num, mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, model_num_flag=True, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+        # Update the model info.
+        if last_model != model_num:
+            model_index = model_index + 1
+            last_model = model_num
+
+        # Remove the '+' regular expression character from the mol, res, and spin names!
+        if mol_name and search('\+', mol_name):
+            mol_name = replace(mol_name, '+', '')
+        if res_name and search('\+', res_name):
+            res_name = replace(res_name, '+', '')
+        if atom_name and search('\+', atom_name):
+            atom_name = replace(atom_name, '+', '')
+
+        # The spin identification string.  The residue name and spin num is not included to allow molecules with point mutations to be used as different models.
+        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=None, spin_name=atom_name)
+
+        # Get the spin container.
+        spin_cont = return_spin(id)
+
+        # Skip the spin if it doesn't exist.
+        if spin_cont == None:
+            continue
+
+        # Add the position vector to the spin container.
+        if ave_pos:
+            spin_cont.pos = pos
+        else:
+            if not hasattr(spin_cont, 'pos'):
+                spin_cont.pos = []
+            spin_cont.pos.append(pos)
+
+    # Update pseudo-atoms.
+    for spin in spin_loop():
+        if hasattr(spin, 'members'):
+            # Get the spin positions.
+            positions = []
+            for atom in spin.members:
+                # Get the spin container.
+                subspin = return_spin(atom)
+
+                # Test that the spin exists.
+                if subspin == None:
+                    raise RelaxNoSpinError(atom)
+
+                # Test the position.
+                if not hasattr(subspin, 'pos') or not subspin.pos:
+                    raise RelaxError("Positional information is not available for the atom '%s'." % atom)
+
+                # Store the position.
+                positions.append([])
+                for i in range(len(subspin.pos)):
+                    positions[-1].append(subspin.pos[i].tolist())
+
+            # The averaging.
+            if spin.averaging == 'linear':
+                spin.pos = linear_ave(positions)
+
+
 def load_spins(spin_id=None, str_id=None, combine_models=True, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
 
@@ -200,7 +282,7 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     =======
 
     A number of parsers are available for reading PDB files.  These include:
-    
+
         - 'scientific', the Scientific Python PDB parser.
         - 'internal', a low quality yet fast PDB parser built into relax.
 
