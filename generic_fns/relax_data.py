@@ -244,6 +244,7 @@ def bmrb_write(star):
     res_name_list = []
     atom_name_list = []
     isotope_list = []
+    element_list = []
     relax_data_list = []
     relax_error_list = []
     for i in range(cdp.num_ri):
@@ -308,6 +309,7 @@ def bmrb_write(star):
 
         # Other info.
         isotope_list.append(int(string.strip(spin.heteronuc_type, string.ascii_letters)))
+        element_list.append(spin.element)
 
     # Convert the molecule names into the entity IDs.
     entity_ids = zeros(len(mol_name_list), int32)
@@ -340,7 +342,7 @@ def bmrb_write(star):
             raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
 
         # Add the relaxation data.
-        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
+        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
