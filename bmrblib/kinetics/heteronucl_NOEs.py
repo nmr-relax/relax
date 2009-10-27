@@ -128,7 +128,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.generate_data_ids(self.N)
 
         # The label.
-        self.label = 'heteronuclear NOE ' + repr(self.noe_inc)
+        self.sf_label = 'heteronuclear NOE ' + repr(self.noe_inc)
 
         # Set up the version specific variables.
         self.specific_setup()
@@ -164,7 +164,7 @@ class HeteronuclNOEList(HeteronuclRxList):
 
         # The save frame category.
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfFramecode']], tagvalues=[[self.sf.label]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfFramecode']], tagvalues=[[self.sf.sf_label]]))
 
         # NOE ID number.
         if 'HeteronuclNOEListID' in self.tag_names:
