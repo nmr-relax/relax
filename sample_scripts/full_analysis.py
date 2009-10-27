@@ -211,6 +211,9 @@ class Main:
         # Setup.
         self.relax = relax
 
+        # User variable checks.
+        self.check_vars()
+
 
         # MI - Local tm.
         ################
@@ -385,6 +388,94 @@ class Main:
 
         else:
             raise RelaxError("Unknown diffusion model, change the value of 'DIFF_MODEL'")
+
+
+    def check_vars(self):
+        """Check that the user has set the variables correctly."""
+
+        # The diff model.
+        valid_models = ['local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', 'final']
+        if DIFF_MODEL not in valid_models:
+            raise RelaxError("The DIFF_MODEL user variable '%s' is incorrectly set.  It must be one of %s." % (DIFF_MODEL, valid_models))
+
+        # Model-free models.
+        mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+        local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+        if not isinstance(MF_MODELS, list):
+            raise RelaxError("The MF_MODELS user variable must be a list.")
+        if not isinstance(LOCAL_TM_MODELS, list):
+            raise RelaxError("The LOCAL_TM_MODELS user variable must be a list.")
+        for i in range(len(MF_MODELS)):
+            if MF_MODELS[i] not in mf_models:
+                raise RelaxError("The MF_MODELS user variable '%s' is incorrectly set.  It must be one of %s." % (MF_MODELS, mf_models))
+        for i in range(len(LOCAL_TM_MODELS)):
+            if LOCAL_TM_MODELS[i] not in local_tm_models:
+                raise RelaxError("The LOCAL_TM_MODELS user variable '%s' is incorrectly set.  It must be one of %s." % (LOCAL_TM_MODELS, local_tm_models))
+
+        # PDB file.
+        if PDB_FILE and not isinstance(PDB_FILE, str):
+            raise RelaxError("The PDB_FILE user variable '%s' is incorrectly set.  It should either be a string or None." % PDB_FILE)
+
+        # Sequence data.
+        if not isinstance(SEQ_ARGS, list):
+            raise RelaxError("The SEQ_ARGS user variable '%s' must be a list." % SEQ_ARGS)
+        if len(SEQ_ARGS) != 8:
+            raise RelaxError("The SEQ_ARGS user variable '%s' must be a list with eight elements." % SEQ_ARGS)
+        if not isinstance(SEQ_ARGS[0], str):
+            raise RelaxError("The file name component of the SEQ_ARGS user variable '%s' must be a string." % SEQ_ARGS)
+        for i in range(1, 8):
+            if SEQ_ARGS[i] != None and not isinstance(SEQ_ARGS[i], int):
+                raise RelaxError("The column components of the SEQ_ARGS user variable '%s' must be either None or integers." % SEQ_ARGS)
+
+        # Atom name.
+        if not isinstance(HET_NAME, str):
+            raise RelaxError("The HET_NAME heteronucleus atom name user variable '%s' must be a string." % HET_NAME)
+
+        # Relaxation data.
+        if not isinstance(RELAX_DATA, list):
+            raise RelaxError("The RELAX_DATA user variable '%s' must be a list." % RELAX_DATA)
+        for i in range(len(RELAX_DATA)):
+            if len(RELAX_DATA[i]) != 13:
+                raise RelaxError("The RELAX_DATA user variable component '%s' must be a list of 13 elements." % RELAX_DATA[i])
+            if not isinstance(RELAX_DATA[i][0], str):
+                raise RelaxError("The data type component '%s' of the RELAX_DATA user variable must be a string." % RELAX_DATA[i][0])
+            if not isinstance(RELAX_DATA[i][1], str):
+                raise RelaxError("The frequency label component '%s' of the RELAX_DATA user variable must be a string." % RELAX_DATA[i][1])
+            if not isinstance(RELAX_DATA[i][2], float):
+                raise RelaxError("The frequency component '%s' of the RELAX_DATA user variable must be a floating point number." % RELAX_DATA[i][2])
+            if not isinstance(RELAX_DATA[i][3], str):
+                raise RelaxError("The file name component '%s' of the RELAX_DATA user variable must be a string." % RELAX_DATA[i][3])
+            for j in range(4, 13):
+                if RELAX_DATA[i][j] != None and not isinstance(RELAX_DATA[i][j], int):
+                    raise RelaxError("The column components of the RELAX_DATA user variable '%s' must be either None or integers." % RELAX_DATA[i])
+
+        # Unresolved and exclude files.
+        if UNRES and not isinstance(UNRES, str):
+            raise RelaxError("The UNRES user variable '%s' is incorrectly set.  It should either be a string or None." % UNRES)
+        if EXCLUDE and not isinstance(EXCLUDE, str):
+            raise RelaxError("The EXCLUDE user variable '%s' is incorrectly set.  It should either be a string or None." % EXCLUDE)
+
+        # Spin vars.
+        if not isinstance(BOND_LENGTH, float):
+            raise RelaxError("The BOND_LENGTH user variable '%s' is incorrectly set.  It should be a floating point number." % BOND_LENGTH)
+        if not isinstance(CSA, float):
+            raise RelaxError("The CSA user variable '%s' is incorrectly set.  It should be a floating point number." % CSA)
+        if not isinstance(HETNUC, str):
+            raise RelaxError("The HETNUC user variable '%s' is incorrectly set.  It should be a string." % HETNUC)
+        if not isinstance(PROTON, str):
+            raise RelaxError("The PROTON user variable '%s' is incorrectly set.  It should be a string." % PROTON)
+
+        # Min vars.
+        if not isinstance(GRID_INC, int):
+            raise RelaxError("The GRID_INC user variable '%s' is incorrectly set.  It should be an integer." % GRID_INC)
+        if not isinstance(MIN_ALGOR, str):
+            raise RelaxError("The MIN_ALGOR user variable '%s' is incorrectly set.  It should be a string." % MIN_ALGOR)
+        if not isinstance(MC_NUM, int):
+            raise RelaxError("The MC_NUM user variable '%s' is incorrectly set.  It should be an integer." % MC_NUM)
+
+        # Looping.
+        if not isinstance(CONV_LOOP, bool):
+            raise RelaxError("The CONV_LOOP user variable '%s' is incorrectly set.  It should be one of the booleans True or False." % CONV_LOOP)
 
 
     def convergence(self):

@@ -730,7 +730,7 @@ class Frame_order(Common_functions):
                     # Set the default bounds.
                     if default_bounds:
                         lower.append(0.0)
-                        upper.append(pi * (1.0 - 1.0/incs[i]))
+                        upper.append(pi)
 
             # Get the grid row.
             if not row:
