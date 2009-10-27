@@ -105,7 +105,7 @@ class HeteronuclNOEList_v3_2(HeteronuclNOEList_v3_1):
 
         # The save frame category.
         self.sf.frame.tagtables.append(self.create_tag_table([['SfCategory', 'cat_name']], free=True))
-        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfFramecode']], tagvalues=[[self.sf.label]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfFramecode']], tagvalues=[[self.sf.sf_label]]))
 
         # NOE ID number.
         if 'HeteronuclNOEListID' in self.tag_names:
