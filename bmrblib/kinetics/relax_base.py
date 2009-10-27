@@ -142,8 +142,14 @@ class Rx(TagCategory):
         # Convert the residue numbers to ints and the values and errors to floats.
         for i in range(len(res_nums)):
             res_nums[i] = int(res_nums[i])
-            values[i] = float(values[i])
-            errors[i] = float(errors[i])
+            if values[i] == '?':
+                values[i] = None
+            else:
+                values[i] = float(values[i])
+            if errors[i] == '?':
+                errors[i] = None
+            else:
+                errors[i] = float(errors[i])
 
         # Return the data.
         return res_nums, res_names, atom_names, values, errors
