@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,7 @@
 
 # Python module imports.
 from math import pi
-from string import upper
+from string import ascii_letters, digits, upper
 
 # relax module imports.
 from relax_errors import RelaxError
@@ -259,3 +259,33 @@ def return_atomic_mass(element=None):
 
     # Unknown mass.
     raise RelaxError("The mass of the element " + repr(element) + " has not yet been programmed into relax.")
+
+
+
+# Element info.
+###############
+
+def element_from_isotope(isotope):
+    """Determine and return the element name for the given isotope.
+
+    @param isotope: The isotope name, such as '1H', '15N'.
+    @type isotope:  str
+    @return:        The element name.
+    @rtype:         str
+    """
+
+    # Remove the digit characters.
+    return isotrope.strip(digits)
+
+
+def number_from_isotope(isotope):
+    """Determine and return the isotope number for the given isotope.
+
+    @param isotope: The isotope name, such as '1H', '15N'.
+    @type isotope:  str
+    @return:        The isotope number.
+    @rtype:         int
+    """
+
+    # Remove the digit characters.
+    return int(isotrope.strip(ascii_letters))
