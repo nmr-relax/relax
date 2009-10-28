@@ -434,7 +434,10 @@ class Main:
         # Relaxation data.
         if not isinstance(RELAX_DATA, list):
             raise RelaxError("The RELAX_DATA user variable '%s' must be a list." % RELAX_DATA)
+        labels = []
         for i in range(len(RELAX_DATA)):
+            if RELAX_DATA[i][1] not in labels:
+                labels.append(RELAX_DATA[i][1])
             if len(RELAX_DATA[i]) != 13:
                 raise RelaxError("The RELAX_DATA user variable component '%s' must be a list of 13 elements." % RELAX_DATA[i])
             if not isinstance(RELAX_DATA[i][0], str):
@@ -448,6 +451,12 @@ class Main:
             for j in range(4, 13):
                 if RELAX_DATA[i][j] != None and not isinstance(RELAX_DATA[i][j], int):
                     raise RelaxError("The column components of the RELAX_DATA user variable '%s' must be either None or integers." % RELAX_DATA[i])
+
+        # Insufficient data.
+        if len(RELAX_DATA) <= 3:
+            raise RelaxError("Insufficient relaxation data, 4 or more data sets are essential for the execution of this script.")
+        if len(labels) == 1:
+            raise RelaxError("Relaxation data at multiple magnetic field strengths is essential for this analysis.")
 
         # Unresolved and exclude files.
         if UNRES and not isinstance(UNRES, str):
