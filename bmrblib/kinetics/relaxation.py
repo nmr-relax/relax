@@ -312,7 +312,7 @@ class Relaxation_v3_2(Relaxation_v3_1):
                                      entity_assembly_ids_2=entity_assembly_ids_2,
                                      entity_ids_2=entity_ids_2,
                                      res_nums_2=res_nums_2,
-                                     seq_id_2=res_nums_2,
+                                     seq_id_2=seq_id_2,
                                      res_names_2=res_names_2,
                                      atom_names_2=atom_names_2,
                                      atom_types_2=atom_types_2,
