@@ -57,24 +57,47 @@ class EntitySaveframe:
         self.add_tag_categories()
 
 
-    def add(self, mol_name=None, mol_type='polymer', res_nums=None, res_names=None, atom_names=None):
+    def add(self, mol_name=None, mol_type='polymer', polymer_type='polypeptide(L)', polymer_seq_code=None, thiol_state='all free', res_nums=None, res_names=None, atom_names=None):
         """Add relaxation data to the data nodes.
 
-        @keyword mol_name:      The molecule name.
-        @type mol_name:         str
-        @keyword mol_type:      The molecule type.
-        @type mol_type:         str
-        @keyword res_nums:      The residue number list.
-        @type res_nums:         list of int
-        @keyword res_names:     The residue name list.
-        @type res_names:        list of str
-        @keyword atom_names:    The atom name list.
-        @type atom_names:       list of str
+        @keyword mol_name:          The molecule name.
+        @type mol_name:             str
+        @keyword mol_type:          The molecule type.
+        @type mol_type:             str
+        @keyword polymer_type:      The type of polymer.  This is only allowed to be one of 'DNA/RNA hybrid', 'polydeoxyribonucleotide', 'polypeptide(D)', 'polypeptide(L)', 'polyribonucleotide', 'polysaccharide(D)', 'polysaccharide(L)'.
+        @type polymer_type:         str
+        @keyword polymer_seq_code:  The complete sequence of a protein or nucleic acid as it existed in the NMR tube expressed using the one-letter code for standard residues and an X for non-standard residues. Include residues for cloning tags, etc. and for all residues even when experimental data are not reported.  For example, 'HHHHHHAFGCRESWQAKCLPHNMVIXSDF'.
+        @type polymer_seq_code:     str
+        @keyword thiol_state:       The state of the thiol groups in the entity.  Can be one of 'all disulfide bound', 'all free', 'all other bound', 'disulfide and other bound', 'free and disulfide bound', 'free and other bound', 'free disulfide and other bound', 'not available', 'not present', 'not reported', 'unknown'.
+        @type thiol_state:          str
+        @keyword res_nums:          The residue number list.
+        @type res_nums:             list of int
+        @keyword res_names:         The residue name list.
+        @type res_names:            list of str
+        @keyword atom_names:        The atom name list.
+        @type atom_names:           list of str
         """
+
+        # Check the polymer type.
+        allowed = ['DNA/RNA hybrid', 'polydeoxyribonucleotide', 'polypeptide(D)', 'polypeptide(L)', 'polyribonucleotide', 'polysaccharide(D)', 'polysaccharide(L)']
+        if polymer_type not in allowed:
+            raise NameError("The polymer type '%s' should be one of %s." % (polymer_type, allowed))
+        allowed = ['all disulfide bound', 'all free', 'all other bound', 'disulfide and other bound', 'free and disulfide bound', 'free and other bound', 'free disulfide and other bound', 'not available', 'not present', 'not reported', 'unknown']
+
+        # Check the polymer one letter code sequence.
+        if not isinstance(polymer_seq_code, str):
+            raise NameError("The polymer one letter code sequence '%s' should be a string." % polymer_seq_code)
+
+        # Check the thiol state.
+        if thiol_state not in allowed:
+            raise NameError("The thiol state '%s' should be one of %s." % (thiol_state, allowed))
 
         # Place the args into the namespace.
         self.mol_name = mol_name
         self.mol_type = mol_type
+        self.polymer_type = polymer_type
+        self.polymer_seq_code = polymer_seq_code
+        self.thiol_state = thiol_state
         self.res_names = translate(res_names)
         self.res_nums = translate(res_nums)
         self.atom_names = translate(atom_names)
@@ -144,17 +167,14 @@ class Entity(TagCategory):
     def create(self):
         """Create the Entity tag category."""
 
-        # The save frame category.
+        # The entity tags.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['SfCategory']], tagvalues=[['entity']]))
-
-        # The entity ID.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['EntityID']], tagvalues=[[str(self.sf.entity_num)]]))
-
-        # The entity name.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['Name']], tagvalues=[[self.sf.mol_name]]))
-
-        # The entity type.
         self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['Type']], tagvalues=[[self.sf.mol_type]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['PolymerType']], tagvalues=[[self.sf.polymer_type]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['PolymerSeqOneLetterCode']], tagvalues=[[self.sf.polymer_seq_code]]))
+        self.sf.frame.tagtables.append(TagTable(free=True, tagnames=[self.tag_names_full['ThiolState']], tagvalues=[[self.sf.thiol_state]]))
 
 
     def read(self, tagtable):
@@ -191,6 +211,9 @@ class Entity(TagCategory):
         self.tag_names['EntityID'] = 'ID'
         self.tag_names['Name'] = 'Name'
         self.tag_names['Type'] = 'Type'
+        self.tag_names['PolymerType'] = 'Polymer_type'
+        self.tag_names['PolymerSeqOneLetterCode'] = 'Polymer_seq_one_letter_code'
+        self.tag_names['ThiolState'] = 'Thiol_state'
 
 
 class EntityCompIndex(TagCategory):
