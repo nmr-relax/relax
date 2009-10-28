@@ -36,6 +36,7 @@ from data.exp_info import ExpInfo
 from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
+from physical_constants import element_from_isotope, number_from_isotope
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from relax_io import read_spin_data
 from relax_warnings import RelaxWarning
@@ -245,6 +246,9 @@ def bmrb_write(star):
     atom_name_list = []
     isotope_list = []
     element_list = []
+    attached_atom_name_list = []
+    attached_isotope_list = []
+    attached_element_list = []
     relax_data_list = []
     relax_error_list = []
     for i in range(cdp.num_ri):
@@ -281,6 +285,11 @@ def bmrb_write(star):
         res_num_list.append(str(res_num))
         res_name_list.append(str(res_name))
         atom_name_list.append(str(spin.name))
+
+        # The attached atom info.
+        attached_atom_name_list.append(str(spin.attached_atom))
+        attached_element_list.append(element_from_isotope(spin.proton_type))
+        attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
 
         # The relaxation data.
         used_index = -ones(spin.num_ri)
@@ -342,7 +351,7 @@ def bmrb_write(star):
             raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
 
         # Add the relaxation data.
-        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
+        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
