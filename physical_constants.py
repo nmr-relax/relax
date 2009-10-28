@@ -275,7 +275,7 @@ def element_from_isotope(isotope):
     """
 
     # Remove the digit characters.
-    return isotrope.strip(digits)
+    return isotope.strip(digits)
 
 
 def number_from_isotope(isotope):
@@ -288,4 +288,4 @@ def number_from_isotope(isotope):
     """
 
     # Remove the digit characters.
-    return int(isotrope.strip(ascii_letters))
+    return int(isotope.strip(ascii_letters))
