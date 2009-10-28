@@ -82,13 +82,13 @@ class EntitySaveframe:
         allowed = ['DNA/RNA hybrid', 'polydeoxyribonucleotide', 'polypeptide(D)', 'polypeptide(L)', 'polyribonucleotide', 'polysaccharide(D)', 'polysaccharide(L)']
         if polymer_type not in allowed:
             raise NameError("The polymer type '%s' should be one of %s." % (polymer_type, allowed))
-        allowed = ['all disulfide bound', 'all free', 'all other bound', 'disulfide and other bound', 'free and disulfide bound', 'free and other bound', 'free disulfide and other bound', 'not available', 'not present', 'not reported', 'unknown']
 
         # Check the polymer one letter code sequence.
         if not isinstance(polymer_seq_code, str):
             raise NameError("The polymer one letter code sequence '%s' should be a string." % polymer_seq_code)
 
         # Check the thiol state.
+        allowed = ['all disulfide bound', 'all free', 'all other bound', 'disulfide and other bound', 'free and disulfide bound', 'free and other bound', 'free disulfide and other bound', 'not available', 'not present', 'not reported', 'unknown']
         if thiol_state not in allowed:
             raise NameError("The thiol state '%s' should be one of %s." % (thiol_state, allowed))
 
