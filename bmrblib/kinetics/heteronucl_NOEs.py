@@ -58,7 +58,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.add_tag_categories()
 
 
-    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, data=None, errors=None):
+    def add(self, sample_cond_list_id=None, sample_cond_list_label='$conditions_1', frq=None, details=None, assembly_atom_ids=None, entity_assembly_ids=None, entity_ids=None, res_nums=None, seq_id=None, res_names=None, atom_names=None, atom_types=None, isotope=None, assembly_atom_ids_2=None, entity_assembly_ids_2=None, entity_ids_2=None, res_nums_2=None, seq_id_2=None, res_names_2=None, atom_names_2=None, atom_types_2=None, isotope_2=None, data=None, errors=None):
         """Add relaxation data to the data nodes.
 
         @keyword sample_cond_list_id:       The sample conditions list ID number.
@@ -85,6 +85,22 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         @type atom_types:                   list of str
         @keyword isotope:                   The isotope type list, ie 15 for '15N'.
         @type isotope:                      list of int
+        @keyword assembly_atom_ids_2:       The assembly atom ID numbers.  This is for the second atom used in the heteronuclear NOE.
+        @type assembly_atom_ids_2:          list of int
+        @keyword entity_assembly_ids_2:     The entity assembly ID numbers.  This is for the second atom used in the heteronuclear NOE.
+        @type entity_assembly_ids_2:        list of int
+        @keyword entity_ids_2:              The entity ID numbers.  This is for the second atom used in the heteronuclear NOE.
+        @type entity_ids_2:                 int
+        @keyword res_nums_2:                The residue number list.  This is for the second atom used in the heteronuclear NOE.
+        @type res_nums_2:                   list of int
+        @keyword res_names_2:               The residue name list.  This is for the second atom used in the heteronuclear NOE.
+        @type res_names_2:                  list of str
+        @keyword atom_names_2:              The atom name list.  This is for the second atom used in the heteronuclear NOE.
+        @type atom_names_2:                 list of str
+        @keyword atom_types_2:              The atom types as IUPAC element abbreviations.  This is for the second atom used in the heteronuclear NOE.
+        @type atom_types_2:                 list of str
+        @keyword isotope_2:                 The isotope type list, ie 1 for '1H'.  This is for the second atom used in the heteronuclear NOE.
+        @type isotope_2:                    list of int
         @keyword data:                      The relaxation data.
         @type data:                         list of float
         @keyword errors:                    The errors associated with the relaxation data.
@@ -107,7 +123,7 @@ class HeteronuclNOESaveframe(RelaxSaveframe):
         self.details = translate(details)
 
         # Convert to lists and check the lengths.
-        for name in ['assembly_atom_ids', 'entity_assembly_ids', 'entity_ids', 'res_nums', 'seq_id', 'res_names', 'atom_names', 'atom_types', 'isotope', 'data', 'errors']:
+        for name in ['assembly_atom_ids', 'entity_assembly_ids', 'entity_ids', 'res_nums', 'seq_id', 'res_names', 'atom_names', 'atom_types', 'isotope', 'assembly_atom_ids_2', 'entity_assembly_ids_2', 'entity_ids_2', 'res_nums_2', 'seq_id_2', 'res_names_2', 'atom_names_2', 'atom_types_2', 'isotope_2', 'data', 'errors']:
             # Get the object.
             obj = locals()[name]
 

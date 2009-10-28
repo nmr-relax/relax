@@ -91,6 +91,42 @@ class HeteronuclNOESoftware_v3_1(HeteronuclNOESoftware):
 class HeteronuclNOE_v3_1(HeteronuclNOE):
     """v3.1 HeteronuclNOE tag category."""
 
+    def create(self):
+        """Create the HeteronuclNOE tag category."""
+
+        # Keys and objects.
+        info = [
+            ['RxID',                'data_ids'],
+            ['AssemblyAtomID',      'assembly_atom_ids'],
+            ['EntityAssemblyID',    'entity_assembly_ids'],
+            ['EntityID',            'entity_ids'],
+            ['CompIndexID',         'res_nums'],
+            ['SeqID',               'seq_id'],
+            ['CompID',              'res_names'],
+            ['AtomID',              'atom_names'],
+            ['AtomType',            'atom_types'],
+            ['AtomIsotopeNumber',   'isotope'],
+            ['AssemblyAtomID2',     'assembly_atom_ids_2'],
+            ['EntityAssemblyID2',   'entity_assembly_ids_2'],
+            ['EntityID2',           'entity_ids_2'],
+            ['CompIndexID2',        'res_nums_2'],
+            ['SeqID2',              'seq_id_2'],
+            ['CompID2',             'res_names_2'],
+            ['AtomID2',             'atom_names_2'],
+            ['AtomType2',           'atom_types_2'],
+            ['AtomIsotopeNumber2',  'isotope_2'],
+            ['Val',                 'data'],
+            ['ValErr',              'errors'],
+            ['HeteronuclRxListID',  'rx_inc_list']
+        ]
+
+        # Get the TabTable.
+        table = self.create_tag_table(info)
+
+        # Add the tagtable to the save frame.
+        self.sf.frame.tagtables.append(table)
+
+
     def tag_setup(self, tag_category_label=None, sep=None):
         """Replacement method for setting up the tag names.
 
@@ -105,8 +141,23 @@ class HeteronuclNOE_v3_1(HeteronuclNOE):
 
         # Tag names for the relaxation data.
         self.tag_names['RxID'] = 'ID'
-        self.tag_names['CompIndexID'] = 'Comp_index_ID'
-        self.tag_names['CompID'] = 'Comp_ID'
-        self.tag_names['AtomID'] = 'Atom_ID'
+        self.tag_names['AssemblyAtomID'] = 'Assembly_atom_ID_1'
+        self.tag_names['EntityAssemblyID'] = 'Entity_assembly_ID_1'
+        self.tag_names['EntityID'] = 'Entity_ID_1'
+        self.tag_names['CompIndexID'] = 'Comp_index_ID_1'
+        self.tag_names['SeqID'] = 'Seq_ID_1'
+        self.tag_names['CompID'] = 'Comp_ID_1'
+        self.tag_names['AtomID'] = 'Atom_ID_1'
+        self.tag_names['AtomType'] = 'Atom_type_1'
+        self.tag_names['AtomIsotopeNumber'] = 'Atom_isotope_number_1'
+        self.tag_names['AssemblyAtomID2'] = 'Assembly_atom_ID_2'
+        self.tag_names['EntityAssemblyID2'] = 'Entity_assembly_ID_2'
+        self.tag_names['EntityID2'] = 'Entity_ID_2'
+        self.tag_names['CompIndexID2'] = 'Comp_index_ID_2'
+        self.tag_names['SeqID2'] = 'Seq_ID_2'
+        self.tag_names['CompID2'] = 'Comp_ID_2'
+        self.tag_names['AtomID2'] = 'Atom_ID_2'
+        self.tag_names['AtomType2'] = 'Atom_type_2'
+        self.tag_names['AtomIsotopeNumber2'] = 'Atom_isotope_number_2'
         self.tag_names['Val'] = 'Val'
         self.tag_names['ValErr'] = 'Val_err'
