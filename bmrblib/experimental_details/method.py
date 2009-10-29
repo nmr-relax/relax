@@ -216,7 +216,7 @@ class MethodFile(TagCategory):
         ]
 
         # Get the TabTable.
-        table = self.create_tag_table(info)
+        table = self.create_tag_table(info, free=True)
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
@@ -256,7 +256,7 @@ class MethodParam(TagCategory):
         ]
 
         # Get the TabTable.
-        table = self.create_tag_table(info)
+        table = self.create_tag_table(info, free=True)
 
         # Add the tagtable to the save frame.
         self.sf.frame.tagtables.append(table)
