@@ -371,7 +371,7 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
         cdp.exp_info.add_citation(cite_id=id, authors=CITE[key].authors, doi=CITE[key].doi, pubmed_id=CITE[key].pubmed_id, full_citation=CITE[key].full_citation, title=CITE[key].title, status=CITE[key].status, type=CITE[key].type, journal_abbrev=CITE[key].journal_abbrev, journal_full=CITE[key].journal_full, volume=CITE[key].volume, page_first=CITE[key].page_first, page_last=CITE[key].page_last, year=CITE[key].year)
 
     # Place the data in the container.
-    cdp.exp_info.setup_script(file=file, dir=dir, text=text, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
+    cdp.exp_info.setup_script(file=file, dir=dir, text=text, cite_ids=cite_id, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
 
 
 def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
