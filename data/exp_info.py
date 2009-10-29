@@ -306,3 +306,18 @@ class ExpInfo(Element):
 
         # Append the container.
         self.temp_control.append(temp_control)
+
+
+    def setup_thiol(self, state):
+        """Set up the thiol state of the system.
+
+        @param thiol_state:     The thiol state of the molecule.
+        @type thiol_state:      str
+        """
+
+        # Check.
+        if hasattr(self, "thiol_state"):
+            raise RelaxError("The thiol state has already been specified")
+
+        # Set the attribute.
+        self.thiol_state = state

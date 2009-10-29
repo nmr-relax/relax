@@ -335,6 +335,57 @@ class BMRB(User_fn_class):
         exp_info.software_select(name=name, version=version)
 
 
+    def thiol_state(self, state='reduced'):
+        """Select the thiol state of the system.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        state:  The thiol state.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        The thiol state can be any text, thought the BMRB suggests the following:
+
+            'all disulfide bound',
+            'all free',
+            'all other bound',
+            'disulfide and other bound',
+            'free and disulfide bound',
+            'free and other bound',
+            'free disulfide and other bound',
+            'not available',
+            'not present',
+            'not reported',
+            'unknown'.
+
+        Alternatively the pure states 'reduced' or 'oxidised' could be specified.
+
+
+        Examples
+        ~~~~~~~~
+
+        For BMRB deposition, to say that the protein studied is in the oxidised state, tyype one of:
+
+        relax> bmrb.thiol_state('oxidised')
+        relax> bmrb.thiol_state(state='oxidised')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "bmrb.thiol_state("
+            text = text + "state=" + repr(state) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str(state, 'thiol state')
+
+        # Execute the functional code.
+        exp_info.thiol_state(state=state)
+
+
     def write(self, file=None, dir='pipe_name', version='3.1', force=False):
         """Write the results to a BMRB NMR-STAR formatted file.
 

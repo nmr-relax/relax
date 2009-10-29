@@ -259,3 +259,18 @@ def software_select(name, version=None):
 
         # Add the software info.
         cdp.exp_info.software_setup(name=SPARKY_NAME, version=version, vendor_name=SPARKY_AUTHORS, url=SPARKY_URL, cite_ids=['sparky_ref'], tasks=SPARKY_TASKS)
+
+
+def thiol_state(state=None):
+    """Set the thiol state of the system.
+
+    @keyword state:         The thiol state of the molecule.
+    @type state:            str
+    """
+
+    # Set up the experimental info data container, if needed.
+    if not hasattr(cdp, 'exp_info'):
+        cdp.exp_info = ExpInfo()
+
+    # Place the data in the container.
+    cdp.exp_info.setup_thiol(state=state)
