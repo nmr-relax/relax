@@ -287,7 +287,10 @@ def bmrb_write(star):
         atom_name_list.append(str(spin.name))
 
         # The attached atom info.
-        attached_atom_name_list.append(str(spin.attached_atom))
+        if hasattr(spin, 'attached_atom'):
+            attached_atom_name_list.append(str(spin.attached_atom))
+        else:
+            attached_atom_name_list.append(str(spin.attached_proton))
         attached_element_list.append(element_from_isotope(spin.proton_type))
         attached_isotope_list.append(str(number_from_isotope(spin.proton_type)))
 
