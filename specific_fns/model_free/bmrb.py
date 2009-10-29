@@ -249,6 +249,9 @@ class Bmrb:
         # Create Supergroup 4:  The experimental descriptions saveframes.
         #################################################################
 
+        # Generate the method saveframes.
+        exp_info.bmrb_write_methods(star)
+
         # Generate the software saveframe.
         software_ids, software_labels = exp_info.bmrb_write_software(star)
 

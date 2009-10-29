@@ -113,6 +113,28 @@ def bmrb_write_citations(star):
             star.citations.add(citation_label=citations.cite_id, authors=citations.authors, doi=citations.doi, pubmed_id=citations.pubmed_id, full_citation=citations.full_citation, title=citations.title, status=citations.status, type=citations.type, journal_abbrev=citations.journal_abbrev, journal_full=citations.journal_full, volume=citations.volume, issue=citations.issue, page_first=citations.page_first, page_last=citations.page_last, year=citations.year)
 
 
+def bmrb_write_methods(star):
+    """Generate the Software saveframe records.
+
+    @param star:        The NMR-STAR dictionary object.
+    @type star:         NMR_STAR instance
+    @return:            A list BMRB software IDs and a list of software labels.
+    @rtype:             tuple of list of int and list of str
+    """
+
+    # The scripts.
+    if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'scripts'):
+        for script in cdp.exp_info.scripts:
+            # Get the citation ID numbers.
+            cite_id_nums = []
+            if script.cite_ids:
+                for cite in script.cite_ids:
+                    cite_id_nums.append(cdp.exp_info.get_cite_id_num(cite))
+
+            # The method info.
+            star.method.add(name=script.file, details=None, cite_ids=cite_id_nums, file_name=script.file, file_text=script.text)
+
+
 def bmrb_write_software(star):
     """Generate the Software saveframe records.
 
