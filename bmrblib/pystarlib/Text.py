@@ -202,7 +202,7 @@ def pattern_unquoted_find(text, pattern, pos=0):
             
         # Not the one
         if line[0] == ';': 
-            if verbosity > 1:
+            if verbosity > 9:
                 print('WARNING: (1) found pattern: [%s] preceded by: [%s]' % (
                     pattern.pattern, line ))
             pos = pos + 1
