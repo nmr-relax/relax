@@ -74,13 +74,24 @@ class MethodSaveframe(BaseSaveframe):
 
         # Check that nothing is missing.
         no_missing(name, 'method name')
+        no_missing(file_name, 'file name')
+        no_missing(file_text, 'file text')
 
         # Check.
         if not isinstance(cite_ids, list):
             raise NameError, "The cite_ids argument '%s' should be a list." % cite_ids
 
         # Place the args into the namespace.
+        self.method_name = name
+        self.details = translate(details)
         self.cite_ids = translate(cite_ids)
+        self.file_name = translate(file_name)
+        self.file_text = translate(file_text)
+        self.param_file_name = translate(param_file_name)
+        self.param_file_text = translate(param_file_text)
+
+        # The text format.
+        self.text_format = '?'
 
         # Increment the ID number.
         self.method_num = self.method_num + 1
@@ -152,6 +163,10 @@ class MethodCitation(TagCategory):
     def create(self):
         """Create the Method tag category."""
 
+        # Skip this tag category if no citations are present.
+        if not self.sf.cite_ids:
+            return
+
         # Keys and objects.
         info = [
             ['CitationID',      'cite_ids'],
@@ -195,7 +210,8 @@ class MethodFile(TagCategory):
         # Keys and objects.
         info = [
             ['Name',                'file_name'],
-            ['Text',                'text'],
+            ['TextFormat',          'text_format'],
+            ['Text',                'file_text'],
             ['MethodID',            'method_id_num']
         ]
 
@@ -219,9 +235,10 @@ class MethodFile(TagCategory):
         TagCategory.tag_setup(self, tag_category_label='Method_file', sep=sep)
 
         # Tag names for the relaxation data.
-        self.tag_names['Name'] = 'Name'
-        self.tag_names['Text'] = 'Text'
-        self.tag_names['MethodID'] = 'Method_ID'
+        self.tag_names['Name'] =        'Name'
+        self.tag_names['TextFormat'] =  'Text_format'
+        self.tag_names['Text'] =        'Text'
+        self.tag_names['MethodID'] =    'Method_ID'
 
 
 class MethodParam(TagCategory):
