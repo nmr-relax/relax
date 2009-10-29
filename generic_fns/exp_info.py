@@ -372,7 +372,7 @@ def software_select(name, version=None):
             cdp.exp_info.add_citation(cite_id=cite_ids[i][j], authors=CITE[keys[i][j]].cite_authors, doi=CITE[keys[i][j]].cite_doi, pubmed_id=CITE[keys[i][j]].cite_pubmed_id, full_citation=CITE[keys[i][j]].cite_full_citation, title=CITE[keys[i][j]].cite_title, status=CITE[keys[i][j]].cite_status, type=CITE[keys[i][j]].cite_type, journal_abbrev=CITE[keys[i][j]].cite_journal_abbrev, journal_full=CITE[keys[i][j]].cite_journal_full, volume=CITE[keys[i][j]].cite_volume, page_first=CITE[keys[i][j]].cite_page_first, page_last=CITE[keys[i][j]].cite_page_last, year=CITE[keys[i][j]].cite_year)
 
         # Add the software info.
-        cdp.exp_info.software_setup(name=CITE[keys[i][0]].name, version=versions, vendor_name=CITE[keys[i][0]].authors, url=CITE[keys[i][0]].url, cite_ids=cite_ids, tasks=CITE[keys[i][0]].tasks)
+        cdp.exp_info.software_setup(name=CITE[keys[i][0]].name, version=versions[i], vendor_name=CITE[keys[i][0]].authors, url=CITE[keys[i][0]].url, cite_ids=cite_ids, tasks=CITE[keys[i][0]].tasks)
 
 
 def thiol_state(state=None):
