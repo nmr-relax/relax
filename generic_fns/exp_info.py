@@ -69,13 +69,14 @@ class Software_store:
 CITE = {}
 SOFTWARE = {}
 
-# relax.
+# relax software.
 SOFTWARE['relax'] = Software_store()
 SOFTWARE['relax'].name = "relax"
 SOFTWARE['relax'].authors = "The relax development team"
 SOFTWARE['relax'].url = "http://nmr-relax.com"
 SOFTWARE['relax'].tasks = ["data processing"]
 
+# relax citation 1.
 CITE['relax 1'] = Cite_store()
 CITE['relax 1'].authors = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
 CITE['relax 1'].doi = "10.1007/s10858-007-9214-2"
@@ -92,6 +93,7 @@ CITE['relax 1'].page_first = 107
 CITE['relax 1'].page_last = 119
 CITE['relax 1'].year = 2008
 
+# relax citation 2.
 CITE['relax 2'] = Cite_store()
 CITE['relax 2'].authors = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
 CITE['relax 2'].doi = "10.1007/s10858-007-9213-3"
@@ -108,13 +110,12 @@ CITE['relax 2'].page_first = 121
 CITE['relax 2'].page_last = 133
 CITE['relax 2'].year = 2008
 
-# NMRPipe citation.
+# NMRPipe software and citation.
 SOFTWARE['NMRPipe'] = Software_store()
 SOFTWARE['NMRPipe'].name = "NMRPipe"
 SOFTWARE['NMRPipe'].authors = "Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A"
 SOFTWARE['NMRPipe'].url = "http://spin.niddk.nih.gov/NMRPipe/"
 SOFTWARE['NMRPipe'].tasks = ["processing"]
-
 CITE['NMRPipe'] = Cite_store()
 CITE['NMRPipe'].authors = [["Frank", "Delaglio", "F.", None], ["Stephan", "Grzesiek", "S.", None], ["Geerten", "Vuister", "G.", "W."], ["Guang", "Zhu", "G.", None], ["John", "Pfeifer", "J.", None], ["Ad", "Bax", "A.", None]]
 CITE['NMRPipe'].doi = "10.1007/BF00197809"
@@ -130,14 +131,13 @@ CITE['NMRPipe'].page_first = 277
 CITE['NMRPipe'].page_last = 293
 CITE['NMRPipe'].year = 1995
 
-# Sparky citation.
+# Sparky software and citation.
 SOFTWARE['Sparky'] = Software_store()
 SOFTWARE['Sparky'].name = "Sparky"
 SOFTWARE['Sparky'].authors = "Goddard, T. D. and Kneller, D. G."
 SOFTWARE['Sparky'].ref = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
 SOFTWARE['Sparky'].url = "http://www.cgl.ucsf.edu/home/sparky/"
 SOFTWARE['Sparky'].tasks = ["spectral analysis"]
-
 CITE['Sparky'] = Cite_store()
 CITE['Sparky'].authors = [["Tom", "Goddard", "T.", "D."], ["Donald", "Kneller", "D.", "G."]]
 CITE['Sparky'].full_citation = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
@@ -145,6 +145,53 @@ CITE['Sparky'].title = "Sparky."
 CITE['Sparky'].status = "unpublished"
 CITE['Sparky'].type = "internet"
 
+# Model-free model selection citation.
+CITE['Mf model selection'] = Cite_store()
+CITE['Mf model selection'].authors =           [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
+CITE['Mf model selection'].doi =               "10.1023/A:1021902006114"
+CITE['Mf model selection'].pubmed_id =         "12566997"
+CITE['Mf model selection'].full_citation =     "d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39."
+CITE['Mf model selection'].title =             "The use of model selection in the model-free analysis of protein dynamics."
+CITE['Mf model selection'].status =            "published"
+CITE['Mf model selection'].type =              "journal"
+CITE['Mf model selection'].journal_abbrev =    "J. Biomol. NMR"
+CITE['Mf model selection'].journal_full =      "Journal of Biomolecular NMR"
+CITE['Mf model selection'].volume =            25
+CITE['Mf model selection'].page_first =        25
+CITE['Mf model selection'].page_last =         39
+CITE['Mf model selection'].year =              2003
+
+# Model-free model elimination citation.
+CITE['Mf model elimination'] = Cite_store()
+CITE['Mf model elimination'].authors =           [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
+CITE['Mf model elimination'].doi =               "10.1007/s10858-006-9007-z"
+CITE['Mf model elimination'].pubmed_id =         "16791734"
+CITE['Mf model elimination'].full_citation =     "d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135."
+CITE['Mf model elimination'].title =             "Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data."
+CITE['Mf model elimination'].status =            "published"
+CITE['Mf model elimination'].type =              "journal"
+CITE['Mf model elimination'].journal_abbrev =    "J. Biomol. NMR"
+CITE['Mf model elimination'].journal_full =      "Journal of Biomolecular NMR"
+CITE['Mf model elimination'].volume =            35
+CITE['Mf model elimination'].page_first =        117
+CITE['Mf model elimination'].page_last =         135
+CITE['Mf model elimination'].year =              2006
+
+# Model-free set theory citation.
+CITE['Set theory'] = Cite_store()
+CITE['Set theory'].authors =           [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
+CITE['Set theory'].doi =               "10.1039/b702202f"
+CITE['Set theory'].pubmed_id =         "17579774"
+CITE['Set theory'].full_citation =     "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494."
+CITE['Set theory'].title =             "Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm."
+CITE['Set theory'].status =            "published"
+CITE['Set theory'].type =              "journal"
+CITE['Set theory'].journal_abbrev =    "Mol. Biosyst."
+CITE['Set theory'].journal_full =      "Molecular BioSystems"
+CITE['Set theory'].volume =            3
+CITE['Set theory'].page_first =        483
+CITE['Set theory'].page_last =         494
+CITE['Set theory'].year =              2007
 
 
 
@@ -299,6 +346,29 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
     f = open_read_file(file, dir)
     text = f.read()
     f.close()
+
+    # Init the citation structures.
+    cite_id = []
+    cite_key = []
+
+    # Model selection.
+    if model_selection in ['AIC', 'AICc', 'BIC', 'Bootstrap', 'CV', 'Expect', 'Overall']:
+        cite_id.append('model-free model selection')
+        cite_key.append('Mf model selection')
+
+    # Model-free model elimination.
+    if model_elim:
+        cite_id.append('model-free model elimination')
+        cite_key.append('Mf model elimination')
+
+    # Universal solution citation.
+    if universal_solution:
+        cite_id.append('model-free set theory')
+        cite_key.append('Set theory')
+
+    # Add the citations.
+    for id, key in zip(cite_id, cite_key):
+        cdp.exp_info.add_citation(cite_id=id, authors=CITE[key].authors, doi=CITE[key].doi, pubmed_id=CITE[key].pubmed_id, full_citation=CITE[key].full_citation, title=CITE[key].title, status=CITE[key].status, type=CITE[key].type, journal_abbrev=CITE[key].journal_abbrev, journal_full=CITE[key].journal_full, volume=CITE[key].volume, page_first=CITE[key].page_first, page_last=CITE[key].page_last, year=CITE[key].year)
 
     # Place the data in the container.
     cdp.exp_info.setup_script(file=file, dir=dir, text=text, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
