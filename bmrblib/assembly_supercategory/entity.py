@@ -87,11 +87,6 @@ class EntitySaveframe:
         if not isinstance(polymer_seq_code, str):
             raise NameError("The polymer one letter code sequence '%s' should be a string." % polymer_seq_code)
 
-        # Check the thiol state.
-        allowed = ['all disulfide bound', 'all free', 'all other bound', 'disulfide and other bound', 'free and disulfide bound', 'free and other bound', 'free disulfide and other bound', 'not available', 'not present', 'not reported', 'unknown']
-        if thiol_state not in allowed:
-            raise NameError("The thiol state '%s' should be one of %s." % (thiol_state, allowed))
-
         # Place the args into the namespace.
         self.mol_name = mol_name
         self.mol_type = mol_type
