@@ -98,7 +98,7 @@ class MethodSaveframe(BaseSaveframe):
         self.method_id_num = [str(translate(self.method_num))]
 
         # The category name.
-        self.cat_name = ['Method']
+        self.cat_name = ['method']
 
         # Initialise the save frame.
         self.frame = SaveFrame(title='method')
