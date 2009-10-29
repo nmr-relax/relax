@@ -524,6 +524,10 @@ def bmrb_write_entity(star, version=None):
         if not hasattr(mol, 'type') or not mol.type:
             raise RelaxError("The molecule type for the '%s' molecule must be specified, please use the appropriate molecule user function to set this." % mol.name)
 
+        # Test that the molecule thiol state has been set.
+        if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'thiol_state'):
+            raise RelaxError("The thiol state of the molecule '%s' must be specified, please use the appropriate BMRB user function to set this." % mol.name)
+
         # Get the residue names and numbers.
         res_names = get_residue_names("#" + mol.name)
         res_nums = get_residue_nums("#" + mol.name)
@@ -538,7 +542,7 @@ def bmrb_write_entity(star, version=None):
             mol_type = 'polymer'
 
         # Add the entity.
-        star.entity.add(mol_name=mol.name, mol_type=mol_type, polymer_type=mol.type, polymer_seq_code=polymer_seq_code, res_nums=res_nums, res_names=res_names)
+        star.entity.add(mol_name=mol.name, mol_type=mol_type, polymer_type=mol.type, polymer_seq_code=polymer_seq_code,thiol_state=cdp.exp_info.thiol_state, res_nums=res_nums, res_names=res_names)
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
