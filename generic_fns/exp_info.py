@@ -26,6 +26,7 @@
 # relax module imports.
 from data.exp_info import ExpInfo
 from relax_errors import RelaxError
+from relax_io import open_read_file
 from version import version_full
 
 
@@ -187,6 +188,50 @@ def citation(cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation
 
     # Place the data in the container.
     cdp.exp_info.add_citation(cite_id=cite_id, authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
+
+
+def script(file=None, dir=None, analysis_type=None, model_selection=None, engine=None, model_elim=False, universal_solution=False):
+    """Specify the scripts used in the analysis.
+
+    @param file:                    The name of the file to open.
+    @type file:                     str
+    @param dir:                     The directory containing the file (defaults to the current directory if None).
+    @type dir:                      None or str
+    @keyword analysis_type:         The type of analysis performed.
+    @type analysis_type:            str
+    @keyword model_selection:       The model selection technique used, if relevant.
+    @type model_selection:          None or str
+    @keyword engine:                The software engine used in the analysis.
+    @type engine:                   str
+    @keyword model_elim:            A model-free specific flag specifying if model elimination was performed.
+    @type model_elim:               bool
+    @keyword universal_solution:    A model-free specific flag specifying if the universal solution was sought after.
+    @type universal_solution:       bool
+    """
+
+    # Check.
+    allowed = ['frame order',
+               'jw',
+               'mf',
+               'N-state',
+               'noe',
+               'relax_fit',
+               'srls'
+    ]
+    if analysis_type not in allowed:
+        raise RelaxError("The analysis type '%s' should be one of %s." % (analysis_type, allowed))
+
+    # Set up the experimental info data container, if needed.
+    if not hasattr(cdp, 'exp_info'):
+        cdp.exp_info = ExpInfo()
+
+    # Extract the text.
+    file = open_read_file(file, dir)
+    text = file.read()
+    file.close()
+
+    # Place the data in the container.
+    cdp.exp_info.setup_script(file=file, text=text, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
 
 
 def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):

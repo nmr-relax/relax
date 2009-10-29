@@ -169,6 +169,73 @@ class ExpInfo(Element):
                 return self.temp_control[i].method
 
 
+    def setup_thiol(self, state):
+        """Set up the thiol state of the system.
+
+        @param thiol_state:     The thiol state of the molecule.
+        @type thiol_state:      str
+        """
+
+        # Check.
+        if hasattr(self, "thiol_state"):
+            raise RelaxError("The thiol state has already been specified")
+
+        # Set the attribute.
+        self.thiol_state = state
+
+
+    def setup_script(self, file=None, text=None, analysis_type=None, model_selection=None, engine=None, model_elim=False, universal_solution=False):
+        """Specify the scripts used in the analysis.
+
+        @param file:                    The name of the script file.
+        @type file:                     str
+        @param text:                    The script text.
+        @type text:                     str
+        @keyword analysis_type:         The type of analysis performed.
+        @type analysis_type:            str
+        @keyword model_selection:       The model selection technique used, if relevant.
+        @type model_selection:          None or str
+        @keyword engine:                The software engine used in the analysis.
+        @type engine:                   str
+        @keyword model_elim:            A model-free specific flag specifying if model elimination was performed.
+        @type model_elim:               bool
+        @keyword universal_solution:    A model-free specific flag specifying if the universal solution was sought after.
+        @type universal_solution:       bool
+        """
+
+        # Initialise the container if needed.
+        if not hasattr(self, "scripts"):
+            # The list.
+            self.scripts = ContainerList()
+
+            # The name of the container.
+            self.scripts.container_name = "script_list"
+
+            # The description of the container.
+            self.scripts.container_desc = "List of scripts used for the analysis"
+
+        # Init the container.
+        script = Element()
+
+        # The name of the container.
+        script.element_name = "script"
+
+        # The description of the container.
+        script.element_desc = "Script used for the analysis"
+
+        # Set the attributes.
+        script.file = file
+        script.text = text
+        script.analysis_type = analysis_type
+        script.model_selection = model_selection
+        script.engine = engine
+        script.model_elim = model_elim
+        script.universal_solution = universal_solution
+
+        # Append the container.
+        self.scripts.append(script)
+
+
     def software_setup(self, name, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
         """Set up the software information.
 
@@ -306,18 +373,3 @@ class ExpInfo(Element):
 
         # Append the container.
         self.temp_control.append(temp_control)
-
-
-    def setup_thiol(self, state):
-        """Set up the thiol state of the system.
-
-        @param thiol_state:     The thiol state of the molecule.
-        @type thiol_state:      str
-        """
-
-        # Check.
-        if hasattr(self, "thiol_state"):
-            raise RelaxError("The thiol state has already been specified")
-
-        # Set the attribute.
-        self.thiol_state = state
