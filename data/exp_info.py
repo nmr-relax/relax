@@ -184,11 +184,13 @@ class ExpInfo(Element):
         self.thiol_state = state
 
 
-    def setup_script(self, file=None, cite_ids=None, text=None, analysis_type=None, model_selection=None, engine=None, model_elim=False, universal_solution=False):
+    def setup_script(self, file=None, dir=None, cite_ids=None, text=None, analysis_type=None, model_selection=None, engine=None, model_elim=False, universal_solution=False):
         """Specify the scripts used in the analysis.
 
-        @param file:                    The name of the script file.
+        @keyword file:                  The name of the script file.
         @type file:                     str
+        @keyword dir:                   The directory containing the file (defaults to the current directory if None).
+        @type dir:                      None or str
         @keyword cite_ids:              The citation ID numbers.
         @type cite_ids:                 None or str
         @param text:                    The script text.
@@ -227,6 +229,7 @@ class ExpInfo(Element):
 
         # Set the attributes.
         script.file = file
+        script.dir = dir
         script.cite_ids = cite_ids
         script.text = text
         script.analysis_type = analysis_type

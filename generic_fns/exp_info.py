@@ -263,9 +263,9 @@ def citation(cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation
 def script(file=None, dir=None, analysis_type=None, model_selection=None, engine=None, model_elim=False, universal_solution=False):
     """Specify the scripts used in the analysis.
 
-    @param file:                    The name of the file to open.
+    @keyword file:                  The name of the file to open.
     @type file:                     str
-    @param dir:                     The directory containing the file (defaults to the current directory if None).
+    @keyword dir:                   The directory containing the file (defaults to the current directory if None).
     @type dir:                      None or str
     @keyword analysis_type:         The type of analysis performed.
     @type analysis_type:            str
@@ -301,7 +301,7 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
     f.close()
 
     # Place the data in the container.
-    cdp.exp_info.setup_script(file=file, text=text, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
+    cdp.exp_info.setup_script(file=file, dir=dir, text=text, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
 
 
 def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None, tasks=None):
