@@ -30,7 +30,7 @@ For example, see http://www.bmrb.wisc.edu/dictionary/3.1html_frame/frame_SaveFra
 from bmrblib.base_classes import BaseSaveframe, TagCategory
 from bmrblib.pystarlib.SaveFrame import SaveFrame
 from bmrblib.pystarlib.TagTable import TagTable
-from bmrblib.misc import translate
+from bmrblib.misc import no_missing, translate
 
 
 class MethodSaveframe(BaseSaveframe):
