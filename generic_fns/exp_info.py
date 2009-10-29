@@ -248,9 +248,9 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
         cdp.exp_info = ExpInfo()
 
     # Extract the text.
-    file = open_read_file(file, dir)
-    text = file.read()
-    file.close()
+    f = open_read_file(file, dir)
+    text = f.read()
+    f.close()
 
     # Place the data in the container.
     cdp.exp_info.setup_script(file=file, text=text, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
