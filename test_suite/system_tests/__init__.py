@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006, 2008 Edward d'Auvergne                                  #
+# Copyright (C) 2006, 2008-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,10 +31,12 @@ from unittest import TestLoader, TestSuite
 from test_suite.relax_test_runner import RelaxTestRunner
 
 # relax system/functional test module imports.
+from align_tensor import Align_tensor
 from angles import Angles
 from consistency_tests import Ct
 from dasha import Dasha
 from diffusion_tensor import Diffusion_tensor
+from frame_order import Frame_order
 from generic import Generic
 from jw_mapping import Jw
 from load_spins import Load_spins
@@ -46,7 +48,7 @@ from noe import Noe
 from noe_restraints import Noe_restraints
 from palmer import Palmer
 from peak_lists import Peak_lists
-from pipe_create import Pipe_create
+from pipes import Pipes
 from relax_disp import Relax_disp
 from relax_fit import Relax_fit
 from results import Results
@@ -56,10 +58,12 @@ from structure import Structure
 from unit_vectors import Unit_vectors
 
 
-__all__ = ['angles',
+__all__ = ['align_tensor',
+           'angles',
            'consistency_tests',
            'dasha'
            'diffusion_tensor',
+           'frame_order',
            'generic',
            'jw_mapping',
            'load_spins',
@@ -71,7 +75,7 @@ __all__ = ['angles',
            'noe_restraints',
            'palmer',
            'peak_lists'
-           'pipe_create',
+           'pipes',
            'relax_disp',
            'relax_fit',
            'results',
@@ -99,10 +103,12 @@ class System_test_runner:
 
         # Create an array of test suites (add your new TestCase classes here).
         suite_array = []
+        suite_array.append(TestLoader().loadTestsFromTestCase(Align_tensor))
         suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
         suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
         suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
         suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
         suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
         suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
         suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
@@ -114,7 +120,7 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
         suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
         suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Pipe_create))
+        suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_disp))
         suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
         suite_array.append(TestLoader().loadTestsFromTestCase(Results))

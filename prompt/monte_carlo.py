@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import monte_carlo
-from relax_errors import RelaxIntError, RelaxNumError, RelaxStrError
 
 
-class Monte_carlo:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class containing the functions for Monte Carlo and related simulations."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Monte_carlo(User_fn_class):
+    """Class containing the functions for Monte Carlo and related simulations."""
 
     def create_data(self, method='back_calc'):
         """Function for creating simulation data.
@@ -80,12 +70,11 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.create_data("
-            text = text + "method=" + `method` + ")"
-            print text
+            text = text + "method=" + repr(method) + ")"
+            print(text)
 
-        # The method argument.
-        if type(method) != str:
-            raise RelaxStrError, ('method', method)
+        # The argument checks.
+        check.is_str(method, 'method')
 
         # Execute the functional code.
         monte_carlo.create_data(method=method)
@@ -127,12 +116,11 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.error_analysis("
-            text = text + "prune=" + `prune` + ")"
-            print text
+            text = text + "prune=" + repr(prune) + ")"
+            print(text)
 
-        # The prune argument.
-        if type(prune) != int and type(prune) != float:
-            raise RelaxNumError, ('prune', prune)
+        # The argument checks.
+        check.is_num(prune, 'prune')
 
         # Execute the functional code.
         monte_carlo.error_analysis(prune=prune)
@@ -159,7 +147,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.initial_values()"
-            print text
+            print(text)
 
         # Execute the functional code.
         monte_carlo.initial_values()
@@ -171,7 +159,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.off()"
-            print text
+            print(text)
 
         # Execute the functional code.
         monte_carlo.off()
@@ -183,7 +171,7 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.on()"
-            print text
+            print(text)
 
         # Execute the functional code.
         monte_carlo.on()
@@ -208,12 +196,11 @@ class Monte_carlo:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "monte_carlo.setup("
-            text = text + "number=" + `number` + ")"
-            print text
+            text = text + "number=" + repr(number) + ")"
+            print(text)
 
-        # The number of simulations.
-        if type(number) != int:
-            raise RelaxIntError, ('number', number)
+        # The argument checks.
+        check.is_int(number, 'number of Monte Carlo simulations')
 
         # Execute the functional code.
         monte_carlo.setup(number=number)

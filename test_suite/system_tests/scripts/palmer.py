@@ -1,6 +1,7 @@
 # Script for model-free analysis using the program 'Modelfree4'.
 
 # Python module imports.
+from os import sep
 import sys
 
 # relax module imports.
@@ -21,16 +22,16 @@ def exec_stage_1(pipes):
     # Loop over the data pipes.
     for name in pipes:
         # Create the pipe.
-        print "\n\n# " + name + " #"
+        print(("\n\n# " + name + " #"))
         pipe.create(name, 'mf')
 
         # Load the sequence.
-        sequence.read(sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
+        sequence.read(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
 
         # Load the relaxation data.
-        relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R1.dat')
-        relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/R2.dat')
-        relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + '/test_suite/shared_data/jw_mapping/noe.dat')
+        relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R2.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         diffusion_tensor.init(1e-8)
@@ -42,13 +43,13 @@ def exec_stage_1(pipes):
         model_free.select_model(model=name)
 
         # Create the Modelfree4 files.
-        palmer.create(dir=ds.tmpdir + '/' + name, force=True, sims=0)
+        palmer.create(dir=ds.tmpdir + sep + name, force=True, sims=0)
 
         # Run Modelfree4.
-        palmer.execute(dir=ds.tmpdir + '/' + name, force=True)
+        palmer.execute(dir=ds.tmpdir + sep + name, force=True)
 
     # Save the program state.
-    state.save(state='stage1.save', dir_name=ds.tmpdir, force=True)
+    state.save(state='stage1.save', dir=ds.tmpdir, force=True)
 
 
 def exec_stage_2(pipes):
@@ -58,7 +59,7 @@ def exec_stage_2(pipes):
     """
 
     # Print out.
-    print "\n\nLoading all the Modelfree 4 data."
+    print("\n\nLoading all the Modelfree 4 data.")
 
     # Loop over the data pipes.
     for name in pipes:
@@ -66,10 +67,10 @@ def exec_stage_2(pipes):
         pipe.switch(name)
 
         # Extract the Modelfree4 data from the 'mfout' files.
-        palmer.extract(dir=ds.tmpdir + '/' + name)
+        palmer.extract(dir=ds.tmpdir + sep + name)
 
     # Print out.
-    print "\n\nModel selection."
+    print("\n\nModel selection.")
 
     # Model selection.
     model_selection(method='AIC', modsel_pipe='aic')
@@ -78,7 +79,7 @@ def exec_stage_2(pipes):
     results.write(file='results', dir=ds.tmpdir, force=True)
 
     # Save the program state.
-    state.save(state='stage2.save', dir_name=ds.tmpdir, force=True)
+    state.save(state='stage2.save', dir=ds.tmpdir, force=True)
 
 
 def exec_stage_3():
@@ -91,19 +92,19 @@ def exec_stage_3():
     fix('diff', False)
 
     # Create the Modelfree4 files (change sims as needed, see below).
-    palmer.create(dir=ds.tmpdir + '/final', force=True, sims=0)
+    palmer.create(dir=ds.tmpdir + sep+'final', force=True, sims=0)
 
     # Run Modelfree4.
-    palmer.execute(dir=ds.tmpdir + '/final', force=True)
+    palmer.execute(dir=ds.tmpdir + sep+'final', force=True)
 
     # Extract the Modelfree4 data from the 'mfout' file.
-    palmer.extract(dir=ds.tmpdir + '/final')
+    palmer.extract(dir=ds.tmpdir + sep+'final')
 
     # Write the results.
     results.write(file='final', dir=ds.tmpdir, force=True)
 
     # Save the program state.
-    state.save(state='stage3.save', dir_name=ds.tmpdir, force=True)
+    state.save(state='stage3.save', dir=ds.tmpdir, force=True)
 
 
 # Main section of the script.

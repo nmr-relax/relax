@@ -27,7 +27,6 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import count_spins
 
 
@@ -51,13 +50,10 @@ class Structure(TestCase):
         """Load the PDB file using the information in a results file (using the internal structural object)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the results file.
         self.relax.interpreter._Results.read(file='str_internal', dir=path)
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
@@ -104,23 +100,20 @@ class Structure(TestCase):
         """Load the PDB file using the information in a results file (using the internal structural object)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the results file.
-        self.relax.interpreter._Results.read(file=path+'/str_internal')
+        self.relax.interpreter._Results.read(file=path+sep+'str_internal')
 
 
     def test_load_scientific_results(self):
         """Load the PDB file using the information in a results file (using the Scientific python structural object)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the results file.
         self.relax.interpreter._Results.read(file='str_scientific', dir=path)
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structure metadata.
         self.assert_(hasattr(cdp, 'structure'))
@@ -153,13 +146,10 @@ class Structure(TestCase):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='internal')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the molecule name.
         self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, '1F35_N_H_molmol_mol1')
@@ -176,7 +166,7 @@ class Structure(TestCase):
 
         # Extract a N-Ca vector.
         self.relax.interpreter._Structure.vectors('CA', spin_id='#1F35_N_H_molmol_mol1:3@N')
-        print cdp.mol[0].res[0].spin[0]
+        print((cdp.mol[0].res[0].spin[0]))
         self.assert_(hasattr(cdp.mol[0].res[0].spin[0], 'bond_vect'))
 
 
@@ -185,7 +175,7 @@ class Structure(TestCase):
         """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='internal')
@@ -200,11 +190,8 @@ class Structure(TestCase):
     def test_read_pdb_internal3(self):
         """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the internal structural object PDB reader)."""
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal')
@@ -223,7 +210,7 @@ class Structure(TestCase):
         """Load the 'tylers_peptide_trunc.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='internal')
@@ -239,7 +226,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
@@ -255,7 +242,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' and 'lactose_MCMM4_S1_2.pdb' PDB files as 2 separate structures (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
@@ -272,7 +259,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file twice as 2 separate structures (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='internal')
@@ -289,7 +276,7 @@ class Structure(TestCase):
         """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Files.
         files = ['lactose_MCMM4_S1_1.pdb',
@@ -306,9 +293,6 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -329,7 +313,7 @@ class Structure(TestCase):
         """Load the 2 models of the 'gromacs_phthalic_acid.pdb' PDB file as separate molecules of the same model (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB models.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal', read_model=1, set_model_num=1)
@@ -340,9 +324,6 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -363,23 +344,20 @@ class Structure(TestCase):
         """Test the packing of models and molecules using 'gromacs_phthalic_acid.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the internal structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB models.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='internal')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_1.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_2.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_3.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_4.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_1.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_2.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_3.pdb', dir=path, parser='internal', set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_4.pdb', dir=path, parser='internal', set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
 
         # Try loading a few protons.
         self.relax.interpreter._Structure.load_spins('@*H*')
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -407,13 +385,10 @@ class Structure(TestCase):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='1F35_N_H_molmol.pdb', dir=path, parser='scientific')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Load a single atom and test it.
         self.relax.interpreter._Structure.load_spins('#1F35_N_H_molmol_mol1:3@N')
@@ -434,7 +409,7 @@ class Structure(TestCase):
         """Load the 'Ap4Aase_res1-12.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=path, parser='scientific')
@@ -449,11 +424,8 @@ class Structure(TestCase):
     def test_read_pdb_scientific3(self):
         """Load the 'gromacs_phthalic_acid.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific')
@@ -472,7 +444,7 @@ class Structure(TestCase):
         """Load the 'tylers_peptide_trunc.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='tylers_peptide_trunc.pdb', dir=path, parser='scientific')
@@ -488,7 +460,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
@@ -504,7 +476,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' and 'lactose_MCMM4_S1_2.pdb' PDB files as 2 separate structures (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
@@ -521,7 +493,7 @@ class Structure(TestCase):
         """Load the 'lactose_MCMM4_S1_1.pdb' PDB file twice as 2 separate structures (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Read the PDB twice.
         self.relax.interpreter._Structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific')
@@ -538,7 +510,7 @@ class Structure(TestCase):
         """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
 
         # Files.
         files = ['lactose_MCMM4_S1_1.pdb',
@@ -555,9 +527,6 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -578,7 +547,7 @@ class Structure(TestCase):
         """Load the 2 models of the 'gromacs_phthalic_acid.pdb' PDB file as separate molecules of the same model (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB models.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific', read_model=1, set_model_num=1)
@@ -589,9 +558,6 @@ class Structure(TestCase):
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -612,23 +578,20 @@ class Structure(TestCase):
         """Test the packing of models and molecules using 'gromacs_phthalic_acid.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the Scientific python structural object PDB reader)."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/structures'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
         # Read the PDB models.
         self.relax.interpreter._Structure.read_pdb(file='gromacs_phthalic_acid.pdb', dir=path, parser='scientific')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=1, set_mol_name='lactose_MCMM4_S1')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_2.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=2, set_mol_name='lactose_MCMM4_S1')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_3.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
-        self.relax.interpreter._Structure.read_pdb(file='lactose/lactose_MCMM4_S1_4.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_1.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=1, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_2.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=2, set_mol_name='lactose_MCMM4_S1')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_3.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
+        self.relax.interpreter._Structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_4.pdb', dir=path, parser='scientific', read_mol=1, set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
 
         # Try loading a few protons.
         self.relax.interpreter._Structure.load_spins('@*H*')
 
         # And now all the rest of the atoms.
         self.relax.interpreter._Structure.load_spins()
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the structural data.
         self.assert_(hasattr(cdp, 'structure'))

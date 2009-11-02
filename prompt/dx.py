@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,29 +26,19 @@ __docformat__ = 'plaintext'
 
 # Python module imports.
 import sys
-from types import FunctionType
 
 # relax module imports.
-from doc_string import regexp_doc
-import help
+from base_class import User_fn_class
+import check
+from doc_string import docs
 from generic_fns import diffusion_tensor
 import opendx.main
-from relax_errors import RelaxBoolError, RelaxError, RelaxFunctionError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxListStrError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 from specific_fns.model_free import Model_free
 
 
-class OpenDX:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for interfacing with OpenDX."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class OpenDX(User_fn_class):
+    """Class for interfacing with OpenDX."""
 
     def execute(self, file="map", dir="dx", dx_exe="dx", vp_exec=True):
         """Function for running OpenDX.
@@ -71,29 +61,17 @@ class OpenDX:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "dx("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", dx_exe=" + `dx_exe`
-            text = text + ", vp_exec=" + `vp_exec` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", dx_exe=" + repr(dx_exe)
+            text = text + ", vp_exec=" + repr(vp_exec) + ")"
+            print(text)
 
-        # File name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory name.
-        if dir == None:
-            pass
-        elif type(dir) != str:
-            raise RelaxNoneStrError, ('file name', file)
-
-        # The OpenDX executable file.
-        if type(dx_exe) != str:
-            raise RelaxStrError, ('OpenDX executable file name', dx_exe)
-
-        # Visual program execution flag.
-        if type(vp_exec) != bool:
-            raise RelaxBoolError, ('visual program execution flag', vp_exec)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(dx_exe, 'OpenDX executable file name')
+        check.is_bool(vp_exec, 'visual program execution flag')
 
         # Execute the functional code.
         opendx.main.run(file_prefix=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
@@ -188,91 +166,38 @@ class OpenDX:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "map("
-            text = text + "params=" + `params`
-            text = text + ", map_type=" + `map_type`
-            text = text + ", spin_id=" + `spin_id`
-            text = text + ", inc=" + `inc`
-            text = text + ", lower=" + `lower`
-            text = text + ", upper=" + `upper`
-            text = text + ", axis_incs=" + `axis_incs`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", point=" + `point`
-            text = text + ", point_file=" + `point_file`
-            text = text + ", remap=" + `remap` + ")"
-            print text
+            text = text + "params=" + repr(params)
+            text = text + ", map_type=" + repr(map_type)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", inc=" + repr(inc)
+            text = text + ", lower=" + repr(lower)
+            text = text + ", upper=" + repr(upper)
+            text = text + ", axis_incs=" + repr(axis_incs)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", point=" + repr(point)
+            text = text + ", point_file=" + repr(point_file)
+            text = text + ", remap=" + repr(remap) + ")"
+            print(text)
 
-        # The parameters to map.
-        if type(params) != list:
-            raise RelaxListError, ('parameters', params)
-        num_params = len(params)
-        for i in xrange(num_params):
-            if type(params[i]) != str:
-                raise RelaxListStrError, ('parameters', params)
-
-        # Space type.
-        if type(map_type) != str:
-            raise RelaxStrError, ('map type', map_type)
-
-        # Spin identifier.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identifier', spin_id)
-
-        # Increment.
-        if type(inc) != int:
-            raise RelaxIntError, ('increment', inc)
-        elif inc <= 1:
-            raise RelaxError, "The increment value needs to be greater than 1."
-
-        # Lower bounds.
-        if lower != None:
-            if type(lower) != list:
-                raise RelaxListError, ('lower bounds', lower)
-            if len(lower) != num_params:
-                raise RelaxLenError, ('lower bounds', num_params)
-            for i in xrange(len(lower)):
-                if type(lower[i]) != int and type(lower[i]) != float:
-                    raise RelaxListNumError, ('lower bounds', lower)
-
-        # Upper bounds.
-        if upper != None:
-            if type(upper) != list:
-                raise RelaxListError, ('upper bounds', upper)
-            if len(upper) != num_params:
-                raise RelaxLenError, ('upper bounds', num_params)
-            for i in xrange(len(upper)):
-                if type(upper[i]) != int and type(upper[i]) != float:
-                    raise RelaxListNumError, ('upper bounds', upper)
-
-        # Axis increments.
-        if type(axis_incs) != int:
-            raise RelaxIntError, ('axis increments', axis_incs)
-        elif axis_incs <= 1:
-            raise RelaxError, "The axis increment value needs to be greater than 1."
-
-        # File prefix.
-        if type(file_prefix) != str:
-            raise RelaxStrError, ('file prefix', file_prefix)
-
-        # Directory name.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Point.
+        # The argument checks.
+        check.is_str_list(params, 'parameters')
+        check.is_str(map_type, 'map type')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_int(inc, 'increment')
+        if inc <= 1:
+            raise RelaxError("The increment value needs to be greater than 1.")
+        check.is_num_list(lower, 'lower bounds', size=len(params), can_be_none=True)
+        check.is_num_list(upper, 'upper bounds', size=len(params), can_be_none=True)
+        check.is_int(axis_incs, 'axis increments')
+        if axis_incs <= 1:
+            raise RelaxError("The axis increment value needs to be greater than 1.")
+        check.is_str(file_prefix, 'file prefix')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_num_list(point, 'point', size=len(params), can_be_none=True)
         if point != None:
-            if type(point) != list:
-                raise RelaxListError, ('point', point)
-            if len(point) != num_params:
-                raise RelaxLenError, ('point', point)
-            if type(point_file) != str:
-                raise RelaxStrError, ('point file name', point_file)
-            for i in xrange(len(point)):
-                if type(point[i]) != int and type(point[i]) != float:
-                    raise RelaxListNumError, ('point', point)
-
-        # Remap function.
-        if remap != None and type(remap) is not FunctionType:
-            raise RelaxFunctionError, ('remap function', remap)
+            check.is_str(point_file, 'point file name')
+        check.is_func(remap, 'remap function', can_be_none=True)
 
         # Execute the functional code.
         opendx.main.map(params=params, map_type=map_type, spin_id=spin_id, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file_prefix=file_prefix, dir=dir, point=point, point_file=point_file, remap=remap)
@@ -282,6 +207,6 @@ class OpenDX:
     #########################
 
     # Write function.
-    map.__doc__ = map.__doc__ + "\n\n" + regexp_doc() + "\n"
+    map.__doc__ = map.__doc__ + "\n\n" + docs.regexp.doc + "\n"
     map.__doc__ = map.__doc__ + diffusion_tensor.__return_data_name_prompt_doc__ + "\n\n"
-    map.__doc__ = map.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
+    map.__doc__ = map.__doc__ + Model_free.return_data_name_doc + "\n\n"

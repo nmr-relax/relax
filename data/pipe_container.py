@@ -81,7 +81,7 @@ class PipeContainer(Prototype):
                 text = text + "  structure: The 3D molecular data object\n"
 
             # Skip the PipeContainer methods.
-            if name in self.__class__.__dict__.keys():
+            if name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip certain objects.
@@ -89,7 +89,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Add the object's attribute to the text string.
-            text = text + "  " + name + ": " + `getattr(self, name)` + "\n"
+            text = text + "  " + name + ": " + repr(getattr(self, name)) + "\n"
 
         # Return the text representation.
         return text
@@ -100,13 +100,14 @@ class PipeContainer(Prototype):
 
         @param relax_node:  The relax XML node.
         @type relax_node:   xml.dom.minidom.Element instance
-        @keyword dir:       The name of the directory containing the results file.
+        @keyword dir:       The name of the directory containing the results file (needed for
+                            loading external files).
         @type dir:          str
         """
 
         # Test if empty.
         if not self.is_empty():
-            raise RelaxFromXMLNotEmptyError, self.__class__.__name__
+            raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Get the global data node, and fill the contents of the pipe.
         global_node = relax_node.getElementsByTagName('global')[0]
@@ -127,16 +128,13 @@ class PipeContainer(Prototype):
             self.diff_tensor.from_xml(diff_tensor_nodes[0])
 
         # Get the alignment tensor data nodes and, if they exist, fill the contents.
-        align_tensor_super_node = relax_node.getElementsByTagName('align_tensors')
-        if align_tensor_super_node:
-            # Get the individual tensors.
-            align_tensor_nodes = align_tensor_super_node[0].getElementsByTagName('align_tensor')
-
-            # Create the diffusion tensor object.
+        align_tensor_nodes = relax_node.getElementsByTagName('align_tensors')
+        if align_tensor_nodes:
+            # Create the alignment tensor object.
             self.align_tensors = AlignTensorList()
 
             # Fill its contents.
-            self.align_tensors.from_xml(align_tensor_nodes)
+            self.align_tensors.from_xml(align_tensor_nodes[0])
 
         # Recreate the molecule, residue, and spin data structure.
         mol_nodes = relax_node.getElementsByTagName('mol')
@@ -155,7 +153,7 @@ class PipeContainer(Prototype):
             elif parser == 'internal':
                 self.structure = generic_fns.structure.internal.Internal()
             else:
-                warn(RelaxWarning("The structural file parser " + `parser` + " is unknown.  The structure will not be loaded."))
+                warn(RelaxWarning("The structural file parser " + repr(parser) + " is unknown.  The structure will not be loaded."))
                 fail = True
 
             # Fill its contents.
@@ -189,7 +187,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Skip the PipeContainer methods.
-            if name in self.__class__.__dict__.keys():
+            if name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip special objects.
@@ -216,7 +214,7 @@ class PipeContainer(Prototype):
         global_element = doc.createElement('global')
         element.appendChild(global_element)
         global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + self.__class__.__dict__.keys())
+        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + list(self.__class__.__dict__.keys()))
 
         # Hybrid info.
         self.xml_create_hybrid_element(doc, element)

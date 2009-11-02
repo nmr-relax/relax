@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,21 +25,28 @@
 
 
 # Python module imports.
+import __builtin__
 from re import search
 from string import split
+from sys import stderr
 from time import asctime
 import xml.dom.minidom
 
 # relax module imports.
 from pipe_container import PipeContainer
-from relax_errors import RelaxPipeError
+import generic_fns
+from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from version import version
 
 
-__all__ = [ 'data_classes',
+__all__ = [ 'align_tensor',
+            'data_classes',
             'diff_tensor',
-            'diff_tensor_auto_objects',
-            'main' ]
+            'mol_res_spin',
+            'pipe_container',
+            'prototype',
+            'relax_xml'
+]
 
 
 class Relax_data_store(dict):
@@ -47,11 +54,12 @@ class Relax_data_store(dict):
 
     # The current data pipe.
     current_pipe = None
+    __builtin__.cdp = None
 
     # Class variable for storing the class instance.
     instance = None
 
-    def __new__(self, *args, **kargs): 
+    def __new__(self, *args, **kargs):
         """Replacement function for implementing the singleton design pattern."""
 
         # First initialisation.
@@ -61,7 +69,7 @@ class Relax_data_store(dict):
         # Already initialised, so return the instance.
         return self.instance
 
-    
+
     def __repr__(self):
         """The string representation of the object.
 
@@ -75,24 +83,23 @@ class Relax_data_store(dict):
         # The data pipes.
         text = text + "\n"
         text = text + "Data pipes:\n"
-        pipes = self.instance.keys()
+        pipes = list(self.instance.keys())
         if pipes:
             for pipe in pipes:
-                text = text + "  %s\n" % `pipe`
+                text = text + "  %s\n" % repr(pipe)
         else:
             text = text + "  None\n"
 
         # Data store objects.
         text = text + "\n"
         text = text + "Data store objects:\n"
-        names = self.__class__.__dict__.keys()
-        names.sort()
+        names = sorted(self.__class__.__dict__.keys())
         for name in names:
             # The object.
             obj = getattr(self, name)
 
             # The text.
-            if obj == None or type(obj) == str:
+            if obj == None or isinstance(obj, str):
                 text = text + "  %s %s: %s\n" % (name, type(obj), obj)
             else:
                 text = text + "  %s %s: %s\n" % (name, type(obj), split(obj.__doc__, '\n')[0])
@@ -106,7 +113,7 @@ class Relax_data_store(dict):
                 continue
 
             # Skip overwritten methods.
-            if name in self.__class__.__dict__.keys():
+            if name in list(self.__class__.__dict__.keys()):
                 continue
 
             # The object.
@@ -127,7 +134,7 @@ class Relax_data_store(dict):
         """
 
         # Loop over the keys of self.__dict__ and delete the corresponding object.
-        for key in self.__dict__.keys():
+        for key in list(self.__dict__.keys()):
             # Delete the object.
             del self.__dict__[key]
 
@@ -147,8 +154,8 @@ class Relax_data_store(dict):
         """
 
         # Test if the pipe already exists.
-        if pipe_name in self.instance.keys():
-            raise RelaxPipeError, pipe_name
+        if pipe_name in list(self.instance.keys()):
+            raise RelaxPipeError(pipe_name)
 
         # Create a new container.
         self[pipe_name] = PipeContainer()
@@ -158,18 +165,66 @@ class Relax_data_store(dict):
 
         # Change the current data pipe.
         self.instance.current_pipe = pipe_name
+        __builtin__.cdp = self[pipe_name]
 
 
-    def from_xml(self, file, dir=None, verbosity=1):
+    def is_empty(self):
+        """Method for testing if the relax data store is empty.
+
+        @return:    True if the data store is empty, False otherwise.
+        @rtype:     bool
+        """
+
+        # No pipes should exist.
+        if not self.keys() == []:
+            stderr.write("The relax data store contains the data pipes %s.\n" % self.keys())
+            return False
+
+        # An object has been added to the data store.
+        for name in dir(self):
+            # Skip the data store methods.
+            if name in list(self.__class__.__dict__.keys()):
+                continue
+
+            # Skip the dict methods.
+            if name in list(dict.__dict__.keys()):
+                continue
+
+            # Skip special objects.
+            if search("^__", name):
+                continue
+
+            # An object has been added.
+            stderr.write("The relax data store contains the object %s.\n" % name)
+            return False
+
+        # The data store is empty.
+        return True
+
+
+    def from_xml(self, file, dir=None, pipe_to=None, verbosity=1):
         """Parse a XML document representation of a data pipe, and load it into the relax data store.
 
-        @param file:        The open file object.
-        @type file:         file
-        @keyword dir:       The name of the directory containing the results file.
-        @type dir:          str
-        @keyword verbosity: A flag specifying the amount of information to print.  The higher the value,
-                            the greater the verbosity.
-        @type verbosity:    int
+        @param file:                The open file object.
+        @type file:                 file
+        @keyword dir:               The name of the directory containing the results file (needed
+                                    for loading external files).
+        @type dir:                  str
+        @keyword pipe_to:           The data pipe to load the XML data pipe into (the file must only
+                                    contain one data pipe).
+        @type pipe_to:              str
+        @keyword verbosity:         A flag specifying the amount of information to print.  The
+                                    higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @raises RelaxError:         If pipe_to is given and the file contains multiple pipe
+                                    elements;  or if the data pipes in the XML file already exist in
+                                    the relax data store;  or if the data pipe type is invalid;  or
+                                    if the target data pipe is not empty.
+        @raises RelaxNoPipeError:   If pipe_to is given but the data pipe does not exist.
+        @raises RelaxError:         If the data pipes in the XML file already exist in the relax
+                                    data store, or if the data pipe type is invalid.
+        @raises RelaxPipeError:     If the data pipes of the XML file are already present in the
+                                    relax data store.
         """
 
         # Create the XML document from the file.
@@ -181,11 +236,63 @@ class Relax_data_store(dict):
         # Get the relax version of the XML file.
         relax_version = str(relax_node.getAttribute('version'))
 
-        # Fill the pipe.
-        self[self.instance.current_pipe].from_xml(relax_node, dir=dir)
+        # Get the pipe nodes.
+        pipe_nodes = relax_node.getElementsByTagName('pipe')
+
+        # Target loading to a specific pipe (for pipe results reading).
+        if pipe_to:
+            # Check if there are multiple pipes in the XML file.
+            if len(pipe_nodes) > 1:
+                raise RelaxError("The pipe_to target pipe argument '%s' cannot be given as the file contains multiple pipe elements." % pipe_to)
+
+            # The pipe type.
+            pipe_type = pipe_nodes[0].getAttribute('type')
+
+            # Check that the pipe already exists.
+            if not pipe_to in self:
+                raise RelaxNoPipeError(pipe_to)
+
+            # Check if the pipe type matches.
+            if pipe_type != self[pipe_to].pipe_type:
+                raise RelaxError("The XML file pipe type '%s' does not match the pipe type '%s'" % (pipe_type, self[pipe_to].pipe_type))
+
+            # Check if the pipe is empty.
+            if not self[pipe_to].is_empty():
+                raise RelaxError("The data pipe '%s' is not empty." % pipe_to)
+
+            # Load the data.
+            self[pipe_to].from_xml(pipe_nodes[0], dir=dir)
+
+        # Load the state.
+        else:
+            # Checks.
+            for pipe_node in pipe_nodes:
+                # The pipe name and type.
+                pipe_name = pipe_node.getAttribute('name')
+                pipe_type = pipe_node.getAttribute('type')
+
+                # Existence check.
+                if pipe_name in self:
+                    raise RelaxPipeError(pipe_name)
+
+                # Valid type check.
+                if not pipe_type in generic_fns.pipes.VALID_TYPES:
+                    raise RelaxError("The data pipe type '%s' is invalid and must be one of the strings in the list %s." % (pipe_type, generic_fns.pipes.VALID_TYPES))
+
+            # Load the data pipes.
+            for pipe_node in pipe_nodes:
+                # The pipe name and type.
+                pipe_name = pipe_node.getAttribute('name')
+                pipe_type = pipe_node.getAttribute('type')
+
+                # Add the data pipe.
+                self.add(pipe_name, pipe_type)
+
+                # Fill the pipe.
+                self[pipe_name].from_xml(pipe_node, dir=dir)
 
 
-    def to_xml(self, file):
+    def to_xml(self, file, pipes=None):
         """Create a XML document representation of the current data pipe.
 
         This method creates the top level XML document including all the information needed
@@ -194,7 +301,18 @@ class Relax_data_store(dict):
 
         @param file:        The open file object.
         @type file:         file
+        @param pipes:       The name of the pipe, or list of pipes to place in the XML file.
+        @type pipes:        str or list of str
         """
+
+        # The pipes to include in the XML file.
+        if not pipes:
+            pipes = self.keys()
+        elif isinstance(pipes, str):
+            pipes = [pipes]
+
+        # Sort the pipes.
+        pipes.sort()
 
         # Create the XML document object.
         xmldoc = xml.dom.minidom.Document()
@@ -209,17 +327,19 @@ class Relax_data_store(dict):
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
 
-        # Create the pipe XML element and add it to the top level XML element.
-        pipe_element = xmldoc.createElement('pipe')
-        top_element.appendChild(pipe_element)
+        # Loop over the pipes.
+        for pipe in pipes:
+            # Create the pipe XML element and add it to the top level XML element.
+            pipe_element = xmldoc.createElement('pipe')
+            top_element.appendChild(pipe_element)
 
-        # Set the data pipe attributes.
-        pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
-        pipe_element.setAttribute('name', self.instance.current_pipe)
-        pipe_element.setAttribute('type', self[self.instance.current_pipe].pipe_type)
+            # Set the data pipe attributes.
+            pipe_element.setAttribute('desc', 'The contents of a relax data pipe')
+            pipe_element.setAttribute('name', pipe)
+            pipe_element.setAttribute('type', self[pipe].pipe_type)
 
-        # Fill the data pipe XML element.
-        self[self.instance.current_pipe].to_xml(xmldoc, pipe_element)
+            # Fill the data pipe XML element.
+            self[pipe].to_xml(xmldoc, pipe_element)
 
         # Write out the XML file.
         file.write(xmldoc.toprettyxml(indent='    '))

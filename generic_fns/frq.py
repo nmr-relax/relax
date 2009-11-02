@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,16 +41,13 @@ def set(id=None, frq=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Set up the dictionary data structure if it doesn't exist yet.
     if not hasattr(cdp, 'frq'):
         cdp.frq = {}
 
     # Test the frequency has not already been set.
-    if cdp.frq.has_key(id):
-        raise RelaxError, "The frequency for the experiment " + `id` + " has already been set."
+    if id in cdp.frq:
+        raise RelaxError("The frequency for the experiment " + repr(id) + " has already been set.")
 
     # Set the frequency.
     cdp.frq[id] = frq

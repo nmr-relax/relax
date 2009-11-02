@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -58,9 +58,6 @@ class Base_Map:
         self.point_file = point_file
         self.remap = remap
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Specific function setup.
         self.calculate = get_specific_fn('calculate', cdp.pipe_type)
         self.model_stats = get_specific_fn('model_stats', cdp.pipe_type)
@@ -101,7 +98,7 @@ class Base_Map:
 
             # No bounds found.
             if not bounds:
-                raise RelaxError, "No bounds for the parameter " + `self.params[i]` + " could be determined."
+                raise RelaxError("No bounds for the parameter " + repr(self.params[i]) + " could be determined.")
 
             # Assign the bounds to the global data structure.
             self.bounds[i] = bounds
@@ -146,7 +143,7 @@ class Base_Map:
         """Function for creating the OpenDX .cfg program configuration file."""
 
         # Print out.
-        print "\nCreating the OpenDX .cfg program configuration file."
+        print("\nCreating the OpenDX .cfg program configuration file.")
 
         # Open the file.
         config_file = open_write_file(file_name=self.file_prefix+".cfg", dir=self.dir, force=True)
@@ -165,7 +162,7 @@ class Base_Map:
         """Function for creating the OpenDX .general file."""
 
         # Print out.
-        print "\nCreating the OpenDX .general file."
+        print("\nCreating the OpenDX .general file.")
 
         # Open the file.
         general_file = open_write_file(file_name=self.file_prefix+".general", dir=self.dir, force=True)
@@ -184,7 +181,7 @@ class Base_Map:
         """Function for creating the map."""
 
         # Print out.
-        print "\nCreating the map."
+        print("\nCreating the map.")
 
         # Open the file.
         map_file = open_write_file(file_name=self.file_prefix, dir=self.dir, force=True)
@@ -215,7 +212,7 @@ class Base_Map:
         """
 
         # Print out.
-        print "\nCreating the OpenDX .general and data files for the given point."
+        print("\nCreating the OpenDX .general and data files for the given point.")
 
         # Open the files.
         point_file = open_write_file(file_name=self.point_file, dir=self.dir, force=True)
@@ -242,7 +239,7 @@ class Base_Map:
         """Function for creating the OpenDX .net program file."""
 
         # Print out.
-        print "\nCreating the OpenDX .net program file."
+        print("\nCreating the OpenDX .net program file.")
 
         # Open the file.
         program_file = open_write_file(file_name=self.file_prefix+".net", dir=self.dir, force=True)
@@ -254,13 +251,13 @@ class Base_Map:
         self.corners = "{[0"
         for i in xrange(self.n - 1):
             self.corners = self.corners + " 0"
-        self.corners = self.corners + "] [" + `self.inc`
+        self.corners = self.corners + "] [" + repr(self.inc)
         for i in xrange(self.n - 1):
-            self.corners = self.corners + " "  + `self.inc`
+            self.corners = self.corners + " "  + repr(self.inc)
         self.corners = self.corners + "]}"
 
         # Sphere size.
-        self.sphere_size = `0.025 * (self.inc + 1.0)`
+        self.sphere_size = repr(0.025 * (self.inc + 1.0))
 
         # Get the text of the program.
         text = self.program_text()
@@ -303,7 +300,7 @@ class Base_Map:
 
             # Bad parameter name.
             if not name:
-                raise RelaxUnknownParamError, self.params[i]
+                raise RelaxUnknownParamError(self.params[i])
 
             # Append the parameter name.
             self.param_names.append(name)
@@ -351,6 +348,6 @@ class Base_Map:
             string = ""
             val = 0.0
             for j in xrange(self.axis_incs + 1):
-                string = string + " " + `val`
+                string = string + " " + repr(val)
                 val = val + loc_inc
             self.tick_locations.append("{" + string + " }")

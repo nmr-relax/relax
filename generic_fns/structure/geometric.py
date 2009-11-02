@@ -31,7 +31,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.mass import centre_of_mass
 from internal import Internal
-from maths_fns.rotation_matrix import R_2vect
+from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
@@ -102,7 +102,7 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
 
     # Get the rotation matrix.
     if axis != None:
-        R_2vect(R, array([0,0,1], float64), axis)
+        two_vect_to_R(array([0, 0, 1], float64), axis, R)
 
     # Loop over each vector.
     for i in xrange(inc):
@@ -128,7 +128,7 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
         vector = dot(R, vector)
 
         # The atom id.
-        atom_id = 'T' + `i`
+        atom_id = 'T' + repr(i)
 
         # The atom position.
         pos = apex+vector*length
@@ -168,9 +168,6 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Create an array of data pipes to loop over (hybrid support).
     if cdp.pipe_type == 'hybrid':
         pipe_list = cdp.hybrid_pipes
@@ -197,7 +194,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
 
         # Test if the diffusion tensor data is loaded.
         if not hasattr(pipe, 'diff_tensor'):
-            raise RelaxNoTensorError, 'diffusion'
+            raise RelaxNoTensorError('diffusion')
 
         # Test if a structure has been loaded.
         if not hasattr(cdp, 'structure'):
@@ -221,7 +218,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         atom_id_ext = '_' + chain_id
 
         # Print out.
-        print "\nChain " + chain_id + "\n"
+        print(("\nChain " + chain_id + "\n"))
 
 
         # Centre of mass.
@@ -241,7 +238,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         ######################
 
         # Print out.
-        print "\nGenerating the geometric object."
+        print("\nGenerating the geometric object.")
 
         # The distribution.
         generate_vector_dist(mol=mol, res_name='TNS', res_num=res_num, chain_id=chain_id, centre=CoM, R=pipe.diff_tensor.rotation, warp=pipe.diff_tensor.tensor, scale=scale, inc=20)
@@ -256,15 +253,17 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Create the unique axis of the spheroid.
         if pipe.diff_tensor.type == 'spheroid':
             # Print out.
-            print "\nGenerating the unique axis of the diffusion tensor."
-            print "    Scaling factor:                      " + `scale`
+            print("\nGenerating the unique axis of the diffusion tensor.")
+            print(("    Scaling factor:                      " + repr(scale)))
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
-                sim_vectors = pipe.diff_tensor.Dpar_sim * pipe.diff_tensor.Dpar_unit_sim
+                sim_vectors = []
+                for i in range(len(pipe.diff_tensor.tm_sim)):
+                    sim_vectors.append(pipe.diff_tensor.Dpar_sim[i] * pipe.diff_tensor.Dpar_unit_sim[i])
             else:
                 sim_vectors = None
-                
+
             # Generate the axes representation.
             res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dpar*pipe.diff_tensor.Dpar_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
 
@@ -272,30 +271,34 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Create the three axes of the ellipsoid.
         if pipe.diff_tensor.type == 'ellipsoid':
             # Print out.
-            print "Generating the three axes of the ellipsoid."
-            print "    Scaling factor:                      " + `scale`
+            print("Generating the three axes of the ellipsoid.")
+            print(("    Scaling factor:                      " + repr(scale)))
 
             # Simulations.
             if hasattr(pipe.diff_tensor, 'tm_sim'):
-                sim_Dx_vectors = pipe.diff_tensor.Dx_sim * pipe.diff_tensor.Dx_unit_sim
-                sim_Dy_vectors = pipe.diff_tensor.Dy_sim * pipe.diff_tensor.Dy_unit_sim
-                sim_Dz_vectors = pipe.diff_tensor.Dz_sim * pipe.diff_tensor.Dz_unit_sim
+                sim_Dx_vectors = []
+                sim_Dy_vectors = []
+                sim_Dz_vectors = []
+                for i in range(len(pipe.diff_tensor.tm_sim)):
+                    sim_Dx_vectors.append(pipe.diff_tensor.Dx_sim[i] * pipe.diff_tensor.Dx_unit_sim[i])
+                    sim_Dy_vectors.append(pipe.diff_tensor.Dy_sim[i] * pipe.diff_tensor.Dy_unit_sim[i])
+                    sim_Dz_vectors.append(pipe.diff_tensor.Dz_sim[i] * pipe.diff_tensor.Dz_unit_sim[i])
             else:
                 sim_Dx_vectors = None
                 sim_Dy_vectors = None
                 sim_Dz_vectors = None
-                
+
             # Generate the axes representation.
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dx*pipe.diff_tensor.Dx_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dy*pipe.diff_tensor.Dy_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
-            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dpar', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dx*pipe.diff_tensor.Dx_unit, atom_name='Dx', res_name_vect='AXS', sim_vectors=sim_Dx_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dy*pipe.diff_tensor.Dy_unit, atom_name='Dy', res_name_vect='AXS', sim_vectors=sim_Dy_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
+            res_num = generate_vector_residues(mol=mol, vector=pipe.diff_tensor.Dz*pipe.diff_tensor.Dz_unit, atom_name='Dz', res_name_vect='AXS', sim_vectors=sim_Dz_vectors, chain_id=chain_id, res_num=res_num, origin=CoM, scale=scale, neg=True)
 
 
     # Create the PDB file.
     ######################
 
     # Print out.
-    print "\nGenerating the PDB file."
+    print("\nGenerating the PDB file.")
 
     # Open the PDB file for writing.
     tensor_pdb_file = open_write_file(file, dir, force=force)
@@ -325,9 +328,6 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
 
     # Test if the current pipe exists.
     pipes.test()
-
-    # Get the data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() > 0:
@@ -434,7 +434,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     ######################
 
     # Print out.
-    print "\nGenerating the PDB file."
+    print("\nGenerating the PDB file.")
 
     # Open the PDB file for writing.
     tensor_pdb_file = open_write_file(file, dir, force=force)
@@ -483,7 +483,7 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
     atom_num = origin_num
 
     # Get the uniform vector distribution.
-    print "    Creating the uniform vector distribution."
+    print("    Creating the uniform vector distribution.")
     vectors = uniform_vect_dist_spherical_angles(inc=inc)
 
     # Generate the increment values of v.
@@ -611,15 +611,15 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
         mol.atom_add(pdb_record='HETATM', atom_num=atom_neg_num+num, atom_name=atom_name, res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin-label_placement*vector*scale, segment_id=None, element='N')
 
     # Print out.
-    print "    " + atom_name + " vector (scaled + shifted to origin): " + `origin+vector*scale`
-    print "    Creating the MC simulation vectors."
+    print(("    " + atom_name + " vector (scaled + shifted to origin): " + repr(origin+vector*scale)))
+    print("    Creating the MC simulation vectors.")
 
     # Monte Carlo simulations.
     if sim_vectors != None:
         for i in range(len(sim_vectors)):
             # Increment the residue number, so each simulation is a new residue.
             res_num = res_num + 1
-    
+
             # The atom numbers (and indices).
             atom_num = mol.atom_num[-1]+1
             atom_neg_num = mol.atom_num[-1]+2
@@ -652,7 +652,7 @@ def get_proton_name(atom_num):
     for i in range(len(names)):
         # In the bounds.
         if atom_num >= lims[i] and atom_num < lims[i+1]:
-            return names[i] + `atom_num - lims[i]`
+            return names[i] + repr(atom_num - lims[i])
 
 
 def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=None, inc=None):
@@ -735,7 +735,7 @@ def uniform_vect_dist_spherical_angles(inc=20):
 
     # The inc argument must be an even number.
     if inc%2:
-        raise RelaxError, "The increment value of " + `inc` + " must be an even number."
+        raise RelaxError("The increment value of " + repr(inc) + " must be an even number.")
 
     # Generate the increment values of u.
     u = zeros(inc, float64)

@@ -32,16 +32,16 @@ from string import strip
 from float import floatAsByteArray, packBytesAsPyFloat
 
 
-def fill_object_contents(doc, elem, object=None, blacklist=None):
+def fill_object_contents(doc, elem, object=None, blacklist=[]):
     """Place all simple python objects into the XML element namespace.
 
     @param doc:         The XML document object.
     @type doc:          xml.dom.minidom.Document instance
     @param elem:        The element to add all python objects to.
     @type elem:         XML element object
-    @param object:      The python class instance containing the objects to add.
+    @keyword object:    The python class instance containing the objects to add.
     @type object:       instance
-    @param blacklist:   A list of object names to exclude.
+    @keyword blacklist: A list of object names to exclude.
     @type blacklist:    list of str
     """
 
@@ -67,11 +67,11 @@ def fill_object_contents(doc, elem, object=None, blacklist=None):
         subobj = getattr(object, name)
 
         # Store floats as IEEE-754 byte arrays (for full precision storage).
-        if type(subobj) == float or type(subobj) == float64:
-            sub_elem.setAttribute('ieee_754_byte_array', `floatAsByteArray(subobj)`)
+        if isinstance(subobj, float) or isinstance(subobj, float64):
+            sub_elem.setAttribute('ieee_754_byte_array', repr(floatAsByteArray(subobj)))
 
         # Add the text value to the sub element.
-        text_val = doc.createTextNode(`subobj`)
+        text_val = doc.createTextNode(repr(subobj))
         sub_elem.appendChild(text_val)
 
 
@@ -89,16 +89,18 @@ def node_value_to_python(elem):
     return eval(val)
 
 
-def xml_to_object(elem, base_object=None, set_fn=None):
+def xml_to_object(elem, base_object=None, set_fn=None, blacklist=[]):
     """Convert the XML elements into python objects, and place these into the base object.
 
-    @param elem:        The element to extract all python objects from.
-    @type elem:         xml.dom.minidom.Element instance
-    @param base_object: The python class instance to place the objects into.
-    @type  base_bject:  instance
-    @param set_fn:      A function used to replace setattr for placing the object into the base
-                        object.
-    @type set_fn:       function
+    @param elem:            The element to extract all python objects from.
+    @type elem:             xml.dom.minidom.Element instance
+    @keyword base_object:   The python class instance to place the objects into.
+    @type  base_bject:      instance
+    @keyword set_fn:        A function used to replace setattr for placing the object into the base
+                            object.
+    @type set_fn:           function
+    @keyword blacklist:     A list of object names to exclude.
+    @type blacklist:        list of str
     """
 
     # Loop over the nodes of the element
@@ -109,6 +111,10 @@ def xml_to_object(elem, base_object=None, set_fn=None):
 
         # The name of the python object to recreate.
         name = str(node.localName)
+
+        # Skip blacklisted objects.
+        if name in blacklist:
+            continue
 
         # IEEE-754 floats (for full precision restoration).
         ieee_array = node.getAttribute('ieee_754_byte_array')

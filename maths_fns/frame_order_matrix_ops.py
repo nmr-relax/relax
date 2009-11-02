@@ -30,8 +30,8 @@ from numpy.linalg import norm
 
 # relax module imports.
 from float import isNaN
-from maths_fns.kronecker_product import kron_prod, transpose_14
-from maths_fns.rotation_matrix import R_2vect
+from maths_fns.kronecker_product import kron_prod, transpose_23
+from maths_fns.rotation_matrix import two_vect_to_R
 
 
 def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_axis, theta_cone):
@@ -57,7 +57,7 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     generate_vector(cone_axis, theta_axis, phi_axis)
 
     # Generate the rotation matrix.
-    R_2vect(R, z_axis, cone_axis)
+    two_vect_to_R(z_axis, cone_axis, R)
 
     # The outer product of R.
     R_kron = kron_prod(R, R)
@@ -65,17 +65,69 @@ def compile_2nd_matrix_iso_cone(matrix, R, z_axis, cone_axis, theta_axis, phi_ax
     # Populate the Frame Order matrix in the eigenframe.
     populate_2nd_eigenframe_iso_cone(matrix, theta_cone)
 
-    # Perform the T14 transpose to obtain the Kronecker product matrix!
-    matrix = transpose_14(matrix)
+    # Perform the T23 transpose to obtain the Kronecker product matrix!
+    transpose_23(matrix)
 
     # Rotate.
     matrix = dot(R_kron, dot(matrix, transpose(R_kron)))
 
-    # Perform T14 again to return back.
-    matrix = transpose_14(matrix)
+    # Perform T23 again to return back.
+    transpose_23(matrix)
 
     # Return the matrix.
     return matrix
+
+
+def daeg_to_rotational_superoperator(daeg, Rsuper):
+    """Convert the frame order matrix (daeg) to the rotational superoperator.
+
+    @param daeg:    The second degree frame order matrix, daeg.
+    @type daeg:     numpy 9D, rank-2 array or numpy 3D, rank-4 array
+    @param Rsuper:  The rotational superoperator structure to be populated.
+    @type Rsuper:   numpy 5D, rank-2 array
+    """
+
+    # Convert to rank-4.
+    orig_shape = daeg.shape
+    daeg.shape = (3, 3, 3, 3)
+
+    # First column of the superoperator.
+    Rsuper[0, 0] = daeg[0, 0, 0, 0] - daeg[2, 0, 2, 0]
+    Rsuper[1, 0] = daeg[0, 1, 0, 1] - daeg[2, 1, 2, 1]
+    Rsuper[2, 0] = daeg[0, 0, 0, 1] - daeg[2, 0, 2, 1]
+    Rsuper[3, 0] = daeg[0, 0, 0, 2] - daeg[2, 0, 2, 2]
+    Rsuper[4, 0] = daeg[0, 1, 0, 2] - daeg[2, 1, 2, 2]
+
+    # Second column of the superoperator.
+    Rsuper[0, 1] = daeg[1, 0, 1, 0] - daeg[2, 0, 2, 0]
+    Rsuper[1, 1] = daeg[1, 1, 1, 1] - daeg[2, 1, 2, 1]
+    Rsuper[2, 1] = daeg[1, 0, 1, 1] - daeg[2, 0, 2, 1]
+    Rsuper[3, 1] = daeg[1, 0, 1, 2] - daeg[2, 0, 2, 2]
+    Rsuper[4, 1] = daeg[1, 1, 1, 2] - daeg[2, 1, 2, 2]
+
+    # Third column of the superoperator.
+    Rsuper[0, 2] = daeg[0, 0, 1, 0] + daeg[1, 0, 0, 0]
+    Rsuper[1, 2] = daeg[0, 1, 1, 1] + daeg[1, 1, 0, 1]
+    Rsuper[2, 2] = daeg[0, 0, 1, 1] + daeg[1, 0, 0, 1]
+    Rsuper[3, 2] = daeg[0, 0, 1, 2] + daeg[1, 0, 0, 2]
+    Rsuper[4, 2] = daeg[0, 1, 1, 2] + daeg[1, 1, 0, 2]
+
+    # Fourth column of the superoperator.
+    Rsuper[0, 3] = daeg[0, 0, 2, 0] + daeg[2, 0, 0, 0]
+    Rsuper[1, 3] = daeg[0, 1, 2, 1] + daeg[2, 1, 0, 1]
+    Rsuper[2, 3] = daeg[0, 0, 2, 1] + daeg[2, 0, 0, 1]
+    Rsuper[3, 3] = daeg[0, 0, 2, 2] + daeg[2, 0, 0, 2]
+    Rsuper[4, 3] = daeg[0, 1, 2, 2] + daeg[2, 1, 0, 2]
+
+    # Fifth column of the superoperator.
+    Rsuper[0, 4] = daeg[1, 0, 2, 0] + daeg[2, 0, 1, 0]
+    Rsuper[1, 4] = daeg[1, 1, 2, 1] + daeg[2, 1, 1, 1]
+    Rsuper[2, 4] = daeg[1, 0, 2, 1] + daeg[2, 0, 1, 1]
+    Rsuper[3, 4] = daeg[1, 0, 2, 2] + daeg[2, 0, 1, 2]
+    Rsuper[4, 4] = daeg[1, 1, 2, 2] + daeg[2, 1, 1, 2]
+
+    # Revert the shape.
+    daeg.shape = orig_shape
 
 
 def generate_vector(vector, theta, phi):
@@ -173,39 +225,39 @@ def reduce_alignment_tensor(D, A, red_tensor):
     """
 
     # The reduced tensor element A0.
-    red_tensor[0] =                 (D[0,0] - D[2,2])*A[0]
-    red_tensor[0] = red_tensor[0] + (D[1,1] - D[2,2])*A[1]
-    red_tensor[0] = red_tensor[0] + 2.0*D[0,1]*A[2]
-    red_tensor[0] = red_tensor[0] + 2.0*D[0,2]*A[3]
-    red_tensor[0] = red_tensor[0] + 2.0*D[1,2]*A[4]
+    red_tensor[0] =                 (D[0, 0] - D[2, 2])*A[0]
+    red_tensor[0] = red_tensor[0] + (D[1, 1] - D[2, 2])*A[1]
+    red_tensor[0] = red_tensor[0] + 2.0*D[0, 1]*A[2]
+    red_tensor[0] = red_tensor[0] + 2.0*D[0, 2]*A[3]
+    red_tensor[0] = red_tensor[0] + 2.0*D[1, 2]*A[4]
 
     # The reduced tensor element A1.
-    red_tensor[1] =                 (D[3,3] - D[5,5])*A[0]
-    red_tensor[1] = red_tensor[1] + (D[4,4] - D[5,5])*A[1]
-    red_tensor[1] = red_tensor[1] + 2.0*D[3,4]*A[2]
-    red_tensor[1] = red_tensor[1] + 2.0*D[3,5]*A[3]
-    red_tensor[1] = red_tensor[1] + 2.0*D[4,5]*A[4]
+    red_tensor[1] =                 (D[3, 3] - D[5, 5])*A[0]
+    red_tensor[1] = red_tensor[1] + (D[4, 4] - D[5, 5])*A[1]
+    red_tensor[1] = red_tensor[1] + 2.0*D[3, 4]*A[2]
+    red_tensor[1] = red_tensor[1] + 2.0*D[3, 5]*A[3]
+    red_tensor[1] = red_tensor[1] + 2.0*D[4, 5]*A[4]
 
     # The reduced tensor element A2.
-    red_tensor[2] =                 (D[0,3] - D[2,5])*A[0] 
-    red_tensor[2] = red_tensor[2] + (D[1,4] - D[2,5])*A[1] 
-    red_tensor[2] = red_tensor[2] + (D[0,4] + D[1,3])*A[2] 
-    red_tensor[2] = red_tensor[2] + (D[0,5] + D[2,3])*A[3] 
-    red_tensor[2] = red_tensor[2] + (D[1,5] + D[2,4])*A[4]
+    red_tensor[2] =                 (D[0, 3] - D[2, 5])*A[0] 
+    red_tensor[2] = red_tensor[2] + (D[1, 4] - D[2, 5])*A[1] 
+    red_tensor[2] = red_tensor[2] + (D[0, 4] + D[1, 3])*A[2] 
+    red_tensor[2] = red_tensor[2] + (D[0, 5] + D[2, 3])*A[3] 
+    red_tensor[2] = red_tensor[2] + (D[1, 5] + D[2, 4])*A[4]
 
     # The reduced tensor element A3.
-    red_tensor[3] =                 (D[0,6] - D[2,8])*A[0] 
-    red_tensor[3] = red_tensor[3] + (D[1,7] - D[2,8])*A[1] 
-    red_tensor[3] = red_tensor[3] + (D[0,7] + D[1,6])*A[2] 
-    red_tensor[3] = red_tensor[3] + (D[0,8] + D[2,6])*A[3] 
-    red_tensor[3] = red_tensor[3] + (D[1,8] + D[2,7])*A[4]
+    red_tensor[3] =                 (D[0, 6] - D[2, 8])*A[0] 
+    red_tensor[3] = red_tensor[3] + (D[1, 7] - D[2, 8])*A[1] 
+    red_tensor[3] = red_tensor[3] + (D[0, 7] + D[1, 6])*A[2] 
+    red_tensor[3] = red_tensor[3] + (D[0, 8] + D[2, 6])*A[3] 
+    red_tensor[3] = red_tensor[3] + (D[1, 8] + D[2, 7])*A[4]
 
     # The reduced tensor element A4.
-    red_tensor[4] =                 (D[3,6] - D[5,8])*A[0] 
-    red_tensor[4] = red_tensor[4] + (D[4,7] - D[5,8])*A[1] 
-    red_tensor[4] = red_tensor[4] + (D[3,7] + D[4,6])*A[2] 
-    red_tensor[4] = red_tensor[4] + (D[3,8] + D[5,6])*A[3] 
-    red_tensor[4] = red_tensor[4] + (D[4,8] + D[5,7])*A[4]
+    red_tensor[4] =                 (D[3, 6] - D[5, 8])*A[0] 
+    red_tensor[4] = red_tensor[4] + (D[4, 7] - D[5, 8])*A[1] 
+    red_tensor[4] = red_tensor[4] + (D[3, 7] + D[4, 6])*A[2] 
+    red_tensor[4] = red_tensor[4] + (D[3, 8] + D[5, 6])*A[3] 
+    red_tensor[4] = red_tensor[4] + (D[4, 8] + D[5, 7])*A[4]
 
 
 def reduce_alignment_tensor_reverse(D, A, red_tensor):
@@ -223,36 +275,36 @@ def reduce_alignment_tensor_reverse(D, A, red_tensor):
     """
 
     # The reduced tensor element A0.
-    red_tensor[0] =                 (D[0,0] - D[6,6])*A[0]
-    red_tensor[0] = red_tensor[0] + (D[3,3] - D[6,6])*A[1]
-    red_tensor[0] = red_tensor[0] + 2.0*D[0,3]*A[2]
-    red_tensor[0] = red_tensor[0] + 2.0*D[0,6]*A[3]
-    red_tensor[0] = red_tensor[0] + 2.0*D[3,6]*A[4]
+    red_tensor[0] =                 (D[0, 0] - D[6, 6])*A[0]
+    red_tensor[0] = red_tensor[0] + (D[3, 3] - D[6, 6])*A[1]
+    red_tensor[0] = red_tensor[0] + 2.0*D[0, 3]*A[2]
+    red_tensor[0] = red_tensor[0] + 2.0*D[0, 6]*A[3]
+    red_tensor[0] = red_tensor[0] + 2.0*D[3, 6]*A[4]
 
     # The reduced tensor element A1.
-    red_tensor[1] =                 (D[1,1] - D[7,7])*A[0]
-    red_tensor[1] = red_tensor[1] + (D[4,4] - D[7,7])*A[1]
-    red_tensor[1] = red_tensor[1] + 2.0*D[1,4]*A[2]
-    red_tensor[1] = red_tensor[1] + 2.0*D[1,7]*A[3]
-    red_tensor[1] = red_tensor[1] + 2.0*D[4,7]*A[4]
+    red_tensor[1] =                 (D[1, 1] - D[7, 7])*A[0]
+    red_tensor[1] = red_tensor[1] + (D[4, 4] - D[7, 7])*A[1]
+    red_tensor[1] = red_tensor[1] + 2.0*D[1, 4]*A[2]
+    red_tensor[1] = red_tensor[1] + 2.0*D[1, 7]*A[3]
+    red_tensor[1] = red_tensor[1] + 2.0*D[4, 7]*A[4]
 
     # The reduced tensor element A2.
-    red_tensor[2] =                 (D[0,1] - D[6,7])*A[0] 
-    red_tensor[2] = red_tensor[2] + (D[3,4] - D[6,7])*A[1] 
-    red_tensor[2] = red_tensor[2] + (D[0,4] + D[1,3])*A[2] 
-    red_tensor[2] = red_tensor[2] + (D[0,7] + D[1,6])*A[3] 
-    red_tensor[2] = red_tensor[2] + (D[3,7] + D[4,6])*A[4]
+    red_tensor[2] =                 (D[0, 1] - D[6, 7])*A[0] 
+    red_tensor[2] = red_tensor[2] + (D[3, 4] - D[6, 7])*A[1] 
+    red_tensor[2] = red_tensor[2] + (D[0, 4] + D[1, 3])*A[2] 
+    red_tensor[2] = red_tensor[2] + (D[0, 7] + D[1, 6])*A[3] 
+    red_tensor[2] = red_tensor[2] + (D[3, 7] + D[4, 6])*A[4]
 
     # The reduced tensor element A3.
-    red_tensor[3] =                 (D[0,2] - D[6,8])*A[0] 
-    red_tensor[3] = red_tensor[3] + (D[3,5] - D[6,8])*A[1] 
-    red_tensor[3] = red_tensor[3] + (D[0,5] + D[2,3])*A[2] 
-    red_tensor[3] = red_tensor[3] + (D[0,8] + D[2,6])*A[3] 
-    red_tensor[3] = red_tensor[3] + (D[3,8] + D[5,6])*A[4]
+    red_tensor[3] =                 (D[0, 2] - D[6, 8])*A[0] 
+    red_tensor[3] = red_tensor[3] + (D[3, 5] - D[6, 8])*A[1] 
+    red_tensor[3] = red_tensor[3] + (D[0, 5] + D[2, 3])*A[2] 
+    red_tensor[3] = red_tensor[3] + (D[0, 8] + D[2, 6])*A[3] 
+    red_tensor[3] = red_tensor[3] + (D[3, 8] + D[5, 6])*A[4]
 
     # The reduced tensor element A4.
-    red_tensor[4] =                 (D[1,2] - D[7,8])*A[0] 
-    red_tensor[4] = red_tensor[4] + (D[4,5] - D[7,8])*A[1] 
-    red_tensor[4] = red_tensor[4] + (D[1,5] + D[2,4])*A[2] 
-    red_tensor[4] = red_tensor[4] + (D[1,8] + D[2,7])*A[3] 
-    red_tensor[4] = red_tensor[4] + (D[4,8] + D[5,7])*A[4]
+    red_tensor[4] =                 (D[1, 2] - D[7, 8])*A[0] 
+    red_tensor[4] = red_tensor[4] + (D[4, 5] - D[7, 8])*A[1] 
+    red_tensor[4] = red_tensor[4] + (D[1, 5] + D[2, 4])*A[2] 
+    red_tensor[4] = red_tensor[4] + (D[1, 8] + D[2, 7])*A[3] 
+    red_tensor[4] = red_tensor[4] + (D[4, 8] + D[5, 7])*A[4]

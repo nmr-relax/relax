@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2005, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,15 +21,20 @@
 ###############################################################################
 
 
-__all__ = ['angles',
+__all__ = ['align_tensor',
+           'angles',
+           'base_class',
+           'check',
            'command',
            'consistency_tests',
            'dasha',
            'deselect',
            'diffusion_tensor',
+           'doc_string',
            'dx',
            'eliminate',
            'fix',
+           'frame_order',
            'frq',
            'gpl',
            'grace',
@@ -39,20 +44,26 @@ __all__ = ['angles',
            'minimisation',
            'model_free',
            'model_selection',
+           'molecule',
            'molmol',
            'monte_carlo',
+           'n_state_model',
            'noe',
-           'nuclei',
            'palmer',
+           'pcs',
+           'pipe',
            'pymol',
+           'rdc',
            'relax_data',
            'relax_disp',
            'relax_fit',
            'reset',
-           'pipe',
-           'rw',
+           'residue',
+           'results',
            'select',
            'sequence',
+           'spectrum',
+           'spin',
            'state',
            'structure',
            'tab_completion',

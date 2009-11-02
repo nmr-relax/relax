@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.relax_data import Relax_data
-from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 # Unit test imports.
@@ -71,12 +71,12 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float argument, and skip it.
-            if data[0] == 'float':
+            # Catch the number arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFloatError, self.relax_data_fns.back_calc, ri_label='R2', frq_label='1000', frq=data[1])
+            self.assertRaises(RelaxNumError, self.relax_data_fns.back_calc, ri_label='R2', frq_label='1000', frq=data[1])
 
 
     def test_copy_argfail_pipe_from(self):
@@ -221,12 +221,12 @@ class Test_relax_data(Relax_data_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the float argument, and skip it.
-            if data[0] == 'float':
+            # Catch the number arguments, and skip them.
+            if data[0] == 'bin' or data[0] == 'int' or data[0] == 'float':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxFloatError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=data[1])
+            self.assertRaises(RelaxNumError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=data[1])
 
 
     def test_read_argfail_file(self):
@@ -356,7 +356,7 @@ class Test_relax_data(Relax_data_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', sep=data[1])
+            self.assertRaises(RelaxNoneStrError, self.relax_data_fns.read, ri_label='R2', frq_label='1000', frq=1e9, file='R2_1000MHz', data_col=0, error_col=0, sep=data[1])
 
 
     def test_write_argfail_ri_label(self):

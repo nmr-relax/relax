@@ -25,7 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.n_state_model import N_state_model
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxBoolError, RelaxIntError, RelaxLenError, RelaxListError, RelaxListNumError, RelaxNoneListNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 # Unit test imports.
@@ -45,23 +45,12 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the list arguments.
-            if type(data[1]) == list:
-                # The wrong length.
-                if len(data[1]) != 3:
-                    self.assertRaises(RelaxLenError, self.n_state_model_fns.CoM, pivot_point=data[1])
+            # Catch the int, float, and number list arguments, and skip them (if the length is 3).
+            if (data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3:
+                continue
 
-                # Catch the int, float, and number list arguments, and skip them.
-                elif data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
-                    continue
-
-                # The argument test.
-                else:
-                    self.assertRaises(RelaxListNumError, self.n_state_model_fns.CoM, pivot_point=data[1])
-
-            # All other arguments.
-            else:
-                self.assertRaises(RelaxListError, self.n_state_model_fns.CoM, pivot_point=data[1])
+            # The argument test.
+            self.assertRaises(RelaxListNumError, self.n_state_model_fns.CoM, pivot_point=data[1])
 
 
     def test_CoM_argfail_centre(self):
@@ -69,27 +58,12 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the None arguments, and skip them.
-            if data[0] == 'None':
+            # Catch the None, int, float, and number list arguments, and skip them (if the length is 3).
+            if data[0] == 'None' or ((data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list') and len(data[1]) == 3):
                 continue
 
-            # Catch the list arguments.
-            if type(data[1]) == list:
-                # The wrong length.
-                if len(data[1]) != 3:
-                    self.assertRaises(RelaxLenError, self.n_state_model_fns.CoM, centre=data[1])
-
-                # Catch the int, float, and number list arguments, and skip them.
-                elif data[0] == 'int list' or data[0] == 'float list' or data[0] == 'number list':
-                    continue
-
-                # The argument test.
-                else:
-                    self.assertRaises(RelaxListNumError, self.n_state_model_fns.CoM, centre=data[1])
-
-            # All other arguments.
-            else:
-                self.assertRaises(RelaxListError, self.n_state_model_fns.CoM, centre=data[1])
+            # The argument test.
+            self.assertRaises(RelaxNoneListNumError, self.n_state_model_fns.CoM, centre=data[1])
 
 
     def test_cone_pdb_argfail_cone_type(self):

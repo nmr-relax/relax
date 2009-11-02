@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import path
+from os import path, sep
 import sys
 from unittest import TestCase
 
@@ -44,7 +44,7 @@ class Test_scientific(TestCase):
             self.path = sys.path[-1]
 
         # The path to a PDB file.
-        self.test_pdb_path = self.path+'/test_suite/shared_data/structures/Ap4Aase_res1-12.pdb'
+        self.test_pdb_path = self.path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]
@@ -82,7 +82,7 @@ class Test_scientific(TestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+        self.assertEqual(list(res.atoms.keys()), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
 
 
     def test___residue_loop_selection(self):
@@ -106,7 +106,7 @@ class Test_scientific(TestCase):
         self.assertEqual(res_num, 12)
         self.assertEqual(res_name, 'GLY')
         self.assertEqual(len(res.atoms), 7)
-        self.assertEqual(res.atoms.keys(), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
+        self.assertEqual(list(res.atoms.keys()), ['C', 'H', 'CA', 'O', 'N', '1HA', '2HA'])
 
 
     def test___residue_loop_selection_no_match(self):

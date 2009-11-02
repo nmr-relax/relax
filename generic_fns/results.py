@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -78,12 +78,9 @@ def read(file='results', directory=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Make sure that the data pipe is empty.
     if not cdp.is_empty():
-        raise RelaxError, "The current data pipe is not empty."
+        raise RelaxError("The current data pipe is not empty.")
 
     # Get the full file path, for later use.
     file_path = get_file_path(file_name=file, dir=directory)
@@ -96,7 +93,7 @@ def read(file='results', directory=None):
 
     # XML results.
     if format == 'xml':
-        read_function = ds.from_xml(file, dir=dirname(file_path))
+        ds.from_xml(file, dir=dirname(file_path), pipe_to=pipes.cdp_name())
 
     # Columnar results.
     elif format == 'columnar':
@@ -117,7 +114,7 @@ def read(file='results', directory=None):
 
     # Unknown results file.
     else:
-        raise RelaxError, "The format of the results file " + `file_path` + " cannot be determined."
+        raise RelaxError("The format of the results file " + repr(file_path) + " cannot be determined.")
 
 
 def write(file="results", directory=None, force=False, compress_type=1, verbosity=1):
@@ -134,7 +131,7 @@ def write(file="results", directory=None, force=False, compress_type=1, verbosit
     results_file = open_write_file(file_name=file, dir=directory, force=force, compress_type=compress_type, verbosity=verbosity)
 
     # Write the results.
-    ds.to_xml(results_file)
+    ds.to_xml(results_file, pipes=pipes.cdp_name())
 
     # Close the results file.
     results_file.close()

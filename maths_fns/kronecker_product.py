@@ -43,32 +43,196 @@ def kron_prod(A, B):
     C = outer(A, B)
 
     # Redefine the shape.
+    orig_shape = C.shape
     C.shape = A.shape + B.shape
 
     # Generate and return the Kronecker product matrix.
-    return transpose_14(C, A.shape + B.shape)
+    transpose_23(C)
+    C.shape = orig_shape
+    return C
 
 
-def transpose_14(C, shape=(3,3,3,3)):
-    """Perform the transpose of axes 1 and 4.
+def transpose_12(matrix):
+    """Perform the 1,2 transpose of a rank-4, 3D tensor.
 
-    @param A:       ixj matrix.
-    @type A:        rank-2 numpy array
-    @keyword shape: The rank-4 shape of the matrix A.
-    @type shape:    tuple of 4 int
-    @return:        A with axes 1 and 4 transposed.
-    @rtype:         rank-2 numpy array
+    @param matrix:  The rank-4 tensor either in (9, 9) shape for a matrix or the (3, 3, 3, 3) shape
+                    for the tensor form.
+    @type matrix:   numpy array
     """
 
-    # Redefine the shape.
-    orig_shape = C.shape
-    C.shape = shape
+    # Reshape if necessary.
+    reshape = False
+    if matrix.shape == (9, 9):
+        reshape = True
+        matrix.shape = (3, 3, 3, 3)
 
-    # Generate the transposed matrix.
-    C_T14 = concatenate(concatenate(C, axis=1), axis=1)
+    # Perform the transpose.
+    for i in range(3):
+        for j in range(i, 3):
+            for k in range(3):
+                for l in range(3):
+                    # Store the element.
+                    element = matrix[i, j, k, l]
 
-    # Restore the shape of C.
-    C.shape = orig_shape
+                    # Overwrite.
+                    matrix[i, j, k, l] = matrix[j, i, k, l]
+                    matrix[j, i, k, l] = element
 
-    # Return the transposed matrix.
-    return C_T14
+    # Undo the reshape.
+    if reshape:
+        matrix.shape = (9, 9)
+
+
+def transpose_13(matrix):
+    """Perform the 1,3 transpose of a rank-4, 3D tensor.
+
+    @param matrix:  The rank-4 tensor either in (9, 9) shape for a matrix or the (3, 3, 3, 3) shape
+                    for the tensor form.
+    @type matrix:   numpy array
+    """
+
+    # Reshape if necessary.
+    reshape = False
+    if matrix.shape == (9, 9):
+        reshape = True
+        matrix.shape = (3, 3, 3, 3)
+
+    # Perform the transpose.
+    for i in range(3):
+        for j in range(3):
+            for k in range(i, 3):
+                for l in range(3):
+                    # Store the element.
+                    element = matrix[i, j, k, l]
+
+                    # Overwrite.
+                    matrix[i, j, k, l] = matrix[k, j, i, l]
+                    matrix[k, j, i, l] = element
+
+    # Undo the reshape.
+    if reshape:
+        matrix.shape = (9, 9)
+
+
+def transpose_14(matrix):
+    """Perform the 1,4 transpose of a rank-4, 3D tensor.
+
+    @param matrix:  The rank-4 tensor either in (9, 9) shape for a matrix or the (3, 3, 3, 3) shape
+                    for the tensor form.
+    @type matrix:   numpy array
+    """
+
+    # Reshape if necessary.
+    reshape = False
+    if matrix.shape == (9, 9):
+        reshape = True
+        matrix.shape = (3, 3, 3, 3)
+
+    # Perform the transpose.
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(i, 3):
+                    # Store the element.
+                    element = matrix[i, j, k, l]
+
+                    # Overwrite.
+                    matrix[i, j, k, l] = matrix[l, j, k, i]
+                    matrix[l, j, k, i] = element
+
+    # Undo the reshape.
+    if reshape:
+        matrix.shape = (9, 9)
+
+
+def transpose_23(matrix):
+    """Perform the 2,3 transpose of a rank-4, 3D tensor.
+
+    @param matrix:  The rank-4 tensor either in (9, 9) shape for a matrix or the (3, 3, 3, 3) shape
+                    for the tensor form.
+    @type matrix:   numpy array
+    """
+
+    # Reshape if necessary.
+    reshape = False
+    if matrix.shape == (9, 9):
+        reshape = True
+        matrix.shape = (3, 3, 3, 3)
+
+    # Perform the transpose.
+    for i in range(3):
+        for j in range(3):
+            for k in range(j, 3):
+                for l in range(3):
+                    # Store the element.
+                    element = matrix[i, j, k, l]
+
+                    # Overwrite.
+                    matrix[i, j, k, l] = matrix[i, k, j, l]
+                    matrix[i, k, j, l] = element
+
+    # Undo the reshape.
+    if reshape:
+        matrix.shape = (9, 9)
+
+
+def transpose_24(matrix):
+    """Perform the 2,4 transpose of a rank-4, 3D tensor.
+
+    @param matrix:  The rank-4 tensor either in (9, 9) shape for a matrix or the (3, 3, 3, 3) shape
+                    for the tensor form.
+    @type matrix:   numpy array
+    """
+
+    # Reshape if necessary.
+    reshape = False
+    if matrix.shape == (9, 9):
+        reshape = True
+        matrix.shape = (3, 3, 3, 3)
+
+    # Perform the transpose.
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(j, 3):
+                    # Store the element.
+                    element = matrix[i, j, k, l]
+
+                    # Overwrite.
+                    matrix[i, j, k, l] = matrix[i, l, k, j]
+                    matrix[i, l, k, j] = element
+
+    # Undo the reshape.
+    if reshape:
+        matrix.shape = (9, 9)
+
+
+def transpose_34(matrix):
+    """Perform the 3,4 transpose of a rank-4, 3D tensor.
+
+    @param matrix:  The rank-4 tensor either in (9, 9) shape for a matrix or the (3, 3, 3, 3) shape
+                    for the tensor form.
+    @type matrix:   numpy array
+    """
+
+    # Reshape if necessary.
+    reshape = False
+    if matrix.shape == (9, 9):
+        reshape = True
+        matrix.shape = (3, 3, 3, 3)
+
+    # Perform the transpose.
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(k, 3):
+                    # Store the element.
+                    element = matrix[i, j, k, l]
+
+                    # Overwrite.
+                    matrix[i, j, k, l] = matrix[i, j, l, k]
+                    matrix[i, j, l, k] = element
+
+    # Undo the reshape.
+    if reshape:
+        matrix.shape = (9, 9)

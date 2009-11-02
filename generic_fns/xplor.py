@@ -51,7 +51,7 @@ def __convert_to_id(string):
 
         # Don't know what this is!
         if len(info) != 2:
-            raise RelaxError, "Cannot convert the Xplor atom string '%s' to relax format." % string
+            raise RelaxError("Cannot convert the Xplor atom string '%s' to relax format." % string)
 
         # A molecule identifier.
         if info[0] == 'segid':
@@ -92,14 +92,14 @@ def parse_noe_restraints(lines):
         id2 = second_parse(id2)
 
         # Convert to relax spin IDs.
-        if type(id1) == list:
+        if isinstance(id1, list):
             relax_id1 = []
             for i in range(len(id1)):
                 relax_id1.append(__convert_to_id(id1[i]))
         else:
             relax_id1 = __convert_to_id(id1)
 
-        if type(id2) == list:
+        if isinstance(id2, list):
             relax_id2 = []
             for i in range(len(id2)):
                 relax_id2.append(__convert_to_id(id2[i]))
@@ -131,7 +131,7 @@ def first_parse(lines):
 
     # Extract the data.
     line_index = 0
-    while 1:
+    while True:
         # Break out!
         if line_index >= len(lines):
             break
@@ -145,7 +145,7 @@ def first_parse(lines):
             id = ['', '']
             id_index = 0
             inside = 0
-            while 1:
+            while True:
                 # Inc the character index.
                 char_index = char_index + 1
 
@@ -177,7 +177,7 @@ def first_parse(lines):
 
                 # A logical test (debugging).
                 if inside < 0:
-                    raise RelaxError, "Improperly formatted Xplor file, unmatched ')'."
+                    raise RelaxError("Improperly formatted Xplor file, unmatched ')'.")
 
                 # Append the character.
                 if inside:
@@ -197,6 +197,14 @@ def first_parse(lines):
             noe = float(info[0])
             lower = float(info[1])
             upper = float(info[2])
+
+        # Non-data line.
+        else:
+            # Line index.
+            line_index = line_index + 1
+
+            # Skip to the next line without yielding.
+            continue
 
         # Line index.
         line_index = line_index + 1
@@ -220,7 +228,7 @@ def second_parse(id):
     atoms = ['']
     index = -1
     inside = False
-    while 1:
+    while True:
         # Inc the character index.
         index = index + 1
 
@@ -232,7 +240,7 @@ def second_parse(id):
         if id[index] == '(':
             # 2 brackets?!?
             if inside:
-                raise RelaxError, "The Xplor pseudoatom ID string '%s' is invalid." % id
+                raise RelaxError("The Xplor pseudoatom ID string '%s' is invalid." % id)
 
             # The flag.
             inside = True

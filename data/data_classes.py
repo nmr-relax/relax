@@ -27,7 +27,7 @@ from re import search
 # Empty data container.
 #######################
 
-class Element:
+class Element(object):
     """Empty data container."""
 
     def __repr__(self):
@@ -37,7 +37,7 @@ class Element:
         # Data structures.
         for name in dir(self):
             # Skip Element and derived class methods.
-            if name in Element.__dict__.keys() or name in self.__class__.__dict__.keys():
+            if name in list(Element.__dict__.keys()) or name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip special objects.
@@ -45,7 +45,7 @@ class Element:
                 continue
 
             # Generate the text.
-            text = text + "%-25s%-100s\n" % (name, `getattr(self, name)`)
+            text = text + "%-25s%-100s\n" % (name, repr(getattr(self, name)))
 
         # Return the lot.
         return text
@@ -61,7 +61,7 @@ class Element:
         # An object has been added to the container.
         for name in dir(self):
             # Skip Element and derived class methods.
-            if name in Element.__dict__.keys() or name in self.__class__.__dict__.keys():
+            if name in list(Element.__dict__.keys()) or name in list(self.__class__.__dict__.keys()):
                 continue
 
             # Skip special objects.

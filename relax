@@ -41,7 +41,8 @@ import dep_check
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
 import platform
-import profile
+if dep_check.profile_module:
+    import profile
 import pstats
 from re import match
 from string import split, strip
@@ -52,7 +53,7 @@ import generic_fns
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
-from relax_io import log, tee
+from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
 import version
@@ -106,16 +107,16 @@ class Relax:
 
         # Show the version number and exit.
         if mode == 'version':
-            print 'relax ' + self.version
+            print(('relax ' + self.version))
             sys.exit()
 
         # Logging.
         if log_file:
-            log(log_file)
+            io_streams_log(log_file)
 
         # Tee.
         elif tee_file:
-            tee(tee_file)
+            io_streams_tee(tee_file)
 
         # Create a string to pass to the interpreter to print.
         intro_string = self.get_intro_string()
@@ -201,7 +202,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(log_file, F_OK):
-                parser.error("the log file " + `log_file` + " already exists")
+                parser.error("the log file " + repr(log_file) + " already exists")
         else:
             log_file = None
 
@@ -216,7 +217,7 @@ class Relax:
 
             # Fail if the file already exists.
             if access(tee_file, F_OK):
-                parser.error("the tee file " + `tee_file` + " already exists")
+                parser.error("the tee file " + repr(tee_file) + " already exists")
         else:
             tee_file = None
 
@@ -231,7 +232,7 @@ class Relax:
 
             # Test if the script file exists.
             if not access(self.script_file, F_OK):
-                parser.error("the script file " + `self.script_file` + " does not exist")
+                parser.error("the script file " + repr(self.script_file) + " does not exist")
 
 
         # Determine the relax mode and test for mutually exclusive modes.
@@ -404,7 +405,7 @@ class RelaxParser(OptionParser):
 
         # Raise a clean error.
         try:
-            raise relax_errors.RelaxError, message
+            raise relax_errors.RelaxError(message)
         except relax_errors.AllRelaxErrors, instance:
             sys.stderr.write(instance.__str__())
 
@@ -413,14 +414,23 @@ class RelaxParser(OptionParser):
 
 
 if __name__ == "__main__":
-    # Change this flag to 1 for code profiling.
-    profile_flag = 0
+    # Change this flag to True for code profiling.
+    profile_flag = False
 
+    # Normal relax operation.
     if not profile_flag:
         Relax()
+
+    # relax in profiling mode.
     else:
         def print_stats(stats, status=0):
             pstats.Stats(stats).sort_stats('cumulative', 'name').print_stats()
 
+        # No profile module.
+        if not dep_check.profile_module:
+            sys.stderr.write("The profile module is not available, please install the Python development packages for profiling.\n\n")
+            sys.exit()
+
+        # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
         profile.run('Relax()')

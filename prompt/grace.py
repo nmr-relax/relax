@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,9 +28,9 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-from relax_errors import RelaxBinError, RelaxBoolError, RelaxNoneIntStrError, RelaxNoneStrError, RelaxStrError
-from doc_string import regexp_doc
-import help
+from base_class import User_fn_class
+import check
+from doc_string import docs
 from generic_fns import grace, minimise
 from specific_fns.model_free import Model_free
 from specific_fns.jw_mapping import Jw_mapping
@@ -39,18 +39,8 @@ from specific_fns.relax_disp import Relax_disp
 from specific_fns.relax_fit import Relax_fit
 
 
-class Grace:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for interfacing with Grace."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Grace(User_fn_class):
+    """Class for interfacing with Grace."""
 
     def view(self, file=None, dir='grace', grace_exe='xmgrace'):
         """Function for running Grace.
@@ -85,22 +75,15 @@ class Grace:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "grace.view("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", grace_exe=" + `grace_exe` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", grace_exe=" + repr(grace_exe) + ")"
+            print(text)
 
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Grace executable file.
-        if type(grace_exe) != str:
-            raise RelaxStrError, ('Grace executable file', grace_exe)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(grace_exe, 'Grace executable file')
 
         # Execute the functional code.
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
@@ -200,47 +183,25 @@ class Grace:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "grace.write("
-            text = text + "x_data_type=" + `x_data_type`
-            text = text + ", y_data_type=" + `y_data_type`
-            text = text + ", spin_id=" + `spin_id`
-            text = text + ", plot_data=" + `plot_data`
-            text = text + ", file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", norm=" + `norm` + ")"
-            print text
+            text = text + "x_data_type=" + repr(x_data_type)
+            text = text + ", y_data_type=" + repr(y_data_type)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", plot_data=" + repr(plot_data)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force)
+            text = text + ", norm=" + repr(norm) + ")"
+            print(text)
 
-        # Data type for x-axis.
-        if type(x_data_type) != str:
-            raise RelaxStrError, ('x data type', x_data_type)
-
-        # Data type for y-axis.
-        if type(y_data_type) != str:
-            raise RelaxStrError, ('y data type', y_data_type)
-
-        # Spin ID string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
-
-        # The plot data.
-        if type(plot_data) != str:
-            raise RelaxStrError, ('plot data', plot_data)
-
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
-
-        # The normalisation flag.
-        if type(norm) != bool:
-            raise RelaxBoolError, ('normalisation flag', norm)
+        # The argument checks.
+        check.is_str(x_data_type, 'x data type')
+        check.is_str(y_data_type, 'y data type')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_str(plot_data, 'plot data')
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_bool(force, 'force flag')
+        check.is_bool(norm, 'normalisation flag')
 
         # Execute the functional code.
         grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=dir, force=force, norm=norm)
@@ -251,10 +212,10 @@ class Grace:
     #########################
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + regexp_doc() + "\n"
-    write.__doc__ = write.__doc__ + minimise.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Noe.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Relax_disp.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Relax_fit.return_data_name.__doc__ + "\n"
-    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name.__doc__ + "\n\n"
-    write.__doc__ = write.__doc__ + Model_free.return_data_name.__doc__ + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + docs.regexp.doc + "\n"
+    write.__doc__ = write.__doc__ + minimise.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Noe.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + Relax_disp.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + Relax_fit.return_data_name_doc + "\n"
+    write.__doc__ = write.__doc__ + Jw_mapping.return_data_name_doc + "\n\n"
+    write.__doc__ = write.__doc__ + Model_free.return_data_name_doc + "\n\n"

@@ -21,8 +21,9 @@
 ###############################################################################
 
 # Python module imports.
-from unittest import TestCase
+from os import sep
 import sys
+from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
@@ -51,7 +52,7 @@ class Generic(TestCase):
             self.relax.interpreter._Pipe.create(pipe_list[i], 'mf')
 
             # Load the Lupin Ap4Aase sequence.
-            self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/shared_data")
+            self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
             # Only select residue 8.
             self.relax.interpreter._Select.spin(spin_id=':8', change_all=True)
@@ -77,4 +78,4 @@ class Generic(TestCase):
         """Test the creation of a PDB representation of the distribution of XH bond vectors."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/xh_vector_dist.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')

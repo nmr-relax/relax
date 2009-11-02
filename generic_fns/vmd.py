@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 
 # relax module imports.
 import dep_check
-from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError
 
 
@@ -34,10 +33,7 @@ def view():
 
     # Test if the module is available.
     if not dep_check.vmd_module:
-        raise RelaxError, "VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency)."
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
+        raise RelaxError("VMD is not available (cannot import Scientific.Visualization.VMD due to missing Numeric dependency).")
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):

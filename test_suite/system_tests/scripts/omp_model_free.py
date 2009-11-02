@@ -1,6 +1,7 @@
 """Script for performing a very minimal model-free analysis using the OMP relaxation data."""
 
 # Python module imports.
+from os import sep
 import sys
 
 # relax module imports.
@@ -8,7 +9,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 
 # Path of the relaxation data.
-DATA_PATH = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
 # Mini subset of local tm and model-free data pipes.
 LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2']
@@ -98,10 +99,10 @@ class Main:
         ##############
 
         # Print out.
-        print "\n\n\n"
-        print "Final stage"
-        print "==========="
-        print "\n"
+        print("\n\n\n")
+        print("Final stage")
+        print("===========")
+        print("\n")
 
         # Unfix all parameters (to switch to the global models).
         fix('all', fixed=False)
@@ -135,10 +136,10 @@ class Main:
         #################################################
 
         # Print out.
-        print "\n\n\n"
-        print "MC simulations of the diffusion tensor"
-        print "======================================"
-        print "\n"
+        print("\n\n\n")
+        print("MC simulations of the diffusion tensor")
+        print("======================================")
+        print("\n")
 
         # Unfix all parameters (to switch to the global models).
         fix('all', fixed=False)
@@ -184,7 +185,7 @@ class Main:
         # Loop over the data pipes.
         for name in self.pipes:
             # Create the data pipe.
-            if ds.has_key(name):
+            if name in ds:
                 pipe.delete(name)
             pipe.create(name, 'mf')
 

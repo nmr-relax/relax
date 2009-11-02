@@ -88,7 +88,7 @@ Todo:
     - Add example IEEE double.
     - Check byte/nibble attributions.
 '''
-from struct import pack,unpack
+from struct import pack, unpack
 import sys
 
 
@@ -199,15 +199,15 @@ def packBytesAsPyFloat(bytes):
         doubleString = doubleString[::-1]
 
     # unpack binary string to a python float
-    return unpack('d',doubleString)[0]
+    return unpack('d', doubleString)[0]
 
 
-NAN_BYTES = [0x00,0x00,0x00,0x00,0x00,0x00,0xF8,0x7F]
+NAN_BYTES = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF8, 0x7F]
 '''Bytes for an arbitary IEEE-754 not a number (NaN) in little endian format
 0b00000000 00000000 00000000 00000000 00000000 00000000 00011111 11111110.'''
 
 
-INF_BYTES = [0x00,0x00,0x00,0x00,0x00,0x00,0xF0,0x7F]
+INF_BYTES = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x7F]
 '''Bytes for IEEE-754 positive infinity (inf) in little endian format
 0b00000000 00000000 00000000 00000000 00000000 00000000 00001111 11111110.'''
 
@@ -239,11 +239,11 @@ def floatToBinaryString(obj):
     @raise TypeError:   If the input object isn't a python float.
     '''
 
-    if not isinstance(obj,float):
+    if not isinstance(obj, float):
         raise TypeError('the object recieved wasn\'t a float, type was: %s' % type(obj))
 
     # pack float into binary string
-    packed =pack('d',obj)
+    packed =pack('d', obj)
 
     #change byte order to little endian by reversing string
     if sys.byteorder == 'big':
@@ -268,7 +268,7 @@ def floatAsByteArray(obj):
     binaryString = floatToBinaryString(obj)
 
     # convert the binary string to an array of 8 bytes
-    bytes = unpack('8B',binaryString)
+    bytes = unpack('8B', binaryString)
 
     #convert bytes to a list for ease of editing
     return list(bytes)
@@ -321,7 +321,7 @@ def isNegative(obj):
     return not isPositive(obj)
 
 
-def areUnordered(obj1,obj2):
+def areUnordered(obj1, obj2):
     '''Test to see if two python float are unordered.
 
     Float comparison is unordered if either or both of the objects is 'not a number' (NaN).
@@ -369,7 +369,7 @@ def isFinite(obj):
     return result
 
 
-def copySign(fromNumber,toDouble):
+def copySign(fromNumber, toDouble):
     '''Copy the sign bit from one python float to another.
 
     This function is class agnostic the sign bit can be copied freely between ordinary floats, NaNs
@@ -661,17 +661,17 @@ def bitpatternToFloat(string, endian='big'):
     """
 
     # Test that the bit pattern is a string.
-    if type(string) != str:
-        raise TypeError, "The string argument '%s' is not a string." % string
+    if not isinstance(string, str):
+        raise TypeError("The string argument '%s' is not a string." % string)
 
     # Test the length of the bit pattern.
     if len(string) != 64:
-        raise TypeError, "The string '%s' is not 64 characters long." % string
+        raise TypeError("The string '%s' is not 64 characters long." % string)
 
     # Test that the string consists solely of zeros and ones.
     for char in string:
         if char not in ['0', '1']:
-            raise TypeError, "The string '%s' should be composed solely of the characters '0' and '1'." % string
+            raise TypeError("The string '%s' should be composed solely of the characters '0' and '1'." % string)
 
     # Reverse the byte order as neccessary.
     if endian == 'big' and sys.byteorder == 'little':
@@ -700,13 +700,13 @@ def bitpatternToInt(string, endian='big'):
     """
 
     # Test that the bit pattern is a string.
-    if type(string) != str:
-        raise TypeError, "The string argument '%s' is not a string." % string
+    if not isinstance(string, str):
+        raise TypeError("The string argument '%s' is not a string." % string)
 
     # Test that the string consists solely of zeros and ones.
     for char in string:
         if char not in ['0', '1']:
-            raise TypeError, "The string '%s' should be composed solely of the characters '0' and '1'." % string
+            raise TypeError("The string '%s' should be composed solely of the characters '0' and '1'." % string)
 
     # Reverse the byte order as neccessary.
     if endian == 'big' and sys.byteorder == 'little':

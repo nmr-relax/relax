@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -95,7 +95,7 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
 
         # Invalid argument combination.
         else:
-            raise RelaxError, "When plotting errors, the errors must exist."
+            raise RelaxError("When plotting errors, the errors must exist.")
 
     # Plot of simulation values.
     else:
@@ -150,9 +150,6 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     @return:                The graph numerical data.
     @rtype:                 list of lists of float
     """
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Initialise the data structure.
     data = []
@@ -286,7 +283,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
     if plot_data not in ['value', 'error', 'sim']:
-        raise RelaxError, "The plot data argument " + `plot_data` + " must be set to either 'value', 'error', 'sim'."
+        raise RelaxError("The plot data argument " + repr(plot_data) + " must be set to either 'value', 'error', 'sim'.")
 
     # Test if the simulations exist.
     if plot_data == 'sim' and not hasattr(cdp, 'sim_number'):
@@ -328,7 +325,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Test for multiple data sets.
     multi = False
-    if type(data[0][-4]) == list or isinstance(data[0][-4], ndarray):
+    if isinstance(data[0][-4], list) or isinstance(data[0][-4], ndarray):
         multi = True
 
     # Multiple data sets.
@@ -429,9 +426,6 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
     @type y_return_grace_string:    function
     """
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Graph G0.
     file.write("@with g0\n")
 
@@ -443,8 +437,8 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
         # Residue only data.
         if seq_type == 'res':
             # Axis limits.
-            file.write("@    world xmin " + `cdp.mol[0].res[0].num - 1` + "\n")
-            file.write("@    world xmax " + `cdp.mol[0].res[-1].num + 1` + "\n")
+            file.write("@    world xmin " + repr(cdp.mol[0].res[0].num - 1) + "\n")
+            file.write("@    world xmax " + repr(cdp.mol[0].res[-1].num + 1) + "\n")
 
             # X-axis label.
             file.write("@    xaxis  label \"Residue number\"\n")
@@ -452,8 +446,8 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
         # Spin only data.
         if seq_type == 'spin':
             # Axis limits.
-            file.write("@    world xmin " + `cdp.mol[0].res[0].spin[0].num - 1` + "\n")
-            file.write("@    world xmax " + `cdp.mol[0].res[0].spin[-1].num + 1` + "\n")
+            file.write("@    world xmin " + repr(cdp.mol[0].res[0].spin[0].num - 1) + "\n")
+            file.write("@    world xmax " + repr(cdp.mol[0].res[0].spin[-1].num + 1) + "\n")
 
             # X-axis label.
             # FIXME.
@@ -533,7 +527,7 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
     # Loop over the data.
     for i in xrange(len(data)):
         # Multi data set (graph 0, set i).
-        file.write("@target G0.S" + `i` + "\n")
+        file.write("@target G0.S" + repr(i) + "\n")
         file.write("@type " + graph_type + "\n")
 
         # Normalisation.
@@ -623,8 +617,8 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
         # Residue only data.
         if seq_type == 'res':
             # Axis limits.
-            file.write("@    world xmin " + `cdp.mol[0].res[0].num - 1` + "\n")
-            file.write("@    world xmax " + `cdp.mol[0].res[-1].num + 1` + "\n")
+            file.write("@    world xmin " + repr(cdp.mol[0].res[0].num - 1) + "\n")
+            file.write("@    world xmax " + repr(cdp.mol[0].res[-1].num + 1) + "\n")
 
             # X-axis label.
             file.write("@    xaxis  label \"Residue number\"\n")
@@ -632,8 +626,8 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
         # Spin only data.
         if seq_type == 'spin':
             # Axis limits.
-            file.write("@    world xmin " + `cdp.mol[0].res[0].spin[0].num - 1` + "\n")
-            file.write("@    world xmax " + `cdp.mol[0].res[0].spin[-1].num + 1` + "\n")
+            file.write("@    world xmin " + repr(cdp.mol[0].res[0].spin[0].num - 1) + "\n")
+            file.write("@    world xmax " + repr(cdp.mol[0].res[0].spin[-1].num + 1) + "\n")
 
             # X-axis label.
             file.write("@    xaxis  label \"Spin number\"\n")

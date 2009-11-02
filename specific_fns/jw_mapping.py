@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,19 +33,14 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, 
 
 
 class Jw_mapping(Common_functions):
-    def __init__(self):
-        """Class containing functions specific to reduced spectral density mapping."""
-
+    """Class containing functions specific to reduced spectral density mapping."""
 
     def calculate(self, verbosity=1, sim_index=None, spin_id=None):
         """Calculation of the spectral density values."""
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the frequency has been set.
-        if not hasattr(cdp, 'jw_frq') or type(cdp.jw_frq) != float:
-            raise RelaxError, "The frequency has not been set up."
+        if not hasattr(cdp, 'jw_frq') or not isinstance(cdp.jw_frq, float):
+            raise RelaxError("The frequency has not been set up.")
 
         # Test if the sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -59,11 +54,11 @@ class Jw_mapping(Common_functions):
 
             # Test if the CSA value has been set.
             if not hasattr(spin, 'csa') or spin.csa == None:
-                raise RelaxNoValueError, "CSA"
+                raise RelaxNoValueError("CSA")
 
             # Test if the bond length has been set.
             if not hasattr(spin, 'r') or spin.r == None:
-                raise RelaxNoValueError, "bond length"
+                raise RelaxNoValueError("bond length")
 
             # Test if the spin type has been set.
             if not hasattr(spin, 'heteronuc_type'):
@@ -75,7 +70,7 @@ class Jw_mapping(Common_functions):
 
         # Frequency index.
         if cdp.jw_frq not in cdp.frq:
-            raise RelaxError, "No relaxation data corresponding to the frequency " + `cdp.jw_frq` + " has been loaded."
+            raise RelaxError("No relaxation data corresponding to the frequency " + repr(cdp.jw_frq) + " has been loaded.")
 
         # Reduced spectral density mapping.
         for spin in spin_loop(spin_id):
@@ -231,8 +226,7 @@ class Jw_mapping(Common_functions):
         return names
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         Reduced spectral density mapping default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         These default values are found in the file 'physical_constants.py'.
@@ -252,7 +246,15 @@ class Jw_mapping(Common_functions):
         |_______________________________________|____________________|________________________|
 
         """
-        __docformat__ = "plaintext"
+
+    def default_value(self, param):
+        """The default J(w) mapping parameter values.
+
+        @param param:   The J(w) mapping parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
 
         # Bond length.
         if param == 'r':
@@ -291,8 +293,7 @@ class Jw_mapping(Common_functions):
                 continue
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc = """
         Reduced spectral density mapping data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -317,7 +318,15 @@ class Jw_mapping(Common_functions):
         |________________________|__________________|______________________________________________|
 
         """
-        __docformat__ = "plaintext"
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the J(w) mapping parameter.
+
+        @param name:    The J(w) mapping parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
 
         # J(0).
         if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
@@ -405,22 +414,17 @@ class Jw_mapping(Common_functions):
             return 'ppm'
 
 
-    def set_doc(self, value=None, error=None, param=None, spin=None):
-        """
+    set_doc = """
         Reduced spectral density mapping set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         In reduced spectral density mapping, three values must be set prior to the calculation of
         spectral density values:  the bond length, CSA, and heteronucleus type.
         """
-        __docformat__ = "plaintext"
 
 
     def set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test if the current pipe exists.
         pipes.test()
@@ -428,11 +432,11 @@ class Jw_mapping(Common_functions):
         # Test if the pipe type is set to 'jw'.
         function_type = cdp.pipe_type
         if function_type != 'jw':
-            raise RelaxFuncSetupError, specific_fns.setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
 
         # Test if the frequency has been set.
         if hasattr(cdp, 'jw_frq'):
-            raise RelaxError, "The frequency has already been set."
+            raise RelaxError("The frequency has already been set.")
 
         # Create the data structure if it doesn't exist.
         if not hasattr(cdp, 'jw_frq'):
@@ -500,7 +504,7 @@ class Jw_mapping(Common_functions):
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'relax_sim_data'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
+            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.relax_sim_data = sim_data

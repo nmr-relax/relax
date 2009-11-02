@@ -29,7 +29,7 @@ from chi2 import chi2, dchi2_element
 from float import isNaN
 from pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
-from rotation_matrix import R_euler_zyz
+from rotation_matrix import euler_zyz_to_R
 
 
 class N_state_opt:
@@ -169,11 +169,11 @@ class N_state_opt:
         if model == '2-domain':
             # Some checks.
             if red_data == None or not len(red_data):
-                raise RelaxError, "The red_data argument " + `red_data` + " must be supplied."
+                raise RelaxError("The red_data argument " + repr(red_data) + " must be supplied.")
             if red_errors == None or not len(red_errors):
-                raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
+                raise RelaxError("The red_errors argument " + repr(red_errors) + " must be supplied.")
             if full_in_ref_frame == None or not len(full_in_ref_frame):
-                raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
+                raise RelaxError("The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied.")
 
             # Tensor set up.
             self.full_tensors = array(full_tensors, float64)
@@ -192,9 +192,9 @@ class N_state_opt:
             # RT:  the transposes of the rotation matricies.
             # red_bc:  the back-calculated reduced alignment tensors.
             # red_bc_vector:  the back-calculated reduced alignment tensors in vector form {Sxx, Syy, Sxy, Sxz, Syz}.
-            self.R = zeros((self.N,3,3), float64)
-            self.RT = zeros((self.N,3,3), float64)
-            self.red_bc = zeros((self.num_tensors,3,3), float64)
+            self.R = zeros((self.N, 3, 3), float64)
+            self.RT = zeros((self.N, 3, 3), float64)
+            self.red_bc = zeros((self.num_tensors, 3, 3), float64)
             self.red_bc_vector = zeros(self.num_tensors*5, float64)
 
             # Set the target function.
@@ -214,13 +214,13 @@ class N_state_opt:
 
             # Some checks.
             if self.rdc_flag and (xh_vect == None or not len(xh_vect)):
-                raise RelaxError, "The xh_vect argument " + `xh_vect` + " must be supplied."
+                raise RelaxError("The xh_vect argument " + repr(xh_vect) + " must be supplied.")
             if self.pcs_flag and (pcs_vect == None or not len(pcs_vect)):
-                raise RelaxError, "The pcs_vect argument " + `pcs_vect` + " must be supplied."
+                raise RelaxError("The pcs_vect argument " + repr(pcs_vect) + " must be supplied.")
 
             # No data?
             if not self.rdc_flag and not self.pcs_flag:
-                raise RelaxError, "No RDC or PCS data has been supplied."
+                raise RelaxError("No RDC or PCS data has been supplied.")
 
             # The total number of spins.
             if self.rdc_flag:
@@ -351,7 +351,7 @@ class N_state_opt:
         # Loop over the N states.
         for c in xrange(self.N):
             # The rotation matrix.
-            R_euler_zyz(self.R[c], params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2])
+            euler_zyz_to_R(params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2], self.R[c])
 
             # Its transpose.
             self.RT[c] = transpose(self.R[c])
@@ -378,11 +378,11 @@ class N_state_opt:
 
         # 5D vectorise the back-calculated tensors (create red_bc_vector from red_bc).
         for i in xrange(self.num_tensors):
-            self.red_bc_vector[5*i]   = self.red_bc[i,0,0]    # Sxx.
-            self.red_bc_vector[5*i+1] = self.red_bc[i,1,1]    # Syy.
-            self.red_bc_vector[5*i+2] = self.red_bc[i,0,1]    # Sxy.
-            self.red_bc_vector[5*i+3] = self.red_bc[i,0,2]    # Sxz.
-            self.red_bc_vector[5*i+4] = self.red_bc[i,1,2]    # Syz.
+            self.red_bc_vector[5*i]   = self.red_bc[i, 0, 0]    # Sxx.
+            self.red_bc_vector[5*i+1] = self.red_bc[i, 1, 1]    # Syy.
+            self.red_bc_vector[5*i+2] = self.red_bc[i, 0, 1]    # Sxy.
+            self.red_bc_vector[5*i+3] = self.red_bc[i, 0, 2]    # Sxz.
+            self.red_bc_vector[5*i+4] = self.red_bc[i, 1, 2]    # Syz.
 
         # Return the chi-squared value.
         return chi2(self.red_data, self.red_bc_vector, self.red_errors)

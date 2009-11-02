@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -36,6 +36,7 @@ with the command:
 """
 
 # Python module imports.
+from os import sep
 from string import replace
 import sys
 
@@ -45,7 +46,7 @@ from generic_fns import pipes
 from relax_io import open_write_file
 
 # Path to the files.
-DATA_PATH = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
 
 class Latex:
@@ -93,9 +94,6 @@ class Latex:
     def headings(self):
         """Create the LaTeX table headings."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Spacing.
         self.file.write("\\\\[-5pt]\n")
 
@@ -110,7 +108,7 @@ class Latex:
         self.file.write("\multicolumn{2}{c}{$S^2_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e < 100$ or $\\tau_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e > 100$ or $\\tau_s$} &%\n")
-        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + `cdp.frq[0] / 1e6` + " MHz)} \\\\\n")
+        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + repr(cdp.frq[0] / 1e6) + " MHz)} \\\\\n")
         self.file.write("\n")
 
         # Units.

@@ -73,7 +73,12 @@ def aicc(chi2, k, n):
     @rtype:         float
     """
 
-    return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
+    if n > (k+1):
+        return chi2 + 2.0*k + 2.0*k*(k + 1.0) / (n - k - 1.0)
+    elif n == (k+1):
+        raise RelaxError("The size of the dataset, n=%s, is too small for this model of size k=%s.  This situation causes a fatal division by zero as:\n    AICc = chi2 + 2k + 2k*(k + 1) / (n - k - 1).\n\nPlease use AIC model selection instead." % (n, k))
+    elif n < (k+1):
+        raise RelaxError("The size of the dataset, n=%s, is too small for this model of size k=%s.  This situation produces a negative, and hence nonsense, AICc score as:\n    AICc = chi2 + 2k + 2k*(k + 1) / (n - k - 1).\n\nPlease use AIC model selection instead." % (n, k))
 
 
 def bic(chi2, k, n):
@@ -116,7 +121,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
 
     # Test if the pipe already exists.
     if has_pipe(modsel_pipe):
-        raise RelaxPipeError, modsel_pipe
+        raise RelaxPipeError(modsel_pipe)
 
     # Use all pipes.
     if pipes == None:
@@ -125,23 +130,23 @@ def select(method=None, modsel_pipe=None, pipes=None):
 
     # Select the model selection technique.
     if method == 'AIC':
-        print "AIC model selection."
+        print("AIC model selection.")
         formula = aic
     elif method == 'AICc':
-        print "AICc model selection."
+        print("AICc model selection.")
         formula = aicc
     elif method == 'BIC':
-        print "BIC model selection."
+        print("BIC model selection.")
         formula = bic
     elif method == 'CV':
-        print "CV model selection."
-        raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
+        print("CV model selection.")
+        raise RelaxError("The model selection technique " + repr(method) + " is not currently supported.")
     else:
-        raise RelaxError, "The model selection technique " + `method` + " is not currently supported."
+        raise RelaxError("The model selection technique " + repr(method) + " is not currently supported.")
 
     # No pipes.
     if len(pipes) == 0:
-        raise RelaxError, "No data pipes are available for use in model selection."
+        raise RelaxError("No data pipes are available for use in model selection.")
 
     # Initialise.
     function_type = {}
@@ -153,10 +158,10 @@ def select(method=None, modsel_pipe=None, pipes=None):
     modsel_pipe_exists = False
 
     # Cross validation setup.
-    if type(pipes[0]) == list:
+    if isinstance(pipes[0], list):
         # No pipes.
         if len(pipes[0]) == 0:
-            raise RelaxError, "No pipes are available for use in model selection in the array " + `pipes[0]` + "."
+            raise RelaxError("No pipes are available for use in model selection in the array " + repr(pipes[0]) + ".")
 
         # Loop over the data pipes.
         for i in xrange(len(pipes)):
@@ -172,7 +177,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
         for i in xrange(len(pipes)):
             for j in xrange(len(pipes[i])):
                 if model_loop[pipes[0][j]] != model_loop[pipes[i][j]]:
-                    raise RelaxError, "The models for each data pipes should be the same."
+                    raise RelaxError("The models for each data pipes should be the same.")
         model_loop = model_loop[pipes[0][0]]
 
         # The model description.
@@ -211,8 +216,8 @@ def select(method=None, modsel_pipe=None, pipes=None):
     # Loop over the base models.
     for model_info in model_loop():
         # Print out.
-        print "\n" + model_desc(model_info)
-        print "%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")
+        print(("\n" + model_desc(model_info)))
+        print(("%-20s %-20s %-20s %-20s %-20s" % ("Data pipe", "Num_params_(k)", "Num_data_sets_(n)", "Chi2", "Criterion")))
 
         # Initial model.
         best_model = None
@@ -273,7 +278,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
                 crit = formula(chi2, float(k), float(n))
 
                 # Print out.
-                print "%-20s %-20i %-20i %-20.5f %-20.5f" % (pipe, k, n, chi2, crit)
+                print(("%-20s %-20i %-20i %-20.5f %-20.5f" % (pipe, k, n, chi2, crit)))
 
             # Select model.
             if crit < best_crit:
@@ -283,7 +288,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # Duplicate the data from the 'best_model' to the model selection data pipe.
         if best_model != None:
             # Print out of selected model.
-            print "The model from the data pipe " + `best_model` + " has been selected."
+            print(("The model from the data pipe " + repr(best_model) + " has been selected."))
 
             # Switch to the selected data pipe.
             switch(best_model)
@@ -297,7 +302,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
         # No model selected.
         else:
             # Print out of selected model.
-            print "No model has been selected."
+            print("No model has been selected.")
 
     # Switch to the model selection pipe.
     if modsel_pipe_exists:

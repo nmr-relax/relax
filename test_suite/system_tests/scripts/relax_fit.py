@@ -1,5 +1,7 @@
 # Script for relaxation curve fitting.
 
+# Python module imports.
+from os import sep
 import sys
 
 
@@ -7,10 +9,10 @@ import sys
 pipe.create('rx', 'relax_fit')
 
 # The path to the data files.
-data_path = sys.path[-1] + '/test_suite/shared_data/curve_fitting'
+data_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'
 
 # Load the sequence.
-sequence.read('Ap4Aase.seq', dir=sys.path[-1] + '/test_suite/shared_data')
+sequence.read('Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
@@ -61,7 +63,7 @@ spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
 spectrum.error_analysis()
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path)
+deselect.read(file='unresolved', dir=data_path, res_num_col=1)
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp')

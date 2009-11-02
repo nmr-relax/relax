@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,12 +22,12 @@
 
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 
 
 class Load_spins(TestCase):
@@ -50,10 +50,7 @@ class Load_spins(TestCase):
         """Test the loading of spins from a small molecule using the Scientific Python PDB data object."""
 
         # Execute a relax script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/load_spins_from_small_molecule.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
 
         # Test the molecule and residue data.
         self.assertEqual(len(cdp.mol), 1)

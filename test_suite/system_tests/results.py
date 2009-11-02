@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,11 +21,14 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
+from tempfile import mktemp
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_io import delete
 
 
 class Results(TestCase):
@@ -37,22 +40,29 @@ class Results(TestCase):
         # Create a data pipe.
         self.relax.interpreter._Pipe.create('test', 'relax_fit')
 
+        # Create a temporary file name.
+        self.tmpfile = mktemp()
+
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Reset the relax data storage object.
         ds.__reset__()
+
+        # Delete the temporary file (if needed).
+        delete(self.tmpfile, fail=False)
 
 
     def test_read_empty_results(self):
         """Test the reading of an empty results file."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(file='empty', dir=sys.path[-1] + '/test_suite/shared_data/results_files/')
+        self.relax.interpreter._Results.read(file='empty', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'results_files'+sep)
 
 
     def test_write_empty_results(self):
         """Test the writing of an empty results file."""
 
         # Write the results.
-        self.relax.interpreter._Results.write(file="devnull")
+        self.relax.interpreter._Results.write(file=self.tmpfile, dir=None)

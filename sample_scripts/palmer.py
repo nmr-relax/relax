@@ -45,22 +45,22 @@ def exec_stage_1(pipes):
     # Loop over the data pipes.
     for name in pipes:
         # Create the data pipe.
-        print "\n\n# " + name + " #"
+        print(("\n\n# " + name + " #"))
         pipe.create(name, 'mf')
 
         # Load the sequence.
-        sequence.read('noe.500.out')
+        sequence.read('noe.500.out', res_num_col=1)
 
         # PDB.
         #structure.read_pdb('Ap4Aase_new_3.pdb')
 
         # Load the relaxation data.
-        relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out')
-        relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out')
-        relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out')
-        relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out')
-        relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out')
-        relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out')
+        relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', res_num_col=1, data_col=3, error_col=4)
+        relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', res_num_col=1, data_col=3, error_col=4)
+        relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', res_num_col=1, data_col=3, error_col=4)
+        relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', res_num_col=1, data_col=3, error_col=4)
+        relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', res_num_col=1, data_col=3, error_col=4)
+        relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
         # Setup other values.
         diffusion_tensor.init(1e-8)
@@ -91,7 +91,7 @@ def exec_stage_2(pipes):
     state.load('stage1.save')
 
     # Print out.
-    print "\n\nLoading all the Modelfree 4 data."
+    print("\n\nLoading all the Modelfree 4 data.")
 
     # Loop over the data pipes.
     for name in pipes:
@@ -102,7 +102,7 @@ def exec_stage_2(pipes):
         palmer.extract(dir=name)
 
     # Print out.
-    print "\n\nModel selection."
+    print("\n\nModel selection.")
 
     # Model selection.
     model_selection(method='AIC', modsel_pipe='aic')
@@ -153,6 +153,6 @@ elif STAGE == 2:
 elif STAGE == 3:
     exec_stage_3()
 else:
-    raise RelaxError, "The stage value, which is set to " + `stage` + ", should be either 1, 2, or 3."
+    raise RelaxError("The stage value, which is set to " + repr(stage) + ", should be either 1, 2, or 3.")
 
 # Either repeat all the above with the optimised diffusion tensor or run Monte Carlo simulations on the final results.

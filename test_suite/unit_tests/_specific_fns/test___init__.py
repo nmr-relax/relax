@@ -20,13 +20,21 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""Module containing number type lists for argument checks."""
-
 # Python module imports.
-from numpy import int8, int16, int32, int64, float32, float64
+from os import sep
+import sys
+
+# relax module imports.
+from test_suite.unit_tests.package_checking import PackageTestCase
+import specific_fns
 
 
-# The lists.
-int_list = [int, int8, int16, int32]
-float_list = [float, float32, float64]
+class Test___init__(PackageTestCase):
+    """Unit tests for the specific_fns package."""
+
+    def setUp(self):
+        """Set up for the package checking."""
+
+        self.package = specific_fns
+        self.package_name = 'specific_fns'
+        self.package_path = sys.path[0] + sep + 'specific_fns'

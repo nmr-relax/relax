@@ -1,11 +1,12 @@
 """Script for eliminating model tm4 with parameters {local_tm, S2, te, Rex} when tm > 50 ns."""
 
 # Python module imports.
+from os import sep
 import sys
 
 
 # Read the sequence.
-sequence.read(file='Ap4Aase.Noe.600', dir=sys.path[-1] + '/test_suite/shared_data/relaxation_data/')
+sequence.read(file='Ap4Aase.Noe.600', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data'+sep, res_num_col=1, res_name_col=2)
 
 # Select the model.
 model_free.select_model(model='tm4')

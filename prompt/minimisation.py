@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2008 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2008-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,17 +29,15 @@ from string import split
 import sys
 
 # relax module imports.
+from base_class import Basic_class
+import check
 from minfx.generic import generic_minimise
 from generic_fns import minimise
-from relax_errors import RelaxBoolError, RelaxError, RelaxIntError, RelaxIntListIntError, RelaxListError, RelaxListNumError, RelaxNoneError, RelaxNoneNumError, RelaxNumError, RelaxStrError
+from relax_errors import RelaxError, RelaxNoneError, RelaxStrError
 
 
-class Minimisation:
-    def __init__(self, relax):
-        """Class containing the calc, grid, minimisation, and set functions."""
-
-        self.relax = relax
-
+class Minimisation(Basic_class):
+    """Class containing the calc, grid, minimisation, and set functions."""
 
     def calc(self, verbosity=1):
         """Function for calculating the function value.
@@ -52,14 +50,13 @@ class Minimisation:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "calc("
-            text = text + "verbosity=" + `verbosity` + ")"
-            print text
+            text = text + "verbosity=" + repr(verbosity) + ")"
+            print(text)
 
-        # The verbosity level.
-        if type(verbosity) != int:
-            raise RelaxIntError, ('verbosity level', verbosity)
+        # The argument checks.
+        check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.calc(verbosity=verbosity)
@@ -90,67 +87,21 @@ class Minimisation:
         """
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "grid_search("
-            text = text + "lower=" + `lower`
-            text = text + ", upper=" + `upper`
-            text = text + ", inc=" + `inc`
-            text = text + ", constraints=" + `constraints`
-            text = text + ", verbosity=" + `verbosity` + ")"
-            print text
+            text = text + "lower=" + repr(lower)
+            text = text + ", upper=" + repr(upper)
+            text = text + ", inc=" + repr(inc)
+            text = text + ", constraints=" + repr(constraints)
+            text = text + ", verbosity=" + repr(verbosity) + ")"
+            print(text)
 
-        # The lower bounds.
-        if lower == None:
-            pass
-        elif type(lower) != list:
-            raise RelaxListError, ('lower bounds', lower)
-        else:
-            # Empty list.
-            if lower == []:
-                raise RelaxListNumError, ('lower bounds', lower)
-
-            # Check the values.
-            for i in xrange(len(lower)):
-                if type(lower[i]) != float and type(lower[i]) != int:
-                    raise RelaxListNumError, ('lower bounds', lower)
-
-        # The upper bounds.
-        if upper == None:
-            pass
-        elif type(upper) != list:
-            raise RelaxListError, ('upper bounds', upper)
-        else:
-            # Empty list.
-            if upper == []:
-                raise RelaxListNumError, ('upper bounds', upper)
-
-            # Check the values.
-            for i in xrange(len(upper)):
-                if type(upper[i]) != float and type(upper[i]) != int:
-                    raise RelaxListNumError, ('upper bounds', upper)
-
-        # The incrementation value.
-        if type(inc) == int:
-            pass
-        elif type(inc) == list:
-            # Empty list.
-            if inc == []:
-                raise RelaxIntListIntError, ('incrementation value', inc)
-
-            # Check the values.
-            for i in xrange(len(inc)):
-                if type(inc[i]) != int:
-                    raise RelaxIntListIntError, ('incrementation value', inc)
-        else:
-            raise RelaxIntListIntError, ('incrementation value', inc)
-
-        # Constraint flag.
-        if type(constraints) != bool:
-            raise RelaxBoolError, ('constraint flag', constraints)
-
-        # The verbosity level.
-        if type(verbosity) != int:
-            raise RelaxIntError, ('verbosity level', verbosity)
+        # The argument checks.
+        check.is_num_list(lower, 'lower bounds', can_be_none=True)
+        check.is_num_list(upper, 'upper bounds', can_be_none=True)
+        check.is_int_or_int_list(inc, 'incrementation value')
+        check.is_bool(constraints, 'constraints flag')
+        check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
@@ -262,60 +213,60 @@ class Minimisation:
         # The function intro text is found at the end!
 
         # Keyword: func_tol.
-        if keywords.has_key('func_tol'):
+        if 'func_tol' in keywords:
             func_tol = keywords['func_tol']
         else:
             func_tol = 1e-25
 
         # Keyword: grad_tol.
-        if keywords.has_key('grad_tol'):
+        if 'grad_tol' in keywords:
             grad_tol = keywords['grad_tol']
         else:
             grad_tol = None
 
         # Keyword: max_iterations.
-        if keywords.has_key('max_iterations'):
+        if 'max_iterations' in keywords:
             max_iterations = keywords['max_iterations']
-        elif keywords.has_key('max_iter'):
+        elif 'max_iter' in keywords:
             max_iterations = keywords['max_iter']
         else:
             max_iterations = 10000000
 
         # Keyword: constraints.
-        if keywords.has_key('constraints'):
+        if 'constraints' in keywords:
             constraints = keywords['constraints']
         else:
             constraints = True
 
         # Keyword: scaling.
-        if keywords.has_key('scaling'):
+        if 'scaling' in keywords:
             scaling = keywords['scaling']
         else:
             scaling = True
 
         # Keyword: verbosity.
-        if keywords.has_key('verbosity'):
+        if 'verbosity' in keywords:
             verbosity = keywords['verbosity']
         else:
             verbosity = 1
 
         # Function intro text.
-        if self.relax.interpreter.intro:
+        if self.__relax__.interpreter.intro:
             text = sys.ps3 + "minimise("
-            text = text + "*args=" + `args`
-            text = text + ", func_tol=" + `func_tol`
-            text = text + ", max_iterations=" + `max_iterations`
-            text = text + ", constraints=" + `constraints`
-            text = text + ", scaling=" + `scaling`
-            text = text + ", verbosity=" + `verbosity` + ")"
-            print text
+            text = text + "*args=" + repr(args)
+            text = text + ", func_tol=" + repr(func_tol)
+            text = text + ", max_iterations=" + repr(max_iterations)
+            text = text + ", constraints=" + repr(constraints)
+            text = text + ", scaling=" + repr(scaling)
+            text = text + ", verbosity=" + repr(verbosity) + ")"
+            print(text)
 
         # Minimisation algorithm.
         if len(args) == 0:
-            raise RelaxNoneError, 'minimisation algorithm'
+            raise RelaxNoneError('minimisation algorithm')
         for i in xrange(len(args)):
-            if type(args[i]) != str:
-                raise RelaxStrError, ('minimisation algorithm', args[0])
+            if not isinstance(args[i], str):
+                raise RelaxStrError('minimisation algorithm', args[0])
         min_algor = args[0]
 
         # Minimisation options.
@@ -329,34 +280,20 @@ class Minimisation:
                 if key == valid_key:
                     valid = True
             if not valid:
-                raise RelaxError, "Unknown keyword argument " + `key` + "."
+                raise RelaxError("Unknown keyword argument " + repr(key) + ".")
 
-        # The function tolerance value.
-        if func_tol != None and type(func_tol) != int and type(func_tol) != float:
-            raise RelaxNoneNumError, ('function tolerance', func_tol)
-
-        # The gradient tolerance value.
-        if grad_tol != None and type(grad_tol) != int and type(grad_tol) != float:
-            raise RelaxNoneNumError, ('gradient tolerance', grad_tol)
-
-        # The maximum number of iterations.
-        if type(max_iterations) != int:
-            raise RelaxIntError, ('maximum number of iterations', max_iterations)
+        # The argument checks.
+        check.is_num(func_tol, 'function tolerance')
+        check.is_num(grad_tol, 'gradient tolerance', can_be_none=True)
+        check.is_int(max_iterations, 'maximum number of iterations')
+        check.is_bool(constraints, 'constraints flag')
+        check.is_bool(scaling, 'diagonal scaling flag')
+        check.is_int(verbosity, 'verbosity level')
 
         # Constraint flag.
-        if type(constraints) != bool:
-            raise RelaxBoolError, ('constraint flag', constraints)
-        elif constraints:
+        if constraints:
             min_algor = 'Method of Multipliers'
             min_options = args
-
-        # Scaling.
-        if type(scaling) != bool:
-            raise RelaxBoolError, ('scaling', scaling)
-
-        # The verbosity level.
-        if type(verbosity) != int:
-            raise RelaxIntError, ('verbosity level', verbosity)
 
         # Execute the functional code.
         minimise.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@ from copy import deepcopy
 
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
-from generic_fns import pipes
 from relax_errors import RelaxError, RelaxLenError, RelaxNoSequenceError
 
 
@@ -78,9 +77,6 @@ class Common_functions:
         @return:    The answer to the question of whether errors exist.
         @rtype:     bool
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Diffusion tensor errors.
         if hasattr(cdp, 'diff'):
@@ -226,7 +222,6 @@ class Common_functions:
         """
 
         # Initialise.
-        cdp = pipes.get_pipe()
         index = None
 
         # Get the object name.
@@ -248,7 +243,7 @@ class Common_functions:
 
             # Unknown data type.
             else:
-                raise RelaxError, "The parameter " + `param` + " does not exist."
+                raise RelaxError("The parameter " + repr(param) + " does not exist.")
 
         # Initial values.
         value = None
@@ -329,7 +324,7 @@ class Common_functions:
 
         # Throw a RelaxError.
         if value or param:
-            raise RelaxError, "Do not know how to handle the non-spin specific parameters " + `param` + " with the values " + `value`
+            raise RelaxError("Do not know how to handle the non-spin specific parameters " + repr(param) + " with the values " + repr(value))
 
 
     def set_selected_sim(self, spin, select_sim):
@@ -366,9 +361,6 @@ class Common_functions:
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
 
         # Test if Monte Carlo parameter values have already been set.
         #############################################################
@@ -386,7 +378,7 @@ class Common_functions:
 
                 # Test if the simulation object already exists.
                 if hasattr(spin, sim_object_name):
-                    raise RelaxError, "Monte Carlo parameter values have already been set."
+                    raise RelaxError("Monte Carlo parameter values have already been set.")
 
 
         # Set the Monte Carlo parameter values.
@@ -507,14 +499,14 @@ class Common_functions:
         # Lower bounds test.
         if lower != None:
             if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
+                raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
         if upper != None:
             if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
+                raise RelaxLenError('upper bounds', n)
 
         # Increment.
-        if type(inc) == list:
+        if isinstance(inc, list):
             if len(inc) != n:
-                raise RelaxLenError, ('increment', n)
+                raise RelaxLenError('increment', n)

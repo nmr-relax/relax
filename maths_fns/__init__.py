@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2008 Edward d'Auvergne                             #
+# Copyright (C) 2003-2005, 2008-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,13 +24,24 @@
 """Package containing all of relax's number crunching code."""
 
 
-__all__ = [ 'chi2',
+__all__ = [ 'alignment_tensor',
+            'chi2',
+            'consistency_tests',
             'correlation_time',
             'direction_cosine',
+            'frame_order',
+            'frame_order_matrix_ops',
+            'jw_mapping',
             'jw_mf_comps',
             'jw_mf',
+            'kronecker_product',
             'mf',
+            'n_state_model',
+            'pcs',
+            'potential',
+            'rdc',
             'ri_comps',
             'ri_prime',
             'ri',
+            'rotation_matrix',
             'weights' ]

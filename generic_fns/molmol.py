@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -121,9 +121,6 @@ def open_pdb():
     if not pipe_open_test():
         return
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Run InitAll to remove everything from molmol.
     pipe_write("InitAll yes")
 
@@ -136,9 +133,6 @@ def pipe_open():
 
     # Test that the Molmol binary exists.
     test_binary('molmol')
-
-    # Alias the data pipe container.
-    cdp = pipes.get_pipe()
 
     # Open and store the Molmol pipe.
     cdp.molmol = popen("molmol -f -", 'w', 0)
@@ -163,9 +157,6 @@ def pipe_open_test():
     @return:    Whether the Molmol pipe is open or not.
     @rtype:     bool
     """
-
-    # Alias the data pipe container.
-    cdp = pipes.get_pipe()
 
     # Test if a pipe has been opened.
     if not hasattr(cdp, 'molmol'):
@@ -197,9 +188,6 @@ def pipe_write(command=None, store_command=True):
     # Reopen the pipe if needed.
     if not pipe_open_test():
         pipe_open()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Write the command to the pipe.
     cdp.molmol.write(command + '\n')
@@ -263,7 +251,7 @@ def view():
 
     # Open a Molmol pipe.
     if pipe_open_test():
-        raise RelaxError, "The Molmol pipe already exists."
+        raise RelaxError("The Molmol pipe already exists.")
     else:
         pipe_open()
 

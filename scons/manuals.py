@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006, 2009 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,8 +23,7 @@
 
 # Import statements.
 from glob import glob
-from os import F_OK, access, chdir, getcwd, path, remove, sep, system
-from shutil import move
+from os import F_OK, access, chdir, getcwd, path, remove, rename, sep, system
 import sys
 
 from version import version
@@ -34,10 +33,10 @@ def clean_manual_files(target, source, env):
     """Builder action for removing the temporary manual files."""
 
     # Print out.
-    print
-    print "##########################################"
-    print "# Cleaning up the temporary manual files #"
-    print "##########################################\n\n"
+    print('')
+    print("##########################################")
+    print("# Cleaning up the temporary manual files #")
+    print("##########################################\n\n")
 
     # File list to remove.
     files = ["relax.bbl",
@@ -73,20 +72,20 @@ def clean_manual_files(target, source, env):
             else:
                 raise
         else:
-            print "Removing the file " + `file` + "."
+            print(("Removing the file " + repr(file) + "."))
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")
 
 
 def compile_api_manual_html(target, source, env):
     """Builder action for compiling the API documentation manual (HTML version) using Epydoc."""
 
     # Print out.
-    print
-    print "#####################################################"
-    print "# Compiling API documentation manual (HTML version) #"
-    print "#####################################################\n\n"
+    print('')
+    print("#####################################################")
+    print("# Compiling API documentation manual (HTML version) #")
+    print("#####################################################\n\n")
 
 
     # Set up the Epydoc configuration (adapted from http://epydoc.sourceforge.net/configfile.html).
@@ -96,17 +95,17 @@ def compile_api_manual_html(target, source, env):
     #   The list of objects to document.
     modules = ['relax',
                '*.py',
-               'docs/*.py',
-               'docs/latex/*.py',
-               'dx/*.py',
-               'generic_fns/*.py',
-               'generic_fns/structure/*.py',
-               'maths_fns/*.py',
-               'prompt/*.py',
-               'specific_fns/*.py',
-               'test_suite/[a-z]*.py',
-               'test_suite/unit_tests/unit_test_runner.py',
-               'scons/*.py']
+               'docs'+sep+'*.py',
+               'docs'+sep+'latex'+sep+'*.py',
+               'dx'+sep+'*.py',
+               'generic_fns'+sep+'*.py',
+               'generic_fns'+sep+'structure'+sep+'*.py',
+               'maths_fns'+sep+'*.py',
+               'prompt'+sep+'*.py',
+               'specific_fns'+sep+'*.py',
+               'test_suite'+sep+'[a-z]*.py',
+               'test_suite'+sep+'unit_tests'+sep+'unit_test_runner.py',
+               'scons'+sep+'*.py']
 
     # exclude
     #   The list of objects to exclude.
@@ -119,7 +118,7 @@ def compile_api_manual_html(target, source, env):
 
     # target
     #   The path to the output directory.  May be relative or absolute.
-    target = 'docs/api'
+    target = 'docs'+sep+'api'
 
     # docformat
     #   The default markup language for docstrings, for modules that do
@@ -272,7 +271,7 @@ def compile_api_manual_html(target, source, env):
     #################
 
     # Print out.
-    print "Running the command:\n$ " + epydoc_cmd + "\n\n\n"
+    print(("Running the command:\n$ " + epydoc_cmd + "\n\n\n"))
 
     # System call.
     system(epydoc_cmd)
@@ -283,7 +282,7 @@ def compile_api_manual_html(target, source, env):
     ######################
 
     # Open the file.
-    css_file = open(target + '/epydoc.css', 'a')
+    css_file = open(target + sep+'epydoc.css', 'a')
 
     # Header.
     css_file.write("\n\n\n\n/* Edward */\n\n")
@@ -296,68 +295,68 @@ def compile_api_manual_html(target, source, env):
     css_file.close()
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")
 
 
 def compile_user_manual_html(target, source, env):
     """Builder action for compiling the user manual (HTML version) from the LaTeX sources."""
 
     # Print out.
-    print
-    print "############################################"
-    print "# Compiling the user manual (HTML version) #"
-    print "############################################\n\n"
+    print('')
+    print("############################################")
+    print("# Compiling the user manual (HTML version) #")
+    print("############################################\n\n")
 
     # Go to the LaTeX directory.
     base_dir = getcwd()
     chdir(env['LATEX_DIR'])
 
     # Run the latex2html command.
-    print "Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex\n\n\n"
+    print(("Running the command:\n$ latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex\n\n\n"))
     system("latex2html -split +3 -html_version 4.0 -dir " + path.pardir + path.sep + "html relax.tex")
 
     # Return to the base directory.
     chdir(base_dir)
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")
 
 
 def compile_user_manual_pdf(target, source, env):
     """Builder action for compiling the user manual (PDF version) from the LaTeX sources."""
 
     # Print out.
-    print
-    print "###########################################"
-    print "# Compiling the user manual (PDF version) #"
-    print "###########################################\n\n"
+    print('')
+    print("###########################################")
+    print("# Compiling the user manual (PDF version) #")
+    print("###########################################\n\n")
 
     # Go to the LaTeX directory.
     base_dir = getcwd()
     chdir(env['LATEX_DIR'])
 
-    print "\n\n\n <<< LaTeX (first round) >>>\n\n\n"
+    print("\n\n\n <<< LaTeX (first round) >>>\n\n\n")
     system('latex relax')
 
-    print "\n\n\n <<< Bibtex >>>\n\n\n"
+    print("\n\n\n <<< Bibtex >>>\n\n\n")
     system('bibtex relax')
 
-    print "\n\n\n <<< Makeindex >>>\n\n\n"
+    print("\n\n\n <<< Makeindex >>>\n\n\n")
     system('makeindex relax')
 
-    print "\n\n\n <<< LaTeX (second round) >>>\n\n\n"
+    print("\n\n\n <<< LaTeX (second round) >>>\n\n\n")
     system('latex relax')
 
-    print "\n\n\n <<< LaTeX (third round) >>>\n\n\n"
+    print("\n\n\n <<< LaTeX (third round) >>>\n\n\n")
     system('latex relax')
 
-    print "\n\n\n <<< LaTeX (fourth round) >>>\n\n\n"
+    print("\n\n\n <<< LaTeX (fourth round) >>>\n\n\n")
     system('latex relax')
 
-    print "\n\n\n <<< dvips >>>\n\n\n"
+    print("\n\n\n <<< dvips >>>\n\n\n")
     system('dvips -o relax.ps relax.dvi')
 
-    print "\n\n\n <<< ps2pdf >>>\n\n\n"
+    print("\n\n\n <<< ps2pdf >>>\n\n\n")
     if env['SYSTEM'] == 'Windows':
         # According to the Ghostscript documentation, "When passing options to ghostcript through a batch
         # file wrapper such as ps2pdf.bat you need to substitute '#' for '=' as the separator between options
@@ -367,27 +366,27 @@ def compile_user_manual_pdf(target, source, env):
         assign = '='
     system('ps2pdf -dAutoFilterColorImages' + assign + 'false -dAutoFilterGrayImages' + assign + 'false -dColorImageFilter' + assign + '/FlateEncode -dColorImageFilter' + assign + '/FlateEncode -dGrayImageFilter' + assign + '/FlateEncode -dMonoImageFilter' + assign + '/FlateEncode -dPDFSETTINGS' + assign + '/prepress relax.ps relax.pdf')
 
-    print "\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n"
+    print("\n\n\n <<< Removing the PS file and shifting the PDF down a directory >>>\n\n\n")
     if access('relax.ps', F_OK):
         remove('relax.ps')
     if access('relax.pdf', F_OK):
-        move('relax.pdf', path.pardir)
+        rename('relax.pdf', path.pardir+path.sep+'relax.pdf')
 
     # Return to the base directory.
     chdir(base_dir)
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")
 
 
 def fetch_docstrings(target, source, env):
     """Builder action for fetching the relax user function docstrings."""
 
     # Print out.
-    print
-    print "###############################################"
-    print "# Fetching the relax user function docstrings #"
-    print "###############################################\n\n"
+    print('')
+    print("###############################################")
+    print("# Fetching the relax user function docstrings #")
+    print("###############################################\n\n")
 
     # Import the fetch_docstrings module (needs to be done here so that Sconstruct doesn't need to load the entire program each time).
     sys.path.append(getcwd())
@@ -400,17 +399,17 @@ def fetch_docstrings(target, source, env):
     del Fetch_docstrings
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")
 
 
 def version_file(target, source, env):
     """Builder action for creating the LaTeX relax version file."""
 
     # Print out.
-    print
-    print "################################################"
-    print "# Creating the LaTeX relax version number file #"
-    print "################################################"
+    print('')
+    print("################################################")
+    print("# Creating the LaTeX relax version number file #")
+    print("################################################")
 
     # Place the program version number into a LaTeX file.
     file = open(env['LATEX_DIR'] + sep + 'relax_version.tex', 'w')
@@ -418,4 +417,4 @@ def version_file(target, source, env):
     file.close()
 
     # Final print out.
-    print "\n\n\n"
+    print("\n\n\n")

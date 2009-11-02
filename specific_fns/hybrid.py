@@ -29,9 +29,7 @@ import setup
 
 
 class Hybrid:
-    def __init__(self):
-        """Class containing function specific to hybrid models."""
-
+    """Class containing function specific to hybrid models."""
 
     def duplicate_data(self, pipe_from=None, pipe_to=None):
         """Duplicate the data specific to a single hybrid data pipe.
@@ -52,7 +50,7 @@ class Hybrid:
 
         # Test that the target data pipe has no sequence loaded.
         if not exists_mol_res_spin_data(pipe_to):
-            raise RelaxSequenceError, pipe_to
+            raise RelaxSequenceError(pipe_to)
 
         # Duplicate the hybrid pipe list data structure.
         dp_to.hybrid_pipes = dp_from.hybrid_pipes
@@ -69,7 +67,7 @@ class Hybrid:
 
         # Test if the hybrid data pipe already exists.
         if hybrid in pipes.pipe_names():
-            raise RelaxPipeError, hybrid
+            raise RelaxPipeError(hybrid)
 
         # Loop over the pipes to be hybridised and check them.
         pipe_type = pipes.get_type(pipe_list[0])
@@ -82,7 +80,7 @@ class Hybrid:
 
             # Check that the pipe types match.
             if pipes.get_type() != pipe_type:
-                raise RelaxError, "The data pipe types do not match."
+                raise RelaxError("The data pipe types do not match.")
 
             # Test if sequence data is loaded.
             if not exists_mol_res_spin_data():
@@ -94,9 +92,6 @@ class Hybrid:
 
         # Create the data pipe.
         pipes.create(pipe_name=hybrid, pipe_type='hybrid')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Store the pipe list forming the hybrid.
         cdp.hybrid_pipes = pipe_list
@@ -155,12 +150,9 @@ class Hybrid:
 
         # Bad argument combination.
         if model_info == None and spin_id == None:
-            raise RelaxError, "Either the model_info or spin_id argument must be supplied."
+            raise RelaxError("Either the model_info or spin_id argument must be supplied.")
         elif model_info != None and spin_id != None:
-            raise RelaxError, "The model_info arg " + `model_info` + " and spin_id arg " + `spin_id` + " clash.  Only one should be supplied."
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
+            raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
 
         # Initialise.
         k_total = 0

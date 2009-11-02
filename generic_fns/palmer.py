@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,6 +38,33 @@ from physical_constants import return_gyromagnetic_ratio
 from relax_errors import RelaxDirError, RelaxFileError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError
 from relax_io import mkdir_nofail, open_write_file, test_binary
 from specific_fns.setup import model_free_obj
+
+
+def __deselect_spins():
+    """Deselect spins with no or too little data, that are overfitting, etc."""
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Is structural data required?
+    need_vect = False
+    if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid'):
+        need_vect = True
+
+    # Loop over the sequence.
+    for spin in spin_loop():
+        # Relaxation data must exist!
+        if not hasattr(spin, 'relax_data'):
+            spin.select = False
+
+        # Require 3 or more relaxation data points.
+        elif len(spin.relax_data) < 3:
+            spin.select = False
+
+        # Require at least as many data points as params to prevent over-fitting.
+        elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
+            spin.select = False
 
 
 def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, trim=None, steps=None, heteronuc_type=None, atom1=None, atom2=None, spin_id=None, force=False, constraints=True):
@@ -89,9 +116,6 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     # Test if the current pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
@@ -99,6 +123,9 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     # Test if the PDB file is loaded (for the spheroid and ellipsoid).
     if hasattr(cdp, 'diff_tensor') and not cdp.diff_tensor.type == 'sphere' and not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
+
+    # Deselect certain spins.
+    __deselect_spins()
 
     # Directory creation.
     if dir == None:
@@ -155,7 +182,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     run = open_write_file('run.sh', dir, force)
     create_run(run, binary=binary, dir=dir)
     run.close()
-    chmod(dir + '/run.sh', 0755)
+    chmod(dir + sep+'run.sh', 0755)
 
 
 def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
@@ -249,9 +276,6 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
     @type frq:              list of float
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Set the diffusion tensor specific values.
     if cdp.diff_tensor.type == 'sphere':
         diff = 'isotropic'
@@ -289,7 +313,7 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
 
     # Monte Carlo simulations.
     if sims:
-        file.write("simulations     " + sim_type + "    " + `sims` + "       " + `trim` + "\n\n")
+        file.write("simulations     " + sim_type + "    " + repr(sims) + "       " + repr(trim) + "\n\n")
     else:
         file.write("simulations     none\n\n")
 
@@ -297,9 +321,9 @@ def create_mfin(file, diff_search=None, sims=None, sim_type=None, trim=None, num
     file.write("selection       " + selection + "\n\n")
     file.write("sim_algorithm   " + algorithm + "\n\n")
 
-    file.write("fields          " + `num_frq`)
+    file.write("fields          " + repr(num_frq))
     for val in frq:
-        file.write("  " + `val*1e-6`)
+        file.write("  " + repr(val*1e-6))
     file.write("\n")
 
     # tm.
@@ -353,9 +377,6 @@ def create_mfmodel(file, spin=None, spin_id=None, steps=None, constraints=None):
     @keyword constraints:   A flag which if True will result in constrained optimisation.
     @type constraints:      bool
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Spin title.
     file.write("\nspin     " + spin_id + "\n")
@@ -459,9 +480,6 @@ def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=
     @type atom2:        str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Spin title.
     file.write("\nspin     " + spin_id + "\n")
 
@@ -489,9 +507,6 @@ def create_run(file, binary=None, dir=None):
     @type dir:          str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     file.write("#! /bin/sh\n")
     file.write(binary + " -i mfin -d mfdata -p mfpar -m mfmodel -o mfout -e out")
     if cdp.diff_tensor.type != 'sphere':
@@ -518,9 +533,6 @@ def execute(dir, force, binary):
     @type binary:   str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # The current directory.
     orig_dir = getcwd()
 
@@ -528,7 +540,7 @@ def execute(dir, force, binary):
     if dir == None:
         dir = pipes.cdp_name()
     if not access(dir, F_OK):
-        raise RelaxDirError, ('Modelfree4', dir)
+        raise RelaxDirError('Modelfree4', dir)
 
     # Change to this directory.
     chdir(dir)
@@ -537,25 +549,25 @@ def execute(dir, force, binary):
     try:
         # Test if the 'mfin' input file exists.
         if not access('mfin', F_OK):
-            raise RelaxFileError, ('mfin input', 'mfin')
+            raise RelaxFileError('mfin input', 'mfin')
 
         # Test if the 'mfdata' input file exists.
         if not access('mfdata', F_OK):
-            raise RelaxFileError, ('mfdata input', 'mfdata')
+            raise RelaxFileError('mfdata input', 'mfdata')
 
         # Test if the 'mfmodel' input file exists.
         if not access('mfmodel', F_OK):
-            raise RelaxFileError, ('mfmodel input', 'mfmodel')
+            raise RelaxFileError('mfmodel input', 'mfmodel')
 
         # Test if the 'mfpar' input file exists.
         if not access('mfpar', F_OK):
-            raise RelaxFileError, ('mfpar input', 'mfpar')
+            raise RelaxFileError('mfpar input', 'mfpar')
 
         # Test if the 'PDB' input file exists.
         if cdp.diff_tensor.type != 'sphere':
             pdb = cdp.structure.structural_data[0].mol[0].file_name
             if not access(pdb, F_OK):
-                raise RelaxFileError, ('PDB', pdb)
+                raise RelaxFileError('PDB', pdb)
         else:
             pdb = None
 
@@ -605,9 +617,6 @@ def extract(dir, spin_id=None):
     @type spin_id:      str or None
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
@@ -616,17 +625,17 @@ def extract(dir, spin_id=None):
     if dir == None:
         dir = pipes.cdp_name()
     if not access(dir, F_OK):
-        raise RelaxDirError, ('Modelfree4', dir)
+        raise RelaxDirError('Modelfree4', dir)
 
     # Test if the file exists.
-    if not access(dir + "/mfout", F_OK):
-        raise RelaxFileError, ('Modelfree4', dir + "/mfout")
+    if not access(dir + sep+'mfout', F_OK):
+        raise RelaxFileError('Modelfree4', dir + sep+'mfout')
 
     # Determine the parameter set.
     model_type = model_free_obj.determine_model_type()
 
     # Open the file.
-    mfout_file = open(dir + "/mfout", 'r')
+    mfout_file = open(dir + sep+'mfout', 'r')
     mfout_lines = mfout_file.readlines()
     mfout_file.close()
 
@@ -830,7 +839,7 @@ def line_positions(mfout_lines):
             i = i + 2
 
             # Walk through all the data.
-            while 1:
+            while True:
                 # Break once the end of the data section is reached.
                 if not mfout_lines[i] == '\n' and not search('^ ', mfout_lines[i]):
                     break

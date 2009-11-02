@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@ from math import pi
 import platform
 import numpy
 from re import search
+from os import sep
 import sys
 from unittest import TestCase
 
@@ -35,7 +36,7 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
 
 
-# Get the platform information.
+# Get the platform/version information.
 SYSTEM = platform.system()
 RELEASE = platform.release()
 VERSION = platform.version()
@@ -45,6 +46,8 @@ ARCH = platform.architecture()
 MACH = platform.machine()
 PROC = platform.processor()
 PY_VER = platform.python_version()
+NUMPY_VER = numpy.__version__
+LIBC_VER = platform.libc_ver()
 
 # Windows system name pain.
 if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
@@ -82,28 +85,29 @@ class Mf(TestCase):
         string = 'Optimisation failure.\n\n'
 
         # Create the string.
-        string = string + "System: " + SYSTEM + "\n"
-        string = string + "Release: " + RELEASE + "\n"
-        string = string + "Version: " + VERSION + "\n"
-        string = string + "Win32 version: " + WIN32_VER[0] + " " + WIN32_VER[1] + " " + WIN32_VER[2] + " " + WIN32_VER[3] + "\n"
-        string = string + "Distribution: " + DIST[0] + " " + DIST[1] + " " + DIST[2] + "\n"
-        string = string + "Architecture: " + ARCH[0] + " " + ARCH[1] + "\n"
-        string = string + "Machine: " + MACH + "\n"
-        string = string + "Processor: " + PROC + "\n"
-        string = string + "Python version: " + PY_VER + "\n"
-        string = string + "numpy version: " + numpy.__version__ + "\n"
+        string = string + "%-18s%-25s\n" % ("System: ", SYSTEM)
+        string = string + "%-18s%-25s\n" % ("Release: ", RELEASE)
+        string = string + "%-18s%-25s\n" % ("Version: ", VERSION)
+        string = string + "%-18s%-25s\n" % ("Win32 version: ", (WIN32_VER[0] + " " + WIN32_VER[1] + " " + WIN32_VER[2] + " " + WIN32_VER[3]))
+        string = string + "%-18s%-25s\n" % ("Distribution: ", (DIST[0] + " " + DIST[1] + " " + DIST[2]))
+        string = string + "%-18s%-25s\n" % ("Architecture: ", (ARCH[0] + " " + ARCH[1]))
+        string = string + "%-18s%-25s\n" % ("Machine: ", MACH)
+        string = string + "%-18s%-25s\n" % ("Processor: ", PROC)
+        string = string + "%-18s%-25s\n" % ("Python version: ", PY_VER)
+        string = string + "%-18s%-25s\n" % ("Numpy version: ", NUMPY_VER)
+        string = string + "%-18s%-25s\n" % ("Libc version: ", (LIBC_VER[0] + " " + LIBC_VER[1]))
 
 
         # Minimisation info.
-        string = string + "\n\n%-10s%10.16f" % ('s2:', spin.s2)
-        string = string + "\n%-10s%10.13f" % ('te:', spin.te * 1e12)
-        string = string + "\n%-10s%10.17f" % ('rex:', spin.rex * (2.0 * pi * spin.frq[0])**2)
-        string = string + "\n%-10s%10.17g" % ('chi2:', spin.chi2)
-        string = string + "\n%-10s%-10i" % ('iter:', spin.iter)
-        string = string + "\n%-10s%-10i" % ('f_count:', spin.f_count)
-        string = string + "\n%-10s%-10i" % ('g_count:', spin.g_count)
-        string = string + "\n%-10s%-10i" % ('h_count:', spin.h_count)
-        string = string + "\n%-10s%-10s" % ('warning:', spin.warning)
+        string = string + "\n%-15s %30.16g\n" % ('s2:',      spin.s2)
+        string = string +   "%-15s %30.13g\n" % ('te:',      spin.te * 1e12)
+        string = string +   "%-15s %30.17g\n" % ('rex:',     spin.rex * (2.0 * pi * spin.frq[0])**2)
+        string = string +   "%-15s %30.17g\n" % ('chi2:',    spin.chi2)
+        string = string +   "%-15s %30i\n"   % ('iter:',    spin.iter)
+        string = string +   "%-15s %30i\n"   % ('f_count:', spin.f_count)
+        string = string +   "%-15s %30i\n"   % ('g_count:', spin.g_count)
+        string = string +   "%-15s %30i\n"   % ('h_count:', spin.h_count)
+        string = string +   "%-15s %30s\n"   % ('warning:', spin.warning)
 
         # Return the string.
         return string
@@ -138,11 +142,11 @@ class Mf(TestCase):
                 continue
 
             # Skip original class methods.
-            if name in obj1.__class__.__dict__.keys():
+            if name in list(obj1.__class__.__dict__.keys()):
                 continue
 
             # Print out.
-            print "\t" + name
+            print(("\t" + name))
 
             # Get the sub-objects.
             sub_obj1 = getattr(obj1, name)
@@ -159,10 +163,7 @@ class Mf(TestCase):
         """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/bugs_12582_12591_12607.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bugs_12582_12591_12607.py')
 
         # Test for bug #12607 (S2 changes because it is in the grid search when it should not be).
         self.assertNotEqual(cdp.mol[0].res[1].spin[0].s2, 1.0)
@@ -172,10 +173,7 @@ class Mf(TestCase):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/create_m4.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'create_m4.py')
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -186,40 +184,40 @@ class Mf(TestCase):
         """Test the creation of a LaTeX table of model-free results, mimicking the latex_mf_table.py sample script."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/latex_mf_table.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'latex_mf_table.py')
 
 
     def test_omp_analysis(self):
         """Try a very minimal model-free analysis on the OMP relaxation data."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/omp_model_free.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'omp_model_free.py')
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe('final')
+        # Alias the final data pipe.
+        dp = pipes.get_pipe('final')
 
         # Some checks.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].select_sim, [True, False, True])
-        self.assertEqual(cdp.mol[0].res[1].spin[0].select_sim, [True, True, False])
-        self.assertEqual(cdp.mol[0].res[2].spin[0].select_sim, [True, True, True])
-        self.assert_(not hasattr(cdp.mol[0].res[3].spin[0], 'select_sim'))
+        self.assertEqual(dp.mol[0].res[0].spin[0].select_sim, [True, False, True])
+        self.assertEqual(dp.mol[0].res[1].spin[0].select_sim, [True, True, False])
+        self.assertEqual(dp.mol[0].res[2].spin[0].select_sim, [True, True, True])
+        self.assert_(not hasattr(dp.mol[0].res[3].spin[0], 'select_sim'))
 
 
     def test_opendx_s2_te_rex(self):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opendx_s2_te_rex.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opendx_s2_te_rex.py')
 
 
     def test_opendx_theta_phi_da(self):
         """Mapping the {theta, phi, Da} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the PDF file and set the vectors.
         self.relax.interpreter._Structure.read_pdb(file='pdb', dir=path, read_model=1)
@@ -227,12 +225,12 @@ class Mf(TestCase):
         self.relax.interpreter._Structure.vectors(attached='H')
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.relax.interpreter._Diffusion_tensor.init((1.601 * 1e7, 1.34, 72.4, 90-77.9), param_types=4)
@@ -252,18 +250,18 @@ class Mf(TestCase):
         """Mapping the {local_tm, S2, te} chi2 space through the OpenDX user function dx.map()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path)
-        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path)
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '600', 600.0 * 1e6, 'r2.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '600', 600.0 * 1e6, 'noe.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R1', '500', 500.0 * 1e6, 'r1.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('R2', '500', 500.0 * 1e6, 'r2.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+        self.relax.interpreter._Relax_data.read('NOE', '500', 500.0 * 1e6, 'noe.500.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Setup other values.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
@@ -291,11 +289,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -306,31 +301,141 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 32-bit Linux.
+        # iter: 203
+        # f_count: 955
+        # g_count: 209
+
+        # 32-bit i686 Linux (https://mail.gna.org/public/relax-devel/2009-05/msg00003.html).
+        # System: Linux
+        # Release: 2.6.28-gentoo-r5
+        # Version: #1 SMP Sat Apr 25 13:31:51 EDT 2009
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit ELF
+        # Machine: i686
+        # Processor: Intel(R) Pentium(R) M processor 1.80GHz
+        # Python version: 2.5.4
+        # numpy version: 1.2.1
+        # 
+        # s2:       0.9700000000012307
+        # te:       2048.0000002299716
+        # rex:      0.14899999997647859
+        # chi2:     1.9223825944220359e-20
+        # iter:     157
+        # f_count:  722
+        # g_count:  164
+        # h_count:  0
+        # warning:  None
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        # 
+        # s2:                         0.9699999999999785
+        # te:                         2047.9999999962433
+        # rex:                       0.14900000000039709
+        # chi2:                   5.2479491342506911e-24
+        # iter:                                      162
+        # f_count:                                   758
+        # g_count:                                   169
+        # h_count:                                     0
+        # warning:                                  None
+
+        # 32-bit Windows.
+        # iter: 156
+        # f_count: 701
+        # g_count: 163
+
+        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # System: Darwin
+        # Release: 9.5.0
+        # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; root:xnu-1228.7.58~1/RELEASE_PPC
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: Power Macintosh
+        # Processor: powerpc
+        # Python version: 2.5.2
+        # numpy version: 1.1.1
+        # 
+        # s2:       0.9699999999999861
+        # te:       2047.9999999978033
+        # rex:      0.14900000000028032
+        # chi2:     1.8533903598853284e-24
+        # iter:     156
+        # f_count:  695
+        # g_count:  162
+        # h_count:  0
+        # warning:  None
+
+        # 32-bit i386 Darwin (http://gna.org/bugs/?14173).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9700000000009170
+        # te: 2048.0000001751678
+        # rex: 0.14899999998256069
+        # chi2: 1.1151721805269898e-20
+        # iter: 175
+        # f_count: 735
+        # g_count: 182
+        # h_count: 0
+        # warning: None 
+
+        # 64-bit i386 Darwin (http://gna.org/bugs/?14173).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 64bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9699999999999785
+        # te: 2047.9999999962433
+        # rex: 0.14900000000039709
+        # chi2: 5.2479491342506911e-24
+        # iter: 162
+        # f_count: 758
+        # g_count: 169
+        # h_count: 0
+        # warning: None
+
+        # Optimisation values.
         select = True
         s2 = 0.9699999999999995
         te = 2048.000000000022283
         rex = 0.14900000000000566
         chi2 = 3.1024517431117421e-27
-        iter = 203
-        f_count = 955
-        g_count = 209
+        iter = [156, 157, 162, 175, 203]
+        f_count = [695, 701, 722, 735, 758, 955]
+        g_count = [162, 163, 164, 169, 182, 209]
         h_count = 0
         warning = None
-
-        # Optimisation differences.
-        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            iter = 162
-            f_count = 758
-            g_count = 169
-        elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
-            iter = 156
-            f_count = 701
-            g_count = 163
-        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
-            iter = 156
-            f_count = 695
-            g_count = 162
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -351,11 +456,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -366,31 +468,139 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 32-bit Linux.
+        # f_count: 388
+        # g_count: 388
+
+        # 32-bit i686 Linux (https://mail.gna.org/public/relax-devel/2009-05/msg00003.html).
+        # System: Linux
+        # Release: 2.6.28-gentoo-r5
+        # Version: #1 SMP Sat Apr 25 13:31:51 EDT 2009
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit ELF
+        # Machine: i686
+        # Processor: Intel(R) Pentium(R) M processor 1.80GHz
+        # Python version: 2.5.4
+        # numpy version: 1.2.1
+        # 
+        # s2:       0.9700000000000604
+        # te:       2048.0000000114946
+        # rex:      0.14899999999885985
+        # chi2:     4.762657780645096e-23
+        # iter:     120
+        # f_count:  386
+        # g_count:  386
+        # h_count:  0
+        # warning:  None
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        # 
+        # s2:                         0.9700000000000603
+        # te:                         2048.0000000114601
+        # rex:                       0.14899999999886163
+        # chi2:                   4.7289676642197204e-23
+        # iter:                                      120
+        # f_count:                                   384
+        # g_count:                                   384
+        # h_count:                                     0
+        # warning:                                  None
+
+        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # System: Darwin
+        # Release: 9.5.0
+        # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
+        # root:xnu-1228.7.58~1/RELEASE_PPC
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: Power Macintosh
+        # Processor: powerpc
+        # Python version: 2.5.2
+        # numpy version: 1.1.1
+        # 
+        # s2:       0.9700000000000607
+        # te:       2048.0000000115510
+        # rex:      0.14899999999885080
+        # chi2:     4.8056261450870388e-23
+        # iter:     120
+        # f_count:  377
+        # g_count:  377
+        # h_count:  0
+        # warning:  None
+
+        # 32-bit i386 Darwin (http://gna.org/bugs/?14174).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9700000000000604
+        # te: 2048.0000000114997
+        # rex: 0.14899999999886168
+        # chi2: 4.7647467884964078e-23
+        # iter: 120
+        # f_count: 386
+        # g_count: 386
+        # h_count: 0
+        # warning: None 
+
+        # 64-bit i386 Darwin (http://gna.org/bugs/?14174).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 64bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9700000000000603
+        # te: 2048.0000000114601
+        # rex: 0.14899999999886163
+        # chi2: 4.7289676642197204e-23
+        # iter: 120
+        # f_count: 384
+        # g_count: 384
+        # h_count: 0
+        # warning: None
+
+        # Optimisation values.
         select = True
         s2 = 0.9700000000000580
         te = 2048.000000011044449
         rex = 0.148999999998904
         chi2 = 4.3978813282102374e-23
         iter = 120
-        f_count = 388
-        g_count = 388
+        f_count = [377, 384, 386, 388]
+        g_count = [377, 384, 386, 388]
         h_count = 0
         warning = None
 
-        # Optimisation differences.
-        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            f_count = 384
-            g_count = 384
-        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
-            f_count = 377
-            g_count = 377
-
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
@@ -408,11 +618,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -423,7 +630,33 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        # 
+        # s2:                         0.9097900390625000
+        # te:                           25.0000000000000
+        # rex:                       1.24017333984375000
+        # chi2:                       53.476155463267176
+        # iter:                                       50
+        # f_count:                                   131
+        # g_count:                                    51
+        # h_count:                                     0
+        # warning:        Maximum number of iterations reached
+
+        # Optimisation values.
         select = True
         s2 = 0.9097900390625
         te = 25.00000000000000
@@ -454,11 +687,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -469,25 +699,92 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 32-bit Linux.
+        # f_count: 738
+        # g_count: 738
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        #
+        # s2:                         0.9700000000219674
+        # te:                         2048.0000015341870
+        # rex:                       0.14899999946977982
+        # chi2:                   2.3477234248531005e-18
+        # iter:                                      198
+        # f_count:                                   757
+        # g_count:                                   757
+        # h_count:                                     0
+        # warning:                                  None
+
+        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # System: Darwin
+        # Release: 9.5.0
+        # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
+        # root:xnu-1228.7.58~1/RELEASE_PPC
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: Power Macintosh
+        # Processor: powerpc
+        # Python version: 2.5.2
+        # numpy version: 1.1.1
+        # 
+        # s2:       0.9700000000219674
+        # te:       2048.0000015341870
+        # rex:      0.14899999946977982
+        # chi2:     2.3477234248531005e-18
+        # iter:     198
+        # f_count:  757
+        # g_count:  757
+        # h_count:  0
+        # warning:  None
+
+        # 64-bit i386 Darwin (http://gna.org/bugs/?14175).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 64bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9700000000219674
+        # te: 2048.0000015341870
+        # rex: 0.14899999946977982
+        # chi2: 2.3477234248531005e-18
+        # iter: 198
+        # f_count: 757
+        # g_count: 757
+        # h_count: 0
+        # warning: None 
+
+        # Optimisation values.
         select = True
         s2 = 0.9700000000219674
         te = 2048.000001534187049
         rex = 0.14899999946977982
         chi2 = 2.3477234248531005e-18
         iter = 198
-        f_count = 738
-        g_count = 738
+        f_count = [738, 757]
+        g_count = [738, 757]
         h_count = 0
         warning = None
-
-        # Optimisation differences.
-        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            f_count = 757
-            g_count = 757
-        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
-            f_count = 757
-            g_count = 757
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -509,11 +806,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -524,21 +818,92 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 32-bit Linux.
+        # f_count: 55
+        # g_count: 23
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        #
+        # s2:                         0.9699999999999995
+        # te:                         2048.0000000000473
+        # rex:                       0.14900000000001926
+        # chi2:                   7.9357208397255696e-28
+        # iter:                                       18
+        # f_count:                                    55
+        # g_count:                                    23
+        # h_count:                                    18
+        # warning:                                  None
+        
+        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # System: Darwin
+        # Release: 9.5.0
+        # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
+        # root:xnu-1228.7.58~1/RELEASE_PPC
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: Power Macintosh
+        # Processor: powerpc
+        # Python version: 2.5.2
+        # numpy version: 1.1.1
+        # 
+        # s2:       0.9699999999999993
+        # te:       2048.0000000000427
+        # rex:      0.14900000000002098
+        # chi2:     5.7085251917483392e-28
+        # iter:     18
+        # f_count:  94
+        # g_count:  23
+        # h_count:  18
+        # warning:  None
+
+        # 64-bit i386 Darwin (http://gna.org/bugs/?14177).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9699999999999994
+        # te: 2048.0000000000455
+        # rex: 0.14900000000001823
+        # chi2: 7.3040158179665562e-28
+        # iter: 18
+        # f_count: 55
+        # g_count: 23
+        # h_count: 18
+        # warning: None 
+
+        # Optimisation values.
         select = True
         s2 = 0.9699999999999994
         te = 2048.000000000045020
         rex = 0.14900000000001817
         chi2 = 7.3040158179665562e-28
         iter = 18
-        f_count = 55
-        g_count = 23
+        f_count = [55, 94]
+        g_count = [23]
         h_count = 18
         warning = None
-
-        # Optimisation differences.
-        if SYSTEM == 'Darwin' and ARCH[0] == '32bit':
-            f_count = 94
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -560,11 +925,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -578,31 +940,122 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 32-bit Linux.
+        # f_count: 159
+        # g_count: 159
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        #
+        # s2:                         0.9699999999999994
+        # te:                         2048.0000000000446
+        # rex:                       0.14900000000001615
+        # chi2:                   8.3312601381368332e-28
+        # iter:                                       22
+        # f_count:                                    91
+        # g_count:                                    91
+        # h_count:                                    22
+        # warning:                                  None
+        
+        # 64-bit x86_64 Linux (Not sure why there is a difference here, maybe this is gcc or blas/lapack - Python and numpy versions are identical).
+        # f_count: 153
+        # g_count: 153
+
+        # 32-bit powerpc Darwin (http://gna.org/bugs/?12573, https://mail.gna.org/public/relax-users/2008-10/msg00089.html).
+        # System: Darwin
+        # Release: 9.5.0
+        # Version: Darwin Kernel Version 9.5.0: Wed Sep  3 11:31:44 PDT 2008; 
+        # root:xnu-1228.7.58~1/RELEASE_PPC
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: Power Macintosh
+        # Processor: powerpc
+        # Python version: 2.5.2
+        # numpy version: 1.1.1
+        # 
+        # s2:       0.9699999999999993
+        # te:       2048.0000000000409
+        # rex:      0.14900000000002178
+        # chi2:     6.8756889983348349e-28
+        # iter:     22
+        # f_count:  160
+        # g_count:  160
+        # h_count:  22
+        # warning:  None
+
+        # 32-bit Windows.
+        # f_count: 165
+        # g_count: 165
+
+        # 32-bit i386 Darwin (http://gna.org/bugs/?14176).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 32bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9699999999999994
+        # te: 2048.0000000000446
+        # rex: 0.14900000000001609
+        # chi2: 8.3312601381368332e-28
+        # iter: 22
+        # f_count: 91
+        # g_count: 91
+        # h_count: 22
+        # warning: None 
+
+        # 64-bit i386 Darwin (http://gna.org/bugs/?14176).
+        # System: Darwin
+        # Release: 9.8.0
+        # Version: Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 2009; root:xnu-1228.15.4~1/RELEASE_I386
+        # Win32 version:
+        # Distribution:
+        # Architecture: 64bit
+        # Machine: i386
+        # Processor: i386
+        # Python version: 2.6.2
+        # numpy version: 1.3.0
+        # 
+        # s2: 0.9699999999999994
+        # te: 2048.0000000000446
+        # rex: 0.14900000000001609
+        # chi2: 8.3312601381368332e-28
+        # iter: 22
+        # f_count: 91
+        # g_count: 91
+        # h_count: 22
+        # warning: None 
+
+        # Optimisation values.
         select = True
         s2 = 0.9699999999999993
         te = 2048.000000000041837
         rex = 0.14900000000002225
         chi2 = 6.8756889983348349e-28
         iter = 22
-        f_count = 159
-        g_count = 159
+        f_count = [91, 153, 159, 160, 165]
+        g_count = [91, 153, 159, 160, 165]
         h_count = 22
         warning = None
-
-        # Optimisation differences.
-        if SYSTEM == 'Linux' and ARCH[0] == '64bit':
-            f_count = 91
-            g_count = 91
-            if search('^2.6', PY_VER):
-                f_count = 153
-                g_count = 153
-        elif SYSTEM == 'Windows' and ARCH[0] == '32bit':
-            f_count = 165
-            g_count = 165
-        elif SYSTEM == 'Darwin' and ARCH[0] == '32bit':
-            f_count = 160
-            g_count = 160
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
@@ -623,11 +1076,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -638,7 +1088,33 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        #
+        # s2:                         0.9157922083468916
+        # te:                            0.3056865872253
+        # rex:                       0.34008409798064831
+        # chi2:                       68.321956795340569
+        # iter:                                       50
+        # f_count:                                   134
+        # g_count:                                    51
+        # h_count:                                     0
+        # warning:        Maximum number of iterations reached
+        
+        # Optimisation values.
         select = True
         s2 = 0.91579220834688024
         te = 0.30568658722531733
@@ -669,11 +1145,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Set up the initial model-free parameter values (bypass the grid search for speed).
         self.relax.interpreter._Value.set([1.0, 0.0, 0.0], ['S2', 'te', 'Rex'])
@@ -684,21 +1157,47 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Get the debugging message.
-        mesg = self.mesg_opt_debug(spin)
+        # Optimisation differences.
+        ###########################
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        #
+        # s2:                         0.9161999495781851
+        # te:                            0.1231968757090
+        # rex:                       0.16249110939079675
+        # chi2:                       73.843613548025075
+        # iter:                                       50
+        # f_count:                                   108
+        # g_count:                                   108
+        # h_count:                                     0
+        # warning:        Maximum number of iterations reached
+        
+        # Optimisation values.
+        select = True
+        s2 = 0.91619994957822126
+        te = 0.12319687570987945
+        rex = 0.16249110942961512
+        chi2 = 73.843613546506191
+        iter = 50
+        f_count = 108
+        g_count = 108
+        h_count = 0
+        warning = 'Maximum number of iterations reached'
 
         # Test the values.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False, msg=mesg)
-        self.assertEqual(spin.select, True, msg=mesg)
-        self.assertAlmostEqual(spin.s2, 0.91619994957822126, msg=mesg)
-        self.assertAlmostEqual(spin.te, 1.2319687570987945e-13, msg=mesg)
-        self.assertAlmostEqual(spin.rex, 0.16249110942961512 / (2.0 * pi * spin.frq[0])**2, msg=mesg)
-        self.assertAlmostEqual(spin.chi2, 73.843613546506191, msg=mesg)
-        self.assertEqual(spin.iter, 50, msg=mesg)
-        self.assertEqual(spin.f_count, 108, msg=mesg)
-        self.assertEqual(spin.g_count, 108, msg=mesg)
-        self.assertEqual(spin.h_count, 0, msg=mesg)
-        self.assertEqual(spin.warning, None or 'Maximum number of iterations reached', msg=mesg)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].select, False)
+        self.value_test(spin, select, s2, te, rex, chi2, iter, f_count, g_count, h_count, warning)
 
 
     def test_opt_grid_search_S2_0_970_te_2048_Rex_0_149(self):
@@ -713,11 +1212,8 @@ class Mf(TestCase):
             Rex = 0.149 s^-1
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Setup the data pipe for optimisation.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/opt_setup_S2_0_970_te_2048_Rex_0_149.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Grid search.
         self.relax.interpreter._Minimisation.grid_search(inc=11)
@@ -725,7 +1221,33 @@ class Mf(TestCase):
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
 
-        # Optimisation values (from 32 bit Linux as the standard).
+        # Optimisation differences.
+        ###########################
+
+        # 64-bit x86_64 Linux.
+        # System:           Linux
+        # Release:          2.6.24.7-server-2mnb
+        # Version:          #1 SMP Thu Oct 30 14:50:37 EDT 2008
+        # Win32 version:
+        # Distribution:     mandriva 2008.1 Official
+        # Architecture:     64bit ELF
+        # Machine:          x86_64
+        # Processor:        Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz
+        # Python version:   2.5.2
+        # Numpy version:    1.2.0
+        # Libc version:     glibc 2.2.5
+        #
+        # s2:                                          1
+        # te:                                          0
+        # rex:                                         0
+        # chi2:                       3.9844117908982288
+        # iter:                                     1331
+        # f_count:                                  1331
+        # g_count:                                     0
+        # h_count:                                     0
+        # warning:                                  None
+
+        # Optimisation values.
         select = True
         s2 = 1.0
         te = 0.0
@@ -746,16 +1268,13 @@ class Mf(TestCase):
         """Reading of relaxation data using the user function relax_data.read()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Read the relaxation data.
-        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path)
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter._Relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', dir=path, res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Test the data and error.
         self.assertEqual(cdp.mol[0].res[1].spin[0].relax_data[0], 1.3874977659397683)
@@ -766,13 +1285,10 @@ class Mf(TestCase):
         """Read a relax 1.2 model-free results file using the user function results.read()."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + '/test_suite/shared_data/model_free')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter._Results.read(file='results_1.2', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free')
 
         # Debugging print out.
-        print cdp
+        print(cdp)
 
         # The spin specific data.
         num = [3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 33, 34, 35]
@@ -821,10 +1337,10 @@ class Mf(TestCase):
         self.assertEqual(cdp.warning, None)
 
         # Global relaxation data tests.
-        self.assertEqual(cdp.ri_labels, ['R1','R2','NOE','R1','R2','NOE','R1','R2','NOE'])
-        self.assertEqual(cdp.remap_table, [0,0,0,1,1,1,2,2,2])
-        self.assertEqual(cdp.frq_labels, ['500','600','750'])
-        self.assertEqual(cdp.frq, [500000000.0,600000000.0,750000000.0])
+        self.assertEqual(cdp.ri_labels, ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
+        self.assertEqual(cdp.remap_table, [0, 0, 0, 1, 1, 1, 2, 2, 2])
+        self.assertEqual(cdp.frq_labels, ['500', '600', '750'])
+        self.assertEqual(cdp.frq, [500000000.0, 600000000.0, 750000000.0])
         self.assertEqual(cdp.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
         self.assertEqual(cdp.num_frq, 3)
         self.assertEqual(cdp.num_ri, 9)
@@ -837,8 +1353,8 @@ class Mf(TestCase):
             spin = cdp.mol[0].res[i].spin[0]
 
             # Debugging print out.
-            print res
-            print spin
+            print(res)
+            print(spin)
 
             # Spin info tests.
             self.assertEqual(res.num, num[i])
@@ -886,10 +1402,10 @@ class Mf(TestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            self.assertEqual(spin.ri_labels, ['R1','R2','NOE','R1','R2','NOE','R1','R2','NOE'])
-            self.assertEqual(spin.remap_table, [0,0,0,1,1,1,2,2,2])
-            self.assertEqual(spin.frq_labels, ['500','600','750'])
-            self.assertEqual(spin.frq, [500000000.0,600000000.0,750000000.0])
+            self.assertEqual(spin.ri_labels, ['R1', 'R2', 'NOE', 'R1', 'R2', 'NOE', 'R1', 'R2', 'NOE'])
+            self.assertEqual(spin.remap_table, [0, 0, 0, 1, 1, 1, 2, 2, 2])
+            self.assertEqual(spin.frq_labels, ['500', '600', '750'])
+            self.assertEqual(spin.frq, [500000000.0, 600000000.0, 750000000.0])
             self.assertEqual(spin.noe_r1_table, [None, None, 0, None, None, 3, None, None, 6])
             self.assertEqual(spin.num_frq, 3)
             self.assertEqual(spin.num_ri, 9)
@@ -904,7 +1420,7 @@ class Mf(TestCase):
         """Read a relax 1.3 model-free results file using the user function results.read()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
         self.relax.interpreter._Pipe.create('1.3', 'mf')
@@ -919,11 +1435,11 @@ class Mf(TestCase):
         pipe_13 = pipes.get_pipe('1.3')
 
         # Test that the objects in the base pipes are the same.
-        print "Comparison of the objects of the base data pipe:"
+        print("Comparison of the objects of the base data pipe:")
         self.object_comparison(obj1=pipe_12, obj2=pipe_13, skip=['mol', 'diff_tensor'])
 
         # Test that the diffusion tensor data is the same.
-        print "Comparison of the objects of the diffusion tensor:"
+        print("Comparison of the objects of the diffusion tensor:")
         self.object_comparison(obj1=pipe_12.diff_tensor, obj2=pipe_13.diff_tensor)
 
         # Test the number of molecules.
@@ -932,7 +1448,7 @@ class Mf(TestCase):
         # Loop over the molecules.
         for i in xrange(len(pipe_12.mol)):
             # Test the objects.
-            print "Comparison of the objects of the molecule:"
+            print("Comparison of the objects of the molecule:")
             self.object_comparison(obj1=pipe_12.mol[i], obj2=pipe_13.mol[i], skip=['res'])
 
             # Test the number of residues.
@@ -945,7 +1461,7 @@ class Mf(TestCase):
                     break
 
                 # Test the objects.
-                print "Comparison of the objects of the residue:"
+                print("Comparison of the objects of the residue:")
                 self.object_comparison(obj1=pipe_12.mol[i].res[j], obj2=pipe_13.mol[i].res[j], skip=['spin'])
 
                 # Test the number of spins.
@@ -954,7 +1470,7 @@ class Mf(TestCase):
                 # Loop over the spins.
                 for k in xrange(len(pipe_12.mol[i].res[j].spin)):
                     # Test the objects.
-                    print "Comparison of the objects of the spin:"
+                    print("Comparison of the objects of the spin:")
                     self.object_comparison(obj1=pipe_12.mol[i].res[j].spin[k], obj2=pipe_13.mol[i].res[j].spin[k])
 
 
@@ -963,16 +1479,13 @@ class Mf(TestCase):
         """Selecting model m4 with parameters {S2, te, Rex} using model_free.select_model()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Select the model.
         self.relax.interpreter._Model_free.select_model(model='m4')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the model.
         self.assertEqual(cdp.mol[0].res[1].spin[0].model, 'm4')
@@ -983,16 +1496,13 @@ class Mf(TestCase):
         """Setting the bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value.
         self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].r, NH_BOND_LENGTH)
@@ -1002,16 +1512,13 @@ class Mf(TestCase):
         """Setting the CSA value through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value.
         self.relax.interpreter._Value.set(N15_CSA, 'csa')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the value.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
@@ -1021,16 +1528,13 @@ class Mf(TestCase):
         """Setting both the CSA value and bond length through the user function value.set()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/S2_0.970_te_2048_Rex_0.149'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path)
+        self.relax.interpreter._Sequence.read(file='noe.500.out', dir=path, res_num_col=1, res_name_col=2)
 
         # Set the CSA value and bond length simultaneously.
         self.relax.interpreter._Value.set([N15_CSA, NH_BOND_LENGTH], ['csa', 'bond_length'])
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test the values.
         self.assertEqual(cdp.mol[0].res[1].spin[0].csa, N15_CSA)
@@ -1041,14 +1545,14 @@ class Mf(TestCase):
         """Try a component of model-free analysis on Tyler Reddy's peptide data (truncated)."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/tylers_peptide.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'tylers_peptide.py')
 
 
     def test_write_results(self):
         """Writing of model-free results using the user function results.write()."""
 
         # Path of the files.
-        path = sys.path[-1] + '/test_suite/shared_data/model_free/OMP'
+        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
         # Read the results file.
         self.relax.interpreter._Results.read(file='final_results_trunc_1.2', dir=path)
@@ -1099,14 +1603,24 @@ class Mf(TestCase):
         # Get the debugging message.
         mesg = self.mesg_opt_debug(spin)
 
+        # Convert to lists.
+        if not isinstance(iter, list):
+            iter = [iter]
+        if not isinstance(f_count, list):
+            f_count = [f_count]
+        if not isinstance(g_count, list):
+            g_count = [g_count]
+        if not isinstance(h_count, list):
+            h_count = [h_count]
+
         # Test all the values.
         self.assertEqual(spin.select, select, msg=mesg)
         self.assertAlmostEqual(spin.s2, s2, msg=mesg)
         self.assertAlmostEqual(spin.te / 1e-9, te / 1e3, msg=mesg)
         self.assertAlmostEqual(spin.rex * (2.0 * pi * spin.frq[0])**2, rex, msg=mesg)
         self.assertAlmostEqual(spin.chi2, chi2, msg=mesg)
-        self.assertEqual(spin.iter, iter, msg=mesg)
-        self.assertEqual(spin.f_count, f_count, msg=mesg)
-        self.assertEqual(spin.g_count, g_count, msg=mesg)
-        self.assertEqual(spin.h_count, h_count, msg=mesg)
+        self.assert_(spin.iter in iter, msg=mesg)
+        self.assert_(spin.f_count in f_count, msg=mesg)
+        self.assert_(spin.g_count in g_count, msg=mesg)
+        self.assert_(spin.h_count in h_count, msg=mesg)
         self.assertEqual(spin.warning, warning, msg=mesg)

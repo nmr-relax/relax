@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,13 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
-from relax_errors import RelaxIntError, RelaxListIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from base_class import User_fn_class
+import check
 from generic_fns import spectrum
 
 
-class Spectrum:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for supporting the input of spectral data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Spectrum(User_fn_class):
+    """Class for supporting the input of spectral data."""
 
     def baseplane_rmsd(self, error=0.0, spectrum_id=None, spin_id=None):
         """Set the baseplane RMSD of a given spin in a spectrum for error analysis.
@@ -70,22 +60,15 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.baseplane_rmsd("
-            text = text + "error=" + `error`
-            text = text + ", spectrum_id=" + `spectrum_id`
-            text = text + ", spin_id=" + `spin_id` + ")"
-            print text
+            text = text + "error=" + repr(error)
+            text = text + ", spectrum_id=" + repr(spectrum_id)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        # The error.
-        if type(error) != float and type(error) != int:
-            raise RelaxNumError, ('error', error)
-
-        # The spectrum identification string.
-        if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
-
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+        # The argument checks.
+        check.is_num(error, 'error')
+        check.is_str(spectrum_id, 'spectrum identification string')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         spectrum.baseplane_rmsd(error=error, spectrum_id=spectrum_id, spin_id=spin_id)
@@ -235,7 +218,7 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.error_analysis()"
-            print text
+            print(text)
 
         # Execute the functional code.
         spectrum.error_analysis()
@@ -269,28 +252,21 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.integration_points("
-            text = text + "N=" + `N`
-            text = text + ", spectrum_id=" + `spectrum_id`
-            text = text + ", spin_id=" + `spin_id` + ")"
-            print text
+            text = text + "N=" + repr(N)
+            text = text + ", spectrum_id=" + repr(spectrum_id)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        # The number of summed points.
-        if type(N) != int:
-            raise RelaxIntError, ('number of summed points', N)
-
-        # The spectrum identification string.
-        if type(spectrum_id) != str:
-            raise RelaxStrError, ('spectrum identification string', spectrum_id)
-
-        # Spin identification string.
-        if spin_id != None and type(spin_id) != str:
-            raise RelaxNoneStrError, ('spin identification string', spin_id)
+        # The argument checks.
+        check.is_int(N, 'number of summed points')
+        check.is_str(spectrum_id, 'spectrum identification string')
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         spectrum.integration_points(N=N, spectrum_id=spectrum_id, spin_id=spin_id)
 
 
-    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method='height', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, ncproc=None):
+    def read_intensities(self, file=None, dir=None, spectrum_id=None, heteronuc='N', proton='HN', int_col=None, int_method='height', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None):
         """Function for reading peak intensities from a file for NOE calculations.
 
         Keyword Arguments
@@ -306,21 +282,34 @@ class Spectrum:
 
         proton:  The name of the proton as specified in the peak intensity file.
 
-        int_col:  The column(s) containing the peak intensity data (for a non-standard format).
+        int_col:  The column containing the peak intensity data (used by the generic intensity file
+            format).
 
         int_method:  The integration method.
 
-        mol_name_col:  The molecule name column used by the generic intensity file format.
+        spin_id_col:  The spin ID string column used by the generic intensity file format (an
+            alternative to the mol, res, and spin name and number columns).
 
-        res_num_col:  The residue number column used by the generic intensity file format.
+        mol_name_col:  The molecule name column used by the generic intensity file format
+            (alternative to the spin_id_col).
 
-        res_name_col:  The residue name column used by the generic intensity file format.
+        res_num_col:  The residue number column used by the generic intensity file format
+            (alternative to the spin_id_col).
 
-        spin_num_col:  The spin number column used by the generic intensity file format.
+        res_name_col:  The residue name column used by the generic intensity file format
+            (alternative to the spin_id_col).
 
-        spin_name_col:  The spin name column used by the generic intensity file format.
+        spin_num_col:  The spin number column used by the generic intensity file format
+            (alternative to the spin_id_col).
 
-        sep:  The column separator used by the generic intensity format (defaults to white space).
+        spin_name_col:  The spin name column used by the generic intensity file format
+            (alternative to the spin_id_col).
+
+        sep:  The column separator used by the generic intensity format (the default is white
+            space).
+
+        spin_id:  The spin ID string used by the generic intensity file format to restrict the
+            loading of data to certain spin subsets.
 
         ncproc:  The Bruker specific FID intensity scaling factor.
 
@@ -382,12 +371,14 @@ class Spectrum:
         support non-supported peak lists.  It should contain in the first few columns enough
         information to identify the spin.  This can include columns for the molecule name, residue
         number, residue name, spin number, and spin name, with each optional type positioned with
-        the *name_col and *num_col arguments.  The peak intensities can be placed in another column
-        specified by the int_col argument.  Intensities from multiple spectra can be placed into
-        different columns, and these can then be specified simultaneously by setting the int_col
-        argument to a list of columns.  This list must be matched by setting the spectrum_id
-        argument to list of the same length.  If columns are delimited by a character other than
-        whitespace, this can be specified with the sep argument.
+        the *name_col and *num_col arguments.  Alternatively a spin ID string column can be used.
+        The peak intensities can be placed in another column specified by the int_col argument.
+        Intensities from multiple spectra can be placed into different columns, and these can then
+        be specified simultaneously by setting the int_col argument to a list of columns.  This list
+        must be matched by setting the spectrum_id argument to list of the same length.  If columns
+        are delimited by a character other than whitespace, this can be specified with the sep
+        argument.  The spin_id argument can be used to restrict the loading to specific spin
+        subsets.
 
 
         Examples
@@ -409,88 +400,44 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.read_intensities("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", spectrum_id=" + `spectrum_id`
-            text = text + ", heteronuc=" + `heteronuc`
-            text = text + ", proton=" + `proton`
-            text = text + ", int_col=" + `int_col`
-            text = text + ", int_method=" + `int_method`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", sep=" + `sep` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", spectrum_id=" + repr(spectrum_id)
+            text = text + ", heteronuc=" + repr(heteronuc)
+            text = text + ", proton=" + repr(proton)
+            text = text + ", int_col=" + repr(int_col)
+            text = text + ", int_method=" + repr(int_method)
+            text = text + ", spin_id_col=" + repr(spin_id_col)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", sep=" + repr(sep)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", ncproc=" + repr(ncproc) + ")"
+            print(text)
 
-        # The file name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The spectrum identification string (or list).
-        if type(spectrum_id) != str and type(spectrum_id) != list:
-            raise RelaxStrListStrError, ('spectrum identification string', spectrum_id)
-
-        # The heteronucleus name.
-        if type(heteronuc) != str:
-            raise RelaxStrError, ('heteronucleus name', heteronuc)
-
-        # The proton name.
-        if type(proton) != str:
-            raise RelaxStrError, ('proton name', proton)
-
-        # The intensity column.
-        if int_col != None and type(int_col) != int and type(int_col) != list:
-            raise RelaxNoneIntListIntError, ('intensity column', int_col)
-        if type(int_col) == list:
-            # Empty list.
-            if int_col == []:
-                raise RelaxListIntError, ('intensity column', int_col)
-
-            # Check the values.
-            for i in xrange(len(int_col)):
-                if type(int_col[i]) != int:
-                    raise RelaxListIntError, ('intensity column', int_col)
-
-        # The integration method name.
-        if type(int_method) != str:
-            raise RelaxStrError, ('integration method', int_method)
-
-        # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_num_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
-
-        # Bruker ncproc parameter.
-        if ncproc != None and type(ncproc) != int:
-            raise RelaxNoneIntError, ('Bruker ncproc parameter', ncproc)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str_or_str_list(spectrum_id, 'spectrum identification string')
+        check.is_str(heteronuc, 'heteronucleus name')
+        check.is_str(proton, 'proton name')
+        check.is_int_or_int_list(int_col, 'intensity column', can_be_none=True)
+        check.is_str(int_method, 'integration method')
+        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        check.is_int(ncproc, 'Bruker ncproc parameter', can_be_none=True)
 
         # Execute the functional code.
-        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, ncproc=ncproc)
+        spectrum.read(file=file, dir=dir, spectrum_id=spectrum_id, heteronuc=heteronuc, proton=proton, int_col=int_col, int_method=int_method, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, ncproc=ncproc)
 
 
     def replicated(self, spectrum_ids=None):
@@ -526,21 +473,11 @@ class Spectrum:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "spectrum.replicated("
-            text = text + "spectrum_ids=" + `spectrum_ids` + ")"
-            print text
+            text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
+            print(text)
 
         # Spectrum ids.
-        if type(spectrum_ids) != list:
-            raise RelaxListStrError, ('spectrum ids', spectrum_ids)
-        else:
-            # Empty list.
-            if spectrum_ids == []:
-                raise RelaxListStrError, ('spectrum ids', spectrum_ids)
-
-            # Check the values.
-            for i in xrange(len(spectrum_ids)):
-                if type(spectrum_ids[i]) != str:
-                    raise RelaxListStrError, ('spectrum ids', spectrum_ids)
+        check.is_str_or_str_list(spectrum_ids, 'spectrum identification strings')
 
         # Execute the functional code.
         spectrum.replicated(spectrum_ids=spectrum_ids)

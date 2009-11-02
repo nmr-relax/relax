@@ -30,7 +30,7 @@ from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns.mol_res_spin import spin_index_loop
+from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
 
 
@@ -62,7 +62,7 @@ class Relax_fit(TestCase):
         """Test the relaxation curve fitting, replicating bug #12670 and bug #12679."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/1UBQ_relax_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'1UBQ_relax_fit.py')
 
         # Open the intensities.agr file.
         file = open(ds.tmpdir + sep + 'intensities.agr')
@@ -83,26 +83,57 @@ class Relax_fit(TestCase):
         """Test the relaxation curve fitting C modules."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/relax_fit.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit.py')
+
+        # Data.
+        relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
+        chi2 = [None, None, None, 3.1727215308183405, 5.9732236976178248, 17.633333237460601, 4.7413502242106036, 10.759950979457724, None, None, None, 6.5520255580798752]
+        rx = [None, None, None, 8.0814894819861891, 8.6478971007171523, 9.5710638143380482, 10.716551832690667, 11.143793929315777, None, None, None, 12.828753698718391]
+        i0 = [None, None, None, 1996050.9679873895, 2068490.9458262245, 1611556.5193290685, 1362887.2329727132, 1877670.5629299041, None, None, None, 897044.17270784755]
+
+        # Some checks.
+        self.assertEqual(cdp.curve_type, 'exp')
+        self.assertEqual(cdp.int_method, 'height')
+        self.assertEqual(len(cdp.relax_times), 10)
+        for i in range(10):
+            self.assertEqual(cdp.relax_times[i], relax_times[i])
+
+        # Spin data check.
+        i = 0
+        for spin in spin_loop():
+            # No data present.
+            if chi2[i] == None:
+                self.assert_(not hasattr(spin, 'chi2'))
+
+            # Data present.
+            else:
+                self.assertAlmostEqual(spin.chi2, chi2[i])
+                self.assertAlmostEqual(spin.rx, rx[i])
+                self.assertAlmostEqual(spin.i0/1e6, i0[i]/1e6)
+
+            # Increment the spin index.
+            i = i + 1
+            if i >= 12:
+                break
 
 
     def test_read_sparky(self):
         """The Sparky peak height loading test."""
 
         # Load the original state.
-        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir_name=sys.path[-1] + '/test_suite/shared_data/saved_states')
+        self.relax.interpreter._State.load(state='basic_heights_T2_ncyc1', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'saved_states', force=True)
 
         # Create a new data pipe for the new data.
         self.relax.interpreter._Pipe.create('new', 'relax_fit')
 
         # Load the Lupin Ap4Aase sequence.
-        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + "/test_suite/shared_data")
+        self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Name the spins so they can be matched to the assignments.
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak heights.
-        self.relax.interpreter._Spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/curve_fitting", spectrum_id='0.0176')
+        self.relax.interpreter._Spectrum.read_intensities(file="T2_ncyc1_ave.list", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', spectrum_id='0.0176')
 
 
         # Test the integrity of the data.

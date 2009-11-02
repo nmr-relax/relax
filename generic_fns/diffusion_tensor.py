@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -48,7 +48,7 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -64,11 +64,11 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Test if pipe_from contains diffusion tensor data.
     if not diff_data_exists(pipe_from):
-        raise RelaxNoTensorError, 'diffusion'
+        raise RelaxNoTensorError('diffusion')
 
     # Test if pipe_to contains diffusion tensor data.
     if diff_data_exists(pipe_to):
-        raise RelaxTensorError, 'diffusion'
+        raise RelaxTensorError('diffusion')
 
     # Copy the data.
     dp_to.diff_tensor = deepcopy(dp_from.diff_tensor)
@@ -162,12 +162,9 @@ def delete():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
-        raise RelaxNoTensorError, 'diffusion'
+        raise RelaxNoTensorError('diffusion')
 
     # Delete the diffusion data.
     del(cdp.diff_tensor)
@@ -204,97 +201,94 @@ def display():
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
-        raise RelaxNoTensorError, 'diffusion'
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
+        raise RelaxNoTensorError('diffusion')
 
     # Spherical diffusion.
     if cdp.diff_tensor.type == 'sphere':
         # Tensor type.
-        print "Type:  Spherical diffusion"
+        print("Type:  Spherical diffusion")
 
         # Parameters.
-        print "\nParameters {tm}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
+        print("\nParameters {tm}.")
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
 
         # Alternate parameters.
-        print "\nAlternate parameters {Diso}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
+        print("\nAlternate parameters {Diso}.")
+        print(("Diso (1/s):  " + repr(cdp.diff_tensor.Diso)))
 
         # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+        print(("\nFixed:  " + repr(cdp.diff_tensor.fixed)))
 
     # Spheroidal diffusion.
     elif cdp.diff_tensor.type == 'spheroid':
         # Tensor type.
-        print "Type:  Spheroidal diffusion"
+        print("Type:  Spheroidal diffusion")
 
         # Parameters.
-        print "\nParameters {tm, Da, theta, phi}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print("\nParameters {tm, Da, theta, phi}.")
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Alternate parameters.
-        print "\nAlternate parameters {Diso, Da, theta, phi}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print("\nAlternate parameters {Diso, Da, theta, phi}.")
+        print(("Diso (1/s):  " + repr(cdp.diff_tensor.Diso)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Alternate parameters.
-        print "\nAlternate parameters {Dpar, Dper, theta, phi}."
-        print "Dpar (1/s):  " + `cdp.diff_tensor.Dpar`
-        print "Dper (1/s):  " + `cdp.diff_tensor.Dper`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print("\nAlternate parameters {Dpar, Dper, theta, phi}.")
+        print(("Dpar (1/s):  " + repr(cdp.diff_tensor.Dpar)))
+        print(("Dper (1/s):  " + repr(cdp.diff_tensor.Dper)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Alternate parameters.
-        print "\nAlternate parameters {tm, Dratio, theta, phi}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Dratio:  " + `cdp.diff_tensor.Dratio`
-        print "theta (rad):  " + `cdp.diff_tensor.theta`
-        print "phi (rad):  " + `cdp.diff_tensor.phi`
+        print("\nAlternate parameters {tm, Dratio, theta, phi}.")
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
+        print(("Dratio:  " + repr(cdp.diff_tensor.Dratio)))
+        print(("theta (rad):  " + repr(cdp.diff_tensor.theta)))
+        print(("phi (rad):  " + repr(cdp.diff_tensor.phi)))
 
         # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+        print(("\nFixed:  " + repr(cdp.diff_tensor.fixed)))
 
     # Ellipsoidal diffusion.
     elif cdp.diff_tensor.type == 'ellipsoid':
         # Tensor type.
-        print "Type:  Ellipsoidal diffusion"
+        print("Type:  Ellipsoidal diffusion")
 
         # Parameters.
-        print "\nParameters {tm, Da, Dr, alpha, beta, gamma}."
-        print "tm (s):  " + `cdp.diff_tensor.tm`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "Dr:  " + `cdp.diff_tensor.Dr`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+        print("\nParameters {tm, Da, Dr, alpha, beta, gamma}.")
+        print(("tm (s):  " + repr(cdp.diff_tensor.tm)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("Dr:  " + repr(cdp.diff_tensor.Dr)))
+        print(("alpha (rad):  " + repr(cdp.diff_tensor.alpha)))
+        print(("beta (rad):  " + repr(cdp.diff_tensor.beta)))
+        print(("gamma (rad):  " + repr(cdp.diff_tensor.gamma)))
 
         # Alternate parameters.
-        print "\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}."
-        print "Diso (1/s):  " + `cdp.diff_tensor.Diso`
-        print "Da (1/s):  " + `cdp.diff_tensor.Da`
-        print "Dr:  " + `cdp.diff_tensor.Dr`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+        print("\nAlternate parameters {Diso, Da, Dr, alpha, beta, gamma}.")
+        print(("Diso (1/s):  " + repr(cdp.diff_tensor.Diso)))
+        print(("Da (1/s):  " + repr(cdp.diff_tensor.Da)))
+        print(("Dr:  " + repr(cdp.diff_tensor.Dr)))
+        print(("alpha (rad):  " + repr(cdp.diff_tensor.alpha)))
+        print(("beta (rad):  " + repr(cdp.diff_tensor.beta)))
+        print(("gamma (rad):  " + repr(cdp.diff_tensor.gamma)))
 
         # Alternate parameters.
-        print "\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}."
-        print "Dx (1/s):  " + `cdp.diff_tensor.Dx`
-        print "Dy (1/s):  " + `cdp.diff_tensor.Dy`
-        print "Dz (1/s):  " + `cdp.diff_tensor.Dz`
-        print "alpha (rad):  " + `cdp.diff_tensor.alpha`
-        print "beta (rad):  " + `cdp.diff_tensor.beta`
-        print "gamma (rad):  " + `cdp.diff_tensor.gamma`
+        print("\nAlternate parameters {Dx, Dy, Dz, alpha, beta, gamma}.")
+        print(("Dx (1/s):  " + repr(cdp.diff_tensor.Dx)))
+        print(("Dy (1/s):  " + repr(cdp.diff_tensor.Dy)))
+        print(("Dz (1/s):  " + repr(cdp.diff_tensor.Dz)))
+        print(("alpha (rad):  " + repr(cdp.diff_tensor.alpha)))
+        print(("beta (rad):  " + repr(cdp.diff_tensor.beta)))
+        print(("gamma (rad):  " + repr(cdp.diff_tensor.gamma)))
 
         # Fixed flag.
-        print "\nFixed:  " + `cdp.diff_tensor.fixed`
+        print(("\nFixed:  " + repr(cdp.diff_tensor.fixed)))
 
 
 def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None):
@@ -313,9 +307,6 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
                             Dper, theta, phi}, 4: {Diso, Dratio, theta, phi}.
     @type param_types:      int
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # The diffusion type.
     cdp.diff_tensor.type = 'ellipsoid'
@@ -359,7 +350,7 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
 
     # Unknown parameter combination.
     else:
-        raise RelaxUnknownParamCombError, ('param_types', param_types)
+        raise RelaxUnknownParamCombError('param_types', param_types)
 
     # Convert the angles to radians.
     if angle_units == 'deg':
@@ -402,9 +393,6 @@ def fold_angles(sim_index=None):
                         rather than the simulation values.
     @type sim_index:    int or None
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
 
     # Wrap the angles.
@@ -554,17 +542,14 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if diffusion tensor data already exists.
     if diff_data_exists():
-        raise RelaxTensorError, 'diffusion'
+        raise RelaxTensorError('diffusion')
 
     # Check the validity of the angle_units argument.
     valid_types = ['deg', 'rad']
     if not angle_units in valid_types:
-        raise RelaxError, "The diffusion tensor 'angle_units' argument " + `angle_units` + " should be either 'deg' or 'rad'."
+        raise RelaxError("The diffusion tensor 'angle_units' argument " + repr(angle_units) + " should be either 'deg' or 'rad'.")
 
     # Add the diff_tensor object to the data pipe.
     cdp.diff_tensor = DiffTensorData()
@@ -573,23 +558,23 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     cdp.diff_tensor.fixed = fixed
 
     # Spherical diffusion.
-    if type(params) == float:
+    if isinstance(params, float):
         num_params = 1
         sphere(params, time_scale, param_types)
 
     # Spheroidal diffusion.
-    elif (type(params) == tuple or type(params) == list) and len(params) == 4:
+    elif (isinstance(params, tuple) or isinstance(params, list)) and len(params) == 4:
         num_params = 4
         spheroid(params, time_scale, d_scale, angle_units, param_types, spheroid_type)
 
     # Ellipsoidal diffusion.
-    elif (type(params) == tuple or type(params) == list) and len(params) == 6:
+    elif (isinstance(params, tuple) or isinstance(params, list)) and len(params) == 6:
         num_params = 6
         ellipsoid(params, time_scale, d_scale, angle_units, param_types)
 
     # Unknown.
     else:
-        raise RelaxError, "The diffusion tensor parameters " + `params` + " are of an unknown type."
+        raise RelaxError("The diffusion tensor parameters " + repr(params) + " are of an unknown type.")
 
     # Test the validity of the parameters.
     test_params(num_params)
@@ -685,7 +670,7 @@ def map_labels(index, params, bounds, swap, inc):
         string = "{"
         val = 0.0
         for j in xrange(axis_incs + 1):
-            string = string + " " + `val`
+            string = string + " " + repr(val)
             val = val + loc_inc
         string = string + " }"
         tick_locations.append(string)
@@ -745,8 +730,8 @@ def return_data_name(name):
     """
 
     # Enforce that the name must be a string.
-    if type(name) != str:
-        raise RelaxStrError, ('name', name)
+    if not isinstance(name, str):
+        raise RelaxStrError('name', name)
 
     # Local tm.
     if search('^tm$', name):
@@ -927,12 +912,9 @@ def set(value=None, param=None):
     @type param:        list of str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Set up the diffusion tensor data if it doesn't exist.
     if not diff_data_exists():
-        raise RelaxNoTensorError, 'diffusion'
+        raise RelaxNoTensorError('diffusion')
 
     # Initialise.
     geo_params = []
@@ -947,7 +929,7 @@ def set(value=None, param=None):
 
         # Unknown parameter.
         if not param[i]:
-            raise RelaxUnknownParamError, ("diffusion tensor", param[i])
+            raise RelaxUnknownParamError("diffusion tensor", param[i])
 
         # Default value.
         if value[i] == None:
@@ -983,11 +965,11 @@ def set(value=None, param=None):
 
             # Cannot set the single parameter.
             else:
-                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+                raise RelaxError("The geometric diffusion parameter " + repr(geo_params[0]) + " cannot be set.")
 
         # More than one geometric parameters.
         elif len(geo_params) > 1:
-            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+            raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
 
         # Orientational parameters.
@@ -995,7 +977,7 @@ def set(value=None, param=None):
 
         # ???
         if len(orient_params):
-            raise RelaxError, "For spherical diffusion, the orientation parameters " + `orient_params` + " should not exist."
+            raise RelaxError("For spherical diffusion, the orientation parameters " + repr(orient_params) + " should not exist.")
 
 
     # Spheroidal diffusion.
@@ -1026,7 +1008,7 @@ def set(value=None, param=None):
 
             # Cannot set the single parameter.
             else:
-                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+                raise RelaxError("The geometric diffusion parameter " + repr(geo_params[0]) + " cannot be set.")
 
         # Two geometric parameters.
         elif len(geo_params) == 2:
@@ -1082,11 +1064,11 @@ def set(value=None, param=None):
 
             # Unknown parameter combination.
             else:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+                raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
         # More than two geometric parameters.
         elif len(geo_params) > 2:
-            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+            raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
 
         # Orientational parameters.
@@ -1104,7 +1086,7 @@ def set(value=None, param=None):
 
             # Disallowed parameter.
             else:
-                raise RelaxError, "For spheroidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
+                raise RelaxError("For spheroidal diffusion, the orientation parameter " + repr(orient_params) + " cannot be set.")
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
@@ -1115,11 +1097,11 @@ def set(value=None, param=None):
 
             # Unknown parameter combination.
             else:
-                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+                raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
         # More than two orientational parameters.
         elif len(orient_params) > 2:
-            raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+            raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
 
     # Ellipsoidal diffusion.
@@ -1149,7 +1131,7 @@ def set(value=None, param=None):
 
             # Cannot set the single parameter.
             else:
-                raise RelaxError, "The geometric diffusion parameter " + `geo_params[0]` + " cannot be set."
+                raise RelaxError("The geometric diffusion parameter " + repr(geo_params[0]) + " cannot be set.")
 
         # Two geometric parameters.
         elif len(geo_params) == 2:
@@ -1205,7 +1187,7 @@ def set(value=None, param=None):
 
             # Unknown parameter combination.
             else:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+                raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
         # Three geometric parameters.
         elif len(geo_params) == 3:
@@ -1257,12 +1239,12 @@ def set(value=None, param=None):
 
             # Unknown parameter combination.
             else:
-                raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+                raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
 
         # More than three geometric parameters.
         elif len(geo_params) > 3:
-            raise RelaxUnknownParamCombError, ('geometric parameter set', geo_params)
+            raise RelaxUnknownParamCombError('geometric parameter set', geo_params)
 
 
         # Orientational parameters.
@@ -1284,7 +1266,7 @@ def set(value=None, param=None):
 
             # Disallowed parameter.
             else:
-                raise RelaxError, "For ellipsoidal diffusion, the orientation parameter " + `orient_params` + " cannot be set."
+                raise RelaxError("For ellipsoidal diffusion, the orientation parameter " + repr(orient_params) + " cannot be set.")
 
         # Two orientational parameters.
         elif len(orient_params) == 2:
@@ -1305,7 +1287,7 @@ def set(value=None, param=None):
 
             # Unknown parameter combination.
             else:
-                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+                raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
         # Three orientational parameters.
         elif len(orient_params) == 3:
@@ -1317,11 +1299,11 @@ def set(value=None, param=None):
 
             # Unknown parameter combination.
             else:
-                raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+                raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
         # More than three orientational parameters.
         elif len(orient_params) > 3:
-            raise RelaxUnknownParamCombError, ('orientational parameter set', orient_params)
+            raise RelaxUnknownParamCombError('orientational parameter set', orient_params)
 
 
     # Fold the angles in.
@@ -1386,9 +1368,6 @@ def sphere(params=None, time_scale=None, param_types=None):
     @type param_types:  int
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # The diffusion type.
     cdp.diff_tensor.type = 'sphere'
 
@@ -1410,7 +1389,7 @@ def sphere(params=None, time_scale=None, param_types=None):
 
     # Unknown parameter combination.
     else:
-        raise RelaxUnknownParamCombError, ('param_types', param_types)
+        raise RelaxUnknownParamCombError('param_types', param_types)
 
 
 def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None, spheroid_type=None):
@@ -1433,16 +1412,13 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
     @type spheroid_type:    str
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # The diffusion type.
     cdp.diff_tensor.type = 'spheroid'
 
     # Spheroid diffusion type.
     allowed_types = [None, 'oblate', 'prolate']
     if spheroid_type not in allowed_types:
-        raise RelaxError, "The 'spheroid_type' argument " + `spheroid_type` + " should be 'oblate', 'prolate', or None."
+        raise RelaxError("The 'spheroid_type' argument " + repr(spheroid_type) + " should be 'oblate', 'prolate', or None.")
     cdp.diff_tensor.spheroid_type = spheroid_type
 
     # (tm, Da, theta, phi).
@@ -1505,7 +1481,7 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
 
     # Unknown parameter combination.
     else:
-        raise RelaxUnknownParamCombError, ('param_types', param_types)
+        raise RelaxUnknownParamCombError('param_types', param_types)
 
     # Convert the angles to radians.
     if angle_units == 'deg':
@@ -1519,16 +1495,13 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
 def test_params(num_params):
     """Function for testing the validity of the input parameters."""
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # An allowable error to account for machine precision, optimisation quality, etc.
     error = 1e-4
 
     # tm.
     tm = cdp.diff_tensor.tm
     if tm <= 0.0 or tm > 1e-6:
-        raise RelaxError, "The tm value of " + `tm` + " should be between zero and one microsecond."
+        raise RelaxError("The tm value of " + repr(tm) + " should be between zero and one microsecond.")
 
     # Spheroid.
     if num_params == 4:
@@ -1538,7 +1511,7 @@ def test_params(num_params):
 
         # Da.
         if Da < (-1.5*Diso - error*Diso) or Da > (3.0*Diso + error*Diso):
-            raise RelaxError, "The Da value of " + `Da` + " should be between -3/2 * Diso and 3Diso."
+            raise RelaxError("The Da value of " + repr(Da) + " should be between -3/2 * Diso and 3Diso.")
 
     # Ellipsoid.
     if num_params == 6:
@@ -1549,11 +1522,11 @@ def test_params(num_params):
 
         # Da.
         if Da < (0.0 - error*Diso) or Da > (3.0*Diso + error*Diso):
-            raise RelaxError, "The Da value of " + `Da` + " should be between zero and 3Diso."
+            raise RelaxError("The Da value of " + repr(Da) + " should be between zero and 3Diso.")
 
         # Dr.
         if Dr < (0.0 - error) or Dr > (1.0 + error):
-            raise RelaxError, "The Dr value of " + `Dr` + " should be between zero and one."
+            raise RelaxError("The Dr value of " + repr(Dr) + " should be between zero and one.")
 
 
 def unit_axes():

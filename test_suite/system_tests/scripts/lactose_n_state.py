@@ -1,6 +1,7 @@
 # Script for determining populations for lactose conformations using RDCs and PCSs.
 
 # Python module imports.
+from os import sep
 import sys
 
 # relax imports.
@@ -9,8 +10,8 @@ from specific_fns.setup import n_state_model_obj
 
 
 # Path of the files.
-str_path = sys.path[-1] + '/test_suite/shared_data/structures/lactose'
-data_path = sys.path[-1] + '/test_suite/shared_data/align_data'
+str_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+data_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'align_data'
 
 # Create the data pipe.
 pipe.create('lactose', 'N-state')
@@ -18,7 +19,7 @@ pipe.create('lactose', 'N-state')
 # Load the structures.
 NUM_STR = 4
 for i in range(NUM_STR):
-    structure.read_pdb(file='lactose_MCMM4_S1_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
+    structure.read_pdb(file='lactose_MCMM4_S1_'+repr(i+1), dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='lactose_MCMM4_S1')
 
 # Load the sequence information.
 structure.load_spins(spin_id=':UNK@C*', combine_models=False, ave_pos=False)
@@ -44,12 +45,12 @@ align_list = ['Dy', 'Tb', 'Tm', 'Er']
 # Load the RDCs and PCSs.
 for i in xrange(len(align_list)):
     # The RDC.
-    rdc.read(id=align_list[i], file='rdc.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=0, data_col=i+2, error_col=None)
-    rdc.read(id=align_list[i], file='rdc_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=0, data_col=None, error_col=i+2)
+    rdc.read(align_id=align_list[i], file='rdc.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+3, error_col=None)
+    rdc.read(align_id=align_list[i], file='rdc_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+3)
 
     # The PCS.
-    pcs.read(id=align_list[i], file='pcs.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=0, data_col=i+1, error_col=None)
-    pcs.read(id=align_list[i], file='pcs_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=0, data_col=None, error_col=i+1)
+    pcs.read(align_id=align_list[i], file='pcs.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+2, error_col=None)
+    pcs.read(align_id=align_list[i], file='pcs_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+2)
 
     # The temperature.
     temperature(id=align_list[i], temp=298)
@@ -63,7 +64,7 @@ pipe.create('tag', 'N-state')
 # Load all the tag structures.
 NUM_TAG = 10
 for i in range(NUM_TAG):
-    structure.read_pdb(file='tag_MCMM4_'+`i+1`, dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='tag')
+    structure.read_pdb(file='tag_MCMM4_'+repr(i+1), dir=str_path, parser='internal', set_model_num=i+1, set_mol_name='tag')
 
 # Load the lanthanide atoms.
 structure.load_spins(spin_id='@C1', combine_models=False, ave_pos=False)
@@ -79,7 +80,7 @@ n_state_model.select_model(model='population')
 
 # Set to equal probabilities.
 for j in xrange(NUM_STR):
-    value.set(1.0/NUM_STR, 'p'+`j`)
+    value.set(1.0/NUM_STR, 'p'+repr(j))
 
 # Minimisation.
 minimise('bfgs', constraints=True, max_iter=5)

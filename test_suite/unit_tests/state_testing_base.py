@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import tmpfile
+from os import sep, tmpfile
 import sys
 
 # relax module imports.
@@ -63,7 +63,7 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
@@ -73,13 +73,13 @@ class State_base_class:
             path = sys.path[-1]
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
 
         # Test the contents of the restored singleton.
-        self.assertEqual(ds.keys(), ['orig'])
+        self.assertEqual(list(ds.keys()), ['orig'])
         self.assertEqual(pipes.cdp_name(), 'orig')
         self.assertEqual(dp.x, 1)
         self.assertEqual(ds.y, 'Hello')
@@ -92,7 +92,7 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
@@ -102,11 +102,10 @@ class State_base_class:
             path = sys.path[-1]
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Add a new data pipe and some data to it.
         ds.add('new', 'jw_mapping')
-        cdp = pipes.get_pipe()
         cdp.z = [None, None]
 
         # Get the data pipes.
@@ -114,7 +113,7 @@ class State_base_class:
         dp_new = pipes.get_pipe('new')
 
         # Test the contents of the restored singleton (with subsequent data added).
-        self.assertEqual(ds.keys().sort(), ['orig', 'new'].sort())
+        self.assertEqual(list(ds.keys()).sort(), ['orig', 'new'].sort())
         self.assertEqual(pipes.cdp_name(), 'new')
         self.assertEqual(dp_orig.x, 1)
         self.assertEqual(ds.y, 'Hello')
@@ -128,7 +127,7 @@ class State_base_class:
         """
 
         # Test the contents of the empty singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
@@ -138,13 +137,13 @@ class State_base_class:
             path = sys.path[-1]
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir_name=path+'/test_suite/shared_data/saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Reset.
         ds.__reset__()
 
         # Test that there are no contents in the reset singleton.
-        self.assertEqual(ds.keys(), [])
+        self.assertEqual(list(ds.keys()), [])
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 

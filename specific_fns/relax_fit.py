@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,6 +24,8 @@
 """The relaxation curve fitting specific code."""
 
 # Python module imports.
+from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, zeros
 from numpy.linalg import inv
 from re import match, search
@@ -33,7 +35,6 @@ from dep_check import C_module_fit
 from base_class import Common_functions
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
-from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 
 # C modules.
@@ -110,9 +111,6 @@ class Relax_fit(Common_functions):
         if not scaling:
             return scaling_matrix
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Loop over the parameters.
         for i in xrange(len(spin.params)):
             # Relaxation rate.
@@ -144,9 +142,6 @@ class Relax_fit(Common_functions):
         @return:                    The peak intensity for the desired relaxation time.
         @rtype:                     float
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the initial parameter vector.
         param_vector = self.assemble_param_vector(spin=spin)
@@ -194,9 +189,6 @@ class Relax_fit(Common_functions):
         # Test if the model is set.
         if not hasattr(spin, 'model') or not spin.model:
             raise RelaxNoModelError
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Loop over the spectral time points.
         for j in xrange(len(cdp.relax_times)):
@@ -305,8 +297,7 @@ class Relax_fit(Common_functions):
         return names
 
 
-    def default_value(self, param):
-        """
+    default_value_doc = """
         Relaxation curve fitting default values
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -325,6 +316,15 @@ class Relax_fit(Common_functions):
         |                        |               |                        |
         |________________________|_______________|________________________|
 
+        """
+
+    def default_value(self, param):
+        """The default relaxation curve-fitting parameter values.
+
+        @param param:   The relaxation curve-fitting parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
         """
 
         # Relaxation rate.
@@ -350,9 +350,6 @@ class Relax_fit(Common_functions):
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
         """
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Monte Carlo simulations.
         if sim_index != None:
@@ -441,76 +438,50 @@ class Relax_fit(Common_functions):
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
-            raise RelaxError, "Cannot run a grid search on a model with zero parameters."
+            raise RelaxError("Cannot run a grid search on a model with zero parameters.")
 
         # Lower bounds.
-        if lower != None:
-            if len(lower) != n:
-                raise RelaxLenError, ('lower bounds', n)
+        if lower != None and len(lower) != n:
+            raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
-        if upper != None:
-            if len(upper) != n:
-                raise RelaxLenError, ('upper bounds', n)
+        if upper != None and len(upper) != n:
+            raise RelaxLenError('upper bounds', n)
 
-        # Increment.
-        if type(inc) == list:
-            if len(inc) != n:
-                raise RelaxLenError, ('increment', n)
-            inc = inc
-        elif type(inc) == int:
-            temp = []
-            for j in xrange(n):
-                temp.append(inc)
-            inc = temp
+        # Increments.
+        if isinstance(inc, list) and len(inc) != n:
+            raise RelaxLenError('increment', n)
+        elif isinstance(inc, int):
+            inc = [inc]*n
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        # Set up the default bounds.
+        if not lower:
+            # Init.
+            lower = []
+            upper = []
 
-        # Minimisation options initialisation.
-        min_options = []
-        j = 0
+            # Loop over the parameters.
+            for i in range(n):
+                # Relaxation rate (from 0 to 20 s^-1).
+                if spin.params[i] == 'Rx':
+                    lower.append(0.0)
+                    upper.append(20.0)
 
-        # Loop over the parameters.
-        for i in xrange(len(spin.params)):
-            # Relaxation rate (from 0 to 20 s^-1).
-            if spin.params[i] == 'Rx':
-                min_options.append([inc[j], 0.0, 20.0])
+                # Intensity
+                elif search('^I', spin.params[i]):
+                    # Find the position of the first time point.
+                    pos = cdp.relax_times.index(min(cdp.relax_times))
 
-            # Intensity
-            elif search('^I', spin.params[i]):
-                # Find the position of the first time point.
-                pos = cdp.relax_times.index(min(cdp.relax_times))
+                    # Defaults.
+                    lower.append(0.0)
+                    upper.append(average(spin.intensities[pos]))
 
-                # Scaling.
-                min_options.append([inc[j], 0.0, average(spin.intensities[pos])])
+        # Parameter scaling.
+        for i in range(n):
+            lower[i] = lower[i] / scaling_matrix[i, i]
+            upper[i] = upper[i] / scaling_matrix[i, i]
 
-            # Increment j.
-            j = j + 1
-
-        # Set the lower and upper bounds if these are supplied.
-        if lower != None:
-            for j in xrange(n):
-                if lower[j] != None:
-                    min_options[j][1] = lower[j]
-        if upper != None:
-            for j in xrange(n):
-                if upper[j] != None:
-                    min_options[j][2] = upper[j]
-
-        # Test if the grid is too large.
-        grid_size = 1
-        for i in xrange(len(min_options)):
-            grid_size = grid_size * min_options[i][0]
-        if type(grid_size) == long:
-            raise RelaxError, "A grid search of size " + `grid_size` + " is too large."
-
-        # Diagonal scaling of minimisation options.
-        for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
-
-        return grid_size, min_options
+        return inc, lower, upper
 
 
     def linear_constraints(self, spin=None, scaling_matrix=None):
@@ -625,9 +596,6 @@ class Relax_fit(Common_functions):
         @type inc:                  array of int
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
@@ -652,11 +620,13 @@ class Relax_fit(Common_functions):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                grid_size, min_options = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower, upper = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
                 A, b = self.linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+            else:
+                A, b = None, None
 
             # Print out.
             if verbosity >= 1:
@@ -665,15 +635,11 @@ class Relax_fit(Common_functions):
 
                 # Individual spin print out.
                 if verbosity >= 2:
-                    print "\n\n"
+                    print("\n\n")
 
-                string = "Fitting to spin " + `spin_id`
-                print "\n\n" + string
-                print len(string) * '~'
-
-                # Grid search print out.
-                if match('^[Gg]rid', min_algor):
-                    print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
+                string = "Fitting to spin " + repr(spin_id)
+                print(("\n\n" + string))
+                print((len(string) * '~'))
 
 
             # Initialise the function to minimise.
@@ -713,13 +679,24 @@ class Relax_fit(Common_functions):
             # Minimisation.
             ###############
 
-            if constraints:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+            # Grid search.
+            if search('^[Gg]rid', min_algor):
+                results = grid(func=func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+
+                # Unpack the results.
+                param_vector, chi2, iter_count, warning = results
+                f_count = iter_count
+                g_count = 0.0
+                h_count = 0.0
+
+            # Minimisation.
             else:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
-            if results == None:
-                return
-            param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+
+                # Unpack the results.
+                if results == None:
+                    return
+                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
             if scaling:
@@ -779,9 +756,6 @@ class Relax_fit(Common_functions):
         @type params:   list of str
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Set the model.
         cdp.curve_type = model
 
@@ -828,12 +802,9 @@ class Relax_fit(Common_functions):
         @type spectrum_id:      str
         """
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the spectrum id exists.
         if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError, "The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id
+            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
 
         # Store the relaxation time in the class instance.
         self.__relax_time = float(time)
@@ -846,7 +817,7 @@ class Relax_fit(Common_functions):
             cdp.relax_times = [None] * len(cdp.spectrum_ids)
 
         # Index not present in the global relaxation time data structure.
-        while 1:
+        while True:
             if index > len(cdp.relax_times) - 1:
                 cdp.relax_times.append(None)
             else:
@@ -878,9 +849,6 @@ class Relax_fit(Common_functions):
         @rtype:         list of float
         """
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Get the spin container.
         spin = return_spin(spin_id)
 
@@ -888,8 +856,7 @@ class Relax_fit(Common_functions):
         return spin.intensity_err
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc = """
         Relaxation curve fitting data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -909,6 +876,15 @@ class Relax_fit(Common_functions):
         | Relaxation period times (series)  | 'relax_times'        | '^[Rr]elax[ -_][Tt]imes$'   |
         |___________________________________|______________________|_____________________________|
 
+        """
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the relaxation curve-fitting parameter.
+
+        @param name:    The relaxation curve-fitting parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
         """
 
         # Relaxation rate.
@@ -965,8 +941,8 @@ class Relax_fit(Common_functions):
     def return_units(self, stat_types, spin_id=None):
         """Dummy function which returns None as the stats have no units.
 
-        @param stat_type:   Not used.
-        @type stat_type:    None
+        @param stat_types:  Not used.
+        @type stat_types:   None
         @keyword spin_id:   Not used.
         @type spin_id:      None
         @return:            Nothing.
@@ -986,13 +962,10 @@ class Relax_fit(Common_functions):
         # Test if the current pipe exists.
         pipes.test()
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test if the pipe type is set to 'relax_fit'.
         function_type = cdp.pipe_type
         if function_type != 'relax_fit':
-            raise RelaxFuncSetupError, specific_setup.get_string(function_type)
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
@@ -1000,24 +973,23 @@ class Relax_fit(Common_functions):
 
         # Two parameter exponential fit.
         if model == 'exp':
-            print "Two parameter exponential fit."
+            print("Two parameter exponential fit.")
             params = ['Rx', 'I0']
 
         # Three parameter inversion recovery fit.
         elif model == 'inv':
-            print "Three parameter inversion recovery fit."
+            print("Three parameter inversion recovery fit.")
             params = ['Rx', 'I0', 'Iinf']
 
         # Invalid model.
         else:
-            raise RelaxError, "The model '" + model + "' is invalid."
+            raise RelaxError("The model '" + model + "' is invalid.")
 
         # Set up the model.
         self.model_setup(model, params)
 
 
-    def set_doc(self):
-        """
+    set_doc = """
         Relaxation curve fitting set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1042,7 +1014,7 @@ class Relax_fit(Common_functions):
 
         # Test if the simulation data already exists.
         if hasattr(spin, 'sim_intensities'):
-            raise RelaxError, "Monte Carlo simulation data already exists."
+            raise RelaxError("Monte Carlo simulation data already exists.")
 
         # Create the data structure.
         spin.sim_intensities = sim_data

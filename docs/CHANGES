@@ -1,3 +1,127 @@
+Version 1.3.4
+(12 August 2009, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.4
+
+    Features:
+        * The file format of peak intensity lists is now automatically detected (supporting Sparky, XEasy and NMRView).
+        * Initial support for a generically formatted peak intensity file (note, this is not yet usable).
+        * Error analysis for peak intensities is significantly improved with support for baseplane RMSD, a subset of spectra replicated, and all spectra replicated for both peak heights and peak volumes.
+        * NOESY distance restraints (in Xplor or generic format) can now be used in the N-state model via the noe.read_restraints() user function.
+        * Psuedo atoms/spin containers are now supported via the spin.create_pseudo() user function (used for the NOE distance restraints).
+        * Support for multiple molecules and/or multiple models within relax.
+        * Multiple molecules (as one or more PDB files) can now be read in as individual molecules of different models.
+        * Multiple models (as one or more PDB files) can now be read in as multiple molecules of the same model.
+        * The internal PDB writer can now generate a file with multiple molecules and multiple models.
+        * The N-state model with fixed and equal probabilities is now supported.
+        * The bond length values for RDCs are now hard-coded (from Ottiger, M. and Bax A., J. Am. Chem. Soc. (1998), 120, 12334-12341).
+        * Added the Bruker ncproc parameter to handle Topspin's integer scaling of FID intensities (to the spectrum.read_intensities() user function).
+        * Hybridisation support, present in relax 1.2, has returned allowing data pipes to be merged (i.e. to hybridise two model-free data pipes with a different diffusion tensor for sets of spins).
+        * The initial code for relaxation dispersion analyses has been added (note, this is not yet usable).
+        * Initial support for the new Frame Order theories, using the isotropic cone model for RDC data of domain dynamics.
+        * MOLMOL macro support for plotting model-free parameter values onto the structure has returned.
+
+    Changes:
+        * The XH bond vector distribution PDB and Pymol representation is now restored.
+        * The new user function class 'spectrum' contains all functions associated with spectral data.
+        * Spectral data is now identified by unique spectrum ID strings.
+        * The noe.read() and relax_fit.read() user functions have been merged into spectrum.read_intensities().
+        * The relax_fit.mean_and_error() user function is now called spectrum.error_analysis().
+        * The noe.error() user function is now called spectrum.baseplane_rmsd().
+        * The new spectrum.integration_points() user function is used to specify the number of points used in a volume integration.
+        * The R1 and R2 relaxation time period is now specified using relax_fit.relax_time().
+        * grace.write() will now show a warning when an empty file is being created.
+        * Replicated spectra are now specified explicitly via spectrum.replicated().
+        * Extensive code base clean up - including formatting, unused imports, comments, typos, etc.
+        * Complete redesign of the structural information storage.
+        * Massive speed up of the structure.vectors() user function.
+        * More element types of standard protein PDB atom names are identified (to support PDB files with a blank element column).
+        * Information is now printed out when reading RDCs and PCSs to aid the user identify usage faults.
+        * The RDC and PCS data is now checked before being loaded into relax.
+        * The N-state model grid search now handles alignment tensor parameters.
+        * For better optimisation, the grid search lower bound for alignment tensor elements has changed from 0 to -1e-3.
+        * Improvement to the algorithm for determining attached atoms in the internal PDB reader - a 2 rather than 1 Angstrom radius sphere is now being searched.
+        * The molecule.name() user function can now name unnamed molecules.
+        * The diagonalised alignment tensor is now created.
+        * Spin numbers can now be set to None, adding support for polymers where the atom name rather than number is used.
+        * The Q factor is now calculated as Clore's R-factor divided by N, matching the Pales default mode (both Q factors are now calculated and stored).
+        * The force flag has been introduced to the mol/res/spin naming and numbering user functions, where the default is now not to overwrite.
+        * Redesign of the spin.create() and residue.create() user functions - respectively residue and molecule names and numbers are used instead of the res_id and mol_id arguments, allowing residues and molecules to be created as needed.
+        * Modified the full_analysis.py script to perform 500 Monte Carlo simulations and turned on automatic looping.
+        * Support for non-identical sequences in different PDB files within the same data pipe (only as different molecules, not different models).
+        * Modified the structure.vectors() user function to fail if no vectors are found, saving the user a lot of sanity when fixing a non-functional script.
+        * A quadratic, flat-bottomed well potential has been added for the NOE distance restraints.
+        * For the N-state model, a default of inverse sixth power averaging of NOE distance restraints is being performed.
+        * The pcs.centre() user function can now accept pseudo-atoms.
+        * The pcs.centre() user function can now handle multiple paramagnetic centres.
+        * The new maths_fns.rotation_matrix.R_axis_angle() function generates a rotation matrix from the axis-angle notation.
+        * The new maths_fns.rotation_matrix.random_rot_axis() and maths_fns.rotation_matrix.R_random_axis() functions are used to generate random rotation matrices.
+        * The new maths_fns.rotation_matrix.R_random_hypersphere() function generates a pure random rotation matrix.
+        * The new maths_fns.rotation_matrix.quaternion_to_R() function generates a rotation matrix from a quaternion.
+        * The new maths_fns.kronecker_product.kron_prod() function is used to calculate the Kronecker product.
+        * Converted the user function n_state_model.set_type() to align_tensor.reduction().
+        * Renamed n_state_model.set_domain() to align_tensor.set_domain().
+        * The statistics ordering has been improved when profiling.
+        * align_tensor.init() can now accept any type of float or int (python or numpy).
+        * Removed the checks to see if the RDC or PCS data is already loaded, allowing sequential loading by a few calls to rdc.read() and pcs.read().
+        * Large improvements to the information printed by the align_tensor.display() user function.
+        * Removed a check for the presence of the alignment tensor so that align_tensor.init() can be used to reset the tensor values.
+        * Created the six transpose functions for rank-4, 3D tensors in maths_fns.kronecker_product.transpose_ij().
+
+    Bugfixes:
+        * A bug in the Monte Carlo simulations for relaxation curve-fitting has been fixed (bug #12670).
+        * Fixes for the Pymol PDB file opening and pymol.cartoon() user function.
+        * The molecular centre of mass is now correctly calculated.
+        * Grace plots (http://plasma-gate.weizmann.ac.il/Grace/) were sometimes corrupted due to data being stored in numpy arrays and not Python lists (bug #12679).
+        * Fix for the value.read() user function, the directory and 'sep' arguments were being ignored.
+        * Multiple failures of structure.load_spins() for different PDB file layouts have been fixed (bug #12735).
+        * Model-free optimisation failures on Mac OS X for PowerPC (bug #12573).
+        * Many PDB file reading fixes for different multi-molecule/multi-model formats.
+        * The '-' character is now allowed in molecule, residue, and spin names (was a bug if the file name contains a '-' character).
+        * Bug fixes for handling molecules other than proteins and RNA via the Scientific python PDB reader.
+        * The internal PDB reader no longer considers the END record to be a molecule.
+        * Fix for a rare circular import failure of the RelaxError and RelaxWarning systems when running with the --debug command line flag.
+        * Significant simplifications of the RelaxError system, fixing a state saving bug with --debug.
+        * Fix for the retarded Scientific python PDB reader splitting a perfectly good molecule into 2 when it can't recognise a residue type.
+        * Linear constraints and now supported for the N-state models without probabilities.
+        * Modified the full_analysis.py script to name spins if the sequence data contains no spin name info.
+        * All column arguments now default to None for the RDC and PCS reading so if residue numbers are non-existent, then they will not be read from the default column.
+        * Bug fixes for the N-state model with N = 1 (allowing relax to mimic Pales http://www.mpibpc.mpg.de/groups/griesinger/zweckstetter/_links/software_pales.htm).
+        * Bug fix for the PCS alignment tensor fitting, the paramagnetic-nuclear spin distance was being incorrectly determined.
+        * The Q factors for the RDCs and PCSs were completely incorrect (found by comparing to Pales).
+        * All the value.*() user functions have now been converted from the relax 1.2 to the relax 1.3 design.
+        * Fixes for some circular import issues in generic_fns.minimise and generic_fns.value.
+        * All the relax_data.*() user functions have now been converted to the relax 1.3 design.
+        * Bug fix for the spin.copy() user function, non-empty spin containers are no longer overwritten if the name and num are set to None.
+        * Fix for the latex_mf_table.py sample script (bug #13163).
+        * Rex values in XML results file not in s-1 (bug #13162).
+        * Fix for the structure.create_diff_tensor_pdb() user function which was creating weird shaped ellipsoid diffusion tensor representations when 'alpha' and 'beta' were unequal (bug #13032).
+        * Sparky assignments such as '004N-H' are now handled.
+        * Fixed a bad apostrophe character causing the 'full_analysis.py' script to fail.
+        * Removed a check disallowing multiple steady-state NOE data sets at the same spectrometer frequency.
+        * Bug fix for the results reading from_xml() method, the molecule name was being evaluated causing results.read() to fail.
+        * Fixes for the model-free Monte Carlo simulation methods for deselected spins.
+        * Models with high te values (>200 ns) were not being eliminated in the full_analysis.py sample script (bug #13259).
+        * Monte Carlo simulations were failing in the model-free.py sample script (bug #13442).
+        * The model-free minimisation statistics are no longer reset by the Monte Carlo simulation setup.
+        * A number of bug fixes for Python 2.6 support.
+        * Model selection between data pipes of different type is now allowed.
+        * Bug fix for the maths_fns.rotation_matrix.R_2vect() function as the rotation axis is not always of unit length.
+        * The diffusion tensor geometric object PDB representation is now correctly generated.
+        * The isotropic cone geometric object PDB representation is now correctly generated.
+        * The Hetrogen section was failing with MC simulations in the structure.write_pdb() user function.
+        * pymol.cartoon() was failing when multiple proteins were loaded.
+        * Bug fix for the maths_fns.rotation_matrix.R_to_axis_angle() function, the axis needs to be normalised.
+        * Bug fixes for the grace.write() user function.
+        * Monte Carlo simulations failed when all parameters except for the diffusion tensor were fixed.
+        * The diffusion and alignment tensor *_sim and *_err elements are now present and read from a results file.
+        * The align_tensor.matrix_angles() user function now avoids NaN problems through arccos of numbers > 1.
+        * Bug fixes for the updating of the diffusion tensor MC simulation data structures.
+        * Fix for the copying of diffusion tensors data structures.
+        * relax and the sample scripts are more compatible with non-Unix operating systems by using the Python os.sep and os.pardir rather than '/' and '..' for directory separators and the parent directory.
+        * Caught a NaN problem in the N-state model, RDC Q factor code causing failures in MS Windows.
+
+
+
 Version 1.3.3
 (29 November 2008, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.3
@@ -14,7 +138,7 @@ http://svn.gna.org/svn/relax/tags/1.3.3
         * The results.write() and results.display() now only support XML output.
         * More information is now extracted from the Modelfree mfout files.
         * The version of the Modelfree program is checked and if it is an old, buggy version, relax will refuse to execute it.
-        * The system tests can now handle the sometimes large differences in Modelfree results between the GNU gcc and Portland C compiler versions. 
+        * The system tests can now handle the sometimes large differences in Modelfree results between the GNU gcc and Portland C compiler versions.
         * Fixes and improvements to much of the API documentation.
 
     Bugfixes:
@@ -171,6 +295,16 @@ http://svn.gna.org/svn/relax/tags/1.3.0
 
 
 
+Version 1.2.15
+(27 November 2008, from /1.2)
+http://svn.gna.org/svn/relax/tags/1.2.15
+
+    Bugfixes:
+        * Problems with the value.write() user function have been fixed (see bug #12418).
+        * Error analysis in relaxation curve-fitting was incorrectly implemented with standard deviation rather than variance averaging (see bug #12456).
+
+
+
 Version 1.2.14
 (9 August 2008, from /1.2)
 http://svn.gna.org/svn/relax/tags/1.2.14
@@ -271,10 +405,10 @@ http://svn.gna.org/svn/relax/tags/1.2.10
 
     Changes:
         * The relax core design diagram in the development chapter of the manual has been updated.
-        * Three flow diagrams have been added to the relax manual detailing the steps of different model-free analysis protocols.      
+        * Three flow diagrams have been added to the relax manual detailing the steps of different model-free analysis protocols.
         * Spin systems are now identified when deselected by the 'eliminate()' user function.
         * The model-free Molmol cutoff for fast and slow motions has been changed from 100 to 200 ps.
-        * For the clarification of bug #8059 a RelaxNoTensorError is raised instead of returning None when no diffusion tensor data is present. 
+        * For the clarification of bug #8059 a RelaxNoTensorError is raised instead of returning None when no diffusion tensor data is present.
         * The Scons target 'source_dist' now creates and GPG signs both the 'tar.bz2' and 'zip' source distribution packages. (see task #4087)
 
     Bugfixes:

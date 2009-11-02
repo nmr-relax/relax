@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -92,9 +92,6 @@ class Latex:
     def headings(self):
         """Create the LaTeX table headings."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Spacing.
         self.file.write("\\\\[-5pt]\n")
 
@@ -109,7 +106,7 @@ class Latex:
         self.file.write("\multicolumn{2}{c}{$S^2_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e < 100$ or $\\tau_f$} &%\n")
         self.file.write("\multicolumn{2}{c}{$\\tau_e > 100$ or $\\tau_s$} &%\n")
-        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + `cdp.frq[0] / 1e6` + " MHz)} \\\\\n")
+        self.file.write("\multicolumn{2}{c}{$R_{ex}$ (" + repr(cdp.frq[0] / 1e6) + " MHz)} \\\\\n")
         self.file.write("\n")
 
         # Units.

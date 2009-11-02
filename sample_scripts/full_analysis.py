@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -140,7 +140,7 @@ The final black-box model-free results will be placed in the file 'final/results
 """
 
 # Python module imports.
-from os import getcwd, listdir
+from os import getcwd, listdir, sep
 from re import search
 from string import lower
 
@@ -165,18 +165,18 @@ LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8'
 PDB_FILE = '1f3y.pdb'
 
 # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-SEQ_ARGS = ['noe.600.out', None, None, 0, 1, None, None, None]
+SEQ_ARGS = ['noe.600.out', None, None, 1, 2, None, None, None]
 
 # The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
 HET_NAME = 'N'
 
 # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
-RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 0, 1, None, None, 2, 3, None],
-              ['R2',  '600', 599.719 * 1e6, 'r2.600.out',  None, None, 0, 1, None, None, 2, 3, None],
-              ['NOE', '600', 599.719 * 1e6, 'noe.600.out', None, None, 0, 1, None, None, 2, 3, None],
-              ['R1',  '500', 500.208 * 1e6, 'r1.500.out',  None, None, 0, 1, None, None, 2, 3, None],
-              ['R2',  '500', 500.208 * 1e6, 'r2.500.out',  None, None, 0, 1, None, None, 2, 3, None],
-              ['NOE', '500', 500.208 * 1e6, 'noe.500.out', None, None, 0, 1, None, None, 2, 3, None]
+RELAX_DATA = [['R1',  '600', 599.719 * 1e6, 'r1.600.out',  None, None, 1, 2, None, None, 3, 4, None],
+              ['R2',  '600', 599.719 * 1e6, 'r2.600.out',  None, None, 1, 2, None, None, 3, 4, None],
+              ['NOE', '600', 599.719 * 1e6, 'noe.600.out', None, None, 1, 2, None, None, 3, 4, None],
+              ['R1',  '500', 500.208 * 1e6, 'r1.500.out',  None, None, 1, 2, None, None, 3, 4, None],
+              ['R2',  '500', 500.208 * 1e6, 'r2.500.out',  None, None, 1, 2, None, None, 3, 4, None],
+              ['NOE', '500', 500.208 * 1e6, 'noe.500.out', None, None, 1, 2, None, None, 3, 4, None]
 ]
 
 # The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
@@ -211,13 +211,16 @@ class Main:
         # Setup.
         self.relax = relax
 
+        # User variable checks.
+        self.check_vars()
+
 
         # MI - Local tm.
         ################
 
         if DIFF_MODEL == 'local_tm':
             # Base directory to place files into.
-            self.base_dir = 'local_tm/'
+            self.base_dir = 'local_tm'+sep
 
             # Sequential optimisation of all model-free models (function must be modified to suit).
             self.multi_model(local_tm=True)
@@ -232,14 +235,14 @@ class Main:
         elif DIFF_MODEL == 'sphere' or DIFF_MODEL == 'prolate' or DIFF_MODEL == 'oblate' or DIFF_MODEL == 'ellipsoid':
             # Loop until convergence if CONV_LOOP is set, otherwise just loop once.
             # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
-            while 1:
+            while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=DIFF_MODEL)
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
                     # Base directory to place files into.
-                    self.base_dir = DIFF_MODEL + '/init/'
+                    self.base_dir = DIFF_MODEL + sep+'init'+sep
 
                     # Run name.
                     name = DIFF_MODEL
@@ -248,7 +251,7 @@ class Main:
                     pipe.create(name, 'mf')
 
                     # Load the local tm diffusion model MI results.
-                    results.read(file='results', dir='local_tm/aic')
+                    results.read(file='results', dir='local_tm'+sep+'aic')
 
                     # Remove the tm parameter.
                     model_free.remove_tm()
@@ -288,7 +291,7 @@ class Main:
                 # Normal round of optimisation for diffusion models MII to MV.
                 else:
                     # Base directory to place files into.
-                    self.base_dir = DIFF_MODEL + '/round_' + `self.round` + '/'
+                    self.base_dir = DIFF_MODEL + sep+'round_'+repr(self.round)+sep
 
                     # Load the optimised diffusion tensor from either the previous round.
                     self.load_tensor()
@@ -331,7 +334,7 @@ class Main:
             pipe.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
-            results.read(file='results', dir='local_tm/aic')
+            results.read(file='results', dir='local_tm'+sep+'aic')
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -346,13 +349,13 @@ class Main:
                         name = name + ' spheroid'
 
                     # Throw an error to prevent misuse of the script.
-                    raise RelaxError, "Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script."
+                    raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
 
                 # Create the data pipe.
                 pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
-                results.read(file='results', dir=model + '/round_' + `self.round` + '/opt')
+                results.read(file='results', dir=model + sep+'round_'+repr(self.round)+sep+'opt')
 
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
@@ -384,21 +387,117 @@ class Main:
         ###########################
 
         else:
-            raise RelaxError, "Unknown diffusion model, change the value of 'DIFF_MODEL'"
+            raise RelaxError("Unknown diffusion model, change the value of 'DIFF_MODEL'")
+
+
+    def check_vars(self):
+        """Check that the user has set the variables correctly."""
+
+        # The diff model.
+        valid_models = ['local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', 'final']
+        if DIFF_MODEL not in valid_models:
+            raise RelaxError("The DIFF_MODEL user variable '%s' is incorrectly set.  It must be one of %s." % (DIFF_MODEL, valid_models))
+
+        # Model-free models.
+        mf_models = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+        local_tm_models = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+        if not isinstance(MF_MODELS, list):
+            raise RelaxError("The MF_MODELS user variable must be a list.")
+        if not isinstance(LOCAL_TM_MODELS, list):
+            raise RelaxError("The LOCAL_TM_MODELS user variable must be a list.")
+        for i in range(len(MF_MODELS)):
+            if MF_MODELS[i] not in mf_models:
+                raise RelaxError("The MF_MODELS user variable '%s' is incorrectly set.  It must be one of %s." % (MF_MODELS, mf_models))
+        for i in range(len(LOCAL_TM_MODELS)):
+            if LOCAL_TM_MODELS[i] not in local_tm_models:
+                raise RelaxError("The LOCAL_TM_MODELS user variable '%s' is incorrectly set.  It must be one of %s." % (LOCAL_TM_MODELS, local_tm_models))
+
+        # PDB file.
+        if PDB_FILE and not isinstance(PDB_FILE, str):
+            raise RelaxError("The PDB_FILE user variable '%s' is incorrectly set.  It should either be a string or None." % PDB_FILE)
+
+        # Sequence data.
+        if not isinstance(SEQ_ARGS, list):
+            raise RelaxError("The SEQ_ARGS user variable '%s' must be a list." % SEQ_ARGS)
+        if len(SEQ_ARGS) != 8:
+            raise RelaxError("The SEQ_ARGS user variable '%s' must be a list with eight elements." % SEQ_ARGS)
+        if not isinstance(SEQ_ARGS[0], str):
+            raise RelaxError("The file name component of the SEQ_ARGS user variable '%s' must be a string." % SEQ_ARGS)
+        for i in range(1, 8):
+            if SEQ_ARGS[i] != None and not isinstance(SEQ_ARGS[i], int):
+                raise RelaxError("The column components of the SEQ_ARGS user variable '%s' must be either None or integers." % SEQ_ARGS)
+
+        # Atom name.
+        if not isinstance(HET_NAME, str):
+            raise RelaxError("The HET_NAME heteronucleus atom name user variable '%s' must be a string." % HET_NAME)
+
+        # Relaxation data.
+        if not isinstance(RELAX_DATA, list):
+            raise RelaxError("The RELAX_DATA user variable '%s' must be a list." % RELAX_DATA)
+        labels = []
+        for i in range(len(RELAX_DATA)):
+            if RELAX_DATA[i][1] not in labels:
+                labels.append(RELAX_DATA[i][1])
+            if len(RELAX_DATA[i]) != 13:
+                raise RelaxError("The RELAX_DATA user variable component '%s' must be a list of 13 elements." % RELAX_DATA[i])
+            if not isinstance(RELAX_DATA[i][0], str):
+                raise RelaxError("The data type component '%s' of the RELAX_DATA user variable must be a string." % RELAX_DATA[i][0])
+            if not isinstance(RELAX_DATA[i][1], str):
+                raise RelaxError("The frequency label component '%s' of the RELAX_DATA user variable must be a string." % RELAX_DATA[i][1])
+            if not isinstance(RELAX_DATA[i][2], float):
+                raise RelaxError("The frequency component '%s' of the RELAX_DATA user variable must be a floating point number." % RELAX_DATA[i][2])
+            if not isinstance(RELAX_DATA[i][3], str):
+                raise RelaxError("The file name component '%s' of the RELAX_DATA user variable must be a string." % RELAX_DATA[i][3])
+            for j in range(4, 13):
+                if RELAX_DATA[i][j] != None and not isinstance(RELAX_DATA[i][j], int):
+                    raise RelaxError("The column components of the RELAX_DATA user variable '%s' must be either None or integers." % RELAX_DATA[i])
+
+        # Insufficient data.
+        if len(RELAX_DATA) <= 3:
+            raise RelaxError("Insufficient relaxation data, 4 or more data sets are essential for the execution of this script.")
+        if len(labels) == 1:
+            raise RelaxError("Relaxation data at multiple magnetic field strengths is essential for this analysis.")
+
+        # Unresolved and exclude files.
+        if UNRES and not isinstance(UNRES, str):
+            raise RelaxError("The UNRES user variable '%s' is incorrectly set.  It should either be a string or None." % UNRES)
+        if EXCLUDE and not isinstance(EXCLUDE, str):
+            raise RelaxError("The EXCLUDE user variable '%s' is incorrectly set.  It should either be a string or None." % EXCLUDE)
+
+        # Spin vars.
+        if not isinstance(BOND_LENGTH, float):
+            raise RelaxError("The BOND_LENGTH user variable '%s' is incorrectly set.  It should be a floating point number." % BOND_LENGTH)
+        if not isinstance(CSA, float):
+            raise RelaxError("The CSA user variable '%s' is incorrectly set.  It should be a floating point number." % CSA)
+        if not isinstance(HETNUC, str):
+            raise RelaxError("The HETNUC user variable '%s' is incorrectly set.  It should be a string." % HETNUC)
+        if not isinstance(PROTON, str):
+            raise RelaxError("The PROTON user variable '%s' is incorrectly set.  It should be a string." % PROTON)
+
+        # Min vars.
+        if not isinstance(GRID_INC, int):
+            raise RelaxError("The GRID_INC user variable '%s' is incorrectly set.  It should be an integer." % GRID_INC)
+        if not isinstance(MIN_ALGOR, str):
+            raise RelaxError("The MIN_ALGOR user variable '%s' is incorrectly set.  It should be a string." % MIN_ALGOR)
+        if not isinstance(MC_NUM, int):
+            raise RelaxError("The MC_NUM user variable '%s' is incorrectly set.  It should be an integer." % MC_NUM)
+
+        # Looping.
+        if not isinstance(CONV_LOOP, bool):
+            raise RelaxError("The CONV_LOOP user variable '%s' is incorrectly set.  It should be one of the booleans True or False." % CONV_LOOP)
 
 
     def convergence(self):
         """Test for the convergence of the global model."""
 
         # Alias the data pipes.
-        cdp = pipes.get_pipe()
         prev_pipe = pipes.get_pipe('previous')
 
         # Print out.
-        print "\n\n\n"
-        print "#####################"
-        print "# Convergence tests #"
-        print "#####################\n\n"
+        print("\n\n\n")
+        print("#####################")
+        print("# Convergence tests #")
+        print("#####################\n\n")
 
         # Convergence flags.
         chi2_converged = True
@@ -409,23 +508,23 @@ class Main:
         # Chi-squared test.
         ###################
 
-        print "Chi-squared test:"
-        print "    chi2 (k-1):          " + `prev_pipe.chi2`
-        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
-        print "    chi2 (k):            " + `cdp.chi2`
-        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
-        print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
+        print("Chi-squared test:")
+        print(("    chi2 (k-1):          " + repr(prev_pipe.chi2)))
+        print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_pipe.chi2)) + ')'))
+        print(("    chi2 (k):            " + repr(cdp.chi2)))
+        print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(cdp.chi2)) + ')'))
+        print(("    chi2 (difference):   " + repr(prev_pipe.chi2 - cdp.chi2)))
         if prev_pipe.chi2 == cdp.chi2:
-            print "    The chi-squared value has converged.\n"
+            print("    The chi-squared value has converged.\n")
         else:
-            print "    The chi-squared value has not converged.\n"
+            print("    The chi-squared value has not converged.\n")
             chi2_converged = False
 
 
         # Identical model-free model test.
         ##################################
 
-        print "Identical model-free models test:"
+        print("Identical model-free models test:")
 
         # Create a string representation of the model-free models of the previous data pipe.
         prev_models = ''
@@ -443,16 +542,16 @@ class Main:
 
         # The test.
         if prev_models == curr_models:
-            print "    The model-free models have converged.\n"
+            print("    The model-free models have converged.\n")
         else:
-            print "    The model-free models have not converged.\n"
+            print("    The model-free models have not converged.\n")
             models_converged = False
 
 
         # Identical parameter value test.
         #################################
 
-        print "Identical parameter test:"
+        print("Identical parameter test:")
 
         # Only run the tests if the model-free models have converged.
         if models_converged:
@@ -472,12 +571,12 @@ class Main:
 
                 # Test if not identical.
                 if prev_val != curr_val:
-                    print "    Parameter:   " + param
-                    print "    Value (k-1): " + `prev_val`
-                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                    print "    Value (k):   " + `curr_val`
-                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
-                    print "    The diffusion parameters have not converged.\n"
+                    print(("    Parameter:   " + param))
+                    print(("    Value (k-1): " + repr(prev_val)))
+                    print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'))
+                    print(("    Value (k):   " + repr(curr_val)))
+                    print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(curr_val)) + ')'))
+                    print("    The diffusion parameters have not converged.\n")
                     params_converged = False
 
             # Skip the rest if the diffusion tensor parameters have not converged.
@@ -507,35 +606,35 @@ class Main:
 
                         # Test if not identical.
                         if prev_val != curr_val:
-                            print "    Spin ID:     " + `spin_id`
-                            print "    Parameter:   " + curr_spin.params[j]
-                            print "    Value (k-1): " + `prev_val`
-                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                            print "    Value (k):   " + `curr_val`
-                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-                            print "    The model-free parameters have not converged.\n"
+                            print(("    Spin ID:     " + repr(spin_id)))
+                            print(("    Parameter:   " + curr_spin.params[j]))
+                            print(("    Value (k-1): " + repr(prev_val)))
+                            print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'))
+                            print(("    Value (k):   " + repr(curr_val)))
+                            print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'))
+                            print("    The model-free parameters have not converged.\n")
                             params_converged = False
                             break
 
         # The model-free models haven't converged hence the parameter values haven't converged.
         else:
-            print "    The model-free models haven't converged hence the parameters haven't converged.\n"
+            print("    The model-free models haven't converged hence the parameters haven't converged.\n")
             params_converged = False
 
         # Print out.
         if params_converged:
-            print "    The diffusion tensor and model-free parameters have converged.\n"
+            print("    The diffusion tensor and model-free parameters have converged.\n")
 
 
         # Final print out.
         ##################
 
-        print "\nConvergence:"
+        print("\nConvergence:")
         if chi2_converged and models_converged and params_converged:
-            print "    [ Yes ]"
+            print("    [ Yes ]")
             return True
         else:
-            print "    [ No ]"
+            print("    [ No ]")
             return False
 
 
@@ -544,7 +643,7 @@ class Main:
 
         # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
         try:
-            dir_list = listdir(getcwd() + '/' + model)
+            dir_list = listdir(getcwd()+sep+model)
         except:
             return 0
 
@@ -585,11 +684,11 @@ class Main:
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            results.read('results', DIFF_MODEL + '/init')
+            results.read('results', DIFF_MODEL + sep+'init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('results', DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
+            results.read('results', DIFF_MODEL + sep+'round_'+repr(self.round-1)+sep+'opt')
 
 
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):

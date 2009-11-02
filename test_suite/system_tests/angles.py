@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,12 +21,12 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 
 
 class Angles(TestCase):
@@ -42,10 +42,7 @@ class Angles(TestCase):
         """The user function angles()."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/angles.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'angles.py')
 
         # Res info.
         res_name = ['GLY', 'PRO', 'LEU', 'GLY', 'SER', 'MET', 'ASP', 'SER', 'PRO', 'PRO', 'GLU', 'GLY']
@@ -75,7 +72,7 @@ class Angles(TestCase):
 
         # Checks for the first 12 residues.
         for i in xrange(12):
-            print cdp.mol[0].res[i].spin[0]
+            print((cdp.mol[0].res[i].spin[0]))
             # Check the residue and spin info.
             self.assertEqual(cdp.mol[0].res[i].num, i+1)
             self.assertEqual(cdp.mol[0].res[i].name, res_name[i])

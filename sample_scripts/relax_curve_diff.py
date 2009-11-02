@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -44,7 +44,6 @@ from numpy import float64, array, identity, sqrt, zeros
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
-from generic_fns import pipes
 from maths_fns.relax_fit import back_calc_I, func, setup
 
 
@@ -58,11 +57,8 @@ def back_calc():
     The simple two parameter exponential curve (Rx, I0) is assumed.
     """
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -93,9 +89,6 @@ def calc_ave_sd():
     and Xav is the peak intensity difference averaged across all spins.
     """
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Diff array, std deviation array, and number of spins.
     diff_array = zeros(sum(cdp.num_spectra), float64)
     sd_array = zeros(sum(cdp.num_spectra), float64)
@@ -106,7 +99,7 @@ def calc_ave_sd():
     ###################################
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -132,7 +125,7 @@ def calc_ave_sd():
     ####################################
 
     # Loop over the spins.
-    for spin in spin_loop()
+    for spin in spin_loop():
         # Skip deselected spins.
         if not spin.select:
             continue
@@ -213,9 +206,6 @@ def grace_header(file, xmin, xmax, ymin, ymax):
 def grace_plot(ave, sd):
     """Grace plot of the intensity differences."""
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Open the file.
     file = open('differences.agr', 'w')
 
@@ -243,7 +233,7 @@ def grace_plot(ave, sd):
                 continue
 
             # Grace data point.
-            file.write("%-30s%-30s\n" % (`cdp.relax_times[i]`, `spin.intensities[i][0] - spin.fit_int[i]`))
+            file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.intensities[i][0] - spin.fit_int[i])))
 
     # End the graph.
     file.write("&\n")
@@ -266,7 +256,7 @@ def grace_plot(ave, sd):
 
             # Grace data point.
             if len(spin.intensities[i]) == 2:
-                file.write("%-30s%-30s\n" % (`cdp.relax_times[i]`, `spin.intensities[i][1] - spin.fit_int[i]`))
+                file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.intensities[i][1] - spin.fit_int[i])))
 
     # End the graph.
     file.write("&\n")
@@ -284,7 +274,7 @@ def grace_plot(ave, sd):
     for i in xrange(len(cdp.num_spectra)):
         for j in xrange(cdp.num_spectra[i]):
             # Grace data point.
-            file.write("%-30s%-30s%-30s\n" % (`cdp.relax_times[i]`, `ave[index]`, `sd[index]`))
+            file.write("%-30s%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(ave[index]), repr(sd[index])))
 
             # Increment the index.
             index = index + 1

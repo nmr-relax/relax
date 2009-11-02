@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,7 +38,7 @@ The functionality of this module is diverse:
 # Python module imports.
 from numpy import array
 from re import split
-from string import strip
+from string import count, strip
 from textwrap import fill
 from warnings import warn
 
@@ -143,7 +143,7 @@ class Selection(object):
             return (obj in self._intersect[0]) and (obj in self._intersect[1])
 
         # Simple spin identification string.
-        if type(obj) == str:
+        if isinstance(obj, str):
             return self.__contains_spin_id(obj)
 
         # Comparison of data containers to this selection object.
@@ -168,7 +168,7 @@ class Selection(object):
         spin = None
 
         # The object is not a tuple, so lets turn it into one.
-        if type(obj) != tuple:
+        if not isinstance(obj, tuple):
             obj = (obj,)
 
         # Max 3 objects (cannot match, so False).
@@ -181,7 +181,7 @@ class Selection(object):
             if isinstance(obj[i], MoleculeContainer):
                 # Error.
                 if mol != None:
-                    raise RelaxError, "Comparing two molecular containers simultaneously with the selection object is not supported."
+                    raise RelaxError("Comparing two molecular containers simultaneously with the selection object is not supported.")
 
                 # Unpack.
                 mol = obj[i]
@@ -190,7 +190,7 @@ class Selection(object):
             elif isinstance(obj[i], ResidueContainer):
                 # Error.
                 if res != None:
-                    raise RelaxError, "Comparing two residue containers simultaneously with the selection object is not supported."
+                    raise RelaxError("Comparing two residue containers simultaneously with the selection object is not supported.")
 
                 # Unpack.
                 res = obj[i]
@@ -199,7 +199,7 @@ class Selection(object):
             elif isinstance(obj[i], SpinContainer):
                 # Error.
                 if spin != None:
-                    raise RelaxError, "Comparing two spin containers simultaneously with the selection object is not supported."
+                    raise RelaxError("Comparing two spin containers simultaneously with the selection object is not supported.")
 
                 # Unpack.
                 spin = obj[i]
@@ -276,7 +276,7 @@ class Selection(object):
             residues = parse_token(res_token)
             spins = parse_token(spin_token)
         except RelaxError:
-            warn(RelaxWarning("The spin identification string " + `spin_id` + " is too complex for the selection object."))
+            warn(RelaxWarning("The spin identification string " + repr(spin_id) + " is too complex for the selection object."))
 
 
     def contains_mol(self, mol=None):
@@ -467,7 +467,7 @@ class Selection(object):
 
         # Check that nothing is set.
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
-            raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
+            raise RelaxError("Cannot define multiple Boolean relationships between Selection objects")
 
         # Create the intersection.
         self._intersect = (select_obj0, select_obj1)
@@ -484,41 +484,11 @@ class Selection(object):
 
         # Check that nothing is set.
         if self._union or self._intersect or self.molecules or self.residues or self.spins:
-            raise RelaxError, "Cannot define multiple Boolean relationships between Selection objects"
+            raise RelaxError("Cannot define multiple Boolean relationships between Selection objects")
 
         # Create the union.
         self._union = (select_obj0, select_obj1)
 
-
-
-def __linear_ave(positions):
-    """Perform linear averaging of the atomic positions.
-
-    @param positions:   The atomic positions.  The first index is that of the positions to be
-                        averaged over.  The second index is over the different models.  The last
-                        index is over the x, y, and z coordinates.
-    @type positions:    list of lists of numpy float arrays
-    @return:            The averaged positions as a list of vectors.
-    @rtype:             list of numpy float arrays
-    """
-
-    # Loop over the multiple models.
-    ave = []
-    for model_index in range(len(positions[0])):
-        # Append an empty vector.
-        ave.append(array([0.0, 0.0, 0.0]))
-
-        # Loop over the x, y, and z coordinates.
-        for coord_index in range(3):
-            # Loop over the atomic positions.
-            for atom_index in range(len(positions)):
-                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
-
-            # Average.
-            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
-
-    # Return the averaged positions.
-    return ave
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
@@ -565,14 +535,14 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
     # Test if the molecule name already exists.
     mol_to_cont = return_molecule(mol_to, pipe_to)
     if mol_to_cont and not mol_to_cont.is_empty():
-        raise RelaxError, "The molecule " + `mol_to` + " already exists in the " + `pipe_to` + " data pipe."
+        raise RelaxError("The molecule " + repr(mol_to) + " already exists in the " + repr(pipe_to) + " data pipe.")
 
     # Get the single molecule data container.
     mol_from_cont = return_molecule(mol_from, pipe_from)
 
     # No molecule to copy data from.
     if mol_from_cont == None:
-        raise RelaxError, "The molecule " + `mol_from` + " does not exist in the " + `pipe_from` + " data pipe."
+        raise RelaxError("The molecule " + repr(mol_from) + " does not exist in the " + repr(pipe_from) + " data pipe.")
 
     # Get the target pipe.
     pipe = pipes.get_pipe(pipe_to)
@@ -632,14 +602,14 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
     # Test if the residue number already exists.
     res_to_cont = return_residue(res_to, pipe_to)
     if res_to_cont and not res_to_cont.is_empty():
-        raise RelaxError, "The residue " + `res_to` + " already exists in the " + `pipe_to` + " data pipe."
+        raise RelaxError("The residue " + repr(res_to) + " already exists in the " + repr(pipe_to) + " data pipe.")
 
     # Get the single residue data container.
     res_from_cont = return_residue(res_from, pipe_from)
 
     # No residue to copy data from.
     if res_from_cont == None:
-        raise RelaxError, "The residue " + `res_from` + " does not exist in the " + `pipe_from` + " data pipe."
+        raise RelaxError("The residue " + repr(res_from) + " does not exist in the " + repr(pipe_from) + " data pipe.")
 
     # Get the single molecule data container to copy the residue to (default to the first molecule).
     mol_to_container = return_molecule(res_to, pipe_to)
@@ -696,22 +666,22 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
     if spin_to_token:
         spin_to_cont = return_spin(spin_to, pipe_to)
         if spin_to_cont and not spin_to_cont.is_empty():
-            raise RelaxError, "The spin " + `spin_to` + " already exists in the " + `pipe_from` + " data pipe."
+            raise RelaxError("The spin " + repr(spin_to) + " already exists in the " + repr(pipe_from) + " data pipe.")
 
     # No residue to copy data from.
     if not return_residue(spin_from, pipe_from):
-        raise RelaxError, "The residue in " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
+        raise RelaxError("The residue in " + repr(spin_from) + " does not exist in the " + repr(pipe_from) + " data pipe.")
 
     # No spin to copy data from.
     spin_from_cont = return_spin(spin_from, pipe_from)
     if spin_from_cont == None:
-        raise RelaxError, "The spin " + `spin_from` + " does not exist in the " + `pipe_from` + " data pipe."
+        raise RelaxError("The spin " + repr(spin_from) + " does not exist in the " + repr(pipe_from) + " data pipe.")
 
     # Get the single residue data container to copy the spin to (default to the first molecule, first residue).
     res_to_cont = return_residue(spin_to, pipe_to)
     if res_to_cont == None and spin_to:
         # No residue to copy data to.
-        raise RelaxError, "The residue in " + `spin_to` + " does not exist in the " + `pipe_from` + " data pipe."
+        raise RelaxError("The residue in " + repr(spin_to) + " does not exist in the " + repr(pipe_from) + " data pipe.")
     if res_to_cont == None:
         res_to_cont = pipe.mol[0].res[0]
 
@@ -847,13 +817,10 @@ def create_molecule(mol_name=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if the molecule name already exists.
     for i in xrange(len(cdp.mol)):
         if cdp.mol[i].name == mol_name:
-            raise RelaxError, "The molecule '" + `mol_name` + "' already exists in the relax data store."
+            raise RelaxError("The molecule '" + repr(mol_name) + "' already exists in the relax data store.")
 
     # Append the molecule.
     cdp.mol.add_item(mol_name=mol_name)
@@ -873,9 +840,6 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Create the molecule if it does not exist.
     if not return_molecule(generate_spin_id(mol_name=mol_name)):
         create_molecule(mol_name=mol_name)
@@ -891,7 +855,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None):
 
 def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None, averaging=None):
     """Add a pseudo-atom spin container into the relax data store.
-    
+
     @param spin_name:   The name of the new pseudo-spin.
     @type spin_name:    str
     @param spin_num:    The identification number of the new spin.
@@ -902,9 +866,6 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Split up the selection string.
     mol_token, res_token, spin_token = tokenise(res_id)
@@ -917,13 +878,13 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
     if res_id:
         res_to_cont = return_residue(res_id)
         if res_to_cont == None:
-            raise RelaxError, "The residue in " + `res_id` + " does not exist in the current data pipe."
+            raise RelaxError("The residue in " + repr(res_id) + " does not exist in the current data pipe.")
     else:
         res_to_cont = cdp.mol[0].res[0]
 
     # Check the averaging technique.
     if averaging not in ['linear']:
-        raise RelaxError, "The '%s' averaging technique is unknown." % averaging
+        raise RelaxError("The '%s' averaging technique is unknown." % averaging)
 
     # Get the spin positions.
     positions = []
@@ -933,11 +894,11 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
 
         # Test that the spin exists.
         if spin == None:
-            raise RelaxNoSpinError, atom
+            raise RelaxNoSpinError(atom)
 
         # Test the position.
         if not hasattr(spin, 'pos') or not spin.pos:
-            raise RelaxError, "Positional information is not available for the atom '%s'." % atom
+            raise RelaxError("Positional information is not available for the atom '%s'." % atom)
 
         # Store the position.
         positions.append([])
@@ -964,12 +925,12 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
     spin.averaging = averaging
     spin.members = members
     if averaging == 'linear':
-        spin.pos = __linear_ave(positions)
+        spin.pos = linear_ave(positions)
 
 
 def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
     """Add a spin into the relax data store (and molecule and residue if necessary).
-    
+
     @keyword spin_num:  The number of the new spin.
     @type spin_num:     int
     @keyword spin_name: The name of the new spin.
@@ -984,9 +945,6 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Create the molecule and residue if they do not exist.
     if not return_molecule(generate_spin_id(mol_name=mol_name)):
@@ -1053,9 +1011,6 @@ def delete_molecule(mol_id=None):
 
     # Parse the token.
     molecules = parse_token(mol_token)
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # List of indices to delete.
     indices = []
@@ -1177,12 +1132,12 @@ def display_molecule(mol_id=None):
         mol_sel = None
 
     # Print a header.
-    print "\n\n%-15s %-15s" % ("Molecule", "Number of residues")
+    print(("\n\n%-15s %-15s" % ("Molecule", "Number of residues")))
 
     # Molecule loop.
     for mol in molecule_loop(mol_sel):
         # Print the molecule data.
-        print "%-15s %-15s" % (mol.name, `len(mol.res)`)
+        print(("%-15s %-15s" % (mol.name, repr(len(mol.res)))))
 
 
 def display_residue(res_id=None):
@@ -1200,11 +1155,11 @@ def display_residue(res_id=None):
         raise RelaxSpinSelectDisallowError
 
     # Print a header.
-    print "\n\n%-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Number of spins")
+    print(("\n\n%-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Number of spins")))
 
     # Residue loop.
     for res, mol_name in residue_loop(res_id, full_info=True):
-        print "%-15s %-15s %-15s %-15s" % (mol_name, `res.num`, res.name, `len(res.spin)`)
+        print(("%-15s %-15s %-15s %-15s" % (mol_name, repr(res.num), res.name, repr(len(res.spin)))))
 
 
 def display_spin(spin_id=None):
@@ -1215,12 +1170,12 @@ def display_spin(spin_id=None):
     """
 
     # Print a header.
-    print "\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")
+    print(("\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name")))
 
     # Spin loop.
     for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
         # Print the residue data.
-        print "%-15s %-15s %-15s %-15s %-15s" % (mol_name, `res_num`, res_name, `spin.num`, spin.name)
+        print(("%-15s %-15s %-15s %-15s %-15s" % (mol_name, repr(res_num), res_name, repr(spin.num), spin.name)))
 
 
 def exists_mol_res_spin_data(pipe=None):
@@ -1370,7 +1325,7 @@ def generate_spin_id(mol_name=None, res_num=None, res_name=None, spin_num=None, 
     return id
 
 
-def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None):
+def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None):
     """Generate the spin selection string from the given data array.
 
     @param data:            An array containing the molecule, residue, and/or spin data.
@@ -1393,24 +1348,24 @@ def generate_spin_id_data_array(data=None, mol_name_col=None, res_num_col=0, res
     id = ""
 
     # Molecule data.
-    if mol_name_col != None and data[mol_name_col]:
-        id = id + "#" + data[mol_name_col]
+    if mol_name_col and data[mol_name_col-1]:
+        id = id + "#" + data[mol_name_col-1]
 
     # Residue data.
-    if res_num_col != None and data[res_num_col] != None:
-        id = id + ":" + str(data[res_num_col])
-    if (res_num_col != None and data[res_num_col] != None) and (res_name_col != None and data[res_name_col]):
-        id = id + "&:" + data[res_name_col]
-    elif res_name_col != None and data[res_name_col]:
-        id = id + ":" + data[res_name_col]
+    if res_num_col and data[res_num_col-1] != None:
+        id = id + ":" + str(data[res_num_col-1])
+    if (res_num_col and data[res_num_col-1] != None) and (res_name_col and data[res_name_col-1]):
+        id = id + "&:" + data[res_name_col-1]
+    elif res_name_col and data[res_name_col-1]:
+        id = id + ":" + data[res_name_col-1]
 
     # Spin data.
-    if spin_num_col != None and data[spin_num_col] != None:
-        id = id + "@" + str(data[spin_num_col])
-    if (spin_num_col != None and data[spin_num_col] != None) and (spin_name_col != None and data[spin_name_col]):
-        id = id + "&@" + data[spin_name_col]
-    elif spin_name_col != None and data[spin_name_col]:
-        id = id + "@" + data[spin_name_col]
+    if spin_num_col and data[spin_num_col-1] != None:
+        id = id + "@" + str(data[spin_num_col-1])
+    if (spin_num_col and data[spin_num_col-1] != None) and (spin_name_col and data[spin_name_col-1]):
+        id = id + "&@" + data[spin_name_col-1]
+    elif spin_name_col and data[spin_name_col-1]:
+        id = id + "@" + data[spin_name_col-1]
 
     # Return the spin id string.
     return id
@@ -1474,6 +1429,36 @@ def molecule_loop(selection=None, pipe=None):
         yield mol
 
 
+def linear_ave(positions):
+    """Perform linear averaging of the atomic positions.
+
+    @param positions:   The atomic positions.  The first index is that of the positions to be
+                        averaged over.  The second index is over the different models.  The last
+                        index is over the x, y, and z coordinates.
+    @type positions:    list of lists of numpy float arrays
+    @return:            The averaged positions as a list of vectors.
+    @rtype:             list of numpy float arrays
+    """
+
+    # Loop over the multiple models.
+    ave = []
+    for model_index in range(len(positions[0])):
+        # Append an empty vector.
+        ave.append(array([0.0, 0.0, 0.0]))
+
+        # Loop over the x, y, and z coordinates.
+        for coord_index in range(3):
+            # Loop over the atomic positions.
+            for atom_index in range(len(positions)):
+                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
+
+            # Average.
+            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
+
+    # Return the averaged positions.
+    return ave
+
+
 def name_molecule(mol_id, name=None, force=False):
     """Name the molecules.
 
@@ -1501,7 +1486,7 @@ def name_molecule(mol_id, name=None, force=False):
             warn(RelaxWarning("The molecule '%s' is already named.  Set the force flag to rename." % mol_id))
         else:
             mol.name = name
-        
+
 
 def name_residue(res_id, name=None, force=False):
     """Name the residues.
@@ -1564,7 +1549,7 @@ def number_residue(res_id, number=None, force=False):
 
     # Fail if multiple residues are numbered.
     if i > 1:
-        raise RelaxError, "The numbering of multiple residues is disallowed, each residue requires a unique number."
+        raise RelaxError("The numbering of multiple residues is disallowed, each residue requires a unique number.")
 
     # Disallow spin selections.
     select_obj = Selection(res_id)
@@ -1597,7 +1582,7 @@ def number_spin(spin_id=None, number=None, force=False):
 
     # Fail if multiple spins are numbered.
     if number != None and i > 1:
-        raise RelaxError, "The numbering of multiple spins is disallowed, as each spin requires a unique number."
+        raise RelaxError("The numbering of multiple spins is disallowed, as each spin requires a unique number.")
 
     # Rename the spin.
     for spin, id in spin_loop(spin_id, return_id=True):
@@ -1628,70 +1613,78 @@ def parse_token(token, verbosity=False):
     if token == None:
         return []
 
-    # Split by the ',' character.
-    elements = split(',', token)
+    # Convert to a list.
+    if not isinstance(token, list):
+        tokens = [token]
+    else:
+        tokens = token
 
-    # Loop over the elements.
-    list = []
-    for element in elements:
-        # Strip all leading and trailing whitespace.
-        element = strip(element)
+    # Loop over the tokens.
+    id_list = []
+    for token in tokens:
+        # Split by the ',' character.
+        elements = split(',', token)
 
-        # Find all '-' characters (ignoring the first character, i.e. a negative number).
-        indices= []
-        for i in xrange(1,len(element)):
-            if element[i] == '-':
-                indices.append(i)
+        # Loop over the elements.
+        for element in elements:
+            # Strip all leading and trailing whitespace.
+            element = strip(element)
 
-        # Range.
-        valid_range = True
-        if indices:
-            # Invalid range element, only one range char '-' and one negative sign is allowed.
-            if len(indices) > 2:
-                if verbosity:
-                    print "The range element " + `element` + " is invalid.  Assuming the '-' character does not specify a range."
-                valid_range = False
+            # Find all '-' characters (ignoring the first character, i.e. a negative number).
+            indices= []
+            for i in xrange(1, len(element)):
+                if element[i] == '-':
+                    indices.append(i)
 
-            # Convert the two numbers to integers.
-            try:
-                start = int(element[:indices[0]])
-                end = int(element[indices[0]+1:])
-            except ValueError:
-                if verbosity:
-                    print "The range element " + `element` + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."
-                valid_range = False
+            # Range.
+            valid_range = True
+            if indices:
+                # Invalid range element, only one range char '-' and one negative sign is allowed.
+                if len(indices) > 2:
+                    if verbosity:
+                        print(("The range element " + repr(element) + " is invalid.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Test that the starting number is less than the end.
-            if valid_range and start >= end:
-                if verbosity:
-                    print "The starting number of the range element " + `element` + " needs to be less than the end number.  Assuming the '-' character does not specify a range."
-                valid_range = False
+                # Convert the two numbers to integers.
+                try:
+                    start = int(element[:indices[0]])
+                    end = int(element[indices[0]+1:])
+                except ValueError:
+                    if verbosity:
+                        print(("The range element " + repr(element) + " is invalid as either the start or end of the range are not integers.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Create the range and append it to the list.
-            if valid_range:
-                for i in range(start, end+1):
-                    list.append(i)
+                # Test that the starting number is less than the end.
+                if valid_range and start >= end:
+                    if verbosity:
+                        print(("The starting number of the range element " + repr(element) + " needs to be less than the end number.  Assuming the '-' character does not specify a range."))
+                    valid_range = False
 
-            # Just append the string (even though it might be junk).
+                # Create the range and append it to the list.
+                if valid_range:
+                    for i in range(start, end+1):
+                        id_list.append(i)
+
+                # Just append the string (even though it might be junk).
+                else:
+                    id_list.append(element)
+
+            # Number or name.
             else:
-                list.append(element)
+                # Try converting the element into an integer.
+                try:
+                    element = int(element)
+                except ValueError:
+                    pass
 
-        # Number or name.
-        else:
-            # Try converting the element into an integer.
-            try:
-                element = int(element)
-            except ValueError:
-                pass
-
-            # Append the element.
-            list.append(element)
+                # Append the element.
+                id_list.append(element)
 
     # Sort the list.
-    list.sort()
+    id_list.sort()
 
     # Return the identifying list.
-    return list
+    return id_list
 
 
 def residue_loop(selection=None, pipe=None, full_info=False):
@@ -1787,7 +1780,7 @@ def return_molecule(selection=None, pipe=None):
 
     # No unique identifier.
     if mol_num > 1:
-        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single molecule in the " + `pipe` + " data pipe."
+        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single molecule in the " + repr(pipe) + " data pipe.")
 
     # Return the molecule container.
     return mol_container
@@ -1836,7 +1829,7 @@ def return_residue(selection=None, pipe=None):
 
     # No unique identifier.
     if res_num > 1:
-        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single residue in the " + `pipe` + " data pipe."
+        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single residue in the " + repr(pipe) + " data pipe.")
 
     # Return the residue container.
     return res_container
@@ -1873,7 +1866,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
     dp = pipes.get_pipe(pipe)
 
     # Parse the selection string.
-    if type(selection) == str:
+    if isinstance(selection, str):
         selection = [selection]
     select_obj = []
     for i in range(len(selection)):
@@ -1906,7 +1899,7 @@ def return_spin(selection=None, pipe=None, full_info=False):
 
     # No unique identifier.
     if spin_num > 1:
-        raise RelaxError, "The identifier " + `selection` + " corresponds to more than a single spin in the " + `pipe` + " data pipe."
+        raise RelaxError("The identifier " + repr(selection) + " corresponds to more than a single spin in the " + repr(pipe) + " data pipe.")
 
     # Return the spin container.
     if full_info:
@@ -1979,7 +1972,7 @@ def return_single_molecule_info(molecule_token):
         if mol_name == None:
             mol_name = info
         else:
-            raise RelaxError, "The molecule identifier " + `molecule_token` + " does not correspond to a single molecule."
+            raise RelaxError("The molecule identifier " + repr(molecule_token) + " does not correspond to a single molecule.")
 
     # Return the molecule name.
     return mol_name
@@ -2002,18 +1995,18 @@ def return_single_residue_info(residue_token):
     res_name = None
     for info in residue_info:
         # A residue name identifier.
-        if type(info) == str:
+        if isinstance(info, str):
             if res_name == None:
                 res_name = info
             else:
-                raise RelaxError, "The residue identifier " + `residue_token` + " does not correspond to a single residue."
+                raise RelaxError("The residue identifier " + repr(residue_token) + " does not correspond to a single residue.")
 
         # A residue number identifier.
-        if type(info) == int:
+        if isinstance(info, int):
             if res_num == None:
                 res_num = info
             else:
-                raise RelaxError, "The residue identifier " + `residue_token` + " does not correspond to a single residue."
+                raise RelaxError("The residue identifier " + repr(residue_token) + " does not correspond to a single residue.")
 
     # Return the residue number and name.
     return res_num, res_name
@@ -2036,18 +2029,18 @@ def return_single_spin_info(spin_token):
     spin_name = None
     for info in spin_info:
         # A spin name identifier.
-        if type(info) == str:
+        if isinstance(info, str):
             if spin_name == None:
                 spin_name = info
             else:
-                raise RelaxError, "The spin identifier " + `spin_token` + " does not correspond to a single spin."
+                raise RelaxError("The spin identifier " + repr(spin_token) + " does not correspond to a single spin.")
 
         # A spin number identifier.
-        if type(info) == int:
+        if isinstance(info, int):
             if spin_num == None:
                 spin_num = info
             else:
-                raise RelaxError, "The spin identifier " + `spin_token` + " does not correspond to a single spin."
+                raise RelaxError("The spin identifier " + repr(spin_token) + " does not correspond to a single spin.")
 
     # Return the spin number and name.
     return spin_num, spin_name
@@ -2100,6 +2093,78 @@ def same_sequence(pipe1, pipe2):
 
     # The sequence is the same.
     return True
+
+
+def spin_id_to_data_list(id):
+    """Convert the single spin ID string into a list of the mol, res, and spin names and numbers.
+
+    @param id:  The spin ID string.
+    @type id:   str
+    @return:    The molecule name, the residue number and name, and the spin number and name.
+    @rtype:     str, int, str, int, str
+    """
+
+    # Split up the spin ID.
+    mol_token, res_token, spin_token = tokenise(id)
+    mol_info = parse_token(mol_token)
+    res_info = parse_token(res_token)
+    spin_info = parse_token(spin_token)
+
+    # Molecule name.
+    mol_name = None
+    if len(mol_info) > 1:
+        raise RelaxError("The single spin ID should only belong to one molecule, not %s." % mol_info)
+    if len(mol_info) == 1:
+        mol_name = mol_info[0]
+
+    # Residue info.
+    res_names = []
+    res_nums = []
+    for i in range(len(res_info)):
+        try:
+            res_nums.append(int(res_info[i]))
+        except ValueError:
+            res_names.append(res_info[i])
+
+    # Residue number.
+    res_num = None
+    if len(res_nums) > 1:
+        raise RelaxError("The single spin ID should only belong to one residue number, not %s." % res_info)
+    elif len(res_nums) == 1:
+        res_num = res_nums[0]
+
+    # Residue name.
+    res_name = None
+    if len(res_names) > 1:
+        raise RelaxError("The single spin ID should only belong to one residue name, not %s." % res_info)
+    elif len(res_names) == 1:
+        res_name = res_names[0]
+
+    # Spin info.
+    spin_names = []
+    spin_nums = []
+    for i in range(len(spin_info)):
+        try:
+            spin_nums.append(int(spin_info[i]))
+        except ValueError:
+            spin_names.append(spin_info[i])
+
+    # Spin number.
+    spin_num = None
+    if len(spin_nums) > 1:
+        raise RelaxError("The single spin ID should only belong to one spin number, not %s." % spin_info)
+    elif len(spin_nums) == 1:
+        spin_num = spin_nums[0]
+
+    # Spin name.
+    spin_name = None
+    if len(spin_names) > 1:
+        raise RelaxError("The single spin ID should only belong to one spin name, not %s." % spin_info)
+    elif len(spin_names) == 1:
+        spin_name = spin_names[0]
+
+    # Return the data.
+    return mol_name, res_num, res_name, spin_num, spin_name
 
 
 def spin_in_list(spin_list, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
@@ -2288,73 +2353,134 @@ def tokenise(selection):
         return None, None, None
 
 
-    # Atoms.
-    ########
+    # Walk along the ID string, separating the molecule, residue, and spin data.
+    mol_info = ''
+    res_info = ''
+    spin_info = ''
+    pos = 'mol'
+    for i in range(len(selection)):
+        # Find forbidden boolean operators.
+        if selection[i] == '|':
+            raise RelaxError("The boolean operator '|' is not supported for individual spin selections.")
 
-    # Split by '@'.
-    atom_split = split('@', selection)
+        # Hit the residue position.
+        if selection[i] == ':':
+            if pos == 'spin':
+                raise RelaxError("Invalid selection string '%s'." % selection)
+            pos = 'res'
 
-    # Test that only one '@' character was supplied.
-    if len(atom_split) > 2:
-        raise RelaxError, "Only one '@' character is allowed within the selection identifier string."
+        # Hit the spin position.
+        if selection[i] == '@':
+            pos = 'spin'
 
-    # No atom identifier.
-    if len(atom_split) == 1:
-        spin_token = None
-    else:
-        # Test for out of order identifiers.
-        if ':' in atom_split[1]:
-            raise RelaxError, "The atom identifier '@' must come after the residue identifier ':'."
-        elif '#' in atom_split[1]:
-            raise RelaxError, "The atom identifier '@' must come after the molecule identifier '#'."
-
-        # The token.
-        spin_token = atom_split[1]
-
-
-    # Residues.
-    ###########
-
-    # Split by ':'.
-    res_split = split(':', atom_split[0])
-
-    # Test that only one ':' character was supplied.
-    if len(res_split) > 2:
-        raise RelaxError, "Only one ':' character is allowed within the selection identifier string."
-
-    # No residue identifier.
-    if len(res_split) == 1:
-        res_token = None
-    else:
-        # Test for out of order identifiers.
-        if '#' in res_split[1]:
-            raise RelaxError, "The residue identifier ':' must come after the molecule identifier '#'."
-
-        # The token.
-        res_token = res_split[1]
-
+        # Append the data.
+        if pos == 'mol':
+            mol_info = mol_info + selection[i]
+        if pos == 'res':
+            res_info = res_info + selection[i]
+        if pos == 'spin':
+            spin_info = spin_info + selection[i]
 
 
     # Molecules.
     ############
 
-    # Split by '#'.
-    mol_split = split('#', res_split[0])
+    # Molecule identifier.
+    if mol_info:
+        # Find boolean operators.
+        if '&' in mol_info:
+            raise RelaxError("The boolean operator '&' is not supported for the molecule component of individual spin IDs.")
 
-    # Test that only one '#' character was supplied.
-    if len(mol_split) > 2:
-        raise RelaxError, "Only one '#' character is allowed within the selection identifier string."
+        # Checks:
+        #   No residue identification characters are allowed.
+        #   No spin identification characters are allowed.
+        #   First character must be '#'.
+        #   Only 1 '#' allowed.
+        if ':' in mol_info or '@' in mol_info or mol_info[0] != '#' or count(mol_info, '#') != 1:
+            raise RelaxError("Invalid molecule selection '%s'." % mol_info)
+
+        # ID.
+        mol_token = mol_info[1:]
 
     # No molecule identifier.
-    if len(mol_split) == 1:
-        mol_token = None
     else:
-        mol_token = mol_split[1]
+        mol_token = None
 
+
+    # Residues.
+    ###########
+
+    # Residue identifier.
+    if res_info:
+        # Only max 1 '&' allowed.
+        if count(res_info, '&') > 1:
+            raise RelaxError("Only one '&' boolean operator is supported for the residue component of individual spin IDs.")
+
+        # Split by '&'.
+        res_token = split('&', res_info)
+
+        # Check and remove the ':' character.
+        for i in range(len(res_token)):
+            # Checks:
+            #   No molecule identification characters are allowed.
+            #   No spin identification characters are allowed.
+            #   First character must be ':'.
+            #   Only 1 ':' allowed.
+            if '#' in res_token[i] or '@' in res_token[i] or res_token[i][0] != ':' or count(res_token[i], ':') != 1:
+                raise RelaxError("Invalid residue selection '%s'." % res_info)
+
+            # Strip.
+            res_token[i] = res_token[i][1:]
+
+        # Convert to a string if only a single item.
+        if len(res_token) == 1:
+            res_token = res_token[0]
+
+    # No residue identifier.
+    else:
+        res_token = None
+
+
+    # Spins.
+    ########
+
+    # Spin identifier.
+    if spin_info:
+        # Only max 1 '&' allowed.
+        if count(spin_info, '&') > 1:
+            raise RelaxError("Only one '&' boolean operator is supported for the spin component of individual spin IDs.")
+
+        # Split by '&'.
+        spin_token = split('&', spin_info)
+
+        # Check and remove the ':' character.
+        for i in range(len(spin_token)):
+            # Checks:
+            #   No molecule identification characters are allowed.
+            #   No residue identification characters are allowed.
+            #   First character must be '@'.
+            #   Only 1 '@' allowed.
+            if '#' in spin_token[i] or ':' in spin_token[i] or spin_token[i][0] != '@' or count(spin_token[i], '@') != 1:
+                raise RelaxError("Invalid spin selection '%s'." % spin_info)
+
+            # Strip.
+            spin_token[i] = spin_token[i][1:]
+
+        # Convert to a string if only a single item.
+        if len(spin_token) == 1:
+            spin_token = spin_token[0]
+
+    # No spin identifier.
+    else:
+        spin_token = None
+
+
+    # End.
+    ######
 
     # Improper selection string.
     if mol_token == None and res_token == None and spin_token == None:
-        raise RelaxError, "The selection string " + `selection` + " is invalid."
+        raise RelaxError("The selection string '%s' is invalid." % selection)
 
     # Return the three tokens.
     return mol_token, res_token, spin_token

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,7 +26,6 @@ from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import return_molecule, return_residue, return_spin
-from generic_fns import pipes
 from physical_constants import return_atomic_mass
 from relax_errors import RelaxError, RelaxNoPdbError
 from relax_warnings import RelaxWarning
@@ -44,15 +43,12 @@ def centre_of_mass(return_mass=False):
     @rtype:                 list of 3 floats (or tuple of a list of 3 floats and one float)
     """
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
 
     # Print out.
-    print "Calculating the centre of mass."
+    print("Calculating the centre of mass.")
 
     # Initialise the centre of mass.
     R = zeros(3, float64)
@@ -76,14 +72,14 @@ def centre_of_mass(return_mass=False):
         if res_name == None and res_num == None:
             res_cont = mol_cont.res[0]
         else:
-            id = id + ':' + `res_num`
+            id = id + ':' + repr(res_num)
             res_cont = return_residue(id)
 
         # Get the corresponding spin container.
         if atom_name == None and atom_num == None:
             spin_cont = res_cont.spin[0]
         else:
-            id = id + '@' + `atom_num`
+            id = id + '@' + repr(atom_num)
             spin_cont = return_spin(id)
 
         # Deselected spins.
@@ -110,11 +106,11 @@ def centre_of_mass(return_mass=False):
     R = R / M
 
     # Final print out.
-    print "    Total mass:      M = " + `M`
-    print "    Centre of mass:  R = " + `R`
+    print(("    Total mass:      M = " + repr(M)))
+    print(("    Centre of mass:  R = " + repr(R)))
 
     # Return the centre of mass.
     if return_mass:
-        return R,M
+        return R, M
     else:
         return R

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2009 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,24 +21,20 @@
 ###############################################################################
 
 # Python module imports.
-from unittest import TestCase
+from os import sep
+import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from test_suite.unit_tests.package_checking import PackageTestCase
+import maths_fns
 
 
-class Pipe_create(TestCase):
-    """TestCase class for the functional tests of relax data pipes."""
+class Test___init__(PackageTestCase):
+    """Unit tests for the maths_fns package."""
 
+    def setUp(self):
+        """Set up for the package checking."""
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
-    def test_pipe_create(self):
-        """Create a data pipe."""
-
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create('test', 'mf')
+        self.package = maths_fns
+        self.package_name = 'maths_fns'
+        self.package_path = sys.path[0] + sep + 'maths_fns'

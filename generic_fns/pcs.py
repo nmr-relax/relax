@@ -31,7 +31,7 @@ from numpy import array, float64, zeros
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
-from relax_io import extract_data, strip
+from relax_io import read_spin_data
 
 
 def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
@@ -60,9 +60,6 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
 
     # Test if the current data pipe exists.
     pipes.test()
-
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -112,7 +109,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
                 spin.remap_table.pop(index)
 
         # Remove any data with error of None.
-        for index,error in enumerate(spin.relax_error):
+        for index, error in enumerate(spin.relax_error):
             if error == None:
                 spin.relax_data.pop(index)
                 spin.relax_error.pop(index)
@@ -131,7 +128,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
     # Simulation data.
     else:
         # Create the data structure if necessary.
-        if not hasattr(spin, 'relax_sim_data') or type(spin.relax_sim_data) != list:
+        if not hasattr(spin, 'relax_sim_data') or not isinstance(spin.relax_sim_data, list):
             spin.relax_sim_data = []
 
         # Append the simulation's relaxation data.
@@ -159,7 +156,6 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # Get the data pipes.
     source_dp = pipes.get_pipe(pipe)
-    cdp = pipes.get_pipe()
 
     # Test if the structure has been loaded.
     if not hasattr(source_dp, 'structure'):
@@ -167,7 +163,7 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # Test the centre has already been set.
     if hasattr(cdp, 'paramagnetic_centre'):
-        raise RelaxError, "The paramagnetic centre has already been set to the coordinates " + `cdp.paramagnetic_centre` + "."
+        raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
     # Get the positions.
     centre = zeros(3, float64)
@@ -179,7 +175,7 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
             continue
 
         # Spin position list.
-        if type(spin.pos[0]) == float or type(spin.pos[0]) == float64:
+        if isinstance(spin.pos[0], float) or isinstance(spin.pos[0], float64):
             pos_list = [spin.pos]
         else:
             pos_list = spin.pos
@@ -192,24 +188,24 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
 
     # No positional information!
     if not num_pos:
-        raise RelaxError, "No positional information could be found for the spin '%s'." % atom_id
+        raise RelaxError("No positional information could be found for the spin '%s'." % atom_id)
 
     # Averaging.
     centre = centre / float(num_pos)
 
     # Print out.
-    print "Paramagnetic centres located at:"
+    print("Paramagnetic centres located at:")
     for pos in full_pos_list:
-        print "    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])
-    print "\nAverage paramagnetic centre located at:"
-    print "    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])
+        print(("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])))
+    print("\nAverage paramagnetic centre located at:")
+    print(("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])))
 
     # Set the centre (place it into the current data pipe).
     if ave_pos:
-        print "\nUsing the average paramagnetic position."
+        print("\nUsing the average paramagnetic position.")
         cdp.paramagnetic_centre = centre
     else:
-        print "\nUsing all paramagnetic positions."
+        print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
 
 
@@ -230,7 +226,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
 
     # Defaults.
     if pipe_from == None and pipe_to == None:
-        raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+        raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
     elif pipe_from == None:
         pipe_from = pipes.cdp_name()
     elif pipe_to == None:
@@ -276,11 +272,11 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
     else:
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_from.
         if not test_labels(ri_label, frq_label, pipe=pipe_from):
-            raise RelaxNoRiError, (ri_label, frq_label)
+            raise RelaxNoRiError(ri_label, frq_label)
 
         # Test if relaxation data corresponding to 'ri_label' and 'frq_label' exists for pipe_to.
         if not test_labels(ri_label, frq_label, pipe=pipe_to):
-            raise RelaxRiError, (ri_label, frq_label)
+            raise RelaxRiError(ri_label, frq_label)
 
         # Spin loop.
         for mol_index, res_index, spin_index in spin_index_loop():
@@ -441,11 +437,11 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read the PCS data from file.
 
-    @param id:              The alignment identification string.
-    @type id:               str
+    @param align_id:        The alignment tensor ID string.
+    @type align_id:         str
     @param file:            The name of the file to open.
     @type file:             str
     @param dir:             The directory containing the file (defaults to the current directory
@@ -457,18 +453,34 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     @type file_data:        list of lists
     @keyword spin_id:       The spin identification string.
     @type spin_id:          None or str
-    @param mol_name_col:    The column containing the molecule name information.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
+                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
+                            arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
+                            spin_id_col must be None.
     @type mol_name_col:     int or None
-    @param res_name_col:    The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied,
+                            spin_id_col must be None.
     @type res_name_col:     int or None
-    @param res_num_col:     The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied,
+                            spin_id_col must be None.
     @type res_num_col:      int or None
-    @param spin_name_col:   The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied,
+                            spin_id_col must be None.
     @type spin_name_col:    int or None
-    @param spin_num_col:    The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
+                            spin_id_col must be None.
     @type spin_num_col:     int or None
-    @param sep:             The column separator which, if None, defaults to whitespace.
+    @keyword data_col:      The column containing the RDC data in Hz.
+    @type data_col:         int or None
+    @keyword error_col:     The column containing the RDC errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
+    @type spin_id:          None or str
     """
 
     # Test if the current data pipe exists.
@@ -478,70 +490,56 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Either the data or error column must be supplied.
     if data_col == None and error_col == None:
-        raise RelaxError, "One of either the data or error column must be supplied."
+        raise RelaxError("One of either the data or error column must be supplied.")
 
-    # Minimum number of columns.
-    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
 
-    # Extract the data from the file.
-    if not file_data:
-        # Extract.
-        file_data = extract_data(file, dir)
+    # Spin specific data.
+    #####################
 
-        # Count the number of header lines.
-        header_lines = 0
-        for i in xrange(len(file_data)):
-            try:
-                if data_col != None:
-                    float(file_data[i][data_col])
-                else:
-                    float(file_data[i][error_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
+    # Loop over the PCS data.
+    print(("\n%-50s %-15s %-15s" % ("spin_id", "value", "error")))
+    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+        # Unpack.
+        if data_col and error_col:
+            id, value, error = data
+        elif data_col:
+            id, value = data
+            error = None
+        else:
+            id, error = data
+            value = None
 
-        # Remove the header.
-        file_data = file_data[header_lines:]
+        # Test the error value (cannot be 0.0).
+        if error == 0.0:
+            raise RelaxError("An invalid error value of zero has been encountered.")
 
-        # Strip the data of all comments and empty lines.
-        file_data = strip(file_data)
+        # Get the corresponding spin container.
+        spin = return_spin([id, spin_id])
+        if spin == None:
+            raise RelaxNoSpinError(id)
 
-    # Test the validity of the PCS data.
-    missing = True
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-        elif data_col != None and file_data[i][data_col] == 'None':
-            continue
-        elif error_col != None and file_data[i][error_col] == 'None':
-            continue
+        # Add the data.
+        if data_col:
+            # Initialise.
+            if not hasattr(spin, 'pcs'):
+                spin.pcs = []
 
-        # Test that the data are numbers.
-        try:
-            if res_num_col != None:
-                int(file_data[i][res_num_col])
-            if spin_num_col != None:
-                int(file_data[i][spin_num_col])
-            if data_col != None:
-                float(file_data[i][data_col])
-            if error_col != None:
-                float(file_data[i][error_col])
-        except ValueError:
-            raise RelaxError, "The PCS data in the line " + `file_data[i]` + " is invalid."
+            # Append the value.
+            spin.pcs.append(value)
 
-        # Right, data is ok and exists.
-        missing = False
+        # Add the error.
+        if error_col:
+            # Initialise.
+            if not hasattr(spin, 'pcs_err'):
+                spin.pcs_err = []
 
-    # Hmmm, no data!
-    if missing:
-        raise RelaxError, "No corresponding data could be found within the file."
+            # Append the error.
+            spin.pcs_err.append(error)
+
+        # Print out.
+        print(("%-50s %15s %15s" % (id, value, error)))
 
 
     # Global (non-spin specific) data.
@@ -552,60 +550,8 @@ def read(id=None, file=None, dir=None, file_data=None, spin_id=None, mol_name_co
         cdp.pcs_ids = []
 
     # Add the PCS id string.
-    if id not in cdp.pcs_ids:
-        cdp.pcs_ids.append(id)
-
-
-    # Spin specific data.
-    #####################
-
-    # Loop over the PCS data.
-    print "\n%-50s %-15s %-15s" % ("spin_id", "value", "error")
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-
-        # Generate the spin identification string.
-        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
-        # Convert the data.
-        value = None
-        if data_col != None:
-            value = eval(file_data[i][data_col])
-        error = None
-        if error_col != None:
-            error = eval(file_data[i][error_col])
-
-        # Test the error value (cannot be 0.0).
-        if error == 0.0:
-            raise RelaxError, "An invalid error value of zero has been encountered."
-
-        # Get the corresponding spin container.
-        spin = return_spin([id, spin_id])
-        if spin == None:
-            raise RelaxNoSpinError, id
-
-        # Add the data.
-        if data_col != None:
-            # Initialise.
-            if not hasattr(spin, 'pcs'):
-                spin.pcs = []
-
-            # Append the value.
-            spin.pcs.append(value)
-
-        # Add the error.
-        if error_col != None:
-            # Initialise.
-            if not hasattr(spin, 'pcs_err'):
-                spin.pcs_err = []
-
-            # Append the error.
-            spin.pcs_err.append(error)
-
-        # Print out.
-        print "%-50s %15s %15s" % (id, value, error)
+    if align_id not in cdp.pcs_ids:
+        cdp.pcs_ids.append(align_id)
 
 
 def return_data_desc(name):

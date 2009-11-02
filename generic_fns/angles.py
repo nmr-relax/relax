@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,9 +41,6 @@ def angle_diff_frame():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
@@ -54,7 +51,7 @@ def angle_diff_frame():
 
     # Test if the diffusion tensor data is loaded.
     if not hasattr(cdp, 'diff_tensor'):
-        raise RelaxNoTensorError, 'diffusion'
+        raise RelaxNoTensorError('diffusion')
 
     # Sphere.
     if cdp.diff_tensor.type == 'sphere':
@@ -66,14 +63,11 @@ def angle_diff_frame():
 
     # Ellipsoid.
     elif cdp.diff_tensor.type == 'ellipsoid':
-        raise RelaxError, "No coded yet."
+        raise RelaxError("No coded yet.")
 
 
 def ellipsoid_frame():
     """Calculate the spherical angles of the bond vector in the ellipsoid frame."""
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Get the unit vectors Dx, Dy, and Dz of the diffusion tensor axes.
     Dx, Dy, Dz = diffusion_tensor.unit_axes()
@@ -86,7 +80,7 @@ def ellipsoid_frame():
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
             # Throw a warning.
-            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+            warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))
 
             # Skip the spin.
             continue
@@ -105,9 +99,6 @@ def ellipsoid_frame():
 def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Loop over the sequence.
     for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
         # Test if the vector exists.
@@ -116,7 +107,7 @@ def spheroid_frame():
             spin_id = generate_spin_id(mol_name, res_num, res_name, spin.num, spin.name)
 
             # Throw a warning.
-            warn(RelaxWarning("No angles could be calculated for the spin " + `spin_id` + "."))
+            warn(RelaxWarning("No angles could be calculated for the spin " + repr(spin_id) + "."))
 
             # Skip the spin.
             continue
@@ -128,7 +119,7 @@ def spheroid_frame():
 def wrap_angles(angle, lower, upper):
     """Convert the given angle to be between the lower and upper values."""
 
-    while 1:
+    while True:
         if angle > upper:
             angle = angle - upper
         elif angle < lower:

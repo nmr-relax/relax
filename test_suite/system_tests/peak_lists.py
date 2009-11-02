@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -22,12 +22,12 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import spin_loop
 
 
@@ -50,79 +50,50 @@ class Peak_lists(TestCase):
     def test_read_peak_list_generic(self):
         """Test the reading of a generic peak intensity list."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(20)
-        self.relax.interpreter._Residue.create(23)
-        self.relax.interpreter._Residue.create(34)
-        self.relax.interpreter._Residue.create(35)
-        self.relax.interpreter._Residue.create(36)
+        self.relax.interpreter._Residue.create(20, 'GLY')
+        self.relax.interpreter._Residue.create(23, 'ALA')
+        self.relax.interpreter._Residue.create(34, 'CYS')
+        self.relax.interpreter._Residue.create(35, 'MET')
+        self.relax.interpreter._Residue.create(36, 'LYS')
         self.relax.interpreter._Spin.name(name='N')
 
-        # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='height')
+        # Relaxation delays.
+        delays = [0.0109016,
+                  0.0218032,
+                  0.0436064,
+                  0.0436064,
+                  0.0872128,
+                  0.1744260,
+                  0.3488510,
+                  0.6977020,
+                  1.3954000,
+                  1.9949900]
+
+        # Load the data.
+        for i in range(10):
+            # Read the peak intensities.
+            self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+3, res_num_col=1, res_name_col=2)
+
+            # Set the relaxation times.
+            self.relax.interpreter._Relax_fit.relax_time(time=delays[i], spectrum_id=repr(i))
+
+        # The actual intensities.
+        heights = [[1.0000, 0.9714, 0.9602, 0.9626, 0.8839, 0.8327, 0.7088, 0.5098, 0.2410, 0.1116],
+                   [1.0000, 0.9789, 0.9751, 0.9762, 0.9074, 0.8532, 0.7089, 0.5170, 0.2444, 0.1537],
+                   [1.0000, 0.9659, 0.9580, 0.9559, 0.9325, 0.8460, 0.7187, 0.5303, 0.2954, 0.1683],
+                   [1.0000, 0.9657, 0.9389, 0.9366, 0.9331, 0.8683, 0.7169, 0.5357, 0.2769, 0.1625],
+                   [1.0000, 1.0060, 0.9556, 0.9456, 0.9077, 0.8411, 0.6788, 0.4558, 0.2448, 0.1569]
+        ]
 
         # Test the data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.0000)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[1], 0.9714)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[2], 0.9602)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[3], 0.9626)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[4], 0.8839)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[5], 0.8327)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[6], 0.7088)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[7], 0.5098)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[8], 0.2410)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[9], 0.1116)
-
-
-    def test_read_peak_list_generic2(self):
-        """Test the reading of a generic peak intensity list (test number 2)."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
-        # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(20)
-        self.relax.interpreter._Residue.create(23)
-        self.relax.interpreter._Residue.create(34)
-        self.relax.interpreter._Residue.create(35)
-        self.relax.interpreter._Residue.create(36)
-        self.relax.interpreter._Spin.name(name='N')
-
-        # Spectrum ids.
-        spectrum_ids = ['0.0109016', '0.0218032', '0.0436064', '0.0436064', '0.0872128', '0.1744260', '0.3488510', '0.6977020', '1.3954000', '1.9949900']
-
-        # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity2.txt", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id=spectrum_ids, int_col=range(2, 12), int_method='volume', mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None)
-
-        # The intensities.
-        intensities = []
-        intensities.append([1.0000, 0.9714, 0.9602, 0.9626, 0.8839, 0.8327, 0.7088, 0.5098, 0.2410, 0.1116])
-        intensities.append([1.0000, 0.9789, 0.9751, 0.9762, 0.9074, 0.8532, 0.7089, 0.5170, 0.2444, 0.1537])
-        intensities.append([1.0000, 0.9659, 0.9580, 0.9559, 0.9325, 0.8460, 0.7187, 0.5303, 0.2954, 0.1683])
-        intensities.append([1.0000, 0.9657, 0.9389, 0.9366, 0.9331, 0.8683, 0.7169, 0.5357, 0.2769, 0.1625])
-        intensities.append([1.0000, 1.0060, 0.9556, 0.9456, 0.9077, 0.8411, 0.6788, 0.4558, 0.2448, 0.1569])
-
-        # Test the spectrum ids.
-        self.assertEqual(cdp.spectrum_ids, spectrum_ids)
-
-        # Test the data.
-        index = 0
-        for spin in spin_loop():
-            for j in xrange(len(spin.intensities)):
-                self.assertEqual(spin.intensities[j], intensities[index][j])
-
-            # Increment the index.
-            index = index + 1
+        for i in range(10):
+            for j in range(5):
+                self.assertEqual(cdp.mol[0].res[j].spin[0].intensities[i], heights[j][i])
 
 
     def test_read_peak_list_nmrview(self):
         """Test the reading of an NMRView peak list."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(70)
@@ -130,7 +101,7 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="cNTnC.xpk", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='height')
+        self.relax.interpreter._Spectrum.read_intensities(file="cNTnC.xpk", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], -0.1694)
@@ -140,9 +111,6 @@ class Peak_lists(TestCase):
     def test_read_peak_list_sparky(self):
         """Test the reading of an Sparky peak list."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(3)
         self.relax.interpreter._Residue.create(4)
@@ -151,7 +119,7 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="ref_ave.list", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='height')
+        self.relax.interpreter._Spectrum.read_intensities(file="ref_ave.list", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 6262)
@@ -162,9 +130,6 @@ class Peak_lists(TestCase):
 
     def test_read_peak_list_xeasy(self):
         """Test the reading of an XEasy peak list."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(15)
@@ -191,7 +156,7 @@ class Peak_lists(TestCase):
         self.relax.interpreter._Spin.name(name='N')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', int_method='height')
+        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 9.714e+03)
@@ -218,15 +183,12 @@ class Peak_lists(TestCase):
     def test_read_peak_list_xeasy_2(self):
         """Test the reading of an XEasy peak list (2)."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(79)
         self.relax.interpreter._Spin.name(name='NE1')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
+        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.532e+04)
@@ -235,15 +197,12 @@ class Peak_lists(TestCase):
     def test_read_peak_list_xeasy_3(self):
         """Test the reading of an XEasy peak list (3)."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(100)
         self.relax.interpreter._Spin.name(name='C')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', heteronuc='C', int_method='height')
+        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 6.877e+03)
@@ -252,15 +211,12 @@ class Peak_lists(TestCase):
     def test_read_peak_list_xeasy_4(self):
         """Test the reading of an XEasy peak list (4)."""
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Create the sequence data, and name the spins.
         self.relax.interpreter._Residue.create(107)
         self.relax.interpreter._Spin.name(name='C')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + "/test_suite/shared_data/peak_lists", spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
+        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 7.123e+03)

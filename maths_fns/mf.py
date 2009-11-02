@@ -266,8 +266,8 @@ class Mf:
                 self.data[i].frq_list[j, 4] = frqH + frqX
             self.data[i].frq_sqrd_list = self.data[i].frq_list ** 2
             for j in xrange(self.diff_data.num_indices):
-                self.data[i].frq_list_ext[:, :, j] = self.data[i].frq_list
-                self.data[i].frq_sqrd_list_ext[:, :, j] = self.data[i].frq_sqrd_list
+                self.data[i].frq_list_ext[:,:, j] = self.data[i].frq_list
+                self.data[i].frq_sqrd_list_ext[:,:, j] = self.data[i].frq_sqrd_list
 
             # Store supplied data in self.data
             self.data[i].gh = gh[i]
@@ -314,7 +314,7 @@ class Mf:
 
             # Setup the residue specific equations.
             if not self.setup_equations(self.data[i]):
-                raise RelaxError, "The model-free equations could not be setup."
+                raise RelaxError("The model-free equations could not be setup.")
 
             # Diffusion tensor parameters.
             if self.model_type == 'local_tm':
@@ -1620,7 +1620,7 @@ class Mf:
                 elif data.param_types[i] == 'local_tm':
                     pass
                 else:
-                    print "Unknown parameter."
+                    print("Unknown parameter.")
                     return 0
 
             # Increment the parameter index.
@@ -1664,7 +1664,7 @@ class Mf:
 
                 # Bad parameter combination.
                 else:
-                    print "Invalid combination of parameters for the extended model-free equation."
+                    print("Invalid combination of parameters for the extended model-free equation.")
                     return 0
 
             # Minimisation with variable diffusion parameters.
@@ -1934,7 +1934,7 @@ class Mf:
 
                 # Bad parameter combination.
                 else:
-                    print "Invalid combination of parameters for the extended model-free equation."
+                    print("Invalid combination of parameters for the extended model-free equation.")
                     return 0
 
 
@@ -1969,7 +1969,7 @@ class Mf:
                 elif data.param_types[i] == 'local_tm':
                     pass
                 else:
-                    print "Unknown parameter."
+                    print("Unknown parameter.")
                     return 0
 
             # Increment the parameter index.
@@ -2016,7 +2016,7 @@ class Mf:
 
                 # Bad parameter combination.
                 else:
-                    print "Invalid combination of parameters for the extended model-free equation."
+                    print("Invalid combination of parameters for the extended model-free equation.")
                     return 0
 
             # Minimisation with variable diffusion parameters.
@@ -2282,7 +2282,7 @@ class Mf:
 
                 # Bad parameter combination.
                 else:
-                    print "Invalid combination of parameters for the extended model-free equation."
+                    print("Invalid combination of parameters for the extended model-free equation.")
                     return 0
 
 
@@ -2316,7 +2316,7 @@ class Mf:
                 elif data.param_types[i] == 'local_tm':
                     pass
                 else:
-                    print "Unknown parameter."
+                    print("Unknown parameter.")
                     return 0
 
             # Increment the parameter index.
@@ -2365,7 +2365,7 @@ class Mf:
 
                 # Bad parameter combination.
                 else:
-                    print "Invalid combination of parameters for the extended model-free equation."
+                    print("Invalid combination of parameters for the extended model-free equation.")
                     return 0
 
             # Minimisation with variable diffusion parameters.
@@ -2632,12 +2632,12 @@ class Mf:
 
                 # Bad parameter combination.
                 else:
-                    print "Invalid combination of parameters for the extended model-free equation."
+                    print("Invalid combination of parameters for the extended model-free equation.")
                     return 0
 
         # Unknown model-free equation.
         else:
-            print "Unknown model-free equation."
+            print("Unknown model-free equation.")
             return 0
 
 
@@ -2969,7 +2969,7 @@ class Mf:
         ####################################
 
         else:
-            print "Invalid combination of parameters for the model-free equations."
+            print("Invalid combination of parameters for the model-free equations.")
             return 0
 
         return 1

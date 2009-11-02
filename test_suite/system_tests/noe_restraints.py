@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,12 +21,12 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 from generic_fns.mol_res_spin import create_molecule, create_residue, create_spin
 
 
@@ -92,7 +92,7 @@ class Noe_restraints(TestCase):
         ds.file_name = 'phthalic_acid'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
@@ -148,9 +148,6 @@ class Noe_restraints(TestCase):
             ['@H28', '@Q9',  3.0, 6.0]
         ]
 
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Test that the restraints are properly set.
         for i in range(len(restraints)):
             # Atom ids.
@@ -169,16 +166,13 @@ class Noe_restraints(TestCase):
         ds.file_name = 'pseudo_atoms.dat'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/phthalic_acid_noes.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'phthalic_acid_noes.py')
 
         # The restraint data.
         restraints = [
             ['@H28', '@H9',  3.0, 5.0],
             ['@H28', '@Q9',  3.0, 6.0]
         ]
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test that the restraints are properly set.
         for i in range(len(restraints)):
@@ -198,7 +192,7 @@ class Noe_restraints(TestCase):
         self.rna_seq()
 
         # Read the Xplor input file.
-        self.relax.interpreter._Noe.read_restraints(file='noe_rna_hbond.dat', dir=sys.path[-1] + '/test_suite/shared_data/noe_restraints')
+        self.relax.interpreter._Noe.read_restraints(file='noe_rna_hbond.dat', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'noe_restraints')
 
         # The restraint data.
         restraints = [
@@ -223,9 +217,6 @@ class Noe_restraints(TestCase):
             ['#A:4@H42', '#B:1@O6',  1.71, 0.20, 0.20],
             ['#A:4@N4',  '#B:1@O6',  2.72, 0.20, 0.20]
         ]
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test that the restraints are properly set.
         for i in range(len(restraints)):

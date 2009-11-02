@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,16 +41,13 @@ def set(id=None, temp=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Set up the dictionary data structure if it doesn't exist yet.
     if not hasattr(cdp, 'temperature'):
         cdp.temperature = {}
 
     # Test the temperature has not already been set.
-    if cdp.temperature.has_key(id):
-        raise RelaxError, "The temperature for the experiment " + `id` + " has already been set."
+    if id in cdp.temperature:
+        raise RelaxError("The temperature for the experiment " + repr(id) + " has already been set.")
 
     # Set the temperature.
     cdp.temperature[id] = temp

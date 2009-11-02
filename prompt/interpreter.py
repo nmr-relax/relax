@@ -125,7 +125,7 @@ class Interpreter:
         sys.ps3 = '\nrelax> '
 
         # The function intro flag.
-        self.intro = 0
+        self.intro = False
 
         # Python modules.
         self._pi = pi
@@ -273,7 +273,7 @@ class Interpreter:
         # Execute the script file if given.
         if script_file:
             # Turn on the function intro flag.
-            self.intro = 1
+            self.intro = True
 
             # Run the script.
             return run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
@@ -292,49 +292,57 @@ class Interpreter:
     def _off(self):
         """Function for turning the function introductions off."""
 
-        self.intro = 0
-        print "Function intros have been disabled."
+        self.intro = False
+        print("Echoing of user function calls has been disabled.")
 
 
     def _on(self):
         """Function for turning the function introductions on."""
 
-        self.intro = 1
-        print "Function intros have been enabled."
+        self.intro = True
+        print("Echoing of user function calls has been enabled.")
 
 
-    def script(self, file=None, quit=0):
+    def script(self, file=None, quit=False):
         """Function for executing a script file."""
+
+        # Function intro text.
+        if self.intro:
+            text = sys.ps3 + "script("
+            text = text + "file=" + repr(file)
+            text = text + ", quit=" + repr(quit) + ")"
+            print(text)
 
         # File argument.
         if file == None:
-            raise RelaxNoneError, 'file'
-        elif type(file) != str:
-            raise RelaxStrError, ('file', file)
+            raise RelaxNoneError('file')
+        elif not isinstance(file, str):
+            raise RelaxStrError('file', file)
 
         # Test if the script file exists.
         if not access(file, F_OK):
-            raise RelaxError, "The script file '" + file + "' does not exist."
+            raise RelaxError("The script file '" + file + "' does not exist.")
 
         # Quit argument.
-        if type(quit) != int or (quit != 0 and quit != 1):
-            raise RelaxBinError, ('quit', quit)
+        if not isinstance(quit, int) or (quit != False and quit != True):
+            raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
-        self.intro = 1
+        orig_intro_state = self.intro
+        self.intro = True
 
         # Execute the script.
         run_script(local=self.local, script_file=file, quit=quit)
 
-        # Turn off the function intro flag.
-        self.intro = 0
+        # Return the function intro flag to the original value.
+        self.intro = orig_intro_state
 
 
 class _Exit:
     def __repr__(self):
         """Exit the program."""
 
-        print "Exiting the program."
+        print("Exiting the program.")
         sys.exit()
 
 
@@ -359,8 +367,8 @@ def interact_prompt(self, intro=None, local={}):
     #signal.signal(2, 1)
 
     # Prompt.
-    more = 0
-    while 1:
+    more = False
+    while True:
         try:
             if more:
                 prompt = sys.ps2
@@ -376,7 +384,7 @@ def interact_prompt(self, intro=None, local={}):
         except KeyboardInterrupt:
             self.write("\nKeyboardInterrupt\n")
             self.resetbuffer()
-            more = 0
+            more = False
 
 
 def interact_script(self, intro=None, local={}, script_file=None, quit=True, show_script=True, raise_relax_error=False):
@@ -409,7 +417,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
         sys.stdout.write("%s\n" % intro)
 
     # Turn the intro flag on so functions will print their intro strings.
-    local['self'].intro = 1
+    local['self'].intro = True
 
     # Print the script.
     if show_script:
@@ -417,12 +425,12 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
             file = open(script_file, 'r')
         except IOError, warning:
             try:
-                raise RelaxError, "The script file '" + script_file + "' does not exist."
+                raise RelaxError("The script file '" + script_file + "' does not exist.")
             except AllRelaxErrors, instance:
                 sys.stdout.write(instance.__str__())
                 sys.stdout.write("\n")
                 return
-        sys.stdout.write("script = " + `script_file` + "\n")
+        sys.stdout.write("script = " + repr(script_file) + "\n")
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
         sys.stdout.write(file.read())
         sys.stdout.write("----------------------------------------------------------------------------------------------------\n")
@@ -433,7 +441,7 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
 
     # Execute the script.
     try:
-        execfile(script_file, local)
+        exec(compile(open(script_file).read(), script_file, 'exec'), local)
 
     # Catch ctrl-C.
     except KeyboardInterrupt:
@@ -548,7 +556,7 @@ def runcode(self, code):
     """
 
     try:
-        exec code in self.locals
+        exec(code, self.locals)
     except SystemExit:
         raise
     except AllRelaxErrors, instance:
@@ -558,4 +566,4 @@ def runcode(self, code):
         self.showtraceback()
     else:
         if softspace(sys.stdout, 0):
-            print
+            print('')

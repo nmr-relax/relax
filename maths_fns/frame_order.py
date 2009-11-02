@@ -32,7 +32,7 @@ from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, reduce_alignment_tensor
-from maths_fns.rotation_matrix import R_euler_zyz
+from maths_fns.rotation_matrix import euler_zyz_to_R
 from relax_errors import RelaxError
 
 
@@ -68,28 +68,29 @@ class Frame_order:
 
         # Model test.
         if not model:
-            raise RelaxError, "The type of Frame Order model must be specified."
+            raise RelaxError("The type of Frame Order model must be specified.")
 
         # Store the initial parameter (as a copy).
         self.params = deepcopy(init_params)
 
+        # The rigid model.
+        if model == 'rigid':
+            # Tensor optimisation.
+            self.__init_tensors(full_tensors, red_tensors, red_errors, full_in_ref_frame)
+
+            # Alias the target function.
+            self.func = self.func_rigid
+
+
         # Isotropic cone model.
         if model == 'iso cone':
-            # Some checks.
-            if red_tensors == None or not len(red_tensors):
-                raise RelaxError, "The red_tensors argument " + `red_tensors` + " must be supplied."
-            if red_errors == None or not len(red_errors):
-                raise RelaxError, "The red_errors argument " + `red_errors` + " must be supplied."
-            if full_in_ref_frame == None or not len(full_in_ref_frame):
-                raise RelaxError, "The full_in_ref_frame argument " + `full_in_ref_frame` + " must be supplied."
-
             # Mix up.
             if full_tensors != None and frame_order_2nd != None:
-                raise RelaxError, "Tensors and Frame Order matrices cannot be supplied together."
+                raise RelaxError("Tensors and Frame Order matrices cannot be supplied together.")
 
-            # Tensor optimisation.
-            elif full_tensors != None:
-                self.__init_iso_cone(full_tensors, red_tensors, red_errors, full_in_ref_frame)
+            # Tensor setup.
+            if full_tensors != None:
+                self.__init_tensors(full_tensors, red_tensors, red_errors, full_in_ref_frame)
 
             # Optimisation to the 2nd degree Frame Order matrix components directly.
             elif frame_order_2nd != None:
@@ -97,10 +98,14 @@ class Frame_order:
 
             # Badly supplied arguments.
             else:
-                raise RelaxError, "The arguments have been incorrectly supplied, cannot determine the optimisation mode."
+                raise RelaxError("The arguments have been incorrectly supplied, cannot determine the optimisation mode.")
+
+            # The cone axis storage and molecular frame z-axis.
+            self.cone_axis = zeros(3, float64)
+            self.z_axis = array([0, 0, 1], float64)
 
 
-    def __init_iso_cone(self, full_tensors, red_tensors, red_errors):
+    def __init_tensors(self, full_tensors, red_tensors, red_errors, full_in_ref_frame):
         """Set up isotropic cone optimisation against the alignment tensor data.
 
         @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
@@ -116,9 +121,15 @@ class Frame_order:
         @type red_errors:           numpy nx5D, rank-1 float64 array
         """
 
-        # Checks.
-        if red_tensors == None:
-            raise RelaxError, "The reduced tensors have not been supplied."
+        # Some checks.
+        if full_tensors == None or not len(full_tensors):
+            raise RelaxError("The full_tensors argument " + repr(full_tensors) + " must be supplied.")
+        if red_tensors == None or not len(red_tensors):
+            raise RelaxError("The red_tensors argument " + repr(red_tensors) + " must be supplied.")
+        if red_errors == None or not len(red_errors):
+            raise RelaxError("The red_errors argument " + repr(red_errors) + " must be supplied.")
+        if full_in_ref_frame == None or not len(full_in_ref_frame):
+            raise RelaxError("The full_in_ref_frame argument " + repr(full_in_ref_frame) + " must be supplied.")
 
         # Tensor set up.
         self.num_tensors = len(full_tensors) / 5
@@ -127,10 +138,6 @@ class Frame_order:
         self.red_errors = red_errors
         self.red_tensors_bc = zeros(self.num_tensors*5, float64)
         self.full_in_ref_frame = full_in_ref_frame
-
-        # The cone axis storage and molecular frame z-axis.
-        self.cone_axis = zeros(3, float64)
-        self.z_axis = array([0, 0, 1], float64)
 
         # The rotation to the Frame Order eigenframe.
         self.rot = zeros((3, 3), float64)
@@ -172,28 +179,72 @@ class Frame_order:
         self.func = self.func_iso_cone_elements
 
 
+    def func_rigid(self, params):
+        """Target function for rigid model optimisation using the alignment tensors.
+
+        This function optimises against alignment tensors.  The Euler angles for the tensor rotation
+        are the 3 parameters optimised in this model.
+
+        @param params:  The vector of parameter values.  These are the tensor rotation angles
+                        {alpha, beta, gamma}.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Unpack the parameters.
+        alpha, beta, gamma = params
+
+        # Alignment tensor rotation.
+        euler_zyz_to_R(alpha, beta, gamma, self.rot)
+
+        # Back calculate the rotated tensors.
+        for i in range(self.num_tensors):
+            # Tensor indices.
+            index1 = i*5
+            index2 = i*5+5
+
+            # Convert the original tensor to 3D, rank-2 form.
+            to_tensor(self.tensor_3D, self.full_tensors[index1:index2])
+
+            # Rotate the tensor (normal R.X.RT rotation).
+            if self.full_in_ref_frame[i]:
+                self.tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+
+            # Rotate the tensor (inverse RT.X.R rotation).
+            else:
+                self.tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+
+            # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
+            to_5D(self.red_tensors_bc[index1:index2], self.tensor_3D)
+
+        # Return the chi-squared value.
+        return chi2(self.red_tensors, self.red_tensors_bc, self.red_errors)
+
+
     def func_iso_cone(self, params):
         """Target function for isotropic cone model optimisation using the alignment tensors.
 
         This function optimises against alignment tensors.  The cone axis spherical angles theta and
         phi and the cone angle theta are the 3 parameters optimised in this model.
 
-        @param params:  The vector of parameter values {theta, phi, theta_cone} where the first two
-                        are the polar and azimuthal angles of the cone axis theta_cone is the
-                        isotropic cone angle.
+        @param params:  The vector of parameter values {alpha, beta, gamma, theta, phi, theta_cone}
+                        where the first 3 are the tensor rotation Euler angles, the next two are the
+                        polar and azimuthal angles of the cone axis theta_cone is the isotropic cone
+                        angle.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
         """
 
-        # Break up the parameters.
+        # Unpack the parameters.
         alpha, beta, gamma, theta, phi, theta_cone = params
 
         # Generate the 2nd degree Frame Order super matrix.
         self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
 
-        # Reduced alignment tensor rotation into the eigenframe.
-        R_euler_zyz(self.rot, alpha, beta, gamma)
+        # Reduced alignment tensor rotation.
+        euler_zyz_to_R(alpha, beta, gamma, self.rot)
 
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):

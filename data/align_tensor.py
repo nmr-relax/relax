@@ -613,12 +613,18 @@ class AlignTensorList(ListType):
         self.append(AlignTensorData(name))
 
 
-    def from_xml(self, align_tensor_nodes):
+    def from_xml(self, align_tensor_super_node):
         """Recreate the alignment tensor data structure from the XML alignment tensor node.
 
-        @param align_tensor_nodes:  The alignment tensor XML nodes.
-        @type align_tensor_nodes:   list of xml.dom.minicompat.Element instances
+        @param align_tensor_super_node:     The alignment tensor XML nodes.
+        @type align_tensor_super_node:      xml.dom.minicompat.Element instance
         """
+
+        # Recreate all the alignment tensor data structures.
+        xml_to_object(align_tensor_super_node, self, blacklist=['align_tensor'])
+
+        # Get the individual tensors.
+        align_tensor_nodes = align_tensor_super_node.getElementsByTagName('align_tensor')
 
         # Loop over the child nodes.
         for align_tensor_node in align_tensor_nodes:
@@ -657,16 +663,19 @@ class AlignTensorList(ListType):
         # Set the alignment tensor attributes.
         tensor_list_element.setAttribute('desc', 'Alignment tensor list')
 
+        # Add all simple python objects within the PipeContainer to the pipe element.
+        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
+
         # Loop over the tensors.
         for i in xrange(len(self)):
             # Create an XML element for a single tensor.
             tensor_element = doc.createElement('align_tensor')
             tensor_list_element.appendChild(tensor_element)
-            tensor_element.setAttribute('index', `i`)
+            tensor_element.setAttribute('index', repr(i))
             tensor_element.setAttribute('desc', 'Alignment tensor')
 
             # Add all simple python objects within the PipeContainer to the pipe element.
-            fill_object_contents(doc, tensor_element, object=self[i], blacklist=self[i].__class__.__dict__.keys())
+            fill_object_contents(doc, tensor_element, object=self[i], blacklist=list(self[i].__class__.__dict__.keys()))
 
 
 class AlignTensorData(Element):
@@ -710,7 +719,7 @@ class AlignTensorData(Element):
 
         # Test if the attribute that is trying to be set is modifiable.
         if not param_name in self.__mod_attr__:
-            raise RelaxError, "The object " + `name` + " is not modifiable."
+            raise RelaxError("The object " + repr(name) + " is not modifiable.")
 
         # Set the attribute normally.
         self.__dict__[name] = value

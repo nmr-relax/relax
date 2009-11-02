@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2007-2008 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2007-2009 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,14 +41,11 @@ def fix(element, fixed):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Diffusion tensor.
     if element == 'diff' or element == 'all':
         # Test if the diffusion tensor data is loaded.
         if not hasattr(cdp, 'diff_tensor'):
-            raise RelaxNoTensorError, 'diffusion'
+            raise RelaxNoTensorError('diffusion')
 
         # Set the fixed flag.
         cdp.diff_tensor.fixed = fixed
@@ -72,4 +69,4 @@ def fix(element, fixed):
 
     # Unknown.
     if element not in ['diff', 'all_spins', 'all']:
-        raise RelaxError, "The 'element' argument " + `element` + " is unknown."
+        raise RelaxError("The 'element' argument " + repr(element) + " is unknown.")

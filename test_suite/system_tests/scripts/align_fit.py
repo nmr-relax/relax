@@ -1,6 +1,7 @@
 """Script for testing the fitting an alignment tensor to RDCs or PCSs."""
 
 # Python module imports.
+from os import sep
 import sys
 
 # relax module imports.
@@ -9,12 +10,11 @@ from generic_fns import pipes
 
 
 # Path of the alignment data and structure.
-DATA_PATH = sys.path[-1] + '/test_suite/shared_data/align_data/CaM'
-STRUCT_PATH = sys.path[-1] + '/test_suite/shared_data/structures'
+DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep+'CaM'
+STRUCT_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
 # Create the data pipe.
 pipe.create('rdc', 'N-state')
-cdp = pipes.get_pipe()
 
 # Set the mode, if not specified by the system test.
 if not hasattr(ds, 'mode'):
@@ -44,11 +44,11 @@ value.set('1H', 'proton', spin_id="@N")
 
 # RDCs.
 if ds.mode in ['rdc', 'all']:
-    rdc.read(id='synth', file=rdc_file, dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
+    rdc.read(align_id='synth', file=rdc_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
 
 # PCSs.
 if ds.mode in ['pcs', 'all']:
-    pcs.read(id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4, data_col=5)
+    pcs.read(align_id='synth', file=pcs_file, dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6)
 
     # Set the paramagnetic centre.
     pcs.centre(atom_id=':1000@CA')
@@ -80,5 +80,5 @@ results.write('devnull', force=True)
 align_tensor.display()
 
 # Print the contents of the current data pipe (for debugging Q-values).
-print cdp
-print cdp.align_tensors[0]
+print(cdp)
+print((cdp.align_tensors[0]))

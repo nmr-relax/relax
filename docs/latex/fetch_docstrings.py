@@ -58,13 +58,9 @@ class Fetch_docstrings:
         self.file = open(file, 'w')
 
         # Get the names of the data structures.
-        names = self.local.keys()
+        names = sorted(self.local.keys())
 
         # Alphabetically sort the names of the data structures.
-        names.sort()
-
-        # Loop over the data structures.
-        #for name in ['minimise']:
         for name in names:
             # Skip the name if it is in the blacklist.
             if name in self.blacklist:
@@ -77,6 +73,7 @@ class Fetch_docstrings:
             if hasattr(object, '__relax_help__'):
                 # Document the user class.
                 self.doc_user_class(name, object)
+                continue
 
             # Skip the object if there is no docstring.
             if not hasattr(object, '__doc__') or not object.__doc__:
@@ -93,12 +90,9 @@ class Fetch_docstrings:
         """Document the user class."""
 
         # Get the names of the data structures.
-        names = dir(parent_object)
+        names = sorted(dir(parent_object))
 
         # Alphabetically sort the names of the data structures.
-        names.sort()
-
-        # Loop over the data structures.
         for name in names:
             # Skip names begining with an underscore.
             if search('^_', name):
@@ -296,7 +290,7 @@ class Fetch_docstrings:
         string = ''
 
         # Loop until the end of the verbatim section.
-        while 1:
+        while True:
             # End of the keywords section (go to the next line then break).
             if self.i+1 > len(self.docstring_lines) or (self.docstring_lines[self.i] == '' and self.docstring_lines[self.i+1] == ''):
                 self.i = self.i + 1
@@ -519,7 +513,7 @@ class Fetch_docstrings:
 
         # Determine the element spacing.
         j = self.i
-        while 1:
+        while True:
             # Walk to the next line.
             j = j + 1
 
@@ -551,7 +545,7 @@ class Fetch_docstrings:
             string = string + ' \n '
 
             # Loop until the end of the list.
-            while 1:
+            while True:
                 # Increment the line counter.
                 self.i = self.i + 1
 
@@ -565,7 +559,7 @@ class Fetch_docstrings:
         # Spaced list.
         else:
             # Loop until the end of the list.
-            while 1:
+            while True:
                 # Increment the line counter.
                 self.i = self.i + 1
 
@@ -603,7 +597,7 @@ class Fetch_docstrings:
         string = self.docstring_lines[self.i]
 
         # Loop until the end of the paragraph.
-        while 1:
+        while True:
             # Increment the line counter.
             self.i = self.i + 1
 
@@ -641,7 +635,7 @@ class Fetch_docstrings:
         #############
 
         # Print the function name to sys.stdout
-        sys.stdout.write("Function: " + `function` + "\n")
+        sys.stdout.write("User function: %s().\n" % function)
 
         # Get the docstring.
         docstring = getdoc(object)
@@ -696,7 +690,7 @@ class Fetch_docstrings:
 
         # Loop over the lines.
         self.i = 1     # Skip the first two lines (synopsis and blank line).
-        while 1:
+        while True:
             # Increment the line number.
             self.i = self.i + 1
 
@@ -832,7 +826,7 @@ class Fetch_docstrings:
 
                     # Don't know what to do with this!
                     if len(line_elements) > 2:
-                        sys.write("Keyword failure in: " + `line` + " \n ")
+                        sys.write("Keyword failure in: " + repr(line) + " \n ")
                         sys.exit()
 
                     # Format the keyword.
@@ -898,7 +892,7 @@ class Fetch_docstrings:
                 # Badly formatted list.
                 if len(elements) > 2:
                     sys.stderr.write("Error: Badly formatted list element.\n")
-                    sys.stderr.write("The element is: " + `lines[i]` + "\n")
+                    sys.stderr.write("The element is: " + repr(lines[i]) + "\n")
                     sys.exit()
 
                 # Plain list.
@@ -959,7 +953,7 @@ class Fetch_docstrings:
 
         # Weird quote.
         elif len(elements) > 3:
-            sys.stderr.write('Unknown quote: ' + `self.words[index]`)
+            sys.stderr.write('Unknown quote: ' + repr(self.words[index]))
             sys.exit()
 
         # Multiword quote.
@@ -982,7 +976,7 @@ class Fetch_docstrings:
         string = self.docstring_lines[self.i]
 
         # Loop until the end of the example.
-        while 1:
+        while True:
             # Increment the line counter.
             self.i = self.i + 1
 
@@ -1092,7 +1086,7 @@ class Fetch_docstrings:
 
         # Count the number of columns.
         num_col = len(split(self.docstring_lines[self.i], '|'))
-        string = `num_col-2` + ' \n '
+        string = repr(num_col-2) + ' \n '
 
         # Not really a table!
         if num_col == 1:
@@ -1118,7 +1112,7 @@ class Fetch_docstrings:
         self.i = self.i + 3
 
         # Go through the table.
-        while 1:
+        while True:
             # End of the table (go to the next line then break).
             if self.i >= len(self.docstring_lines) or search('^\\|_', self.docstring_lines[self.i]):
                 self.i = self.i + 1
@@ -1151,7 +1145,7 @@ class Fetch_docstrings:
         string = ''
 
         # Loop until the end of the verbatim section.
-        while 1:
+        while True:
             # Increment the line counter.
             self.i = self.i + 1
 

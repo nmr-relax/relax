@@ -15,7 +15,7 @@ PRE = 15.0
 
 
 # Path to files.
-path = sys.path[-1] + '/test_suite/shared_data/'
+path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep
 
 # Create a data pipe.
 pipe.create('pre', 'N-state')
@@ -34,7 +34,7 @@ centre = spin.pos
 file = open('unresolved', 'w')
 
 # Find the atoms within X Angstrom.
-print "\n\nBleached spins:"
+print("\n\nBleached spins:")
 for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # Skip calciums.
     if spin.name == "CA":
@@ -46,7 +46,7 @@ for spin, mol, res_num, res_name in spin_loop(full_info=True):
     # PRE.
     if norm(r) < PRE:
         # Print out.
-        print "\t%20s %20s %20s %20s %20s" % (mol, res_num, res_name, spin.num, spin.name)
+        print(("\t%20s %20s %20s %20s %20s" % (mol, res_num, res_name, spin.num, spin.name)))
 
         file.write("%20s %20s %20s %20s %20s\n" % (mol, res_num, res_name, spin.num, spin.name))
 

@@ -3,6 +3,7 @@
 # Bug #12679 (https://gna.org/bugs/index.php?12679).
 
 # Python module imports.
+from os import sep
 import sys
 
 # relax module imports.
@@ -17,11 +18,11 @@ if not hasattr(ds, 'tmpdir'):
 pipe.create('rx', 'relax_fit')
 
 # The paths to the data files.
-seq_path = sys.path[-1] + '/test_suite/shared_data/sequence'
-list_path = sys.path[-1] + '/test_suite/shared_data/peak_lists'
+seq_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'sequence'
+list_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
 
 # Load the sequence.
-sequence.read('1UBQ.seq', dir=seq_path, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+sequence.read('1UBQ.seq', dir=seq_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
 # Spectrum names.
 names = [
@@ -103,4 +104,4 @@ grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr'
 grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir=ds.tmpdir, force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
-state.save('rx.save', dir_name=ds.tmpdir, force=True)
+state.save('rx.save', dir=ds.tmpdir, force=True)

@@ -45,17 +45,14 @@ def create_data(method=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations have not been set up."
+        raise RelaxError("Monte Carlo simulations have not been set up.")
 
     # Test the method argument.
     valid_methods = ['back_calc', 'direct']
     if method not in valid_methods:
-        raise RelaxError, "The simulation creation method " + `method` + " is not valid."
+        raise RelaxError("The simulation creation method " + repr(method) + " is not valid.")
 
     # Specific Monte Carlo data creation, data return, and error return function setup.
     base_data_loop = get_specific_fn('base_data_loop', cdp.pipe_type)
@@ -122,12 +119,9 @@ def error_analysis(prune=0.0):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations have not been set up."
+        raise RelaxError("Monte Carlo simulations have not been set up.")
 
     # Model loop, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
     model_loop = get_specific_fn('model_loop', cdp.pipe_type)
@@ -154,8 +148,7 @@ def error_analysis(prune=0.0):
             n = len(chi2_array)
 
             # Create a sorted array of chi-squared values.
-            chi2_sorted = deepcopy(chi2_array)
-            chi2_sorted.sort()
+            chi2_sorted = sorted(deepcopy(chi2_array))
 
             # Number of indices to remove from one side of the chi2 distribution.
             num = int(float(n) * 0.5 * prune)
@@ -170,7 +163,7 @@ def error_analysis(prune=0.0):
 
         # Loop over the parameters.
         index = 0
-        while 1:
+        while True:
             # Get the array of simulation parameters for the index.
             param_array = return_sim_param(model_info, index)
 
@@ -251,12 +244,9 @@ def initial_values():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations have not been set up."
+        raise RelaxError("Monte Carlo simulations have not been set up.")
 
     # Specific initial Monte Carlo parameter value function setup.
     init_sim_values = get_specific_fn('init_sim_values', cdp.pipe_type)
@@ -271,12 +261,9 @@ def off():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations have not been set up."
+        raise RelaxError("Monte Carlo simulations have not been set up.")
 
     # Turn simulations off.
     cdp.sim_state = False
@@ -288,12 +275,9 @@ def on():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
-        raise RelaxError, "Monte Carlo simulations have not been set up."
+        raise RelaxError("Monte Carlo simulations have not been set up.")
 
     # Turn simulations on.
     cdp.sim_state = True
@@ -309,9 +293,6 @@ def select_all_sims(number=None, all_select_sim=None):
                                 second corresponds to the models.
     @type all_select_sim:       list of lists of bool
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Model loop and set the selected simulation array functions.
     model_loop = get_specific_fn('model_loop', cdp.pipe_type)
@@ -349,12 +330,9 @@ def setup(number=None, all_select_sim=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test if Monte Carlo simulations have already been set up.
     if hasattr(cdp, 'sim_number'):
-        raise RelaxError, "Monte Carlo simulations have already been set up."
+        raise RelaxError("Monte Carlo simulations have already been set up.")
 
     # Create a number of MC sim data structures.
     cdp.sim_number = number

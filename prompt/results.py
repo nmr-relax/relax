@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008 Edward d'Auvergne                              #
+# Copyright (C) 2003-2005,2008-2009 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,31 +28,27 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import results
-from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
 
-class Results:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating results."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Results(User_fn_class):
+    """Class for manipulating results."""
 
     def display(self):
-        """Function for displaying the results."""
+        """Function for displaying the results.
+
+        Description
+        ~~~~~~~~~~~
+
+        This will print to screen (STDOUT) the results contained within the current data pipe.
+        """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.display()"
-            print text
+            print(text)
 
         # Execute the functional code.
         results.display()
@@ -83,23 +79,19 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir) + ")"
+            print(text)
 
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         results.read(file=file, directory=dir)
 
 
-    def write(self, file='results', dir='pipe_name', force=False, compress_type=1):
+    def write(self, file='results', dir='pipe_name', compress_type=1, force=False):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -110,9 +102,9 @@ class Results:
 
         dir:  The directory name.
 
-        force:  A flag which if True will cause the results file to be overwritten.
-
         compress_type:  The type of compression to use when creating the file.
+
+        force:  A flag which if True will cause the results file to be overwritten.
 
 
         Description
@@ -137,27 +129,17 @@ class Results:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "results.write("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", force=" + `force`
-            text = text + ", compress_type=" + `compress_type` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", compress_type=" + repr(compress_type)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # File.
-        if type(file) != str and not hasattr(file, 'write'):
-            raise RelaxStrFileError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
-
-        # Compression type.
-        if type(compress_type) != int:
-            raise RelaxIntError, ('compression type', compress_type)
+        # The argument checks.
+        check.is_str_or_inst(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(compress_type, 'compression type')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         results.write(file=file, directory=dir, force=force, compress_type=compress_type)

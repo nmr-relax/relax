@@ -30,7 +30,7 @@ from warnings import warn
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError
-from relax_io import extract_data, strip
+from relax_io import read_spin_data
 from relax_warnings import RelaxNoSpinWarning
 
 
@@ -52,8 +52,8 @@ def desel_all():
         spin.select = False
 
 
-def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, boolean='AND', change_all=False):
-    """Deselect the spins contained in a file.
+def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False):
+    """Deselect the spins contained in the given file.
 
     @keyword file:                  The name of the file to open.
     @type file:                     str
@@ -64,18 +64,30 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
                                     correct format.  The format is a list of lists where the first
                                     index corresponds to the row and the second the column.
     @type file_data:                list of lists
-    @keyword mol_name_col:          The column containing the molecule name information.
+    @keyword spin_id_col:           The column containing the spin ID strings.  If supplied, the
+                                    mol_name_col, res_name_col, res_num_col, spin_name_col, and
+                                    spin_num_col arguments must be none.
+    @type spin_id_col:              int or None
+    @keyword mol_name_col:          The column containing the molecule name information.  If
+                                    supplied, spin_id_col must be None.
     @type mol_name_col:             int or None
-    @keyword res_name_col:          The column containing the residue name information.
+    @keyword res_name_col:          The column containing the residue name information.  If
+                                    supplied, spin_id_col must be None.
     @type res_name_col:             int or None
-    @keyword res_num_col:           The column containing the residue number information.
+    @keyword res_num_col:           The column containing the residue number information.  If
+                                    supplied, spin_id_col must be None.
     @type res_num_col:              int or None
-    @keyword spin_name_col:         The column containing the spin name information.
+    @keyword spin_name_col:         The column containing the spin name information.  If supplied,
+                                    spin_id_col must be None.
     @type spin_name_col:            int or None
-    @keyword spin_num_col:          The column containing the spin number information.
+    @keyword spin_num_col:          The column containing the spin number information.  If supplied,
+                                    spin_id_col must be None.
     @type spin_num_col:             int or None
     @keyword sep:                   The column separator which, if None, defaults to whitespace.
     @type sep:                      str or None
+    @keyword spin_id:               The spin ID string used to restrict data loading to a subset of
+                                    all spins.
+    @type spin_id:                  None or str
     @param boolean:                 The boolean operator used to deselect the spin systems with.  It
                                     can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
                                     This will be ignored if the change_all flag is set.
@@ -96,43 +108,13 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Extract the data from the file.
-    file_data = extract_data(file, dir)
-
-    # Count the number of header lines.
-    header_lines = 0
-    num_col = max(res_num_col, spin_num_col)
-    for i in xrange(len(file_data)):
-        try:
-            int(file_data[i][num_col])
-        except:
-            header_lines = header_lines + 1
-        else:
-            break
-
-    # Remove the header.
-    file_data = file_data[header_lines:]
-
-    # Strip the data.
-    file_data = strip(file_data)
-
-    # Minimum number of columns.
-    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col)
-
     # First select all spins if the change_all flag is set.
     if change_all:
         for spin in spin_loop():
             spin.select = True
 
     # Then deselect the spins in the file.
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-
-        # Generate the spin identification string.
-        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
+    for id in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
         spin = return_spin(id)
 
@@ -160,7 +142,7 @@ def desel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_nam
             elif boolean == 'XNOR':
                 spin.select = (spin.select and False) or not (spin.select or False)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError("Unknown boolean operator " + repr(boolean))
 
 
 def desel_spin(spin_id=None, boolean='AND', change_all=False):
@@ -214,7 +196,7 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
             elif boolean == 'XNOR':
                 spin.select = (spin.select and False) or not (spin.select or False)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError("Unknown boolean operator " + repr(boolean))
 
 
 def reverse(spin_id=None):
@@ -259,7 +241,7 @@ def sel_all():
         spin.select = True
 
 
-def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, boolean='OR', change_all=False):
+def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='OR', change_all=False):
     """Select the spins contained in the given file.
 
     @keyword file:                  The name of the file to open.
@@ -271,18 +253,30 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
                                     correct format.  The format is a list of lists where the first
                                     index corresponds to the row and the second the column.
     @type file_data:                list of lists
-    @keyword mol_name_col:          The column containing the molecule name information.
+    @keyword spin_id_col:           The column containing the spin ID strings.  If supplied, the
+                                    mol_name_col, res_name_col, res_num_col, spin_name_col, and
+                                    spin_num_col arguments must be none.
+    @type spin_id_col:              int or None
+    @keyword mol_name_col:          The column containing the molecule name information.  If
+                                    supplied, spin_id_col must be None.
     @type mol_name_col:             int or None
-    @keyword res_name_col:          The column containing the residue name information.
+    @keyword res_name_col:          The column containing the residue name information.  If
+                                    supplied, spin_id_col must be None.
     @type res_name_col:             int or None
-    @keyword res_num_col:           The column containing the residue number information.
+    @keyword res_num_col:           The column containing the residue number information.  If
+                                    supplied, spin_id_col must be None.
     @type res_num_col:              int or None
-    @keyword spin_name_col:         The column containing the spin name information.
+    @keyword spin_name_col:         The column containing the spin name information.  If supplied,
+                                    spin_id_col must be None.
     @type spin_name_col:            int or None
-    @keyword spin_num_col:          The column containing the spin number information.
+    @keyword spin_num_col:          The column containing the spin number information.  If supplied,
+                                    spin_id_col must be None.
     @type spin_num_col:             int or None
     @keyword sep:                   The column separator which, if None, defaults to whitespace.
     @type sep:                      str or None
+    @keyword spin_id:               The spin ID string used to restrict data loading to a subset of
+                                    all spins.
+    @type spin_id:                  None or str
     @param boolean:                 The boolean operator used to select the spin systems with.  It
                                     can be one of 'OR', 'NOR', 'AND', 'NAND', 'XOR', or 'XNOR'.
                                     This will be ignored if the change_all flag is set.
@@ -303,29 +297,6 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Extract the data from the file.
-    file_data = extract_data(file, dir)
-
-    # Count the number of header lines.
-    header_lines = 0
-    num_col = max(res_num_col, spin_num_col)
-    for i in xrange(len(file_data)):
-        try:
-            int(file_data[i][num_col])
-        except:
-            header_lines = header_lines + 1
-        else:
-            break
-
-    # Remove the header.
-    file_data = file_data[header_lines:]
-
-    # Strip the data.
-    file_data = strip(file_data)
-
-    # Minimum number of columns.
-    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col)
-
     # First deselect all spins if the change_all flag is set.
     if change_all:
         # Loop over all spins.
@@ -333,14 +304,7 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
             spin.select = False
 
     # Then deselect the spins in the file.
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
-
-        # Generate the spin identification string.
-        id = generate_spin_id_data_array(data=file_data[i], mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
-
+    for id in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id):
         # Get the corresponding spin container.
         spin = return_spin(id)
 
@@ -368,7 +332,7 @@ def sel_read(file=None, dir=None, mol_name_col=None, res_num_col=None, res_name_
             elif boolean == 'XNOR':
                 spin.select = (spin.select and True) or not (spin.select or True)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError("Unknown boolean operator " + repr(boolean))
 
 
 def sel_spin(spin_id=None, boolean='OR', change_all=False):
@@ -423,4 +387,4 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
             elif boolean == 'XNOR':
                 spin.select = (spin.select and True) or not (spin.select or True)
             else:
-                raise RelaxError, "Unknown boolean operator " + `boolean`
+                raise RelaxError("Unknown boolean operator " + repr(boolean))

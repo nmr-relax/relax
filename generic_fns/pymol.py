@@ -64,9 +64,6 @@ class Pymol:
         if not self.pipe_open_test():
             return
 
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
-
         # Reinitialise PyMOL.
         self.pipe_write("reinitialize")
 
@@ -92,9 +89,6 @@ class Pymol:
 
     def pipe_open(self):
         """Function for opening a PyMOL pipe."""
-
-        # Get the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Test that the PyMOL binary exists.
         test_binary('pymol')
@@ -160,9 +154,6 @@ def cartoon():
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Get the current data pipe.
-    cdp = pipes.get_pipe()
-
     # Test for the structure.
     if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
@@ -185,13 +176,13 @@ def cartoon():
             open_files.append(pdb_file)
 
             # Hide everything.
-            pymol.pipe_write("cmd.hide('everything'," + `id` + ")")
+            pymol.pipe_write("cmd.hide('everything'," + repr(id) + ")")
 
             # Show the cartoon style.
-            pymol.pipe_write("cmd.show('cartoon'," + `id` + ")")
+            pymol.pipe_write("cmd.show('cartoon'," + repr(id) + ")")
 
             # Colour by secondary structure.
-            pymol.pipe_write("util.cbss(" + `id` + ", 'red', 'yellow', 'green')")
+            pymol.pipe_write("util.cbss(" + repr(id) + ", 'red', 'yellow', 'green')")
 
 
 def command(command):
@@ -287,9 +278,6 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     @return:                The list of PyMOL commands.
     @rtype:                 list of str
     """
-
-    # Alias the current data pipe.
-    cdp = pipes.get_pipe()
 
     # Specific PyMOL macro creation function.
     pymol_macro = get_specific_fn('pymol_macro', cdp.pipe_type)
@@ -420,7 +408,7 @@ def vector_dist(file=None):
     ###################
 
     # Select the vector distribution.
-    pymol.pipe_write("cmd.show('surface', " + `id` + ")")
+    pymol.pipe_write("cmd.show('surface', " + repr(id) + ")")
 
 
 def view():
@@ -428,7 +416,7 @@ def view():
 
     # Open a PyMOL pipe.
     if pymol.pipe_open_test():
-        raise RelaxError, "The PyMOL pipe already exists."
+        raise RelaxError("The PyMOL pipe already exists.")
     else:
         pymol.pipe_open()
 

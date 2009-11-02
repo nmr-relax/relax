@@ -22,12 +22,12 @@
 
 # Python module imports.
 from math import pi, sqrt
+from os import sep
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 
 
 class N_state_model(TestCase):
@@ -51,10 +51,7 @@ class N_state_model(TestCase):
         """
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/5_state_xz.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'5_state_xz.py')
 
         # Test the optimised probabilities.
         self.assertAlmostEqual(cdp.probs[0], 0.2)
@@ -95,10 +92,7 @@ class N_state_model(TestCase):
         ds.mode = 'all'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -121,10 +115,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189412096996)
@@ -144,10 +135,7 @@ class N_state_model(TestCase):
         ds.mode = 'pcs'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -169,10 +157,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189165581069)
@@ -191,10 +176,7 @@ class N_state_model(TestCase):
         ds.mode = 'rdc'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -216,10 +198,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/align_fit.py')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
 
         # Test the optimised values (these are about ~10% different from Pales).
         # Pales:      S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)
@@ -237,4 +216,4 @@ class N_state_model(TestCase):
         """The 4-state model analysis of lactose using RDCs and PCSs."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + '/test_suite/system_tests/scripts/lactose_n_state.py')
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'lactose_n_state.py')

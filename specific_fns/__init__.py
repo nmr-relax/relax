@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004, 2006-2008 Edward d'Auvergne                             #
+# Copyright (C) 2004, 2006-2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,10 +27,14 @@
 # The available modules.
 __all__ = [ 'base_class',
             'consistency_tests',
+            'frame_order',
             'hybrid',
             'jw_mapping',
             'model_free',
             'n_state_model',
             'noe',
             'relax_disp',
-            'relax_fit']
+            'relax_fit',
+            'setup',
+            'srls'
+]

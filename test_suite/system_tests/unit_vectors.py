@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,12 +21,12 @@
 ###############################################################################
 
 # Python module imports.
+from os import sep
 import sys
 from unittest import TestCase
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from generic_fns import pipes
 
 
 class Unit_vectors(TestCase):
@@ -49,16 +49,13 @@ class Unit_vectors(TestCase):
         """Load the PDB file using the Scientific parser and calculate the XH unit vectors."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='scientific')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
 
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
@@ -74,7 +71,7 @@ class Unit_vectors(TestCase):
         """Load the PDB file using the Scientific parser and calculate the XH unit vectors (with spin numbers removed)."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='scientific')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
@@ -84,9 +81,6 @@ class Unit_vectors(TestCase):
 
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
@@ -102,16 +96,13 @@ class Unit_vectors(TestCase):
         """Load the PDB file using the internal parser and calculate the XH unit vectors."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='internal')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
 
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))
@@ -127,7 +118,7 @@ class Unit_vectors(TestCase):
         """Load the PDB file using the internal parser and calculate the XH unit vectors from it (with spin numbers removed)."""
 
         # Read the PDB file.
-        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + '/test_suite/shared_data/structures', read_model=1, parser='internal')
+        self.relax.interpreter._Structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Load the spins.
         self.relax.interpreter._Structure.load_spins(spin_id='@N')
@@ -137,9 +128,6 @@ class Unit_vectors(TestCase):
 
         # Calculate the unit vectors.
         self.relax.interpreter._Structure.vectors(attached='H')
-
-        # Alias the current data pipe.
-        cdp = pipes.get_pipe()
 
         # Leu 3.
         self.assert_(hasattr(cdp.mol[0].res[2].spin[0], 'xh_vect'))

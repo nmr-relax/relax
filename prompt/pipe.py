@@ -28,24 +28,15 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import pipes
-from relax_errors import RelaxListStrError, RelaxNoneListError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 from specific_fns.setup import hybrid_obj
 
 
-class Pipe:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for holding the functions for manipulating data pipes."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Pipe(User_fn_class):
+    """Class for holding the functions for manipulating data pipes."""
 
     def copy(self, pipe_from=None, pipe_to=None):
         """Function for copying a data pipe.
@@ -82,17 +73,17 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
-            print text
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
+            print(text)
 
-        # The source data pipe argument.
-        if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('data pipe from', pipe_from)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
-        # The target data pipe argument.
-        if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('data pipe to', pipe_to)
+        # Both pipe arguments cannot be None.
+        if pipe_from == None and pipe_to == None:
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
         pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
@@ -136,17 +127,13 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.create("
-            text = text + "pipe_name=" + `pipe_name`
-            text = text + ", pipe_type=" + `pipe_type` + ")"
-            print text
+            text = text + "pipe_name=" + repr(pipe_name)
+            text = text + ", pipe_type=" + repr(pipe_type) + ")"
+            print(text)
 
-        # The name of the data pipe.
-        if type(pipe_name) != str:
-            raise RelaxStrError, ('data pipe name', pipe_name)
-
-        # The data pipe type.
-        if type(pipe_type) != str:
-            raise RelaxStrError, ('data pipe type', pipe_type)
+        # The argument checks.
+        check.is_str(pipe_name, 'data pipe name')
+        check.is_str(pipe_type, 'data pipe type')
 
         # Execute the functional code.
         pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
@@ -166,7 +153,7 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.current()"
-            print text
+            print(text)
 
         # Execute the functional code.
         pipes.current()
@@ -184,21 +171,41 @@ class Pipe:
         Description
         ~~~~~~~~~~~
 
-        This function will permanently remove the data pipe and all of its contents.
+        This function will permanently remove the data pipe and all of its contents.  If the pipe
+        name is not given, then all data pipes will be deleted.
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.delete("
-            text = text + "pipe_name=" + `pipe_name` + ")"
-            print text
+            text = text + "pipe_name=" + repr(pipe_name) + ")"
+            print(text)
 
-        # The data pipe name argument.
-        if pipe_name != None and type(pipe_name) != str:
-            raise RelaxNoneStrError, ('data pipe name', pipe_name)
+        # The argument checks.
+        check.is_str(pipe_name, 'data pipe name', can_be_none=True)
 
         # Execute the functional code.
         pipes.delete(pipe_name=pipe_name)
+
+
+    def display(self):
+        """Print a list of all the data pipes.
+
+        Examples
+        ~~~~~~~~
+
+        To run the user function, type:
+
+        relax> pipe.display()
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "pipe.display()"
+            print(text)
+
+        # Execute the functional code.
+        pipes.display()
 
 
     def hybridise(self, hybrid=None, pipes=None):
@@ -237,44 +244,16 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.hybridise("
-            text = text + "hybrid=" + `hybrid`
-            text = text + ", pipes=" + `pipes` + ")"
-            print text
+            text = text + "hybrid=" + repr(hybrid)
+            text = text + ", pipes=" + repr(pipes) + ")"
+            print(text)
 
-        # The hybrid argument.
-        if hybrid != None and type(hybrid) != str:
-            raise RelaxNoneStrError, ('hybrid data pipe', hybrid)
-
-        # Data pipes.
-        if type(pipes) != list:
-            raise RelaxNoneListError, ('data pipes', pipes)
-        else:
-            for name in pipes:
-                if type(name) != str:
-                    raise RelaxListStrError, ('data pipes', pipes)
+        # The argument checks.
+        check.is_str(hybrid, 'hybrid pipe name')
+        check.is_str_list(pipes, 'data pipes')
 
         # Execute the functional code.
         hybrid_obj.hybridise(hybrid=hybrid, pipe_list=pipes)
-
-
-    def list(self):
-        """Print a list of all the data pipes.
-
-        Examples
-        ~~~~~~~~
-
-        To run the user function, type:
-
-        relax> pipe.list()
-        """
-
-        # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.list()"
-            print text
-
-        # Execute the functional code.
-        pipes.list()
 
 
     def switch(self, pipe_name=None):
@@ -304,12 +283,11 @@ class Pipe:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pipe.switch("
-            text = text + "pipe_name=" + `pipe_name` + ")"
-            print text
+            text = text + "pipe_name=" + repr(pipe_name) + ")"
+            print(text)
 
-        # The data pipe name argument.
-        if pipe_name != None and type(pipe_name) != str:
-            raise RelaxNoneStrError, ('data pipe name', pipe_name)
+        # The argument checks.
+        check.is_str(pipe_name, 'data pipe name')
 
         # Execute the functional code.
         pipes.switch(pipe_name=pipe_name)

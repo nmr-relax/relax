@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2007-2008 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2007-2009 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,23 +28,14 @@ __docformat__ = 'plaintext'
 import sys
 
 # relax module imports.
-import help
+from base_class import User_fn_class
+import check
 from generic_fns import sequence
-from relax_errors import RelaxError, RelaxBoolError, RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
+from relax_errors import RelaxError
 
 
-class Sequence:
-    def __init__(self, relax):
-        # Help.
-        self.__relax_help__ = \
-        """Class for manipulating sequence data."""
-
-        # Add the generic help string.
-        self.__relax_help__ = self.__relax_help__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
-
+class Sequence(User_fn_class):
+    """Class for manipulating sequence data."""
 
     def copy(self, pipe_from=None, pipe_to=None):
         """Copy the molecule, residue, and spin sequence data from one data pipe to another.
@@ -89,21 +80,17 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.copy("
-            text = text + "pipe_from=" + `pipe_from`
-            text = text + ", pipe_to=" + `pipe_to` + ")"
-            print text
+            text = text + "pipe_from=" + repr(pipe_from)
+            text = text + ", pipe_to=" + repr(pipe_to) + ")"
+            print(text)
 
-        # The pipe_from argument.
-        if pipe_from != None and type(pipe_from) != str:
-            raise RelaxNoneStrError, ('pipe from', pipe_from)
-
-        # The pipe_to argument.
-        if pipe_to != None and type(pipe_to) != str:
-            raise RelaxNoneStrError, ('pipe to', pipe_to)
+        # The argument checks.
+        check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
-            raise RelaxError, "The pipe_from and pipe_to arguments cannot both be set to None."
+            raise RelaxError("The pipe_from and pipe_to arguments cannot both be set to None.")
 
         # Execute the functional code.
         sequence.copy(pipe_from=pipe_from, pipe_to=pipe_to)
@@ -132,44 +119,28 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.display("
-            text = text + "sep=" + `sep`
-            text = text + ", mol_name_flag=" + `mol_name_flag`
-            text = text + ", res_num_flag=" + `res_num_flag`
-            text = text + ", res_name_flag=" + `res_name_flag`
-            text = text + ", spin_num_flag=" + `spin_num_flag`
-            text = text + ", spin_name_flag=" + `spin_name_flag` + ")"
-            print text
+            text = text + "sep=" + repr(sep)
+            text = text + ", mol_name_flag=" + repr(mol_name_flag)
+            text = text + ", res_num_flag=" + repr(res_num_flag)
+            text = text + ", res_name_flag=" + repr(res_name_flag)
+            text = text + ", spin_num_flag=" + repr(spin_num_flag)
+            text = text + ", spin_name_flag=" + repr(spin_name_flag) + ")"
+            print(text)
 
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
-
-        # Molecule name flag.
-        if type(mol_name_flag) != bool:
-            raise RelaxBoolError, ('molecule name flag', mol_name_flag)
-
-        # Residue number flag.
-        if type(res_num_flag) != bool:
-            raise RelaxBoolError, ('residue number flag', res_num_flag)
-
-        # Residue name flag.
-        if type(res_name_flag) != bool:
-            raise RelaxBoolError, ('residue name flag', res_name_flag)
-
-        # Spin number flag.
-        if type(spin_num_flag) != bool:
-            raise RelaxBoolError, ('spin number flag', spin_num_flag)
-
-        # Spin name flag.
-        if type(spin_name_flag) != bool:
-            raise RelaxBoolError, ('spin name flag', spin_name_flag)
+        # The argument checks.
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_bool(mol_name_flag, 'molecule name flag')
+        check.is_bool(res_num_flag, 'residue number flag')
+        check.is_bool(res_name_flag, 'residue name flag')
+        check.is_bool(spin_num_flag, 'spin number flag')
+        check.is_bool(spin_name_flag, 'spin name flag')
 
         # Execute the functional code.
         sequence.display(sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag)
 
 
-    def read(self, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, sep=None):
-        """Function for reading sequences of molecules, residues, and spins.
+    def read(self, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
+        """Read the molecule, residue, and spin sequence from a file.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
@@ -178,109 +149,102 @@ class Sequence:
 
         dir:  The directory where the file is located.
 
-        mol_name_col:  The molecule name column (this defaults to no column).
+        spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
+            number columns).
 
-        res_num_col:  The residue number column (the default is 0, i.e. the first column).
+        mol_name_col:  The molecule name column (alternative to the spin_id_col).
 
-        res_name_col:  The residue name column (the default is 1, i.e. the second column).
+        res_num_col:  The residue number column (alternative to the spin_id_col).
 
-        spin_num_col:  The spin number column (this defaults to no column).
+        res_name_col:  The residue name column (alternative to the spin_id_col).
 
-        spin_name_col:  The spin name column (this defaults to no column).
+        spin_num_col:  The spin number column (alternative to the spin_id_col).
+
+        spin_name_col:  The spin name column (alternative to the spin_id_col).
 
         sep:  The column separator (the default is white space).
+
+        spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
 
 
         Description
         ~~~~~~~~~~~
 
-        If no directory is given, the file will be assumed to be in the current working directory.
+        The spin system can be identified in the file using two different formats.  The first is the
+        spin ID string column which can include the molecule name, the residue name and number, and
+        the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
+        spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be
+        in separate columns.  Note that the numbering of columns starts at one.  The spin_id
+        argument can be used to restrict the reading to certain spin types, for example only 15N
+        spins when only residue information is in the file.
 
 
         Examples
         ~~~~~~~~
 
-        The following commands will read the sequence data out of a file called 'seq' where the
-        residue numbers and names are in the first and second columns respectively:
+        The following commands will read protein backbone 15N sequence data out of a file called
+        'seq' where the residue numbers and names are in the first and second columns respectively:
 
         relax> sequence.read('seq')
-        relax> sequence.read('seq', num_col=0, name_col=1)
-        relax> sequence.read(file='seq', num_col=0, name_col=1, sep=None)
+        relax> sequence.read('seq', res_num_col=1, res_name_col=2)
+        relax> sequence.read(file='seq', res_num_col=1, res_name_col=2, sep=None)
 
 
         The following commands will read the residue sequence out of the file 'noe.out' which also
         contains the NOE values:
 
         relax> sequence.read('noe.out')
-        relax> sequence.read('noe.out', num_col=0, name_col=1)
-        relax> sequence.read(file='noe.out', num_col=0, name_col=1)
+        relax> sequence.read('noe.out', res_num_col=1, res_name_col=2)
+        relax> sequence.read(file='noe.out', res_num_col=1, res_name_col=2)
 
 
         The following commands will read the sequence out of the file 'noe.600.out' where the
         residue numbers are in the second column, the names are in the sixth column and the columns
         are separated by commas:
 
-        relax> sequence.read('noe.600.out', num_col=1, name_col=5, sep=',')
-        relax> sequence.read(file='noe.600.out', num_col=1, name_col=5, sep=',')
+        relax> sequence.read('noe.600.out', res_num_col=2, res_name_col=6, sep=',')
+        relax> sequence.read(file='noe.600.out', res_num_col=2, res_name_col=6, sep=',')
 
 
         The following commands will read the RNA residues and atoms (including C2, C5, C6, C8, N1,
         and N3) from the file '500.NOE', where the residue number, residue name, spin number, and
         spin name are in the first to fourth columns respectively:
 
-        relax> sequence.read('500.NOE', spin_num_col=2, spin_name_col=3)
-        relax> sequence.read('500.NOE', num_col=0, name_col=1, spin_num_col=2, spin_name_col=3)
-        relax> sequence.read(file='500.NOE', spin_num_col=2, spin_name_col=3)
-        relax> sequence.read(file='500.NOE', num_col=0, name_col=1, spin_num_col=2, spin_name_col=3)
+        relax> sequence.read('500.NOE', res_num_col=1, res_name_col=2, spin_num_col=3,
+                             spin_name_col=4)
+        relax> sequence.read(file='500.NOE', res_num_col=1, res_name_col=2, spin_num_col=3,
+                             spin_name_col=4)
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.read("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", mol_name_col=" + `mol_name_col`
-            text = text + ", res_num_col=" + `res_num_col`
-            text = text + ", res_name_col=" + `res_name_col`
-            text = text + ", spin_num_col=" + `spin_num_col`
-            text = text + ", spin_name_col=" + `spin_name_col`
-            text = text + ", sep=" + `sep` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", spin_id_col=" + repr(spin_id_col)
+            text = text + ", mol_name_col=" + repr(mol_name_col)
+            text = text + ", res_num_col=" + repr(res_num_col)
+            text = text + ", res_name_col=" + repr(res_name_col)
+            text = text + ", spin_num_col=" + repr(spin_num_col)
+            text = text + ", spin_name_col=" + repr(spin_name_col)
+            text = text + ", sep=" + repr(sep)
+            text = text + ", spin_id=" + repr(spin_id) + ")"
+            print(text)
 
-        # The file name.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Molecule name column.
-        if mol_name_col != None and type(mol_name_col) != int:
-            raise RelaxNoneIntError, ('molecule name column', mol_name_col)
-
-        # Residue number column.
-        if res_name_col != None and type(res_num_col) != int:
-            raise RelaxNoneIntError, ('residue number column', res_num_col)
-
-        # Residue name column.
-        if res_name_col != None and type(res_name_col) != int:
-            raise RelaxNoneIntError, ('residue name column', res_name_col)
-
-        # Spin number column.
-        if spin_num_col != None and type(spin_num_col) != int:
-            raise RelaxNoneIntError, ('spin number column', spin_num_col)
-
-        # Spin name column.
-        if spin_name_col != None and type(spin_name_col) != int:
-            raise RelaxNoneIntError, ('spin name column', spin_name_col)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        sequence.read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep)
+        sequence.read(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
 
     def write(self, file, dir=None, sep=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, spin_num_flag=False, spin_name_flag=False, force=False):
@@ -317,52 +281,27 @@ class Sequence:
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "sequence.write("
-            text = text + "file=" + `file`
-            text = text + ", dir=" + `dir`
-            text = text + ", sep=" + `sep`
-            text = text + ", mol_name_flag=" + `mol_name_flag`
-            text = text + ", res_num_flag=" + `res_num_flag`
-            text = text + ", res_name_flag=" + `res_name_flag`
-            text = text + ", spin_num_flag=" + `spin_num_flag`
-            text = text + ", spin_name_flag=" + `spin_name_flag`
-            text = text + ", force=" + `force` + ")"
-            print text
+            text = text + "file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", sep=" + repr(sep)
+            text = text + ", mol_name_flag=" + repr(mol_name_flag)
+            text = text + ", res_num_flag=" + repr(res_num_flag)
+            text = text + ", res_name_flag=" + repr(res_name_flag)
+            text = text + ", spin_num_flag=" + repr(spin_num_flag)
+            text = text + ", spin_name_flag=" + repr(spin_name_flag)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
 
-        # File.
-        if type(file) != str:
-            raise RelaxStrError, ('file name', file)
-
-        # Directory.
-        if dir != None and type(dir) != str:
-            raise RelaxNoneStrError, ('directory name', dir)
-
-        # Column separator.
-        if sep != None and type(sep) != str:
-            raise RelaxNoneStrError, ('column separator', sep)
-
-        # Molecule name flag.
-        if type(mol_name_flag) != bool:
-            raise RelaxBoolError, ('molecule name flag', mol_name_flag)
-
-        # Residue number flag.
-        if type(res_num_flag) != bool:
-            raise RelaxBoolError, ('residue number flag', res_num_flag)
-
-        # Residue name flag.
-        if type(res_name_flag) != bool:
-            raise RelaxBoolError, ('residue name flag', res_name_flag)
-
-        # Spin number flag.
-        if type(spin_num_flag) != bool:
-            raise RelaxBoolError, ('spin number flag', spin_num_flag)
-
-        # Spin name flag.
-        if type(spin_name_flag) != bool:
-            raise RelaxBoolError, ('spin name flag', spin_name_flag)
-
-        # The force flag.
-        if type(force) != bool:
-            raise RelaxBoolError, ('force flag', force)
+        # The argument checks.
+        check.is_str(file, 'file name')
+        check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_bool(mol_name_flag, 'molecule name flag')
+        check.is_bool(res_num_flag, 'residue number flag')
+        check.is_bool(res_name_flag, 'residue name flag')
+        check.is_bool(spin_num_flag, 'spin number flag')
+        check.is_bool(spin_name_flag, 'spin name flag')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         sequence.write(file=file, dir=dir, sep=sep, mol_name_flag=mol_name_flag, res_num_flag=res_num_flag, res_name_flag=res_name_flag, spin_num_flag=spin_num_flag, spin_name_flag=spin_name_flag, force=force)
