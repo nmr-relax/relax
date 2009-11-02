@@ -1113,8 +1113,7 @@ class Relax_disp(Common_functions):
         return spin.intensities
 
 
-    def return_data_name(self, name):
-        """
+    return_data_name_doc =  """
         Relaxation dispersion curve fitting data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1140,6 +1139,15 @@ class Relax_disp(Common_functions):
         | CPMG pulse train frequency (series)               | 'cpmg_frqs'    | '^[Cc]pmg[ -_][Ff]rqs$'  |
         |___________________________________________________|________________|__________________________|
 
+        """
+
+    def return_data_name(self, name):
+        """Return a unique identifying string for the relaxation dispersion curve-fitting parameter.
+
+        @param name:    The relaxation dispersion curve-fitting parameter.
+        @type name:     str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
         """
 
         # Transversal relaxation rate.
