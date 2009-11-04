@@ -337,6 +337,10 @@ def bmrb_write(star):
     if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control'):
         raise RelaxError("The temperature control methods have not been specified.")
 
+    # Check the peak intensity type.
+    if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'peak_intensity_type'):
+        raise RelaxError("The peak intensity types measured for the relaxation data have not been specified.")
+
     # Loop over the relaxation data.
     for i in range(cdp.num_ri):
         # Alias.
@@ -347,6 +351,9 @@ def bmrb_write(star):
         temp_calib = cdp.exp_info.get_temp_calibration(ri_label, frq_label)
         temp_control = cdp.exp_info.get_temp_control(ri_label, frq_label)
 
+        # Get the peak intensity type.
+        peak_intensity_type = cdp.exp_info.get_peak_intensity_type(ri_label, frq_label)
+
         # Check.
         if not temp_calib:
             raise RelaxError("The temperature calibration method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
@@ -354,7 +361,7 @@ def bmrb_write(star):
             raise RelaxError("The temperature control method for the '%s' ri_label and '%s' frq_label have not been specified." % (ri_label, frq_label))
 
         # Add the relaxation data.
-        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control)
+        star.relaxation.add(data_type=ri_label, frq=cdp.frq[cdp.remap_table[i]], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, entity_ids_2=entity_ids, res_nums_2=res_num_list, res_names_2=res_name_list, atom_names_2=attached_atom_name_list, atom_types_2=attached_element_list, isotope_2=attached_isotope_list, data=relax_data_list[i], errors=relax_error_list[i], temp_calibration=temp_calib, temp_control=temp_control, peak_intensity_type=peak_intensity_type)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
