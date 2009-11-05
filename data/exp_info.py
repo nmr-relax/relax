@@ -135,6 +135,23 @@ class ExpInfo(Element):
                 return i + 1
 
 
+    def get_peak_intensity_type(self, ri_label, frq_label):
+        """Return the peak intensity type for the given relaxation data.
+
+        @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @param frq_label:   The field strength label.
+        @type frq_label:    str
+        @return:            The peak intensity type.
+        @rtype:             str
+        """
+
+        # Find the matching container.
+        for i in range(len(self.peak_intensity_type)):
+            if self.peak_intensity_type[i].ri_label == ri_label and self.peak_intensity_type[i].frq_label == frq_label:
+                return self.peak_intensity_type[i].type
+
+
     def get_temp_calibration(self, ri_label, frq_label):
         """Return the temperature calibration method.
 
