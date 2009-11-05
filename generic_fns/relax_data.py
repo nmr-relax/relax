@@ -769,6 +769,41 @@ def pack_data(ri_label, frq_label, frq, values, errors, spin_ids=None, mol_names
         update_data_structures_spin(spin, ri_label, frq_label, frq, values[i], errors[i])
 
 
+def peak_intensity_type(ri_label=None, frq_label=None, type=None):
+    """Set the type of intensity measured for the peaks.
+
+    @param ri_label:    The relaxation data type, ie 'R1', 'R2', or 'NOE'.
+    @type ri_label:     str
+    @param frq_label:   The field strength label.
+    @type frq_label:    str
+    @param type:        The peak intensity type, one of 'height' or 'volume'.
+    @type type:         str
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if relaxation data corresponding to 'ri_label' and 'frq_label' already exists.
+    if not test_labels(ri_label, frq_label):
+        raise RelaxNoRiError(ri_label, frq_label)
+
+    # Check the values, and warn if not in the list.
+    valid = ['height', 'volume']
+    if type not in valid:
+        raise RelaxError("The '%s' peak intensity type is unknown.  Please select one of %s." % (type, valid))
+
+    # Set up the experimental info data container, if needed.
+    if not hasattr(cdp, 'exp_info'):
+        cdp.exp_info = ExpInfo()
+
+    # Store the type.
+    cdp.exp_info.setup_peak_intensity_type(ri_label, frq_label, type)
+
+
 def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read R1, R2, or NOE relaxation data from a file.
 
