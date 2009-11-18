@@ -40,10 +40,10 @@ The origins of the equations used in the approach:
         Farrow et al. (1995) Spectral density function mapping using 15N relaxation data exclusively. J. Biomol. NMR, 6: 153-162. http://dx.doi.org/10.1007/BF00211779
 
     F_eta:
-        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947–10952. http://dx.doi.org/10.1021/ja981686m
+        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. http://dx.doi.org/10.1021/ja981686m
 
     F_R2:
-        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947–10952. http://dx.doi.org/10.1021/ja981686m
+        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. http://dx.doi.org/10.1021/ja981686m
 
 A study where consistency tests were used:
 
