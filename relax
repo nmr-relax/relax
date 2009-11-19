@@ -128,8 +128,8 @@ class Relax:
             self.interpreter.run(self.script_file)
 
         # Execute the Bieri GUI.
-        elif mode == 'bieri_gui':
-            self.bieri_gui.run()
+        elif mode == 'gui_bieri':
+            self.gui_bieri.run()
 
         # Execute the relax test suite
         elif mode == 'test suite':
@@ -182,7 +182,7 @@ class Relax:
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('-g', '--gui', action='store', type='string', dest='gui', default=None, help='launch the specified GUI for relax')
-        parser.add_option('-b', '--bieri', action='store_true', dest='bieri_gui', default=0, help='launch the Bieri GUI for relax')
+        parser.add_option('-b', '--bieri', action='store_true', dest='gui_bieri', default=0, help='launch the Bieri GUI for relax')
         parser.add_option('-p', '--pedantic', action='store_true', dest='pedantic', default=0, help='escalate all warnings to errors')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
@@ -308,13 +308,13 @@ class Relax:
             mode = 'script'
 
         # GUI.
-        elif options.gui or options.bieri_gui:
+        elif options.gui or options.gui_bieri:
             # Make sure no script is supplied.
             if self.script_file:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive models.
-            if options.gui and options.gui != 'bieri' and options.bieri_gui:
+            if options.gui and options.gui != 'bieri' and options.gui_bieri:
                 parser.error("specifying multiple GUIs is not allowed")
             elif options.test_suite or options.system_tests or options.unit_tests:
                 parser.error("the relax GUI mode and testing modes are mutually exclusive")
@@ -322,8 +322,8 @@ class Relax:
                 parser.error("the relax GUI mode and licence mode are mutually exclusive")
 
             # Set the mode.
-            if options.gui == 'bieri' or options.bieri_gui:
-                mode = 'bieri_gui'
+            if options.gui == 'bieri' or options.gui_bieri:
+                mode = 'gui_bieri'
             else:
                 parser.error("the '%s' GUI interface is unknown" % options.gui)
 
