@@ -146,240 +146,240 @@ def model_free_results(self):
         pdbfile = str(self.structure_noe1.GetValue())
 
         #Read results
-	pipename = 'Data_extraction ' + str(time.asctime(time.localtime()))
-	pipe.create(pipename ,'mf')
-	results.read()
+        pipename = 'Data_extraction ' + str(time.asctime(time.localtime()))
+        pipe.create(pipename ,'mf')
+        results.read()
 
-	#create a table file
+        #create a table file
 
-	#create file
-	self.file = open(str(directory) + '/Model-free_Results.txt', 'w')
-	self.file.write('Data Extraction by relaxGUI, (C) 2009 Michael Bieri')
-	self.file.write("\n")
-	self.file.write("\n")
-	"self.file.write(""Residue		Model	S2			Rex [1/s]		Te			Relaxation Parameters\n"")"
-	self.file.write("\n")
+        #create file
+        self.file = open(str(directory) + '/Model-free_Results.txt', 'w')
+        self.file.write('Data Extraction by relaxGUI, (C) 2009 Michael Bieri')
+        self.file.write("\n")
+        self.file.write("\n")
+        "self.file.write(""Residue		Model	S2			Rex [1/s]		Te			Relaxation Parameters\n"")"
+        self.file.write("\n")
 
-	#loop over residues
-	for spin, spin_id in spin_loop(return_id=True):
-	            # The spin ID string.
-	            spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-	            spin_res = spin_id[spin_id.index('&')+2:spin_id.index('@')]
-	            self.file.write((spin_res) + " " + (spin_no))
-	            # The spin is not selected.
-	            if not spin.select:
-	                self.file.write("\n")
-	                continue
-	
-	
-	# The model-free model.
-	            if hasattr(spin, 'model'):
-	                spin.model = spin.model[1:2]
-	                self.file.write(""		"" + spin.model)
-	
-	
-	# S2.
-	            if  hasattr(spin, 's2'):
-	                s2 = str(spin.s2)
-	                s2_err = str(spin.s2_err)
-	                if spin.s2 == None:
-	                        self.file.write("")
-	                else:
-	                        self.file.write("	" + s2[0:5]+ " +/- " + s2_err[0:4])
-	
-	
-	# Rex.
-	            if hasattr(spin, 'rex'):
-	                rex = str(spin.rex)
-	                rex_err = str(spin.rex_err)
-	                if spin.rex == None:
-	                        self.file.write("			")
-	                else:
-	                        rex_eff = spin.rex * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
-	                        rex = str(rex_eff)
-	                        rex_err_eff = spin.rex_err * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
-	                        rex_err = str(rex_err_eff)
-	                        self.file.write("		" + rex[0:5]+ " +/- " + rex_err[0:4])
-	
-	
-	# Te
-	            if  hasattr(spin, 'te'):
-	                if spin.te == None:
-	                        self.file.write("		")
-	                else:
-	                        te_ps = spin.te * 1e-12
-	                        te = str(te_ps)
-	                        te_err = str(spin.te_err)
-	                        self.file.write("		" + te[0:5]+ " +/- " + te_err[0:4])
-	
-	
-	
-	# Parameters.
-	            if hasattr(spin, 'params'):
-	                self.file.write("			" + str(spin.params[0:len(spin.params)]))
-	            else:
-	                self.file.write("\\n")
-	                continue
-	
-	
-	
-	# Start a new line.
-	            self.file.write("\n")
-	
-	##################################################################################################
-	
-	#Create Single Data Files
-		
-	value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='s2', file='s2.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='s2f', file='s2f.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='s2s', file='s2s.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='te', file='te.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='tf', file='tf.txt', dir=str(directory) +' /final_results',  force=True)
-	value.write(param='ts', file='ts.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='r', file='r.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='csa', file='csa.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
-	value.write(param='local_tm', file='local_tm.txt', dir=str(directory) +' /final_results', force=True)
-	
-	##################################################################################################
-	
-	#Create Grace Plots
-	
-	grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=str(directory) +' /grace', force=True)
-	grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=str(directory) +' /grace', force=True)
-	grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=str(directory) +' /grace', force=True)
-	grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=str(directory) +' /grace', force=True)
-	grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=str(directory) +' /grace', force=True)
-	grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=str(directory) +' /grace', force=True)
-	grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', dir=str(directory) +' /grace', force=True)
-	grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', dir=str(directory) +' /grace', force=True)
-	
-	##################################################################################################
-	
-	#Create Diffusion Tensor
-	
-	# Display the diffusion tensor.
-	diffusion_tensor.display()
-	
-	# Create the tensor PDB file.
-	tensor_file = 'tensor.pdb'
-	structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + '/', force=True)
-	
-	##################################################################################################
-	
-	# Create S2 Macro for PyMol
-	
-	#create file
-	
-	self.file = open(str(directory) +'/s2.pml', 'w')
-	self.file.write("load " + pdbfile + '\n')
-	self.file.write("bg_color white\n")
-	self.file.write("color gray90\n")
-	self.file.write("hide all\n")
-	self.file.write("show ribbon\n")
-	
-	for spin, spin_id in spin_loop(return_id=True):
-	
-	#select residue
-	            spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-	
-	
-	#ribbon color
-	            if  hasattr(spin, 's2'):
-	                s2 = str(spin.s2)
-	                if spin.s2 == None:
-	                        self.file.write("")
-	                else:
-	                        width = ((1-spin.s2) * 2)
-	                        green = 1 - ((spin.s2)**3)
-	                        green = green * green * green #* green * green
-	                        green = 1 - green
-	                        self.file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
-	                        self.file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-	                        self.file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
-	
-	
-	
-	self.file.write("hide all\n")
-	self.file.write("show sticks, name C+N+CA\n")
-	self.file.write("set stick_quality, 10\n")
-	self.file.write("ray\n")
-	
-	
-	##################################################################################################
-	
-	# Create Rex Macro for PyMol
-	
-	#create file
-	
-	self.file = open(str(directory) +'/rex.pml', 'w')
-	self.file.write("load " + pdbfile + '\n')
-	self.file.write("bg_color white\n")
-	self.file.write("color gray90\n")
-	self.file.write("hide all\n")
-	self.file.write("show ribbon\n")
-	
-	max_rex = 0
-	
-	#find max Rex
-	for spin, spin_id in spin_loop(return_id=True):
-	
-	            if  hasattr(spin, 'rex'):
-	
-	                  if not spin.rex == None:
-	                       if spin.rex > max_rex:
-	                             max_rex = spin.rex
-	
-	
-	for spin, spin_id in spin_loop(return_id=True):
-	
-	#select residue
-	            spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-	#ribbon color
-	            if  hasattr(spin, 'rex'):
-	                rex = str(spin.rex)
-	                if spin.rex == None:
-	                        self.file.write("")
-	                else:
-	                        rel_rex = spin.rex / max_rex
-	                        width = ((rel_rex) * 2)
-	                        green = ((rel_rex))
-	                        green = green * green * green #* green * green
-	                        green = 1 - green
-	                        self.file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
-	                        self.file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-	                        self.file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
-	
-	
-	
-	self.file.write("hide all\n")
-	self.file.write("show sticks, name C+N+CA\n")
-	self.file.write("set stick_quality, 10\n")
-	self.file.write("ray\n")
-	
-	##################################################################################################
-	
-	print ""
-	print ""
-	print " ---------- done ----------------"
-	print ""
-	print ""
-	print "Grace Plots are in Folder /grace/"
-	print ""
-	print "Signle Text Files for Relaxation Parameters are in Folder /final_results/"
-	print ""
-	print "Diffusion Tensor is in current Folder"
-	print ""
-	print "PyMol Macros are in current Folder - execute in PyMol with Command:"
-	print "@rex.pml and @s2.pml"
+        #loop over residues
+        for spin, spin_id in spin_loop(return_id=True):
+                    # The spin ID string.
+                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+                    spin_res = spin_id[spin_id.index('&')+2:spin_id.index('@')]
+                    self.file.write((spin_res) + " " + (spin_no))
+                    # The spin is not selected.
+                    if not spin.select:
+                        self.file.write("\n")
+                        continue
+        
+        
+        # The model-free model.
+                    if hasattr(spin, 'model'):
+                        spin.model = spin.model[1:2]
+                        self.file.write(""		"" + spin.model)
+        
+        
+        # S2.
+                    if  hasattr(spin, 's2'):
+                        s2 = str(spin.s2)
+                        s2_err = str(spin.s2_err)
+                        if spin.s2 == None:
+                                self.file.write("")
+                        else:
+                                self.file.write("	" + s2[0:5]+ " +/- " + s2_err[0:4])
+        
+        
+        # Rex.
+                    if hasattr(spin, 'rex'):
+                        rex = str(spin.rex)
+                        rex_err = str(spin.rex_err)
+                        if spin.rex == None:
+                                self.file.write("			")
+                        else:
+                                rex_eff = spin.rex * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
+                                rex = str(rex_eff)
+                                rex_err_eff = spin.rex_err * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
+                                rex_err = str(rex_err_eff)
+                                self.file.write("		" + rex[0:5]+ " +/- " + rex_err[0:4])
+        
+        
+        # Te
+                    if  hasattr(spin, 'te'):
+                        if spin.te == None:
+                                self.file.write("		")
+                        else:
+                                te_ps = spin.te * 1e-12
+                                te = str(te_ps)
+                                te_err = str(spin.te_err)
+                                self.file.write("		" + te[0:5]+ " +/- " + te_err[0:4])
+        
+        
+        
+        # Parameters.
+                    if hasattr(spin, 'params'):
+                        self.file.write("			" + str(spin.params[0:len(spin.params)]))
+                    else:
+                        self.file.write("\\n")
+                        continue
+        
+        
+        
+        # Start a new line.
+                    self.file.write("\n")
+        
+        ##################################################################################################
+        
+        #Create Single Data Files
+        	
+        value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='s2', file='s2.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='s2f', file='s2f.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='s2s', file='s2s.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='te', file='te.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='tf', file='tf.txt', dir=str(directory) +' /final_results',  force=True)
+        value.write(param='ts', file='ts.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='r', file='r.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='csa', file='csa.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='rex', file='rex.txt', dir=str(directory) +' /final_results', force=True)
+        value.write(param='local_tm', file='local_tm.txt', dir=str(directory) +' /final_results', force=True)
+        
+        ##################################################################################################
+        
+        #Create Grace Plots
+        
+        grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=str(directory) +' /grace', force=True)
+        grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=str(directory) +' /grace', force=True)
+        grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=str(directory) +' /grace', force=True)
+        grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=str(directory) +' /grace', force=True)
+        grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=str(directory) +' /grace', force=True)
+        grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=str(directory) +' /grace', force=True)
+        grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', dir=str(directory) +' /grace', force=True)
+        grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', dir=str(directory) +' /grace', force=True)
+        
+        ##################################################################################################
+        
+        #Create Diffusion Tensor
+        
+        # Display the diffusion tensor.
+        diffusion_tensor.display()
+        
+        # Create the tensor PDB file.
+        tensor_file = 'tensor.pdb'
+        structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + '/', force=True)
+        
+        ##################################################################################################
+        
+        # Create S2 Macro for PyMol
+        
+        #create file
+        
+        self.file = open(str(directory) +'/s2.pml', 'w')
+        self.file.write("load " + pdbfile + '\n')
+        self.file.write("bg_color white\n")
+        self.file.write("color gray90\n")
+        self.file.write("hide all\n")
+        self.file.write("show ribbon\n")
+        
+        for spin, spin_id in spin_loop(return_id=True):
+        
+        #select residue
+                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+        
+        
+        #ribbon color
+                    if  hasattr(spin, 's2'):
+                        s2 = str(spin.s2)
+                        if spin.s2 == None:
+                                self.file.write("")
+                        else:
+                                width = ((1-spin.s2) * 2)
+                                green = 1 - ((spin.s2)**3)
+                                green = green * green * green #* green * green
+                                green = 1 - green
+                                self.file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
+                                self.file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                                self.file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+        
+        
+        
+        self.file.write("hide all\n")
+        self.file.write("show sticks, name C+N+CA\n")
+        self.file.write("set stick_quality, 10\n")
+        self.file.write("ray\n")
+        
+        
+        ##################################################################################################
+        
+        # Create Rex Macro for PyMol
+        
+        #create file
+        
+        self.file = open(str(directory) +'/rex.pml', 'w')
+        self.file.write("load " + pdbfile + '\n')
+        self.file.write("bg_color white\n")
+        self.file.write("color gray90\n")
+        self.file.write("hide all\n")
+        self.file.write("show ribbon\n")
+        
+        max_rex = 0
+        
+        #find max Rex
+        for spin, spin_id in spin_loop(return_id=True):
+        
+                    if  hasattr(spin, 'rex'):
+        
+                          if not spin.rex == None:
+                               if spin.rex > max_rex:
+                                     max_rex = spin.rex
+        
+        
+        for spin, spin_id in spin_loop(return_id=True):
+        
+        #select residue
+                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+        #ribbon color
+                    if  hasattr(spin, 'rex'):
+                        rex = str(spin.rex)
+                        if spin.rex == None:
+                                self.file.write("")
+                        else:
+                                rel_rex = spin.rex / max_rex
+                                width = ((rel_rex) * 2)
+                                green = ((rel_rex))
+                                green = green * green * green #* green * green
+                                green = 1 - green
+                                self.file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
+                                self.file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                                self.file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+        
+        
+        
+        self.file.write("hide all\n")
+        self.file.write("show sticks, name C+N+CA\n")
+        self.file.write("set stick_quality, 10\n")
+        self.file.write("ray\n")
+        
+        ##################################################################################################
+        
+        print ""
+        print ""
+        print " ---------- done ----------------"
+        print ""
+        print ""
+        print "Grace Plots are in Folder /grace/"
+        print ""
+        print "Signle Text Files for Relaxation Parameters are in Folder /final_results/"
+        print ""
+        print "Diffusion Tensor is in current Folder"
+        print ""
+        print "PyMol Macros are in current Folder - execute in PyMol with Command:"
+        print "@rex.pml and @s2.pml"
 
-	self.list_modelfree.Append(directory + '/grace/s2.agr')
-	self.list_modelfree.Append(directory + '/Model-free_Results.txt')
-	self.list_modelfree.Append(directory + '/s2.pml')
-	self.list_modelfree.Append(directory + '/rex.pml')
+        self.list_modelfree.Append(directory + '/grace/s2.agr')
+        self.list_modelfree.Append(directory + '/Model-free_Results.txt')
+        self.list_modelfree.Append(directory + '/s2.pml')
+        self.list_modelfree.Append(directory + '/rex.pml')
 
 
 ## Create PyMol Macro for NOE colouring
@@ -388,41 +388,41 @@ def color_code_noe(self, target_dir):
         pdbfile = str(self.structure_t21_copy_1_copy.GetValue())
         directory = target_dir
 
-	#create file
-	file = open(directory + '/noe.pml', 'w')
+        #create file
+        file = open(directory + '/noe.pml', 'w')
         file.write("load " + pdbfile + '\n')
-	file.write("bg_color white\n")
-	file.write("color gray90\n")
-	file.write("hide all\n")
-	file.write("show ribbon\n")
-	
-	for spin, spin_id in spin_loop(return_id=True):
-	
-	#select residue
-	            spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-	
-	#ribbon color
-	            if  hasattr(spin, 'noe'):
-	                noe = str(spin.noe)
-	                if spin.noe == None:
-	                        file.write("")
-	                else:
-	                        width = ((1-spin.noe) * 2)
-	                        green = 1 - ((spin.noe)**3) 
-	                        green = green * green * green #* green * green
-	                        green = 1 - green
-	                        file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
-	                        file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-	                        file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
-	
-	file.write("hide all\n")
-	file.write("show sticks, name C+N+CA\n")
-	file.write("set stick_quality, 10\n")
-	file.write("ray\n")
+        file.write("bg_color white\n")
+        file.write("color gray90\n")
+        file.write("hide all\n")
+        file.write("show ribbon\n")
+        
+        for spin, spin_id in spin_loop(return_id=True):
+        
+        #select residue
+                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+        
+        #ribbon color
+                    if  hasattr(spin, 'noe'):
+                        noe = str(spin.noe)
+                        if spin.noe == None:
+                                file.write("")
+                        else:
+                                width = ((1-spin.noe) * 2)
+                                green = 1 - ((spin.noe)**3) 
+                                green = green * green * green #* green * green
+                                green = 1 - green
+                                file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
+                                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+        
+        file.write("hide all\n")
+        file.write("show sticks, name C+N+CA\n")
+        file.write("set stick_quality, 10\n")
+        file.write("ray\n")
         file.close()
 
         # add macro to results tab
-	self.list_noe.Append(directory + '/noe.pml')
+        self.list_noe.Append(directory + '/noe.pml')
 
 
 
@@ -676,56 +676,56 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
 
         pipename = 'NOE ' + str(time.asctime(time.localtime()))
 
-	# Create the NOE data pipe.
-	pipe.create(pipename, 'noe')
-	
-	# Load the backbone amide 15N spins from a PDB file.
-	structure.read_pdb(str(struct_pdb))
-	structure.load_spins(spin_id='@N')
-	
-	# Load the reference spectrum and saturated spectrum peak intensities.
-	spectrum.read_intensities(file=str(noe_ref), spectrum_id='ref_ave')
-	spectrum.read_intensities(file=str(noe_sat), spectrum_id='sat_ave')
-	
-	# Set the spectrum types.
-	noe.spectrum_type('ref', 'ref_ave')
-	noe.spectrum_type('sat', 'sat_ave')
-	
-	# Set the errors.
-	spectrum.baseplane_rmsd(error=int(rmsd_ref), spectrum_id='ref_ave')
-	spectrum.baseplane_rmsd(error=int(rmsd_sat), spectrum_id='sat_ave')
-	
-	# Peak intensity error analysis.
-	spectrum.error_analysis()
-	
-	# Deselect unresolved residues.
-	deselect.read(file=resultsdir + '/unresolved')
-	
-	# Calculate the NOEs.
-	calc()
-	
-	# Save the NOEs.
-	value.write(param='noe', file=save_file, force=True)
-	
-	# Create grace files.
-	grace.write(y_data_type='ref_ave', file='ref.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)
-	grace.write(y_data_type='sat_ave', file='sat.' + str(nmr_freq) + '.agr', dir = gracedir,force=True)
-	grace.write(y_data_type='noe', file='noe.' + str(nmr_freq) + '.agr', dir = gracedir,force=True)
-	
-	
-	# Write the results.
-	results.write(file='results', dir=resultsdir, force=True)
-	
-	# Save the program state.
-	state.save('save', dir_name = resultsdir, force=True)
-	
-	print ""
-	print ""
-	print ""
-	print "____________________________________________________________________________"
-	print ""
-	print "calculation finished"
-	print ""
+        # Create the NOE data pipe.
+        pipe.create(pipename, 'noe')
+        
+        # Load the backbone amide 15N spins from a PDB file.
+        structure.read_pdb(str(struct_pdb))
+        structure.load_spins(spin_id='@N')
+        
+        # Load the reference spectrum and saturated spectrum peak intensities.
+        spectrum.read_intensities(file=str(noe_ref), spectrum_id='ref_ave')
+        spectrum.read_intensities(file=str(noe_sat), spectrum_id='sat_ave')
+        
+        # Set the spectrum types.
+        noe.spectrum_type('ref', 'ref_ave')
+        noe.spectrum_type('sat', 'sat_ave')
+        
+        # Set the errors.
+        spectrum.baseplane_rmsd(error=int(rmsd_ref), spectrum_id='ref_ave')
+        spectrum.baseplane_rmsd(error=int(rmsd_sat), spectrum_id='sat_ave')
+        
+        # Peak intensity error analysis.
+        spectrum.error_analysis()
+        
+        # Deselect unresolved residues.
+        deselect.read(file=resultsdir + '/unresolved')
+        
+        # Calculate the NOEs.
+        calc()
+        
+        # Save the NOEs.
+        value.write(param='noe', file=save_file, force=True)
+        
+        # Create grace files.
+        grace.write(y_data_type='ref_ave', file='ref.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)
+        grace.write(y_data_type='sat_ave', file='sat.' + str(nmr_freq) + '.agr', dir = gracedir,force=True)
+        grace.write(y_data_type='noe', file='noe.' + str(nmr_freq) + '.agr', dir = gracedir,force=True)
+        
+        
+        # Write the results.
+        results.write(file='results', dir=resultsdir, force=True)
+        
+        # Save the program state.
+        state.save('save', dir_name = resultsdir, force=True)
+        
+        print ""
+        print ""
+        print ""
+        print "____________________________________________________________________________"
+        print ""
+        print "calculation finished"
+        print ""
         if freqno == 1:
                      self.m_noe_1.SetValue(target_dir + '/noe.' + str(nmr_freq) + '.out')
         if freqno == 2:
@@ -735,8 +735,8 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         self.list_noe.Append(target_dir + '/grace/noe.' + str(nmr_freq) + '.agr')
         success = True
 
-	# Create PyMol Macro
-	color_code_noe(self, target_dir)
+        # Create PyMol Macro
+        color_code_noe(self, target_dir)
 
         msgbox(msg='NOE calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
@@ -754,7 +754,7 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
 
 
         # Select Peak Lists and Relaxation Times 
-	if t1_t2 == 1:
+        if t1_t2 == 1:
             if freq_no == 1:
               peakfiles = t1_list
             if freq_no == 2:
@@ -762,7 +762,7 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
             if freq_no == 3:
               peakfiles = t1_list3
 
-	if t1_t2 == 2:
+        if t1_t2 == 2:
             if freq_no == 1:
               peakfiles = t2_list
             if freq_no == 2:
@@ -777,101 +777,101 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
         file.write(unres)
         file.close()
 
-	pipename = 'Tx ' + str(time.asctime(time.localtime()))
+        pipename = 'Tx ' + str(time.asctime(time.localtime()))
 
-	# Create the NOE data pipe.
-	pipe.create(pipename, 'relax_fit')
+        # Create the NOE data pipe.
+        pipe.create(pipename, 'relax_fit')
 
-	# Load the backbone amide 15N spins from a PDB file.
-	structure.read_pdb(str(structure_pdb))
-	structure.load_spins(spin_id='@N')
+        # Load the backbone amide 15N spins from a PDB file.
+        structure.read_pdb(str(structure_pdb))
+        structure.load_spins(spin_id='@N')
 
-	# Spectrum names.
-	names = peakfiles
+        # Spectrum names.
+        names = peakfiles
 
-	# Relaxation times (in seconds).
-	times = relax_times
+        # Relaxation times (in seconds).
+        times = relax_times
 
-	# Loop over the spectra.
-	for i in xrange(len(names)):
-	    # Load the peak intensities.
-	    spectrum.read_intensities(file=names[i], spectrum_id=names[i], int_method='height')
+        # Loop over the spectra.
+        for i in xrange(len(names)):
+            # Load the peak intensities.
+            spectrum.read_intensities(file=names[i], spectrum_id=names[i], int_method='height')
 
-	    # Set the relaxation times.
-	    relax_fit.relax_time(time=float(times[i]), spectrum_id=names[i])
+            # Set the relaxation times.
+            relax_fit.relax_time(time=float(times[i]), spectrum_id=names[i])
 
-	# Specify the duplicated spectra.
-	for i in range(0,(len(names))):
+        # Specify the duplicated spectra.
+        for i in range(0,(len(names))):
             for j in range(i,(len(names))):
                if relax_times[i] == times[j]:
                   if not i == j:   
                      spectrum.replicated(spectrum_ids=[names[i], names[j]])
 
 
-	# Peak intensity error analysis.
-	spectrum.error_analysis()
-	
-	# Deselect unresolved spins.
-	deselect.read(file=resultsdir + '/unresolved')
-	
-	# Set the relaxation curve type.
-	relax_fit.select_model('exp')
-	
-	# Grid search.
-	grid_search(inc=11)
-	
-	# Minimise.
-	minimise('simplex', scaling=False, constraints=False)
-	
-	# Monte Carlo simulations.
-	monte_carlo.setup(number=500)
-	monte_carlo.create_data()
-	monte_carlo.initial_values()
-	minimise('simplex', scaling=False, constraints=False)
-	monte_carlo.error_analysis()
-	
-	# Save the relaxation rates.
-	value.write(param='rx', file= savefile, force=True)
-	
-	
-	# Create Grace plots of the data.
-	grace.write(y_data_type='chi2', file='chi2.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Minimised chi-squared value.
-	grace.write(y_data_type='i0', file='i0.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Initial peak intensity.
-	grace.write(y_data_type='rx', file='rx.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Relaxation rate.
-	grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Average peak intensities.
-	grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Average peak intensities (normalised).
-	
-	
-	
-	# Write the results.
-	results.write(file='results', dir=resultsdir, force=True)
-	
-	# Save the program state.
-	state.save('save', dir_name = resultsdir, force=True)
-	
-	print ""
-	print ""
-	print ""
-	print "____________________________________________________________________________"
-	print ""
-	print "calculation finished"
-	print ""
+        # Peak intensity error analysis.
+        spectrum.error_analysis()
+        
+        # Deselect unresolved spins.
+        deselect.read(file=resultsdir + '/unresolved')
+        
+        # Set the relaxation curve type.
+        relax_fit.select_model('exp')
+        
+        # Grid search.
+        grid_search(inc=11)
+        
+        # Minimise.
+        minimise('simplex', scaling=False, constraints=False)
+        
+        # Monte Carlo simulations.
+        monte_carlo.setup(number=500)
+        monte_carlo.create_data()
+        monte_carlo.initial_values()
+        minimise('simplex', scaling=False, constraints=False)
+        monte_carlo.error_analysis()
+        
+        # Save the relaxation rates.
+        value.write(param='rx', file= savefile, force=True)
+        
+        
+        # Create Grace plots of the data.
+        grace.write(y_data_type='chi2', file='chi2.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Minimised chi-squared value.
+        grace.write(y_data_type='i0', file='i0.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Initial peak intensity.
+        grace.write(y_data_type='rx', file='rx.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Relaxation rate.
+        grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Average peak intensities.
+        grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Average peak intensities (normalised).
+        
+        
+        
+        # Write the results.
+        results.write(file='results', dir=resultsdir, force=True)
+        
+        # Save the program state.
+        state.save('save', dir_name = resultsdir, force=True)
+        
+        print ""
+        print ""
+        print ""
+        print "____________________________________________________________________________"
+        print ""
+        print "calculation finished"
+        print ""
 
-	msgbox(msg='T' + str(t1_t2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
+        msgbox(msg='T' + str(t1_t2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
         # list files to results
-	self.list_tx.Append(target_dir + '/grace/rx.' + str(nmr_freq) + '.agr')
-	self.list_tx.Append(target_dir + '/grace/intensities_norm.' + str(nmr_freq) + '.agr')
+        self.list_tx.Append(target_dir + '/grace/rx.' + str(nmr_freq) + '.agr')
+        self.list_tx.Append(target_dir + '/grace/intensities_norm.' + str(nmr_freq) + '.agr')
 
-	# add files to model-free tab
-	if t1_t2 == 1:
+        # add files to model-free tab
+        if t1_t2 == 1:
                     if freqno == 1:
                       self.m_r1_1.SetValue(target_dir + '/r1.' + str(nmr_freq) + '.out')
                     if freqno == 2:
                       self.m_r1_2.SetValue(target_dir + '/r1.' + str(nmr_freq) + '.out')
                     if freqno == 3:
                       self.m_r1_3.SetValue(target_dir + '/r1.' + str(nmr_freq) + '.out')
-	if t1_t2 == 2:
+        if t1_t2 == 2:
                     if freqno == 1:
                       self.m_r2_1.SetValue(target_dir + '/r2.' + str(nmr_freq) + '.out')
                     if freqno == 2:
@@ -888,130 +888,130 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
 
 def start_model_free(self, model):
 
-	target_dir = str(self.resultsdir_t21_copy_2.GetValue())
-	unres = str(self.unresolved_t21_copy_1_copy.GetValue())
-	nmr_freq1 = str(self.modelfreefreq1.GetValue())
-	nmr_freq2 = str(self.modelfreefreq2.GetValue())
-	nmr_freq3 = str(self.modelfreefreq3.GetValue())
+        target_dir = str(self.resultsdir_t21_copy_2.GetValue())
+        unres = str(self.unresolved_t21_copy_1_copy.GetValue())
+        nmr_freq1 = str(self.modelfreefreq1.GetValue())
+        nmr_freq2 = str(self.modelfreefreq2.GetValue())
+        nmr_freq3 = str(self.modelfreefreq3.GetValue())
 
-	# detect 2 or 3 field strength
-	num_field = 3
-	if self.modelfreefreq3.GetValue() == '':
+        # detect 2 or 3 field strength
+        num_field = 3
+        if self.modelfreefreq3.GetValue() == '':
             num_field = 2
-	if self.m_noe_3.GetValue() == '':
+        if self.m_noe_3.GetValue() == '':
             num_field = 2
-	if self.m_r1_3.GetValue() == '':
+        if self.m_r1_3.GetValue() == '':
             num_field = 2
-	if self.m_r1_3.GetValue() == '':
+        if self.m_r1_3.GetValue() == '':
             num_field = 2
 
-	if self.aic.GetValue() == True:
+        if self.aic.GetValue() == True:
             selection = "AIC"
-	if self.bic.GetValue() == True:
+        if self.bic.GetValue() == True:
             selection = "BIC" 
 
-	#create unresolved file
-	filename2 =  target_dir + '/unresolved'
-	file = open(filename2, 'w')
-	unres = replace(unres, ",","\n")
-	file.write(unres)
-	file.close()
+        #create unresolved file
+        filename2 =  target_dir + '/unresolved'
+        file = open(filename2, 'w')
+        unres = replace(unres, ",","\n")
+        file.write(unres)
+        file.close()
 
-	#create models list
+        #create models list
         models = []
 
-	if self.m0.GetValue() == True:
+        if self.m0.GetValue() == True:
             models.append('m0')
-	if self.m1.GetValue() == True:
+        if self.m1.GetValue() == True:
             models.append('m1')
-	if self.m2.GetValue() == True:
+        if self.m2.GetValue() == True:
             models.append('m2')
-	if self.m3.GetValue() == True:
+        if self.m3.GetValue() == True:
             models.append('m3')
-	if self.m4.GetValue() == True:
+        if self.m4.GetValue() == True:
             models.append('m4')
-	if self.m5.GetValue() == True:
+        if self.m5.GetValue() == True:
             models.append('m5')
-	if self.m6.GetValue() == True:
+        if self.m6.GetValue() == True:
             models.append('m6')
-	if self.m7.GetValue() == True:
+        if self.m7.GetValue() == True:
             models.append('m7')
-	if self.m8.GetValue() == True:
+        if self.m8.GetValue() == True:
             models.append('m8')
-	if self.m9.GetValue() == True:
+        if self.m9.GetValue() == True:
             models.append('m9')
 
-	#create tm models list
+        #create tm models list
         tmodels = []
 
-	if self.m0.GetValue() == True:
+        if self.m0.GetValue() == True:
             tmodels.append('tm0')
-	if self.m1.GetValue() == True:
+        if self.m1.GetValue() == True:
             tmodels.append('tm1')
-	if self.m2.GetValue() == True:
+        if self.m2.GetValue() == True:
             tmodels.append('tm2')
-	if self.m3.GetValue() == True:
+        if self.m3.GetValue() == True:
             tmodels.append('tm3')
-	if self.m4.GetValue() == True:
+        if self.m4.GetValue() == True:
             tmodels.append('tm4')
-	if self.m5.GetValue() == True:
+        if self.m5.GetValue() == True:
             tmodels.append('tm5')
-	if self.m6.GetValue() == True:
+        if self.m6.GetValue() == True:
             tmodels.append('tm6')
-	if self.m7.GetValue() == True:
+        if self.m7.GetValue() == True:
             tmodels.append('tm7')
-	if self.m8.GetValue() == True:
+        if self.m8.GetValue() == True:
             tmodels.append('tm8')
-	if self.m9.GetValue() == True:
+        if self.m9.GetValue() == True:
             tmodels.append('tm9')
 
-	MF_MODELS = models
-	LOCAL_TM_MODELS = tmodels
+        MF_MODELS = models
+        LOCAL_TM_MODELS = tmodels
 
-	# User variables.
-	#################
+        # User variables.
+        #################
 
-	PDB_FILE = str(self.structure_t21_copy_1_copy.GetValue())
-	gracedir = target_dir + '/grace'
-	resultsdir = target_dir + '/'
-	m_method = selection
+        PDB_FILE = str(self.structure_t21_copy_1_copy.GetValue())
+        gracedir = target_dir + '/grace'
+        resultsdir = target_dir + '/'
+        m_method = selection
 
-	if selection == "AIC":
+        if selection == "AIC":
              msel = "aic"
-	if selection == "BIC":
+        if selection == "BIC":
              msel = "bic"
         modelselection = msel
 
         #parameter files
-	noe_1 = str(self.m_noe_1.GetValue())
-	r1_1 = str(self.m_r1_1.GetValue())
-	r2_1 = str(self.m_r2_1.GetValue())
-	noe_2 = str(self.m_noe_2.GetValue())
-	r1_2 = str(self.m_r1_2.GetValue())
-	r2_2 = str(self.m_r2_2.GetValue())
-	noe_3 = str(self.m_noe_3.GetValue())
-	r1_3 = str(self.m_r1_3.GetValue())
-	r2_3 = str(self.m_r2_3.GetValue())
+        noe_1 = str(self.m_noe_1.GetValue())
+        r1_1 = str(self.m_r1_1.GetValue())
+        r2_1 = str(self.m_r2_1.GetValue())
+        noe_2 = str(self.m_noe_2.GetValue())
+        r1_2 = str(self.m_r1_2.GetValue())
+        r2_2 = str(self.m_r2_2.GetValue())
+        noe_3 = str(self.m_noe_3.GetValue())
+        r1_3 = str(self.m_r1_3.GetValue())
+        r2_3 = str(self.m_r2_3.GetValue())
 
-	HETNUC = 'N'
-	SEQ_ARGS = [noe_1, None, None, 1, 2, 3, 4, None]
+        HETNUC = 'N'
+        SEQ_ARGS = [noe_1, None, None, 1, 2, 3, 4, None]
 
-	nmr_freq1 = int(self.modelfreefreq1.GetValue())
-	nmr_freq2 = int(self.modelfreefreq2.GetValue())
+        nmr_freq1 = int(self.modelfreefreq1.GetValue())
+        nmr_freq2 = int(self.modelfreefreq2.GetValue())
         if num_field == 3:
-	   nmr_freq3 = int(self.modelfreefreq3.GetValue())
+           nmr_freq3 = int(self.modelfreefreq3.GetValue())
 
         # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
 
-	if num_field == 2:
-	 RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1,  None, None, 1, 2, 3, 4, 5, 6, None],
+        if num_field == 2:
+         RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1,  None, None, 1, 2, 3, 4, 5, 6, None],
                        ['R2', str(nmr_freq1), nmr_freq1 * 1e6, r2_1,  None, None, 1, 2, 3, 4, 5, 6, None], 
                        ['NOE', str(nmr_freq1), nmr_freq1 * 1e6, noe_1,  None, None, 1, 2, 3, 4, 5, 6, None], 
                        ['R1', str(nmr_freq2), nmr_freq2 * 1e6, r1_2,  None, None, 1, 2, 3, 4, 5, 6, None],
                        ['R2', str(nmr_freq2), nmr_freq2 * 1e6, r2_2,  None, None, 1, 2, 3, 4, 5, 6, None]]
 
-	if num_field == 3:
-	 RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1,  None, None, 1, 2, 3, 4, 5, 6, None],
+        if num_field == 3:
+         RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1,  None, None, 1, 2, 3, 4, 5, 6, None],
                        ['R2', str(nmr_freq1), nmr_freq1 * 1e6, r2_1,  None, None, 1, 2, 3, 4, 5, 6, None], 
                        ['NOE', str(nmr_freq1), nmr_freq1 * 1e6, noe_1,  None, None, 1, 2, 3, 4, 5, 6, None], 
                        ['R1', str(nmr_freq2), nmr_freq2 * 1e6, r1_2,  None, None, 1, 2, 3, 4, 5, 6, None],
@@ -1020,514 +1020,514 @@ def start_model_free(self, model):
                        ['R1', str(nmr_freq3), nmr_freq3 * 1e6, r1_3,  None, None, 1, 2, 3, 4, 5, 6, None],
                        ['R2', str(nmr_freq3), nmr_freq3 * 1e6, r2_3,  None, None, 1, 2, 3, 4, 5, 6, None], 
                        ['NOE', str(nmr_freq3), nmr_freq3 * 1e6, noe_3,  None, None, 1, 2, 3, 4, 5, 6, None]] 
-	
-	
-	# The diffusion model.
-	DIFF_MODEL = model
-	
-	
-	# The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
-	UNRES = resultsdir + 'unresolved'
-	
-	# A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
-	EXCLUDE = None
-	
-	# The bond length, CSA values, heteronucleus type, and proton type.
-	BOND_LENGTH = 1.02 * 1e-10
-	CSA = -172 * 1e-6
-	HETNUC = '15N'
-	PROTON = '1H'
-	
-	# The grid search size (the number of increments per dimension).
-	GRID_INC = 11
-	
-	# The optimisation technique.
-	MIN_ALGOR = 'newton'
-	
-	# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-	MC_NUM = 500
-	
-	# Automatic looping over all rounds until convergence (must be a boolean value of True or False).
-	CONV_LOOP = True
-	
-	
-	class Model:
-	    def __init__(self):
-	        """Execute the model-free analysis."""
-	
-	        # Setup.
-	        #self = relax
-	
-	
-	        # MI - Local tm.
-	        ################
-	
-	        if DIFF_MODEL == 'local_tm':
-	            # Base directory to place files into.
-	            self.base_dir = resultsdir + 'local_tm/'
-	
-	            # Sequential optimisation of all model-free models (function must be modified to suit).
-	            self.multi_model(local_tm=True)
-	
-	            # Model selection.
-	            self.model_selection(modsel_pipe=modelselection, dir=self.base_dir + modelselection)
-	
-	
-	        # Diffusion models MII to MV.
-	        #############################
-	
-	        elif DIFF_MODEL == 'sphere' or DIFF_MODEL == 'prolate' or DIFF_MODEL == 'oblate' or DIFF_MODEL == 'ellipsoid':
-	            # Loop until convergence if CONV_LOOP is set, otherwise just loop once.
-	            # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
-	            while 1:
-	                # Determine which round of optimisation to do (init, round_1, round_2, etc).
-	                self.round = self.determine_rnd(model=DIFF_MODEL)
-	
-	                # Inital round of optimisation for diffusion models MII to MV.
-	                if self.round == 0:
-	                    # Base directory to place files into.
-	                    self.base_dir = resultsdir + DIFF_MODEL + '/init/'
-	
-	                    # Run name.
-	                    name = DIFF_MODEL
-	
-	                    # Create the data pipe.
-	                    pipe.create(name, 'mf')
-	
-	                    # Load the local tm diffusion model MI results.
-	                    results.read(file='results', dir=resultsdir + 'local_tm/'+modelselection)
-	
-	                    # Remove the tm parameter.
-	                    model_free.remove_tm()
-	
-	                    # Deselect the spins in the EXCLUDE list.
-	                    if EXCLUDE:
-	                        deselect.read(file=EXCLUDE)
-	
-	                    # Load the PDB file and calculate the unit vectors parallel to the XH bond.
-	                    if PDB_FILE:
-	                        structure.read_pdb(PDB_FILE)
-	                        structure.vectors(attached='H')
-	
-	                    # Add an arbitrary diffusion tensor which will be optimised.
-	                    if DIFF_MODEL == 'sphere':
-	                        diffusion_tensor.init(10e-9, fixed=False)
-	                        inc = 11
-	                    elif DIFF_MODEL == 'prolate':
-	                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
-	                        inc = 11
-	                    elif DIFF_MODEL == 'oblate':
-	                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
-	                        inc = 11
-	                    elif DIFF_MODEL == 'ellipsoid':
-	                        diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
-	                        inc = 6
-	
-	                    # Minimise just the diffusion tensor.
-	                    fix(element='all_spins')
-	                    grid_search(inc=inc)
-	                    minimise(MIN_ALGOR)
-	
-	                    # Write the results.
-	                    results.write(file='results', dir=self.base_dir, force=True)
-	
-	
-	                # Normal round of optimisation for diffusion models MII to MV.
-	                else:
-	                    # Base directory to place files into.
-	                    self.base_dir = resultsdir + DIFF_MODEL + '/round_' + `self.round` + '/'
-	
-	                    # Load the optimised diffusion tensor from either the previous round.
-	                    self.load_tensor()
-	
-	                    # Sequential optimisation of all model-free models (function must be modified to suit).
-	                    self.multi_model()
-	
-	                    # Model selection.
-	                    self.model_selection(modsel_pipe='final', dir=self.base_dir + modelselection)
-	
-	                    # Final optimisation of all diffusion and model-free parameters.
-	                    fix('all', fixed=False)
-	
-	                    # Minimise all parameters.
-	                    minimise(MIN_ALGOR)
-	
-	                    # Write the results.
-	                    dir = self.base_dir + 'opt'
-	                    results.write(file='results', dir=dir, force=True)
-	
-	                    # Test for convergence.
-	                    converged = self.convergence()
-	
-	                    # Break out of the infinite while loop if automatic looping is not activated or if convergence has occurred.
-	                    if converged or not CONV_LOOP:
-	                        break
-	
-	
-	        # Final run.
-	        ############
-	
-	        elif DIFF_MODEL == 'final':
-	            # Diffusion model selection.
-	            ############################
-	
-	            # All the global diffusion models to be used in the model selection.
-	            self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
-	
-	            # Create the local_tm data pipe.
-	            pipe.create('local_tm', 'mf')
-	
-	            # Load the local tm diffusion model MI results.
-	            results.read(file='results', dir=resultsdir + 'local_tm/'+modelselection)
-	
-	            # Loop over models MII to MV.
-	            for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
-	                # Determine which was the last round of optimisation for each of the models.
-	                self.round = self.determine_rnd(model=model) - 1
-	
-	                # If no directories begining with 'round_' exist, the script has not been properly utilised!
-	                if self.round < 1:
-	                    # Construct the name of the diffusion tensor.
-	                    name = model
-	                    if model == 'prolate' or model == 'oblate':
-	                        name = name + ' spheroid'
-	
-	                    # Throw an error to prevent misuse of the script.
-	                    raise RelaxError, "Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script."
-	
-	                # Create the data pipe.
-	                pipe.create(model, 'mf')
-	
-	                # Load the diffusion model results.
-	                results.read(file='results', dir=resultsdir + model + '/round_' + `self.round` + '/opt')
-	
-	            # Model selection between MI to MV.
-	            self.model_selection(modsel_pipe='final', write_flag=False)
-	
-	
-	            # Monte Carlo simulations.
-	            ##########################
-	
-	            # Fix the diffusion tensor, if it exists.
-	            if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
-	                fix('diff')
-	
-	            # Simulations.
-	            monte_carlo.setup(number=MC_NUM)
-	            monte_carlo.create_data()
-	            monte_carlo.initial_values()
-	            minimise(MIN_ALGOR)
-	            eliminate()
-	            monte_carlo.error_analysis()
-	
-	
-	            # Write the final results.
-	            ##########################
-	
-	            results.write(file='results', dir=resultsdir + 'final', force=True)
-	
-	
-	        # Unknown script behaviour.
-	        ###########################
-	
-	        else:
-	            raise RelaxError, "Unknown diffusion model, change the value of 'DIFF_MODEL'"
-	
-	
-	    def convergence(self):
-	        """Test for the convergence of the global model."""
-	
-	        # Alias the data pipes.
-	        cdp = pipes.get_pipe()
-	        prev_pipe = pipes.get_pipe('previous')
-	
-	        # Print out.
-	        print "\n\n\n"
-	        print "#####################"
-	        print "# Convergence tests #"
-	        print "#####################\n\n"
-	
-	        # Convergence flags.
-	        chi2_converged = True
-	        models_converged = True
-	        params_converged = True
-	
-	
-	        # Chi-squared test.
-	        ###################
-	
-	        print "Chi-squared test:"
-	        print "    chi2 (k-1):          " + `prev_pipe.chi2`
-	        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
-	        print "    chi2 (k):            " + `cdp.chi2`
-	        print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
-	        print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
-	        if prev_pipe.chi2 == cdp.chi2:
-	            print "    The chi-squared value has converged.\n"
-	        else:
-	            print "    The chi-squared value has not converged.\n"
-	            chi2_converged = False
-	
-	
-	        # Identical model-free model test.
-	        ##################################
-	
-	        print "Identical model-free models test:"
-	
-	        # Create a string representation of the model-free models of the previous data pipe.
-	        prev_models = ''
-	        for spin in spin_loop(pipe='previous'):
-	            if hasattr(spin, 'model'):
-	                if not spin.model == 'None':
-	                    prev_models = prev_models + spin.model
-	
-	        # Create a string representation of the model-free models of the current data pipe.
-	        curr_models = ''
-	        for spin in spin_loop():
-	            if hasattr(spin, 'model'):
-	                if not spin.model == 'None':
-	                    curr_models = curr_models + spin.model
-	
-	        # The test.
-	        if prev_models == curr_models:
-	            print "    The model-free models have converged.\n"
-	        else:
-	            print "    The model-free models have not converged.\n"
-	            models_converged = False
-	
-	
-	        # Identical parameter value test.
-	        #################################
-	
-	        print "Identical parameter test:"
-	
-	        # Only run the tests if the model-free models have converged.
-	        if models_converged:
-	            # Diffusion parameter array.
-	            if DIFF_MODEL == 'sphere':
-	                params = ['tm']
-	            elif DIFF_MODEL == 'oblate' or DIFF_MODEL == 'prolate':
-	                params = ['tm', 'Da', 'theta', 'phi']
-	            elif DIFF_MODEL == 'ellipsoid':
-	                params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
-	
-	            # Tests.
-	            for param in params:
-	                # Get the parameter values.
-	                prev_val = getattr(prev_pipe.diff_tensor, param)
-	                curr_val = getattr(cdp.diff_tensor, param)
-	
-	                # Test if not identical.
-	                if prev_val != curr_val:
-	                    print "    Parameter:   " + param
-	                    print "    Value (k-1): " + `prev_val`
-	                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-	                    print "    Value (k):   " + `curr_val`
-	                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
-	                    print "    The diffusion parameters have not converged.\n"
-	                    params_converged = False
-	
-	            # Skip the rest if the diffusion tensor parameters have not converged.
-	            if params_converged:
-	                # Loop over the spins.
-	                for mol_index, res_index, spin_index in spin_index_loop():
-	                    # Alias the spin containers.
-	                    prev_spin = prev_pipe.mol[mol_index].res[res_index].spin[spin_index]
-	                    curr_spin = cdp.mol[mol_index].res[res_index].spin[spin_index]
-	
-	                    # Skip if the parameters have not converged.
-	                    if not params_converged:
-	                        break
-	
-	                    # Skip spin systems with no 'params' object.
-	                    if not hasattr(prev_spin, 'params') or not hasattr(curr_spin, 'params'):
-	                        continue
-	
-	                    # The spin ID string.
-	                    spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=cdp.mol[mol_index].res[res_index].spin[spin_index].num, spin_name=cdp.mol[mol_index].res[res_index].spin[spin_index].name)
-	
-	                    # Loop over the parameters.
-	                    for j in xrange(len(curr_spin.params)):
-	                        # Get the parameter values.
-	                        prev_val = getattr(prev_spin, lower(prev_spin.params[j]))
-	                        curr_val = getattr(curr_spin, lower(curr_spin.params[j]))
-	
-	                        # Test if not identical.
-	                        if prev_val != curr_val:
-	                            print "    Spin ID:     " + `spin_id`
-	                            print "    Parameter:   " + curr_spin.params[j]
-	                            print "    Value (k-1): " + `prev_val`
-	                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-	                            print "    Value (k):   " + `curr_val`
-	                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
-	                            print "    The model-free parameters have not converged.\n"
-	                            params_converged = False
-	                            break
-	
-	        # The model-free models haven't converged hence the parameter values haven't converged.
-	        else:
-	            print "    The model-free models haven't converged hence the parameters haven't converged.\n"
-	            params_converged = False
-	
-	        # Print out.
-	        if params_converged:
-	            print "    The diffusion tensor and model-free parameters have converged.\n"
-	
-	
-	        # Final print out.
-	        ##################
-	
-	        print "\nConvergence:"
-	        if chi2_converged and models_converged and params_converged:
-	            print "    [ Yes ]"
-	            return True
-	        else:
-	            print "    [ No ]"
-	            return False
-	
-	
-	    def determine_rnd(self, model=None):
-	        """Function for returning the name of next round of optimisation."""
-	
-	        # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
-	        try:
-	            dir_list = listdir(resultsdir + model)
-	        except:
-	            return 0
-	
-	        # Set the round to 'init' or 0 if there is no directory called 'init'.
-	        if 'init' not in dir_list:
-	            return 0
-	
-	        # Create a list of all files which begin with 'round_'.
-	        rnd_dirs = []
-	        for file in dir_list:
-	            if search('^round_', file):
-	                rnd_dirs.append(file)
-	
-	        # Create a sorted list of integer round numbers.
-	        numbers = []
-	        for dir in rnd_dirs:
-	            try:
-	                numbers.append(int(dir[6:]))
-	            except:
-	                pass
-	        numbers.sort()
-	
-	        # No directories begining with 'round_' exist, set the round to 1.
-	        if not len(numbers):
-	            return 1
-	
-	        # Determine the number for the next round (add 1 to the highest number).
-	        return numbers[-1] + 1
-	
-	
-	    def load_tensor(self):
-	        """Function for loading the optimised diffusion tensor."""
-	
-	        # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
-	        if pipes.has_pipe('previous'):
-	            pipe.delete('previous')
-	        pipe.create('previous', 'mf')
-	
-	        # Load the optimised diffusion tensor from the initial round.
-	        if self.round == 1:
-	            results.read('results', resultsdir + DIFF_MODEL + '/init')
-	
-	        # Load the optimised diffusion tensor from the previous round.
-	        else:
-	            results.read('results', resultsdir + DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
-	
-	
-	    def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
-	        """Model selection function."""
-	
-	        # Model elimination.
-	        if modsel_pipe != 'final':
-	            eliminate()
-	
-	        # Model selection (delete the model selection pipe if it already exists).
-	        if pipes.has_pipe(modsel_pipe):
-	            pipe.delete(modsel_pipe)
-	        model_selection(method=m_method, modsel_pipe=modsel_pipe, pipes=self.pipes)
-	
-	        # Write the results.
-	        if write_flag:
-	            results.write(file='results', dir=dir, force=True)
-	
-	
-	    def multi_model(self, local_tm=False):
-	        """Function for optimisation of all model-free models."""
-	
-	        # Set the data pipe names (also the names of preset model-free models).
-	        if local_tm:
-	            self.pipes = LOCAL_TM_MODELS
-	        else:
-	            self.pipes = MF_MODELS
-	
-	        # Loop over the data pipes.
-	        for name in self.pipes:
-	            # Create the data pipe.
-	            if pipes.has_pipe(name):
-	                pipe.delete(name)
-	            pipe.create(name, 'mf')
-	
-	            # Load the sequence.
-	            sequence.read(SEQ_ARGS[0], SEQ_ARGS[1], SEQ_ARGS[2], SEQ_ARGS[3], SEQ_ARGS[4], SEQ_ARGS[5], SEQ_ARGS[6], SEQ_ARGS[7])
-	
-	            # Load the PDB file and calculate the unit vectors parallel to the XH bond.
-	            if not local_tm and PDB_FILE:
-	                structure.read_pdb(PDB_FILE)
-	                structure.vectors(attached='H')
-	
-	            # Load the relaxation data.
-	            for data in RELAX_DATA:
-	                relax_data.read(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12])
-	
-	            # Deselect spins to be excluded (including unresolved and specifically excluded spins).
-	            if UNRES:
-	                deselect.read(file=UNRES)
-	            if EXCLUDE:
-	                deselect.read(file=EXCLUDE)
-	
-	            # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
-	            if not local_tm:
-	                diffusion_tensor.copy('previous')
-	                fix('diff')
-	
-	            # Set all the necessary values.
-	            value.set(BOND_LENGTH, 'bond_length')
-	            value.set(CSA, 'csa')
-	            value.set(HETNUC, 'heteronucleus')
-	            value.set(PROTON, 'proton')
-	
-	            # Select the model-free model.
-	            model_free.select_model(model=name)
-	
-	            # Minimise.
-	            grid_search(inc=GRID_INC)
-	            minimise(MIN_ALGOR)
-	
-	            # Write the results.
-	            dir = self.base_dir + name
-	            results.write(file='results', dir=dir, force=True)
-	
-	
-	# The main class.
-	Model()
-	
-	print ""
-	print ""
-	print "_____________________________________________________________________________"
-	print ""
-	print "calculation finished"
-	print ""
-	msgbox(msg='Model-free ' + str(model) + ' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
+        
+        
+        # The diffusion model.
+        DIFF_MODEL = model
+        
+        
+        # The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
+        UNRES = resultsdir + 'unresolved'
+        
+        # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
+        EXCLUDE = None
+        
+        # The bond length, CSA values, heteronucleus type, and proton type.
+        BOND_LENGTH = 1.02 * 1e-10
+        CSA = -172 * 1e-6
+        HETNUC = '15N'
+        PROTON = '1H'
+        
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 11
+        
+        # The optimisation technique.
+        MIN_ALGOR = 'newton'
+        
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 500
+        
+        # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
+        CONV_LOOP = True
+        
+        
+        class Model:
+            def __init__(self):
+                """Execute the model-free analysis."""
+        
+                # Setup.
+                #self = relax
+        
+        
+                # MI - Local tm.
+                ################
+        
+                if DIFF_MODEL == 'local_tm':
+                    # Base directory to place files into.
+                    self.base_dir = resultsdir + 'local_tm/'
+        
+                    # Sequential optimisation of all model-free models (function must be modified to suit).
+                    self.multi_model(local_tm=True)
+        
+                    # Model selection.
+                    self.model_selection(modsel_pipe=modelselection, dir=self.base_dir + modelselection)
+        
+        
+                # Diffusion models MII to MV.
+                #############################
+        
+                elif DIFF_MODEL == 'sphere' or DIFF_MODEL == 'prolate' or DIFF_MODEL == 'oblate' or DIFF_MODEL == 'ellipsoid':
+                    # Loop until convergence if CONV_LOOP is set, otherwise just loop once.
+                    # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
+                    while 1:
+                        # Determine which round of optimisation to do (init, round_1, round_2, etc).
+                        self.round = self.determine_rnd(model=DIFF_MODEL)
+        
+                        # Inital round of optimisation for diffusion models MII to MV.
+                        if self.round == 0:
+                            # Base directory to place files into.
+                            self.base_dir = resultsdir + DIFF_MODEL + '/init/'
+        
+                            # Run name.
+                            name = DIFF_MODEL
+        
+                            # Create the data pipe.
+                            pipe.create(name, 'mf')
+        
+                            # Load the local tm diffusion model MI results.
+                            results.read(file='results', dir=resultsdir + 'local_tm/'+modelselection)
+        
+                            # Remove the tm parameter.
+                            model_free.remove_tm()
+        
+                            # Deselect the spins in the EXCLUDE list.
+                            if EXCLUDE:
+                                deselect.read(file=EXCLUDE)
+        
+                            # Load the PDB file and calculate the unit vectors parallel to the XH bond.
+                            if PDB_FILE:
+                                structure.read_pdb(PDB_FILE)
+                                structure.vectors(attached='H')
+        
+                            # Add an arbitrary diffusion tensor which will be optimised.
+                            if DIFF_MODEL == 'sphere':
+                                diffusion_tensor.init(10e-9, fixed=False)
+                                inc = 11
+                            elif DIFF_MODEL == 'prolate':
+                                diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
+                                inc = 11
+                            elif DIFF_MODEL == 'oblate':
+                                diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
+                                inc = 11
+                            elif DIFF_MODEL == 'ellipsoid':
+                                diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
+                                inc = 6
+        
+                            # Minimise just the diffusion tensor.
+                            fix(element='all_spins')
+                            grid_search(inc=inc)
+                            minimise(MIN_ALGOR)
+        
+                            # Write the results.
+                            results.write(file='results', dir=self.base_dir, force=True)
+        
+        
+                        # Normal round of optimisation for diffusion models MII to MV.
+                        else:
+                            # Base directory to place files into.
+                            self.base_dir = resultsdir + DIFF_MODEL + '/round_' + `self.round` + '/'
+        
+                            # Load the optimised diffusion tensor from either the previous round.
+                            self.load_tensor()
+        
+                            # Sequential optimisation of all model-free models (function must be modified to suit).
+                            self.multi_model()
+        
+                            # Model selection.
+                            self.model_selection(modsel_pipe='final', dir=self.base_dir + modelselection)
+        
+                            # Final optimisation of all diffusion and model-free parameters.
+                            fix('all', fixed=False)
+        
+                            # Minimise all parameters.
+                            minimise(MIN_ALGOR)
+        
+                            # Write the results.
+                            dir = self.base_dir + 'opt'
+                            results.write(file='results', dir=dir, force=True)
+        
+                            # Test for convergence.
+                            converged = self.convergence()
+        
+                            # Break out of the infinite while loop if automatic looping is not activated or if convergence has occurred.
+                            if converged or not CONV_LOOP:
+                                break
+        
+        
+                # Final run.
+                ############
+        
+                elif DIFF_MODEL == 'final':
+                    # Diffusion model selection.
+                    ############################
+        
+                    # All the global diffusion models to be used in the model selection.
+                    self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
+        
+                    # Create the local_tm data pipe.
+                    pipe.create('local_tm', 'mf')
+        
+                    # Load the local tm diffusion model MI results.
+                    results.read(file='results', dir=resultsdir + 'local_tm/'+modelselection)
+        
+                    # Loop over models MII to MV.
+                    for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
+                        # Determine which was the last round of optimisation for each of the models.
+                        self.round = self.determine_rnd(model=model) - 1
+        
+                        # If no directories begining with 'round_' exist, the script has not been properly utilised!
+                        if self.round < 1:
+                            # Construct the name of the diffusion tensor.
+                            name = model
+                            if model == 'prolate' or model == 'oblate':
+                                name = name + ' spheroid'
+        
+                            # Throw an error to prevent misuse of the script.
+                            raise RelaxError, "Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script."
+        
+                        # Create the data pipe.
+                        pipe.create(model, 'mf')
+        
+                        # Load the diffusion model results.
+                        results.read(file='results', dir=resultsdir + model + '/round_' + `self.round` + '/opt')
+        
+                    # Model selection between MI to MV.
+                    self.model_selection(modsel_pipe='final', write_flag=False)
+        
+        
+                    # Monte Carlo simulations.
+                    ##########################
+        
+                    # Fix the diffusion tensor, if it exists.
+                    if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
+                        fix('diff')
+        
+                    # Simulations.
+                    monte_carlo.setup(number=MC_NUM)
+                    monte_carlo.create_data()
+                    monte_carlo.initial_values()
+                    minimise(MIN_ALGOR)
+                    eliminate()
+                    monte_carlo.error_analysis()
+        
+        
+                    # Write the final results.
+                    ##########################
+        
+                    results.write(file='results', dir=resultsdir + 'final', force=True)
+        
+        
+                # Unknown script behaviour.
+                ###########################
+        
+                else:
+                    raise RelaxError, "Unknown diffusion model, change the value of 'DIFF_MODEL'"
+        
+        
+            def convergence(self):
+                """Test for the convergence of the global model."""
+        
+                # Alias the data pipes.
+                cdp = pipes.get_pipe()
+                prev_pipe = pipes.get_pipe('previous')
+        
+                # Print out.
+                print "\n\n\n"
+                print "#####################"
+                print "# Convergence tests #"
+                print "#####################\n\n"
+        
+                # Convergence flags.
+                chi2_converged = True
+                models_converged = True
+                params_converged = True
+        
+        
+                # Chi-squared test.
+                ###################
+        
+                print "Chi-squared test:"
+                print "    chi2 (k-1):          " + `prev_pipe.chi2`
+                print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_pipe.chi2)` + ')'
+                print "    chi2 (k):            " + `cdp.chi2`
+                print "        (as an IEEE-754 byte array: " + `floatAsByteArray(cdp.chi2)` + ')'
+                print "    chi2 (difference):   " + `prev_pipe.chi2 - cdp.chi2`
+                if prev_pipe.chi2 == cdp.chi2:
+                    print "    The chi-squared value has converged.\n"
+                else:
+                    print "    The chi-squared value has not converged.\n"
+                    chi2_converged = False
+        
+        
+                # Identical model-free model test.
+                ##################################
+        
+                print "Identical model-free models test:"
+        
+                # Create a string representation of the model-free models of the previous data pipe.
+                prev_models = ''
+                for spin in spin_loop(pipe='previous'):
+                    if hasattr(spin, 'model'):
+                        if not spin.model == 'None':
+                            prev_models = prev_models + spin.model
+        
+                # Create a string representation of the model-free models of the current data pipe.
+                curr_models = ''
+                for spin in spin_loop():
+                    if hasattr(spin, 'model'):
+                        if not spin.model == 'None':
+                            curr_models = curr_models + spin.model
+        
+                # The test.
+                if prev_models == curr_models:
+                    print "    The model-free models have converged.\n"
+                else:
+                    print "    The model-free models have not converged.\n"
+                    models_converged = False
+        
+        
+                # Identical parameter value test.
+                #################################
+        
+                print "Identical parameter test:"
+        
+                # Only run the tests if the model-free models have converged.
+                if models_converged:
+                    # Diffusion parameter array.
+                    if DIFF_MODEL == 'sphere':
+                        params = ['tm']
+                    elif DIFF_MODEL == 'oblate' or DIFF_MODEL == 'prolate':
+                        params = ['tm', 'Da', 'theta', 'phi']
+                    elif DIFF_MODEL == 'ellipsoid':
+                        params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+        
+                    # Tests.
+                    for param in params:
+                        # Get the parameter values.
+                        prev_val = getattr(prev_pipe.diff_tensor, param)
+                        curr_val = getattr(cdp.diff_tensor, param)
+        
+                        # Test if not identical.
+                        if prev_val != curr_val:
+                            print "    Parameter:   " + param
+                            print "    Value (k-1): " + `prev_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
+                            print "    Value (k):   " + `curr_val`
+                            print "        (as an IEEE-754 byte array: " + `floatAsByteArray(curr_val)` + ')'
+                            print "    The diffusion parameters have not converged.\n"
+                            params_converged = False
+        
+                    # Skip the rest if the diffusion tensor parameters have not converged.
+                    if params_converged:
+                        # Loop over the spins.
+                        for mol_index, res_index, spin_index in spin_index_loop():
+                            # Alias the spin containers.
+                            prev_spin = prev_pipe.mol[mol_index].res[res_index].spin[spin_index]
+                            curr_spin = cdp.mol[mol_index].res[res_index].spin[spin_index]
+        
+                            # Skip if the parameters have not converged.
+                            if not params_converged:
+                                break
+        
+                            # Skip spin systems with no 'params' object.
+                            if not hasattr(prev_spin, 'params') or not hasattr(curr_spin, 'params'):
+                                continue
+        
+                            # The spin ID string.
+                            spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=cdp.mol[mol_index].res[res_index].spin[spin_index].num, spin_name=cdp.mol[mol_index].res[res_index].spin[spin_index].name)
+        
+                            # Loop over the parameters.
+                            for j in xrange(len(curr_spin.params)):
+                                # Get the parameter values.
+                                prev_val = getattr(prev_spin, lower(prev_spin.params[j]))
+                                curr_val = getattr(curr_spin, lower(curr_spin.params[j]))
+        
+                                # Test if not identical.
+                                if prev_val != curr_val:
+                                    print "    Spin ID:     " + `spin_id`
+                                    print "    Parameter:   " + curr_spin.params[j]
+                                    print "    Value (k-1): " + `prev_val`
+                                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
+                                    print "    Value (k):   " + `curr_val`
+                                    print "        (as an IEEE-754 byte array: " + `floatAsByteArray(prev_val)` + ')'
+                                    print "    The model-free parameters have not converged.\n"
+                                    params_converged = False
+                                    break
+        
+                # The model-free models haven't converged hence the parameter values haven't converged.
+                else:
+                    print "    The model-free models haven't converged hence the parameters haven't converged.\n"
+                    params_converged = False
+        
+                # Print out.
+                if params_converged:
+                    print "    The diffusion tensor and model-free parameters have converged.\n"
+        
+        
+                # Final print out.
+                ##################
+        
+                print "\nConvergence:"
+                if chi2_converged and models_converged and params_converged:
+                    print "    [ Yes ]"
+                    return True
+                else:
+                    print "    [ No ]"
+                    return False
+        
+        
+            def determine_rnd(self, model=None):
+                """Function for returning the name of next round of optimisation."""
+        
+                # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
+                try:
+                    dir_list = listdir(resultsdir + model)
+                except:
+                    return 0
+        
+                # Set the round to 'init' or 0 if there is no directory called 'init'.
+                if 'init' not in dir_list:
+                    return 0
+        
+                # Create a list of all files which begin with 'round_'.
+                rnd_dirs = []
+                for file in dir_list:
+                    if search('^round_', file):
+                        rnd_dirs.append(file)
+        
+                # Create a sorted list of integer round numbers.
+                numbers = []
+                for dir in rnd_dirs:
+                    try:
+                        numbers.append(int(dir[6:]))
+                    except:
+                        pass
+                numbers.sort()
+        
+                # No directories begining with 'round_' exist, set the round to 1.
+                if not len(numbers):
+                    return 1
+        
+                # Determine the number for the next round (add 1 to the highest number).
+                return numbers[-1] + 1
+        
+        
+            def load_tensor(self):
+                """Function for loading the optimised diffusion tensor."""
+        
+                # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
+                if pipes.has_pipe('previous'):
+                    pipe.delete('previous')
+                pipe.create('previous', 'mf')
+        
+                # Load the optimised diffusion tensor from the initial round.
+                if self.round == 1:
+                    results.read('results', resultsdir + DIFF_MODEL + '/init')
+        
+                # Load the optimised diffusion tensor from the previous round.
+                else:
+                    results.read('results', resultsdir + DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
+        
+        
+            def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
+                """Model selection function."""
+        
+                # Model elimination.
+                if modsel_pipe != 'final':
+                    eliminate()
+        
+                # Model selection (delete the model selection pipe if it already exists).
+                if pipes.has_pipe(modsel_pipe):
+                    pipe.delete(modsel_pipe)
+                model_selection(method=m_method, modsel_pipe=modsel_pipe, pipes=self.pipes)
+        
+                # Write the results.
+                if write_flag:
+                    results.write(file='results', dir=dir, force=True)
+        
+        
+            def multi_model(self, local_tm=False):
+                """Function for optimisation of all model-free models."""
+        
+                # Set the data pipe names (also the names of preset model-free models).
+                if local_tm:
+                    self.pipes = LOCAL_TM_MODELS
+                else:
+                    self.pipes = MF_MODELS
+        
+                # Loop over the data pipes.
+                for name in self.pipes:
+                    # Create the data pipe.
+                    if pipes.has_pipe(name):
+                        pipe.delete(name)
+                    pipe.create(name, 'mf')
+        
+                    # Load the sequence.
+                    sequence.read(SEQ_ARGS[0], SEQ_ARGS[1], SEQ_ARGS[2], SEQ_ARGS[3], SEQ_ARGS[4], SEQ_ARGS[5], SEQ_ARGS[6], SEQ_ARGS[7])
+        
+                    # Load the PDB file and calculate the unit vectors parallel to the XH bond.
+                    if not local_tm and PDB_FILE:
+                        structure.read_pdb(PDB_FILE)
+                        structure.vectors(attached='H')
+        
+                    # Load the relaxation data.
+                    for data in RELAX_DATA:
+                        relax_data.read(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12])
+        
+                    # Deselect spins to be excluded (including unresolved and specifically excluded spins).
+                    if UNRES:
+                        deselect.read(file=UNRES)
+                    if EXCLUDE:
+                        deselect.read(file=EXCLUDE)
+        
+                    # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
+                    if not local_tm:
+                        diffusion_tensor.copy('previous')
+                        fix('diff')
+        
+                    # Set all the necessary values.
+                    value.set(BOND_LENGTH, 'bond_length')
+                    value.set(CSA, 'csa')
+                    value.set(HETNUC, 'heteronucleus')
+                    value.set(PROTON, 'proton')
+        
+                    # Select the model-free model.
+                    model_free.select_model(model=name)
+        
+                    # Minimise.
+                    grid_search(inc=GRID_INC)
+                    minimise(MIN_ALGOR)
+        
+                    # Write the results.
+                    dir = self.base_dir + name
+                    results.write(file='results', dir=dir, force=True)
+        
+        
+        # The main class.
+        Model()
+        
+        print ""
+        print ""
+        print "_____________________________________________________________________________"
+        print ""
+        print "calculation finished"
+        print ""
+        msgbox(msg='Model-free ' + str(model) + ' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
-	#create results file
-	if model == 'final':
-	   model_free_results(self, target_dir)
-	   self.list_modelfree.Append(target_dir + '/final/grace/s2.agr')
+        #create results file
+        if model == 'final':
+           model_free_results(self, target_dir)
+           self.list_modelfree.Append(target_dir + '/final/grace/s2.agr')
            self.list_modelfree.Append(target_dir + '/final/Model-free_Results.txt')
            self.list_modelfree.Append(target_dir + '/final/s2.pml')
            self.list_modelfree.Append(target_dir + '/final/rex.pml')
