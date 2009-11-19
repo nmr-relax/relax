@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2009 Edward d'Auvergne                                   #
-# Copyright (C) 2007-2008 Sebastien Morin                                     #
+# Copyright (C) 2007-2009 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -204,9 +204,9 @@ class Consistency_tests(Common_functions):
             - 'orientation', angle between the 15N-1H vector and the principal axis of the 15N
             chemical shift tensor.
             - 'tc', correlation time.
-            - 'j0', spectral density value at 0 MHz.
-            - 'f_eta', eta-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
-            - 'f_r2', R2-test (from Fushman D. et al. (1998) JACS, 120: 10947-10952).
+            - 'j0', spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162).
+            - 'f_eta', eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
+            - 'f_r2', R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952).
 
 
         @keyword set:           An unused variable.
