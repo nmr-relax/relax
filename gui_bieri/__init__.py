@@ -63,7 +63,7 @@ def run(intro_string):
     sys.stdout.write('\n\n\n\n')
 
     # show about panel
-    about_relax('')
+    about_relax()
 
     # Dependency check.
     if not dep_check.wx_module:

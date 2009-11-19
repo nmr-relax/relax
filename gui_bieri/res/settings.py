@@ -65,7 +65,7 @@ class Settings(wxFrame):
         # begin wxGlade: Settings.__set_properties
         self.SetTitle("Settings")
         _icon = wxEmptyIcon()
-        _icon.CopyFromBitmap(wxBitmap(directory + "res/pics/relax_start.gif", wxBITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wxBitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wxBITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.title.SetFont(wxFont(15, wxDEFAULT, wxITALIC, wxNORMAL, 0, ""))
         self.label_1.SetMinSize((155, 17))
@@ -163,9 +163,7 @@ class Settings(wxFrame):
 # end of class Settings
 
 
-def relax_settings(home_directory):
-    global directory
-    directory = home_directory
+def relax_settings():
     app = wx.PySimpleApp(0)
     wx.InitAllImageHandlers()
     start = Settings(None, -1, "")
