@@ -50,6 +50,7 @@ import sys
 
 # relax modules.
 import generic_fns
+import gui_bieri
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
@@ -129,7 +130,8 @@ class Relax:
 
         # Execute the Bieri GUI.
         elif mode == 'gui_bieri':
-            self.gui_bieri.run()
+            self.gui = gui_bieri
+            self.gui.run()
 
         # Execute the relax test suite
         elif mode == 'test suite':

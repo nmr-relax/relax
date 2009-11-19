@@ -20,11 +20,40 @@
 #                                                                             #
 ###############################################################################
 
+# Deps.
+import dep_check
 
-__all__ = ['relaxGUI']
+# Python module imports.
+import sys
+if dep_check.wx_module:
+    import wx
+
+# relax module imports.
+from relax_errors import RelaxError
+from relax_gui import main
+
+
+__all__ = ['relax_gui']
 
 __doc__ = \
 """Package for the Bieri GUI interface for relax.
 
 This GUI was announced in the post at https://mail.gna.org/public/relax-devel/2009-11/msg00005.html.
 """
+
+# Execute the GUI.
+def run():
+    """Build the Bieri GUI for relax."""
+
+    # Dependency check.
+    if not dep_check.wx_module:
+        sys.stderr.write("Please install the wx Python module to access the Bieri GUI.\n\n")
+        sys.exit()
+
+    # Build the GUI.
+    relaxGUI = wx.PySimpleApp(0)
+    wx.InitAllImageHandlers()
+    relaxGUI_main = main(None, -1, "")
+    relaxGUI.SetTopWindow(relaxGUI_main)
+    relaxGUI_main.Show()
+    relaxGUI.MainLoop()

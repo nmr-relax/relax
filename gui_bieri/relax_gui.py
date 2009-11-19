@@ -4139,13 +4139,3 @@ class main(wx.Frame):
         choice = self.list_modelfree.GetStringSelection()
         see_results(choice)
         event.Skip()
-
-# end of class main
-
-
-relaxGUI = wx.PySimpleApp(0)
-wx.InitAllImageHandlers()
-relaxGUI_main = main(None, -1, "")
-relaxGUI.SetTopWindow(relaxGUI_main)
-relaxGUI_main.Show()
-relaxGUI.MainLoop()

@@ -59,9 +59,16 @@ except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
 
-
 # Optional packages.
 ####################
+
+# wx package for the Bieri gui.
+try:
+    import wx
+    del wx
+    wx_module = True
+except ImportError:
+    wx_module = False
 
 # Readline module.
 try:
