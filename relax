@@ -131,7 +131,7 @@ class Relax:
         # Execute the Bieri GUI.
         elif mode == 'gui_bieri':
             self.gui = gui_bieri
-            self.gui.run()
+            self.gui.run(intro_string)
 
         # Execute the relax test suite
         elif mode == 'test suite':

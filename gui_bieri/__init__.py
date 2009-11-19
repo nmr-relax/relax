@@ -30,7 +30,7 @@ if dep_check.wx_module:
 
 # relax module imports.
 from relax_errors import RelaxError
-from relax_gui import main
+from relax_gui import about_relax, main
 
 
 __all__ = ['relax_gui']
@@ -42,8 +42,28 @@ This GUI was announced in the post at https://mail.gna.org/public/relax-devel/20
 """
 
 # Execute the GUI.
-def run():
-    """Build the Bieri GUI for relax."""
+def run(intro_string):
+    """Build the Bieri GUI for relax.
+
+    @param intro_string:    The relax introduction string.
+    @type intro_string:     str
+    """
+
+    # Print the program intro.
+    sys.stdout.write("%s\n" % intro_string)
+
+    # Print the GUI intro.
+    sys.stdout.write('\n\n\n\n\n')
+    sys.stdout.write('##############################################\n')
+    sys.stdout.write('#                                            #\n')
+    sys.stdout.write('#  relaxGUI - graphical interface for relax  #\n')
+    sys.stdout.write('#        (C) 2009 Michael Bieri              #\n')
+    sys.stdout.write('#                                            #\n')
+    sys.stdout.write('##############################################\n')
+    sys.stdout.write('\n\n\n\n')
+
+    # show about panel
+    about_relax('')
 
     # Dependency check.
     if not dep_check.wx_module:

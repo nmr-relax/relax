@@ -47,19 +47,6 @@ from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loo
 from generic_fns import pipes
 from relax_errors import RelaxError
 
-# Start
-print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
-print '##############################################'
-print '#                                            #'
-print '#  relaxGUI - graphical interface for relax  #'
-print '#        (C) 2009 Michael Bieri              #'
-print '#                                            #'
-print '##############################################'
-print '\n\n\n\n'
-
-# show about panel
-about_relax(homedir)
-
 #####################################################################################################################
 #####################################################################################################################
 #####################################################################################################################
