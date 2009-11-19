@@ -127,6 +127,10 @@ class Relax:
             self.interpreter = interpreter.Interpreter(self, intro_string)
             self.interpreter.run(self.script_file)
 
+        # Execute the Bieri GUI.
+        elif mode == 'bieri_gui':
+            self.bieri_gui.run()
+
         # Execute the relax test suite
         elif mode == 'test suite':
             # Load the interpreter and turn intros on.
@@ -161,6 +165,10 @@ class Relax:
         elif mode == 'licence':
             self.licence()
 
+        # Unknown mode.
+        else:
+            raise relax_errors.RelaxError("The '%s' mode is unknown." % mode)
+
 
     def arguments(self):
         """Function for processing the command line arguments."""
@@ -173,6 +181,8 @@ class Relax:
         parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
+        parser.add_option('-g', '--gui', action='store', type='string', dest='gui', default=None, help='launch the specified GUI for relax')
+        parser.add_option('-b', '--bieri', action='store_true', dest='bieri_gui', default=0, help='launch the Bieri GUI for relax')
         parser.add_option('-p', '--pedantic', action='store_true', dest='pedantic', default=0, help='escalate all warnings to errors')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
@@ -296,6 +306,26 @@ class Relax:
         # Script mode.
         elif self.script_file:
             mode = 'script'
+
+        # GUI.
+        elif options.gui or options.bieri_gui:
+            # Make sure no script is supplied.
+            if self.script_file:
+                parser.error("a script should not be supplied in test mode")
+
+            # Exclusive models.
+            if options.gui and options.gui != 'bieri' and options.bieri_gui:
+                parser.error("specifying multiple GUIs is not allowed")
+            elif options.test_suite or options.system_tests or options.unit_tests:
+                parser.error("the relax GUI mode and testing modes are mutually exclusive")
+            elif options.licence:
+                parser.error("the relax GUI mode and licence mode are mutually exclusive")
+
+            # Set the mode.
+            if options.gui == 'bieri' or options.bieri_gui:
+                mode = 'bieri_gui'
+            else:
+                parser.error("the '%s' GUI interface is unknown" % options.gui)
 
         # Prompt mode (default).
         else:
