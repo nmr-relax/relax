@@ -25,7 +25,7 @@
 homedir = ''
 
 # Python module imports.
-from os import getcwd, listdir
+from os import getcwd, listdir, sep
 from re import search
 from string import lower
 import wx
@@ -740,7 +740,7 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
 	# Create PyMol Macro
 	color_code_noe(self, target_dir)
 
-        msgbox(msg='NOE calculation was successfull !', title='relaxGUI ', ok_button='OK', image=homedir + 'res/pics/relax.gif', root=None)
+        msgbox(msg='NOE calculation was successfull !', title='relaxGUI ', ok_button='OK', image=homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
 
 
@@ -859,7 +859,7 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
 	print "calculation finished"
 	print ""
 
-	msgbox(msg='T' + str(t1_t2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=homedir + 'res/pics/relax.gif', root=None)
+	msgbox(msg='T' + str(t1_t2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
         # list files to results
 	self.list_tx.Append(target_dir + '/grace/rx.' + str(nmr_freq) + '.agr')
@@ -1524,7 +1524,7 @@ def start_model_free(self, model):
 	print ""
 	print "calculation finished"
 	print ""
-	msgbox(msg='Model-free ' + str(model) + ' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=homedir + 'res/pics/relax.gif', root=None)
+	msgbox(msg='Model-free ' + str(model) + ' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
 	#create results file
 	if model == 'final':
@@ -1608,7 +1608,7 @@ class main(wx.Frame):
 
         # NOE 1 no. 1
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
-        self.bitmap_1_copy_1 = wx.StaticBitmap(self.noe1, -1, wx.Bitmap(homedir + "res/pics/noe.gif", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_1 = wx.StaticBitmap(self.noe1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1 = wx.StaticText(self.noe1, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3 = wx.StaticText(self.noe1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_noe1 = wx.TextCtrl(self.noe1, -1, str(nmrfreq[0]) )
@@ -1633,11 +1633,11 @@ class main(wx.Frame):
         self.chandir_noe1 = wx.Button(self.noe1, -1, "Change")
         self.label_2_copy_2 = wx.StaticText(self.noe1, -1, "")
         self.label_5_copy_1 = wx.StaticText(self.noe1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_noe1 = wx.BitmapButton(self.noe1, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_noe1 = wx.BitmapButton(self.noe1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         # T1 no. 1
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.t1_1, -1, wx.Bitmap(homedir + "res/pics/t1.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy = wx.StaticBitmap(self.t1_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'t1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy = wx.StaticText(self.t1_1, -1, "Set-up for T1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.t1_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_t11 = wx.TextCtrl(self.t1_1, -1, str(nmrfreq[0]))
@@ -1684,11 +1684,11 @@ class main(wx.Frame):
         self.t1_list_14 = wx.StaticText(self.panel_3, -1, "")
         self.t1_time_1_4 = wx.TextCtrl(self.panel_3, -1, "")
         self.label_5_copy_1_copy = wx.StaticText(self.t1_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_t1_1 = wx.BitmapButton(self.t1_1, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_t1_1 = wx.BitmapButton(self.t1_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #T2 no. 1
-        self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.t2_1, -1, wx.Bitmap(homedir + "res/pics/t2.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.t2_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'t2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy = wx.StaticText(self.t2_1, -1, "Set-up for T2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1 = wx.StaticText(self.t2_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_t21 = wx.TextCtrl(self.t2_1, -1, str(nmrfreq[0]))
@@ -1735,11 +1735,11 @@ class main(wx.Frame):
         self.t2_list_14 = wx.StaticText(self.panel_3_copy, -1, "")
         self.t2_time_14 = wx.TextCtrl(self.panel_3_copy, -1, "")
         self.label_5_copy_1_copy_copy = wx.StaticText(self.t2_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_t1_1_copy = wx.BitmapButton(self.t2_1, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_t1_1_copy = wx.BitmapButton(self.t2_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #Noe no.2
-        self.bitmap_1_copy_1_copy = wx.StaticBitmap(self.noe1_copy, -1, wx.Bitmap(homedir + "res/pics/noe.gif", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_1_copy = wx.StaticBitmap(self.noe1_copy, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy = wx.StaticText(self.noe1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, str(nmrfreq[1]))
@@ -1764,11 +1764,11 @@ class main(wx.Frame):
         self.chandir_noe1_copy = wx.Button(self.noe1_copy, -1, "Change")
         self.label_2_copy_2_copy = wx.StaticText(self.noe1_copy, -1, "")
         self.label_5_copy_1_copy_1 = wx.StaticText(self.noe1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_noe1_copy = wx.BitmapButton(self.noe1_copy, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_noe1_copy = wx.BitmapButton(self.noe1_copy, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #T1 no. 2
-        self.bitmap_1_copy_copy_copy_1 = wx.StaticBitmap(self.t1_1_copy, -1, wx.Bitmap(homedir + "res/pics/t1.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_1 = wx.StaticBitmap(self.t1_1_copy, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'t1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_1 = wx.StaticText(self.t1_1_copy, -1, "Set-up for T1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_2 = wx.StaticText(self.t1_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_t11_copy = wx.TextCtrl(self.t1_1_copy, -1, str(nmrfreq[1]))
@@ -1814,10 +1814,10 @@ class main(wx.Frame):
         self.t1_list_14_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
         self.t1_time_1_4_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
         self.label_5_copy_1_copy_copy_1 = wx.StaticText(self.t1_1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_t1_1_copy_1 = wx.BitmapButton(self.t1_1_copy, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_t1_1_copy_1 = wx.BitmapButton(self.t1_1_copy, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #T2 no. 2
-        self.bitmap_1_copy_copy_copy_copy = wx.StaticBitmap(self.t2_1_copy, -1, wx.Bitmap(homedir + "res/pics/t2.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_copy = wx.StaticBitmap(self.t2_1_copy, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'t2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy = wx.StaticText(self.t2_1_copy, -1, "Set-up for T2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy = wx.StaticText(self.t2_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_t21_copy = wx.TextCtrl(self.t2_1_copy, -1, str(nmrfreq[1]))
@@ -1864,10 +1864,10 @@ class main(wx.Frame):
         self.t2_list_14_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
         self.t2_time_14_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
         self.label_5_copy_1_copy_copy_copy = wx.StaticText(self.t2_1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_t1_1_copy_copy = wx.BitmapButton(self.t2_1_copy, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_t1_1_copy_copy = wx.BitmapButton(self.t2_1_copy, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #NOE no. 3
-        self.bitmap_1_copy_1_copy_1 = wx.StaticBitmap(self.noe1_copy_1, -1, wx.Bitmap(homedir + "res/pics/noe.gif", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_1_copy_1 = wx.StaticBitmap(self.noe1_copy_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, str(nmrfreq[2]))
@@ -1892,11 +1892,11 @@ class main(wx.Frame):
         self.chandir_noe1_copy_1 = wx.Button(self.noe1_copy_1, -1, "Change")
         self.label_2_copy_2_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "")
         self.label_5_copy_1_copy_2 = wx.StaticText(self.noe1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_noe1_copy_1 = wx.BitmapButton(self.noe1_copy_1, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_noe1_copy_1 = wx.BitmapButton(self.noe1_copy_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #T1 no. 3
-        self.bitmap_1_copy_copy_copy_2 = wx.StaticBitmap(self.t1_1_copy_1, -1, wx.Bitmap(homedir + "res/pics/t1.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_2 = wx.StaticBitmap(self.t1_1_copy_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'t1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_2 = wx.StaticText(self.t1_1_copy_1, -1, "Set-up for T1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_3 = wx.StaticText(self.t1_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_t11_copy_1 = wx.TextCtrl(self.t1_1_copy_1, -1, str(nmrfreq[2]))
@@ -1943,10 +1943,10 @@ class main(wx.Frame):
         self.t1_list_14_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
         self.t1_time_1_4_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
         self.label_5_copy_1_copy_copy_2 = wx.StaticText(self.t1_1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_t1_1_copy_2 = wx.BitmapButton(self.t1_1_copy_1, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_t1_1_copy_2 = wx.BitmapButton(self.t1_1_copy_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #T2 no. 3
-        self.bitmap_1_copy_copy_copy_copy_1 = wx.StaticBitmap(self.t2_1_copy_1, -1, wx.Bitmap(homedir + "res/pics/t2.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_copy_1 = wx.StaticBitmap(self.t2_1_copy_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'t2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1 = wx.StaticText(self.t2_1_copy_1, -1, "Set-up for T2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy_1 = wx.StaticText(self.t2_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_t21_copy_1 = wx.TextCtrl(self.t2_1_copy_1, -1, str(nmrfreq[2]))
@@ -1993,11 +1993,11 @@ class main(wx.Frame):
         self.t2_list_14_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
         self.t2_time_14_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
         self.label_5_copy_1_copy_copy_copy_1 = wx.StaticText(self.t2_1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_t1_1_copy_copy_1 = wx.BitmapButton(self.t2_1_copy_1, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_t1_1_copy_copy_1 = wx.BitmapButton(self.t2_1_copy_1, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #Model-free
-        self.bitmap_2 = wx.StaticBitmap(self.modelfree, -1, wx.Bitmap(homedir + "res/pics/modelfree.png", wx.BITMAP_TYPE_ANY))
+        self.bitmap_2 = wx.StaticBitmap(self.modelfree, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'modelfree.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Set-up for Model-free analysis:")
         self.label_7 = wx.StaticText(self.panel_4, -1, "NMR freq 1:")
         self.modelfreefreq1 = wx.TextCtrl(self.panel_4, -1, "")
@@ -2056,7 +2056,7 @@ class main(wx.Frame):
         self.resultsdir_t21_copy_2 = wx.TextCtrl(self.modelfree, -1, results_dir_model)
         self.results_directory_t21_copy_2 = wx.Button(self.modelfree, -1, "Change")
         self.label_5_copy_1_copy_3 = wx.StaticText(self.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_modelfree = wx.BitmapButton(self.modelfree, -1, wx.Bitmap(homedir + "res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        self.relax_start_modelfree = wx.BitmapButton(self.modelfree, -1, wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         ## results
         self.label_11 = wx.StaticText(self.results, -1, "NOE analysis")
@@ -2151,7 +2151,7 @@ class main(wx.Frame):
         # begin wxGlade: main.__set_properties
         self.SetTitle("relaxGUI")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(homedir + "res/pics/relax.gif", wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((1000, 600))
         self.frame_1_statusbar.SetStatusWidths([770, 50, -1])
@@ -3424,7 +3424,7 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_noe1(self, event): # Start NOE calculation no. 1
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
 
         if start_relax == True:
            make_noe(self.res_noe1.GetValue(), self.noe_ref_1.GetValue(), self.noe_sat_1.GetValue(), self.noe_ref_err_1.GetValue(), self.noe_sat_err_1.GetValue(), self.nmrfreq_value_noe1.GetValue(),self.structure_noe1.GetValue(), self.unres_noe1.GetValue(), start_relax, self, 1)
@@ -3515,7 +3515,7 @@ class main(wx.Frame):
         relax_times_t1_1[11] = str(self.t1_time_12.GetValue()) 
         relax_times_t1_1[12] = str(self.t1_time_13.GetValue()) 
         relax_times_t1_1[13] = str(self.t1_time_1_4.GetValue()) 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_tx(self.resultsdir_t11.GetValue(), relax_times_t1_1, self.structure_t11.GetValue(), self.nmrfreq_value_t11.GetValue(), 1, 1, self.unresolved_t11.GetValue(), self, 1)
         event.Skip()
@@ -3600,7 +3600,7 @@ class main(wx.Frame):
         relax_times_t2_1[11] = str(self.t2_time_12.GetValue()) 
         relax_times_t2_1[12] = str(self.t2_time_13.GetValue()) 
         relax_times_t2_1[13] = str(self.t2_time_14.GetValue()) 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_tx(self.resultsdir_t21.GetValue(), relax_times_t2_1, self.structure_t11.GetValue(), self.nmrfreq_value_t11.GetValue(), 2, 1, self.unresolved_t11.GetValue(), self,1)
         event.Skip()
@@ -3632,7 +3632,7 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_noe2(self, event): # start noe 2 calculation
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_noe(self.res_noe1_copy.GetValue(), self.noe_ref_1_copy.GetValue(), self.noe_sat_1_copy.GetValue(), self.noe_ref_err_1_copy.GetValue(), self.noe_sat_err_1_copy.GetValue(), self.nmrfreq_value_noe1_copy.GetValue(),self.structure_noe1_copy.GetValue(), self.unres_noe1_copy.GetValue(), start_relax, self, 2)
         event.Skip()
@@ -3719,7 +3719,7 @@ class main(wx.Frame):
         relax_times_t1_2[12] = str(self.t1_time_13_copy.GetValue()) 
         relax_times_t1_2[13] = str(self.t1_time_1_4_copy.GetValue()) 
 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_tx(self.resultsdir_t11_copy.GetValue(), relax_times_t1_2, self.structure_t11_copy.GetValue(), self.nmrfreq_value_t11_copy.GetValue(), 1, 2, self.unresolved_t11_copy.GetValue(), self,2)
         event.Skip()
@@ -3806,7 +3806,7 @@ class main(wx.Frame):
         relax_times_t2_2[12] = str(self.t2_time_13_copy.GetValue()) 
         relax_times_t2_2[13] = str(self.t2_time_14_copy.GetValue()) 
 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_tx(self.resultsdir_t21_copy.GetValue(), relax_times_t2_2, self.structure_t11_copy.GetValue(), self.nmrfreq_value_t11_copy.GetValue(), 2, 2, self.unresolved_t11_copy.GetValue(), self,2)
         event.Skip()
@@ -3838,7 +3838,7 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_noe3(self, event): # calculate noe 3
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_noe(self.res_noe1_copy_1.GetValue(), self.noe_ref_1_copy_1.GetValue(), self.noe_sat_1_copy_1.GetValue(), self.noe_ref_err_1_copy_1.GetValue(), self.noe_sat_err_1_copy_1.GetValue(), self.nmrfreq_value_noe1_copy_1.GetValue(),self.structure_noe1_copy_1.GetValue(), self.unres_noe1_copy_1.GetValue(), start_relax, self, 3)
         event.Skip()
@@ -3924,7 +3924,7 @@ class main(wx.Frame):
         relax_times_t1_3[11] = str(self.t1_time_12_copy_1.GetValue()) 
         relax_times_t1_3[12] = str(self.t1_time_13_copy_1.GetValue()) 
         relax_times_t1_3[13] = str(self.t1_time_1_4_copy_1.GetValue()) 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_tx(self.resultsdir_t11_copy_1.GetValue(), relax_times_t1_3, self.structure_t11_copy_1.GetValue(), self.nmrfreq_value_t11_copy_1.GetValue(), 1, 3, self.unresolved_t11_copy_1.GetValue(), self,3)
         event.Skip()
@@ -4011,7 +4011,7 @@ class main(wx.Frame):
         relax_times_t2_3[12] = str(self.t2_time_13_copy_1.GetValue()) 
         relax_times_t2_3[13] = str(self.t2_time_14_copy_1.GetValue()) 
 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'res/pics/relax.gif')
+        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
         if start_relax == True:
            make_tx(self.resultsdir_t21_copy_1.GetValue(), relax_times_t2_3, self.structure_t11_copy_1.GetValue(), self.nmrfreq_value_t11_copy_1.GetValue(), 2, 3, self.unresolved_t11_copy_1.GetValue(), self,3)
         event.Skip()
@@ -4107,7 +4107,7 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_model_free(self, event):
-        which_model = buttonbox(msg='Start relax?', title='relaxGUI', choices=('local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid','final', 'cancel'), image=homedir + 'res/pics/relax.gif', root=None) 
+        which_model = buttonbox(msg='Start relax?', title='relaxGUI', choices=('local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid','final', 'cancel'), image=homedir + 'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None) 
         if not which_model == 'cancel':
            start_model_free(self, which_model)
         event.Skip()   
