@@ -454,7 +454,7 @@ class Mf_minimise:
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def grid_search_config(self, num_params, spin=None, spin_id=None, lower=None, upper=None, inc=None, scaling_matrix=None, verbosity=1):
+    def _grid_search_config(self, num_params, spin=None, spin_id=None, lower=None, upper=None, inc=None, scaling_matrix=None, verbosity=1):
         """Configure the grid search.
 
         @param num_params:          The number of parameters in the model.
@@ -499,7 +499,7 @@ class Mf_minimise:
             # Minimisation options for diffusion tensor parameters.
             if model_type == 'diff' or model_type == 'all':
                 # Get the diffusion tensor specific configuration.
-                self.grid_search_diff_bounds(lower, upper)
+                self._grid_search_diff_bounds(lower, upper)
 
             # Model-free parameters (residue specific parameters).
             if model_type != 'diff':
@@ -516,7 +516,7 @@ class Mf_minimise:
                         continue
 
                     # Get the spin specific configuration.
-                    self.grid_search_spin_bounds(spin, lower, upper)
+                    self._grid_search_spin_bounds(spin, lower, upper)
 
         # Diagonal scaling of minimisation options.
         for i in xrange(num_params):
@@ -527,7 +527,7 @@ class Mf_minimise:
         return inc, lower, upper
 
 
-    def grid_search_diff_bounds(self, lower, upper):
+    def _grid_search_diff_bounds(self, lower, upper):
         """Set up the default grid search bounds the diffusion tensor.
 
         This method appends the default bounds to the lower and upper lists.
@@ -595,7 +595,7 @@ class Mf_minimise:
             upper.append(pi)
 
 
-    def grid_search_spin_bounds(self, spin, lower, upper):
+    def _grid_search_spin_bounds(self, spin, lower, upper):
         """Set up the default grid search bounds for a single spin.
 
         This method appends the default bounds to the lower and upper lists.  The ordering of the
@@ -644,6 +644,343 @@ class Mf_minimise:
             # Unknown option.
             else:
                 raise RelaxError("Unknown model-free parameter.")
+
+
+    def _linear_constraints(self, num_params, model_type=None, spin=None, spin_id=None, scaling_matrix=None):
+        """Set up the model-free linear constraint matrices A and b.
+
+        Standard notation
+        =================
+
+        The order parameter constraints are::
+
+            0 <= S2 <= 1
+            0 <= S2f <= 1
+            0 <= S2s <= 1
+
+        By substituting the formula S2 = S2f.S2s into the above inequalities, the additional two
+        inequalities can be derived::
+
+            S2 <= S2f
+            S2 <= S2s
+
+        Correlation time constraints are::
+
+            te >= 0
+            tf >= 0
+            ts >= 0
+
+            tf <= ts
+
+            te, tf, ts <= 2 * tm
+
+        Additional constraints used include::
+
+            Rex >= 0
+            0.9e-10 <= r <= 2e-10
+            -300e-6 <= CSA <= 0
+
+
+        Rearranged notation
+        ===================
+
+        The above inequality constraints can be rearranged into::
+
+            S2 >= 0
+            -S2 >= -1
+            S2f >= 0
+            -S2f >= -1
+            S2s >= 0
+            -S2s >= -1
+            S2f - S2 >= 0
+            S2s - S2 >= 0
+            te >= 0
+            tf >= 0
+            ts >= 0
+            ts - tf >= 0
+            Rex >= 0
+            r >= 0.9e-10
+            -r >= -2e-10
+            CSA >= -300e-6
+            -CSA >= 0
+
+
+        Matrix notation
+        ===============
+
+        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
+        values, and b is a vector of scalars, these inequality constraints are::
+
+            | 1  0  0  0  0  0  0  0  0 |                  |    0    |
+            |                           |                  |         |
+            |-1  0  0  0  0  0  0  0  0 |                  |   -1    |
+            |                           |                  |         |
+            | 0  1  0  0  0  0  0  0  0 |                  |    0    |
+            |                           |                  |         |
+            | 0 -1  0  0  0  0  0  0  0 |                  |   -1    |
+            |                           |                  |         |
+            | 0  0  1  0  0  0  0  0  0 |     | S2  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0 -1  0  0  0  0  0  0 |     | S2f |      |   -1    |
+            |                           |     |     |      |         |
+            |-1  1  0  0  0  0  0  0  0 |     | S2s |      |    0    |
+            |                           |     |     |      |         |
+            |-1  0  1  0  0  0  0  0  0 |     | te  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  1  0  0  0  0  0 |  .  | tf  |  >=  |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0  1  0  0  0  0 |     | ts  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0  0  1  0  0  0 |     | Rex |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0 -1  1  0  0  0 |     |  r  |      |    0    |
+            |                           |     |     |      |         |
+            | 0  0  0  0  0  0  1  0  0 |     | CSA |      |    0    |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0  1  0 |                  | 0.9e-10 |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0 -1  0 |                  | -2e-10  |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0  0  1 |                  | -300e-6 |
+            |                           |                  |         |
+            | 0  0  0  0  0  0  0  0 -1 |                  |    0    |
+
+
+        @param num_params:          The number of parameters in the model.
+        @type num_params:           int
+        @keyword model_type:        The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
+        @type model_type:           str
+        @keyword spin:              The spin data container.  If this argument is supplied, then the
+                                    spin_id argument will be ignored.
+        @type spin:                 SpinContainer instance
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              str
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        """
+
+        # Upper limit flag for correlation times.
+        upper_time_limit = 1
+
+        # Initialisation (0..j..m).
+        A = []
+        b = []
+        zero_array = zeros(num_params, float64)
+        i = 0
+        j = 0
+
+        # Diffusion tensor parameters.
+        if model_type != 'mf' and diffusion_tensor.diff_data_exists():
+            # Spherical diffusion.
+            if cdp.diff_tensor.type == 'sphere':
+                # 0 <= tm <= 200 ns.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+            # Spheroidal diffusion.
+            elif cdp.diff_tensor.type == 'spheroid':
+                # 0 <= tm <= 200 ns.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+                # Prolate diffusion, Da >= 0.
+                if cdp.diff_tensor.spheroid_type == 'prolate':
+                    A.append(zero_array * 0.0)
+                    A[j][i] = 1.0
+                    b.append(0.0 / scaling_matrix[i, i])
+                    i = i + 1
+                    j = j + 1
+
+                    # Add two to i for the theta and phi parameters.
+                    i = i + 2
+
+                # Oblate diffusion, Da <= 0.
+                elif cdp.diff_tensor.spheroid_type == 'oblate':
+                    A.append(zero_array * 0.0)
+                    A[j][i] = -1.0
+                    b.append(0.0 / scaling_matrix[i, i])
+                    i = i + 1
+                    j = j + 1
+
+                    # Add two to i for the theta and phi parameters.
+                    i = i + 2
+
+                else:
+                    # Add three to i for the Da, theta and phi parameters.
+                    i = i + 3
+
+            # Ellipsoidal diffusion.
+            elif cdp.diff_tensor.type == 'ellipsoid':
+                # 0 <= tm <= 200 ns.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+                # Da >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0 / scaling_matrix[i, i])
+                i = i + 1
+                j = j + 1
+
+                # 0 <= Dr <= 1.
+                A.append(zero_array * 0.0)
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                A[j+1][i] = -1.0
+                b.append(0.0 / scaling_matrix[i, i])
+                b.append(-1.0 / scaling_matrix[i, i])
+                i = i + 1
+                j = j + 2
+
+                # Add three to i for the alpha, beta, and gamma parameters.
+                i = i + 3
+
+        # Model-free parameters.
+        if model_type != 'diff':
+            # The loop.
+            if spin:
+                loop = [spin]
+            else:
+                loop = spin_loop(spin_id)
+
+            # Loop over the spins.
+            for spin in loop:
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Save current value of i.
+                old_i = i
+
+                # Loop over the model-free parameters.
+                for l in xrange(len(spin.params)):
+                    # Local tm.
+                    if spin.params[l] == 'local_tm':
+                        if upper_time_limit:
+                            # 0 <= tm <= 200 ns.
+                            A.append(zero_array * 0.0)
+                            A.append(zero_array * 0.0)
+                            A[j][i] = 1.0
+                            A[j+1][i] = -1.0
+                            b.append(0.0 / scaling_matrix[i, i])
+                            b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
+                            j = j + 2
+                        else:
+                            # 0 <= tm.
+                            A.append(zero_array * 0.0)
+                            A[j][i] = 1.0
+                            b.append(0.0 / scaling_matrix[i, i])
+                            j = j + 1
+
+                    # Order parameters {S2, S2f, S2s}.
+                    elif match('S2', spin.params[l]):
+                        # 0 <= S2 <= 1.
+                        A.append(zero_array * 0.0)
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j+1][i] = -1.0
+                        b.append(0.0 / scaling_matrix[i, i])
+                        b.append(-1.0 / scaling_matrix[i, i])
+                        j = j + 2
+
+                        # S2 <= S2f and S2 <= S2s.
+                        if spin.params[l] == 'S2':
+                            for m in xrange(len(spin.params)):
+                                if spin.params[m] == 'S2f' or spin.params[m] == 'S2s':
+                                    A.append(zero_array * 0.0)
+                                    A[j][i] = -1.0
+                                    A[j][old_i+m] = 1.0
+                                    b.append(0.0)
+                                    j = j + 1
+
+                    # Correlation times {te, tf, ts}.
+                    elif match('t[efs]', spin.params[l]):
+                        # te, tf, ts >= 0.
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        b.append(0.0 / scaling_matrix[i, i])
+                        j = j + 1
+
+                        # tf <= ts.
+                        if spin.params[l] == 'ts':
+                            for m in xrange(len(spin.params)):
+                                if spin.params[m] == 'tf':
+                                    A.append(zero_array * 0.0)
+                                    A[j][i] = 1.0
+                                    A[j][old_i+m] = -1.0
+                                    b.append(0.0)
+                                    j = j + 1
+
+                        # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
+                        if upper_time_limit:
+                            if not spin.params[l] == 'tf':
+                                if model_type == 'mf':
+                                    A.append(zero_array * 0.0)
+                                    A[j][i] = -1.0
+                                    b.append(-2.0 * cdp.diff_tensor.tm / scaling_matrix[i, i])
+                                else:
+                                    A.append(zero_array * 0.0)
+                                    A[j][0] = 2.0
+                                    A[j][i] = -1.0
+                                    b.append(0.0)
+
+                                j = j + 1
+
+                    # Rex.
+                    elif spin.params[l] == 'Rex':
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        b.append(0.0 / scaling_matrix[i, i])
+                        j = j + 1
+
+                    # Bond length.
+                    elif spin.params[l] == 'r':
+                        # 0.9e-10 <= r <= 2e-10.
+                        A.append(zero_array * 0.0)
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j+1][i] = -1.0
+                        b.append(0.9e-10 / scaling_matrix[i, i])
+                        b.append(-2e-10 / scaling_matrix[i, i])
+                        j = j + 2
+
+                    # CSA.
+                    elif spin.params[l] == 'CSA':
+                        # -300e-6 <= CSA <= 0.
+                        A.append(zero_array * 0.0)
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j+1][i] = -1.0
+                        b.append(-300e-6 / scaling_matrix[i, i])
+                        b.append(0.0 / scaling_matrix[i, i])
+                        j = j + 2
+
+                    # Increment i.
+                    i = i + 1
+
+        # Convert to numpy data structures.
+        A = array(A, float64)
+        b = array(b, float64)
+
+        return A, b
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -725,7 +1062,7 @@ class Mf_minimise:
 
         # Reset the minimisation statistics.
         if sim_index == None and min_algor != 'back_calc':
-            self.reset_min_stats()
+            self._reset_min_stats()
 
         # Determine the model type.
         model_type = self._determine_model_type()
@@ -861,7 +1198,7 @@ class Mf_minimise:
 
             # Configure the grid search.
             if match('^[Gg]rid', min_algor):
-                inc, lower, upper = self.grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower, upper = self._grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
@@ -869,7 +1206,7 @@ class Mf_minimise:
 
             # Linear constraints.
             if constraints:
-                A, b = self.linear_constraints(num_params, model_type=model_type, spin=spin, scaling_matrix=scaling_matrix)
+                A, b = self._linear_constraints(num_params, model_type=model_type, spin=spin, scaling_matrix=scaling_matrix)
             else:
                 A, b = None, None
 
@@ -880,7 +1217,7 @@ class Mf_minimise:
             h_count = 0
 
             # Get the data for minimisation.
-            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self.minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
+            relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self._minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
 
 
             # Initialise the function to minimise.
@@ -1052,7 +1389,7 @@ class Mf_minimise:
                     cdp.warning = warning
 
 
-    def minimise_data_setup(self, model_type, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
+    def _minimise_data_setup(self, model_type, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
         """Set up all the data required for minimisation.
 
         @param model_type:      The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
@@ -1217,7 +1554,7 @@ class Mf_minimise:
         return relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params
 
 
-    def reset_min_stats(self):
+    def _reset_min_stats(self):
         """Reset all the minimisation statistics.
 
         All global and spin specific values will be set to None.

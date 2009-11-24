@@ -241,7 +241,7 @@ class Results:
 
             # Set up the model-free model.
             if model and equation:
-                self.model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
+                self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
 
         # The model type.
         model_type = spin_line[col['param_set']]

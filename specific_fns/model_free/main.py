@@ -669,7 +669,7 @@ class Model_free_main:
                 raise RelaxError("The parameter array " + repr(params) + " contains an invalid combination of parameters.")
 
         # Set up the model.
-        self.model_setup(model, equation, params, spin_id)
+        self._model_setup(model, equation, params, spin_id)
 
 
     def data_init(self, spin):
@@ -1244,9 +1244,7 @@ class Model_free_main:
         @type name:         str
         @param value:       The parameter value.
         @type value:        float
-        @param model_index: The model index.  This is zero for the global models or equal to the
-                            global spin index (which covers the molecule, residue, and spin
-                            indices).  This originates from the model_loop().
+        @param model_index: The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).  This originates from the model_loop().
         @type model_index:  int
         @param args:        The c1 and c2 elimination constant overrides.
         @type args:         None or tuple of float
@@ -1386,343 +1384,6 @@ class Model_free_main:
             return True
 
 
-    def linear_constraints(self, num_params, model_type=None, spin=None, spin_id=None, scaling_matrix=None):
-        """Set up the model-free linear constraint matrices A and b.
-
-        Standard notation
-        =================
-
-        The order parameter constraints are::
-
-            0 <= S2 <= 1
-            0 <= S2f <= 1
-            0 <= S2s <= 1
-
-        By substituting the formula S2 = S2f.S2s into the above inequalities, the additional two
-        inequalities can be derived::
-
-            S2 <= S2f
-            S2 <= S2s
-
-        Correlation time constraints are::
-
-            te >= 0
-            tf >= 0
-            ts >= 0
-
-            tf <= ts
-
-            te, tf, ts <= 2 * tm
-
-        Additional constraints used include::
-
-            Rex >= 0
-            0.9e-10 <= r <= 2e-10
-            -300e-6 <= CSA <= 0
-
-
-        Rearranged notation
-        ===================
-
-        The above inequality constraints can be rearranged into::
-
-            S2 >= 0
-            -S2 >= -1
-            S2f >= 0
-            -S2f >= -1
-            S2s >= 0
-            -S2s >= -1
-            S2f - S2 >= 0
-            S2s - S2 >= 0
-            te >= 0
-            tf >= 0
-            ts >= 0
-            ts - tf >= 0
-            Rex >= 0
-            r >= 0.9e-10
-            -r >= -2e-10
-            CSA >= -300e-6
-            -CSA >= 0
-
-
-        Matrix notation
-        ===============
-
-        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are::
-
-            | 1  0  0  0  0  0  0  0  0 |                  |    0    |
-            |                           |                  |         |
-            |-1  0  0  0  0  0  0  0  0 |                  |   -1    |
-            |                           |                  |         |
-            | 0  1  0  0  0  0  0  0  0 |                  |    0    |
-            |                           |                  |         |
-            | 0 -1  0  0  0  0  0  0  0 |                  |   -1    |
-            |                           |                  |         |
-            | 0  0  1  0  0  0  0  0  0 |     | S2  |      |    0    |
-            |                           |     |     |      |         |
-            | 0  0 -1  0  0  0  0  0  0 |     | S2f |      |   -1    |
-            |                           |     |     |      |         |
-            |-1  1  0  0  0  0  0  0  0 |     | S2s |      |    0    |
-            |                           |     |     |      |         |
-            |-1  0  1  0  0  0  0  0  0 |     | te  |      |    0    |
-            |                           |     |     |      |         |
-            | 0  0  0  1  0  0  0  0  0 |  .  | tf  |  >=  |    0    |
-            |                           |     |     |      |         |
-            | 0  0  0  0  1  0  0  0  0 |     | ts  |      |    0    |
-            |                           |     |     |      |         |
-            | 0  0  0  0  0  1  0  0  0 |     | Rex |      |    0    |
-            |                           |     |     |      |         |
-            | 0  0  0  0 -1  1  0  0  0 |     |  r  |      |    0    |
-            |                           |     |     |      |         |
-            | 0  0  0  0  0  0  1  0  0 |     | CSA |      |    0    |
-            |                           |                  |         |
-            | 0  0  0  0  0  0  0  1  0 |                  | 0.9e-10 |
-            |                           |                  |         |
-            | 0  0  0  0  0  0  0 -1  0 |                  | -2e-10  |
-            |                           |                  |         |
-            | 0  0  0  0  0  0  0  0  1 |                  | -300e-6 |
-            |                           |                  |         |
-            | 0  0  0  0  0  0  0  0 -1 |                  |    0    |
-
-
-        @param num_params:          The number of parameters in the model.
-        @type num_params:           int
-        @keyword model_type:        The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
-        @type model_type:           str
-        @keyword spin:              The spin data container.  If this argument is supplied, then the
-                                    spin_id argument will be ignored.
-        @type spin:                 SpinContainer instance
-        @keyword spin_id:           The spin identification string.
-        @type spin_id:              str
-        @keyword scaling_matrix:    The diagonal, square scaling matrix.
-        @type scaling_matrix:       numpy diagonal matrix
-        """
-
-        # Upper limit flag for correlation times.
-        upper_time_limit = 1
-
-        # Initialisation (0..j..m).
-        A = []
-        b = []
-        zero_array = zeros(num_params, float64)
-        i = 0
-        j = 0
-
-        # Diffusion tensor parameters.
-        if model_type != 'mf' and diffusion_tensor.diff_data_exists():
-            # Spherical diffusion.
-            if cdp.diff_tensor.type == 'sphere':
-                # 0 <= tm <= 200 ns.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
-
-            # Spheroidal diffusion.
-            elif cdp.diff_tensor.type == 'spheroid':
-                # 0 <= tm <= 200 ns.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
-
-                # Prolate diffusion, Da >= 0.
-                if cdp.diff_tensor.spheroid_type == 'prolate':
-                    A.append(zero_array * 0.0)
-                    A[j][i] = 1.0
-                    b.append(0.0 / scaling_matrix[i, i])
-                    i = i + 1
-                    j = j + 1
-
-                    # Add two to i for the theta and phi parameters.
-                    i = i + 2
-
-                # Oblate diffusion, Da <= 0.
-                elif cdp.diff_tensor.spheroid_type == 'oblate':
-                    A.append(zero_array * 0.0)
-                    A[j][i] = -1.0
-                    b.append(0.0 / scaling_matrix[i, i])
-                    i = i + 1
-                    j = j + 1
-
-                    # Add two to i for the theta and phi parameters.
-                    i = i + 2
-
-                else:
-                    # Add three to i for the Da, theta and phi parameters.
-                    i = i + 3
-
-            # Ellipsoidal diffusion.
-            elif cdp.diff_tensor.type == 'ellipsoid':
-                # 0 <= tm <= 200 ns.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / scaling_matrix[i, i])
-                b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
-
-                # Da >= 0.
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0 / scaling_matrix[i, i])
-                i = i + 1
-                j = j + 1
-
-                # 0 <= Dr <= 1.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0 / scaling_matrix[i, i])
-                b.append(-1.0 / scaling_matrix[i, i])
-                i = i + 1
-                j = j + 2
-
-                # Add three to i for the alpha, beta, and gamma parameters.
-                i = i + 3
-
-        # Model-free parameters.
-        if model_type != 'diff':
-            # The loop.
-            if spin:
-                loop = [spin]
-            else:
-                loop = spin_loop(spin_id)
-
-            # Loop over the spins.
-            for spin in loop:
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Save current value of i.
-                old_i = i
-
-                # Loop over the model-free parameters.
-                for l in xrange(len(spin.params)):
-                    # Local tm.
-                    if spin.params[l] == 'local_tm':
-                        if upper_time_limit:
-                            # 0 <= tm <= 200 ns.
-                            A.append(zero_array * 0.0)
-                            A.append(zero_array * 0.0)
-                            A[j][i] = 1.0
-                            A[j+1][i] = -1.0
-                            b.append(0.0 / scaling_matrix[i, i])
-                            b.append(-200.0 * 1e-9 / scaling_matrix[i, i])
-                            j = j + 2
-                        else:
-                            # 0 <= tm.
-                            A.append(zero_array * 0.0)
-                            A[j][i] = 1.0
-                            b.append(0.0 / scaling_matrix[i, i])
-                            j = j + 1
-
-                    # Order parameters {S2, S2f, S2s}.
-                    elif match('S2', spin.params[l]):
-                        # 0 <= S2 <= 1.
-                        A.append(zero_array * 0.0)
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        A[j+1][i] = -1.0
-                        b.append(0.0 / scaling_matrix[i, i])
-                        b.append(-1.0 / scaling_matrix[i, i])
-                        j = j + 2
-
-                        # S2 <= S2f and S2 <= S2s.
-                        if spin.params[l] == 'S2':
-                            for m in xrange(len(spin.params)):
-                                if spin.params[m] == 'S2f' or spin.params[m] == 'S2s':
-                                    A.append(zero_array * 0.0)
-                                    A[j][i] = -1.0
-                                    A[j][old_i+m] = 1.0
-                                    b.append(0.0)
-                                    j = j + 1
-
-                    # Correlation times {te, tf, ts}.
-                    elif match('t[efs]', spin.params[l]):
-                        # te, tf, ts >= 0.
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        b.append(0.0 / scaling_matrix[i, i])
-                        j = j + 1
-
-                        # tf <= ts.
-                        if spin.params[l] == 'ts':
-                            for m in xrange(len(spin.params)):
-                                if spin.params[m] == 'tf':
-                                    A.append(zero_array * 0.0)
-                                    A[j][i] = 1.0
-                                    A[j][old_i+m] = -1.0
-                                    b.append(0.0)
-                                    j = j + 1
-
-                        # te, tf, ts <= 2 * tm.  (tf not needed because tf <= ts).
-                        if upper_time_limit:
-                            if not spin.params[l] == 'tf':
-                                if model_type == 'mf':
-                                    A.append(zero_array * 0.0)
-                                    A[j][i] = -1.0
-                                    b.append(-2.0 * cdp.diff_tensor.tm / scaling_matrix[i, i])
-                                else:
-                                    A.append(zero_array * 0.0)
-                                    A[j][0] = 2.0
-                                    A[j][i] = -1.0
-                                    b.append(0.0)
-
-                                j = j + 1
-
-                    # Rex.
-                    elif spin.params[l] == 'Rex':
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        b.append(0.0 / scaling_matrix[i, i])
-                        j = j + 1
-
-                    # Bond length.
-                    elif spin.params[l] == 'r':
-                        # 0.9e-10 <= r <= 2e-10.
-                        A.append(zero_array * 0.0)
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        A[j+1][i] = -1.0
-                        b.append(0.9e-10 / scaling_matrix[i, i])
-                        b.append(-2e-10 / scaling_matrix[i, i])
-                        j = j + 2
-
-                    # CSA.
-                    elif spin.params[l] == 'CSA':
-                        # -300e-6 <= CSA <= 0.
-                        A.append(zero_array * 0.0)
-                        A.append(zero_array * 0.0)
-                        A[j][i] = 1.0
-                        A[j+1][i] = -1.0
-                        b.append(-300e-6 / scaling_matrix[i, i])
-                        b.append(0.0 / scaling_matrix[i, i])
-                        j = j + 2
-
-                    # Increment i.
-                    i = i + 1
-
-        # Convert to numpy data structures.
-        A = array(A, float64)
-        b = array(b, float64)
-
-        return A, b
-
-
     def map_bounds(self, param, spin_id=None):
         """Create bounds for the OpenDX mapping function.
 
@@ -1816,7 +1477,7 @@ class Model_free_main:
                 yield global_index
 
 
-    def model_setup(self, model=None, equation=None, params=None, spin_id=None):
+    def _model_setup(self, model=None, equation=None, params=None, spin_id=None):
         """Function for updating various data structures depending on the model selected.
 
         @param model:       The name of the model.
@@ -1851,7 +1512,7 @@ class Model_free_main:
             spin.params = params
 
 
-    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
+    def model_statistics(self, model_index=None, spin_id=None, global_stats=None):
         """Return the k, n, and chi2 model statistics.
 
         k - number of parameters.
@@ -1859,28 +1520,21 @@ class Model_free_main:
         chi2 - the chi-squared value.
 
 
-        @keyword model_index:   The model index.  This is zero for the global models or equal to the
-                                global spin index (which covers the molecule, residue, and spin
-                                indices).  This originates from the model_loop().
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).  This originates from the model_loop().
         @type model_index:      int
-        @keyword spin_id:       The spin identification string.  Either this or the instance keyword
-                                argument must be supplied.
+        @keyword spin_id:       The spin identification string.  Either this or the instance keyword argument must be supplied.
         @type spin_id:          None or str
-        @keyword global_stats:  A parameter which determines if global or local statistics are
-                                returned.  If None, then the appropriateness of global or local
-                                statistics is automatically determined.
+        @keyword global_stats:  A parameter which determines if global or local statistics are returned.  If None, then the appropriateness of global or local statistics is automatically determined.
         @type global_stats:     None or bool
-        @return:                The optimisation statistics, in tuple format, of the number of
-                                parameters (k), the number of data points (n), and the chi-squared
-                                value (chi2).
+        @return:                The optimisation statistics, in tuple format, of the number of parameters (k), the number of data points (n), and the chi-squared value (chi2).
         @rtype:                 tuple of (int, int, float)
         """
 
         # Bad argument combination.
-        if model_info == None and spin_id == None:
-            raise RelaxError("Either the model_info or spin_id argument must be supplied.")
-        elif model_info != None and spin_id != None:
-            raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
+        if model_index == None and spin_id == None:
+            raise RelaxError("Either the model_index or spin_id argument must be supplied.")
+        elif model_index != None and spin_id != None:
+            raise RelaxError("The model_index arg " + repr(model_index) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
 
         # Determine the model type.
         model_type = self._determine_model_type()
@@ -1898,7 +1552,7 @@ class Model_free_main:
             if spin_id:
                 spin = return_spin(spin_id)
             else:
-                spin = return_spin_from_index(model_info)
+                spin = return_spin_from_index(model_index)
 
             # Skip deselected residues.
             if not spin.select:
@@ -2694,7 +2348,7 @@ class Model_free_main:
             raise RelaxError("The model '" + model + "' is invalid.")
 
         # Set up the model.
-        self.model_setup(model, equation, params, spin_id)
+        self._model_setup(model, equation, params, spin_id)
 
 
     set_doc = """
