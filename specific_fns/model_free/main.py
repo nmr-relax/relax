@@ -195,7 +195,7 @@ class Model_free_main:
         return param_names
 
 
-    def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None, model_type=None):
+    def _assemble_param_vector(self, spin=None, spin_id=None, sim_index=None, model_type=None):
         """Assemble the model-free parameter vector (as numpy array).
 
         If the spin argument is supplied, then the spin_id argument will be ignored.
@@ -1347,7 +1347,7 @@ class Model_free_main:
             spin = None
 
         # Assemble the parameter values and return them.
-        return self.assemble_param_vector(spin=spin, sim_index=sim_index, model_type=model_type)
+        return self._assemble_param_vector(spin=spin, sim_index=sim_index, model_type=model_type)
 
 
     def is_spin_param(self, name):
@@ -1896,7 +1896,7 @@ class Model_free_main:
                 return None, None, None
 
             # Count the number of parameters.
-            param_vector = self.assemble_param_vector(spin=spin)
+            param_vector = self._assemble_param_vector(spin=spin)
             k = len(param_vector)
 
             # Count the number of data points.
@@ -1908,7 +1908,7 @@ class Model_free_main:
         # Global stats.
         elif global_stats:
             # Count the number of parameters.
-            param_vector = self.assemble_param_vector()
+            param_vector = self._assemble_param_vector()
             k = len(param_vector)
 
             # Count the number of data points.

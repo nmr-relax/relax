@@ -45,7 +45,7 @@ if C_module_exp_fn:
 class Relax_fit(API_base):
     """Class containing functions for relaxation curve fitting."""
 
-    def assemble_param_vector(self, spin=None, sim_index=None):
+    def _assemble_param_vector(self, spin=None, sim_index=None):
         """Assemble the exponential curve parameter vector (as a numpy array).
 
         @keyword spin:          The spin data container.
@@ -144,7 +144,7 @@ class Relax_fit(API_base):
         """
 
         # Create the initial parameter vector.
-        param_vector = self.assemble_param_vector(spin=spin)
+        param_vector = self._assemble_param_vector(spin=spin)
 
         # Create a scaling matrix.
         scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
@@ -340,7 +340,7 @@ class Relax_fit(API_base):
             return 0.0
 
 
-    def disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
+    def _disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
         """Disassemble the parameter vector.
 
         @keyword param_vector:  The parameter vector.
@@ -611,7 +611,7 @@ class Relax_fit(API_base):
                 continue
 
             # Create the initial parameter vector.
-            param_vector = self.assemble_param_vector(spin=spin)
+            param_vector = self._assemble_param_vector(spin=spin)
 
             # Diagonal scaling.
             scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=scaling)
@@ -703,7 +703,7 @@ class Relax_fit(API_base):
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
+            self._disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:

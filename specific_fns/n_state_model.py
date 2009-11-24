@@ -53,7 +53,7 @@ from specific_fns.api_base import API_base
 class N_state_model(API_base):
     """Class containing functions for the N-state model."""
 
-    def __assemble_param_vector(self, sim_index=None):
+    def _assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
 
         @param sim_index:       The index of the simulation to optimise.  This should be None if
@@ -201,7 +201,7 @@ class N_state_model(API_base):
         return list
 
 
-    def __disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
+    def _disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
         """Disassemble the parameter vector and place the values into the relevant variables.
 
         For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
@@ -1379,7 +1379,7 @@ class N_state_model(API_base):
         self.__update_model()
 
         # Create the initial parameter vector.
-        param_vector = self.__assemble_param_vector(sim_index=sim_index)
+        param_vector = self._assemble_param_vector(sim_index=sim_index)
 
         # Determine if alignment tensors or RDCs are to be used.
         data_types = self.__base_data_types()
@@ -1444,7 +1444,7 @@ class N_state_model(API_base):
             param_vector = dot(scaling_matrix, param_vector)
 
         # Disassemble the parameter vector.
-        self.__disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
+        self._disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
         if sim_index != None:

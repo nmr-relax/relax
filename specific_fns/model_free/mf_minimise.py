@@ -141,7 +141,7 @@ class Mf_minimise:
                     raise RelaxError("Negative error for spin '" + repr(spin.num) + " " + spin.name + "', calculation not possible.")
 
             # Create the initial parameter vector.
-            param_vector = self.assemble_param_vector(spin=spin, sim_index=sim_index)
+            param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
 
             # Repackage the spin.
             if sim_index == None:
@@ -167,7 +167,7 @@ class Mf_minimise:
             num_params = [len(spin.params)]
 
             # Repackage the parameter values as a local model (ignore if the diffusion tensor is not fixed).
-            param_values = [self.assemble_param_vector(model_type='mf')]
+            param_values = [self._assemble_param_vector(model_type='mf')]
 
             # Convert to Numeric arrays.
             relax_data = [array(spin.relax_data, float64)]
@@ -209,7 +209,7 @@ class Mf_minimise:
                 spin.chi2 = chi2
 
 
-    def disassemble_param_vector(self, model_type, param_vector=None, spin=None, spin_id=None, sim_index=None):
+    def _disassemble_param_vector(self, model_type, param_vector=None, spin=None, spin_id=None, sim_index=None):
         """Disassemble the model-free parameter vector.
 
         @param model_type:      The model-free model type.  This must be one of 'mf', 'local_tm',
@@ -865,14 +865,14 @@ class Mf_minimise:
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
-                param_vector = self.assemble_param_vector(spin=spin, model_type=model_type)
+                param_vector = self._assemble_param_vector(spin=spin, model_type=model_type)
 
                 # Diagonal scaling.
                 scaling_matrix = None
 
             else:
                 # Create the initial parameter vector.
-                param_vector = self.assemble_param_vector(spin=spin, sim_index=sim_index)
+                param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
 
                 # The number of parameters.
                 num_params = len(param_vector)
@@ -988,7 +988,7 @@ class Mf_minimise:
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
+            self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
@@ -1205,7 +1205,7 @@ class Mf_minimise:
 
             # Repackage the parameter values for minimising just the diffusion tensor parameters.
             if model_type == 'diff':
-                param_values.append(self.assemble_param_vector(model_type='mf'))
+                param_values.append(self._assemble_param_vector(model_type='mf'))
 
         # Convert to numpy arrays.
         for k in xrange(len(relax_data)):

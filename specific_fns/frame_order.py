@@ -50,7 +50,7 @@ from specific_fns.api_base import API_base
 class Frame_order(API_base):
     """Class containing the specific methods of the Frame Order theories."""
 
-    def __assemble_param_vector(self):
+    def _assemble_param_vector(self):
         """Assemble and return the parameter vector.
 
         @return:    The parameter vector.
@@ -364,7 +364,7 @@ class Frame_order(API_base):
         """
 
         # Get the parameter vector.
-        param_vector = self.__assemble_param_vector()
+        param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
@@ -395,7 +395,7 @@ class Frame_order(API_base):
         """Calculate the chi-squared value for the current parameter values."""
 
         # Assemble the parameter vector.
-        param_vector = self.__assemble_param_vector()
+        param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
@@ -818,7 +818,7 @@ class Frame_order(API_base):
             warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
 
         # Assemble the parameter vector.
-        param_vector = self.__assemble_param_vector()
+        param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index)
@@ -874,7 +874,7 @@ class Frame_order(API_base):
         """
 
         # Count the number of parameters.
-        param_vector = self.__assemble_param_vector()
+        param_vector = self._assemble_param_vector()
         k = len(param_vector)
 
         # The number of data points.
