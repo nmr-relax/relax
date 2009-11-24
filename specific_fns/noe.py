@@ -36,7 +36,7 @@ from relax_warnings import RelaxDeselectWarning
 class Noe(API_base):
     """Class containing functions for relaxation data."""
 
-    def assign_function(self, spin=None, intensity=None, spectrum_type=None):
+    def _assign_function(self, spin=None, intensity=None, spectrum_type=None):
         """Place the peak intensity data into the spin container.
 
         The intensity data can be either that of the reference or saturated spectrum.
@@ -58,7 +58,7 @@ class Noe(API_base):
             raise RelaxError("The spectrum type '%s' is unknown." % spectrum_type)
 
 
-    def calculate(self, verbosity=1):
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculate the NOE and its error.
 
         The error for each peak is calculated using the formula::
@@ -67,8 +67,12 @@ class Noe(API_base):
             sd(NOE) = -----------------------------------------------
                                           I(unsat)^2
 
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      None or str
         @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
+        @keyword sim_index: The MC simulation index (unused).
+        @type sim_index:    None
         """
 
         # Test if the current pipe exists.
@@ -135,7 +139,7 @@ class Noe(API_base):
                 spin.select = False
 
 
-    def read(self, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
+    def _read(self, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
         """Read in the peak intensity data.
 
         @keyword file:          The name of the file containing the peak intensities.
@@ -157,6 +161,7 @@ class Noe(API_base):
         @type int_col:          int
         """
 
+        asdf
         # Spectrum type argument.
         spect_type_list = ['ref', 'sat']
         if spectrum_type not in spect_type_list:
@@ -167,7 +172,7 @@ class Noe(API_base):
             print("Saturated spectrum.")
 
         # Generic intensity function.
-        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self.assign_function, spectrum_type=spectrum_type)
+        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self._assign_function, spectrum_type=spectrum_type)
 
 
     return_data_name_doc = """
@@ -188,33 +193,41 @@ class Noe(API_base):
 
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, param):
         """Return a unique identifying string for the steady-state NOE parameter.
 
-        @param name:    The steady-state NOE parameter.
-        @type name:     str
+        @param param:   The steady-state NOE parameter.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # Reference intensity.
-        if match('^[Rr]ef$', name) or match('[Rr]ef[ -_][Ii]nt', name):
+        if match('^[Rr]ef$', param) or match('[Rr]ef[ -_][Ii]nt', param):
             return 'ref'
 
         # Saturated intensity.
-        if match('^[Ss]at$', name) or match('[Ss]at[ -_][Ii]nt', name):
+        if match('^[Ss]at$', param) or match('[Ss]at[ -_][Ii]nt', param):
             return 'sat'
 
         # NOE.
-        if match('^[Nn][Oo][Ee]$', name):
+        if match('^[Nn][Oo][Ee]$', param):
             return 'noe'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_grace_string(self, param):
+        """Return the Grace string representation of the parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Reference intensity.
         if object_name == 'ref':
@@ -228,57 +241,27 @@ class Noe(API_base):
         if object_name == 'noe':
             return '\\qNOE\\Q'
 
-        # Return the data type as the Grace string.
-        return data_type
+        # Return the parameter as the Grace string.
+        return param
 
 
-    def return_units(self, stat_type, spin_id=None):
+    def return_units(self, param, spin=None, spin_id=None):
         """Dummy function which returns None as the stats have no units.
 
-        @param stat_type:   Not used.
-        @type stat_type:    None
-        @keyword spin_id:   Not used.
-        @type spin_id:      None
-        @return:            Nothing.
-        @rtype:             None
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
+        @type spin_id:  str
+        @return:        Nothing.
+        @rtype:         None
         """
 
         return None
 
 
-    def set_error(self, error=0.0, spectrum_id=None, spin_id=None):
-        """Set the peak intensity errors.
-
-        @param error:           The peak intensity error value defined as the RMSD of the base plane
-                                noise.
-        @type error:            float
-        @keyword spectrum_id:   The id of spectrum, one of 'ref' or 'sat'.
-        @type spectrum_id:      str
-        @param spin_id:         The spin identification string.
-        @type spin_id:          str
-        """
-
-        # Test if the current pipe exists
-        pipes.test()
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Loop over the spins.
-        for spin in spin_loop(spin_id):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Set the error.
-            if spectrum_id == 'ref':
-                spin.ref_err = float(error)
-            elif spectrum_id == 'sat':
-                spin.sat_err = float(error)
-
-
-    def spectrum_type(self, spectrum_type=None, spectrum_id=None):
+    def _spectrum_type(self, spectrum_type=None, spectrum_id=None):
         """Set the spectrum type corresponding to the spectrum_id.
 
         @keyword spectrum_type: The type of NOE spectrum, one of 'ref' or 'sat'.
