@@ -851,41 +851,49 @@ class Relax_fit(API_base):
 
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, param):
         """Return a unique identifying string for the relaxation curve-fitting parameter.
 
-        @param name:    The relaxation curve-fitting parameter.
-        @type name:     str
+        @param param:   The relaxation curve-fitting parameter.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # Relaxation rate.
-        if match('^[Rr]x$', name):
+        if match('^[Rr]x$', param):
             return 'rx'
 
         # Peak intensities (series)
-        if match('^[Ii]nt$', name):
+        if match('^[Ii]nt$', param):
             return 'intensities'
 
         # Initial intensity.
-        if match('^[Ii]0$', name):
+        if match('^[Ii]0$', param):
             return 'i0'
 
         # Intensity at infinity.
-        if match('^[Ii]inf$', name):
+        if match('^[Ii]inf$', param):
             return 'iinf'
 
         # Relaxation period times (series).
-        if match('^[Rr]elax[ -_][Tt]imes$', name):
+        if match('^[Rr]elax[ -_][Tt]imes$', param):
             return 'relax_times'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_grace_string(self, param):
+        """Return the Grace string representation of the parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The relaxation curve-fitting parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Relaxation rate.
         if object_name == 'rx':
@@ -911,17 +919,22 @@ class Relax_fit(API_base):
         return grace_string
 
 
-    def return_units(self, stat_types, spin_id=None):
+    def return_units(self, param, spin=None, spin_id=None):
         """Dummy method which returns None as the stats have no units.
 
-        @param stat_types:  Not used.
-        @type stat_types:   None
-        @keyword spin_id:   Not used.
-        @type spin_id:      None
-        @return:            Nothing.
-        @rtype:             None
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
+        @type spin_id:  str
+        @return:        The parameter units string.
+        @rtype:         str
+        @return:        Nothing.
+        @rtype:         None
         """
 
+        # Unitless.
         return None
 
 
