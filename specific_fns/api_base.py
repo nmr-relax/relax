@@ -691,6 +691,9 @@ class API_base:
         @type select_sim:   bool
         """
 
+        # Assume the default of a spin container.
+        spin = model_info
+
         # Set the array.
         spin.select_sim = deepcopy(select_sim)
 
