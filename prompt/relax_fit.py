@@ -68,7 +68,7 @@ class Relax_fit(User_fn_class):
         check.is_str(spectrum_id, 'spectrum identification string')
 
         # Execute the functional code.
-        relax_fit_obj.relax_time(time=time, spectrum_id=spectrum_id)
+        relax_fit_obj._relax_time(time=time, spectrum_id=spectrum_id)
 
 
     def select_model(self, model='exp'):
@@ -103,4 +103,4 @@ class Relax_fit(User_fn_class):
         check.is_str(model, 'model')
 
         # Execute the functional code.
-        relax_fit_obj.select_model(model=model)
+        relax_fit_obj._select_model(model=model)

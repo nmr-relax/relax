@@ -315,7 +315,7 @@ class Relax_fit(API_base):
         """
 
     def default_value(self, param):
-        """The default relaxation curve-fitting parameter values.
+        """Return the default relaxation curve-fitting parameter values.
 
         @param param:   The relaxation curve-fitting parameter.
         @type param:    str
@@ -373,26 +373,19 @@ class Relax_fit(API_base):
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
-        """The exponential curve fitting grid search function.
+        """The exponential curve fitting grid search method.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
         @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
         @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.
-                                The number of elements in the array must equal to the number of
-                                parameters in the model.
+        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
         @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
-                                parts of the grid).  If False, no constraints are used.
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
         @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None,
-                                the normal model is optimised.
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
         @type sim_index:        int
         """
 
@@ -400,7 +393,7 @@ class Relax_fit(API_base):
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+    def _grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
         """The grid search setup function.
 
         @keyword spin:              The spin data container.
@@ -480,7 +473,7 @@ class Relax_fit(API_base):
         return inc, lower, upper
 
 
-    def linear_constraints(self, spin=None, scaling_matrix=None):
+    def _linear_constraints(self, spin=None, scaling_matrix=None):
         """Set up the relaxation curve fitting linear constraint matrices A and b.
 
         Standard notation
@@ -552,43 +545,31 @@ class Relax_fit(API_base):
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
-        """Relaxation curve fitting function.
+        """Relaxation curve fitting minimisation method.
 
         @keyword min_algor:         The minimisation algorithm to use.
         @type min_algor:            str
         @keyword min_options:       An array of options to be used by the minimisation algorithm.
         @type min_options:          array of str
-        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type func_tol:             None or float
-        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type grad_tol:             None or float
         @keyword max_iterations:    The maximum number of iterations for the algorithm.
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
-                                    the problem to be better conditioned.
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
         @type scaling:              bool
-        @keyword verbosity:         The amount of information to print.  The higher the value, the
-                                    greater the verbosity.
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
-        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
-                                    normal optimisation is desired.
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.
-                                    The number of elements in the array must equal to the number of
-                                    parameters in the model.  This argument is only used when doing a
-                                    grid search.
+        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
         @type inc:                  array of int
         """
 
@@ -616,11 +597,11 @@ class Relax_fit(API_base):
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                inc, lower, upper = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower, upper = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
-                A, b = self.linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+                A, b = self._linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
             else:
                 A, b = None, None
 
@@ -743,7 +724,7 @@ class Relax_fit(API_base):
                 spin.warning = warning
 
 
-    def model_setup(self, model, params):
+    def _model_setup(self, model, params):
         """Update various model specific data structures.
 
         @param model:   The exponential curve type.
@@ -789,7 +770,7 @@ class Relax_fit(API_base):
                 continue
 
 
-    def relax_time(self, time=0.0, spectrum_id=None):
+    def _relax_time(self, time=0.0, spectrum_id=None):
         """Set the relaxation time period associated with a given spectrum.
 
         @keyword time:          The time, in seconds, of the relaxation period.
@@ -801,9 +782,6 @@ class Relax_fit(API_base):
         # Test if the spectrum id exists.
         if spectrum_id not in cdp.spectrum_ids:
             raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
-
-        # Store the relaxation time in the class instance.
-        self.__relax_time = float(time)
 
         # The index.
         index = cdp.spectrum_ids.index(spectrum_id)
@@ -935,7 +913,7 @@ class Relax_fit(API_base):
 
 
     def return_units(self, stat_types, spin_id=None):
-        """Dummy function which returns None as the stats have no units.
+        """Dummy method which returns None as the stats have no units.
 
         @param stat_types:  Not used.
         @type stat_types:   None
@@ -948,7 +926,7 @@ class Relax_fit(API_base):
         return None
 
 
-    def select_model(self, model='exp'):
+    def _select_model(self, model='exp'):
         """Function for selecting the model of the exponential curve.
 
         @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
@@ -982,7 +960,7 @@ class Relax_fit(API_base):
             raise RelaxError("The model '" + model + "' is invalid.")
 
         # Set up the model.
-        self.model_setup(model, params)
+        self._model_setup(model, params)
 
 
     set_doc = """
@@ -998,8 +976,7 @@ class Relax_fit(API_base):
     def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
