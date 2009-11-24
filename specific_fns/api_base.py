@@ -55,11 +55,11 @@ class API_base:
             yield spin_id
 
 
-    def calculate(self, spin_id=None, verbosity=None, sim_index=None):
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Prototype method for the calculation of the chi-squared value.
 
         @keyword spin_id:   The spin identification string.
-        @type spin_id:      str
+        @type spin_id:      None or str
         @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
         @keyword sim_index: The optional MC simulation index.
