@@ -225,14 +225,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'deselect':
             function = inst.deselect
 
-        # Write results function (Columnar format).
-        if eqi == 'write_columnar_results':
-            function = inst.write_columnar_results
-
-        # Write results function (XML format).
-        #if eqi == 'write_xml_results':
-        #    function = inst.write_xml_results
-
     # Catch if the function is missing.
     except AttributeError:
         function = None
