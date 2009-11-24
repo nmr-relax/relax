@@ -107,7 +107,7 @@ class Test_api(TestCase):
             args, varargs, varkw, defaults = getargspec(obj)
 
             # Check the args.
-            if args_base != args or varargs_base != varargs or varkw_base != varkw or defaults_base != defaults:
+            if args_base != args or varargs_base != varargs or varkw_base != varkw:
                 # Get string representations of the methods.
                 doc_base = self.__format_method(name, args_base, varargs_base, varkw_base, defaults_base)
                 doc = self.__format_method(name, args, varargs, varkw, defaults)
