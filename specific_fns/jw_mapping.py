@@ -35,8 +35,16 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, 
 class Jw_mapping(API_base):
     """Class containing functions specific to reduced spectral density mapping."""
 
-    def calculate(self, verbosity=1, sim_index=None, spin_id=None):
-        """Calculation of the spectral density values."""
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculation of the spectral density values.
+
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      None or str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
+        """
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'jw_frq') or not isinstance(cdp.jw_frq, float):
@@ -162,8 +170,14 @@ class Jw_mapping(API_base):
         return spin.relax_data
 
 
-    def data_init(self, data, sim=0):
-        """Function for initialising the data structures."""
+    def data_init(self, data_cont, sim=False):
+        """Initialise the data structure.
+
+        @param data_cont:   The data container.
+        @type data_cont:    instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
+        """
 
         # Get the data names.
         data_names = self.data_names()
@@ -175,10 +189,10 @@ class Jw_mapping(API_base):
                 # Add '_sim' to the names.
                 name = name + '_sim'
 
-            # If the name is not in 'data', add it.
-            if not hasattr(data, name):
+            # If the name is not in 'data_cont', add it.
+            if not hasattr(data_cont, name):
                 # Set the attribute.
-                setattr(data, name, None)
+                setattr(data_cont, name, None)
 
 
     def data_names(self, set=None, error_names=False, sim_names=False):
@@ -318,49 +332,57 @@ class Jw_mapping(API_base):
 
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, param):
         """Return a unique identifying string for the J(w) mapping parameter.
 
-        @param name:    The J(w) mapping parameter.
-        @type name:     str
+        @param param:   The J(w) mapping parameter name.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # J(0).
-        if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
+        if search('^[Jj]0$', param) or search('[Jj]\(0\)', param):
             return 'j0'
 
         # J(wX).
-        if search('^[Jj]w[Xx]$', name) or search('[Jj]\(w[Xx]\)', name):
+        if search('^[Jj]w[Xx]$', param) or search('[Jj]\(w[Xx]\)', param):
             return 'jwx'
 
         # J(wH).
-        if search('^[Jj]w[Hh]$', name) or search('[Jj]\(w[Hh]\)', name):
+        if search('^[Jj]w[Hh]$', param) or search('[Jj]\(w[Hh]\)', param):
             return 'jwh'
 
         # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
+        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
             return 'r'
 
         # CSA.
-        if search('^[Cc][Ss][Aa]$', name):
+        if search('^[Cc][Ss][Aa]$', param):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', name):
+        if search('^[Hh]eteronucleus$', param):
             return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', name):
+        if search('^[Pp]roton$', param):
             return 'proton_type'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_grace_string(self, param):
+        """Return the Grace string representing the given parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # J(0).
         if object_name == 'j0':
@@ -383,26 +405,25 @@ class Jw_mapping(API_base):
             return '\\qCSA\\Q'
 
 
-    def return_units(self, data_type, spin=None, spin_id=None):
+    def return_units(self, param, spin=None, spin_id=None):
         """Function for returning a string representing the parameters units.
 
         For example, the internal representation of te is in seconds, whereas the external
         representation is in picoseconds, therefore this function will return the string
         'picoseconds' for te.
 
-        @param data_type:   The name of the parameter to return the units string for.
-        @type data_type:    str
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
-        @param spin_id:     The spin identification string (ignored if the spin container is
-                            supplied).
-        @type spin_id:      str
-        @return:            The string representation of the units.
-        @rtype:             str
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
+        @type spin_id:  str
+        @return:        The string representation of the units.
+        @rtype:         str
         """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Bond length (Angstrom).
         if object_name == 'r':
@@ -422,7 +443,7 @@ class Jw_mapping(API_base):
         """
 
 
-    def set_frq(self, frq=None):
+    def _set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
 
         # Test if the current pipe exists.
