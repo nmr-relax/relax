@@ -447,12 +447,12 @@ class API_base:
         raise RelaxImplementError
 
 
-    def return_conversion_factor(self, stat_type, spin=None, spin_id=None):
+    def return_conversion_factor(self, param, spin=None, spin_id=None):
         """Dummy function for returning 1.0.
 
-        @param stat_type:   The name of the statistic.  This is unused!
-        @type stat_type:    str
-        @param spin:        Spin container (not used).
+        @param param:       The parameter name.
+        @type param:        str
+        @param spin:        Spin container.
         @type spin:         SpinContainer instance
         @return:            A conversion factor of 1.0.
         @rtype:             float
