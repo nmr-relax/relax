@@ -159,8 +159,25 @@ class API_base:
 
     # Empty documentation string.
     eliminate_doc = ""
-    def eliminate(self):
-        """Dummy method for model elimination."""
+    def eliminate(self, name, value, model_index, args, sim=None):
+        """Dummy method for model elimination.
+
+        @param name:        The parameter name.
+        @type name:         str
+        @param value:       The parameter value.
+        @type value:        float
+        @param model_index: The model index.  This originates from the model_loop().
+        @type model_index:  int
+        @param args:        The elimination constant overrides.
+        @type args:         None or tuple of float
+        @keyword sim:       The Monte Carlo simulation index.
+        @type sim:          int
+        @return:            True if the model is to be eliminated, False otherwise.
+        @rtype:             bool
+        """
+
+        # Don't eliminate.
+        return False
 
 
     def get_param_names(self, model_index=None):
@@ -342,7 +359,7 @@ class API_base:
             yield spin
 
 
-    def model_statistics(self, instance=None, spin_id=None, global_stats=None):
+    def model_statistics(self, model_index=None, spin_id=None, global_stats=None):
         """Prototype method for returning the k, n, and chi2 model statistics.
 
         k - number of parameters.
@@ -350,8 +367,8 @@ class API_base:
         chi2 - the chi-squared value.
 
 
-        @keyword instance:      This is the optimisation instance index.  This should always be the value of 1 for the N-state model.  As it is ignored, this arg can be anything.
-        @type instance:         None or int
+        @keyword model_index:   The model index.  This originates from the model_loop().
+        @type model_index:      None or int
         @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
         @type spin_id:          None or str
         @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
