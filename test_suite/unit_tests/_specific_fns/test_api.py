@@ -52,8 +52,12 @@ class Test_api(TestCase):
         if defaults == None:
             defaults = ()
 
+        # Counts.
+        num_args = len(args) - len(defaults)
+        num_kw = len(defaults)
+
         # Args.
-        for i in xrange(len(args) - len(defaults)):
+        for i in range(num_args):
             # Separator.
             if i != 0:
                 text = text + ', '
@@ -62,13 +66,13 @@ class Test_api(TestCase):
             text = text + args[i]
 
         # Keyword args.
-        for j in xrange(i, len(defaults)+1):
+        for j in range(num_kw):
             # Separator.
-            if j != 0:
+            if num_args or j != 0:
                 text = text + ', '
 
             # The keyword.
-            text = text + args[j+1] + '=' + repr(defaults[j-i])
+            text = text + args[num_args+j] + '=' + repr(defaults[j])
 
         # End.
         text = text + ')'
