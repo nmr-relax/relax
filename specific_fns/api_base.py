@@ -39,15 +39,9 @@ class API_base:
 
         This default method simply loops over the spins, returning the spin identification string.
 
-        Specific implementations of this generator method are free to yield any type of data.  The
-        data which is yielded is then passed into the specific functions such as return_data(),
-        return_error(), create_mc_data(), pack_sim_data(), etc., so these methods should handle the
-        data thrown at them.  If multiple data is yielded, this is caught as a tuple and passed into
-        the dependent methods as a tuple.
+        Specific implementations of this generator method are free to yield any type of data.  The data which is yielded is then passed into the specific functions such as return_data(), return_error(), create_mc_data(), pack_sim_data(), etc., so these methods should handle the data thrown at them.  If multiple data is yielded, this is caught as a tuple and passed into the dependent methods as a tuple.
 
-        @return:    Information concerning the base data of the analysis.  For this base class
-                    method, the loop is over the spins and the yielded value is the spin
-                    identification string.
+        @return:    Information concerning the base data of the analysis.  For this base class method, the loop is over the spins and the yielded value is the spin identification string.
         @rtype:     anything
         """
 
@@ -79,8 +73,7 @@ class API_base:
     def create_mc_data(self, spin_id=None):
         """Prototype method for creating the Monte Carlo data.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:  str
         @return:        The Monte Carlo data.
         @rtype:         list of floats
@@ -93,9 +86,28 @@ class API_base:
     def data_init(self, spin):
         """Dummy method for initialising the spin specific data structures.
 
+        This method does nothing!
+
         @param spin:    The spin data container.
         @type spin:     SpinContainer instance
         """
+
+
+    def data_names(self, set='all', error_names=False, sim_names=False):
+        """Prototype method for returning a list of names of data structures.
+
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def eliminate(self):

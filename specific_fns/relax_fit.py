@@ -226,7 +226,7 @@ class Relax_fit(API_base):
 
 
     def data_names(self, set='all', error_names=False, sim_names=False):
-        """Function for returning a list of names of data structures.
+        """Return a list of names of data structures.
 
         Description
         ===========
@@ -245,15 +245,11 @@ class Relax_fit(API_base):
             - 'warning', minimisation warning.
 
 
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for
-                                model-free parameter names, or to 'min' for minimisation specific
-                                object names.
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
         @type set:              str
         @keyword error_names:   A flag which if True will add the error object names as well.
         @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
         @type sim_names:        bool
         @return:                The list of object names.
         @rtype:                 list of str
