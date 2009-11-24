@@ -25,11 +25,14 @@ from copy import deepcopy
 
 # relax module imports.
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
-from relax_errors import RelaxError, RelaxLenError, RelaxNoSequenceError
+from relax_errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNoSequenceError
 
 
 class API_base:
-    """Base class containing simple methods used by some a number of the specific analysis types."""
+    """Base class defining the specific_fns API.
+    
+    Most objects are prototype methods, although a few are operational generic base methods.
+    """
 
     def base_data_loop(self):
         """Generator method for looping over the base data of the specific analysis type.
@@ -57,6 +60,20 @@ class API_base:
             # Yield the spin id string.
             yield spin_id
 
+
+    def calculate(self, spin_id=None, verbosity=None, sim_index=None):
+        """Calculation of the model-free chi-squared value.
+
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
+        """
+
+        raise RelaxImplementError
+ 
 
     def data_init(self, spin):
         """Dummy method for initialising the spin specific data structures.
