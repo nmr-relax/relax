@@ -1171,11 +1171,13 @@ class Model_free_main:
         return mc_data
 
 
-    def data_init(self, spin):
-        """Function for initialising the spin specific data structures.
+    def data_init(self, data_cont, sim=False):
+        """Initialise the spin specific data structures.
 
-        @param spin:    The spin data container.
-        @type spin:     SpinContainer instance
+        @param data_cont:   The spin data container.
+        @type data_cont:    SpinContainer instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
         """
 
         # Get the data names.
@@ -1187,7 +1189,7 @@ class Model_free_main:
         for name in data_names:
             # Relaxation data structures.
             if name in relax_data_names and not relax_data_init:
-                relax_data.data_init(spin)
+                relax_data.data_init(data_cont)
                 relax_data_init = True
 
             # Data structures which are initially empty arrays.
@@ -1198,9 +1200,9 @@ class Model_free_main:
             # Set everything else initially to None.
             init_data = None
 
-            # If the name is not in 'spin', add it.
-            if not hasattr(spin, name):
-                setattr(spin, name, init_data)
+            # If the name is not in 'data_cont', add it.
+            if not hasattr(data_cont, name):
+                setattr(data_cont, name, init_data)
 
 
     def data_names(self, set='all', error_names=False, sim_names=False):
@@ -2251,7 +2253,15 @@ class Model_free_main:
 
 
     def return_grace_string(self, param):
-        """Function for returning the Grace string representing the parameter for axis labelling."""
+        """Return the Grace string representing the given parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
         object_name = self.return_data_name(param)
