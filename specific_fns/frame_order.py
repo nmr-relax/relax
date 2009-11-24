@@ -50,6 +50,22 @@ from specific_fns.base_class import Common_functions
 class Frame_order(Common_functions):
     """Class containing the specific methods of the Frame Order theories."""
 
+    def __assemble_param_vector(self):
+        """Assemble and return the parameter vector.
+
+        @return:    The parameter vector.
+        @rtype:     numpy rank-1 array
+        """
+
+        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
+        if cdp.model == 'rigid':
+            return array([cdp.alpha, cdp.beta, cdp.gamma], float64)
+
+        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
+        elif cdp.model == 'iso cone':
+            return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+
+
     def __grid_row(self, incs, lower, upper, dist_type=None):
         """Set up a row of the grid search for a given parameter.
 
@@ -84,7 +100,7 @@ class Frame_order(Common_functions):
             val = (cos(lower) - cos(upper)) / (incs - 1.0)
             for i in range(incs):
                 v[-i-1] = cos(upper) + float(i) * val
-        
+
             # Generate the distribution.
             row = arccos(v)
 
@@ -340,21 +356,15 @@ class Frame_order(Common_functions):
             cdp.warning = warning
 
 
-
     def back_calc(self):
         """Back-calculation of the reduced alignment tensor.
 
-        @return:                    The peak intensity for the desired relaxation time.
-        @rtype:                     float
+        @return:    The reduced alignment tensors.
+        @rtype:     numpy array
         """
 
-        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
-        if cdp.model == 'rigid':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma], float64)
-
-        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
-        elif cdp.model == 'iso cone':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+        # Get the parameter vector.
+        param_vector = self.__assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
@@ -384,13 +394,8 @@ class Frame_order(Common_functions):
     def calculate(self, verbosity=None):
         """Calculate the chi-squared value for the current parameter values."""
 
-        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
-        if cdp.model == 'rigid':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma], float64)
-
-        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
-        elif cdp.model == 'iso cone':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+        # Assemble the parameter vector.
+        param_vector = self.__assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
@@ -743,6 +748,34 @@ class Frame_order(Common_functions):
         self.minimise(min_algor='grid', min_options=grid, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
+    def map_bounds(self, param, spin_id=None):
+        """Create bounds for the OpenDX mapping function.
+
+        @param param:       The name of the parameter to return the lower and upper bounds of.
+        @type param:        str
+        @param spin_id:     The spin identification string (unused).
+        @type spin_id:      None
+        @return:            The upper and lower bounds of the parameter.
+        @rtype:             list of float
+        """
+
+        # Euler angles.
+        if search('^alpha$', param) or search('^beta$', param) or search('^gamma$', param):
+            return [0.0, 2*pi]
+
+        # Axis spherical coordinate theta.
+        if search('theta[ -_]axis', param):
+            return [0.0, pi]
+
+        # Axis spherical coordinate phi.
+        if search('phi[ -_]axis', param):
+            return [0.0, 2*pi]
+
+        # Cone angle.
+        if search('theta[ -_]cone', param):
+            return [0.0, pi]
+
+
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
         """Minimisation function.
 
@@ -784,13 +817,8 @@ class Frame_order(Common_functions):
             # Throw a warning.
             warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
 
-        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
-        if cdp.model == 'rigid':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma], float64)
-
-        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
-        elif cdp.model == 'iso cone':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+        # Assemble the parameter vector.
+        param_vector = self.__assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index)
@@ -823,6 +851,42 @@ class Frame_order(Common_functions):
 
         # Don't return anything, just loop once.
         yield None
+
+
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
+        """Return the k, n, and chi2 model statistics.
+
+        k - number of parameters.
+        n - number of data points.
+        chi2 - the chi-squared value.
+
+
+        @keyword model_info:    Unused.
+        @type model_info:       None
+        @keyword spin_id:       The spin identification string (unused).
+        @type spin_id:          None
+        @keyword global_stats:  Unused.
+        @type global_stats:     None
+        @return:                The optimisation statistics, in tuple format, of the number of
+                                parameters (k), the number of data points (n), and the chi-squared
+                                value (chi2).
+        @rtype:                 tuple of (int, int, float)
+        """
+
+        # Count the number of parameters.
+        param_vector = self.__assemble_param_vector()
+        k = len(param_vector)
+
+        # The number of data points.
+        n = len(cdp.align_tensors.reduction)
+
+        # The chi2 value.
+        if not hasattr(cdp, 'chi2'):
+            raise RelaxError("Statistics are not available, most likely because the model has not been optimised.")
+        chi2 = cdp.chi2
+
+        # Return the data.
+        return k, n, chi2
 
 
     def pivot(self, pivot=None):
@@ -873,6 +937,40 @@ class Frame_order(Common_functions):
         self.__update_model()
 
 
+    def return_data_name(self, param):
+        """Return a unique identifying string for the Frame order parameter.
+
+        @param param:   The Frame order parameter.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # Euler angle alpha.
+        if search('^alpha$', param):
+            return 'alpha'
+
+        # Euler angle beta.
+        if search('^beta$', param):
+            return 'beta'
+
+        # Euler angle gamma.
+        if search('^gamma$', param):
+            return 'gamma'
+
+        # Axis spherical coordinate theta.
+        if search('theta[ -_]axis', param):
+            return 'theta_axis'
+
+        # Axis spherical coordinate phi.
+        if search('phi[ -_]axis', param):
+            return 'phi_axis'
+
+        # Cone angle.
+        if search('theta[ -_]cone', param):
+            return 'theta_cone'
+
+
     def return_error(self, index):
         """Return the alignment tensor error structure.
 
@@ -887,6 +985,36 @@ class Frame_order(Common_functions):
 
         # Return the errors.
         return red_tensor_err
+
+
+    def return_units(self, param, spin=None, spin_id=None):
+        """Return a string representing the parameters units.
+
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container (unused).
+        @type spin:     None
+        @param spin_id: The spin identification string (unused).
+        @type spin_id:  None
+        @return:        The parameter units string.
+        @rtype:         str
+        """
+
+        # Euler angles.
+        if search('^alpha$', param) or search('^beta$', param) or search('^gamma$', param):
+            return 'rad'
+
+        # Axis spherical coordinate theta.
+        if search('theta[ -_]axis', param):
+            return 'rad'
+
+        # Axis spherical coordinate phi.
+        if search('phi[ -_]axis', param):
+            return 'rad'
+
+        # Cone angle.
+        if search('theta[ -_]cone', param):
+            return 'rad'
 
 
     def select_model(self, model=None):
