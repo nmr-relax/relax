@@ -44,47 +44,6 @@ import specific_fns
 class Model_free_main:
     """Class containing functions specific to model-free analysis."""
 
-    def _compare_objects(self, object_from, object_to, pipe_from, pipe_to):
-        """Compare the contents of the two objects and raise RelaxErrors if they are not the same.
-
-        @param object_from: The first object.
-        @type object_from:  any object
-        @param object_to:   The second object.
-        @type object_to:    any object
-        @param pipe_from:   The name of the data pipe containing the first object.
-        @type pipe_from:    str
-        @param pipe_to:     The name of the data pipe containing the second object.
-        @type pipe_to:      str
-        """
-
-        # Loop over the modifiable objects.
-        for data_name in dir(object_from):
-            # Skip special objects (starting with _, or in the original class and base class namespaces).
-            if search('^_', data_name) or data_name in list(object_from.__class__.__dict__.keys()) or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in list(object_from.__class__.__bases__[0].__dict__.keys())):
-                continue
-
-            # Skip some more special objects.
-            if data_name in ['structural_data']:
-                continue
-
-            # Get the original object.
-            data_from = None
-            if hasattr(object_from, data_name):
-                data_from = getattr(object_from, data_name)
-
-            # Get the target object.
-            if data_from and not hasattr(object_to, data_name):
-                raise RelaxError("The structural object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe.")
-            elif data_from:
-                data_to = getattr(object_to, data_name)
-            else:
-                continue
-
-            # The data must match!
-            if data_from != data_to:
-                raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
-
-
     def _are_mf_params_set(self, spin):
         """Test if the model-free parameter values are set.
 
@@ -490,40 +449,45 @@ class Model_free_main:
         return value
 
 
-    def create_mc_data(self, spin_id=None):
-        """Create the Monte Carlo Ri data.
+    def _compare_objects(self, object_from, object_to, pipe_from, pipe_to):
+        """Compare the contents of the two objects and raise RelaxErrors if they are not the same.
 
-        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
-        @type spin_id:      str
-        @return:            The Monte Carlo simulation data.
-        @rtype:             list of floats
+        @param object_from: The first object.
+        @type object_from:  any object
+        @param object_to:   The second object.
+        @type object_to:    any object
+        @param pipe_from:   The name of the data pipe containing the first object.
+        @type pipe_from:    str
+        @param pipe_to:     The name of the data pipe containing the second object.
+        @type pipe_to:      str
         """
 
-        # Initialise the MC data structure.
-        mc_data = []
+        # Loop over the modifiable objects.
+        for data_name in dir(object_from):
+            # Skip special objects (starting with _, or in the original class and base class namespaces).
+            if search('^_', data_name) or data_name in list(object_from.__class__.__dict__.keys()) or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in list(object_from.__class__.__bases__[0].__dict__.keys())):
+                continue
 
-        # Get the spin container and global spin index.
-        spin = return_spin(spin_id)
-        global_index = find_index(spin_id)
+            # Skip some more special objects.
+            if data_name in ['structural_data']:
+                continue
 
-        # Skip deselected spins.
-        if not spin.select:
-            return
+            # Get the original object.
+            data_from = None
+            if hasattr(object_from, data_name):
+                data_from = getattr(object_from, data_name)
 
-        # Test if the model is set.
-        if not hasattr(spin, 'model') or not spin.model:
-            raise RelaxNoModelError
+            # Get the target object.
+            if data_from and not hasattr(object_to, data_name):
+                raise RelaxError("The structural object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe.")
+            elif data_from:
+                data_to = getattr(object_to, data_name)
+            else:
+                continue
 
-        # Loop over the relaxation data.
-        for j in xrange(len(spin.relax_data)):
-            # Back calculate the value.
-            value = self._back_calc(index=global_index, ri_label=spin.ri_labels[j], frq_label=spin.frq_labels[spin.remap_table[j]], frq=spin.frq[spin.remap_table[j]])
-
-            # Append the value.
-            mc_data.append(value)
-
-        # Return the data.
-        return mc_data
+            # The data must match!
+            if data_from != data_to:
+                raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
 
     def _create_model(self, model=None, equation=None, params=None, spin_id=None):
@@ -670,6 +634,541 @@ class Model_free_main:
 
         # Set up the model.
         self._model_setup(model, equation, params, spin_id)
+
+
+    def _delete(self):
+        """Delete all the model-free data."""
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'mf'.
+        function_type = pipes.get_type()
+        if function_type != 'mf':
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
+
+        # Test if the sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Get all data structure names.
+        names = self.data_names()
+
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Loop through the data structure names.
+            for name in names:
+                # Skip the data structure if it does not exist.
+                if not hasattr(spin, name):
+                    continue
+
+                # Delete the data.
+                delattr(spin, name)
+
+
+    def _determine_model_type(self):
+        """Determine the global model type.
+
+        @return:    The name of the model type, which will be one of 'all', 'diff', 'mf', or
+                    'local_tm'.
+        @rtype:     str
+        """
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # If there is a local tm, fail if not all residues have a local tm parameter.
+        local_tm = False
+        for spin in spin_loop():
+            # No params.
+            if not hasattr(spin, 'params') or not spin.params:
+                continue
+
+            # Local tm.
+            if not local_tm and 'local_tm' in spin.params:
+                local_tm = True
+
+            # Inconsistencies.
+            elif local_tm and not 'local_tm' in spin.params:
+                raise RelaxError("All residues must either have a local tm parameter or not.")
+
+        # Check if any model-free parameters are allowed to vary.
+        mf_all_fixed = True
+        mf_all_deselected = True
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # At least one spin is selected.
+            mf_all_deselected = False
+
+            # Test the fixed flag.
+            if not hasattr(spin, 'fixed'):
+                mf_all_fixed = False
+                break
+            if not spin.fixed:
+                mf_all_fixed = False
+                break
+
+        # No spins selected?!?
+        if mf_all_deselected:
+            # All parameters fixed!
+            if cdp.diff_tensor.fixed:
+                raise RelaxError("All parameters are fixed.")
+
+            return 'diff'
+
+        # Local tm.
+        if local_tm:
+            return 'local_tm'
+
+        # Test if the diffusion tensor data is loaded.
+        if not diffusion_tensor.diff_data_exists():
+            # Catch when the local tm value is set but not in the parameter list.
+            for spin in spin_loop():
+                if spin.local_tm != None and not 'local_tm' in spin.params:
+                    raise RelaxError("The local tm value is set but not located in the model parameter list.")
+
+            # Normal error.
+            raise RelaxNoTensorError('diffusion')
+
+        # 'diff' model type.
+        if mf_all_fixed:
+            # All parameters fixed!
+            if cdp.diff_tensor.fixed:
+                raise RelaxError("All parameters are fixed.")
+
+            return 'diff'
+
+        # 'mf' model type.
+        if cdp.diff_tensor.fixed:
+            return 'mf'
+
+        # 'all' model type.
+        else:
+            return 'all'
+
+
+    def _model_setup(self, model=None, equation=None, params=None, spin_id=None):
+        """Function for updating various data structures depending on the model selected.
+
+        @param model:       The name of the model.
+        @type model:        str
+        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
+                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
+                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
+                            'mf_ext2' for the extended model-free equations with parameters {S2f,
+                            tf, S2s, ts}.
+        @type equation:     str
+        @param params:      A list of the parameters to include in the model.  The allowed parameter
+                            names includes those for the equation type as well as chemical exchange
+                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
+        @type params:       list of str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      str
+        """
+
+        # Test that no diffusion tensor exists if local tm is a parameter in the model.
+        for param in params:
+            if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
+                raise RelaxTensorError('diffusion')
+
+        # Loop over the sequence.
+        for spin in spin_loop(spin_id):
+            # Initialise the data structures (if needed).
+            self.data_init(spin)
+
+            # Model-free model, equation, and parameter types.
+            spin.model = model
+            spin.equation = equation
+            spin.params = params
+
+
+    def _remove_tm(self, spin_id=None):
+        """Remove local tm from the set of model-free parameters for the given spins.
+
+        @param spin_id: The spin identification string.
+        @type spin_id:  str or None
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is 'mf'.
+        function_type = pipes.get_type()
+        if function_type != 'mf':
+            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Loop over the spins.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Test if a local tm parameter exists.
+            if not hasattr(spin, 'params') or not 'local_tm' in spin.params:
+                continue
+
+            # Remove tm.
+            spin.params.remove('local_tm')
+
+            # Model name.
+            if match('^tm', spin.model):
+                spin.model = spin.model[1:]
+
+            # Delete the local tm variable.
+            del spin.local_tm
+
+            # Set all the minimisation stats to None.
+            spin.chi2 = None
+            spin.iter = None
+            spin.f_count = None
+            spin.g_count = None
+            spin.h_count = None
+            spin.warning = None
+
+        # Set the global minimisation stats to None.
+        cdp.chi2 = None
+        cdp.iter = None
+        cdp.f_count = None
+        cdp.g_count = None
+        cdp.h_count = None
+        cdp.warning = None
+
+
+    def _select_model(self, model=None, spin_id=None):
+        """Function for the selection of a preset model-free model.
+
+        @param model:   The name of the model.
+        @type model:    str
+        @param spin_id: The spin identification string.
+        @type spin_id:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is 'mf'.
+        function_type = pipes.get_type()
+        if function_type != 'mf':
+            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+
+        # Preset models.
+        ################
+
+        # Block 1.
+        if model == 'm0':
+            equation = 'mf_orig'
+            params = []
+        elif model == 'm1':
+            equation = 'mf_orig'
+            params = ['S2']
+        elif model == 'm2':
+            equation = 'mf_orig'
+            params = ['S2', 'te']
+        elif model == 'm3':
+            equation = 'mf_orig'
+            params = ['S2', 'Rex']
+        elif model == 'm4':
+            equation = 'mf_orig'
+            params = ['S2', 'te', 'Rex']
+        elif model == 'm5':
+            equation = 'mf_ext'
+            params = ['S2f', 'S2', 'ts']
+        elif model == 'm6':
+            equation = 'mf_ext'
+            params = ['S2f', 'tf', 'S2', 'ts']
+        elif model == 'm7':
+            equation = 'mf_ext'
+            params = ['S2f', 'S2', 'ts', 'Rex']
+        elif model == 'm8':
+            equation = 'mf_ext'
+            params = ['S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'm9':
+            equation = 'mf_orig'
+            params = ['Rex']
+
+        # Block 2.
+        elif model == 'm10':
+            equation = 'mf_orig'
+            params = ['CSA']
+        elif model == 'm11':
+            equation = 'mf_orig'
+            params = ['CSA', 'S2']
+        elif model == 'm12':
+            equation = 'mf_orig'
+            params = ['CSA', 'S2', 'te']
+        elif model == 'm13':
+            equation = 'mf_orig'
+            params = ['CSA', 'S2', 'Rex']
+        elif model == 'm14':
+            equation = 'mf_orig'
+            params = ['CSA', 'S2', 'te', 'Rex']
+        elif model == 'm15':
+            equation = 'mf_ext'
+            params = ['CSA', 'S2f', 'S2', 'ts']
+        elif model == 'm16':
+            equation = 'mf_ext'
+            params = ['CSA', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'm17':
+            equation = 'mf_ext'
+            params = ['CSA', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'm18':
+            equation = 'mf_ext'
+            params = ['CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'm19':
+            equation = 'mf_orig'
+            params = ['CSA', 'Rex']
+
+        # Block 3.
+        elif model == 'm20':
+            equation = 'mf_orig'
+            params = ['r']
+        elif model == 'm21':
+            equation = 'mf_orig'
+            params = ['r', 'S2']
+        elif model == 'm22':
+            equation = 'mf_orig'
+            params = ['r', 'S2', 'te']
+        elif model == 'm23':
+            equation = 'mf_orig'
+            params = ['r', 'S2', 'Rex']
+        elif model == 'm24':
+            equation = 'mf_orig'
+            params = ['r', 'S2', 'te', 'Rex']
+        elif model == 'm25':
+            equation = 'mf_ext'
+            params = ['r', 'S2f', 'S2', 'ts']
+        elif model == 'm26':
+            equation = 'mf_ext'
+            params = ['r', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'm27':
+            equation = 'mf_ext'
+            params = ['r', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'm28':
+            equation = 'mf_ext'
+            params = ['r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'm29':
+            equation = 'mf_orig'
+            params = ['r', 'Rex']
+
+        # Block 4.
+        elif model == 'm30':
+            equation = 'mf_orig'
+            params = ['r', 'CSA']
+        elif model == 'm31':
+            equation = 'mf_orig'
+            params = ['r', 'CSA', 'S2']
+        elif model == 'm32':
+            equation = 'mf_orig'
+            params = ['r', 'CSA', 'S2', 'te']
+        elif model == 'm33':
+            equation = 'mf_orig'
+            params = ['r', 'CSA', 'S2', 'Rex']
+        elif model == 'm34':
+            equation = 'mf_orig'
+            params = ['r', 'CSA', 'S2', 'te', 'Rex']
+        elif model == 'm35':
+            equation = 'mf_ext'
+            params = ['r', 'CSA', 'S2f', 'S2', 'ts']
+        elif model == 'm36':
+            equation = 'mf_ext'
+            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'm37':
+            equation = 'mf_ext'
+            params = ['r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'm38':
+            equation = 'mf_ext'
+            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'm39':
+            equation = 'mf_orig'
+            params = ['r', 'CSA', 'Rex']
+
+
+        # Preset models with local correlation time.
+        ############################################
+
+        # Block 1.
+        elif model == 'tm0':
+            equation = 'mf_orig'
+            params = ['local_tm']
+        elif model == 'tm1':
+            equation = 'mf_orig'
+            params = ['local_tm', 'S2']
+        elif model == 'tm2':
+            equation = 'mf_orig'
+            params = ['local_tm', 'S2', 'te']
+        elif model == 'tm3':
+            equation = 'mf_orig'
+            params = ['local_tm', 'S2', 'Rex']
+        elif model == 'tm4':
+            equation = 'mf_orig'
+            params = ['local_tm', 'S2', 'te', 'Rex']
+        elif model == 'tm5':
+            equation = 'mf_ext'
+            params = ['local_tm', 'S2f', 'S2', 'ts']
+        elif model == 'tm6':
+            equation = 'mf_ext'
+            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm7':
+            equation = 'mf_ext'
+            params = ['local_tm', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm8':
+            equation = 'mf_ext'
+            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm9':
+            equation = 'mf_orig'
+            params = ['local_tm', 'Rex']
+
+        # Block 2.
+        elif model == 'tm10':
+            equation = 'mf_orig'
+            params = ['local_tm', 'CSA']
+        elif model == 'tm11':
+            equation = 'mf_orig'
+            params = ['local_tm', 'CSA', 'S2']
+        elif model == 'tm12':
+            equation = 'mf_orig'
+            params = ['local_tm', 'CSA', 'S2', 'te']
+        elif model == 'tm13':
+            equation = 'mf_orig'
+            params = ['local_tm', 'CSA', 'S2', 'Rex']
+        elif model == 'tm14':
+            equation = 'mf_orig'
+            params = ['local_tm', 'CSA', 'S2', 'te', 'Rex']
+        elif model == 'tm15':
+            equation = 'mf_ext'
+            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts']
+        elif model == 'tm16':
+            equation = 'mf_ext'
+            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm17':
+            equation = 'mf_ext'
+            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm18':
+            equation = 'mf_ext'
+            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm19':
+            equation = 'mf_orig'
+            params = ['local_tm', 'CSA', 'Rex']
+
+        # Block 3.
+        elif model == 'tm20':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r']
+        elif model == 'tm21':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'S2']
+        elif model == 'tm22':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'S2', 'te']
+        elif model == 'tm23':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'S2', 'Rex']
+        elif model == 'tm24':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'S2', 'te', 'Rex']
+        elif model == 'tm25':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'S2f', 'S2', 'ts']
+        elif model == 'tm26':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm27':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm28':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm29':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'Rex']
+
+        # Block 4.
+        elif model == 'tm30':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'CSA']
+        elif model == 'tm31':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'CSA', 'S2']
+        elif model == 'tm32':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'CSA', 'S2', 'te']
+        elif model == 'tm33':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'CSA', 'S2', 'Rex']
+        elif model == 'tm34':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'CSA', 'S2', 'te', 'Rex']
+        elif model == 'tm35':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
+        elif model == 'tm36':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
+        elif model == 'tm37':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
+        elif model == 'tm38':
+            equation = 'mf_ext'
+            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
+        elif model == 'tm39':
+            equation = 'mf_orig'
+            params = ['local_tm', 'r', 'CSA', 'Rex']
+
+        # Invalid model.
+        else:
+            raise RelaxError("The model '" + model + "' is invalid.")
+
+        # Set up the model.
+        self._model_setup(model, equation, params, spin_id)
+
+
+    def create_mc_data(self, spin_id=None):
+        """Create the Monte Carlo Ri data.
+
+        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      str
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
+        """
+
+        # Initialise the MC data structure.
+        mc_data = []
+
+        # Get the spin container and global spin index.
+        spin = return_spin(spin_id)
+        global_index = find_index(spin_id)
+
+        # Skip deselected spins.
+        if not spin.select:
+            return
+
+        # Test if the model is set.
+        if not hasattr(spin, 'model') or not spin.model:
+            raise RelaxNoModelError
+
+        # Loop over the relaxation data.
+        for j in xrange(len(spin.relax_data)):
+            # Back calculate the value.
+            value = self._back_calc(index=global_index, ri_label=spin.ri_labels[j], frq_label=spin.frq_labels[spin.remap_table[j]], frq=spin.frq[spin.remap_table[j]])
+
+            # Append the value.
+            mc_data.append(value)
+
+        # Return the data.
+        return mc_data
 
 
     def data_init(self, spin):
@@ -906,36 +1405,6 @@ class Model_free_main:
             return '1H'
 
 
-    def _delete(self):
-        """Delete all the model-free data."""
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Get all data structure names.
-        names = self.data_names()
-
-        # Loop over the spins.
-        for spin in spin_loop():
-            # Loop through the data structure names.
-            for name in names:
-                # Skip the data structure if it does not exist.
-                if not hasattr(spin, name):
-                    continue
-
-                # Delete the data.
-                delattr(spin, name)
-
-
     def deselect(self, model_info, sim_index=None):
         """Deselect models or simulations.
 
@@ -971,91 +1440,6 @@ class Model_free_main:
             else:
                 # Deselect.
                 cdp.select_sim[sim_index] = False
-
-
-    def _determine_model_type(self):
-        """Determine the global model type.
-
-        @return:    The name of the model type, which will be one of 'all', 'diff', 'mf', or
-                    'local_tm'.
-        @rtype:     str
-        """
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # If there is a local tm, fail if not all residues have a local tm parameter.
-        local_tm = False
-        for spin in spin_loop():
-            # No params.
-            if not hasattr(spin, 'params') or not spin.params:
-                continue
-
-            # Local tm.
-            if not local_tm and 'local_tm' in spin.params:
-                local_tm = True
-
-            # Inconsistencies.
-            elif local_tm and not 'local_tm' in spin.params:
-                raise RelaxError("All residues must either have a local tm parameter or not.")
-
-        # Check if any model-free parameters are allowed to vary.
-        mf_all_fixed = True
-        mf_all_deselected = True
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # At least one spin is selected.
-            mf_all_deselected = False
-
-            # Test the fixed flag.
-            if not hasattr(spin, 'fixed'):
-                mf_all_fixed = False
-                break
-            if not spin.fixed:
-                mf_all_fixed = False
-                break
-
-        # No spins selected?!?
-        if mf_all_deselected:
-            # All parameters fixed!
-            if cdp.diff_tensor.fixed:
-                raise RelaxError("All parameters are fixed.")
-
-            return 'diff'
-
-        # Local tm.
-        if local_tm:
-            return 'local_tm'
-
-        # Test if the diffusion tensor data is loaded.
-        if not diffusion_tensor.diff_data_exists():
-            # Catch when the local tm value is set but not in the parameter list.
-            for spin in spin_loop():
-                if spin.local_tm != None and not 'local_tm' in spin.params:
-                    raise RelaxError("The local tm value is set but not located in the model parameter list.")
-
-            # Normal error.
-            raise RelaxNoTensorError('diffusion')
-
-        # 'diff' model type.
-        if mf_all_fixed:
-            # All parameters fixed!
-            if cdp.diff_tensor.fixed:
-                raise RelaxError("All parameters are fixed.")
-
-            return 'diff'
-
-        # 'mf' model type.
-        if cdp.diff_tensor.fixed:
-            return 'mf'
-
-        # 'all' model type.
-        else:
-            return 'all'
 
 
     def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
@@ -1473,41 +1857,6 @@ class Model_free_main:
                 yield global_index
 
 
-    def _model_setup(self, model=None, equation=None, params=None, spin_id=None):
-        """Function for updating various data structures depending on the model selected.
-
-        @param model:       The name of the model.
-        @type model:        str
-        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the
-                            original model-free equations with parameters {S2, te}; 'mf_ext' for the
-                            extended model-free equations with parameters {S2f, tf, S2, ts}; and
-                            'mf_ext2' for the extended model-free equations with parameters {S2f,
-                            tf, S2s, ts}.
-        @type equation:     str
-        @param params:      A list of the parameters to include in the model.  The allowed parameter
-                            names includes those for the equation type as well as chemical exchange
-                            'Rex', the bond length 'r', and the chemical shift anisotropy 'CSA'.
-        @type params:       list of str
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
-        """
-
-        # Test that no diffusion tensor exists if local tm is a parameter in the model.
-        for param in params:
-            if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
-                raise RelaxTensorError('diffusion')
-
-        # Loop over the sequence.
-        for spin in spin_loop(spin_id):
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-            # Model-free model, equation, and parameter types.
-            spin.model = model
-            spin.equation = equation
-            spin.params = params
-
-
     def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
         """Return the k, n, and chi2 model statistics.
 
@@ -1681,62 +2030,6 @@ class Model_free_main:
                 spin.select = False
             elif need_vect and spin.xh_vect == None:
                 spin.select = False
-
-
-    def _remove_tm(self, spin_id=None):
-        """Remove local tm from the set of model-free parameters for the given spins.
-
-        @param spin_id: The spin identification string.
-        @type spin_id:  str or None
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Loop over the spins.
-        for spin in spin_loop(spin_id):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Test if a local tm parameter exists.
-            if not hasattr(spin, 'params') or not 'local_tm' in spin.params:
-                continue
-
-            # Remove tm.
-            spin.params.remove('local_tm')
-
-            # Model name.
-            if match('^tm', spin.model):
-                spin.model = spin.model[1:]
-
-            # Delete the local tm variable.
-            del spin.local_tm
-
-            # Set all the minimisation stats to None.
-            spin.chi2 = None
-            spin.iter = None
-            spin.f_count = None
-            spin.g_count = None
-            spin.h_count = None
-            spin.warning = None
-
-        # Set the global minimisation stats to None.
-        cdp.chi2 = None
-        cdp.iter = None
-        cdp.f_count = None
-        cdp.g_count = None
-        cdp.h_count = None
-        cdp.warning = None
 
 
     def return_conversion_factor(self, param, spin=None, spin_id=None):
@@ -2052,299 +2345,6 @@ class Model_free_main:
         # CSA (ppm).
         elif object_name == 'csa':
             return 'ppm'
-
-
-    def _select_model(self, model=None, spin_id=None):
-        """Function for the selection of a preset model-free model.
-
-        @param model:   The name of the model.
-        @type model:    str
-        @param spin_id: The spin identification string.
-        @type spin_id:  str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_fns.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-
-        # Preset models.
-        ################
-
-        # Block 1.
-        if model == 'm0':
-            equation = 'mf_orig'
-            params = []
-        elif model == 'm1':
-            equation = 'mf_orig'
-            params = ['S2']
-        elif model == 'm2':
-            equation = 'mf_orig'
-            params = ['S2', 'te']
-        elif model == 'm3':
-            equation = 'mf_orig'
-            params = ['S2', 'Rex']
-        elif model == 'm4':
-            equation = 'mf_orig'
-            params = ['S2', 'te', 'Rex']
-        elif model == 'm5':
-            equation = 'mf_ext'
-            params = ['S2f', 'S2', 'ts']
-        elif model == 'm6':
-            equation = 'mf_ext'
-            params = ['S2f', 'tf', 'S2', 'ts']
-        elif model == 'm7':
-            equation = 'mf_ext'
-            params = ['S2f', 'S2', 'ts', 'Rex']
-        elif model == 'm8':
-            equation = 'mf_ext'
-            params = ['S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'm9':
-            equation = 'mf_orig'
-            params = ['Rex']
-
-        # Block 2.
-        elif model == 'm10':
-            equation = 'mf_orig'
-            params = ['CSA']
-        elif model == 'm11':
-            equation = 'mf_orig'
-            params = ['CSA', 'S2']
-        elif model == 'm12':
-            equation = 'mf_orig'
-            params = ['CSA', 'S2', 'te']
-        elif model == 'm13':
-            equation = 'mf_orig'
-            params = ['CSA', 'S2', 'Rex']
-        elif model == 'm14':
-            equation = 'mf_orig'
-            params = ['CSA', 'S2', 'te', 'Rex']
-        elif model == 'm15':
-            equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'S2', 'ts']
-        elif model == 'm16':
-            equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'tf', 'S2', 'ts']
-        elif model == 'm17':
-            equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'S2', 'ts', 'Rex']
-        elif model == 'm18':
-            equation = 'mf_ext'
-            params = ['CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'm19':
-            equation = 'mf_orig'
-            params = ['CSA', 'Rex']
-
-        # Block 3.
-        elif model == 'm20':
-            equation = 'mf_orig'
-            params = ['r']
-        elif model == 'm21':
-            equation = 'mf_orig'
-            params = ['r', 'S2']
-        elif model == 'm22':
-            equation = 'mf_orig'
-            params = ['r', 'S2', 'te']
-        elif model == 'm23':
-            equation = 'mf_orig'
-            params = ['r', 'S2', 'Rex']
-        elif model == 'm24':
-            equation = 'mf_orig'
-            params = ['r', 'S2', 'te', 'Rex']
-        elif model == 'm25':
-            equation = 'mf_ext'
-            params = ['r', 'S2f', 'S2', 'ts']
-        elif model == 'm26':
-            equation = 'mf_ext'
-            params = ['r', 'S2f', 'tf', 'S2', 'ts']
-        elif model == 'm27':
-            equation = 'mf_ext'
-            params = ['r', 'S2f', 'S2', 'ts', 'Rex']
-        elif model == 'm28':
-            equation = 'mf_ext'
-            params = ['r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'm29':
-            equation = 'mf_orig'
-            params = ['r', 'Rex']
-
-        # Block 4.
-        elif model == 'm30':
-            equation = 'mf_orig'
-            params = ['r', 'CSA']
-        elif model == 'm31':
-            equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2']
-        elif model == 'm32':
-            equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2', 'te']
-        elif model == 'm33':
-            equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2', 'Rex']
-        elif model == 'm34':
-            equation = 'mf_orig'
-            params = ['r', 'CSA', 'S2', 'te', 'Rex']
-        elif model == 'm35':
-            equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'S2', 'ts']
-        elif model == 'm36':
-            equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
-        elif model == 'm37':
-            equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
-        elif model == 'm38':
-            equation = 'mf_ext'
-            params = ['r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'm39':
-            equation = 'mf_orig'
-            params = ['r', 'CSA', 'Rex']
-
-
-        # Preset models with local correlation time.
-        ############################################
-
-        # Block 1.
-        elif model == 'tm0':
-            equation = 'mf_orig'
-            params = ['local_tm']
-        elif model == 'tm1':
-            equation = 'mf_orig'
-            params = ['local_tm', 'S2']
-        elif model == 'tm2':
-            equation = 'mf_orig'
-            params = ['local_tm', 'S2', 'te']
-        elif model == 'tm3':
-            equation = 'mf_orig'
-            params = ['local_tm', 'S2', 'Rex']
-        elif model == 'tm4':
-            equation = 'mf_orig'
-            params = ['local_tm', 'S2', 'te', 'Rex']
-        elif model == 'tm5':
-            equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'S2', 'ts']
-        elif model == 'tm6':
-            equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts']
-        elif model == 'tm7':
-            equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'S2', 'ts', 'Rex']
-        elif model == 'tm8':
-            equation = 'mf_ext'
-            params = ['local_tm', 'S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'tm9':
-            equation = 'mf_orig'
-            params = ['local_tm', 'Rex']
-
-        # Block 2.
-        elif model == 'tm10':
-            equation = 'mf_orig'
-            params = ['local_tm', 'CSA']
-        elif model == 'tm11':
-            equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2']
-        elif model == 'tm12':
-            equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2', 'te']
-        elif model == 'tm13':
-            equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2', 'Rex']
-        elif model == 'tm14':
-            equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'S2', 'te', 'Rex']
-        elif model == 'tm15':
-            equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts']
-        elif model == 'tm16':
-            equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts']
-        elif model == 'tm17':
-            equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
-        elif model == 'tm18':
-            equation = 'mf_ext'
-            params = ['local_tm', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'tm19':
-            equation = 'mf_orig'
-            params = ['local_tm', 'CSA', 'Rex']
-
-        # Block 3.
-        elif model == 'tm20':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r']
-        elif model == 'tm21':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2']
-        elif model == 'tm22':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2', 'te']
-        elif model == 'tm23':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2', 'Rex']
-        elif model == 'tm24':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'S2', 'te', 'Rex']
-        elif model == 'tm25':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'S2', 'ts']
-        elif model == 'tm26':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts']
-        elif model == 'tm27':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'S2', 'ts', 'Rex']
-        elif model == 'tm28':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'tm29':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'Rex']
-
-        # Block 4.
-        elif model == 'tm30':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA']
-        elif model == 'tm31':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2']
-        elif model == 'tm32':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2', 'te']
-        elif model == 'tm33':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2', 'Rex']
-        elif model == 'tm34':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'S2', 'te', 'Rex']
-        elif model == 'tm35':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts']
-        elif model == 'tm36':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts']
-        elif model == 'tm37':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'S2', 'ts', 'Rex']
-        elif model == 'tm38':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'CSA', 'S2f', 'tf', 'S2', 'ts', 'Rex']
-        elif model == 'tm39':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'CSA', 'Rex']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '" + model + "' is invalid.")
-
-        # Set up the model.
-        self._model_setup(model, equation, params, spin_id)
 
 
     set_doc = """
