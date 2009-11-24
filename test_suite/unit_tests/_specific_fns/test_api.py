@@ -61,17 +61,14 @@ class Test_api(TestCase):
             # The arg.
             text = text + args[i]
 
-        # Shifted index.
-        index = i+1
-
         # Keyword args.
-        for i in xrange(index, len(defaults)+1):
+        for j in xrange(i, len(defaults)+1):
             # Separator.
-            if i != 0:
+            if j != 0:
                 text = text + ', '
 
             # The keyword.
-            text = text + args[i] + '=' + repr(defaults[i-index])
+            text = text + args[j+1] + '=' + repr(defaults[j-i])
 
         # End.
         text = text + ')'
@@ -114,7 +111,7 @@ class Test_api(TestCase):
                 print(doc_base)
 
                 # Fail.
-                self.fail('The args of the method\n\t' + doc + '\ndo not match those of the API method\n\t' + doc_base)
+                self.fail('The args of the method:\n\t' + doc + '\ndo not match those of the API method:\n\t' + doc_base)
 
 
     def __check_objects(self, analysis_obj):
