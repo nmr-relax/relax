@@ -842,14 +842,17 @@ class API_base:
             inc = inc + 1
 
 
-    def sim_return_selected(self, spin):
+    def sim_return_selected(self, model_info):
         """Return the array of selected simulation flags for the spin.
 
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
+        @param model_info:  The model information originating from model_loop().
+        @type model_info:   unknown
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
+
+        # Assume the default of a spin container.
+        spin = model_info
 
         # Return the array.
         return spin.select_sim
