@@ -161,7 +161,7 @@ class Common_functions:
         """Dummy function, nornally for deselecting spins with insufficient data for minimisation."""
 
 
-    def return_conversion_factor(self, stat_type, spin):
+    def return_conversion_factor(self, stat_type, spin=None, spin_id=None):
         """Dummy function for returning 1.0.
 
         @param stat_type:   The name of the statistic.  This is unused!
