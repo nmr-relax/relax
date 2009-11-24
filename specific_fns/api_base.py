@@ -157,6 +157,8 @@ class API_base:
         raise RelaxImplementError
 
 
+    # Empty documentation string.
+    eliminate_doc = ""
     def eliminate(self):
         """Dummy method for model elimination."""
 
