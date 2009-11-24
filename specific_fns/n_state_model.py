@@ -201,6 +201,219 @@ class N_state_model(API_base):
         return list
 
 
+    def _calc_ave_dist(self, atom1, atom2, exp=1):
+        """Calculate the average distances.
+
+        The formula used is::
+
+                      _N_
+                  / 1 \                  \ 1/exp
+            <r> = | -  > |p1i - p2i|^exp |
+                  \ N /__                /
+                       i
+
+        where i are the members of the ensemble, N is the total number of structural models, and p1
+        and p2 at the two atom positions.
+
+
+        @param atom1:   The atom identification string of the first atom.
+        @type atom1:    str
+        @param atom2:   The atom identification string of the second atom.
+        @type atom2:    str
+        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
+                        r^-6 NOE averaging.
+        @type exp:      int
+        @return:        The average distance between the two atoms.
+        @rtype:         float
+        """
+
+        # Get the spin containers.
+        spin1 = return_spin(atom1)
+        spin2 = return_spin(atom2)
+
+        # Loop over each model.
+        num_models = len(spin1.pos)
+        ave_dist = 0.0
+        for i in range(num_models):
+            # Distance to the minus sixth power.
+            dist = norm(spin1.pos[i] - spin2.pos[i])
+            ave_dist = ave_dist + dist**(exp)
+
+        # Average.
+        ave_dist = ave_dist / num_models
+
+        # The exponent.
+        ave_dist = ave_dist**(1.0/exp)
+
+        # Return the average distance.
+        return ave_dist
+
+
+    def _CoM(self, pivot_point=None, centre=None):
+        """Centre of mass analysis.
+
+        This function does an analysis of the centre of mass (CoM) of the N states.  This includes
+        calculating the order parameter associated with the pivot-CoM vector, and the associated
+        cone of motions.  The pivot_point argument must be supplied.  If centre is None, then the
+        CoM will be calculated from the selected parts of the loaded structure.  Otherwise it will
+        be set to the centre arg.
+
+        @param pivot_point: The pivot point in the structural file(s).
+        @type pivot_point:  list of float of length 3
+        @param centre:      The optional centre of mass vector.
+        @type centre:       list of float of length 3
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Set the pivot point.
+        cdp.pivot_point = pivot_point
+
+        # The centre has been supplied.
+        if centre:
+            cdp.CoM = centre
+
+        # Calculate from the structure file.
+        else:
+            cdp.CoM = generic_fns.structure.mass.centre_of_mass()
+
+        # Calculate the vector between the pivot and CoM points.
+        cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
+
+        # Calculate the unit vector between the pivot and CoM points.
+        unit_vect = cdp.pivot_CoM / norm(cdp.pivot_CoM)
+
+        # Initilise some data structures.
+        R = zeros((3, 3), float64)
+        vectors = zeros((cdp.N, 3), float64)
+
+        # Loop over the N states.
+        for c in xrange(cdp.N):
+            # Generate the rotation matrix.
+            euler_zyz_to_R(cdp.alpha[c], cdp.beta[c], cdp.gamma[c], R)
+
+            # Rotate the unit vector.
+            vectors[c] = dot(R, unit_vect)
+
+            # Multiply by the probability.
+            vectors[c] = vectors[c] * cdp.probs[c]
+
+        # Average of the unit vectors.
+        cdp.ave_unit_pivot_CoM = sum(vectors)
+
+        # The length reduction.
+        cdp.ave_pivot_CoM_red = norm(cdp.ave_unit_pivot_CoM)
+
+        # The aveage pivot-CoM vector.
+        cdp.ave_pivot_CoM = norm(cdp.pivot_CoM) * cdp.ave_unit_pivot_CoM
+
+        # The full length rotated pivot-CoM vector.
+        cdp.full_ave_pivot_CoM = cdp.ave_pivot_CoM / cdp.ave_pivot_CoM_red
+
+        # The cone angle for diffusion on an axially symmetric cone.
+        cdp.theta_diff_on_cone = acos(cdp.ave_pivot_CoM_red)
+        cdp.S_diff_on_cone = (3.0*cos(cdp.theta_diff_on_cone)**2 - 1.0) / 2.0
+
+        # The cone angle and order parameter for diffusion in an axially symmetric cone.
+        cdp.theta_diff_in_cone = acos(2.*cdp.ave_pivot_CoM_red - 1.)
+        cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
+
+        # Print out.
+        print(("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))))
+        print(("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))))
+        print(("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))))
+        print(("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))))
+        print(("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))))
+        print(("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))))
+        print(("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))))
+        print(("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))))
+        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)))
+        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)))
+        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)))
+        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)))
+        print("\n\n")
+
+
+    def _cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
+        """Create a PDB file containing a geometric object representing the various cone models.
+
+        Currently the only cone types supported are 'diff in cone' and 'diff on cone'.
+
+
+        @param cone_type:   The type of cone model to represent.
+        @type cone_type:    str
+        @param scale:       The size of the geometric object is eqaul to the average pivot-CoM
+                            vector length multiplied by this scaling factor.
+        @type scale:        float
+        @param file:        The name of the PDB file to create.
+        @type file:         str
+        @param dir:         The name of the directory to place the PDB file into.
+        @type dir:          str
+        @param force:       Flag which if set to True will cause any pre-existing file to be
+                            overwritten.
+        @type force:        int
+        """
+
+        # Test if the cone models have been determined.
+        if cone_type == 'diff in cone':
+            if not hasattr(cdp, 'S_diff_in_cone'):
+                raise RelaxError("The diffusion in a cone model has not yet been determined.")
+        elif cone_type == 'diff on cone':
+            if not hasattr(cdp, 'S_diff_on_cone'):
+                raise RelaxError("The diffusion on a cone model has not yet been determined.")
+        else:
+            raise RelaxError("The cone type " + repr(cone_type) + " is unknown.")
+
+        # The number of increments for the filling of the cone objects.
+        inc = 20
+
+        # The rotation matrix.
+        R = zeros((3, 3), float64)
+        two_vect_to_R(array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), R)
+
+        # Create the structural object.
+        structure = Internal()
+
+        # Add a structure.
+        structure.add_struct(name='cone')
+
+        # Alias the single molecule from the single model.
+        mol = structure.structural_data[0].mol[0]
+
+        # Add the pivot point.
+        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
+
+        # Generate the average pivot-CoM vectors.
+        print("\nGenerating the average pivot-CoM vectors.")
+        sim_vectors = None
+        if hasattr(cdp, 'ave_pivot_CoM_sim'):
+            sim_vectors = cdp.ave_pivot_CoM_sim
+        res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+
+        # Generate the cone outer edge.
+        print("\nGenerating the cone outer edge.")
+        if cone_type == 'diff in cone':
+            angle = cdp.theta_diff_in_cone
+        elif cone_type == 'diff on cone':
+            angle = cdp.theta_diff_on_cone
+        cap_start_atom = mol.atom_num[-1]+1
+        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
+
+        # Generate the cone cap, and stitch it to the cone edge.
+        if cone_type == 'diff in cone':
+            print("\nGenerating the cone cap.")
+            cone_start_atom = mol.atom_num[-1]+1
+            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
+            generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
+
+        # Create the PDB file.
+        print("\nGenerating the PDB file.")
+        pdb_file = open_write_file(file, dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
+
+
     def _disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
         """Disassemble the parameter vector and place the values into the relevant variables.
 
@@ -721,32 +934,124 @@ class N_state_model(API_base):
         return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
-    def _tensor_loop(self, red=False):
-        """Generator method for looping over the full or reduced tensors.
+    def _num_data_points(self):
+        """Determine the number of data points used in the model.
 
-        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
-                        the full tensors are returned.
-        @type red:      bool
-        @return:        The tensor index and the tensor.
-        @rtype:         (int, AlignTensorData instance)
+        @return:    The number, n, of data points in the model.
+        @rtype:     int
         """
 
-        # Number of tensor pairs.
-        n = len(cdp.align_tensors.reduction)
+        # Determine the data type.
+        data_types = self._base_data_types()
 
-        # Alias.
-        data = cdp.align_tensors
-        list = data.reduction
+        # Init.
+        n = 0
 
-        # Full or reduced index.
-        if red:
-            index = 1
-        else:
-            index = 0
+        # Spin loop.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
 
-        # Loop over the reduction list.
-        for i in range(n):
-            yield i, data[list[i][index]]
+            # RDC data (skipping array elements set to None).
+            if 'rdc' in data_types:
+                if hasattr(spin, 'rdc'):
+                    for rdc in spin.rdc:
+                        if isinstance(rdc, float):
+                            n = n + 1
+
+            # PCS data (skipping array elements set to None).
+            if 'pcs' in data_types:
+                if hasattr(spin, 'pcs'):
+                    for pcs in spin.pcs:
+                        if isinstance(pcs, float):
+                            n = n + 1
+
+        # Alignment tensors.
+        if 'tensor' in data_types:
+            n = n + 5*len(cdp.align_tensors)
+
+        # Return the value.
+        return n
+
+
+    def _number_of_states(self, N=None):
+        """Set the number of states in the N-state model.
+
+        @param N:   The number of states.
+        @type N:    int
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # Set the value of N.
+        cdp.N = N
+
+        # Update the model.
+        self._update_model()
+
+
+    def _param_model_index(self, param):
+        """Return the N-state model index for the given parameter.
+
+        @param param:   The N-state model parameter.
+        @type param:    str
+        @return:        The N-state model index.
+        @rtype:         str
+        """
+
+        # Probability.
+        if search('^p[0-9]*$', param):
+            return int(param[1:])
+
+        # Alpha Euler angle.
+        if search('^alpha', param):
+            return int(param[5:])
+
+        # Beta Euler angle.
+        if search('^beta', param):
+            return int(param[4:])
+
+        # Gamma Euler angle.
+        if search('^gamma', param):
+            return int(param[5:])
+
+        # Model independent parameter.
+        return None
+
+
+    def _param_num(self):
+        """Determine the number of parameters in the model.
+
+        @return:    The number of model parameters.
+        @rtype:     int
+        """
+
+        # Determine the data type.
+        data_types = self._base_data_types()
+
+        # Init.
+        num = 0
+
+        # Alignment tensor params.
+        if 'rdc' in data_types or 'pcs' in data_types:
+            num = num + 5*len(cdp.align_tensors)
+
+        # Populations.
+        if cdp.model in ['2-domain', 'population']:
+            num = num + (cdp.N - 1)
+
+        # Euler angles.
+        if cdp.model == '2-domain':
+            num = num + 3*cdp.N
+
+        # Return the param number.
+        return num
 
 
     def _q_factors_rdc(self):
@@ -859,6 +1164,95 @@ class N_state_model(API_base):
         cdp.q_pcs = sqrt(cdp.q_pcs)
 
 
+    def _ref_domain(self, ref=None):
+        """Set the reference domain for the '2-domain' N-state model.
+
+        @param ref: The reference domain.
+        @type ref:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # Test that the correct model is set.
+        if cdp.model != '2-domain':
+            raise RelaxError("Setting the reference domain is only possible for the '2-domain' N-state model.")
+
+        # Test if the reference domain exists.
+        exists = False
+        for tensor_cont in cdp.align_tensors:
+            if tensor_cont.domain == ref:
+                exists = True
+        if not exists:
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
+
+        # Set the reference domain.
+        cdp.ref_domain = ref
+
+        # Update the model.
+        self._update_model()
+
+
+    def _select_model(self, model=None):
+        """Select the N-state model type.
+
+        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
+        @type model:    str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if hasattr(cdp, 'model'):
+            raise RelaxModelError('N-state')
+
+        # Test if the model name exists.
+        if not model in ['2-domain', 'population', 'fixed']:
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
+
+        # Set the model
+        cdp.model = model
+
+        # Initialise the list of model parameters.
+        cdp.params = []
+
+        # Update the model.
+        self._update_model()
+
+
+    def _tensor_loop(self, red=False):
+        """Generator method for looping over the full or reduced tensors.
+
+        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
+                        the full tensors are returned.
+        @type red:      bool
+        @return:        The tensor index and the tensor.
+        @rtype:         (int, AlignTensorData instance)
+        """
+
+        # Number of tensor pairs.
+        n = len(cdp.align_tensors.reduction)
+
+        # Alias.
+        data = cdp.align_tensors
+        list = data.reduction
+
+        # Full or reduced index.
+        if red:
+            index = 1
+        else:
+            index = 0
+
+        # Loop over the reduction list.
+        for i in range(n):
+            yield i, data[list[i][index]]
+
+
     def _update_model(self):
         """Update the model parameters as necessary."""
 
@@ -929,54 +1323,6 @@ class N_state_model(API_base):
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
-    def _calc_ave_dist(self, atom1, atom2, exp=1):
-        """Calculate the average distances.
-
-        The formula used is::
-
-                      _N_
-                  / 1 \                  \ 1/exp
-            <r> = | -  > |p1i - p2i|^exp |
-                  \ N /__                /
-                       i
-
-        where i are the members of the ensemble, N is the total number of structural models, and p1
-        and p2 at the two atom positions.
-
-
-        @param atom1:   The atom identification string of the first atom.
-        @type atom1:    str
-        @param atom2:   The atom identification string of the second atom.
-        @type atom2:    str
-        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
-                        r^-6 NOE averaging.
-        @type exp:      int
-        @return:        The average distance between the two atoms.
-        @rtype:         float
-        """
-
-        # Get the spin containers.
-        spin1 = return_spin(atom1)
-        spin2 = return_spin(atom2)
-
-        # Loop over each model.
-        num_models = len(spin1.pos)
-        ave_dist = 0.0
-        for i in range(num_models):
-            # Distance to the minus sixth power.
-            dist = norm(spin1.pos[i] - spin2.pos[i])
-            ave_dist = ave_dist + dist**(exp)
-
-        # Average.
-        ave_dist = ave_dist / num_models
-
-        # The exponent.
-        ave_dist = ave_dist**(1.0/exp)
-
-        # Return the average distance.
-        return ave_dist
-
-
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculation function.
 
@@ -1020,171 +1366,6 @@ class N_state_model(API_base):
         for i in range(num_restraints):
             cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
             cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
-
-
-    def _CoM(self, pivot_point=None, centre=None):
-        """Centre of mass analysis.
-
-        This function does an analysis of the centre of mass (CoM) of the N states.  This includes
-        calculating the order parameter associated with the pivot-CoM vector, and the associated
-        cone of motions.  The pivot_point argument must be supplied.  If centre is None, then the
-        CoM will be calculated from the selected parts of the loaded structure.  Otherwise it will
-        be set to the centre arg.
-
-        @param pivot_point: The pivot point in the structural file(s).
-        @type pivot_point:  list of float of length 3
-        @param centre:      The optional centre of mass vector.
-        @type centre:       list of float of length 3
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Set the pivot point.
-        cdp.pivot_point = pivot_point
-
-        # The centre has been supplied.
-        if centre:
-            cdp.CoM = centre
-
-        # Calculate from the structure file.
-        else:
-            cdp.CoM = generic_fns.structure.mass.centre_of_mass()
-
-        # Calculate the vector between the pivot and CoM points.
-        cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
-
-        # Calculate the unit vector between the pivot and CoM points.
-        unit_vect = cdp.pivot_CoM / norm(cdp.pivot_CoM)
-
-        # Initilise some data structures.
-        R = zeros((3, 3), float64)
-        vectors = zeros((cdp.N, 3), float64)
-
-        # Loop over the N states.
-        for c in xrange(cdp.N):
-            # Generate the rotation matrix.
-            euler_zyz_to_R(cdp.alpha[c], cdp.beta[c], cdp.gamma[c], R)
-
-            # Rotate the unit vector.
-            vectors[c] = dot(R, unit_vect)
-
-            # Multiply by the probability.
-            vectors[c] = vectors[c] * cdp.probs[c]
-
-        # Average of the unit vectors.
-        cdp.ave_unit_pivot_CoM = sum(vectors)
-
-        # The length reduction.
-        cdp.ave_pivot_CoM_red = norm(cdp.ave_unit_pivot_CoM)
-
-        # The aveage pivot-CoM vector.
-        cdp.ave_pivot_CoM = norm(cdp.pivot_CoM) * cdp.ave_unit_pivot_CoM
-
-        # The full length rotated pivot-CoM vector.
-        cdp.full_ave_pivot_CoM = cdp.ave_pivot_CoM / cdp.ave_pivot_CoM_red
-
-        # The cone angle for diffusion on an axially symmetric cone.
-        cdp.theta_diff_on_cone = acos(cdp.ave_pivot_CoM_red)
-        cdp.S_diff_on_cone = (3.0*cos(cdp.theta_diff_on_cone)**2 - 1.0) / 2.0
-
-        # The cone angle and order parameter for diffusion in an axially symmetric cone.
-        cdp.theta_diff_in_cone = acos(2.*cdp.ave_pivot_CoM_red - 1.)
-        cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
-
-        # Print out.
-        print(("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))))
-        print(("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))))
-        print(("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))))
-        print(("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))))
-        print(("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))))
-        print(("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))))
-        print(("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))))
-        print(("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))))
-        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)))
-        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)))
-        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)))
-        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)))
-        print("\n\n")
-
-
-    def _cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
-        """Create a PDB file containing a geometric object representing the various cone models.
-
-        Currently the only cone types supported are 'diff in cone' and 'diff on cone'.
-
-
-        @param cone_type:   The type of cone model to represent.
-        @type cone_type:    str
-        @param scale:       The size of the geometric object is eqaul to the average pivot-CoM
-                            vector length multiplied by this scaling factor.
-        @type scale:        float
-        @param file:        The name of the PDB file to create.
-        @type file:         str
-        @param dir:         The name of the directory to place the PDB file into.
-        @type dir:          str
-        @param force:       Flag which if set to True will cause any pre-existing file to be
-                            overwritten.
-        @type force:        int
-        """
-
-        # Test if the cone models have been determined.
-        if cone_type == 'diff in cone':
-            if not hasattr(cdp, 'S_diff_in_cone'):
-                raise RelaxError("The diffusion in a cone model has not yet been determined.")
-        elif cone_type == 'diff on cone':
-            if not hasattr(cdp, 'S_diff_on_cone'):
-                raise RelaxError("The diffusion on a cone model has not yet been determined.")
-        else:
-            raise RelaxError("The cone type " + repr(cone_type) + " is unknown.")
-
-        # The number of increments for the filling of the cone objects.
-        inc = 20
-
-        # The rotation matrix.
-        R = zeros((3, 3), float64)
-        two_vect_to_R(array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), R)
-
-        # Create the structural object.
-        structure = Internal()
-
-        # Add a structure.
-        structure.add_struct(name='cone')
-
-        # Alias the single molecule from the single model.
-        mol = structure.structural_data[0].mol[0]
-
-        # Add the pivot point.
-        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
-
-        # Generate the average pivot-CoM vectors.
-        print("\nGenerating the average pivot-CoM vectors.")
-        sim_vectors = None
-        if hasattr(cdp, 'ave_pivot_CoM_sim'):
-            sim_vectors = cdp.ave_pivot_CoM_sim
-        res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
-
-        # Generate the cone outer edge.
-        print("\nGenerating the cone outer edge.")
-        if cone_type == 'diff in cone':
-            angle = cdp.theta_diff_in_cone
-        elif cone_type == 'diff on cone':
-            angle = cdp.theta_diff_on_cone
-        cap_start_atom = mol.atom_num[-1]+1
-        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
-
-        # Generate the cone cap, and stitch it to the cone edge.
-        if cone_type == 'diff in cone':
-            print("\nGenerating the cone cap.")
-            cone_start_atom = mol.atom_num[-1]+1
-            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
-
-        # Create the PDB file.
-        print("\nGenerating the PDB file.")
-        pdb_file = open_write_file(file, dir, force=force)
-        structure.write_pdb(pdb_file)
-        pdb_file.close()
 
 
     default_value_doc = """
@@ -1532,159 +1713,6 @@ class N_state_model(API_base):
         return self._param_num(), self._num_data_points(), cdp.chi2
 
 
-    def _num_data_points(self):
-        """Determine the number of data points used in the model.
-
-        @return:    The number, n, of data points in the model.
-        @rtype:     int
-        """
-
-        # Determine the data type.
-        data_types = self._base_data_types()
-
-        # Init.
-        n = 0
-
-        # Spin loop.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # RDC data (skipping array elements set to None).
-            if 'rdc' in data_types:
-                if hasattr(spin, 'rdc'):
-                    for rdc in spin.rdc:
-                        if isinstance(rdc, float):
-                            n = n + 1
-
-            # PCS data (skipping array elements set to None).
-            if 'pcs' in data_types:
-                if hasattr(spin, 'pcs'):
-                    for pcs in spin.pcs:
-                        if isinstance(pcs, float):
-                            n = n + 1
-
-        # Alignment tensors.
-        if 'tensor' in data_types:
-            n = n + 5*len(cdp.align_tensors)
-
-        # Return the value.
-        return n
-
-
-    def _number_of_states(self, N=None):
-        """Set the number of states in the N-state model.
-
-        @param N:   The number of states.
-        @type N:    int
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
-        # Set the value of N.
-        cdp.N = N
-
-        # Update the model.
-        self._update_model()
-
-
-    def _ref_domain(self, ref=None):
-        """Set the reference domain for the '2-domain' N-state model.
-
-        @param ref: The reference domain.
-        @type ref:  str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
-        # Test that the correct model is set.
-        if cdp.model != '2-domain':
-            raise RelaxError("Setting the reference domain is only possible for the '2-domain' N-state model.")
-
-        # Test if the reference domain exists.
-        exists = False
-        for tensor_cont in cdp.align_tensors:
-            if tensor_cont.domain == ref:
-                exists = True
-        if not exists:
-            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
-
-        # Set the reference domain.
-        cdp.ref_domain = ref
-
-        # Update the model.
-        self._update_model()
-
-
-    def _param_model_index(self, param):
-        """Return the N-state model index for the given parameter.
-
-        @param param:   The N-state model parameter.
-        @type param:    str
-        @return:        The N-state model index.
-        @rtype:         str
-        """
-
-        # Probability.
-        if search('^p[0-9]*$', param):
-            return int(param[1:])
-
-        # Alpha Euler angle.
-        if search('^alpha', param):
-            return int(param[5:])
-
-        # Beta Euler angle.
-        if search('^beta', param):
-            return int(param[4:])
-
-        # Gamma Euler angle.
-        if search('^gamma', param):
-            return int(param[5:])
-
-        # Model independent parameter.
-        return None
-
-
-    def _param_num(self):
-        """Determine the number of parameters in the model.
-
-        @return:    The number of model parameters.
-        @rtype:     int
-        """
-
-        # Determine the data type.
-        data_types = self._base_data_types()
-
-        # Init.
-        num = 0
-
-        # Alignment tensor params.
-        if 'rdc' in data_types or 'pcs' in data_types:
-            num = num + 5*len(cdp.align_tensors)
-
-        # Populations.
-        if cdp.model in ['2-domain', 'population']:
-            num = num + (cdp.N - 1)
-
-        # Euler angles.
-        if cdp.model == '2-domain':
-            num = num + 3*cdp.N
-
-        # Return the param number.
-        return num
-
-
     return_data_name_doc = """
         N-state model data type string matching patterns
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1750,34 +1778,6 @@ class N_state_model(API_base):
         # Proton type.
         if search('^[Pp]roton$', param):
             return 'proton_type'
-
-
-    def _select_model(self, model=None):
-        """Select the N-state model type.
-
-        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
-        @type model:    str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('N-state')
-
-        # Test if the model name exists.
-        if not model in ['2-domain', 'population', 'fixed']:
-            raise RelaxError("The model name " + repr(model) + " is invalid.")
-
-        # Set the model
-        cdp.model = model
-
-        # Initialise the list of model parameters.
-        cdp.params = []
-
-        # Update the model.
-        self._update_model()
 
 
     set_doc = """
