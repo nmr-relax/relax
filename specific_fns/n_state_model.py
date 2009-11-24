@@ -68,7 +68,7 @@ class N_state_model(API_base):
             raise RelaxNoModelError
 
         # Determine the data type.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Initialise the parameter vector.
         param_vector = []
@@ -157,7 +157,7 @@ class N_state_model(API_base):
         return scaling_matrix
 
 
-    def __base_data_types(self):
+    def _base_data_types(self):
         """Determine all the base data types.
 
         The base data types can include::
@@ -275,7 +275,7 @@ class N_state_model(API_base):
                 gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
 
 
-    def __linear_constraints(self, data_types=None, scaling_matrix=None):
+    def _linear_constraints(self, data_types=None, scaling_matrix=None):
         """Function for setting up the linear constraint matrices A and b.
 
         Standard notation
@@ -387,7 +387,7 @@ class N_state_model(API_base):
         return A, b
 
 
-    def __minimise_bc_data(self, model):
+    def _minimise_bc_data(self, model):
         """Extract and unpack the back calculated data.
 
         @param model:   The instantiated class containing the target function.
@@ -426,7 +426,7 @@ class N_state_model(API_base):
                     data_index = data_index + 1
 
 
-    def __minimise_setup_pcs(self):
+    def _minimise_setup_pcs(self):
         """Set up the data structures for optimisation using PCSs as base data sets.
 
         @return:    The assembled data structures for using PCSs as the base data for optimisation.
@@ -557,7 +557,7 @@ class N_state_model(API_base):
         return pcs_numpy, pcs_err_numpy, unit_vect_numpy, array(pcs_const)
 
 
-    def __minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
+    def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
         """Set up the data structures for optimisation using RDCs as base data sets.
 
         @return:    The assembled data structures for using RDCs as the base data for optimisation.
@@ -653,7 +653,7 @@ class N_state_model(API_base):
         return rdcs_numpy, rdc_err_numpy, vect_numpy, array(dj, float64)
 
 
-    def __minimise_setup_tensors(self, sim_index=None):
+    def _minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
         @keyword sim_index: The index of the simulation to optimise.  This should be None if
@@ -679,7 +679,7 @@ class N_state_model(API_base):
         full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
-        for i, tensor in self.__tensor_loop(red=False):
+        for i, tensor in self._tensor_loop(red=False):
             # The full tensor.
             full_tensors[5*i + 0] = tensor.Axx
             full_tensors[5*i + 1] = tensor.Ayy
@@ -692,7 +692,7 @@ class N_state_model(API_base):
                 full_in_ref_frame[i] = 1
 
         # Loop over the reduced tensors.
-        for i, tensor in self.__tensor_loop(red=True):
+        for i, tensor in self._tensor_loop(red=True):
             # The reduced tensor (simulation data).
             if sim_index != None:
                 red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
@@ -721,7 +721,7 @@ class N_state_model(API_base):
         return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
-    def __tensor_loop(self, red=False):
+    def _tensor_loop(self, red=False):
         """Generator method for looping over the full or reduced tensors.
 
         @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
@@ -749,7 +749,7 @@ class N_state_model(API_base):
             yield i, data[list[i][index]]
 
 
-    def __q_factors_rdc(self):
+    def _q_factors_rdc(self):
         """Calculate the Q-factors for the RDC data."""
 
         # Q-factor list.
@@ -819,7 +819,7 @@ class N_state_model(API_base):
         cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-    def __q_factors_pcs(self):
+    def _q_factors_pcs(self):
         """Calculate the Q-factors for the PCS data."""
 
         # Q-factor list.
@@ -859,7 +859,7 @@ class N_state_model(API_base):
         cdp.q_pcs = sqrt(cdp.q_pcs)
 
 
-    def __update_model(self):
+    def _update_model(self):
         """Update the model parameters as necessary."""
 
         # Initialise the list of model parameters.
@@ -903,7 +903,7 @@ class N_state_model(API_base):
                 cdp.gamma = [None] * cdp.N
 
         # Determine the data type.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Set up alignment tensors for each alignment.
         ids = []
@@ -1386,13 +1386,13 @@ class N_state_model(API_base):
                 min_options = min_options[1:]
 
         # Update the model parameters if necessary.
-        self.__update_model()
+        self._update_model()
 
         # Create the initial parameter vector.
         param_vector = self._assemble_param_vector(sim_index=sim_index)
 
         # Determine if alignment tensors or RDCs are to be used.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Diagonal scaling.
         scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
@@ -1400,24 +1400,24 @@ class N_state_model(API_base):
 
         # Linear constraints.
         if constraints:
-            A, b = self.__linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
+            A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
         else:
             A, b = None, None
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
         if 'tensor' in data_types:
-            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index=sim_index)
+            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_vect, pcs_dj = self.__minimise_setup_pcs()
+            pcs, pcs_err, pcs_vect, pcs_dj = self._minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, xh_vect, rdc_dj = self.__minimise_setup_rdcs()
+            rdcs, rdc_err, xh_vect, rdc_dj = self._minimise_setup_rdcs()
 
         # Set up the class instance containing the target function.
         model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
@@ -1499,15 +1499,15 @@ class N_state_model(API_base):
         # Statistical analysis.
         if 'rdc' in data_types or 'pcs' in data_types:
             # Get the final back calculated data (for the Q-factor and
-            self.__minimise_bc_data(model)
+            self._minimise_bc_data(model)
 
             # Calculate the RDC Q-factors.
             if 'rdc' in data_types:
-                self.__q_factors_rdc()
+                self._q_factors_rdc()
 
             # Calculate the PCS Q-factors.
             if 'pcs' in data_types:
-                self.__q_factors_pcs()
+                self._q_factors_pcs()
 
 
     def model_statistics(self, instance=None, spin_id=None, global_stats=None):
@@ -1540,7 +1540,7 @@ class N_state_model(API_base):
         """
 
         # Determine the data type.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Init.
         n = 0
@@ -1591,7 +1591,7 @@ class N_state_model(API_base):
         cdp.N = N
 
         # Update the model.
-        self.__update_model()
+        self._update_model()
 
 
     def _ref_domain(self, ref=None):
@@ -1624,7 +1624,7 @@ class N_state_model(API_base):
         cdp.ref_domain = ref
 
         # Update the model.
-        self.__update_model()
+        self._update_model()
 
 
     def _param_model_index(self, param):
@@ -1664,7 +1664,7 @@ class N_state_model(API_base):
         """
 
         # Determine the data type.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Init.
         num = 0
@@ -1777,7 +1777,7 @@ class N_state_model(API_base):
         cdp.params = []
 
         # Update the model.
-        self.__update_model()
+        self._update_model()
 
 
     set_doc = """
