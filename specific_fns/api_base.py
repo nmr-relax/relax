@@ -30,7 +30,7 @@ from relax_errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNo
 
 class API_base:
     """Base class defining the specific_fns API.
-    
+
     Most objects are prototype methods, although a few are operational generic base methods.
     """
 
@@ -68,7 +68,7 @@ class API_base:
 
         # Not implemented.
         raise RelaxImplementError
- 
+
 
     def create_mc_data(self, spin_id=None):
         """Prototype method for creating the Monte Carlo data.
@@ -110,8 +110,44 @@ class API_base:
         raise RelaxImplementError
 
 
+    # Empty documentation string.
+    default_value_doc = ""
+    def default_value(self, param):
+        """Prototype method for returning the default parameter values.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     def eliminate(self):
         """Dummy method for model elimination."""
+
+
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+        """Prototype grid search method.
+
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:              array of int
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:        int
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:        int
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def has_errors(self):
@@ -160,6 +196,39 @@ class API_base:
 
         # Return the default of True.
         return True
+
+
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+        """Prototype minimisation method.
+
+        @keyword min_algor:         The minimisation algorithm to use.
+        @type min_algor:            str
+        @keyword min_options:       An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @keyword max_iterations:    The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @keyword constraints:       If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                array of numbers
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                array of numbers
+        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  array of int
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def model_loop(self):
@@ -230,6 +299,21 @@ class API_base:
         return spin.relax_data
 
 
+    # Empty documentation string.
+    return_data_name_doc = ""
+    def return_data_name(self, param):
+        """Prototype method for returning a unique identifying string for the given parameter.
+
+        @param param:   The parameter name.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     def return_error(self, spin_id):
         """Return the Ri error structure for the corresponding spin.
 
@@ -245,6 +329,36 @@ class API_base:
 
         # Return the data.
         return spin.relax_error
+
+
+    def return_grace_string(self, param):
+        """Prototype method for returning the Grace string representation of the parameter
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
+    def return_units(self, param, spin=None, spin_id=None):
+        """Prototype method for returning a string representing the parameters units.
+
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
+        @type spin_id:  str
+        @return:        The parameter units string.
+        @rtype:         str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def return_value(self, spin, param, sim=None):
@@ -330,6 +444,10 @@ class API_base:
 
         # Return the data.
         return value, error
+
+
+    # Empty documentation string.
+    set_doc = ""
 
 
     def set_error(self, spin, index, error):
@@ -464,6 +582,19 @@ class API_base:
                 for j in xrange(cdp.sim_number):
                     # Copy and append the data.
                     sim_object.append(deepcopy(getattr(spin, object_name)))
+
+
+    def sim_pack_data(self, spin_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def sim_return_chi2(self, spin, index=None):
