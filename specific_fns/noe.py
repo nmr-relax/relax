@@ -58,6 +58,71 @@ class Noe(API_base):
             raise RelaxError("The spectrum type '%s' is unknown." % spectrum_type)
 
 
+    def _read(self, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
+        """Read in the peak intensity data.
+
+        @keyword file:          The name of the file containing the peak intensities.
+        @type file:             str
+        @keyword dir:           The directory where the file is located.
+        @type dir:              str
+        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @keyword format:        The type of file containing peak intensities.  This can currently be
+                                one of 'sparky', 'xeasy' or 'nmrview'.
+        @type format:           str
+        @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
+                                file.
+        @type heteronuc:        str
+        @keyword proton:        The name of the proton as specified in the peak intensity file.
+        @type proton:           str
+        @keyword int_col:       The column containing the peak intensity data (for a non-standard
+                                formatted file).
+        @type int_col:          int
+        """
+
+        asdf
+        # Spectrum type argument.
+        spect_type_list = ['ref', 'sat']
+        if spectrum_type not in spect_type_list:
+            raise RelaxArgNotInListError('spectrum type', spectrum_type, spect_type_list)
+        if spectrum_type == 'ref':
+            print("Reference spectrum.")
+        if spectrum_type == 'sat':
+            print("Saturated spectrum.")
+
+        # Generic intensity function.
+        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self._assign_function, spectrum_type=spectrum_type)
+
+
+    def _spectrum_type(self, spectrum_type=None, spectrum_id=None):
+        """Set the spectrum type corresponding to the spectrum_id.
+
+        @keyword spectrum_type: The type of NOE spectrum, one of 'ref' or 'sat'.
+        @type spectrum_type:    str
+        @keyword spectrum_id:   The spectrum id string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the current pipe exists
+        pipes.test()
+
+        # Test the spectrum id string.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError("The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id)
+
+        # The spectrum id index.
+        spect_index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise or update the spectrum_type data structure as necessary.
+        if not hasattr(cdp, 'spectrum_type'):
+            cdp.spectrum_type = [None] * len(cdp.spectrum_ids)
+        elif len(cdp.spectrum_type) < len(cdp.spectrum_ids):
+            cdp.spectrum_type.append([None] * (len(cdp.spectrum_ids) - len(cdp.spectrum_type)))
+
+        # Set the error.
+        cdp.spectrum_type[spect_index] = spectrum_type
+
+
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculate the NOE and its error.
 
@@ -137,42 +202,6 @@ class Noe(API_base):
             elif not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) == 2:
                 warn(RelaxDeselectWarning(spin_id, 'missing errors'))
                 spin.select = False
-
-
-    def _read(self, file=None, dir=None, spectrum_type=None, format=None, heteronuc=None, proton=None, int_col=None):
-        """Read in the peak intensity data.
-
-        @keyword file:          The name of the file containing the peak intensities.
-        @type file:             str
-        @keyword dir:           The directory where the file is located.
-        @type dir:              str
-        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
-        @type spectrum_type:    str
-        @keyword format:        The type of file containing peak intensities.  This can currently be
-                                one of 'sparky', 'xeasy' or 'nmrview'.
-        @type format:           str
-        @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity
-                                file.
-        @type heteronuc:        str
-        @keyword proton:        The name of the proton as specified in the peak intensity file.
-        @type proton:           str
-        @keyword int_col:       The column containing the peak intensity data (for a non-standard
-                                formatted file).
-        @type int_col:          int
-        """
-
-        asdf
-        # Spectrum type argument.
-        spect_type_list = ['ref', 'sat']
-        if spectrum_type not in spect_type_list:
-            raise RelaxArgNotInListError('spectrum type', spectrum_type, spect_type_list)
-        if spectrum_type == 'ref':
-            print("Reference spectrum.")
-        if spectrum_type == 'sat':
-            print("Saturated spectrum.")
-
-        # Generic intensity function.
-        intensity.read(file=file, dir=dir, format=format, heteronuc=heteronuc, proton=proton, int_col=int_col, assign_func=self._assign_function, spectrum_type=spectrum_type)
 
 
     return_data_name_doc = """
@@ -259,32 +288,3 @@ class Noe(API_base):
         """
 
         return None
-
-
-    def _spectrum_type(self, spectrum_type=None, spectrum_id=None):
-        """Set the spectrum type corresponding to the spectrum_id.
-
-        @keyword spectrum_type: The type of NOE spectrum, one of 'ref' or 'sat'.
-        @type spectrum_type:    str
-        @keyword spectrum_id:   The spectrum id string.
-        @type spectrum_id:      str
-        """
-
-        # Test if the current pipe exists
-        pipes.test()
-
-        # Test the spectrum id string.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError("The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id)
-
-        # The spectrum id index.
-        spect_index = cdp.spectrum_ids.index(spectrum_id)
-
-        # Initialise or update the spectrum_type data structure as necessary.
-        if not hasattr(cdp, 'spectrum_type'):
-            cdp.spectrum_type = [None] * len(cdp.spectrum_ids)
-        elif len(cdp.spectrum_type) < len(cdp.spectrum_ids):
-            cdp.spectrum_type.append([None] * (len(cdp.spectrum_ids) - len(cdp.spectrum_type)))
-
-        # Set the error.
-        cdp.spectrum_type[spect_index] = spectrum_type
