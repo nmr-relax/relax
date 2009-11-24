@@ -65,10 +65,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'calculate':
             function = inst.calculate
 
-        # Copy function.
-        if eqi == 'copy':
-            function = inst.copy
-
         # Create Monte Carlo data function.
         if eqi == 'create_mc_data':
             function = inst.create_mc_data
