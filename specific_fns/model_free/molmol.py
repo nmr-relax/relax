@@ -570,7 +570,21 @@ class Molmol:
 
 
     def molmol_macro(self, data_type=None, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
-        """Create and return an array of Molmol macros of the model-free parameters."""
+        """Create and return an array of Molmol macros of the model-free parameters.
+
+        @param param:           The parameter name.
+        @type param:            str
+        @keyword style:         The Molmol style.
+        @type style:            None or str
+        @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
+        @type colour_start:     str
+        @keyword colour_end:    The ending colour (must be a MOLMOL or X11 name).
+        @type colour_end:       str
+        @keyword colour_list:   The colour list used, either 'molmol' or 'x11'.
+        @type colour_list:      str
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        """
 
         # Initialise.
         self.commands = []

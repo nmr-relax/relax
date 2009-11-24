@@ -61,7 +61,7 @@ class Mf_minimise:
             raise RelaxNoSequenceError
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Test if diffusion tensor data exists.
         if model_type != 'local_tm' and not diff_data_exists():
@@ -94,7 +94,7 @@ class Mf_minimise:
                 raise RelaxProtonTypeError
 
             # Test if the model-free parameter values exist.
-            unset_param = self.are_mf_params_set(spin)
+            unset_param = self._are_mf_params_set(spin)
             if unset_param != None:
                 raise RelaxNoValueError(unset_param)
 
@@ -494,7 +494,7 @@ class Mf_minimise:
             upper = []
 
             # Determine the model type.
-            model_type = self.determine_model_type()
+            model_type = self._determine_model_type()
 
             # Minimisation options for diffusion tensor parameters.
             if model_type == 'diff' or model_type == 'all':
@@ -728,7 +728,7 @@ class Mf_minimise:
             self.reset_min_stats()
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Model type for the back-calculate function.
         if min_algor == 'back_calc' and model_type != 'local_tm':
@@ -758,7 +758,7 @@ class Mf_minimise:
         if model_type == 'diff':
             # Loop over the sequence.
             for spin in spin_loop():
-                unset_param = self.are_mf_params_set(spin)
+                unset_param = self._are_mf_params_set(spin)
                 if unset_param != None:
                     raise RelaxNoValueError(unset_param)
 

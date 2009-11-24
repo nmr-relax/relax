@@ -100,9 +100,7 @@ class Hybrid:
     def model_desc(self, model_index):
         """Return a description of the model.
 
-        @param model_index: The model index.  This is zero for the global models or equal to the
-                            global spin index (which covers the molecule, residue, and spin
-                            indices).  This originates from the model_loop().
+        @param model_index: The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).  This originates from the model_loop().
         @type model_index:  int
         @return:            The model description.
         @rtype:             str

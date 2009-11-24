@@ -1061,7 +1061,7 @@ class Results:
 
 
     def read_columnar_results(self, file_data, verbosity=1):
-        """Read the model-free results file.
+        """Read the columnar formatted model-free results file.
 
         @param file_data:   The processed results file data.
         @type file_data:    list of lists of str

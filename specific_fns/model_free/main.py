@@ -85,7 +85,7 @@ class Model_free_main:
                 raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
 
 
-    def are_mf_params_set(self, spin):
+    def _are_mf_params_set(self, spin):
         """Test if the model-free parameter values are set.
 
         @param spin:    The spin container object.
@@ -143,7 +143,7 @@ class Model_free_main:
                 return spin.params[j]
 
 
-    def assemble_param_names(self, model_type, spin_id=None):
+    def _assemble_param_names(self, model_type, spin_id=None):
         """Function for assembling a list of all the model parameter names.
 
         @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
@@ -217,7 +217,7 @@ class Model_free_main:
 
         # Determine the model type.
         if not model_type:
-            model_type = self.determine_model_type()
+            model_type = self._determine_model_type()
 
         # Diffusion tensor parameters.
         if model_type == 'diff' or model_type == 'all':
@@ -526,7 +526,7 @@ class Model_free_main:
         return mc_data
 
 
-    def create_model(self, model=None, equation=None, params=None, spin_id=None):
+    def _create_model(self, model=None, equation=None, params=None, spin_id=None):
         """Function for creating a custom model-free model.
 
         @param model:       The name of the model.
@@ -906,7 +906,7 @@ class Model_free_main:
             return '1H'
 
 
-    def delete(self):
+    def _delete(self):
         """Delete all the model-free data."""
 
         # Test if the current pipe exists.
@@ -939,17 +939,14 @@ class Model_free_main:
     def deselect(self, model_index, sim_index=None):
         """Deselect models or simulations.
 
-        @param model_index:     The model index.  This is zero for the global models or equal to the
-                                global spin index (which covers the molecule, residue, and spin
-                                indices).
+        @param model_index:     The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_index:      int
-        @keyword sim_index:     The Monte Carlo simulation index.  If None, then models will be
-                                deselected, otherwise the given simulation will.
-        @type sim_index:        int
+        @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
+        @type sim_index:        None or int
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Local models.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -976,7 +973,7 @@ class Model_free_main:
                 cdp.select_sim[sim_index] = False
 
 
-    def determine_model_type(self):
+    def _determine_model_type(self):
         """Determine the global model type.
 
         @return:    The name of the model type, which will be one of 'all', 'diff', 'mf', or
@@ -1068,14 +1065,11 @@ class Model_free_main:
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_index:     The model index.  This is zero for the global models or equal to the
-                                global spin index (which covers the molecule, residue, and spin
-                                indices).  This originates from the model_loop().
+        @param model_index:     The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).  This originates from the model_loop().
         @type model_index:      int
-        @keyword global_stats:  The global statistics flag
+        @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
-        @keyword verbose:       A flag which if True will cause info about each spin to be printed
-                                out as the sequence is generated.
+        @keyword verbose:       A flag which if True will cause info about each spin to be printed out as the sequence is generated.
         @type verbose:          bool
         """
 
@@ -1190,7 +1184,7 @@ class Model_free_main:
 
         # Determine the model type of the original data pipe.
         pipes.switch(pipe_from)
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Sequence specific data.
         if model_type == 'mf' or (model_type == 'local_tm' and not global_stats):
@@ -1271,7 +1265,7 @@ class Model_free_main:
             c1, c2 = args
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Can't handle this one yet!
         if model_type != 'mf' and model_type != 'local_tm':
@@ -1322,7 +1316,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Get the spin ids.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -1332,7 +1326,7 @@ class Model_free_main:
             spin_id = None
 
         # Assemble and return the parameter names.
-        return self.assemble_param_names(model_type, spin_id=spin_id)
+        return self._assemble_param_names(model_type, spin_id=spin_id)
 
 
     def get_param_values(self, model_index=None, sim_index=None):
@@ -1359,7 +1353,7 @@ class Model_free_main:
                 raise RelaxNoModelError
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Set the spin container (to None if the model is global).
         if model_type == 'mf' or model_type == 'local_tm':
@@ -1729,15 +1723,15 @@ class Model_free_main:
         return A, b
 
 
-    def map_bounds(self, param, spin_id):
+    def map_bounds(self, param, spin_id=None):
         """Create bounds for the OpenDX mapping function.
 
-        @param param:   The name of the parameter to return the lower and upper bounds of.
-        @type param:    str
+        @param param:       The name of the parameter to return the lower and upper bounds of.
+        @type param:        str
         @param spin_id:     The spin identification string.
         @type spin_id:      str
-        @return:        The upper and lower bounds of the parameter.
-        @rtype:         list of float
+        @return:            The upper and lower bounds of the parameter.
+        @rtype:             list of float
         """
 
         # Get the spin.
@@ -1767,16 +1761,14 @@ class Model_free_main:
     def model_desc(self, model_index):
         """Return a description of the model.
 
-        @param model_index: The model index.  This is zero for the global models or equal to the
-                            global spin index (which covers the molecule, residue, and spin
-                            indices).  This originates from the model_loop().
+        @param model_index: The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).  This originates from the model_loop().
         @type model_index:  int
         @return:            The model description.
         @rtype:             str
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Global models.
         if model_type == 'all':
@@ -1806,7 +1798,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Global model.
         if model_type == 'all' or model_type == 'diff':
@@ -1891,7 +1883,7 @@ class Model_free_main:
             raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Determine if local or global statistics will be returned.
         if global_stats == None:
@@ -1968,7 +1960,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Global models.
         if model_type in ['all', 'diff']:
@@ -1993,7 +1985,7 @@ class Model_free_main:
             return 0
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Sequence specific data.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -2041,7 +2033,7 @@ class Model_free_main:
                 spin.select = False
 
 
-    def remove_tm(self, spin_id=None):
+    def _remove_tm(self, spin_id=None):
         """Remove local tm from the set of model-free parameters for the given spins.
 
         @param spin_id: The spin identification string.
@@ -2743,7 +2735,7 @@ class Model_free_main:
         inc = 0
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -2863,7 +2855,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Global model.
         if model_type == 'all' or model_type == 'diff':
@@ -2909,7 +2901,7 @@ class Model_free_main:
         """Initialise the Monte Carlo parameter values."""
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -3091,7 +3083,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
@@ -3121,7 +3113,7 @@ class Model_free_main:
         inc = 0
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params')
@@ -3228,7 +3220,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
@@ -3250,14 +3242,14 @@ class Model_free_main:
     def skip_function(self, model_index):
         """Skip certain data.
 
-        @param model_index:     The model index.  This is zero for the global models or equal to the
-                                global spin index (which covers the molecule, residue, and spin
-                                indices).  This originates from the model_loop().
+        @param model_index:     The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).  This originates from the model_loop().
         @type model_index:      int
+        @return:                True if the data should be skipped, False otherwise.
+        @rtype:                 bool
         """
 
         # Determine the model type.
-        model_type = self.determine_model_type()
+        model_type = self._determine_model_type()
 
         # Sequence specific data.
         if (model_type == 'mf' or model_type == 'local_tm') and not return_spin_from_index(model_index).select:
