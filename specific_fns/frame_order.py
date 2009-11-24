@@ -356,7 +356,7 @@ class Frame_order(API_base):
             cdp.warning = warning
 
 
-    def back_calc(self):
+    def _back_calc(self):
         """Back-calculation of the reduced alignment tensor.
 
         @return:    The reduced alignment tensors.
@@ -521,7 +521,7 @@ class Frame_order(API_base):
         """
 
         # Back calculate the tensors.
-        red_tensors_bc = self.back_calc()
+        red_tensors_bc = self._back_calc()
 
         # Return the data.
         return red_tensors_bc
