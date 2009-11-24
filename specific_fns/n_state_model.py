@@ -123,7 +123,7 @@ class N_state_model(API_base):
         return array(param_vector, float64)
 
 
-    def __assemble_scaling_matrix(self, data_types=None, scaling=True):
+    def _assemble_scaling_matrix(self, data_types=None, scaling=True):
         """Create and return the scaling matrix.
 
         @keyword data_types:    The base data types used in the optimisation.  This list can contain
@@ -1385,7 +1385,7 @@ class N_state_model(API_base):
         data_types = self.__base_data_types()
 
         # Diagonal scaling.
-        scaling_matrix = self.__assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+        scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
         param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Linear constraints.

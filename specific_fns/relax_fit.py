@@ -92,7 +92,7 @@ class Relax_fit(API_base):
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, spin=None, scaling=True):
+    def _assemble_scaling_matrix(self, spin=None, scaling=True):
         """Create and return the scaling matrix.
 
         @keyword spin:          The spin data container.
@@ -147,7 +147,7 @@ class Relax_fit(API_base):
         param_vector = self._assemble_param_vector(spin=spin)
 
         # Create a scaling matrix.
-        scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
+        scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=False)
 
         # Initialise the relaxation fit functions.
         setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.intensities, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
@@ -614,7 +614,7 @@ class Relax_fit(API_base):
             param_vector = self._assemble_param_vector(spin=spin)
 
             # Diagonal scaling.
-            scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=scaling)
+            scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=scaling)
             if len(scaling_matrix):
                 param_vector = dot(inv(scaling_matrix), param_vector)
 

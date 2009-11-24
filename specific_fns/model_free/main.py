@@ -364,7 +364,7 @@ class Model_free_main:
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, num_params, model_type=None, spin=None, spin_id=None, scaling=True):
+    def _assemble_scaling_matrix(self, num_params, model_type=None, spin=None, spin_id=None, scaling=True):
         """Create and return the scaling matrix.
 
         If the spin argument is supplied, then the spin_id argument will be ignored.

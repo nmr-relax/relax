@@ -878,7 +878,7 @@ class Mf_minimise:
                 num_params = len(param_vector)
 
                 # Diagonal scaling.
-                scaling_matrix = self.assemble_scaling_matrix(num_params, model_type=model_type, spin=spin, scaling=scaling)
+                scaling_matrix = self._assemble_scaling_matrix(num_params, model_type=model_type, spin=spin, scaling=scaling)
                 if len(scaling_matrix):
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
