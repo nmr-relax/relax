@@ -25,7 +25,7 @@
 from re import search
 
 # relax module imports.
-from base_class import Common_functions
+from specific_fns.api_base import API_base
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.consistency_tests import Consistency
@@ -33,7 +33,7 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyrom
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 
 
-class Consistency_tests(Common_functions):
+class Consistency_tests(API_base):
     """Class containing functions specific to consistency testing."""
 
     def calculate(self, verbosity=1, sim_index=None, spin_id=None):

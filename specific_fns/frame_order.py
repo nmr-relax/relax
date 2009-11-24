@@ -44,10 +44,10 @@ from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.base_class import Common_functions
+from specific_fns.api_base import API_base
 
 
-class Frame_order(Common_functions):
+class Frame_order(API_base):
     """Class containing the specific methods of the Frame Order theories."""
 
     def __assemble_param_vector(self):

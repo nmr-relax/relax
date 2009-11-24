@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,7 +27,7 @@ import types
 from unittest import TestCase
 
 # relax module imports.
-from specific_fns.api_base import Base_API
+from specific_fns.api_base import API_base
 from specific_fns.frame_order import Frame_order
 
 
@@ -78,7 +78,7 @@ class Test_api(TestCase):
         """
 
         # The base object.
-        base = Base_API()
+        base = API_base()
 
         # Loop over the objects of the specific analysis.
         for name in dir(analysis_obj):
@@ -117,7 +117,7 @@ class Test_api(TestCase):
         """
 
         # The base object.
-        base = Base_API()
+        base = API_base()
 
         # The objects in the base class.
         base_names = dir(base)

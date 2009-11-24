@@ -26,14 +26,14 @@ from re import match
 from warnings import warn
 
 # relax module imports.
-from base_class import Common_functions
+from specific_fns.api_base import API_base
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from relax_errors import RelaxArgNotInListError, RelaxError, RelaxNoSequenceError
 from relax_warnings import RelaxDeselectWarning
 
 
-class Noe(Common_functions):
+class Noe(API_base):
     """Class containing functions for relaxation data."""
 
     def assign_function(self, spin=None, intensity=None, spectrum_type=None):

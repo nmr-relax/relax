@@ -47,10 +47,10 @@ from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyrom
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.base_class import Common_functions
+from specific_fns.api_base import API_base
 
 
-class N_state_model(Common_functions):
+class N_state_model(API_base):
     """Class containing functions for the N-state model."""
 
     def __assemble_param_vector(self, sim_index=None):

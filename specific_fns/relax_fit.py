@@ -32,7 +32,7 @@ from re import match, search
 
 # relax module imports.
 from dep_check import C_module_exp_fn
-from base_class import Common_functions
+from specific_fns.api_base import API_base
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
@@ -42,7 +42,7 @@ if C_module_exp_fn:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
 
-class Relax_fit(Common_functions):
+class Relax_fit(API_base):
     """Class containing functions for relaxation curve fitting."""
 
     def assemble_param_vector(self, spin=None, sim_index=None):

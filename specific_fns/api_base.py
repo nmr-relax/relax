@@ -28,8 +28,7 @@ from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, retu
 from relax_errors import RelaxError, RelaxLenError, RelaxNoSequenceError
 
 
-
-class Common_functions:
+class API_base:
     """Base class containing simple methods used by some a number of the specific analysis types."""
 
     def base_data_loop(self):
