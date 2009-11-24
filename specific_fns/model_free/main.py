@@ -44,7 +44,7 @@ import specific_fns
 class Model_free_main:
     """Class containing functions specific to model-free analysis."""
 
-    def __compare_objects(self, object_from, object_to, pipe_from, pipe_to):
+    def _compare_objects(self, object_from, object_to, pipe_from, pipe_to):
         """Compare the contents of the two objects and raise RelaxErrors if they are not the same.
 
         @param object_from: The first object.
@@ -1149,7 +1149,7 @@ class Model_free_main:
             # Otherwise compare the objects inside the container.
             else:
                 # Modifiable object checks.
-                self.__compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
+                self._compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
 
                 # Tests for the model and molecule containers.
                 if len(dp_from.structure.structural_data) != len(dp_from.structure.structural_data):
@@ -1172,7 +1172,7 @@ class Model_free_main:
                     # Loop over the models.
                     for mol_index in range(len(model_from.mol)):
                         # Modifiable object checks.
-                        self.__compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
+                        self._compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
 
         # No sequence data, so skip the rest.
         if dp_from.mol.is_empty():
