@@ -339,4 +339,4 @@ class Model_free(User_fn_class):
         check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        model_free_obj.select_model(model=model, spin_id=spin_id)
+        model_free_obj._select_model(model=model, spin_id=spin_id)

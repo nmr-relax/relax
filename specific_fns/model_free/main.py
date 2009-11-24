@@ -2364,11 +2364,9 @@ class Model_free_main:
 
 
     def return_units(self, param, spin=None, spin_id=None):
-        """Function for returning a string representing the parameters units.
+        """Return a string representing the parameters units.
 
-        For example, the internal representation of te is in seconds, whereas the external
-        representation is in picoseconds, therefore this function will return the string
-        'picoseconds' for te.
+        For example, the internal representation of te is in seconds, whereas the external representation is in picoseconds, therefore this function will return the string 'picoseconds' for te.
 
 
         @param param:   The name of the parameter to return the units string for.
@@ -2415,7 +2413,7 @@ class Model_free_main:
             return 'ppm'
 
 
-    def select_model(self, model=None, spin_id=None):
+    def _select_model(self, model=None, spin_id=None):
         """Function for the selection of a preset model-free model.
 
         @param model:   The name of the model.
@@ -3062,8 +3060,7 @@ class Model_free_main:
     def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
