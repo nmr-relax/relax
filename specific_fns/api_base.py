@@ -125,6 +125,19 @@ class API_base:
         raise RelaxImplementError
 
 
+    def deselect(self, model_index, sim_index=None):
+        """Deselect models or simulations.
+
+        @param model_index:     The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_index:      int
+        @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
+        @type sim_index:        None or int
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single model.
 
@@ -146,6 +159,34 @@ class API_base:
 
     def eliminate(self):
         """Dummy method for model elimination."""
+
+
+    def get_param_names(self, model_index=None):
+        """Return a vector of parameter names.
+
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_index:      int
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
+    def get_param_values(self, model_index=None, sim_index=None):
+        """Return a vector of parameter values.
+
+        @keyword model_index:   The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_index:      int
+        @keyword sim_index:     The optional Monte Carlo simulation index.
+        @type sim_index:        int
+        @return:                The vector of parameter values.
+        @rtype:                 list of str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
@@ -217,6 +258,21 @@ class API_base:
         return True
 
 
+    def map_bounds(self, param, spin_id=None):
+        """Create bounds for the OpenDX mapping function.
+
+        @param param:       The name of the parameter to return the lower and upper bounds of.
+        @type param:        str
+        @param spin_id:     The spin identification string.
+        @type spin_id:      None or str
+        @return:            The upper and lower bounds of the parameter.
+        @rtype:             list of float
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Prototype minimisation method.
 
@@ -244,6 +300,19 @@ class API_base:
         @type upper:                array of numbers
         @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
         @type inc:                  array of int
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
+    def model_desc(self, model_index):
+        """Return a description of the model.
+
+        @param model_index: The model index.  This originates from the model_loop().
+        @type model_index:  int
+        @return:            The model description.
+        @rtype:             str
         """
 
         # Not implemented.
@@ -293,6 +362,38 @@ class API_base:
         raise RelaxImplementError
 
 
+    def model_type(self):
+        """Return the type of the model, either being 'local' or 'global'.
+
+        @return:            The model type, one of 'local' or 'global'.
+        @rtype:             str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
+    def molmol_macro(self, param, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
+        """Create and return an array of Molmol macros.
+
+        @param param:           The parameter name.
+        @type param:            str
+        @keyword style:         The Molmol style.
+        @type style:            None or str
+        @keyword colour_start:  The starting colour (must be a MOLMOL or X11 name).
+        @type colour_start:     str
+        @keyword colour_end:    The ending colour (must be a MOLMOL or X11 name).
+        @type colour_end:       str
+        @keyword colour_list:   The colour list used, either 'molmol' or 'x11'.
+        @type colour_list:      str
+        @keyword spin_id:       The spin identification string.
+        @type spin_id:          str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     def num_instances(self):
         """Function for returning the number of instances.
 
@@ -312,6 +413,19 @@ class API_base:
 
     def overfit_deselect(self):
         """Dummy function, nornally for deselecting spins with insufficient data for minimisation."""
+
+
+    def read_columnar_results(self, file_data, verbosity=1):
+        """Read the columnar formatted results file.
+
+        @param file_data:   The processed results file data.
+        @type file_data:    list of lists of str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def return_conversion_factor(self, stat_type, spin=None, spin_id=None):
@@ -338,6 +452,21 @@ class API_base:
         """
 
         return spin.relax_data
+
+
+    def return_data_desc(self, name, spin=None):
+        """Return a description of the spin specific object.
+
+        @param name:    The name of the spin specific object.
+        @type name:     str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @return:        The object description, or None.
+        @rtype:         str or None
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     # Empty documentation string.
@@ -694,6 +823,19 @@ class API_base:
 
         # Return the array.
         return spin.select_sim
+
+
+    def skip_function(self, model_index):
+        """Skip certain data.
+
+        @param model_index:     The model index.  This originates from the model_loop().
+        @type model_index:      int
+        @return:                True if the data should be skipped, False otherwise.
+        @rtype:                 bool
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def test_grid_ops(self, lower=None, upper=None, inc=None, n=None):
