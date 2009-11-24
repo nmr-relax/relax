@@ -125,11 +125,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def deselect(self, model_index, sim_index=None):
+    def deselect(self, model_info, sim_index=None):
         """Deselect models or simulations.
 
-        @param model_index:     The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_index:      int
+        @param model_info:      The model index from model_info().
+        @type model_info:       int
         @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
         @type sim_index:        None or int
         """
@@ -138,15 +138,15 @@ class API_base:
         raise RelaxImplementError
 
 
-    def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False, verbose=True):
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single model.
 
         @keyword pipe_from:     The data pipe to copy the data from.
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_index:     The model index.  This originates from the model_loop().
-        @type model_index:      int
+        @param model_info:      The model index from model_info().
+        @type model_info:       int
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
         @keyword verbose:       A flag which if True will cause info to be printed out.
@@ -159,15 +159,15 @@ class API_base:
 
     # Empty documentation string.
     eliminate_doc = ""
-    def eliminate(self, name, value, model_index, args, sim=None):
+    def eliminate(self, name, value, model_info, args, sim=None):
         """Dummy method for model elimination.
 
         @param name:        The parameter name.
         @type name:         str
         @param value:       The parameter value.
         @type value:        float
-        @param model_index: The model index.  This originates from the model_loop().
-        @type model_index:  int
+        @param model_info:  The model index from model_info().
+        @type model_info:   int
         @param args:        The elimination constant overrides.
         @type args:         None or tuple of float
         @keyword sim:       The Monte Carlo simulation index.
@@ -180,11 +180,11 @@ class API_base:
         return False
 
 
-    def get_param_names(self, model_index=None):
+    def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_index:   The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_index:      int
+        @keyword model_info:    The model index from model_info().
+        @type model_info:       int
         @return:                The vector of parameter names.
         @rtype:                 list of str
         """
@@ -193,11 +193,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def get_param_values(self, model_index=None, sim_index=None):
+    def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_index:   The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_index:      int
+        @keyword model_info:    The model index from model_info().
+        @type model_info:       int
         @keyword sim_index:     The optional Monte Carlo simulation index.
         @type sim_index:        int
         @return:                The vector of parameter values.
@@ -325,11 +325,11 @@ class API_base:
         raise RelaxImplementError
 
 
-    def model_desc(self, model_index):
+    def model_desc(self, model_info):
         """Return a description of the model.
 
-        @param model_index: The model index.  This originates from the model_loop().
-        @type model_index:  int
+        @param model_info:  The model index from model_info().
+        @type model_info:   int
         @return:            The model description.
         @rtype:             str
         """
@@ -359,7 +359,7 @@ class API_base:
             yield spin
 
 
-    def model_statistics(self, model_index=None, spin_id=None, global_stats=None):
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
         """Prototype method for returning the k, n, and chi2 model statistics.
 
         k - number of parameters.
@@ -367,8 +367,8 @@ class API_base:
         chi2 - the chi-squared value.
 
 
-        @keyword model_index:   The model index.  This originates from the model_loop().
-        @type model_index:      None or int
+        @keyword model_info:    The model index from model_info().
+        @type model_info:       None or int
         @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
         @type spin_id:          None or str
         @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
@@ -641,16 +641,19 @@ class API_base:
     set_doc = ""
 
 
-    def set_error(self, spin, index, error):
+    def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
-        @param spin:    The SpinContainer object.
-        @type spin:     SpinContainer
-        @param index:   The index of the parameter to set the errors for.
-        @type index:    int
-        @param error:   The error value.
-        @type error:    float
+        @param model_info:  The model information originating from model_loop().
+        @type model_info:   unknown
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
         """
+
+        # Assume the default of a spin container.
+        spin = model_info
 
         # Parameter increment counter.
         inc = 0
@@ -679,11 +682,11 @@ class API_base:
             raise RelaxError("Do not know how to handle the non-spin specific parameters " + repr(param) + " with the values " + repr(value))
 
 
-    def set_selected_sim(self, spin, select_sim):
-        """Set the simulation selection flag for the spin.
+    def set_selected_sim(self, model_info, select_sim):
+        """Set the simulation selection flag.
 
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
+        @param model_info:  The model information originating from model_loop().
+        @type model_info:   unknown
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
         """
@@ -788,17 +791,19 @@ class API_base:
         raise RelaxImplementError
 
 
-    def sim_return_chi2(self, spin, index=None):
+    def sim_return_chi2(self, model_info, index=None):
         """Return the simulation chi-squared values.
 
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @keyword index: The optional simulation index.
-        @type index:    int
-        @return:        The list of simulation chi-squared values.  If the index is supplied, only
-                        a single value will be returned.
-        @rtype:         list of float or float
+        @param model_info:  The model information originating from model_loop().
+        @type model_info:   unknown
+        @keyword index:     The optional simulation index.
+        @type index:        int
+        @return:            The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
+        @rtype:             list of float or float
         """
+
+        # Assume the default of a spin container.
+        spin = model_info
 
         # Index.
         if index != None:
@@ -809,14 +814,17 @@ class API_base:
             return spin.chi2_sim
 
 
-    def sim_return_param(self, spin, index):
+    def sim_return_param(self, model_info, index):
         """Return the array of simulation parameter values.
 
-        @param spin:        The spin container.
-        @type spin:         SpinContainer instance
+        @param model_info:  The model information originating from model_loop().
+        @type model_info:   unknown
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
+
+        # Assume the default of a spin container.
+        spin = model_info
 
         # Parameter increment counter.
         inc = 0
@@ -844,13 +852,13 @@ class API_base:
         return spin.select_sim
 
 
-    def skip_function(self, model_index):
+    def skip_function(self, model_info):
         """Skip certain data.
 
-        @param model_index:     The model index.  This originates from the model_loop().
-        @type model_index:      int
-        @return:                True if the data should be skipped, False otherwise.
-        @rtype:                 bool
+        @param model_info:  The model index from model_loop().
+        @type model_info:   int
+        @return:            True if the data should be skipped, False otherwise.
+        @rtype:             bool
         """
 
         # Not implemented.
