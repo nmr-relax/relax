@@ -83,13 +83,15 @@ class API_base:
         raise RelaxImplementError
 
 
-    def data_init(self, spin):
-        """Dummy method for initialising the spin specific data structures.
+    def data_init(self, data_cont, sim=False):
+        """Dummy method for initialising data structures.
 
         This method does nothing!
 
-        @param spin:    The spin data container.
-        @type spin:     SpinContainer instance
+        @param data_cont:   The data container.
+        @type data_cont:    instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
         """
 
 
