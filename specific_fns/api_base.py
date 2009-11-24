@@ -62,7 +62,7 @@ class API_base:
 
 
     def calculate(self, spin_id=None, verbosity=None, sim_index=None):
-        """Calculation of the model-free chi-squared value.
+        """Prototype method for the calculation of the chi-squared value.
 
         @keyword spin_id:   The spin identification string.
         @type spin_id:      str
@@ -72,8 +72,23 @@ class API_base:
         @type sim_index:    int
         """
 
+        # Not implemented.
         raise RelaxImplementError
  
+
+    def create_mc_data(self, spin_id=None):
+        """Prototype method for creating the Monte Carlo data.
+
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The Monte Carlo data.
+        @rtype:         list of floats
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
 
     def data_init(self, spin):
         """Dummy method for initialising the spin specific data structures.
