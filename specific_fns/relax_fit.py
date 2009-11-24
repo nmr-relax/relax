@@ -162,14 +162,13 @@ class Relax_fit(API_base):
         return results[relax_time_index]
 
 
-    def create_mc_data(self, spin_id):
+    def create_mc_data(self, spin_id=None):
         """Create the Monte Carlo peak intensity data.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
+        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      str
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
         """
 
         # Initialise the MC data data structure.

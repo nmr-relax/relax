@@ -511,13 +511,13 @@ class Frame_order(API_base):
             pdb_file.close()
 
 
-    def create_mc_data(self, index):
+    def create_mc_data(self, spin_id=None):
         """Create the Monte Carlo data by back calculating the reduced tensor data.
 
-        @keyword index: Not used.
-        @type index:    None
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
         """
 
         # Back calculate the tensors.

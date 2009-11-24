@@ -490,14 +490,13 @@ class Model_free_main:
         return value
 
 
-    def create_mc_data(self, spin_id):
+    def create_mc_data(self, spin_id=None):
         """Create the Monte Carlo Ri data.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
+        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      str
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
         """
 
         # Initialise the MC data structure.
