@@ -136,7 +136,7 @@ class N_state_model(API_base):
         """
 
         # Initialise.
-        scaling_matrix = identity(self.param_num(), float64)
+        scaling_matrix = identity(self._param_num(), float64)
 
         # Return the identity matrix.
         if not scaling:
@@ -350,7 +350,7 @@ class N_state_model(API_base):
         # Initialisation (0..j..m).
         A = []
         b = []
-        zero_array = zeros(self.param_num(), float64)
+        zero_array = zeros(self._param_num(), float64)
         i = pop_start
         j = 0
 
@@ -373,7 +373,7 @@ class N_state_model(API_base):
             # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            for i in xrange(pop_start, self.param_num()):
+            for i in xrange(pop_start, self._param_num()):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
             b.append(-1.0)
@@ -929,7 +929,7 @@ class N_state_model(API_base):
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
-    def calc_ave_dist(self, atom1, atom2, exp=1):
+    def _calc_ave_dist(self, atom1, atom2, exp=1):
         """Calculate the average distances.
 
         The formula used is::
@@ -977,15 +977,18 @@ class N_state_model(API_base):
         return ave_dist
 
 
-    def calculate(self, verbosity=1):
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculation function.
 
         Currently this function simply calculates the NOESY flat-bottom quadratic energy potential,
         if NOE restraints are available.
 
-        @param verbosity:       A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
-        @type verbosity:        int
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None or str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The MC simulation index (unused).
+        @type sim_index:    None
         """
 
         # Test if the N-state model has been set up.
@@ -1006,7 +1009,7 @@ class N_state_model(API_base):
             upper[i] = cdp.noe_restraints[i][3]
 
             # Calculate the average distances, using -6 power averaging.
-            dist[i] = self.calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+            dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
 
         # Calculate the quadratic potential.
         quad_pot(dist, pot, lower, upper) 
@@ -1019,7 +1022,7 @@ class N_state_model(API_base):
             cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
 
 
-    def CoM(self, pivot_point=None, centre=None):
+    def _CoM(self, pivot_point=None, centre=None):
         """Centre of mass analysis.
 
         This function does an analysis of the centre of mass (CoM) of the N states.  This includes
@@ -1105,7 +1108,7 @@ class N_state_model(API_base):
         print("\n\n")
 
 
-    def cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
+    def _cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
         """Create a PDB file containing a geometric object representing the various cone models.
 
         Currently the only cone types supported are 'diff in cone' and 'diff on cone'.
@@ -1220,7 +1223,8 @@ class N_state_model(API_base):
         """
 
         # Split the parameter into its base name and index.
-        name, index = self.return_data_name(param, index=True)
+        name = self.return_data_name(param)
+        index = self._param_model_index(param)
 
         # The number of states as a float.
         N = float(cdp.N)
@@ -1234,7 +1238,7 @@ class N_state_model(API_base):
             return (float(index)+1) * pi / (N+1.0)
 
 
-    def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
 
         @param lower:       The lower bounds of the grid search which must be equal to the number of
@@ -1260,7 +1264,7 @@ class N_state_model(API_base):
             raise RelaxNoModelError('N-state')
 
         # The number of parameters.
-        n = self.param_num()
+        n = self._param_num()
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
@@ -1323,7 +1327,7 @@ class N_state_model(API_base):
         return False
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation function.
 
         @param min_algor:       The minimisation algorithm to use.
@@ -1349,6 +1353,12 @@ class N_state_model(API_base):
         @param sim_index:       The index of the simulation to optimise.  This should be None if
                                 normal optimisation is desired.
         @type sim_index:        None or int
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:              array of int
         """
 
         # Test if the N-state model has been set up.
@@ -1508,27 +1518,21 @@ class N_state_model(API_base):
         chi2 - the chi-squared value.
 
 
-        @keyword instance:      This is the optimisation instance index.  This should always be the
-                                value of 1 for the N-state model.  As it is ignored, this arg can be
-                                anything.
+        @keyword instance:      This is the optimisation instance index.  This should always be the value of 1 for the N-state model.  As it is ignored, this arg can be anything.
         @type instance:         None or int
-        @keyword spin_id:       The spin identification string.  This is ignored in the N-state
-                                model.
+        @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
         @type spin_id:          None or str
-        @keyword global_stats:  A parameter which determines if global or local statistics are
-                                returned.  For the N-state model, this argument is ignored.
+        @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
         @type global_stats:     None or bool
-        @return:                The optimisation statistics, in tuple format, of the number of
-                                parameters (k), the number of data points (n), and the chi-squared
-                                value (chi2).
+        @return:                The optimisation statistics, in tuple format, of the number of parameters (k), the number of data points (n), and the chi-squared value (chi2).
         @rtype:                 tuple of (int, int, float)
         """
 
         # Return the values.
-        return self.param_num(), self.num_data_points(), cdp.chi2
+        return self._param_num(), self._num_data_points(), cdp.chi2
 
 
-    def num_data_points(self):
+    def _num_data_points(self):
         """Determine the number of data points used in the model.
 
         @return:    The number, n, of data points in the model.
@@ -1569,7 +1573,7 @@ class N_state_model(API_base):
         return n
 
 
-    def number_of_states(self, N=None):
+    def _number_of_states(self, N=None):
         """Set the number of states in the N-state model.
 
         @param N:   The number of states.
@@ -1590,7 +1594,7 @@ class N_state_model(API_base):
         self.__update_model()
 
 
-    def ref_domain(self, ref=None):
+    def _ref_domain(self, ref=None):
         """Set the reference domain for the '2-domain' N-state model.
 
         @param ref: The reference domain.
@@ -1623,7 +1627,36 @@ class N_state_model(API_base):
         self.__update_model()
 
 
-    def param_num(self):
+    def _param_model_index(self, param):
+        """Return the N-state model index for the given parameter.
+
+        @param param:   The N-state model parameter.
+        @type param:    str
+        @return:        The N-state model index.
+        @rtype:         str
+        """
+
+        # Probability.
+        if search('^p[0-9]*$', param):
+            return int(param[1:])
+
+        # Alpha Euler angle.
+        if search('^alpha', param):
+            return int(param[5:])
+
+        # Beta Euler angle.
+        if search('^beta', param):
+            return int(param[4:])
+
+        # Gamma Euler angle.
+        if search('^gamma', param):
+            return int(param[5:])
+
+        # Model independent parameter.
+        return None
+
+
+    def _param_num(self):
         """Determine the number of parameters in the model.
 
         @return:    The number of model parameters.
@@ -1680,103 +1713,46 @@ class N_state_model(API_base):
         corrsponding to each state.
         """
 
-    def return_data_name(self, name, index=None):
+    def return_data_name(self, param):
         """Return a unique identifying string for the N-state model parameter.
 
-        @param name:    The N-state model parameter.
-        @type name:     str
-        @keyword index: The probability parameter index.
-        @type index:    None or int
+        @param param:   The N-state model parameter.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # Probability.
-        if search('^p[0-9]*$', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[1:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'probs', i
-            else:
-                return 'probs'
+        if search('^p[0-9]*$', param):
+            return 'probs'
 
         # Alpha Euler angle.
-        if search('^alpha', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[5:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'alpha', i
-            else:
-                return 'alpha'
+        if search('^alpha', param):
+            return 'alpha'
 
         # Beta Euler angle.
-        if search('^beta', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[4:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'beta', i
-            else:
-                return 'beta'
+        if search('^beta', param):
+            return 'beta'
 
         # Gamma Euler angle.
-        if search('^gamma', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[5:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'gamma', i
-            else:
-                return 'gamma'
+        if search('^gamma', param):
+            return 'gamma'
 
 
         # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
-            if index:
-                return 'r', None
-            else:
-                return 'r'
+        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
+            return 'r'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', name):
-            if index:
-                return 'heteronuc_type', None
-            else:
-                return 'heteronuc_type'
+        if search('^[Hh]eteronucleus$', param):
+            return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', name):
-            if index:
-                return 'proton_type', None
-            else:
-                return 'proton_type'
-
-        # Return nothing.
-        if index:
-            return None, None
-        else:
-            return None
+        if search('^[Pp]roton$', param):
+            return 'proton_type'
 
 
-    def select_model(self, model=None):
+    def _select_model(self, model=None):
         """Select the N-state model type.
 
         @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
@@ -1847,9 +1823,10 @@ class N_state_model(API_base):
         # Set the parameter values.
         for i in xrange(len(param)):
             # Get the object name and the parameter index.
-            object_name, index = self.return_data_name(param[i], index=True)
+            object_name = self.return_data_name(param[i])
             if not object_name:
                 raise RelaxError("The data type " + repr(param[i]) + " does not exist.")
+            index = self._param_model_index(param[i])
 
             # Simple objects (not a list).
             if index == None:

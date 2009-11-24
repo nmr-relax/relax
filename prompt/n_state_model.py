@@ -92,7 +92,7 @@ class N_state_model(User_fn_class):
         check.is_num_list(centre, 'centre of mass', size=3, can_be_none=True)
 
         # Execute the functional code.
-        n_state_model_obj.CoM(pivot_point=pivot_point, centre=centre)
+        n_state_model_obj._CoM(pivot_point=pivot_point, centre=centre)
 
 
     def cone_pdb(self, cone_type=None, scale=1.0, file='cone.pdb', dir=None, force=False):
@@ -201,7 +201,7 @@ class N_state_model(User_fn_class):
         check.is_int(N, 'number of states N')
 
         # Execute the functional code.
-        n_state_model_obj.number_of_states(N=N)
+        n_state_model_obj._number_of_states(N=N)
 
 
     def ref_domain(self, ref=None):
@@ -241,7 +241,7 @@ class N_state_model(User_fn_class):
         check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
-        n_state_model_obj.ref_domain(ref=ref)
+        n_state_model_obj._ref_domain(ref=ref)
 
 
     def select_model(self, model=None):
@@ -290,4 +290,4 @@ class N_state_model(User_fn_class):
         check.is_str(model, 'model')
 
         # Execute the functional code.
-        n_state_model_obj.select_model(model=model)
+        n_state_model_obj._select_model(model=model)
