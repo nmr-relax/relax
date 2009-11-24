@@ -338,6 +338,8 @@ class API_base:
 
         @param param:   The specific analysis parameter.
         @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
         """
 
         # Not implemented.
