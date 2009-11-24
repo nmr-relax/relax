@@ -1691,7 +1691,7 @@ class N_state_model(API_base):
                 self._q_factors_pcs()
 
 
-    def model_statistics(self, instance=None, spin_id=None, global_stats=None):
+    def model_statistics(self, model_index=None, spin_id=None, global_stats=None):
         """Return the k, n, and chi2 model statistics.
 
         k - number of parameters.
@@ -1699,8 +1699,8 @@ class N_state_model(API_base):
         chi2 - the chi-squared value.
 
 
-        @keyword instance:      This is the optimisation instance index.  This should always be the value of 1 for the N-state model.  As it is ignored, this arg can be anything.
-        @type instance:         None or int
+        @keyword model_index:   The model index.  This should always be the value of 1 for the N-state model.  As it is ignored, this arg can be anything.
+        @type model_index:      None or int
         @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
         @type spin_id:          None or str
         @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
