@@ -468,6 +468,28 @@ class Model_free_main:
         return scaling_matrix
 
 
+    def _back_calc(self, index=None, ri_label=None, frq_label=None, frq=None):
+        """Back-calculation of relaxation data from the model-free parameter values.
+
+        @keyword index:     The relaxation data index.
+        @type index:        int
+        @keyword ri_label:  The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.
+        @type ri_label:     str
+        @keyword frq_label: The field strength label.
+        @type frq_label:    str
+        @keyword frq:       The field strength.
+        @type frq:          float
+        @return:            The back calculated relaxation data value corresponding to the index.
+        @rtype:             float
+        """
+
+        # Get the relaxation value from the minimise function.
+        value = self.minimise(min_algor='back_calc', min_options=(index, ri_label, frq_label, frq))
+
+        # Return the relaxation value.
+        return value
+
+
     def create_mc_data(self, spin_id):
         """Create the Monte Carlo Ri data.
 
@@ -496,7 +518,7 @@ class Model_free_main:
         # Loop over the relaxation data.
         for j in xrange(len(spin.relax_data)):
             # Back calculate the value.
-            value = self.back_calc(index=global_index, ri_label=spin.ri_labels[j], frq_label=spin.frq_labels[spin.remap_table[j]], frq=spin.frq[spin.remap_table[j]])
+            value = self._back_calc(index=global_index, ri_label=spin.ri_labels[j], frq_label=spin.frq_labels[spin.remap_table[j]], frq=spin.frq[spin.remap_table[j]])
 
             # Append the value.
             mc_data.append(value)

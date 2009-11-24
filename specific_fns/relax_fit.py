@@ -132,7 +132,7 @@ class Relax_fit(API_base):
         return scaling_matrix
 
 
-    def back_calc(self, spin=None, relax_time_index=None):
+    def _back_calc(self, spin=None, relax_time_index=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
         @keyword spin:              The spin container.
@@ -193,7 +193,7 @@ class Relax_fit(API_base):
         # Loop over the spectral time points.
         for j in xrange(len(cdp.relax_times)):
             # Back calculate the value.
-            value = self.back_calc(spin=spin, relax_time_index=j)
+            value = self._back_calc(spin=spin, relax_time_index=j)
 
             # Append the value.
             mc_data.append(value)

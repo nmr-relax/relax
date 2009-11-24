@@ -45,29 +45,6 @@ from relax_warnings import RelaxWarning
 class Mf_minimise:
     """Class containing functions specific to model-free optimisation."""
 
-
-    def back_calc(self, index=None, ri_label=None, frq_label=None, frq=None):
-        """Back-calculation of relaxation data from the model-free parameter values.
-
-        @keyword index:     The relaxation data index.
-        @type index:        int
-        @keyword ri_label:  The relaxation data type, i.e. 'R1', 'R2', or 'NOE'.
-        @type ri_label:     str
-        @keyword frq_label: The field strength label.
-        @type frq_label:    str
-        @keyword frq:       The field strength.
-        @type frq:          float
-        @return:            The back calculated relaxation data value corresponding to the index.
-        @rtype:             float
-        """
-
-        # Get the relaxation value from the minimise function.
-        value = self.minimise(min_algor='back_calc', min_options=(index, ri_label, frq_label, frq))
-
-        # Return the relaxation value.
-        return value
-
-
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculation of the model-free chi-squared value.
 
