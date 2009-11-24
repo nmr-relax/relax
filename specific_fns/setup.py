@@ -57,10 +57,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
 
     # Attempt to retrieve the function.
     try:
-        # Back-calculate function.
-        if eqi == 'back_calc':
-            function = inst.back_calc
-
         # Base data loop generator function.
         if eqi == 'base_data_loop':
             function = inst.base_data_loop
