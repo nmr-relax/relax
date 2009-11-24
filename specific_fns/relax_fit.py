@@ -965,8 +965,6 @@ class Relax_fit(API_base):
         @type spin:     SpinContainer instance
         @param spin_id: The spin identification string (ignored if the spin container is supplied).
         @type spin_id:  str
-        @return:        The parameter units string.
-        @rtype:         str
         @return:        Nothing.
         @rtype:         None
         """
