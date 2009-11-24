@@ -28,7 +28,15 @@ from unittest import TestCase
 
 # relax module imports.
 from specific_fns.api_base import API_base
+from specific_fns.consistency_tests import Consistency_tests
 from specific_fns.frame_order import Frame_order
+from specific_fns.hybrid import Hybrid
+from specific_fns.jw_mapping import Jw_mapping
+from specific_fns.model_free import Model_free
+from specific_fns.n_state_model import N_state_model
+from specific_fns.noe import Noe
+from specific_fns.relax_fit import Relax_fit
+from specific_fns.srls import SRLS
 
 
 class Test_api(TestCase):
@@ -136,15 +144,127 @@ class Test_api(TestCase):
                 self.fail('The object ' + repr(name) + ' ' + repr(type(obj)) + ' cannot be found in the API base class.')
 
 
+    def test_consistency_tests_method_args(self):
+        """The consistency tests object public method args check."""
+
+        # Check.
+        self.__check_method_args(Consistency_tests())
+
+
+    def test_consistency_tests_objects(self):
+        """The consistency tests object public objects check."""
+
+        # Check.
+        self.__check_objects(Consistency_tests())
+
+
     def test_frame_order_method_args(self):
-        """The args of the public methods of the frame order object must be the same as the API base class."""
+        """The frame order object public method args check."""
 
         # Check.
         self.__check_method_args(Frame_order())
 
 
     def test_frame_order_objects(self):
-        """Are the initial public objects of the frame order object all within the API base class?"""
+        """The frame order object public objects check."""
 
         # Check.
         self.__check_objects(Frame_order())
+
+
+    def test_hybrid_method_args(self):
+        """The hybrid object public method args check."""
+
+        # Check.
+        self.__check_method_args(Hybrid())
+
+
+    def test_hybrid_objects(self):
+        """The hybrid object public objects check."""
+
+        # Check.
+        self.__check_objects(Hybrid())
+
+
+    def test_jw_mapping_method_args(self):
+        """The reduced spectral density mapping object public method args check."""
+
+        # Check.
+        self.__check_method_args(Jw_mapping())
+
+
+    def test_jw_mapping_objects(self):
+        """The reduced spectral density mapping object public objects check."""
+
+        # Check.
+        self.__check_objects(Jw_mapping())
+
+
+    def test_model_free_method_args(self):
+        """The model-free object public method args check."""
+
+        # Check.
+        self.__check_method_args(Model_free())
+
+
+    def test_model_free_objects(self):
+        """The model-free object public objects check."""
+
+        # Check.
+        self.__check_objects(Model_free())
+
+
+    def test_n_state_model_method_args(self):
+        """The N-state model object public method args check."""
+
+        # Check.
+        self.__check_method_args(N_state_model())
+
+
+    def test_n_state_model_objects(self):
+        """The N-state model object public objects check."""
+
+        # Check.
+        self.__check_objects(N_state_model())
+
+
+    def test_noe_method_args(self):
+        """The NOE object public method args check."""
+
+        # Check.
+        self.__check_method_args(Noe())
+
+
+    def test_noe_objects(self):
+        """The NOE object public objects check."""
+
+        # Check.
+        self.__check_objects(Noe())
+
+
+    def test_relax_fit_method_args(self):
+        """The relaxation curve fitting object public method args check."""
+
+        # Check.
+        self.__check_method_args(Relax_fit())
+
+
+    def test_relax_fit_objects(self):
+        """The relaxation curve fitting object public objects check."""
+
+        # Check.
+        self.__check_objects(Relax_fit())
+
+
+    def test_srls_method_args(self):
+        """The SRLS object public method args check."""
+
+        # Check.
+        self.__check_method_args(SRLS())
+
+
+    def test_srls_objects(self):
+        """The SRLS object public objects check."""
+
+        # Check.
+        self.__check_objects(SRLS())
