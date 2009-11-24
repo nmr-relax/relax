@@ -125,6 +125,25 @@ class API_base:
         raise RelaxImplementError
 
 
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_index=None, global_stats=False, verbose=True):
+        """Duplicate the data specific to a single model.
+
+        @keyword pipe_from:     The data pipe to copy the data from.
+        @type pipe_from:        str
+        @keyword pipe_to:       The data pipe to copy the data to.
+        @type pipe_to:          str
+        @param model_index:     The model index.  This originates from the model_loop().
+        @type model_index:      int
+        @keyword global_stats:  The global statistics flag.
+        @type global_stats:     bool
+        @keyword verbose:       A flag which if True will cause info to be printed out.
+        @type verbose:          bool
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     def eliminate(self):
         """Dummy method for model elimination."""
 
