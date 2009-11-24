@@ -162,6 +162,287 @@ class Relax_fit(API_base):
         return results[relax_time_index]
 
 
+    def _disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
+        """Disassemble the parameter vector.
+
+        @keyword param_vector:  The parameter vector.
+        @type param_vector:     numpy array
+        @keyword spin:          The spin data container.
+        @type spin:             SpinContainer instance
+        @keyword sim_index:     The optional MC simulation index.
+        @type sim_index:        int
+        """
+
+        # Monte Carlo simulations.
+        if sim_index != None:
+            # The relaxation rate.
+            spin.rx_sim[sim_index] = param_vector[0]
+
+            # Initial intensity.
+            spin.i0_sim[sim_index] = param_vector[1]
+
+            # Intensity at infinity.
+            if cdp.curve_type == 'inv':
+                spin.iinf_sim[sim_index] = param_vector[2]
+
+        # Parameter values.
+        else:
+            # The relaxation rate.
+            spin.rx = param_vector[0]
+
+            # Initial intensity.
+            spin.i0 = param_vector[1]
+
+            # Intensity at infinity.
+            if cdp.curve_type == 'inv':
+                spin.iinf = param_vector[2]
+
+
+    def _grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+        """The grid search setup function.
+
+        @keyword spin:              The spin data container.
+        @type spin:                 SpinContainer instance
+        @keyword param_vector:      The parameter vector.
+        @type param_vector:         numpy array
+        @keyword lower:             The lower bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is
+                                    only used when doing a grid search.
+        @type lower:                array of numbers
+        @keyword upper:             The upper bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is
+                                    only used when doing a grid search.
+        @type upper:                array of numbers
+        @keyword inc:               The increments for each dimension of the space for the grid
+                                    search.  The number of elements in the array must equal to the
+                                    number of parameters in the model.  This argument is only used
+                                    when doing a grid search.
+        @type inc:                  array of int
+        @keyword scaling_matrix:    The scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        @return:                    A tuple of the grid size and the minimisation options.  For the
+                                    minimisation options, the first dimension corresponds to the
+                                    model parameter.  The second dimension is a list of the number
+                                    of increments, the lower bound, and upper bound.
+        @rtype:                     (int, list of lists [int, float, float])
+        """
+
+        # The length of the parameter array.
+        n = len(param_vector)
+
+        # Make sure that the length of the parameter array is > 0.
+        if n == 0:
+            raise RelaxError("Cannot run a grid search on a model with zero parameters.")
+
+        # Lower bounds.
+        if lower != None and len(lower) != n:
+            raise RelaxLenError('lower bounds', n)
+
+        # Upper bounds.
+        if upper != None and len(upper) != n:
+            raise RelaxLenError('upper bounds', n)
+
+        # Increments.
+        if isinstance(inc, list) and len(inc) != n:
+            raise RelaxLenError('increment', n)
+        elif isinstance(inc, int):
+            inc = [inc]*n
+
+        # Set up the default bounds.
+        if not lower:
+            # Init.
+            lower = []
+            upper = []
+
+            # Loop over the parameters.
+            for i in range(n):
+                # Relaxation rate (from 0 to 20 s^-1).
+                if spin.params[i] == 'Rx':
+                    lower.append(0.0)
+                    upper.append(20.0)
+
+                # Intensity
+                elif search('^I', spin.params[i]):
+                    # Find the position of the first time point.
+                    pos = cdp.relax_times.index(min(cdp.relax_times))
+
+                    # Defaults.
+                    lower.append(0.0)
+                    upper.append(average(spin.intensities[pos]))
+
+        # Parameter scaling.
+        for i in range(n):
+            lower[i] = lower[i] / scaling_matrix[i, i]
+            upper[i] = upper[i] / scaling_matrix[i, i]
+
+        return inc, lower, upper
+
+
+    def _linear_constraints(self, spin=None, scaling_matrix=None):
+        """Set up the relaxation curve fitting linear constraint matrices A and b.
+
+        Standard notation
+        =================
+
+        The relaxation rate constraints are::
+
+            Rx >= 0
+
+        The intensity constraints are::
+
+            I0 >= 0
+            Iinf >= 0
+
+
+        Matrix notation
+        ===============
+
+        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
+        values, and b is a vector of scalars, these inequality constraints are::
+
+            | 1  0  0 |     |  Rx  |      |    0    |
+            |         |     |      |      |         |
+            | 1  0  0 |  .  |  I0  |  >=  |    0    |
+            |         |     |      |      |         |
+            | 1  0  0 |     | Iinf |      |    0    |
+
+
+        @keyword spin:              The spin data container.
+        @type spin:                 SpinContainer instance
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        """
+
+        # Initialisation (0..j..m).
+        A = []
+        b = []
+        n = len(spin.params)
+        zero_array = zeros(n, float64)
+        i = 0
+        j = 0
+
+        # Loop over the parameters.
+        for k in xrange(len(spin.params)):
+            # Relaxation rate.
+            if spin.params[k] == 'Rx':
+                # Rx >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j = j + 1
+
+            # Intensity parameter.
+            elif search('^I', spin.params[k]):
+                # I0, Iinf >= 0.
+                A.append(zero_array * 0.0)
+                A[j][i] = 1.0
+                b.append(0.0)
+                j = j + 1
+
+            # Increment i.
+            i = i + 1
+
+        # Convert to numpy data structures.
+        A = array(A, float64)
+        b = array(b, float64)
+
+        return A, b
+
+
+    def _model_setup(self, model, params):
+        """Update various model specific data structures.
+
+        @param model:   The exponential curve type.
+        @type model:    str
+        @param params:  A list consisting of the model parameters.
+        @type params:   list of str
+        """
+
+        # Set the model.
+        cdp.curve_type = model
+
+        # Loop over the sequence.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Initialise the data structures (if needed).
+            self.data_init(spin)
+
+            # The model and parameter names.
+            spin.model = model
+            spin.params = params
+
+
+    def _relax_time(self, time=0.0, spectrum_id=None):
+        """Set the relaxation time period associated with a given spectrum.
+
+        @keyword time:          The time, in seconds, of the relaxation period.
+        @type time:             float
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
+
+        # The index.
+        index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise the global relaxation time data structure if needed.
+        if not hasattr(cdp, 'relax_times'):
+            cdp.relax_times = [None] * len(cdp.spectrum_ids)
+
+        # Index not present in the global relaxation time data structure.
+        while True:
+            if index > len(cdp.relax_times) - 1:
+                cdp.relax_times.append(None)
+            else:
+                break
+
+        # Add the time at the correct position.
+        cdp.relax_times[index] = time
+
+
+    def _select_model(self, model='exp'):
+        """Function for selecting the model of the exponential curve.
+
+        @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
+        @type model:    str
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'relax_fit'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_fit':
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Two parameter exponential fit.
+        if model == 'exp':
+            print("Two parameter exponential fit.")
+            params = ['Rx', 'I0']
+
+        # Three parameter inversion recovery fit.
+        elif model == 'inv':
+            print("Three parameter inversion recovery fit.")
+            params = ['Rx', 'I0', 'Iinf']
+
+        # Invalid model.
+        else:
+            raise RelaxError("The model '" + model + "' is invalid.")
+
+        # Set up the model.
+        self._model_setup(model, params)
+
+
     def create_mc_data(self, spin_id=None):
         """Create the Monte Carlo peak intensity data.
 
@@ -335,42 +616,6 @@ class Relax_fit(API_base):
             return 0.0
 
 
-    def _disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
-        """Disassemble the parameter vector.
-
-        @keyword param_vector:  The parameter vector.
-        @type param_vector:     numpy array
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
-        @keyword sim_index:     The optional MC simulation index.
-        @type sim_index:        int
-        """
-
-        # Monte Carlo simulations.
-        if sim_index != None:
-            # The relaxation rate.
-            spin.rx_sim[sim_index] = param_vector[0]
-
-            # Initial intensity.
-            spin.i0_sim[sim_index] = param_vector[1]
-
-            # Intensity at infinity.
-            if cdp.curve_type == 'inv':
-                spin.iinf_sim[sim_index] = param_vector[2]
-
-        # Parameter values.
-        else:
-            # The relaxation rate.
-            spin.rx = param_vector[0]
-
-            # Initial intensity.
-            spin.i0 = param_vector[1]
-
-            # Intensity at infinity.
-            if cdp.curve_type == 'inv':
-                spin.iinf = param_vector[2]
-
-
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
         """The exponential curve fitting grid search method.
 
@@ -390,157 +635,6 @@ class Relax_fit(API_base):
 
         # Minimisation.
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
-
-
-    def _grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
-        """The grid search setup function.
-
-        @keyword spin:              The spin data container.
-        @type spin:                 SpinContainer instance
-        @keyword param_vector:      The parameter vector.
-        @type param_vector:         numpy array
-        @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is
-                                    only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is
-                                    only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid
-                                    search.  The number of elements in the array must equal to the
-                                    number of parameters in the model.  This argument is only used
-                                    when doing a grid search.
-        @type inc:                  array of int
-        @keyword scaling_matrix:    The scaling matrix.
-        @type scaling_matrix:       numpy diagonal matrix
-        @return:                    A tuple of the grid size and the minimisation options.  For the
-                                    minimisation options, the first dimension corresponds to the
-                                    model parameter.  The second dimension is a list of the number
-                                    of increments, the lower bound, and upper bound.
-        @rtype:                     (int, list of lists [int, float, float])
-        """
-
-        # The length of the parameter array.
-        n = len(param_vector)
-
-        # Make sure that the length of the parameter array is > 0.
-        if n == 0:
-            raise RelaxError("Cannot run a grid search on a model with zero parameters.")
-
-        # Lower bounds.
-        if lower != None and len(lower) != n:
-            raise RelaxLenError('lower bounds', n)
-
-        # Upper bounds.
-        if upper != None and len(upper) != n:
-            raise RelaxLenError('upper bounds', n)
-
-        # Increments.
-        if isinstance(inc, list) and len(inc) != n:
-            raise RelaxLenError('increment', n)
-        elif isinstance(inc, int):
-            inc = [inc]*n
-
-        # Set up the default bounds.
-        if not lower:
-            # Init.
-            lower = []
-            upper = []
-
-            # Loop over the parameters.
-            for i in range(n):
-                # Relaxation rate (from 0 to 20 s^-1).
-                if spin.params[i] == 'Rx':
-                    lower.append(0.0)
-                    upper.append(20.0)
-
-                # Intensity
-                elif search('^I', spin.params[i]):
-                    # Find the position of the first time point.
-                    pos = cdp.relax_times.index(min(cdp.relax_times))
-
-                    # Defaults.
-                    lower.append(0.0)
-                    upper.append(average(spin.intensities[pos]))
-
-        # Parameter scaling.
-        for i in range(n):
-            lower[i] = lower[i] / scaling_matrix[i, i]
-            upper[i] = upper[i] / scaling_matrix[i, i]
-
-        return inc, lower, upper
-
-
-    def _linear_constraints(self, spin=None, scaling_matrix=None):
-        """Set up the relaxation curve fitting linear constraint matrices A and b.
-
-        Standard notation
-        =================
-
-        The relaxation rate constraints are::
-
-            Rx >= 0
-
-        The intensity constraints are::
-
-            I0 >= 0
-            Iinf >= 0
-
-
-        Matrix notation
-        ===============
-
-        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are::
-
-            | 1  0  0 |     |  Rx  |      |    0    |
-            |         |     |      |      |         |
-            | 1  0  0 |  .  |  I0  |  >=  |    0    |
-            |         |     |      |      |         |
-            | 1  0  0 |     | Iinf |      |    0    |
-
-
-        @keyword spin:              The spin data container.
-        @type spin:                 SpinContainer instance
-        @keyword scaling_matrix:    The diagonal, square scaling matrix.
-        @type scaling_matrix:       numpy diagonal matrix
-        """
-
-        # Initialisation (0..j..m).
-        A = []
-        b = []
-        n = len(spin.params)
-        zero_array = zeros(n, float64)
-        i = 0
-        j = 0
-
-        # Loop over the parameters.
-        for k in xrange(len(spin.params)):
-            # Relaxation rate.
-            if spin.params[k] == 'Rx':
-                # Rx >= 0.
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0)
-                j = j + 1
-
-            # Intensity parameter.
-            elif search('^I', spin.params[k]):
-                # I0, Iinf >= 0.
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0)
-                j = j + 1
-
-            # Increment i.
-            i = i + 1
-
-        # Convert to numpy data structures.
-        A = array(A, float64)
-        b = array(b, float64)
-
-        return A, b
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
@@ -723,32 +817,6 @@ class Relax_fit(API_base):
                 spin.warning = warning
 
 
-    def _model_setup(self, model, params):
-        """Update various model specific data structures.
-
-        @param model:   The exponential curve type.
-        @type model:    str
-        @param params:  A list consisting of the model parameters.
-        @type params:   list of str
-        """
-
-        # Set the model.
-        cdp.curve_type = model
-
-        # Loop over the sequence.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-            # The model and parameter names.
-            spin.model = model
-            spin.params = params
-
-
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support minimisation."""
 
@@ -769,37 +837,6 @@ class Relax_fit(API_base):
                 continue
 
 
-    def _relax_time(self, time=0.0, spectrum_id=None):
-        """Set the relaxation time period associated with a given spectrum.
-
-        @keyword time:          The time, in seconds, of the relaxation period.
-        @type time:             float
-        @keyword spectrum_id:   The spectrum identification string.
-        @type spectrum_id:      str
-        """
-
-        # Test if the spectrum id exists.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
-
-        # The index.
-        index = cdp.spectrum_ids.index(spectrum_id)
-
-        # Initialise the global relaxation time data structure if needed.
-        if not hasattr(cdp, 'relax_times'):
-            cdp.relax_times = [None] * len(cdp.spectrum_ids)
-
-        # Index not present in the global relaxation time data structure.
-        while True:
-            if index > len(cdp.relax_times) - 1:
-                cdp.relax_times.append(None)
-            else:
-                break
-
-        # Add the time at the correct position.
-        cdp.relax_times[index] = time
-
-
     def return_data(self, spin):
         """Function for returning the peak intensity data structure.
 
@@ -810,23 +847,6 @@ class Relax_fit(API_base):
         """
 
         return spin.intensities
-
-
-    def return_error(self, spin_id):
-        """Return the standard deviation data structure.
-
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The standard deviation data structure.
-        @rtype:         list of float
-        """
-
-        # Get the spin container.
-        spin = return_spin(spin_id)
-
-        # Return the error list.
-        return spin.intensity_err
 
 
     return_data_name_doc = """
@@ -879,6 +899,23 @@ class Relax_fit(API_base):
         # Relaxation period times (series).
         if match('^[Rr]elax[ -_][Tt]imes$', param):
             return 'relax_times'
+
+
+    def return_error(self, spin_id):
+        """Return the standard deviation data structure.
+
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The standard deviation data structure.
+        @rtype:         list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the error list.
+        return spin.intensity_err
 
 
     def return_grace_string(self, param):
@@ -936,43 +973,6 @@ class Relax_fit(API_base):
 
         # Unitless.
         return None
-
-
-    def _select_model(self, model='exp'):
-        """Function for selecting the model of the exponential curve.
-
-        @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
-        @type model:    str
-        """
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'relax_fit'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_fit':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Two parameter exponential fit.
-        if model == 'exp':
-            print("Two parameter exponential fit.")
-            params = ['Rx', 'I0']
-
-        # Three parameter inversion recovery fit.
-        elif model == 'inv':
-            print("Three parameter inversion recovery fit.")
-            params = ['Rx', 'I0', 'Iinf']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '" + model + "' is invalid.")
-
-        # Set up the model.
-        self._model_setup(model, params)
 
 
     set_doc = """
