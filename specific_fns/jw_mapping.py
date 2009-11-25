@@ -466,8 +466,19 @@ class Jw_mapping(API_base):
         cdp.jw_frq = frq
 
 
-    def set_error(self, spin, index, error):
-        """Function for setting parameter errors."""
+    def set_error(self, model_info, index, error):
+        """Set the parameter errors.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
+
+        # Alias.
+        spin = model_info
 
         # Return J(0) sim data.
         if index == 0:
@@ -482,8 +493,17 @@ class Jw_mapping(API_base):
             spin.jwh_err = error
 
 
-    def sim_return_param(self, spin, index):
-        """Function for returning the array of simulation parameter values."""
+    def sim_return_param(self, model_info, index):
+        """Return the array of simulation parameter values.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        """
+
+        # Alias.
+        spin = model_info
 
         # Skip deselected residues.
         if not spin.select:
@@ -502,8 +522,15 @@ class Jw_mapping(API_base):
             return spin.jwh_sim
 
 
-    def sim_return_selected(self, spin):
-        """Function for returning the array of selected simulation flags."""
+    def sim_return_selected(self, model_info):
+        """Return the array of selected simulation flags.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        """
+
+        # Alias.
+        spin = model_info
 
         # Multiple spins.
         return spin.select_sim
