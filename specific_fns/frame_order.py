@@ -568,8 +568,16 @@ class Frame_order(API_base):
         yield None
 
 
-    def calculate(self, verbosity=None):
-        """Calculate the chi-squared value for the current parameter values."""
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculate the chi-squared value for the current parameter values.
+
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index (unused).
+        @type sim_index:    None or int
+        """
 
         # Assemble the parameter vector.
         param_vector = self._assemble_param_vector()
@@ -852,7 +860,7 @@ class Frame_order(API_base):
             return [0.0, pi]
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation function.
 
         @param min_algor:       The minimisation algorithm to use.
@@ -878,6 +886,12 @@ class Frame_order(API_base):
         @param sim_index:       The index of the simulation to optimise.  This should be None if
                                 normal optimisation is desired.
         @type sim_index:        None or int
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:              array of int
         """
 
         # Constraints not implemented yet.
@@ -999,12 +1013,12 @@ class Frame_order(API_base):
             return 'theta_cone'
 
 
-    def return_error(self, index):
+    def return_error(self, spin_id):
         """Return the alignment tensor error structure.
 
-        @param index:   Not used.
-        @type index:    None
-        @return:        The array of relaxation data error values.
+        @param spin_id: The information yielded by the base_data_loop() generator method.
+        @type spin_id:  None
+        @return:        The array of tensor error values.
         @rtype:         list of float
         """
 
@@ -1045,15 +1059,15 @@ class Frame_order(API_base):
             return 'rad'
 
 
-    def set_error(self, nothing, index, error):
+    def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
-        @param nothing: Not used.
-        @type nothing:  None
-        @param index:   The index of the parameter to set the errors for.
-        @type index:    int
-        @param error:   The error value.
-        @type error:    float
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
         """
 
         # Parameter increment counter.
@@ -1069,11 +1083,11 @@ class Frame_order(API_base):
             inc = inc + 1
 
 
-    def set_selected_sim(self, index, select_sim):
+    def set_selected_sim(self, model_info, select_sim):
         """Set the simulation selection flag for the spin.
 
-        @param index:       Not used.
-        @type index:        None
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
         """
@@ -1141,10 +1155,10 @@ class Frame_order(API_base):
                 sim_object.append(deepcopy(getattr(cdp, object_name)))
 
 
-    def sim_pack_data(self, index, sim_data):
+    def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param index:       Not used.
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type index:        None
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
@@ -1163,11 +1177,11 @@ class Frame_order(API_base):
             tensor.Ayz_sim = sim_data[5*i + 4]
 
 
-    def sim_return_param(self, nothing, index):
+    def sim_return_param(self, model_info, index):
         """Return the array of simulation parameter values.
 
-        @param nothing:     Not used.
-        @type nothing:      None
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
@@ -1185,11 +1199,11 @@ class Frame_order(API_base):
             inc = inc + 1
 
 
-    def sim_return_selected(self, nothing):
+    def sim_return_selected(self, model_info):
         """Return the array of selected simulation flags for the spin.
 
-        @param nothing:     Not used.
-        @type nothing:      None
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
