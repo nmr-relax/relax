@@ -826,6 +826,8 @@ class API_base:
         @type model_info:   unknown
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
         """
 
         # Assume the default of a spin container.

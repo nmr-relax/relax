@@ -2758,6 +2758,8 @@ class Model_free_main:
         @type model_info:   int
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
         """
 
         # Parameter increment counter.

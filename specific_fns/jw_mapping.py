@@ -500,6 +500,8 @@ class Jw_mapping(API_base):
         @type model_info:   SpinContainer instance
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
         """
 
         # Alias.
@@ -527,6 +529,8 @@ class Jw_mapping(API_base):
 
         @param model_info:  The spin container originating from model_loop().
         @type model_info:   SpinContainer instance
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
         """
 
         # Alias.
