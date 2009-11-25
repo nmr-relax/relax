@@ -1159,7 +1159,7 @@ class Frame_order(API_base):
         """Pack the Monte Carlo simulation data.
 
         @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
-        @type index:        None
+        @type spin_id:      None
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
