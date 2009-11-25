@@ -36,6 +36,29 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, 
 class Consistency_tests(API_base):
     """Class containing functions specific to consistency testing."""
 
+    def _set_frq(self, frq=None):
+        """Function for selecting which relaxation data to use in the consistency tests."""
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'ct'.
+        function_type = cdp.pipe_type
+        if function_type != 'ct':
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
+
+        # Test if the frequency has been set.
+        if hasattr(cdp, 'ct_frq'):
+            raise RelaxError("The frequency for the run has already been set.")
+
+        # Create the data structure if it doesn't exist.
+        if not hasattr(cdp, 'ct_frq'):
+            cdp.ct_frq = {}
+
+        # Set the frequency.
+        cdp.ct_frq = frq
+
+
     def calculate(self, verbosity=1, sim_index=None, spin_id=None):
         """Calculation of the consistency functions."""
 
@@ -475,29 +498,6 @@ class Consistency_tests(API_base):
         calculation of consistency functions.
 
         """
-
-
-    def set_frq(self, frq=None):
-        """Function for selecting which relaxation data to use in the consistency tests."""
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'ct'.
-        function_type = cdp.pipe_type
-        if function_type != 'ct':
-            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
-
-        # Test if the frequency has been set.
-        if hasattr(cdp, 'ct_frq'):
-            raise RelaxError("The frequency for the run has already been set.")
-
-        # Create the data structure if it doesn't exist.
-        if not hasattr(cdp, 'ct_frq'):
-            cdp.ct_frq = {}
-
-        # Set the frequency.
-        cdp.ct_frq = frq
 
 
     def set_error(self, spin, index, error):
