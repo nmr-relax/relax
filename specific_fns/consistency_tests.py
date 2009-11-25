@@ -59,8 +59,16 @@ class Consistency_tests(API_base):
         cdp.ct_frq = frq
 
 
-    def calculate(self, verbosity=1, sim_index=None, spin_id=None):
-        """Calculation of the consistency functions."""
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculation of the consistency functions.
+
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      None or str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    None or int
+        """
 
         # Test if the frequency has been set.
         if not hasattr(cdp, 'ct_frq') or not isinstance(cdp.ct_frq, float):
@@ -193,8 +201,14 @@ class Consistency_tests(API_base):
         return spin.relax_data
 
 
-    def data_init(self, data, sim=0):
-        """Function for initialising the data structures."""
+    def data_init(self, data_cont, sim=False):
+        """Initialise the data structures.
+
+        @param data_cont:   The data container.
+        @type data_cont:    instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
+        """
 
         # Get the data names.
         data_names = self.data_names()
@@ -207,9 +221,9 @@ class Consistency_tests(API_base):
                 name = name + '_sim'
 
             # If the name is not in 'data', add it.
-            if not hasattr(data, name):
+            if not hasattr(data_cont, name):
                 # Set the attribute.
-                setattr(data, name, None)
+                setattr(data_cont, name, None)
 
 
     def data_names(self, set=None, error_names=False, sim_names=False):
@@ -370,57 +384,66 @@ class Consistency_tests(API_base):
         |_______________________|__________________|_______________________________________________|
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, param):
         """Return a unique identifying string for the consistency test parameter.
 
-        @param name:    The consistency test parameter.
-        @type name:     str
+        @param param:   The consistency test parameter name.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # J(0).
-        if search('^[Jj]0$', name) or search('[Jj]\(0\)', name):
+        if search('^[Jj]0$', param) or search('[Jj]\(0\)', param):
             return 'j0'
 
         # F_eta.
-        if search('^[Ff]_[Ee][Tt][Aa]$', name):
+        if search('^[Ff]_[Ee][Tt][Aa]$', param):
             return 'f_eta'
 
         # F_R2.
-        if search('^^[Ff]_[Rr]2$', name):
+        if search('^^[Ff]_[Rr]2$', param):
             return 'f_r2'
 
         # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
+        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
             return 'r'
 
         # CSA.
-        if search('^[Cc][Ss][Aa]$', name):
+        if search('^[Cc][Ss][Aa]$', param):
             return 'csa'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', name):
+        if search('^[Hh]eteronucleus$', param):
             return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', name):
+        if search('^[Pp]roton$', param):
             return 'proton_type'
 
         # Angle Theta
-        if search('^[Oo]rientation$', name):
+        if search('^[Oo]rientation$', param):
             return 'orientation'
 
         # Correlation time
-        if search('^[Tt]c$', name):
+        if search('^[Tt]c$', param):
             return 'tc'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_grace_string(self, param):
+        """Return the Grace string representing the parameter.
+
+        This is used for axis labelling.
+
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # J(0).
         if object_name == 'j0':
@@ -451,21 +474,16 @@ class Consistency_tests(API_base):
             return '\\q\\xt\\f{}c\\Q'
 
 
-    def return_units(self, data_type, spin=None, spin_id=None):
-        """Function for returning a string representing the parameters units.
+    def return_units(self, param, spin=None, spin_id=None):
+        """Return a string representing the parameters units.
 
-        For example, the internal representation of te is in seconds, whereas the external
-        representation is in picoseconds, therefore this function will return the string
-        'picoseconds' for te.
-
-        @param data_type:   The name of the parameter to return the units string for.
-        @type data_type:    str
-        @param spin:        The spin container.
+        @param param:       The name of the parameter to return the units string for.
+        @type param:        str
+        @keyword spin:      The spin container.
         @type spin:         SpinContainer instance
-        @param spin_id:     The spin identification string (ignored if the spin container is
-                            supplied).
+        @keyword spin_id:   The spin identification string (ignored if the spin container is supplied).
         @type spin_id:      str
-        @return:            The string representation of the units.
+        @return:            The parameter units string.
         @rtype:             str
         """
 
@@ -500,8 +518,19 @@ class Consistency_tests(API_base):
         """
 
 
-    def set_error(self, spin, index, error):
-        """Function for setting parameter errors."""
+    def set_error(self, model_info, index, error):
+        """Set the parameter errors.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
+        """
+
+        # Alias.
+        spin = model_info
 
         # Return J(0) sim data.
         if index == 0:
@@ -516,8 +545,19 @@ class Consistency_tests(API_base):
             spin.f_r2_err = error
 
 
-    def sim_return_param(self, spin, index):
-        """Function for returning the array of simulation parameter values."""
+    def sim_return_param(self, model_info, index):
+        """Return the array of simulation parameter values.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @param index:       The index of the parameter to return the array of values for.
+        @type index:        int
+        @return:            The array of simulation parameter values.
+        @rtype:             list of float
+        """
+
+        # Alias.
+        spin = model_info
 
         # Skip deselected residues.
         if not spin.select:
@@ -536,8 +576,17 @@ class Consistency_tests(API_base):
             return spin.f_r2_sim
 
 
-    def sim_return_selected(self, spin):
-        """Function for returning the array of selected simulation flags."""
+    def sim_return_selected(self, model_info):
+        """Return the array of selected simulation flags.
+
+        @param model_info:  The spin container originating from model_loop().
+        @type model_info:   SpinContainer instance
+        @return:            The array of selected simulation flags.
+        @rtype:             list of int
+        """
+
+        # Alias.
+        spin = model_info
 
         # Multiple spins.
         return spin.select_sim
@@ -546,8 +595,7 @@ class Consistency_tests(API_base):
     def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
