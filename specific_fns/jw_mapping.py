@@ -35,6 +35,29 @@ from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, 
 class Jw_mapping(API_base):
     """Class containing functions specific to reduced spectral density mapping."""
 
+    def _set_frq(self, frq=None):
+        """Function for selecting which relaxation data to use in the J(w) mapping."""
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'jw'.
+        function_type = cdp.pipe_type
+        if function_type != 'jw':
+            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
+
+        # Test if the frequency has been set.
+        if hasattr(cdp, 'jw_frq'):
+            raise RelaxError("The frequency has already been set.")
+
+        # Create the data structure if it doesn't exist.
+        if not hasattr(cdp, 'jw_frq'):
+           cdp.jw_frq = {}
+
+        # Set the frequency.
+        cdp.jw_frq = frq
+
+
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculation of the spectral density values.
 
@@ -443,29 +466,6 @@ class Jw_mapping(API_base):
         """
 
 
-    def _set_frq(self, frq=None):
-        """Function for selecting which relaxation data to use in the J(w) mapping."""
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'jw'.
-        function_type = cdp.pipe_type
-        if function_type != 'jw':
-            raise RelaxFuncSetupError(specific_fns.setup.get_string(function_type))
-
-        # Test if the frequency has been set.
-        if hasattr(cdp, 'jw_frq'):
-            raise RelaxError("The frequency has already been set.")
-
-        # Create the data structure if it doesn't exist.
-        if not hasattr(cdp, 'jw_frq'):
-           cdp.jw_frq = {}
-
-        # Set the frequency.
-        cdp.jw_frq = frq
-
-
     def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
@@ -491,6 +491,27 @@ class Jw_mapping(API_base):
         # Return J(wH) sim data.
         if index == 2:
             spin.jwh_err = error
+
+
+    def sim_pack_data(self, spin_id, sim_data):
+        """Pack the Monte Carlo simulation data.
+
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
+                            generator method.
+        @type spin_id:      str
+        @param sim_data:    The Monte Carlo simulation data.
+        @type sim_data:     list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Test if the simulation data already exists.
+        if hasattr(spin, 'relax_sim_data'):
+            raise RelaxError("Monte Carlo simulation data already exists.")
+
+        # Create the data structure.
+        spin.relax_sim_data = sim_data
 
 
     def sim_return_param(self, model_info, index):
@@ -538,24 +559,3 @@ class Jw_mapping(API_base):
 
         # Multiple spins.
         return spin.select_sim
-
-
-    def sim_pack_data(self, spin_id, sim_data):
-        """Pack the Monte Carlo simulation data.
-
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
-        @type spin_id:      str
-        @param sim_data:    The Monte Carlo simulation data.
-        @type sim_data:     list of float
-        """
-
-        # Get the spin container.
-        spin = return_spin(spin_id)
-
-        # Test if the simulation data already exists.
-        if hasattr(spin, 'relax_sim_data'):
-            raise RelaxError("Monte Carlo simulation data already exists.")
-
-        # Create the data structure.
-        spin.relax_sim_data = sim_data
