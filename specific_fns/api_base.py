@@ -147,7 +147,7 @@ class API_base:
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_info:      The model index from model_info().
+        @keyword model_info:    The model index from model_info().
         @type model_info:       int
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
