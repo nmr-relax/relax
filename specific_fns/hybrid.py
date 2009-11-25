@@ -31,13 +31,19 @@ import setup
 class Hybrid:
     """Class containing function specific to hybrid models."""
 
-    def duplicate_data(self, pipe_from=None, pipe_to=None):
+    def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single hybrid data pipe.
 
         @keyword pipe_from:     The data pipe to copy the data from.
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
+        @keyword model_info:    The model information from model_info().
+        @type model_info:       int
+        @keyword global_stats:  The global statistics flag.
+        @type global_stats:     bool
+        @keyword verbose:       A flag which if True will cause info to be printed out.
+        @type verbose:          bool
         """
 
         # First create the pipe_to data pipe, if it doesn't exist, but don't switch to it.
@@ -56,7 +62,7 @@ class Hybrid:
         dp_to.hybrid_pipes = dp_from.hybrid_pipes
 
 
-    def hybridise(self, hybrid=None, pipe_list=None):
+    def _hybridise(self, hybrid=None, pipe_list=None):
         """Create the hybrid data pipe.
 
         @keyword hybrid:    The name of the new hybrid data pipe.
@@ -97,11 +103,11 @@ class Hybrid:
         cdp.hybrid_pipes = pipe_list
 
 
-    def model_desc(self, model_index):
+    def model_desc(self, model_info):
         """Return a description of the model.
 
-        @param model_index: The model index.  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).  This originates from the model_loop().
-        @type model_index:  int
+        @param model_info:  The model information from the model_loop().  This is unused.
+        @type model_info:   int
         @return:            The model description.
         @rtype:             str
         """
@@ -193,8 +199,15 @@ class Hybrid:
         return 1
 
 
-    def skip_function(self, model_index=None):
-        """Dummy function."""
+    def skip_function(self, model_info):
+        """Dummy function.
 
-        return
+        @param model_info:  The model index from model_loop().
+        @type model_info:   int
+        @return:            True if the data should be skipped, False otherwise.
+        @rtype:             bool
+        """
+
+        # Don't skip data.
+        return False
 
