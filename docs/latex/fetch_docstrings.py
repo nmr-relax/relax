@@ -47,6 +47,9 @@ class Fetch_docstrings:
         self.intro_string = ''
         self.dummy_mode = 1
 
+        # Global data structures.
+        self.table_count = 1
+
         # Start the interpreter!
         self.interpreter = Interpreter(self)
         self.interpreter.run()
@@ -590,6 +593,33 @@ class Fetch_docstrings:
         self.section_type.append('list')
 
 
+    def num_to_text(self, num):
+        """Convert the number to text.
+        @param num: The number to convert.
+        @type num:  int
+        @return:    The number in the format of 'First', 'Second', 'Third', etc.
+        @rtype:     str
+        """
+
+        # The list.
+        list = ['First',
+                'Second',
+                'Third',
+                'Fourth',
+                'Fifth',
+                'Sixth',
+                'Seventh',
+                'Eighth',
+                'Ninth',
+                'Tenth',
+                'Eleventh',
+                'Twelfth'
+        ]
+
+        # Convert.
+        return list[num-1]
+
+
     def paragraph(self):
         """Function for extracting the paragraphs from the docstring."""
 
@@ -798,13 +828,21 @@ class Fetch_docstrings:
         self.file.write(" \n\n\n")
 
         # Loop over the data.
+        table_sub_count = 1
         for i in xrange(len(self.section)):
             # The section type alias.
             st = self.section_type[i]
 
             # Subsection.
             if st == 'subsection':
-                self.file.write(" \n\n \\subsection{" + self.section[i] + "()}")
+                # Store the user function name.
+                user_fn = self.section[i] + '()'
+
+                # Write out the new subsection.
+                self.file.write(" \n\n \\subsection{" + user_fn + "}")
+
+                # Reset the sub table count.
+                table_sub_count = 1
 
             # Subsubsection.
             elif st == 'subsubsection':
@@ -843,11 +881,20 @@ class Fetch_docstrings:
 
             # Tables.
             elif st == 'table':
+                # Add a reference.
+                self.file.write("(see table~\\ref{table%s}) \n " % self.table_count)
+
                 # Split the lines
                 lines = split(self.section[i], '\n')
 
-                # Start the table, center it, and add the toprule.
+                # Start the centred table.
+                self.file.write("\\begin{table*} \n ")
                 self.file.write("\\begin{center} \n ")
+
+                # A caption.
+                self.file.write("\\caption{%s table for the %s user function.} \n " % (self.num_to_text(table_sub_count), user_fn))
+
+                # Start the tabular environment and add the toprule.
                 self.file.write("\\begin{tabular}{" + (int(lines[0]))*"l" + "} \n ")
                 self.file.write("\\toprule \n ")
 
@@ -874,8 +921,14 @@ class Fetch_docstrings:
 
                 # Add the bottomrule and terminate the tabular and center environment.
                 self.file.write("\\bottomrule \n ")
+                self.file.write("\\label{table%s} \n " % self.table_count)
                 self.file.write("\\end{tabular} \n ")
                 self.file.write("\\end{center} \n ")
+                self.file.write("\\end{table*} \n ")
+
+                # Increment the table counters.
+                self.table_count = self.table_count + 1
+                table_sub_count = table_sub_count + 1
 
             # Lists.
             elif st == 'list':
