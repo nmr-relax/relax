@@ -63,7 +63,7 @@ class API_base:
         @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:    int
         @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    int
+        @type sim_index:    None or int
         """
 
         # Not implemented.
