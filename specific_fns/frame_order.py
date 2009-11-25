@@ -66,7 +66,7 @@ class Frame_order(API_base):
             return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
 
-    def __grid_row(self, incs, lower, upper, dist_type=None):
+    def _grid_row(self, incs, lower, upper, dist_type=None):
         """Set up a row of the grid search for a given parameter.
 
         @param incs:        The number of increments.
@@ -108,7 +108,7 @@ class Frame_order(API_base):
         return list(row)
 
 
-    def __minimise_setup_tensors(self, sim_index=None):
+    def _minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
         @keyword sim_index: The simulation index.  This should be None if normal optimisation is
@@ -127,7 +127,7 @@ class Frame_order(API_base):
             raise RelaxError("The reference domain has not been set up.")
         if not hasattr(cdp.align_tensors, 'reduction'):
             raise RelaxError("The tensor reductions have not been specified.")
-        for i, tensor in self.__tensor_loop():
+        for i, tensor in self._tensor_loop():
             if not hasattr(tensor, 'domain'):
                 raise RelaxError("The domain that the '%s' tensor is attached to has not been set" % tensor.name)
 
@@ -139,7 +139,7 @@ class Frame_order(API_base):
         full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
-        for i, tensor in self.__tensor_loop(red=False):
+        for i, tensor in self._tensor_loop(red=False):
             # The full tensor.
             full_tensors[5*i + 0] = tensor.Axx
             full_tensors[5*i + 1] = tensor.Ayy
@@ -152,7 +152,7 @@ class Frame_order(API_base):
                 full_in_ref_frame[i] = 1
 
         # Loop over the reduced tensors.
-        for i, tensor in self.__tensor_loop(red=True):
+        for i, tensor in self._tensor_loop(red=True):
             # The reduced tensor (simulation data).
             if sim_index != None:
                 red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
@@ -181,7 +181,7 @@ class Frame_order(API_base):
         return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
-    def __tensor_loop(self, red=False):
+    def _tensor_loop(self, red=False):
         """Generator method for looping over the full or reduced tensors.
 
         @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
@@ -209,7 +209,7 @@ class Frame_order(API_base):
             yield i, data[list[i][index]]
 
 
-    def __update_model(self):
+    def _update_model(self):
         """Update the model parameters as necessary."""
 
         # Initialise the list of model parameters.
@@ -252,7 +252,7 @@ class Frame_order(API_base):
                 cdp.theta_cone = 0.0
 
 
-    def __unpack_opt_results(self, results, sim_index=None):
+    def _unpack_opt_results(self, results, sim_index=None):
         """Unpack and store the Frame Order optimisation results.
 
         @param results:     The results tuple returned by the minfx generic_minimise() function.
@@ -367,7 +367,7 @@ class Frame_order(API_base):
         param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
 
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
@@ -398,7 +398,7 @@ class Frame_order(API_base):
         param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
 
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
@@ -695,7 +695,7 @@ class Frame_order(API_base):
                     upper.append(pi)
 
                 # Get the grid row.
-                row = self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
+                row = self._grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
 
                 # Remove the end point.
                 row = row[:-1]
@@ -739,7 +739,7 @@ class Frame_order(API_base):
 
             # Get the grid row.
             if not row:
-                row = self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
+                row = self._grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
 
             # Append the grid row.
             grid.append(row)
@@ -821,7 +821,7 @@ class Frame_order(API_base):
         param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index)
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
 
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
@@ -835,7 +835,7 @@ class Frame_order(API_base):
             results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
-        self.__unpack_opt_results(results, sim_index)
+        self._unpack_opt_results(results, sim_index)
 
 
     def model_loop(self):
@@ -934,7 +934,7 @@ class Frame_order(API_base):
         cdp.ref_domain = ref
 
         # Update the model.
-        self.__update_model()
+        self._update_model()
 
 
     def return_data_name(self, param):
@@ -981,7 +981,7 @@ class Frame_order(API_base):
         """
 
         # Get the tensor data structures.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
 
         # Return the errors.
         return red_tensor_err
@@ -1042,7 +1042,7 @@ class Frame_order(API_base):
         cdp.params = []
 
         # Update the model.
-        self.__update_model()
+        self._update_model()
 
 
     def set_error(self, nothing, index, error):
@@ -1154,7 +1154,7 @@ class Frame_order(API_base):
         sim_data = transpose(sim_data)
 
         # Loop over the reduced tensors.
-        for i, tensor in self.__tensor_loop(red=True):
+        for i, tensor in self._tensor_loop(red=True):
             # Set the reduced tensor simulation data.
             tensor.Axx_sim = sim_data[5*i + 0]
             tensor.Ayy_sim = sim_data[5*i + 1]
