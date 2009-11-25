@@ -66,6 +66,130 @@ class Frame_order(API_base):
             return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
 
+    def _back_calc(self):
+        """Back-calculation of the reduced alignment tensor.
+
+        @return:    The reduced alignment tensors.
+        @rtype:     numpy array
+        """
+
+        # Get the parameter vector.
+        param_vector = self._assemble_param_vector()
+
+        # Get the data structures for optimisation using the tensors as base data sets.
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
+
+        # Set up the optimisation function.
+        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+
+        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
+        target.func(param_vector)
+
+        # Return the reduced tensors.
+        return target.red_tensors_bc
+
+
+    def _cone_pdb(self, size=30.0, file=None, dir=None, inc=40, force=False):
+        """Create a PDB file containing a geometric object representing the Frame Order cone models.
+
+        @param size:        The size of the geometric object in Angstroms.
+        @type size:         float
+        @param inc:         The number of increments for the filling of the cone objects.
+        @type inc:          int
+        @param file:        The name of the PDB file to create.
+        @type file:         str
+        @param dir:         The name of the directory to place the PDB file into.
+        @type dir:          str
+        @param force:       Flag which if set to True will cause any pre-existing file to be
+                            overwritten.
+        @type force:        bool
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test the model.
+        if not cdp.model in ['iso cone']:
+            raise RelaxError("A cone PDB representation of the '%s' model cannot be made." % cdp.model)
+
+        # Test for the data structures.
+        if not hasattr(cdp, 'theta_cone'):
+            raise RelaxError("The cone angle theta_cone does not exist.")
+        if not hasattr(cdp, 'theta_axis'):
+            raise RelaxError("The cone polar angle theta_axis does not exist.")
+        if not hasattr(cdp, 'phi_axis'):
+            raise RelaxError("The cone azimuthal angle phi_axis does not exist.")
+        if not hasattr(cdp, 'pivot'):
+            raise RelaxError("The pivot point for the cone motion has not been set.")
+
+        # The cone axis.
+        cone_axis = zeros(3, float64)
+        generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
+        print(("Cone axis: %s." % cone_axis))
+        print(("Cone angle: %s." % cdp.theta_cone))
+
+        # Cone axis from simulations.
+        num_sim = 0
+        cone_axis_sim = None
+        cone_axis_sim_new = None
+        if hasattr(cdp, 'sim_number'):
+            num_sim = cdp.sim_number
+            cone_axis_sim = zeros((num_sim, 3), float64)
+        for i in range(num_sim):
+            generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
+
+        # Create a positive and negative cone.
+        for factor in [-1, 1]:
+            # Negative prefix.
+            prefix = ''
+            if factor == -1:
+                prefix = 'neg_'
+
+            # The rotation matrix (rotation from the z-axis to the cone axis).
+            R = zeros((3, 3), float64)
+            two_vect_to_R(array([0, 0, 1], float64), cone_axis, R)
+
+            # Mirroring.
+            cone_axis_new = factor*cone_axis
+            if cone_axis_sim != None:
+                cone_axis_sim_new = factor*cone_axis_sim
+            if factor == -1:
+                R = -R
+
+            # Create the structural object.
+            structure = Internal()
+
+            # Add a molecule.
+            structure.add_molecule(name='iso cone')
+
+            # Alias the single molecule from the single model.
+            mol = structure.structural_data[0].mol[0]
+
+            # Add the pivot point.
+            mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
+
+            # Generate the axis vectors.
+            print("\nGenerating the axis vectors.")
+            res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
+
+            # Generate the cone outer edge.
+            print("\nGenerating the cone outer edge.")
+            edge_start_atom = mol.atom_num[-1]+1
+            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
+
+            # Generate the cone cap, and stitch it to the cone edge.
+            print("\nGenerating the cone cap.")
+            cone_start_atom = mol.atom_num[-1]+1
+            generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
+            stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
+
+            # Create the PDB file.
+            print("\nGenerating the PDB file.")
+            pdb_file = open_write_file(prefix+file, dir, force=force)
+            structure.write_pdb(pdb_file)
+            pdb_file.close()
+
+
     def _grid_row(self, incs, lower, upper, dist_type=None):
         """Set up a row of the grid search for a given parameter.
 
@@ -179,6 +303,82 @@ class Frame_order(API_base):
 
         # Return the data structures.
         return full_tensors, red_tensors, red_err, full_in_ref_frame
+
+
+    def _pivot(self, pivot=None):
+        """Set the pivot point for the 2 body motion.
+
+        @param pivot:   The pivot point of the two bodies (domains, etc.) in the structural
+                        coordinate system.
+        @type pivot:    list of num
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Set the pivot point.
+        cdp.pivot = pivot
+
+        # Convert to floats.
+        for i in range(3):
+            cdp.pivot[i] = float(cdp.pivot[i])
+
+
+    def _ref_domain(self, ref=None):
+        """Set the reference domain for the frame order, multi-domain models.
+
+        @param ref: The reference domain.
+        @type ref:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('Frame order')
+
+        # Test if the reference domain exists.
+        exists = False
+        for tensor_cont in cdp.align_tensors:
+            if hasattr(tensor_cont, 'domain') and tensor_cont.domain == ref:
+                exists = True
+        if not exists:
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
+
+        # Set the reference domain.
+        cdp.ref_domain = ref
+
+        # Update the model.
+        self._update_model()
+
+
+    def _select_model(self, model=None):
+        """Select the Frame Order model.
+
+        @param model:   The Frame Order model.  As of yet, this can only be 'iso cone'.
+        @type model:    str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is already setup.
+        if hasattr(cdp, 'model'):
+            raise RelaxModelError('Frame Order')
+
+        # Test if the model name exists.
+        if not model in ['rigid', 'iso cone']:
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
+
+        # Set the model
+        cdp.model = model
+
+        # Initialise the list of model parameters.
+        cdp.params = []
+
+        # Update the model.
+        self._update_model()
 
 
     def _tensor_loop(self, red=False):
@@ -356,29 +556,6 @@ class Frame_order(API_base):
             cdp.warning = warning
 
 
-    def _back_calc(self):
-        """Back-calculation of the reduced alignment tensor.
-
-        @return:    The reduced alignment tensors.
-        @rtype:     numpy array
-        """
-
-        # Get the parameter vector.
-        param_vector = self._assemble_param_vector()
-
-        # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
-
-        # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
-
-        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        target.func(param_vector)
-
-        # Return the reduced tensors.
-        return target.red_tensors_bc
-
-
     def base_data_loop(self):
         """Generator method for looping nothing.
 
@@ -408,107 +585,6 @@ class Frame_order(API_base):
 
         # Set the chi2.
         cdp.chi2 = chi2
-
-
-    def cone_pdb(self, size=30.0, file=None, dir=None, inc=40, force=False):
-        """Create a PDB file containing a geometric object representing the Frame Order cone models.
-
-        @param size:        The size of the geometric object in Angstroms.
-        @type size:         float
-        @param inc:         The number of increments for the filling of the cone objects.
-        @type inc:          int
-        @param file:        The name of the PDB file to create.
-        @type file:         str
-        @param dir:         The name of the directory to place the PDB file into.
-        @type dir:          str
-        @param force:       Flag which if set to True will cause any pre-existing file to be
-                            overwritten.
-        @type force:        bool
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test the model.
-        if not cdp.model in ['iso cone']:
-            raise RelaxError("A cone PDB representation of the '%s' model cannot be made." % cdp.model)
-
-        # Test for the data structures.
-        if not hasattr(cdp, 'theta_cone'):
-            raise RelaxError("The cone angle theta_cone does not exist.")
-        if not hasattr(cdp, 'theta_axis'):
-            raise RelaxError("The cone polar angle theta_axis does not exist.")
-        if not hasattr(cdp, 'phi_axis'):
-            raise RelaxError("The cone azimuthal angle phi_axis does not exist.")
-        if not hasattr(cdp, 'pivot'):
-            raise RelaxError("The pivot point for the cone motion has not been set.")
-
-        # The cone axis.
-        cone_axis = zeros(3, float64)
-        generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
-        print(("Cone axis: %s." % cone_axis))
-        print(("Cone angle: %s." % cdp.theta_cone))
-
-        # Cone axis from simulations.
-        num_sim = 0
-        cone_axis_sim = None
-        cone_axis_sim_new = None
-        if hasattr(cdp, 'sim_number'):
-            num_sim = cdp.sim_number
-            cone_axis_sim = zeros((num_sim, 3), float64)
-        for i in range(num_sim):
-            generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
-
-        # Create a positive and negative cone.
-        for factor in [-1, 1]:
-            # Negative prefix.
-            prefix = ''
-            if factor == -1:
-                prefix = 'neg_'
-
-            # The rotation matrix (rotation from the z-axis to the cone axis).
-            R = zeros((3, 3), float64)
-            two_vect_to_R(array([0, 0, 1], float64), cone_axis, R)
-
-            # Mirroring.
-            cone_axis_new = factor*cone_axis
-            if cone_axis_sim != None:
-                cone_axis_sim_new = factor*cone_axis_sim
-            if factor == -1:
-                R = -R
-
-            # Create the structural object.
-            structure = Internal()
-
-            # Add a molecule.
-            structure.add_molecule(name='iso cone')
-
-            # Alias the single molecule from the single model.
-            mol = structure.structural_data[0].mol[0]
-
-            # Add the pivot point.
-            mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
-
-            # Generate the axis vectors.
-            print("\nGenerating the axis vectors.")
-            res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
-
-            # Generate the cone outer edge.
-            print("\nGenerating the cone outer edge.")
-            edge_start_atom = mol.atom_num[-1]+1
-            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
-
-            # Generate the cone cap, and stitch it to the cone edge.
-            print("\nGenerating the cone cap.")
-            cone_start_atom = mol.atom_num[-1]+1
-            generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
-            stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
-
-            # Create the PDB file.
-            print("\nGenerating the PDB file.")
-            pdb_file = open_write_file(prefix+file, dir, force=force)
-            structure.write_pdb(pdb_file)
-            pdb_file.close()
 
 
     def create_mc_data(self, spin_id=None):
@@ -889,54 +965,6 @@ class Frame_order(API_base):
         return k, n, chi2
 
 
-    def pivot(self, pivot=None):
-        """Set the pivot point for the 2 body motion.
-
-        @param pivot:   The pivot point of the two bodies (domains, etc.) in the structural
-                        coordinate system.
-        @type pivot:    list of num
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Set the pivot point.
-        cdp.pivot = pivot
-
-        # Convert to floats.
-        for i in range(3):
-            cdp.pivot[i] = float(cdp.pivot[i])
-
-
-    def ref_domain(self, ref=None):
-        """Set the reference domain for the frame order, multi-domain models.
-
-        @param ref: The reference domain.
-        @type ref:  str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('Frame order')
-
-        # Test if the reference domain exists.
-        exists = False
-        for tensor_cont in cdp.align_tensors:
-            if hasattr(tensor_cont, 'domain') and tensor_cont.domain == ref:
-                exists = True
-        if not exists:
-            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
-
-        # Set the reference domain.
-        cdp.ref_domain = ref
-
-        # Update the model.
-        self._update_model()
-
-
     def return_data_name(self, param):
         """Return a unique identifying string for the Frame order parameter.
 
@@ -1015,34 +1043,6 @@ class Frame_order(API_base):
         # Cone angle.
         if search('theta[ -_]cone', param):
             return 'rad'
-
-
-    def select_model(self, model=None):
-        """Select the Frame Order model.
-
-        @param model:   The Frame Order model.  As of yet, this can only be 'iso cone'.
-        @type model:    str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is already setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('Frame Order')
-
-        # Test if the model name exists.
-        if not model in ['rigid', 'iso cone']:
-            raise RelaxError("The model name " + repr(model) + " is invalid.")
-
-        # Set the model
-        cdp.model = model
-
-        # Initialise the list of model parameters.
-        cdp.params = []
-
-        # Update the model.
-        self._update_model()
 
 
     def set_error(self, nothing, index, error):
