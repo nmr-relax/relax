@@ -488,7 +488,7 @@ class Consistency_tests(API_base):
         """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Bond length (Angstrom).
         if object_name == 'r':
