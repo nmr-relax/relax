@@ -528,6 +528,7 @@ class API_base:
 
         This is used for axis labelling.
 
+
         @param param:   The specific analysis parameter.
         @type param:    str
         @return:        The Grace string representation of the parameter.
@@ -541,14 +542,14 @@ class API_base:
     def return_units(self, param, spin=None, spin_id=None):
         """Prototype method for returning a string representing the parameters units.
 
-        @param param:   The name of the parameter to return the units string for.
-        @type param:    str
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        @param spin_id: The spin identification string (ignored if the spin container is supplied).
-        @type spin_id:  str
-        @return:        The parameter units string.
-        @rtype:         str
+        @param param:       The name of the parameter to return the units string for.
+        @type param:        str
+        @keyword spin:      The spin container.
+        @type spin:         SpinContainer instance
+        @keyword spin_id:   The spin identification string (ignored if the spin container is supplied).
+        @type spin_id:      str
+        @return:            The parameter units string.
+        @rtype:             str
         """
 
         # Not implemented.
