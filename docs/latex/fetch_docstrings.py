@@ -804,7 +804,7 @@ class Fetch_docstrings:
 
             # Subsection.
             if st == 'subsection':
-                self.file.write(" \n\n \\subsection{" + self.section[i] + "}")
+                self.file.write(" \n\n \\subsection{" + self.section[i] + "()}")
 
             # Subsubsection.
             elif st == 'subsubsection':
