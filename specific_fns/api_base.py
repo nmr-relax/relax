@@ -41,6 +41,7 @@ class API_base:
 
         Specific implementations of this generator method are free to yield any type of data.  The data which is yielded is then passed into the specific functions such as return_data(), return_error(), create_mc_data(), pack_sim_data(), etc., so these methods should handle the data thrown at them.  If multiple data is yielded, this is caught as a tuple and passed into the dependent methods as a tuple.
 
+
         @return:    Information concerning the base data of the analysis.  For this base class method, the loop is over the spins and the yielded value is the spin identification string.
         @rtype:     anything
         """
@@ -87,6 +88,7 @@ class API_base:
         """Dummy method for initialising data structures.
 
         This method does nothing!
+
 
         @param data_cont:   The data container.
         @type data_cont:    instance
@@ -508,8 +510,7 @@ class API_base:
     def return_error(self, spin_id):
         """Return the Ri error structure for the corresponding spin.
 
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:  str
         @return:        The array of relaxation data error values.
         @rtype:         list of float
@@ -878,18 +879,14 @@ class API_base:
     def test_grid_ops(self, lower=None, upper=None, inc=None, n=None):
         """Function for testing that the grid search options are reasonable.
 
-        @param lower:       The lower bounds of the grid search which must be equal to the number of
-                            parameters in the model.
-        @type lower:        array of numbers
-        @param upper:       The upper bounds of the grid search which must be equal to the number of
-                            parameters in the model.
-        @type upper:        array of numbers
-        @param inc:         The increments for each dimension of the space for the grid search.  The
-                            number of elements in the array must equal to the number of parameters
-                            in the model.
-        @type inc:          array of int
-        @param n:           The number of parameters in the model.
-        @type n:            int
+        @param lower:   The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:    array of numbers
+        @param upper:   The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:    array of numbers
+        @param inc:     The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:      array of int
+        @param n:       The number of parameters in the model.
+        @type n:        int
         """
 
         # Lower bounds test.
