@@ -794,8 +794,8 @@ class Fetch_docstrings:
         # Write to file.
         ################
 
-        # Start a new page.
-        self.file.write(" \n\n \\newpage")
+        # Some whitespace.
+        self.file.write(" \n\n\n")
 
         # Loop over the data.
         for i in xrange(len(self.section)):
