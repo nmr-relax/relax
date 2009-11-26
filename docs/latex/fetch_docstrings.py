@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2006 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2006, 2009 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,7 +28,7 @@
 from inspect import formatargspec, getargspec, getdoc
 from re import match, search
 import sys
-from string import lowercase, lstrip, punctuation, replace, rstrip, split, upper, whitespace
+from string import letters, lowercase, lstrip, punctuation, replace, rstrip, split, upper, whitespace
 
 # Add the path to the relax base directory.
 sys.path.append(sys.path[0])
@@ -87,6 +87,26 @@ class Fetch_docstrings:
 
         # Close the LaTeX file.
         self.file.close()
+
+
+    def break_functions(self, text):
+        """Allow the function text to be broken nicely across lines.
+
+        The '\' character will be added later by the latex_special_chars() method.
+        """
+
+        # Allow line breaks after the opening bracket.
+        text = replace(text, "(", "(linebreak[0]")
+
+        # Allow line breaks after periods (but not in numbers).
+        for char in letters:
+            text = replace(text, ".%s" % char, ".linebreak[0]%s" % char)
+
+        # Allow line breaks after equal signs.
+        text = replace(text, "=", "=linebreak[0]")
+
+        # Return the modified text.
+        return text
 
 
     def doc_user_class(self, parent_name, parent_object):
@@ -504,6 +524,9 @@ class Fetch_docstrings:
         # Damned backslashes!
         string = replace(string, 'This is a backslash to be replaced at the end of this functioN', '$\\backslash$')
 
+        # Add a backslash to where it really should be.
+        string = replace(string, 'linebreak[0]', '\linebreak[0]')
+
         # Return the new text.
         return string
 
@@ -783,8 +806,9 @@ class Fetch_docstrings:
             # The section type alias.
             st = self.section_type[i]
 
-            # Translate to LaTeX quotation marks.
+            # Allow breaking and translate to LaTeX quotation marks.
             if st == 'arguments' or st == 'example':
+                self.section[i] = self.break_functions(self.section[i])
                 self.section[i] = self.latex_quotes(self.section[i])
 
             # Handle the special LaTeX characters.
@@ -855,7 +879,9 @@ class Fetch_docstrings:
 
             # Defaults.
             elif st == 'arguments':
-                self.file.write("\\textsf{\\textbf{" + self.latex_special_chars(function) + "}" + self.section[i] + "}")
+                self.file.write("\\begin{flushleft}\n")
+                self.file.write("\\textsf{\\textbf{" + self.latex_special_chars(self.break_functions(function)) + "}" + self.section[i] + "}\n")
+                self.file.write("\\end{flushleft}\n")
 
             # Keywords.
             elif st == 'keywords':
@@ -1045,6 +1071,9 @@ class Fetch_docstrings:
 
             # Add the line to the example.
             string = string + ' ' + lstrip(self.docstring_lines[self.i])
+
+        # Allow functions to be broken across lines nicely.
+        string = self.break_functions(string)
 
         # Add the sting to the verbatim section.
         self.section.append(string)
