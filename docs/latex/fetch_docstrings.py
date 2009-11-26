@@ -848,6 +848,11 @@ class Fetch_docstrings:
         # Write to file.
         ################
 
+        # List of tables to be formatted using longtable.
+        longtable = {"molmol.write": [1, 3],
+                     "pymol.write": [2]
+        }
+
         # Some whitespace.
         self.file.write(" \n\n\n")
 
@@ -922,44 +927,85 @@ class Fetch_docstrings:
                 # Split the lines
                 lines = split(self.section[i], '\n')
 
-                # Start the centred table.
-                self.file.write("\\begin{table*} \n ")
-                self.file.write("\\begin{center} \n ")
+                # Long table.
+                if function in longtable.keys() and table_sub_count in longtable[function]:
+                    # Start the longtable environment centred and add the caption and toprule.
+                    self.file.write("\\onecolumn\n ")
+                    self.file.write("\\begin{center}\n ")
+                    self.file.write("\\begin{longtable}{" + (int(lines[0]))*"l" + "}\n\n ")
+                    self.file.write("\\caption{%s table for the %s user function.}\n\n " % (self.num_to_text(table_sub_count), user_fn))
+                    self.file.write("\\label{table%s}\n\n " % self.table_count)
+                    self.file.write("\\\\\n \\toprule \n ")
 
-                # A caption.
-                self.file.write("\\caption{%s table for the %s user function.} \n " % (self.num_to_text(table_sub_count), user_fn))
-
-                # Start the tabular environment and add the toprule.
-                self.file.write("\\begin{tabular}{" + (int(lines[0]))*"l" + "} \n ")
-                self.file.write("\\toprule \n ")
-
-                # Generate the LaTeX headings.
-                elements = split(lines[1], 'SEPARATOR')
-                self.file.write(elements[0])
-                for j in range(1, len(elements)):
-                    self.file.write('&' + elements[j])
-                self.file.write(" \\\\ \n ")
-
-                # Add the midrule.
-                self.file.write("\\midrule \n ")
-
-                # Loop over the main table lines.
-                for line in lines[2:-1]:
-                    # Split columns.
-                    elements = split(line, 'SEPARATOR')
-
-                    # Write the columns.
+                    # Generate the LaTeX headings.
+                    elements = split(lines[1], 'SEPARATOR')
                     self.file.write(elements[0])
                     for j in range(1, len(elements)):
                         self.file.write('&' + elements[j])
                     self.file.write(" \\\\\n ")
 
-                # Add the bottomrule and terminate the tabular and center environment.
-                self.file.write("\\bottomrule \n ")
-                self.file.write("\\label{table%s} \n " % self.table_count)
-                self.file.write("\\end{tabular} \n ")
-                self.file.write("\\end{center} \n ")
-                self.file.write("\\end{table*} \n ")
+                    # Add the midrule and bottomrule.
+                    self.file.write("\\midrule\n ")
+                    self.file.write("\\endhead\n\n ")
+                    self.file.write("\\bottomrule\n ")
+                    self.file.write("\\endfoot\n\n ")
+
+                    # Loop over the main table lines.
+                    for line in lines[2:-1]:
+                        # Split columns.
+                        elements = split(line, 'SEPARATOR')
+
+                        # Write the columns.
+                        self.file.write(elements[0])
+                        for j in range(1, len(elements)):
+                            self.file.write('&' + elements[j])
+                        self.file.write(" \\\\\n ")
+
+                    # Terminate.
+                    self.file.write("\\end{longtable}\n ")
+                    self.file.write("\\end{center}\n ")
+                    self.file.write("\\twocolumn\n ")
+
+                # Normal table.
+                else:
+                    # Start the centred table.
+                    self.file.write("\\begin{table*}\n ")
+                    self.file.write("\\begin{center}\n ")
+
+                    # A caption.
+                    self.file.write("\\caption{%s table for the %s user function.}\n " % (self.num_to_text(table_sub_count), user_fn))
+
+                    # Start the tabular environment and add the toprule.
+                    self.file.write("\\begin{tabular}{" + (int(lines[0]))*"l" + "}\n ")
+                    self.file.write("\\toprule\n ")
+
+                    # Generate the LaTeX headings.
+                    elements = split(lines[1], 'SEPARATOR')
+                    self.file.write(elements[0])
+                    for j in range(1, len(elements)):
+                        self.file.write('&' + elements[j])
+                    self.file.write(" \\\\\n ")
+
+                    # Add the midrule.
+                    self.file.write("\\midrule\n ")
+
+                    # Loop over the main table lines.
+                    for line in lines[2:-1]:
+                        # Split columns.
+                        elements = split(line, 'SEPARATOR')
+
+                        # Write the columns.
+                        self.file.write(elements[0])
+                        for j in range(1, len(elements)):
+                            self.file.write('&' + elements[j])
+                        self.file.write(" \\\\\n ")
+
+                    # Terminate.
+                    self.file.write("\\bottomrule\n ")
+                    self.file.write("\\label{table%s}\n " % self.table_count)
+                    self.file.write("\\end{tabular}\n ")
+                    self.file.write("\\end{center}\n ")
+                    self.file.write("\\end{table*}\n ")
 
                 # Increment the table counters.
                 self.table_count = self.table_count + 1
@@ -1007,7 +1053,7 @@ class Fetch_docstrings:
                     else:
                         # Get the description.
                         elements = split(lines[j], ':')
-                        
+
                         # End of list.
                         if len(elements) != 2:
                             continue
