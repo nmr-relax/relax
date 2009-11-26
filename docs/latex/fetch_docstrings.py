@@ -849,7 +849,7 @@ class Fetch_docstrings:
         ################
 
         # List of tables to be formatted using longtable.
-        longtable = {"molmol.write": [1, 3],
+        longtable = {"molmol.write": [3],
                      "pymol.write": [2]
         }
 
@@ -970,6 +970,7 @@ class Fetch_docstrings:
                 else:
                     # Start the centred table.
                     self.file.write("\\begin{table*}\n ")
+                    self.file.write("\\begin{scriptsize}\n ")
                     self.file.write("\\begin{center}\n ")
 
                     # A caption.
@@ -1005,6 +1006,7 @@ class Fetch_docstrings:
                     self.file.write("\\label{table%s}\n " % self.table_count)
                     self.file.write("\\end{tabular}\n ")
                     self.file.write("\\end{center}\n ")
+                    self.file.write("\\end{scriptsize}\n ")
                     self.file.write("\\end{table*}\n ")
 
                 # Increment the table counters.
