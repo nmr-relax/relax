@@ -934,7 +934,6 @@ class Fetch_docstrings:
                     self.file.write("\\begin{center}\n ")
                     self.file.write("\\begin{longtable}{" + (int(lines[0]))*"l" + "}\n\n ")
                     self.file.write("\\caption{%s table for the %s user function.}\n\n " % (self.num_to_text(table_sub_count), user_fn))
-                    self.file.write("\\label{table%s}\n\n " % self.table_count)
                     self.file.write("\\\\\n \\toprule \n ")
 
                     # Generate the LaTeX headings.
@@ -949,6 +948,9 @@ class Fetch_docstrings:
                     self.file.write("\\endhead\n\n ")
                     self.file.write("\\bottomrule\n ")
                     self.file.write("\\endfoot\n\n ")
+
+                    # Label.
+                    self.file.write("\\label{table%s}\n\n " % self.table_count)
 
                     # Loop over the main table lines.
                     for line in lines[2:-1]:
