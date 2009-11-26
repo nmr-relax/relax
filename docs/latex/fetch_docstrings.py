@@ -867,6 +867,10 @@ class Fetch_docstrings:
                 # Store the user function name.
                 user_fn = self.section[i] + '()'
 
+                # Allow for hyphenation.
+                user_fn = replace(user_fn, '.', '\-.')
+                user_fn = replace(user_fn, '\_', '\-\_')
+
                 # Write out the new subsection.
                 self.file.write(" \n\n \\subsection{" + user_fn + "}")
 
