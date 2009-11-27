@@ -56,7 +56,7 @@ class Test_main(TestCase):
         """Test the model-free duplicate_data() method."""
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
 
 
     def test_duplicate_data2(self):
@@ -66,7 +66,7 @@ class Test_main(TestCase):
         results.read(file='final_results_trunc_1.3', directory=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
 
 
     def test_duplicate_data3(self):
@@ -79,7 +79,7 @@ class Test_main(TestCase):
         structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Duplicate the data.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
 
         # Check the original data.
         self.assert_(hasattr(pipes.get_pipe('orig'), 'structure'))
@@ -98,10 +98,10 @@ class Test_main(TestCase):
         structure.main.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Duplicate the data, model by model.
-        self.inst.duplicate_data('orig', 'new', model_index=0)
-        self.inst.duplicate_data('orig', 'new', model_index=1)
-        self.inst.duplicate_data('orig', 'new', model_index=2)
-        self.inst.duplicate_data('orig', 'new', model_index=3)
+        self.inst.duplicate_data('orig', 'new', model_info=0)
+        self.inst.duplicate_data('orig', 'new', model_info=1)
+        self.inst.duplicate_data('orig', 'new', model_info=2)
+        self.inst.duplicate_data('orig', 'new', model_info=3)
 
 
     def test_duplicate_data_fail1(self):
@@ -124,4 +124,4 @@ class Test_main(TestCase):
         dp.structure.structural_data[0].mol[0].file_name = 'test'
 
         # Duplicate the data and catch the error.
-        self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_index=0)
+        self.assertRaises(RelaxError, self.inst.duplicate_data, 'orig', 'new', model_info=0)

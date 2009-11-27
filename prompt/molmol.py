@@ -373,7 +373,7 @@ class Molmol(User_fn_class):
     #########################
 
     # Write function.
-    write.__doc__ = write.__doc__ + "\n\n" + Molmol.molmol_classic_style_doc + "\n\n"
+    write.__doc__ = write.__doc__ + "\n\n" + Molmol._molmol_classic_style_doc + "\n\n"
 
     # Molmol RGB colour list.
     write.__doc__ = write.__doc__ + "\n\n" + colour.__molmol_colours_prompt_doc__ + "\n\n"

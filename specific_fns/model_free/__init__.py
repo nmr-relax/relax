@@ -38,7 +38,8 @@ from main import Model_free_main
 from mf_minimise import Mf_minimise
 from molmol import Molmol
 from results import Results
-from specific_fns.base_class import Common_functions
+from specific_fns.api_base import API_base
 
-class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, Common_functions):
+
+class Model_free(Model_free_main, Mf_minimise, Molmol, Results, Bmrb, API_base):
     """Parent class containing all the model-free specific functions."""

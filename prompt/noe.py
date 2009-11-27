@@ -142,4 +142,4 @@ class Noe(User_fn_class):
         check.is_str(spectrum_id, 'spectrum identification string')
 
         # Execute the functional code.
-        noe_obj.spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)
+        noe_obj._spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)

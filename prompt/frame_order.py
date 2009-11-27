@@ -95,7 +95,7 @@ class Frame_order(User_fn_class):
         check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        frame_order_obj.cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
+        frame_order_obj._cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
 
 
     def pivot(self, pivot=None):
@@ -127,7 +127,7 @@ class Frame_order(User_fn_class):
         check.is_num_list(pivot_point, 'pivot point', size=3)
 
         # Execute the functional code.
-        frame_order_obj.pivot(pivot=pivot)
+        frame_order_obj._pivot(pivot=pivot)
 
 
     def ref_domain(self, ref=None):
@@ -166,7 +166,7 @@ class Frame_order(User_fn_class):
         check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
-        frame_order_obj.ref_domain(ref=ref)
+        frame_order_obj._ref_domain(ref=ref)
 
 
     def select_model(self, model=None):
@@ -205,4 +205,4 @@ class Frame_order(User_fn_class):
         check.is_str(model, 'Frame Order model')
 
         # Execute the functional code.
-        frame_order_obj.select_model(model=model)
+        frame_order_obj._select_model(model=model)
