@@ -53,6 +53,10 @@ class Specific_setup:
         if function_type == 'mf':
             string = "Model-free analysis"
 
+        # Model-free analysis.
+        if function_type == 'mf_csa':
+            string = "Model-free csa analysis"
+
         # Hybrid models.
         if function_type == 'hybrid':
             string = "hybrid models"
@@ -84,6 +88,10 @@ class Specific_setup:
             # Model-free analysis.
             if function_type == 'mf':
                 function = self.mf_funcs()
+
+            # Model-free analysis.
+            if function_type == 'mf_csa':
+                function = self.mf_csa_funcs()
 
             # Hybrid models.
             if function_type == 'hybrid':
@@ -353,6 +361,154 @@ class Specific_setup:
         # Write results function (XML format).
         #if self.eqi == 'write_xml_results':
         #    return self.relax.specific.model_free.write_xml_results
+
+
+    def mf_csa_funcs(self):
+        """Model-free analysis specific functions."""
+
+        # Back-calculate function.
+        if self.eqi == 'back_calc':
+            return self.relax.specific.model_free_csa.back_calc
+
+        # Calculate function.
+        if self.eqi == 'calculate':
+            return self.relax.specific.model_free_csa.calculate
+
+        # Copy function.
+        if self.eqi == 'copy':
+            return self.relax.specific.model_free_csa.copy
+
+        # Create Monte Carlo data function.
+        if self.eqi == 'create_mc_data':
+            return self.relax.specific.model_free_csa.create_mc_data
+
+        # Duplicate data function.
+        if self.eqi == 'duplicate_data':
+            return self.relax.specific.model_free_csa.duplicate_data
+
+        # Eliminate models.
+        if self.eqi == 'eliminate':
+            return self.relax.specific.model_free_csa.eliminate
+
+        # Grid search function.
+        if self.eqi == 'grid_search':
+            return self.relax.specific.model_free_csa.grid_search
+
+        # Initial Monte Carlo parameter value search function.
+        if self.eqi == 'init_sim_values':
+            return self.relax.specific.model_free_csa.sim_init_values
+
+        # Map bounds function.
+        if self.eqi == 'map_bounds':
+            return self.relax.specific.model_free_csa.map_bounds
+
+        # Minimise function.
+        if self.eqi == 'minimise':
+            return self.relax.specific.model_free_csa.minimise
+
+        # Model statistics.
+        if self.eqi == 'model_stats':
+            return self.relax.specific.model_free_csa.model_statistics
+
+        # Molmol macro creation.
+        if self.eqi == 'molmol_macro':
+            return self.relax.specific.model_free_csa.molmol.macro
+
+        # Number of instances.
+        if self.eqi == 'num_instances':
+            return self.relax.specific.model_free_csa.num_instances
+
+        # Overfit deselect.
+        if self.eqi == 'overfit_deselect':
+            return self.relax.specific.model_free_csa.overfit_deselect
+
+        # Pack Monte Carlo simulation data function.
+        if self.eqi == 'pack_sim_data':
+            return self.relax.specific.model_free_csa.sim_pack_data
+
+        # Parameter names function.
+        if self.eqi == 'param_names':
+            return self.relax.specific.model_free_csa.get_param_names
+
+        # Parameter values function.
+        if self.eqi == 'param_values':
+            return self.relax.specific.model_free_csa.get_param_values
+
+        # Read results file function (Columnar format).
+        if self.eqi == 'read_columnar_results':
+            return self.relax.specific.model_free_csa.read_columnar_results
+
+        # Read results file function (XML format).
+        #if self.eqi == 'read_xml_results':
+        #    return self.relax.specific.model_free_csa.read_xml_results
+
+        # Data returning function.
+        if self.eqi == 'return_data':
+            return self.relax.specific.model_free_csa.return_data
+
+        # Data or parameter name returning function.
+        if self.eqi == 'return_data_name':
+            return self.relax.specific.model_free_csa.return_data_name
+
+        # Data error returning function.
+        if self.eqi == 'return_error':
+            return self.relax.specific.model_free_csa.return_error
+
+        # Factor of conversion between different parameter units returning function.
+        if self.eqi == 'return_conversion_factor':
+            return self.relax.specific.model_free_csa.return_conversion_factor
+
+        # Grace string returning function.
+        if self.eqi == 'return_grace_string':
+            return self.relax.specific.model_free_csa.return_grace_string
+
+        # Selected simulation array returning function.
+        if self.eqi == 'return_selected_sim':
+            return self.relax.specific.model_free_csa.sim_return_selected
+
+        # Simulation chi-squared array returning function.
+        if self.eqi == 'return_sim_chi2':
+            return self.relax.specific.model_free_csa.sim_return_chi2
+
+        # Simulation parameter array returning function.
+        if self.eqi == 'return_sim_param':
+            return self.relax.specific.model_free_csa.sim_return_param
+
+        # String of the external parameter units returning function.
+        if self.eqi == 'return_units':
+            return self.relax.specific.model_free_csa.return_units
+
+        # Value and error returning function.
+        if self.eqi == 'return_value':
+            return self.relax.specific.model_free_csa.return_value
+
+        # Set function.
+        if self.eqi == 'set':
+            return self.relax.specific.model_free_csa.set
+
+        # Set error function.
+        if self.eqi == 'set_error':
+            return self.relax.specific.model_free_csa.set_error
+
+        # Set the selected simulations array.
+        if self.eqi == 'set_selected_sim':
+            return self.relax.specific.model_free_csa.set_selected_sim
+
+        # Skip function.
+        if self.eqi == 'skip_function':
+            return self.relax.specific.model_free_csa.skip_function
+
+        # Unselect function.
+        if self.eqi == 'unselect':
+            return self.relax.specific.model_free_csa.unselect
+
+        # Write results function (Columnar format).
+        if self.eqi == 'write_columnar_results':
+            return self.relax.specific.model_free_csa.write_columnar_results
+
+        # Write results function (XML format).
+        #if self.eqi == 'write_xml_results':
+        #    return self.relax.specific.model_free_csa.write_xml_results
 
 
     def noe(self):

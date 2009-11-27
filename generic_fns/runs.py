@@ -38,7 +38,7 @@ class Runs:
             raise RelaxRunError, run
 
         # List of valid run types.
-        valid = ['jw', 'mf', 'noe', 'relax_fit', 'srls']
+        valid = ['jw', 'mf', 'mf_csa', 'noe', 'relax_fit', 'srls']
 
         # Test if run_type is valid.
         if not run_type in valid:

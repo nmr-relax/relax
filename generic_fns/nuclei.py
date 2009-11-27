@@ -115,3 +115,34 @@ class Nuclei:
 
         # Calculate the ratio of the gyromagnetic ratios.
         self.relax.data.g_ratio = self.relax.data.gh / self.relax.data.gx
+
+
+    def set_gy_values(self, y, xy_data_dict):
+        """Function for setting the gyromagnetic ratio of the Y atom to gy."""
+	
+        # Hyrogen.
+        if match('[Hh]', y):
+            xy_data_dict['gy'] = self.gh()
+
+        # Nitrogen.
+        elif match('[Nn]', y):
+            xy_data_dict['gy'] = self.gn()
+
+        # Carbon
+        elif match('[Cc]', y):
+            xy_data_dict['gy'] = self.gc()
+
+        # Oxygen.
+        elif match('[Oo]', y):
+            xy_data_dict['gy'] = self.go()
+
+        # Phosphate.
+        elif match('[Pp]', y):
+            xy_data_dict['gy'] = self.gp()
+
+        # Incorrect arguement.
+        else:
+            raise RelaxInvalidError, ('Y nucleus', y)
+
+        # Calculate the ratio of the xy_data_dict['gy']romagnetic ratios.
+        xy_data_dict['gy_ratio'] = xy_data_dict['gy'] / self.relax.data.gx

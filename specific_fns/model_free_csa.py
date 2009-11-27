@@ -29,12 +29,12 @@ from string import replace, split
 import sys
 
 from base_class import Common_functions
-from maths_fns.mf import Mf
+from maths_fns.mf_csa import Mf_csa
 from minimise.generic import generic_minimise
 from float import isNaN,isInf 
 
 
-class Model_free(Common_functions):
+class Model_free_csa(Common_functions):
     def __init__(self, relax):
         """Class containing functions specific to model-free analysis."""
 
@@ -493,8 +493,15 @@ class Model_free(Common_functions):
             # Repackage the data.
             if sim_index == None:
                 relax_data = [data.relax_data]
+                cst = [data.cst]
+                csea = [data.csea]
+                csa_data_ax = [data.csa_data_ax]
+                csa_data_by = [data.csa_data_by]
+                csa_data_cz = [data.csa_data_cz]
                 r = [data.r]
                 csa = [data.csa]
+		xy_vect_num = [data.xy_vect_num]
+		xy_data = [data.xy_data]
             else:
                 relax_data = [data.relax_sim_data[sim_index]]
                 r = [data.r_sim[sim_index]]
@@ -515,6 +522,11 @@ class Model_free(Common_functions):
             # Convert to Numeric arrays.
             relax_data = [array(data.relax_data, Float64)]
             relax_error = [array(data.relax_error, Float64)]
+            cst = [array(data.cst, Float64)]
+            csea = [array(data.csea, Float64)]
+            csa_data_ax = [array(data.csa_data_ax, Float64)]
+            csa_data_by = [array(data.csa_data_by, Float64)]
+            csa_data_cz = [array(data.csa_data_cz, Float64)]
 
             # Package the diffusion tensor parameters.
             if self.param_set == 'local_tm':
@@ -540,11 +552,11 @@ class Model_free(Common_functions):
                     diff_params = [diff_data.tm, diff_data.Da, diff_data.Dr, diff_data.alpha, diff_data.beta, diff_data.gamma]
 
             # Initialise the model-free function.
-            self.mf = Mf(init_params=self.param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[data.equation], param_types=[data.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[data.num_frq], frq=[data.frq], num_ri=[data.num_ri], remap_table=[data.remap_table], noe_r1_table=[data.noe_r1_table], ri_labels=[data.ri_labels], gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors, csa_data=csa_data, csa_labels=[data.csa_labels])
+            self.mf_csa = Mf_csa(init_params=self.param_vector, param_set='mf', diff_type=diff_type, diff_params=diff_params, num_res=1, equations=[data.equation], param_types=[data.params], param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=[data.num_frq], frq=[data.frq], num_ri=[data.num_ri], remap_table=[data.remap_table], noe_r1_table=[data.noe_r1_table], ri_labels=[data.ri_labels], gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors, csa_data_ax=csa_data_ax, csa_data_by=csa_data_by, csa_data_cz=csa_data_cz, csa_labels=csa_labels, num_csa=num_csa, cst=cst, csea=csea, xy_vect_num=xy_vect_num, xy_data=xy_data)
 
             # Chi-squared calculation.
             try:
-                chi2 = self.mf.func(self.param_vector)
+                chi2 = self.mf_csa.func(self.param_vector)
             except OverflowError:
                 chi2 = 1e200
 
@@ -566,14 +578,14 @@ class Model_free(Common_functions):
         if not run2 in self.relax.data.run_names:
             raise RelaxNoRunError, run2
 
-        # Test if the run type of run1 is set to 'mf'.
+        # Test if the run type of run1 is set to 'mf_csa'.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run1)]
-        if function_type != 'mf':
+        if function_type != 'mf_csa':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
-        # Test if the run type of run2 is set to 'mf'.
+        # Test if the run type of run2 is set to 'mf_csa'.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(run2)]
-        if function_type != 'mf':
+        if function_type != 'mf_csa':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the sequence data for run1 is loaded.
@@ -656,9 +668,9 @@ class Model_free(Common_functions):
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # Test if the run type is set to 'mf'.
+        # Test if the run type is set to 'mf_csa'.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
-        if function_type != 'mf':
+        if function_type != 'mf_csa':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
@@ -973,9 +985,9 @@ class Model_free(Common_functions):
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # Test if the run type is set to 'mf'.
+        # Test if the run type is set to 'mf_csa'.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
-        if function_type != 'mf':
+        if function_type != 'mf_csa':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if the sequence data is loaded.
@@ -2183,6 +2195,11 @@ class Model_free(Common_functions):
             self.h_count = 0
 
             # Initialise the data structures for the model-free function.
+            cst = []
+            csea = []
+            csa_data_ax = []
+            csa_data_by = []
+            csa_data_cz = []
             relax_data = []
             relax_error = []
             equations = []
@@ -2193,11 +2210,15 @@ class Model_free(Common_functions):
             num_frq = []
             frq = []
             num_ri = []
+            num_csa = []
             remap_table = []
             noe_r1_table = []
             ri_labels = []
+            csa_labels = []
             num_params = []
             xh_unit_vectors = []
+	    xy_vect_num = []
+	    xy_data = []
             if self.param_set == 'local_tm':
                 mf_params = []
             elif self.param_set == 'diff':
@@ -2215,6 +2236,18 @@ class Model_free(Common_functions):
                 num_frq = [1]
                 frq = [[min_options[3]]]
                 num_ri = [1]
+                num_csa = [self.relax.data.res[self.run][index].num_csa]
+                cst = [self.relax.data.res[self.run][index].cst]
+                csea = [self.relax.data.res[self.run][index].csea]
+                csa_data_ax = [self.relax.data.res[self.run][index].csa_data_ax]
+                csa_data_by = [self.relax.data.res[self.run][index].csa_data_by]
+                csa_data_cz = [self.relax.data.res[self.run][index].csa_data_cz]
+                csa_labels = [self.relax.data.res[self.run][index].csa_labels]
+		xy_vect_num = [self.relax.data.res[self.run][index].xy_vect_num]
+		#print self.relax.data.res[self.run][index].xy_vect_num
+		if self.relax.data.res[self.run][index].xy_vect_num > 0:
+		    xy_data = [self.relax.data.res[self.run][index].xy_data]
+		
                 remap_table = [[0]]
                 noe_r1_table = [[None]]
                 ri_labels = [[min_options[1]]]
@@ -2226,6 +2259,7 @@ class Model_free(Common_functions):
                 # Count the number of model-free parameters for the residue index.
                 num_params = [len(self.relax.data.res[self.run][index].params)]
 
+
             # Loop over the number of data sets.
             for j in xrange(num_data_sets):
                 # Set the sequence index.
@@ -2236,7 +2270,6 @@ class Model_free(Common_functions):
 
                 # Alias the data structure.
                 data = self.relax.data.res[self.run][seq_index]
-
                 # Skip unselected residues.
                 if not data.select:
                     continue
@@ -2255,17 +2288,36 @@ class Model_free(Common_functions):
                 # Repackage the data.
                 if sim_index == None:
                     relax_data.append(data.relax_data)
+                    cst.append(data.cst)
+                    csea.append(data.csea)
+                    csa_data_ax.append(data.csa_data_ax)
+                    csa_data_by.append(data.csa_data_by)
+                    csa_data_cz.append(data.csa_data_cz)
                 else:
                     relax_data.append(data.relax_sim_data[sim_index])
+                    cst.append(data.cst)
+                    csea.append(data.csea)
+                    csa_data_ax.append(data.csa_data_ax)
+                    csa_data_by.append(data.csa_data_by)
+                    csa_data_cz.append(data.csa_data_cz)
                 relax_error.append(data.relax_error)
                 equations.append(data.equation)
                 param_types.append(data.params)
                 num_frq.append(data.num_frq)
                 frq.append(data.frq)
                 num_ri.append(data.num_ri)
+                num_csa.append(data.num_csa)
                 remap_table.append(data.remap_table)
                 noe_r1_table.append(data.noe_r1_table)
                 ri_labels.append(data.ri_labels)
+                csa_labels.append(data.csa_labels)
+		if self.param_set != 'local_tm':
+		    xy_vect_num.append(data.xy_vect_num)
+		    if data.xy_vect_num > 0:
+		        xy_data.append(data.xy_data)
+		else:
+		    xy_vect_num.append(0)
+		
                 if sim_index == None or self.param_set == 'diff':
                     r.append(data.r)
                     csa.append(data.csa)
@@ -2294,6 +2346,14 @@ class Model_free(Common_functions):
             for k in xrange(len(relax_data)):
                 relax_data[k] = array(relax_data[k], Float64)
                 relax_error[k] = array(relax_error[k], Float64)
+
+            # Convert to Numeric arrays.
+            for k in xrange(len(csa_data_ax)):
+                cst[k] = array(cst[k], Float64)
+                csea[k] = array(csea[k], Float64)
+                csa_data_ax[k] = array(csa_data_ax[k], Float64)
+                csa_data_by[k] = array(csa_data_by[k], Float64)
+                csa_data_cz[k] = array(csa_data_cz[k], Float64)
 
             # Diffusion tensor type.
             if self.param_set == 'local_tm':
@@ -2327,7 +2387,7 @@ class Model_free(Common_functions):
             # Initialise the function to minimise.
             ######################################
 
-            self.mf = Mf(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors)
+            self.mf_csa = Mf_csa(init_params=self.param_vector, param_set=self.param_set, diff_type=diff_type, diff_params=diff_params, scaling_matrix=self.scaling_matrix, num_res=num_res, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=self.relax.data.gx, gh=self.relax.data.gh, g_ratio=self.relax.data.g_ratio, h_bar=self.relax.data.h_bar, mu0=self.relax.data.mu0, num_params=num_params, vectors=xh_unit_vectors, csa_data_ax=csa_data_ax, csa_data_by=csa_data_by, csa_data_cz=csa_data_cz, csa_labels=csa_labels, num_csa=num_csa, cst=cst, csea=csea, xy_vect_num=xy_vect_num, xy_data=xy_data)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -2355,23 +2415,23 @@ class Model_free(Common_functions):
                     lm_error[index:index+len(relax_error[k])] = relax_error[k]
                     index = index + len(relax_error[k])
 
-                min_options = min_options + (self.mf.lm_dri, lm_error)
+                min_options = min_options + (self.mf_csa.lm_dri, lm_error)
 
 
             # Back-calculation.
             ###################
 
             if min_algor == 'back_calc':
-                return self.mf.calc_ri()
+                return self.mf_csa.calc_ri()
 
 
             # Minimisation.
             ###############
 
             if constraints:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
+                results = generic_minimise(func=self.mf_csa.func, dfunc=self.mf_csa.dfunc, d2func=self.mf_csa.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=print_flag)
             else:
-                results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
+                results = generic_minimise(func=self.mf_csa.func, dfunc=self.mf_csa.dfunc, d2func=self.mf_csa.d2func, args=(), x0=self.param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=print_flag)
             if results == None:
                 return
             self.param_vector, self.func, iter, fc, gc, hc, self.warning = results
@@ -3494,9 +3554,9 @@ class Model_free(Common_functions):
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # Test if the run type is set to 'mf'.
+        # Test if the run type is set to 'mf_csa'.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
-        if function_type != 'mf':
+        if function_type != 'mf_csa':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
@@ -3745,9 +3805,9 @@ class Model_free(Common_functions):
         if not self.run in self.relax.data.run_names:
             raise RelaxNoRunError, self.run
 
-        # Test if the run type is set to 'mf'.
+        # Test if the run type is set to 'mf_csa'.
         function_type = self.relax.data.run_types[self.relax.data.run_names.index(self.run)]
-        if function_type != 'mf':
+        if function_type != 'mf_csa':
             raise RelaxFuncSetupError, self.relax.specific_setup.get_string(function_type)
 
         # Test if sequence data is loaded.
@@ -4977,7 +5037,7 @@ class Model_free(Common_functions):
                     xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                 # Write the line.
-                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, data_set='error', nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
         # Simulation values.
@@ -5161,7 +5221,7 @@ class Model_free(Common_functions):
                         xh_vect = replace(`data.xh_vect.tolist()`, ' ', '')
 
                     # Write the line.
-                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=data.heteronuc, pdb_proton=data.proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
+                    self.write_columnar_line(file=file, num=data.num, name=data.name, select=data.select, select_sim=select_sim, data_set='sim_'+`i`, nucleus=nucleus, model=model, equation=equation, params=params, param_set=self.param_set, s2=s2, s2f=s2f, s2s=s2s, local_tm=local_tm, te=te, tf=tf, ts=ts, rex=rex, r=r, csa=csa, chi2=chi2, i=iter, f=f, g=g, h=h, warn=warn, diff_type=diff_type, diff_params=diff_params, pdb=pdb, pdb_model=pdb_model, pdb_heteronuc=pdb_heteronuc, pdb_proton=pdb_proton, xh_vect=xh_vect, ri_labels=ri_labels, remap_table=remap_table, frq_labels=frq_labels, frq=frq, ri=ri, ri_error=ri_error)
 
 
 

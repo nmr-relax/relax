@@ -24,8 +24,10 @@
 from hybrid import Hybrid
 from jw_mapping import Jw_mapping
 from model_free import Model_free
+from model_free_csa import Model_free_csa
 from noe import Noe
 from relax_data import Rx_data
+from csa_data import CSAx_data
 from relax_fit import Relax_fit
 
 
@@ -40,6 +42,8 @@ class Specific:
         self.hybrid = Hybrid(self.relax)
         self.jw_mapping = Jw_mapping(self.relax)
         self.model_free = Model_free(self.relax)
+        self.model_free_csa = Model_free_csa(self.relax)
         self.noe = Noe(self.relax)
         self.relax_data = Rx_data(self.relax)
+        self.csa_data = CSAx_data(self.relax)
         self.relax_fit = Relax_fit(self.relax)

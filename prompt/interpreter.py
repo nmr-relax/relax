@@ -55,11 +55,13 @@ from diffusion_tensor import Diffusion_tensor
 from grace import Grace
 from jw_mapping import Jw_mapping
 from model_free import Model_free
+from model_free_csa import Model_free_csa
 from molmol import Molmol
 from monte_carlo import Monte_carlo
 from noe import Noe
 from palmer import Palmer
 from relax_data import Relax_data
+from csa_data import Csa_data
 from relax_fit import Relax_fit
 from results import Results
 from run import Run
@@ -112,11 +114,13 @@ class Interpreter:
         self._Grace = Grace(relax)
         self._Jw_mapping = Jw_mapping(relax)
         self._Model_free = Model_free(relax)
+        self._Model_free_csa = Model_free_csa(relax)
         self._Molmol = Molmol(relax)
         self._Monte_carlo = Monte_carlo(relax)
         self._Noe = Noe(relax)
         self._Palmer = Palmer(relax)
         self._Relax_data = Relax_data(relax)
+        self._Csa_data = Csa_data(relax)
         self._Relax_fit = Relax_fit(relax)
         self._Results = Results(relax)
         self._Run = Run(relax)
@@ -169,11 +173,13 @@ class Interpreter:
         grace = self._Grace
         jw_mapping = self._Jw_mapping
         model_free = self._Model_free
+        model_free_csa = self._Model_free_csa
         molmol = self._Molmol
         monte_carlo = self._Monte_carlo
         noe = self._Noe
         palmer = self._Palmer
         relax_data = self._Relax_data
+        csa_data = self._Csa_data
         relax_fit = self._Relax_fit
         results = self._Results
         run = self._Run

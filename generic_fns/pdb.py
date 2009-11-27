@@ -205,6 +205,62 @@ class PDB:
         self.relax.data.res[run][res].xh_vect = xh_vect
 
 
+    def xy_vectors(self, res_num, pdb_res, xy_vect_num):
+        """Function for calculating the XY unit vector from the loaded structure."""
+	
+        # Create a temporary XY vector list for each Y atom.
+	for i in xrange(xy_vect_num):
+            self.relax.data.res[self.run][res_num].xy_data.append({'xy_vect':[], 'gy':0.0, 'gy_ratio':0.0})
+	
+	# Calculate XY vector(s)
+	i = 0
+	for atom in pdb_res.atoms:
+	    if (atom != self.proton) and (atom != self.heteronuc):
+		# Store the Y atom name
+                self.relax.data.res[self.run][res_num].xy_data[i]['name'] = atom
+		
+		# Get the heteronucleus position.
+                posX = pdb_res.atoms[self.heteronuc].position.array
+
+	        # Get the Y atom position
+	        posY = pdb_res.atoms[atom].position.array
+	        
+                # Calculate the XY bond vector.
+                vector = posY - posX
+
+                # Normalisation factor.
+                norm_factor = sqrt(dot(vector, vector))
+
+                # Test for zero length.
+                if norm_factor == 0.0:
+                    if self.print_flag:
+                        print "The XY bond vector for residue " + `self.relax.data.res[self.run][res_num].num` + " is of zero length."
+                    self.relax.data.res[self.run][res_num].xy_data[i]['xy_vect'].append(None)
+
+                # Calculate the normalised vector.
+                else:
+                    self.relax.data.res[self.run][res_num].xy_data[i]['xy_vect'].append(vector / norm_factor)
+		
+                # Test for XY bond length.
+                if pdb_res.atoms[atom].properties.has_key('occupancy'):
+                    # Get the XY bond length.
+                    self.relax.data.res[self.run][res_num].xy_data[i]['r'] = float(pdb_res.atoms[atom].properties['occupancy'])
+                else:
+                    if self.print_flag:
+                        print "The X-" + atom.name + " bond length for residue " + `self.relax.data.res[self.run][res_num].num` + " is of zero length."
+                    self.relax.data.res[self.run][res_num].xy_data[i]['r'].append(None)
+
+                # Test for Y gyromagnetic ratio.
+                if pdb_res.atoms[atom].properties.has_key('element'):
+                    # Get the Y gyromagnetic ratio.
+                    self.relax.generic.nuclei.set_gy_values(pdb_res.atoms[atom].properties['element'], self.relax.data.res[self.run][res_num].xy_data[i])
+                else:
+                    if self.print_flag:
+                        print "The " + atom.name + " element type for residue " + `self.relax.data.res[self.run][res_num].num` + " is empty."
+                    self.relax.data.res[self.run][res_num].xy_data[i]['gy'].append(None)
+
+	        i = i + 1
+
     def vectors(self):
         """Function for calculating the XH unit vector from the loaded structure."""
 
@@ -218,6 +274,10 @@ class PDB:
         # Create a temporary vector list for each residue.
         for i in xrange(len(self.relax.data.res[self.run])):
             self.relax.data.res[self.run][i].xh_vect = []
+
+        # Create a temporary XY vector list for each residue.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            self.relax.data.res[self.run][i].xy_data = []
 
         # Loop over the structures.
         for i in xrange(num_str):
@@ -278,6 +338,14 @@ class PDB:
                     else:
                         self.relax.data.res[self.run][j].xh_vect.append(vector / norm_factor)
 
+	            # Get the number of XY vectors for the residue
+		    xy_vect_num = len(pdb_res.atoms) - 2#-2 for the substracting atoms X and H atoms.
+		    self.relax.data.res[self.run][j].xy_vect_num = xy_vect_num
+		    
+		    # Read in the XY vectors.
+		    if xy_vect_num > 0:
+		        self.xy_vectors(j, pdb_res, xy_vect_num)
+
         # Print out.
         if self.print_flag:
             if num_str > 1:
@@ -305,3 +373,30 @@ class PDB:
 
             # Replace the temporary vector list with the normalised average vector.
             self.relax.data.res[self.run][i].xh_vect = ave_vector / sqrt(dot(ave_vector, ave_vector))
+
+	
+        # Average the vectors and convert xy_vect from an array of vectors to a vector.
+        for i in xrange(len(self.relax.data.res[self.run])):
+            # No vectors.
+            if self.relax.data.res[self.run][i].xy_data == []:
+                del self.relax.data.res[self.run][i].xy_data
+                continue
+
+	    # Average vectors.
+            ave_vector = []
+	    for k in xrange(self.relax.data.res[self.run][i].xy_vect_num):
+                ave_vector.append(zeros(3, Float64))
+
+            # Sum the vectors.
+	    for k in xrange(self.relax.data.res[self.run][i].xy_vect_num):
+                for j in xrange(num_str):
+                    # Sum.
+                    ave_vector[k] = ave_vector[k] + self.relax.data.res[self.run][i].xy_data[k]['xy_vect'][j]
+
+            # Average the vector.
+	    for k in xrange(self.relax.data.res[self.run][i].xy_vect_num):
+                ave_vector[k] = ave_vector[k] / num_str
+
+            # Replace the temporary vector list with the normalised average vector.
+	    for k in xrange(self.relax.data.res[self.run][i].xy_vect_num):
+                self.relax.data.res[self.run][i].xy_data[k]['xy_vect'] = ave_vector[k] / sqrt(dot(ave_vector[k], ave_vector[k]))

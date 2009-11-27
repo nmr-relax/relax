@@ -56,6 +56,7 @@ class Run:
 
             'jw':  Reduced spectral density mapping,
             'mf':  Model-free analysis,
+            'mf_csa':  Model-free analysis with asymmetric CST,
             'noe':  Steady state NOE calculation,
             'relax_fit':  Relaxation curve fitting,
             'srls':  SRLS analysis.
