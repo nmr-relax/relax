@@ -319,188 +319,46 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
     pipes.test()
 
     # Specific functions.
-    return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
-    set_non_spin_params = specific_fns.setup.get_specific_fn('set_non_spin_params', pipes.get_type())
+    default_value = specific_fns.setup.get_specific_fn('default_value', pipes.get_type())
+    get_param_names = specific_fns.setup.get_specific_fn('get_param_names', pipes.get_type())
+    set_param_values = specific_fns.setup.get_specific_fn('set_param_values', pipes.get_type())
 
-    # The parameters have been specified.
-    if param:
-        # Partition the parameters into those which are spin specific and those which are not.
-        spin_params, spin_values, other_params, other_values = partition_params(val, param)
+    # Convert numpy arrays to lists, if necessary.
+    if isinstance(val, ndarray):
+        val = val.tolist()
 
-        # Spin specific parameters.
-        if spin_params:
-            # First test if parameter value already exists, prior to setting any params.
-            if not force:
-                # Loop over the spins.
-                for spin in spin_loop(spin_id):
-                    # Skip deselected spins.
-                    if not spin.select:
-                        continue
+    # Invalid combinations.
+    if (isinstance(val, float) or isinstance(val, int)) and param == None:
+        raise RelaxError("The combination of a single value '%s' without specifying the parameter name is invalid." % val)
+    if isinstance(val, list) and isinstance(param, str):
+        raise RelaxError("Invalid combination:  When multiple values '%s' are specified, either no parameters or a list of parameters must by supplied rather than the single parameter '%s'." % (val, param))
 
-                    # Loop over the parameters.
-                    for param in spin_params:
-                        # Get the value and error.
-                        temp_value, temp_error = return_value(spin, param)
+    # Get the parameter list if needed.
+    if param == None:
+        param = get_param_names()
 
-                        # Data exists.
-                        if temp_value != None or temp_error != None:
-                            raise RelaxValueError((param))
+    # Convert the param to a list if needed.
+    if not isinstance(param, list):
+        param = [param]
 
-            # Loop over the spins.
-            for spin in spin_loop(spin_id):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
+    # Convert the value to a list if needed.
+    if (isinstance(val, float) or isinstance(val, int)):
+        val = [val] * len(param)
 
-                # Set the individual parameter values.
-                for j in xrange(len(spin_params)):
-                    set_spin_params(value=spin_values[j], error=None, spin=spin, param=spin_params[j])
+    # Default values.
+    if val == None:
+        # Loop over the parameters, getting the default values.
+        val = []
+        for i in range(len(param)):
+            val.append(default_value(param[i]))
 
-
-        # All other parameters.
-        if other_params:
-            set_non_spin_params(value=other_values, param=other_params)
-
-
-    # All model parameters (i.e. no parameters have been supplied).
-    else:
-        # Convert val to a list if necessary.
-        if not isinstance(val, list) or not isinstance(val, ndarray):
-            val = [val]
-
-        # Spin specific models.
-        if exists_mol_res_spin_data():
-            # Loop over the spins.
-            for spin in spin_loop(spin_id):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Set the individual parameter values.
-                for j in xrange(len(val)):
-                    set_spin_params(value=val[j], error=None, spin=spin, param=None)
-
-        # Set the non-spin specific parameters.
-        set_non_spin_params(value=val, param=param)
+    # Set the parameter values.
+    for i in range(len(param)):
+        set_param_value(param=param[i], val=val[i], spin_id=spin_id, force=force)
 
     # Reset all minimisation statistics.
     if reset:
         minimise.reset_min_stats()
-
-
-def set_spin_params(value=None, error=None, param=None, scaling=1.0, spin=None):
-    """Set spin specific parameter values.
-
-    @param value:   The value to change the parameter to.
-    @type value:    float or str
-    @param error:   The error value associated with the parameter, also to be set.
-    @type error:    float or str
-    @param param:   The name of the parameter to change.
-    @type param:    str
-    @param scaling: The scaling factor for the value or error parameters.
-    @type scaling:  float
-    @param spin:    The SpinContainer object.
-    @type spin:     SpinContainer
-    """
-
-    # Specific functions.
-    data_init = specific_fns.setup.get_specific_fn('data_init', pipes.get_type())
-    default_value = specific_fns.setup.get_specific_fn('default_value', pipes.get_type())
-    return_data_name = specific_fns.setup.get_specific_fn('return_data_name', pipes.get_type())
-    set_update = specific_fns.setup.get_specific_fn('set_update', pipes.get_type())
-
-
-    # Setting the model parameters prior to minimisation.
-    #####################################################
-
-    if param == None:
-        # The values are supplied by the user:
-        if value:
-            # Test if the length of the value array is equal to the length of the parameter array.
-            if len(value) != len(spin.params):
-                raise RelaxError("The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(spin.params) + ", for spin " + repr(spin.num) + " " + spin.name + ".")
-
-        # Default values.
-        else:
-            # Set 'value' to an empty array.
-            value = []
-
-            # Loop over the parameters.
-            for i in xrange(len(spin.params)):
-                value.append(default_value(spin.params[i]))
-
-        # Loop over the parameters.
-        for i in xrange(len(spin.params)):
-            # Get the object.
-            object_name = return_data_name(spin.params[i])
-            if not object_name:
-                raise RelaxError("The data type " + repr(spin.params[i]) + " does not exist.")
-
-            # Initialise all data if it doesn't exist.
-            if not hasattr(spin, object_name):
-                data_init(spin)
-
-            # Set the value.
-            if value[i] == None:
-                setattr(spin, object_name, None)
-            else:
-                # Catch parameters with string values.
-                try:
-                    value[i] = float(value[i]) * scaling
-                except ValueError:
-                    pass
-
-                # Set the attribute.
-                setattr(spin, object_name, value[i])
-
-
-    # Individual data type.
-    #######################
-
-    else:
-        # Get the object.
-        object_name = return_data_name(param)
-        if not object_name:
-            raise RelaxError("The data type " + repr(param) + " does not exist.")
-
-        # Initialise all data if it doesn't exist.
-        if not hasattr(spin, object_name):
-            data_init(spin)
-
-        # Default value.
-        if value == None:
-            value = default_value(object_name)
-
-        # No default value, hence the parameter cannot be set.
-        if value == None:
-            raise RelaxParamSetError(param)
-
-        # Set the value.
-        if value == None:
-            setattr(spin, object_name, None)
-        else:
-            # Catch parameters with string values.
-            try:
-                value = float(value) * scaling
-            except ValueError:
-                pass
-
-            # Set the attribute.
-            setattr(spin, object_name, value)
-
-        # Set the error.
-        if error != None:
-            # Catch parameters with string values.
-            try:
-                error = float(error) * scaling
-            except ValueError:
-                pass
-
-            # Set the attribute.
-            setattr(spin, object_name+'_err', error)
-
-        # Update the other parameters if necessary.
-        set_update(param=param, spin=spin)
 
 
 def write(param=None, file=None, dir=None, force=False, return_value=None):
