@@ -404,12 +404,12 @@ If you are contemplating major changes, either for a bug fix, to add a completel
 
 
 % Branches.
-\subsection{Branches}
+\section{Branches}
 \index{branches|textbf}
 \index{repository!branches|textbf}
 
 
-\subsubsection{Branch creation}
+\subsection{Branch creation}
 \index{repository!branch creation}
 
 If a change is likely to be disruptive or cause breakages in the program, the use of your own temporary branch is recommended.  This private branch is a complete copy of one of the main development lines wherein you can make changes without disrupting the other developers.  Although called a private branch every change is visible to all other developers and each commit will result in an automatic email to the relax-commits mailing list\index{mailing list!relax-commits}.  Other developers are even able to check out your branch and make modifications to it.  Private branches can also be used for testing ideas.  If the idea does not work the branch can be deleted from the repository (in reality the branch will always exist between the revision numbers of its creation and deletion and can always be resurrected).  For example to create a branch from the main 1.3 development line called \texttt{molmol\_macros} whereby new Molmol macros are to be written, type
@@ -426,7 +426,7 @@ replacing \texttt{xxxxx} with your login name.  You can then check out your priv
 which will create a directory called \texttt{molmol\_macros} containing all the relax source files.  To have the files placed into a different directory, type the name of that directory at the end of the last command.  Modifications can be made to this copy while normal development continues on the main line.
 
 
-\subsubsection{Keeping the branch up to date using \texttt{svnmerge.py}}
+\subsection{Keeping the branch up to date using \texttt{svnmerge.py}}
 \index{svnmerge.py}
 \index{repository!keeping up to date}
 \index{repository!svnmerge.py}
@@ -453,7 +453,7 @@ If conflicts\index{Subversion!conflict} have occurred please refer to the Subver
 \index{Subversion!commit}
 
 
-\subsubsection{Merging the branch back into the main line}
+\subsection{Merging the branch back into the main line}
 \index{repository!merging branch back}
 
 Once you have completed the modifications desired for your branch, all changes which have occurred in the main line have been merged using \texttt{svnmerge.py}, and the changes have been approved for merging back into the main line -- then your branch can be merged.  First check out a copy of the main line,

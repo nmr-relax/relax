@@ -25,9 +25,9 @@
 
 
 # relax module imports.
-from base_class import Common_functions
+from specific_fns.api_base import API_base
 
 
-class SRLS(Common_functions):
+class SRLS(API_base):
     """Class containing functions specific to the SRLS analysis."""
 

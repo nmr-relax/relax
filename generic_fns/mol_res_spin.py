@@ -54,15 +54,7 @@ id_string_doc = """
 Identification string documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is
-
-    #<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]],
-
-where the token elements are
-
-    <mol_name>, the name of the molecule,
-    <res_id>, the residue identifier which can be a number, name, or range of numbers,
-    <atom_id>, the atom or spin system identifier which can be a number, name, or range of numbers.
+The identification string is composed of three components: the molecule id token beginning with the '#' character, the residue id token beginning with the ':' character, and the atom or spin system id token beginning with the '@' character.  Each token can be composed of multiple elements separated by the ',' character and each individual element can either be a number (which must be an integer, in string format), a name, or a range of numbers separated by the '-' character.  Negative numbers are supported.  The full id string specification is '#<mol_name> :<res_id>[, <res_id>[, <res_id>, ...]] @<atom_id>[, <atom_id>[, <atom_id>, ...]]', where the token elements are '<mol_name>', the name of the molecule, '<res_id>', the residue identifier which can be a number, name, or range of numbers, '<atom_id>', the atom or spin system identifier which can be a number, name, or range of numbers.
 
 If one of the tokens is left out then all elements will be assumed to match.  For example if the string does not contain the '#' character then all molecules will match the string.
 
@@ -489,36 +481,6 @@ class Selection(object):
         # Create the union.
         self._union = (select_obj0, select_obj1)
 
-
-
-def __linear_ave(positions):
-    """Perform linear averaging of the atomic positions.
-
-    @param positions:   The atomic positions.  The first index is that of the positions to be
-                        averaged over.  The second index is over the different models.  The last
-                        index is over the x, y, and z coordinates.
-    @type positions:    list of lists of numpy float arrays
-    @return:            The averaged positions as a list of vectors.
-    @rtype:             list of numpy float arrays
-    """
-
-    # Loop over the multiple models.
-    ave = []
-    for model_index in range(len(positions[0])):
-        # Append an empty vector.
-        ave.append(array([0.0, 0.0, 0.0]))
-
-        # Loop over the x, y, and z coordinates.
-        for coord_index in range(3):
-            # Loop over the atomic positions.
-            for atom_index in range(len(positions)):
-                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
-
-            # Average.
-            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
-
-    # Return the averaged positions.
-    return ave
 
 
 def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
@@ -955,7 +917,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
     spin.averaging = averaging
     spin.members = members
     if averaging == 'linear':
-        spin.pos = __linear_ave(positions)
+        spin.pos = linear_ave(positions)
 
 
 def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_name=None):
@@ -1457,6 +1419,36 @@ def molecule_loop(selection=None, pipe=None):
 
         # Yield the molecule data container.
         yield mol
+
+
+def linear_ave(positions):
+    """Perform linear averaging of the atomic positions.
+
+    @param positions:   The atomic positions.  The first index is that of the positions to be
+                        averaged over.  The second index is over the different models.  The last
+                        index is over the x, y, and z coordinates.
+    @type positions:    list of lists of numpy float arrays
+    @return:            The averaged positions as a list of vectors.
+    @rtype:             list of numpy float arrays
+    """
+
+    # Loop over the multiple models.
+    ave = []
+    for model_index in range(len(positions[0])):
+        # Append an empty vector.
+        ave.append(array([0.0, 0.0, 0.0]))
+
+        # Loop over the x, y, and z coordinates.
+        for coord_index in range(3):
+            # Loop over the atomic positions.
+            for atom_index in range(len(positions)):
+                ave[model_index][coord_index] = ave[model_index][coord_index] + positions[atom_index][model_index][coord_index]
+
+            # Average.
+            ave[model_index][coord_index] = ave[model_index][coord_index] / len(positions)
+
+    # Return the averaged positions.
+    return ave
 
 
 def name_molecule(mol_id, name=None, force=False):

@@ -44,13 +44,153 @@ from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.base_class import Common_functions
+from specific_fns.api_base import API_base
 
 
-class Frame_order(Common_functions):
+class Frame_order(API_base):
     """Class containing the specific methods of the Frame Order theories."""
 
-    def __grid_row(self, incs, lower, upper, dist_type=None):
+    def _assemble_param_vector(self):
+        """Assemble and return the parameter vector.
+
+        @return:    The parameter vector.
+        @rtype:     numpy rank-1 array
+        """
+
+        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
+        if cdp.model == 'rigid':
+            return array([cdp.alpha, cdp.beta, cdp.gamma], float64)
+
+        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
+        elif cdp.model == 'iso cone':
+            return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+
+
+    def _back_calc(self):
+        """Back-calculation of the reduced alignment tensor.
+
+        @return:    The reduced alignment tensors.
+        @rtype:     numpy array
+        """
+
+        # Get the parameter vector.
+        param_vector = self._assemble_param_vector()
+
+        # Get the data structures for optimisation using the tensors as base data sets.
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
+
+        # Set up the optimisation function.
+        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
+
+        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
+        target.func(param_vector)
+
+        # Return the reduced tensors.
+        return target.red_tensors_bc
+
+
+    def _cone_pdb(self, size=30.0, file=None, dir=None, inc=40, force=False):
+        """Create a PDB file containing a geometric object representing the Frame Order cone models.
+
+        @param size:        The size of the geometric object in Angstroms.
+        @type size:         float
+        @param inc:         The number of increments for the filling of the cone objects.
+        @type inc:          int
+        @param file:        The name of the PDB file to create.
+        @type file:         str
+        @param dir:         The name of the directory to place the PDB file into.
+        @type dir:          str
+        @param force:       Flag which if set to True will cause any pre-existing file to be
+                            overwritten.
+        @type force:        bool
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test the model.
+        if not cdp.model in ['iso cone']:
+            raise RelaxError("A cone PDB representation of the '%s' model cannot be made." % cdp.model)
+
+        # Test for the data structures.
+        if not hasattr(cdp, 'theta_cone'):
+            raise RelaxError("The cone angle theta_cone does not exist.")
+        if not hasattr(cdp, 'theta_axis'):
+            raise RelaxError("The cone polar angle theta_axis does not exist.")
+        if not hasattr(cdp, 'phi_axis'):
+            raise RelaxError("The cone azimuthal angle phi_axis does not exist.")
+        if not hasattr(cdp, 'pivot'):
+            raise RelaxError("The pivot point for the cone motion has not been set.")
+
+        # The cone axis.
+        cone_axis = zeros(3, float64)
+        generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
+        print(("Cone axis: %s." % cone_axis))
+        print(("Cone angle: %s." % cdp.theta_cone))
+
+        # Cone axis from simulations.
+        num_sim = 0
+        cone_axis_sim = None
+        cone_axis_sim_new = None
+        if hasattr(cdp, 'sim_number'):
+            num_sim = cdp.sim_number
+            cone_axis_sim = zeros((num_sim, 3), float64)
+        for i in range(num_sim):
+            generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
+
+        # Create a positive and negative cone.
+        for factor in [-1, 1]:
+            # Negative prefix.
+            prefix = ''
+            if factor == -1:
+                prefix = 'neg_'
+
+            # The rotation matrix (rotation from the z-axis to the cone axis).
+            R = zeros((3, 3), float64)
+            two_vect_to_R(array([0, 0, 1], float64), cone_axis, R)
+
+            # Mirroring.
+            cone_axis_new = factor*cone_axis
+            if cone_axis_sim != None:
+                cone_axis_sim_new = factor*cone_axis_sim
+            if factor == -1:
+                R = -R
+
+            # Create the structural object.
+            structure = Internal()
+
+            # Add a molecule.
+            structure.add_molecule(name='iso cone')
+
+            # Alias the single molecule from the single model.
+            mol = structure.structural_data[0].mol[0]
+
+            # Add the pivot point.
+            mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
+
+            # Generate the axis vectors.
+            print("\nGenerating the axis vectors.")
+            res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
+
+            # Generate the cone outer edge.
+            print("\nGenerating the cone outer edge.")
+            edge_start_atom = mol.atom_num[-1]+1
+            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
+
+            # Generate the cone cap, and stitch it to the cone edge.
+            print("\nGenerating the cone cap.")
+            cone_start_atom = mol.atom_num[-1]+1
+            generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
+            stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
+
+            # Create the PDB file.
+            print("\nGenerating the PDB file.")
+            pdb_file = open_write_file(prefix+file, dir, force=force)
+            structure.write_pdb(pdb_file)
+            pdb_file.close()
+
+
+    def _grid_row(self, incs, lower, upper, dist_type=None):
         """Set up a row of the grid search for a given parameter.
 
         @param incs:        The number of increments.
@@ -84,7 +224,7 @@ class Frame_order(Common_functions):
             val = (cos(lower) - cos(upper)) / (incs - 1.0)
             for i in range(incs):
                 v[-i-1] = cos(upper) + float(i) * val
-        
+
             # Generate the distribution.
             row = arccos(v)
 
@@ -92,7 +232,7 @@ class Frame_order(Common_functions):
         return list(row)
 
 
-    def __minimise_setup_tensors(self, sim_index=None):
+    def _minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
         @keyword sim_index: The simulation index.  This should be None if normal optimisation is
@@ -111,7 +251,7 @@ class Frame_order(Common_functions):
             raise RelaxError("The reference domain has not been set up.")
         if not hasattr(cdp.align_tensors, 'reduction'):
             raise RelaxError("The tensor reductions have not been specified.")
-        for i, tensor in self.__tensor_loop():
+        for i, tensor in self._tensor_loop():
             if not hasattr(tensor, 'domain'):
                 raise RelaxError("The domain that the '%s' tensor is attached to has not been set" % tensor.name)
 
@@ -123,7 +263,7 @@ class Frame_order(Common_functions):
         full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
-        for i, tensor in self.__tensor_loop(red=False):
+        for i, tensor in self._tensor_loop(red=False):
             # The full tensor.
             full_tensors[5*i + 0] = tensor.Axx
             full_tensors[5*i + 1] = tensor.Ayy
@@ -136,7 +276,7 @@ class Frame_order(Common_functions):
                 full_in_ref_frame[i] = 1
 
         # Loop over the reduced tensors.
-        for i, tensor in self.__tensor_loop(red=True):
+        for i, tensor in self._tensor_loop(red=True):
             # The reduced tensor (simulation data).
             if sim_index != None:
                 red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
@@ -165,7 +305,83 @@ class Frame_order(Common_functions):
         return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
-    def __tensor_loop(self, red=False):
+    def _pivot(self, pivot=None):
+        """Set the pivot point for the 2 body motion.
+
+        @param pivot:   The pivot point of the two bodies (domains, etc.) in the structural
+                        coordinate system.
+        @type pivot:    list of num
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Set the pivot point.
+        cdp.pivot = pivot
+
+        # Convert to floats.
+        for i in range(3):
+            cdp.pivot[i] = float(cdp.pivot[i])
+
+
+    def _ref_domain(self, ref=None):
+        """Set the reference domain for the frame order, multi-domain models.
+
+        @param ref: The reference domain.
+        @type ref:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('Frame order')
+
+        # Test if the reference domain exists.
+        exists = False
+        for tensor_cont in cdp.align_tensors:
+            if hasattr(tensor_cont, 'domain') and tensor_cont.domain == ref:
+                exists = True
+        if not exists:
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
+
+        # Set the reference domain.
+        cdp.ref_domain = ref
+
+        # Update the model.
+        self._update_model()
+
+
+    def _select_model(self, model=None):
+        """Select the Frame Order model.
+
+        @param model:   The Frame Order model.  As of yet, this can only be 'iso cone'.
+        @type model:    str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is already setup.
+        if hasattr(cdp, 'model'):
+            raise RelaxModelError('Frame Order')
+
+        # Test if the model name exists.
+        if not model in ['rigid', 'iso cone']:
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
+
+        # Set the model
+        cdp.model = model
+
+        # Initialise the list of model parameters.
+        cdp.params = []
+
+        # Update the model.
+        self._update_model()
+
+
+    def _tensor_loop(self, red=False):
         """Generator method for looping over the full or reduced tensors.
 
         @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
@@ -193,7 +409,7 @@ class Frame_order(Common_functions):
             yield i, data[list[i][index]]
 
 
-    def __update_model(self):
+    def _update_model(self):
         """Update the model parameters as necessary."""
 
         # Initialise the list of model parameters.
@@ -236,7 +452,7 @@ class Frame_order(Common_functions):
                 cdp.theta_cone = 0.0
 
 
-    def __unpack_opt_results(self, results, sim_index=None):
+    def _unpack_opt_results(self, results, sim_index=None):
         """Unpack and store the Frame Order optimisation results.
 
         @param results:     The results tuple returned by the minfx generic_minimise() function.
@@ -340,35 +556,6 @@ class Frame_order(Common_functions):
             cdp.warning = warning
 
 
-
-    def back_calc(self):
-        """Back-calculation of the reduced alignment tensor.
-
-        @return:                    The peak intensity for the desired relaxation time.
-        @rtype:                     float
-        """
-
-        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
-        if cdp.model == 'rigid':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma], float64)
-
-        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
-        elif cdp.model == 'iso cone':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
-
-        # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
-
-        # Set up the optimisation function.
-        target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
-
-        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        target.func(param_vector)
-
-        # Return the reduced tensors.
-        return target.red_tensors_bc
-
-
     def base_data_loop(self):
         """Generator method for looping nothing.
 
@@ -381,19 +568,22 @@ class Frame_order(Common_functions):
         yield None
 
 
-    def calculate(self, verbosity=None):
-        """Calculate the chi-squared value for the current parameter values."""
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculate the chi-squared value for the current parameter values.
 
-        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
-        if cdp.model == 'rigid':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma], float64)
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index (unused).
+        @type sim_index:    None or int
+        """
 
-        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
-        elif cdp.model == 'iso cone':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+        # Assemble the parameter vector.
+        param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
 
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
@@ -405,118 +595,17 @@ class Frame_order(Common_functions):
         cdp.chi2 = chi2
 
 
-    def cone_pdb(self, size=30.0, file=None, dir=None, inc=40, force=False):
-        """Create a PDB file containing a geometric object representing the Frame Order cone models.
-
-        @param size:        The size of the geometric object in Angstroms.
-        @type size:         float
-        @param inc:         The number of increments for the filling of the cone objects.
-        @type inc:          int
-        @param file:        The name of the PDB file to create.
-        @type file:         str
-        @param dir:         The name of the directory to place the PDB file into.
-        @type dir:          str
-        @param force:       Flag which if set to True will cause any pre-existing file to be
-                            overwritten.
-        @type force:        bool
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test the model.
-        if not cdp.model in ['iso cone']:
-            raise RelaxError("A cone PDB representation of the '%s' model cannot be made." % cdp.model)
-
-        # Test for the data structures.
-        if not hasattr(cdp, 'theta_cone'):
-            raise RelaxError("The cone angle theta_cone does not exist.")
-        if not hasattr(cdp, 'theta_axis'):
-            raise RelaxError("The cone polar angle theta_axis does not exist.")
-        if not hasattr(cdp, 'phi_axis'):
-            raise RelaxError("The cone azimuthal angle phi_axis does not exist.")
-        if not hasattr(cdp, 'pivot'):
-            raise RelaxError("The pivot point for the cone motion has not been set.")
-
-        # The cone axis.
-        cone_axis = zeros(3, float64)
-        generate_vector(cone_axis, cdp.theta_axis, cdp.phi_axis)
-        print(("Cone axis: %s." % cone_axis))
-        print(("Cone angle: %s." % cdp.theta_cone))
-
-        # Cone axis from simulations.
-        num_sim = 0
-        cone_axis_sim = None
-        cone_axis_sim_new = None
-        if hasattr(cdp, 'sim_number'):
-            num_sim = cdp.sim_number
-            cone_axis_sim = zeros((num_sim, 3), float64)
-        for i in range(num_sim):
-            generate_vector(cone_axis_sim[i], cdp.theta_axis_sim[i], cdp.phi_axis_sim[i])
-
-        # Create a positive and negative cone.
-        for factor in [-1, 1]:
-            # Negative prefix.
-            prefix = ''
-            if factor == -1:
-                prefix = 'neg_'
-
-            # The rotation matrix (rotation from the z-axis to the cone axis).
-            R = zeros((3, 3), float64)
-            two_vect_to_R(array([0, 0, 1], float64), cone_axis, R)
-
-            # Mirroring.
-            cone_axis_new = factor*cone_axis
-            if cone_axis_sim != None:
-                cone_axis_sim_new = factor*cone_axis_sim
-            if factor == -1:
-                R = -R
-
-            # Create the structural object.
-            structure = Internal()
-
-            # Add a molecule.
-            structure.add_molecule(name='iso cone')
-
-            # Alias the single molecule from the single model.
-            mol = structure.structural_data[0].mol[0]
-
-            # Add the pivot point.
-            mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
-
-            # Generate the axis vectors.
-            print("\nGenerating the axis vectors.")
-            res_num = generate_vector_residues(mol=mol, vector=cone_axis_new, atom_name='Axis', res_name_vect='AXE', sim_vectors=cone_axis_sim_new, res_num=2, origin=cdp.pivot, scale=size)
-
-            # Generate the cone outer edge.
-            print("\nGenerating the cone outer edge.")
-            edge_start_atom = mol.atom_num[-1]+1
-            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
-
-            # Generate the cone cap, and stitch it to the cone edge.
-            print("\nGenerating the cone cap.")
-            cone_start_atom = mol.atom_num[-1]+1
-            generate_vector_dist(mol=mol, res_name='CON', res_num=3+num_sim, centre=cdp.pivot, R=R, max_angle=cdp.theta_cone, scale=size, inc=inc)
-            stitch_cone_to_edge(mol=mol, cone_start=cone_start_atom, edge_start=edge_start_atom+1, max_angle=cdp.theta_cone, inc=inc)
-
-            # Create the PDB file.
-            print("\nGenerating the PDB file.")
-            pdb_file = open_write_file(prefix+file, dir, force=force)
-            structure.write_pdb(pdb_file)
-            pdb_file.close()
-
-
-    def create_mc_data(self, index):
+    def create_mc_data(self, spin_id=None):
         """Create the Monte Carlo data by back calculating the reduced tensor data.
 
-        @keyword index: Not used.
-        @type index:    None
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
         """
 
         # Back calculate the tensors.
-        red_tensors_bc = self.back_calc()
+        red_tensors_bc = self._back_calc()
 
         # Return the data.
         return red_tensors_bc
@@ -690,7 +779,7 @@ class Frame_order(Common_functions):
                     upper.append(pi)
 
                 # Get the grid row.
-                row = self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
+                row = self._grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
 
                 # Remove the end point.
                 row = row[:-1]
@@ -730,11 +819,11 @@ class Frame_order(Common_functions):
                     # Set the default bounds.
                     if default_bounds:
                         lower.append(0.0)
-                        upper.append(pi * (1.0 - 1.0/incs[i]))
+                        upper.append(pi)
 
             # Get the grid row.
             if not row:
-                row = self.__grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
+                row = self._grid_row(incs[i], lower[i], upper[i], dist_type=dist_type)
 
             # Append the grid row.
             grid.append(row)
@@ -743,7 +832,35 @@ class Frame_order(Common_functions):
         self.minimise(min_algor='grid', min_options=grid, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
+    def map_bounds(self, param, spin_id=None):
+        """Create bounds for the OpenDX mapping function.
+
+        @param param:       The name of the parameter to return the lower and upper bounds of.
+        @type param:        str
+        @param spin_id:     The spin identification string (unused).
+        @type spin_id:      None
+        @return:            The upper and lower bounds of the parameter.
+        @rtype:             list of float
+        """
+
+        # Euler angles.
+        if search('^alpha$', param) or search('^beta$', param) or search('^gamma$', param):
+            return [0.0, 2*pi]
+
+        # Axis spherical coordinate theta.
+        if search('theta[ -_]axis', param):
+            return [0.0, pi]
+
+        # Axis spherical coordinate phi.
+        if search('phi[ -_]axis', param):
+            return [0.0, 2*pi]
+
+        # Cone angle.
+        if search('theta[ -_]cone', param):
+            return [0.0, pi]
+
+
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation function.
 
         @param min_algor:       The minimisation algorithm to use.
@@ -769,6 +886,12 @@ class Frame_order(Common_functions):
         @param sim_index:       The index of the simulation to optimise.  This should be None if
                                 normal optimisation is desired.
         @type sim_index:        None or int
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:              array of int
         """
 
         # Constraints not implemented yet.
@@ -784,16 +907,11 @@ class Frame_order(Common_functions):
             # Throw a warning.
             warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
 
-        # The rigid model initial parameter vector (the cone axis angles and the cone angle).
-        if cdp.model == 'rigid':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma], float64)
-
-        # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
-        elif cdp.model == 'iso cone':
-            param_vector = array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+        # Assemble the parameter vector.
+        param_vector = self._assemble_param_vector()
 
         # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index)
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index)
 
         # Set up the optimisation function.
         target = frame_order.Frame_order(model=cdp.model, full_tensors=full_tensors, red_tensors=red_tensors, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame)
@@ -807,7 +925,7 @@ class Frame_order(Common_functions):
             results = generic_minimise(func=target.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
-        self.__unpack_opt_results(results, sim_index)
+        self._unpack_opt_results(results, sim_index)
 
 
     def model_loop(self):
@@ -825,107 +943,131 @@ class Frame_order(Common_functions):
         yield None
 
 
-    def pivot(self, pivot=None):
-        """Set the pivot point for the 2 body motion.
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
+        """Return the k, n, and chi2 model statistics.
 
-        @param pivot:   The pivot point of the two bodies (domains, etc.) in the structural
-                        coordinate system.
-        @type pivot:    list of num
+        k - number of parameters.
+        n - number of data points.
+        chi2 - the chi-squared value.
+
+
+        @keyword model_info:    Unused.
+        @type model_info:       None
+        @keyword spin_id:       The spin identification string (unused).
+        @type spin_id:          None
+        @keyword global_stats:  Unused.
+        @type global_stats:     None
+        @return:                The optimisation statistics, in tuple format, of the number of
+                                parameters (k), the number of data points (n), and the chi-squared
+                                value (chi2).
+        @rtype:                 tuple of (int, int, float)
         """
 
-        # Test if the current data pipe exists.
-        pipes.test()
+        # Count the number of parameters.
+        param_vector = self._assemble_param_vector()
+        k = len(param_vector)
 
-        # Set the pivot point.
-        cdp.pivot = pivot
+        # The number of data points.
+        n = len(cdp.align_tensors.reduction)
 
-        # Convert to floats.
-        for i in range(3):
-            cdp.pivot[i] = float(cdp.pivot[i])
+        # The chi2 value.
+        if not hasattr(cdp, 'chi2'):
+            raise RelaxError("Statistics are not available, most likely because the model has not been optimised.")
+        chi2 = cdp.chi2
+
+        # Return the data.
+        return k, n, chi2
 
 
-    def ref_domain(self, ref=None):
-        """Set the reference domain for the frame order, multi-domain models.
+    def return_data_name(self, param):
+        """Return a unique identifying string for the Frame order parameter.
 
-        @param ref: The reference domain.
-        @type ref:  str
+        @param param:   The Frame order parameter.
+        @type param:    str
+        @return:        The unique parameter identifying string.
+        @rtype:         str
         """
 
-        # Test if the current data pipe exists.
-        pipes.test()
+        # Euler angle alpha.
+        if search('^alpha$', param):
+            return 'alpha'
 
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('Frame order')
+        # Euler angle beta.
+        if search('^beta$', param):
+            return 'beta'
 
-        # Test if the reference domain exists.
-        exists = False
-        for tensor_cont in cdp.align_tensors:
-            if hasattr(tensor_cont, 'domain') and tensor_cont.domain == ref:
-                exists = True
-        if not exists:
-            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
+        # Euler angle gamma.
+        if search('^gamma$', param):
+            return 'gamma'
 
-        # Set the reference domain.
-        cdp.ref_domain = ref
+        # Axis spherical coordinate theta.
+        if search('theta[ -_]axis', param):
+            return 'theta_axis'
 
-        # Update the model.
-        self.__update_model()
+        # Axis spherical coordinate phi.
+        if search('phi[ -_]axis', param):
+            return 'phi_axis'
+
+        # Cone angle.
+        if search('theta[ -_]cone', param):
+            return 'theta_cone'
 
 
-    def return_error(self, index):
+    def return_error(self, spin_id):
         """Return the alignment tensor error structure.
 
-        @param index:   Not used.
-        @type index:    None
-        @return:        The array of relaxation data error values.
+        @param spin_id: The information yielded by the base_data_loop() generator method.
+        @type spin_id:  None
+        @return:        The array of tensor error values.
         @rtype:         list of float
         """
 
         # Get the tensor data structures.
-        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors()
+        full_tensors, red_tensors, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors()
 
         # Return the errors.
         return red_tensor_err
 
 
-    def select_model(self, model=None):
-        """Select the Frame Order model.
+    def return_units(self, param, spin=None, spin_id=None):
+        """Return a string representing the parameters units.
 
-        @param model:   The Frame Order model.  As of yet, this can only be 'iso cone'.
-        @type model:    str
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container (unused).
+        @type spin:     None
+        @param spin_id: The spin identification string (unused).
+        @type spin_id:  None
+        @return:        The parameter units string.
+        @rtype:         str
         """
 
-        # Test if the current data pipe exists.
-        pipes.test()
+        # Euler angles.
+        if search('^alpha$', param) or search('^beta$', param) or search('^gamma$', param):
+            return 'rad'
 
-        # Test if the model is already setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('Frame Order')
+        # Axis spherical coordinate theta.
+        if search('theta[ -_]axis', param):
+            return 'rad'
 
-        # Test if the model name exists.
-        if not model in ['rigid', 'iso cone']:
-            raise RelaxError("The model name " + repr(model) + " is invalid.")
+        # Axis spherical coordinate phi.
+        if search('phi[ -_]axis', param):
+            return 'rad'
 
-        # Set the model
-        cdp.model = model
-
-        # Initialise the list of model parameters.
-        cdp.params = []
-
-        # Update the model.
-        self.__update_model()
+        # Cone angle.
+        if search('theta[ -_]cone', param):
+            return 'rad'
 
 
-    def set_error(self, nothing, index, error):
+    def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
-        @param nothing: Not used.
-        @type nothing:  None
-        @param index:   The index of the parameter to set the errors for.
-        @type index:    int
-        @param error:   The error value.
-        @type error:    float
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
+        @param index:       The index of the parameter to set the errors for.
+        @type index:        int
+        @param error:       The error value.
+        @type error:        float
         """
 
         # Parameter increment counter.
@@ -941,11 +1083,11 @@ class Frame_order(Common_functions):
             inc = inc + 1
 
 
-    def set_selected_sim(self, index, select_sim):
+    def set_selected_sim(self, model_info, select_sim):
         """Set the simulation selection flag for the spin.
 
-        @param index:       Not used.
-        @type index:        None
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
         """
@@ -1013,11 +1155,11 @@ class Frame_order(Common_functions):
                 sim_object.append(deepcopy(getattr(cdp, object_name)))
 
 
-    def sim_pack_data(self, index, sim_data):
+    def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param index:       Not used.
-        @type index:        None
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      None
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float
         """
@@ -1026,7 +1168,7 @@ class Frame_order(Common_functions):
         sim_data = transpose(sim_data)
 
         # Loop over the reduced tensors.
-        for i, tensor in self.__tensor_loop(red=True):
+        for i, tensor in self._tensor_loop(red=True):
             # Set the reduced tensor simulation data.
             tensor.Axx_sim = sim_data[5*i + 0]
             tensor.Ayy_sim = sim_data[5*i + 1]
@@ -1035,11 +1177,11 @@ class Frame_order(Common_functions):
             tensor.Ayz_sim = sim_data[5*i + 4]
 
 
-    def sim_return_param(self, nothing, index):
+    def sim_return_param(self, model_info, index):
         """Return the array of simulation parameter values.
 
-        @param nothing:     Not used.
-        @type nothing:      None
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         """
@@ -1057,11 +1199,11 @@ class Frame_order(Common_functions):
             inc = inc + 1
 
 
-    def sim_return_selected(self, nothing):
+    def sim_return_selected(self, model_info):
         """Return the array of selected simulation flags for the spin.
 
-        @param nothing:     Not used.
-        @type nothing:      None
+        @param model_info:  The model information originating from model_loop() (unused).
+        @type model_info:   None
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """

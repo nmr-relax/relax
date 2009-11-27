@@ -34,83 +34,6 @@ from relax_errors import RelaxError
 import specific_fns
 
 
-def reset_min_stats(data_pipe=None, spin=None):
-    """Function for resetting the minimisation statistics.
-
-    @param data_pipe:   The name of the data pipe to reset the minimisation statisics of.  This
-                        defaults to the current data pipe.
-    @type data_pipe:    str
-    @param spin:        The spin data container if spin specific data is to be reset.
-    @type spin:         SpinContainer
-    """
-
-    # The data pipe.
-    if data_pipe == None:
-        data_pipe = pipes.cdp_name()
-
-    # Get the data pipe.
-    dp = pipes.get_pipe(data_pipe)
-
-
-    # Global minimisation statistics.
-    #################################
-
-    # Chi-squared.
-    if hasattr(dp, 'chi2'):
-        dp.chi2 = None
-
-    # Iteration count.
-    if hasattr(dp, 'iter'):
-        dp.iter = None
-
-    # Function count.
-    if hasattr(dp, 'f_count'):
-        dp.f_count = None
-
-    # Gradient count.
-    if hasattr(dp, 'g_count'):
-        dp.g_count = None
-
-    # Hessian count.
-    if hasattr(dp, 'h_count'):
-        dp.h_count = None
-
-    # Warning.
-    if hasattr(dp, 'warning'):
-        dp.warning = None
-
-
-    # Sequence specific minimisation statistics.
-    ############################################
-
-    # Loop over all spins.
-    for spin in spin_loop():
-        # Chi-squared.
-        if hasattr(spin, 'chi2'):
-            spin.chi2 = None
-
-        # Iteration count.
-        if hasattr(spin, 'iter'):
-            spin.iter = None
-
-        # Function count.
-        if hasattr(spin, 'f_count'):
-            spin.f_count = None
-
-        # Gradient count.
-        if hasattr(spin, 'g_count'):
-            spin.g_count = None
-
-        # Hessian count.
-        if hasattr(spin, 'h_count'):
-            spin.h_count = None
-
-        # Warning.
-        if hasattr(spin, 'warning'):
-            spin.warning = None
-
-
-
 def calc(verbosity=1):
     """Function for calculating the function value.
 
@@ -251,6 +174,82 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
 
     # Execute the queued elements.
     processor_box.processor.run_queue()
+
+
+def reset_min_stats(data_pipe=None, spin=None):
+    """Function for resetting the minimisation statistics.
+
+    @param data_pipe:   The name of the data pipe to reset the minimisation statisics of.  This
+                        defaults to the current data pipe.
+    @type data_pipe:    str
+    @param spin:        The spin data container if spin specific data is to be reset.
+    @type spin:         SpinContainer
+    """
+
+    # The data pipe.
+    if data_pipe == None:
+        data_pipe = pipes.cdp_name()
+
+    # Get the data pipe.
+    dp = pipes.get_pipe(data_pipe)
+
+
+    # Global minimisation statistics.
+    #################################
+
+    # Chi-squared.
+    if hasattr(dp, 'chi2'):
+        dp.chi2 = None
+
+    # Iteration count.
+    if hasattr(dp, 'iter'):
+        dp.iter = None
+
+    # Function count.
+    if hasattr(dp, 'f_count'):
+        dp.f_count = None
+
+    # Gradient count.
+    if hasattr(dp, 'g_count'):
+        dp.g_count = None
+
+    # Hessian count.
+    if hasattr(dp, 'h_count'):
+        dp.h_count = None
+
+    # Warning.
+    if hasattr(dp, 'warning'):
+        dp.warning = None
+
+
+    # Sequence specific minimisation statistics.
+    ############################################
+
+    # Loop over all spins.
+    for spin in spin_loop():
+        # Chi-squared.
+        if hasattr(spin, 'chi2'):
+            spin.chi2 = None
+
+        # Iteration count.
+        if hasattr(spin, 'iter'):
+            spin.iter = None
+
+        # Function count.
+        if hasattr(spin, 'f_count'):
+            spin.f_count = None
+
+        # Gradient count.
+        if hasattr(spin, 'g_count'):
+            spin.g_count = None
+
+        # Hessian count.
+        if hasattr(spin, 'h_count'):
+            spin.h_count = None
+
+        # Warning.
+        if hasattr(spin, 'warning'):
+            spin.warning = None
 
 
 def return_conversion_factor(stat_type, spin):

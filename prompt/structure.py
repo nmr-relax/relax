@@ -204,6 +204,55 @@ class Structure(User_fn_class):
         generic_fns.structure.geometric.create_vector_dist(length=length, symmetry=symmetry, file=file, dir=dir, force=force)
 
 
+    def get_pos(self, spin_id=None, ave_pos=True):
+        """Extract the atomic positions from the loaded structures for the given spins.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        spin_id:  The spin identification string.
+
+        ave_pos:  A flag specifying if the position of the atom is to be averaged across models.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function allows the atomic positions of the spins to be extracted from the loaded
+        structures.  This is automatically performed by the structure.load_spins() user function,
+        but if the sequence information is generated in other ways, this user function allows the
+        structural information to be obtained.
+
+        If the ave_pos flag is True, the average position of all models will be loaded into the spin
+        container.  If False, then the positions from all models will be loaded.
+
+
+        Example
+        ~~~~~~~
+
+        For a model-free backbone amide nitrogen analysis whereby the N spins have already been
+        created, to obtain the backbone N positions from the file '1F3Y.pdb' (which is a single
+        protein), type the following two user functions:
+
+        relax> structure.read_pdb('1F3Y.pdb')
+        relax> structure.get_pos(spin_id='@N')
+        """
+
+        # Function intro text.
+        if self.__relax__.interpreter.intro:
+            text = sys.ps3 + "structure.get_pos("
+            text = text + "spin_id=" + repr(spin_id)
+            text = text + ", ave_pos=" + repr(ave_pos) + ")"
+            print(text)
+
+        # The argument checks.
+        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        check.is_bool(ave_pos, 'average position flag')
+
+        # Execute the functional code.
+        generic_fns.structure.main.get_pos(spin_id=spin_id, ave_pos=ave_pos)
+
+
     def delete(self):
         """Delete all structural information from the current data pipe.
 
@@ -241,7 +290,7 @@ class Structure(User_fn_class):
 
         combine_models:  A flag which specifies if spins from separate models should be combined.
 
-        ave_pos:  A flag specifying if the position of the atom is to be averaged.
+        ave_pos:  A flag specifying if the position of the atom is to be averaged across models.
 
 
         Description
@@ -256,15 +305,15 @@ class Structure(User_fn_class):
         If the combine_models flag is True, then the spins from only a single structure from the
         ensemble of models will be taken.  If False, then spins will be loaded for each model.
 
-        If the ave_pos flag is True, the average position of all structures will be loaded into the spin
-        container.  If False, then the positions from all structures will be loaded.
+        If the ave_pos flag is True, the average position of all models will be loaded into the spin
+        container.  If False, then the positions from all models will be loaded.
 
 
         Example
         ~~~~~~~
 
         For a model-free backbone amide nitrogen analysis, to load just the backbone N sequence from
-        the file '1F3Y.pdb' (which is a single protein), type the follow two user functions:
+        the file '1F3Y.pdb' (which is a single protein), type the following two user functions:
 
         relax> structure.read_pdb('1F3Y.pdb')
         relax> structure.load_spins(spin_id='@N')
@@ -278,7 +327,6 @@ class Structure(User_fn_class):
         relax> structure.load_spins(spin_id=':G@C8&@N1')
         relax> structure.load_spins(spin_id=':C@C5&@C6')
         relax> structure.load_spins(spin_id=':U@N3&@C5&@C6')
-
         """
 
         # Function intro text.

@@ -57,10 +57,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
 
     # Attempt to retrieve the function.
     try:
-        # Back-calculate function.
-        if eqi == 'back_calc':
-            function = inst.back_calc
-
         # Base data loop generator function.
         if eqi == 'base_data_loop':
             function = inst.base_data_loop
@@ -68,10 +64,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Calculate function.
         if eqi == 'calculate':
             function = inst.calculate
-
-        # Copy function.
-        if eqi == 'copy':
-            function = inst.copy
 
         # Create Monte Carlo data function.
         if eqi == 'create_mc_data':
@@ -232,14 +224,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Deselection function.
         if eqi == 'deselect':
             function = inst.deselect
-
-        # Write results function (Columnar format).
-        if eqi == 'write_columnar_results':
-            function = inst.write_columnar_results
-
-        # Write results function (XML format).
-        #if eqi == 'write_xml_results':
-        #    function = inst.write_xml_results
 
     # Catch if the function is missing.
     except AttributeError:

@@ -329,10 +329,6 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
 
         # Spin specific parameters.
         if spin_params:
-            # Test if the sequence data is loaded.
-            if not exists_mol_res_spin_data():
-                raise RelaxNoSequenceError
-
             # First test if parameter value already exists, prior to setting any params.
             if not force:
                 # Loop over the spins.
