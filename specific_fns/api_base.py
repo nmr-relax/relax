@@ -672,18 +672,21 @@ class API_base:
             inc = inc + 1
 
 
-    def set_non_spin_params(self, value=None, param=None):
-        """Base class method which complains loudly if anything is supplied to it.
+    def set_param_values(self, param=None, value=None, spin_id=None, force=True):
+        """Prototype method for setting model parameter values.
 
-        @param value:   The parameter values.
-        @type value:    None, number, or list of numbers
-        @param param:   The parameter names.
-        @type param:    None, str, or list of str
+        @keyword param:     The parameter name.
+        @type param:        str
+        @keyword value:     The parameter value.
+        @type value:        number
+        @keyword spin_id:   The spin identification string, only used for spin specific parameters.
+        @type spin_id:      None or str
+        @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
+        @type force:        bool
         """
 
-        # Throw a RelaxError.
-        if value or param:
-            raise RelaxError("Do not know how to handle the non-spin specific parameters " + repr(param) + " with the values " + repr(value))
+        # Not implemented.
+        raise RelaxImplementError
 
 
     def set_selected_sim(self, model_info, select_sim):
