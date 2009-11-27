@@ -24,7 +24,6 @@
 __all__ = ['align_tensor',
            'angles',
            'base_class',
-           'check',
            'command',
            'consistency_tests',
            'dasha',
