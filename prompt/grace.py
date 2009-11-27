@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from doc_string import docs
 from generic_fns import grace, minimise
 from specific_fns.model_free import Model_free

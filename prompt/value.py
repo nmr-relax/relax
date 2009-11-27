@@ -30,7 +30,7 @@ import sys
 # relax module imports.
 from doc_string import docs
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import diffusion_tensor
 from generic_fns import value
 from relax_errors import RelaxError

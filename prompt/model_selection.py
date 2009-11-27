@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from generic_fns import model_selection
 
 

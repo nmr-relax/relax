@@ -30,7 +30,7 @@ from types import FunctionType
 
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from generic_fns import eliminate
 from relax_errors import RelaxFunctionError, RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
 from specific_fns.model_free import Model_free

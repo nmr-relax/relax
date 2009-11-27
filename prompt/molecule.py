@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns.mol_res_spin import copy_molecule, create_molecule, delete_molecule, display_molecule, id_string_doc, name_molecule
 
 

@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 import colour
 from generic_fns import molmol
 from specific_fns.model_free.molmol import Molmol

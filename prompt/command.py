@@ -24,7 +24,7 @@
 import os
 
 # relax module imports.
-import check
+import arg_check
 
 
 class Lh:

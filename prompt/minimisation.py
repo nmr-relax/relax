@@ -30,7 +30,7 @@ import sys
 
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from minfx.generic import generic_minimise
 from generic_fns import minimise
 from relax_errors import RelaxError, RelaxNoneError, RelaxStrError
