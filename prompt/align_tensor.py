@@ -375,6 +375,8 @@ class Align_tensor(User_fn_class):
         which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz}
         layed out as:
 
+        -----
+
             | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
             | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
             | Sxx3 Syy3 Sxy3 Sxz3 Syz3 |
@@ -383,9 +385,13 @@ class Align_tensor(User_fn_class):
             |  .    .    .    .    .   |
             | SxxN SyyN SxyN SxzN SyzN |
 
+        -----
+
         If basis_set is set to 1, the geometric basis set consisting of the stretching and skewing
         parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.
         The matrix is:
+
+        -----
 
             | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
             | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
@@ -395,10 +401,16 @@ class Align_tensor(User_fn_class):
             |  .     .     .    .    .   |
             | SzzN SxxyyN SxyN SxzN SyzN |
 
+        -----
+
         The relationships between the geometric and unitary basis sets are:
+
+        -----
 
             Szz = - Sxx - Syy,
             Sxxyy = Sxx - Syy,
+
+        -----
 
         The SVD values and condition number are dependendent upon the basis set chosen.
         """

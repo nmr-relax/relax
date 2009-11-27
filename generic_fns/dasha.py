@@ -84,7 +84,7 @@ def create(algor='LM', dir=None, force=False):
         raise RelaxNoSequenceError
 
     # Determine the parameter set.
-    model_type = model_free_obj.determine_model_type()
+    model_type = model_free_obj._determine_model_type()
 
     # Test if diffusion tensor data for the data_pipe exists.
     if model_type != 'local_tm' and not hasattr(cdp, 'diff_tensor'):

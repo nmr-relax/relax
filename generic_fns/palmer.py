@@ -632,7 +632,7 @@ def extract(dir, spin_id=None):
         raise RelaxFileError('Modelfree4', dir + sep+'mfout')
 
     # Determine the parameter set.
-    model_type = model_free_obj.determine_model_type()
+    model_type = model_free_obj._determine_model_type()
 
     # Open the file.
     mfout_file = open(dir + sep+'mfout', 'r')

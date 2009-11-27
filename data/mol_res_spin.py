@@ -31,7 +31,7 @@ from re import match
 from float import floatAsByteArray
 import generic_fns
 from prototype import Prototype
-from relax_errors import RelaxError, RelaxFromXMLNotEmptyError
+from relax_errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
 from relax_xml import fill_object_contents, xml_to_object
 import specific_fns
 
@@ -234,7 +234,7 @@ class SpinList(list):
 
             # Get the spin specific object names and loop over them to get their descriptions.
             object_info = []
-            if data_names:
+            try:
                 for name in data_names(error_names=True, sim_names=True):
                     # Get the description.
                     if return_data_desc:
@@ -244,6 +244,8 @@ class SpinList(list):
 
                     # Append the two.
                     object_info.append([name, desc])
+            except RelaxImplementError:
+                pass
 
             # Add the ordered objects.
             blacklist = []
