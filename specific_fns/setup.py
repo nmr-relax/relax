@@ -89,6 +89,14 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'eliminate':
             function = inst.eliminate
 
+        # Parameter names function.
+        if eqi == 'get_param_names':
+            function = inst.get_param_names
+
+        # Parameter values function.
+        if eqi == 'get_param_values':
+            function = inst.get_param_values
+
         # Grid search function.
         if eqi == 'grid_search':
             function = inst.grid_search
@@ -140,14 +148,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Pack Monte Carlo simulation data function.
         if eqi == 'pack_sim_data':
             function = inst.sim_pack_data
-
-        # Parameter names function.
-        if eqi == 'param_names':
-            function = inst.get_param_names
-
-        # Parameter values function.
-        if eqi == 'param_values':
-            function = inst.get_param_values
 
         # Read results file function (Columnar format).
         if eqi == 'read_columnar_results':
