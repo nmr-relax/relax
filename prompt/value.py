@@ -274,8 +274,8 @@ class Value(User_fn_class):
         |       |       |                                                                          |
         |   n   | None  | This case is used to set the model parameters prior to minimisation or   |
         |       |       | calculation.  The length of the val array must be equal to the number    |
-        |       |       | of model parameters for an individual residue.  The parameters will be   |
-        |       |       | set to the corresponding number.                                         |
+        |       |       | of model parameters.  The parameters will be set to the corresponding    |
+        |       |       | number.                                                                  |
         |       |       |                                                                          |
         | None  |   1   | The parameter matching the string will be set to the default value.      |
         |       |       |                                                                          |
@@ -296,7 +296,7 @@ class Value(User_fn_class):
         ~~~~~~~~~~~~~~~~~~~
 
         If the 'spin_id' argument is left as the default of None, then the function will be applied
-        to all spins.  If the data is global non-residue specific data, such as diffusion tensor
+        to all spins.  If the data is global non-spin specific data, such as diffusion tensor
         parameters, supplying the spin identifier will terminate the program with an error.
 
 
