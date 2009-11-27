@@ -56,6 +56,30 @@ class API_base:
             yield spin_id
 
 
+    def bmrb_read(self, file_path, version=None):
+        """Prototype method for reading the data from a BMRB NMR-STAR v3.1 formatted file.
+
+        @param file_path:   The full file path.
+        @type file_path:    str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
+    def bmrb_write(self, file_path, version=None):
+        """Prototype method for writing the data to a BMRB NMR-STAR formatted file.
+
+        @param file_path:   The full file path.
+        @type file_path:    str
+        @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+        @type version:      str
+        """
+
+        # Not implemented.
+        raise RelaxImplementError
+
+
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Prototype method for the calculation of the chi-squared value.
 
