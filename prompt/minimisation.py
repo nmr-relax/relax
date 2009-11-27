@@ -56,7 +56,7 @@ class Minimisation(Basic_class):
             print(text)
 
         # The argument checks.
-        check.is_int(verbosity, 'verbosity level')
+        arg_check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.calc(verbosity=verbosity)
@@ -97,11 +97,11 @@ class Minimisation(Basic_class):
             print(text)
 
         # The argument checks.
-        check.is_num_list(lower, 'lower bounds', can_be_none=True)
-        check.is_num_list(upper, 'upper bounds', can_be_none=True)
-        check.is_int_or_int_list(inc, 'incrementation value')
-        check.is_bool(constraints, 'constraints flag')
-        check.is_int(verbosity, 'verbosity level')
+        arg_check.is_num_list(lower, 'lower bounds', can_be_none=True)
+        arg_check.is_num_list(upper, 'upper bounds', can_be_none=True)
+        arg_check.is_int_or_int_list(inc, 'incrementation value')
+        arg_check.is_bool(constraints, 'constraints flag')
+        arg_check.is_int(verbosity, 'verbosity level')
 
         # Execute the functional code.
         minimise.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
@@ -279,12 +279,12 @@ class Minimisation(Basic_class):
                 raise RelaxError("Unknown keyword argument " + repr(key) + ".")
 
         # The argument checks.
-        check.is_num(func_tol, 'function tolerance')
-        check.is_num(grad_tol, 'gradient tolerance', can_be_none=True)
-        check.is_int(max_iterations, 'maximum number of iterations')
-        check.is_bool(constraints, 'constraints flag')
-        check.is_bool(scaling, 'diagonal scaling flag')
-        check.is_int(verbosity, 'verbosity level')
+        arg_check.is_num(func_tol, 'function tolerance')
+        arg_check.is_num(grad_tol, 'gradient tolerance', can_be_none=True)
+        arg_check.is_int(max_iterations, 'maximum number of iterations')
+        arg_check.is_bool(constraints, 'constraints flag')
+        arg_check.is_bool(scaling, 'diagonal scaling flag')
+        arg_check.is_int(verbosity, 'verbosity level')
 
         # Constraint flag.
         if constraints:

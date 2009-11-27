@@ -66,7 +66,7 @@ class Jw_mapping(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(frq, 'spectrometer frequency')
+        arg_check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         jw_mapping_obj._set_frq(frq=frq)

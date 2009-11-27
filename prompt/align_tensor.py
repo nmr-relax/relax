@@ -94,10 +94,10 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(tensor_from, 'tensor from')
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(tensor_to, 'tensor to')
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(tensor_from, 'tensor from')
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(tensor_to, 'tensor to')
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.copy(tensor_from=tensor_from, pipe_from=pipe_from, tensor_to=tensor_to, pipe_to=pipe_to)
@@ -126,7 +126,7 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor')
+        arg_check.is_str(tensor, 'tensor')
 
         # Execute the functional code.
         align_tensor.delete(tensor=tensor)
@@ -148,7 +148,7 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor', can_be_none=True)
+        arg_check.is_str(tensor, 'tensor', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.display(tensor=tensor)
@@ -226,12 +226,12 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor')
-        check.is_num_tuple(params, 'alignment tensor parameters', size=5)
-        check.is_float(scale, 'scale')
-        check.is_str(angle_units, 'angle units')
-        check.is_int(param_types, 'parameter types')
-        check.is_bool(errors, 'errors flag')
+        arg_check.is_str(tensor, 'tensor')
+        arg_check.is_num_tuple(params, 'alignment tensor parameters', size=5)
+        arg_check.is_float(scale, 'scale')
+        arg_check.is_str(angle_units, 'angle units')
+        arg_check.is_int(param_types, 'parameter types')
+        arg_check.is_bool(errors, 'errors flag')
 
         # Execute the functional code.
         align_tensor.init(tensor=tensor, params=params, scale=scale, angle_units=angle_units, param_types=param_types, errors=errors)
@@ -266,8 +266,8 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_int(basis_set, 'basis set')
-        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
+        arg_check.is_int(basis_set, 'basis set')
+        arg_check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.matrix_angles(basis_set, tensors)
@@ -308,8 +308,8 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(full_tensor, 'full tensor')
-        check.is_str(red_tensor, 'reduced tensor')
+        arg_check.is_str(full_tensor, 'full tensor')
+        arg_check.is_str(red_tensor, 'reduced tensor')
 
         # Execute the functional code.
         align_tensor.reduction(full_tensor=full_tensor, red_tensor=red_tensor)
@@ -349,8 +349,8 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(tensor, 'tensor')
-        check.is_str(domain, 'domain')
+        arg_check.is_str(tensor, 'tensor')
+        arg_check.is_str(domain, 'domain')
 
         # Execute the functional code.
         align_tensor.set_domain(tensor=tensor, domain=domain)
@@ -423,8 +423,8 @@ class Align_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_int(basis_set, 'basis set')
-        check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
+        arg_check.is_int(basis_set, 'basis set')
+        arg_check.is_str_list(tensors, 'alignment tensors', can_be_none=True)
 
         # Execute the functional code.
         align_tensor.svd(basis_set, tensors)

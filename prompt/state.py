@@ -91,9 +91,9 @@ class State(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(state, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str_or_inst(state, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         load_state(state=state, dir=dir, force=force)
@@ -172,11 +172,11 @@ class State(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(state, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(compress_type, 'compression type')
-        check.is_bool(force, 'force flag')
-        check.is_bool(pickle, 'pickle flag')
+        arg_check.is_str_or_inst(state, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(compress_type, 'compression type')
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_bool(pickle, 'pickle flag')
 
         # Execute the functional code.
         save_state(state=state, dir=dir, compress_type=compress_type, force=force, pickle=pickle)

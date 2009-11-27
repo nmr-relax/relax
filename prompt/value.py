@@ -84,9 +84,9 @@ class Value(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from')
-        check.is_str(pipe_to, 'pipe to')
-        check.is_str(param, 'parameter')
+        arg_check.is_str(pipe_from, 'pipe from')
+        arg_check.is_str(pipe_to, 'pipe to')
+        arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
         self.__relax__.generic.value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
@@ -122,7 +122,7 @@ class Value(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(param, 'parameter')
+        arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
         self.__relax__.generic.value.display(param=param)
@@ -214,20 +214,20 @@ class Value(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(param, 'parameter')
-        check.is_float(scaling, 'scaling')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
-        check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
-        check.is_int(res_num_col, 'residue number column', can_be_none=True)
-        check.is_int(res_name_col, 'residue name column', can_be_none=True)
-        check.is_int(spin_num_col, 'spin number column', can_be_none=True)
-        check.is_int(spin_name_col, 'spin name column', can_be_none=True)
-        check.is_int(data_col, 'data column', can_be_none=True)
-        check.is_int(error_col, 'error column', can_be_none=True)
-        check.is_str(sep, 'column separator', can_be_none=True)
-        check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_str(param, 'parameter')
+        arg_check.is_float(scaling, 'scaling')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
+        arg_check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
+        arg_check.is_int(res_num_col, 'residue number column', can_be_none=True)
+        arg_check.is_int(res_name_col, 'residue name column', can_be_none=True)
+        arg_check.is_int(spin_num_col, 'spin number column', can_be_none=True)
+        arg_check.is_int(spin_name_col, 'spin name column', can_be_none=True)
+        arg_check.is_int(data_col, 'data column', can_be_none=True)
+        arg_check.is_int(error_col, 'error column', can_be_none=True)
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
         self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
@@ -361,9 +361,9 @@ class Value(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
-        check.is_str_or_str_list(param, 'parameter', can_be_none=True)
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str_or_num_or_str_num_list(val, 'value', can_be_none=True)
+        arg_check.is_str_or_str_list(param, 'parameter', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # The invalid combination of a single value and no param argument.
         if (isinstance(val, float) or isinstance(val, int)) and param == None:
@@ -431,10 +431,10 @@ class Value(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(param, 'parameter')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(param, 'parameter')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         value.write(param=param, file=file, dir=dir, force=force)

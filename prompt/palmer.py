@@ -112,18 +112,18 @@ class Palmer(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
-        check.is_str(binary, 'Modelfree executable file')
-        check.is_str(diff_search, 'diffusion search')
-        check.is_int(sims, 'number of Monte Carlo simulations')
-        check.is_str(sim_type, 'simulation type')
-        check.is_num(trim, 'trimming')
-        check.is_int(steps, 'steps')
-        check.is_bool(constraints, 'constraints flag')
-        check.is_str(heteronuc_type, 'heteronucleus')
-        check.is_str(atom1, 'atom1')
-        check.is_str(atom2, 'atom2')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_str(binary, 'Modelfree executable file')
+        arg_check.is_str(diff_search, 'diffusion search')
+        arg_check.is_int(sims, 'number of Monte Carlo simulations')
+        arg_check.is_str(sim_type, 'simulation type')
+        arg_check.is_num(trim, 'trimming')
+        arg_check.is_int(steps, 'steps')
+        arg_check.is_bool(constraints, 'constraints flag')
+        arg_check.is_str(heteronuc_type, 'heteronucleus')
+        arg_check.is_str(atom1, 'atom1')
+        arg_check.is_str(atom2, 'atom2')
 
         # Execute the functional code.
         palmer.create(dir=dir, force=force, binary=binary, diff_search=diff_search, sims=sims, sim_type=sim_type, trim=trim, steps=steps, constraints=constraints, heteronuc_type=heteronuc_type, atom1=atom1, atom2=atom2, spin_id=spin_id)
@@ -168,9 +168,9 @@ class Palmer(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
-        check.is_str(binary, 'Modelfree executable file')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_str(binary, 'Modelfree executable file')
 
         # Execute the functional code.
         palmer.execute(dir=dir, force=force, binary=binary)
@@ -192,7 +192,7 @@ class Palmer(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         palmer.extract(dir=dir)

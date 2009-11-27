@@ -73,8 +73,8 @@ class Fix(Basic_class):
             print(text)
 
         # The argument checks.
-        check.is_str(element, 'element')
-        check.is_bool(fixed, 'fixed')
+        arg_check.is_str(element, 'element')
+        arg_check.is_bool(fixed, 'fixed')
 
         # Execute the functional code.
         fix.fix(element=element, fixed=fixed)

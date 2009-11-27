@@ -88,8 +88,8 @@ class N_state_model(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num_list(pivot_point, 'pivot point', size=3)
-        check.is_num_list(centre, 'centre of mass', size=3, can_be_none=True)
+        arg_check.is_num_list(pivot_point, 'pivot point', size=3)
+        arg_check.is_num_list(centre, 'centre of mass', size=3, can_be_none=True)
 
         # Execute the functional code.
         n_state_model_obj._CoM(pivot_point=pivot_point, centre=centre)
@@ -156,11 +156,11 @@ class N_state_model(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(cone_type, 'cone type')
-        check.is_num(scale, 'scaling factor')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(cone_type, 'cone type')
+        arg_check.is_num(scale, 'scaling factor')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
@@ -198,7 +198,7 @@ class N_state_model(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_int(N, 'number of states N')
+        arg_check.is_int(N, 'number of states N')
 
         # Execute the functional code.
         n_state_model_obj._number_of_states(N=N)
@@ -238,7 +238,7 @@ class N_state_model(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(ref, 'reference frame')
+        arg_check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
         n_state_model_obj._ref_domain(ref=ref)
@@ -287,7 +287,7 @@ class N_state_model(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'model')
+        arg_check.is_str(model, 'model')
 
         # Execute the functional code.
         n_state_model_obj._select_model(model=model)

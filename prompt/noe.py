@@ -95,13 +95,13 @@ class Noe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(proton1_col, 'first proton column', can_be_none=True)
-        check.is_int(proton2_col, 'second proton column', can_be_none=True)
-        check.is_int(lower_col, 'lower bound column', can_be_none=True)
-        check.is_int(upper_col, 'upper bound column', can_be_none=True)
-        check.is_str(sep, 'column separator', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(proton1_col, 'first proton column', can_be_none=True)
+        arg_check.is_int(proton2_col, 'second proton column', can_be_none=True)
+        arg_check.is_int(lower_col, 'lower bound column', can_be_none=True)
+        arg_check.is_int(upper_col, 'upper bound column', can_be_none=True)
+        arg_check.is_str(sep, 'column separator', can_be_none=True)
 
         # Execute the functional code.
         noesy.read_restraints(file=file, dir=dir, proton1_col=proton1_col, proton2_col=proton2_col, lower_col=lower_col, upper_col=upper_col, sep=sep)
@@ -138,8 +138,8 @@ class Noe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(spectrum_type, 'spectrum type')
-        check.is_str(spectrum_id, 'spectrum identification string')
+        arg_check.is_str(spectrum_type, 'spectrum type')
+        arg_check.is_str(spectrum_id, 'spectrum identification string')
 
         # Execute the functional code.
         noe_obj._spectrum_type(spectrum_type=spectrum_type, spectrum_id=spectrum_id)

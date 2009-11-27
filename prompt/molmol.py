@@ -81,7 +81,7 @@ class Molmol(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(command, 'MOLMOL command')
+        arg_check.is_str(command, 'MOLMOL command')
 
         # Execute the functional code.
         molmol.command(command=command)
@@ -152,11 +152,11 @@ class Molmol(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(data_type, 'data type')
-        check.is_str(style, 'style')
-        check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str(colour_list, 'colour list', can_be_none=True)
+        arg_check.is_str(data_type, 'data type')
+        arg_check.is_str(style, 'style')
+        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
 
         # Execute the functional code.
         molmol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
@@ -254,7 +254,7 @@ class Molmol(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(file, 'file name')
+        arg_check.is_str_or_inst(file, 'file name')
 
         # Execute the functional code.
         molmol.tensor_pdb(file=file)
@@ -355,14 +355,14 @@ class Molmol(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(data_type, 'data type')
-        check.is_str(style, 'style')
-        check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
-        check.is_str(colour_list, 'colour list', can_be_none=True)
-        check.is_str_or_inst(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(data_type, 'data type')
+        arg_check.is_str(style, 'style')
+        arg_check.is_str_or_num_list(colour_start, 'starting colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str_or_num_list(colour_end, 'ending colour of the linear gradient', size=3, can_be_none=True)
+        arg_check.is_str(colour_list, 'colour list', can_be_none=True)
+        arg_check.is_str_or_inst(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         molmol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)

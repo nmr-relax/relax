@@ -85,10 +85,10 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(mol_from, 'molecule from')
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
-        check.is_str(mol_to, 'molecule to', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(mol_from, 'molecule from')
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(mol_to, 'molecule to', can_be_none=True)
 
         # Execute the functional code.
         copy_molecule(pipe_from=pipe_from, mol_from=mol_from, pipe_to=pipe_to, mol_to=mol_to)
@@ -127,7 +127,7 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(mol_name, 'molecule name')
+        arg_check.is_str(mol_name, 'molecule name')
 
         # Execute the functional code.
         create_molecule(mol_name=mol_name)
@@ -155,7 +155,7 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(mol_id, 'molecule identification string')
+        arg_check.is_str(mol_id, 'molecule identification string')
 
         # Execute the functional code.
         delete_molecule(mol_id=mol_id)
@@ -177,7 +177,7 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        arg_check.is_str(mol_id, 'molecule identification string', can_be_none=True)
 
         # Execute the functional code.
         display_molecule(mol_id=mol_id)
@@ -222,9 +222,9 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(mol_id, 'molecule identification string', can_be_none=True)
-        check.is_str(name, 'new molecule name')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        arg_check.is_str(name, 'new molecule name')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         name_molecule(mol_id=mol_id, name=name, force=force)

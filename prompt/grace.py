@@ -80,9 +80,9 @@ class Grace(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str(grace_exe, 'Grace executable file')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(grace_exe, 'Grace executable file')
 
         # Execute the functional code.
         self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
@@ -193,14 +193,14 @@ class Grace(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(x_data_type, 'x data type')
-        check.is_str(y_data_type, 'y data type')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_str(plot_data, 'plot data')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
-        check.is_bool(norm, 'normalisation flag')
+        arg_check.is_str(x_data_type, 'x data type')
+        arg_check.is_str(y_data_type, 'y data type')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(plot_data, 'plot data')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_bool(norm, 'normalisation flag')
 
         # Execute the functional code.
         grace.write(x_data_type=x_data_type, y_data_type=y_data_type, spin_id=spin_id, plot_data=plot_data, file=file, dir=dir, force=force, norm=norm)

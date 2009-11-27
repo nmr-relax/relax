@@ -62,8 +62,8 @@ class Temp(Basic_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'experiment identification string')
-        check.is_num(temp, 'experiment temparture')
+        arg_check.is_str(id, 'experiment identification string')
+        arg_check.is_num(temp, 'experiment temparture')
 
         # Execute the functional code.
         temperature.set(id=id, temp=temp)

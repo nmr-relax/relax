@@ -67,7 +67,7 @@ class Consistency_tests(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(frq, 'spectrometer frequency')
+        arg_check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         consistency_tests_obj._set_frq(frq=frq)

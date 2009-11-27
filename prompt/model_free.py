@@ -125,10 +125,10 @@ class Model_free(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'model-free model')
-        check.is_str(equation, 'model-free equation')
-        check.is_str_list(params, 'model-free parameters')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(model, 'model-free model')
+        arg_check.is_str(equation, 'model-free equation')
+        arg_check.is_str_list(params, 'model-free parameters')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         model_free_obj._create_model(model=model, equation=equation, params=params, spin_id=spin_id)
@@ -187,7 +187,7 @@ class Model_free(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         model_free_obj._remove_tm(spin_id=spin_id)
@@ -335,8 +335,8 @@ class Model_free(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'preset model name')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(model, 'preset model name')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
         model_free_obj._select_model(model=model, spin_id=spin_id)

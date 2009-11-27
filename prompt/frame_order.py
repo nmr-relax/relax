@@ -88,11 +88,11 @@ class Frame_order(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(size, 'geometric object size')
-        check.is_int(inc, 'increment number')
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_num(size, 'geometric object size')
+        arg_check.is_int(inc, 'increment number')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         frame_order_obj._cone_pdb(size=size, inc=inc, file=file, dir=dir, force=force)
@@ -124,7 +124,7 @@ class Frame_order(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num_list(pivot_point, 'pivot point', size=3)
+        arg_check.is_num_list(pivot_point, 'pivot point', size=3)
 
         # Execute the functional code.
         frame_order_obj._pivot(pivot=pivot)
@@ -163,7 +163,7 @@ class Frame_order(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(ref, 'reference frame')
+        arg_check.is_str(ref, 'reference frame')
 
         # Execute the functional code.
         frame_order_obj._ref_domain(ref=ref)
@@ -202,7 +202,7 @@ class Frame_order(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(model, 'Frame Order model')
+        arg_check.is_str(model, 'Frame Order model')
 
         # Execute the functional code.
         frame_order_obj._select_model(model=model)

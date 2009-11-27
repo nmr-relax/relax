@@ -84,8 +84,8 @@ class Results(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         results.read(file=file, directory=dir)
@@ -136,10 +136,10 @@ class Results(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_or_inst(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_int(compress_type, 'compression type')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str_or_inst(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_int(compress_type, 'compression type')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         results.write(file=file, directory=dir, force=force, compress_type=compress_type)

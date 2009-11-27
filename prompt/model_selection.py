@@ -104,9 +104,9 @@ class Modsel(Basic_class):
             print(text)
 
         # The argument checks.
-        check.is_str(method, 'model selection method')
-        check.is_str(modsel_pipe, 'model selection data pipe name')
-        check.is_str_list(pipes, 'data pipes', can_be_none=True, list_of_lists=True)
+        arg_check.is_str(method, 'model selection method')
+        arg_check.is_str(modsel_pipe, 'model selection data pipe name')
+        arg_check.is_str_list(pipes, 'data pipes', can_be_none=True, list_of_lists=True)
 
         # Execute the functional code.
         model_selection.select(method=method, modsel_pipe=modsel_pipe, pipes=pipes)
