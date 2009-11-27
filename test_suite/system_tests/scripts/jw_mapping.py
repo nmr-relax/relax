@@ -9,12 +9,12 @@ name = 'jw_mapping'
 pipe.create(name, 'jw')
 
 # Load the sequence.
-sequence.read(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat')
+sequence.read(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2)
 
 # Load the relaxation data.
-relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat')
-relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R2.dat')
-relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat')
+relax_data.read('R1', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R1.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+relax_data.read('R2', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'R2.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+relax_data.read('NOE', '600', 600.0 * 1e6, sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep+'noe.dat', res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
 # Set the nuclei types
 value.set('15N', 'heteronucleus')

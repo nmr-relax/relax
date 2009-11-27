@@ -29,7 +29,7 @@ from chi2 import chi2, dchi2_element
 from float import isNaN
 from pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
-from rotation_matrix import R_euler_zyz
+from rotation_matrix import euler_zyz_to_R
 
 
 class N_state_opt:
@@ -351,7 +351,7 @@ class N_state_opt:
         # Loop over the N states.
         for c in xrange(self.N):
             # The rotation matrix.
-            R_euler_zyz(self.R[c], params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2])
+            euler_zyz_to_R(params[self.N-1+3*c], params[self.N-1+3*c+1], params[self.N-1+3*c+2], self.R[c])
 
             # Its transpose.
             self.RT[c] = transpose(self.R[c])

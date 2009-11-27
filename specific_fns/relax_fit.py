@@ -24,16 +24,17 @@
 """The relaxation curve fitting specific code."""
 
 # Python module imports.
+from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, zeros
 from numpy.linalg import inv
 from re import match, search
 
 # relax module imports.
 from dep_check import C_module_exp_fn
-from base_class import Common_functions
+from specific_fns.api_base import API_base
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
-from minfx.generic import generic_minimise
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
 
 # C modules.
@@ -41,10 +42,10 @@ if C_module_exp_fn:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
 
-class Relax_fit(Common_functions):
+class Relax_fit(API_base):
     """Class containing functions for relaxation curve fitting."""
 
-    def assemble_param_vector(self, spin=None, sim_index=None):
+    def _assemble_param_vector(self, spin=None, sim_index=None):
         """Assemble the exponential curve parameter vector (as a numpy array).
 
         @keyword spin:          The spin data container.
@@ -91,7 +92,7 @@ class Relax_fit(Common_functions):
         return array(param_vector, float64)
 
 
-    def assemble_scaling_matrix(self, spin=None, scaling=True):
+    def _assemble_scaling_matrix(self, spin=None, scaling=True):
         """Create and return the scaling matrix.
 
         @keyword spin:          The spin data container.
@@ -131,7 +132,7 @@ class Relax_fit(Common_functions):
         return scaling_matrix
 
 
-    def back_calc(self, spin=None, relax_time_index=None):
+    def _back_calc(self, spin=None, relax_time_index=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
         @keyword spin:              The spin container.
@@ -143,10 +144,10 @@ class Relax_fit(Common_functions):
         """
 
         # Create the initial parameter vector.
-        param_vector = self.assemble_param_vector(spin=spin)
+        param_vector = self._assemble_param_vector(spin=spin)
 
         # Create a scaling matrix.
-        scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=False)
+        scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=False)
 
         # Initialise the relaxation fit functions.
         setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=spin.intensities, sd=spin.intensity_err, relax_times=cdp.relax_times, scaling_matrix=scaling_matrix)
@@ -161,185 +162,7 @@ class Relax_fit(Common_functions):
         return results[relax_time_index]
 
 
-    def create_mc_data(self, spin_id):
-        """Create the Monte Carlo peak intensity data.
-
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The Monte Carlo simulation data.
-        @rtype:         list of floats
-        """
-
-        # Initialise the MC data data structure.
-        mc_data = []
-
-        # Get the spin container.
-        spin = return_spin(spin_id)
-
-        # Skip deselected spins.
-        if not spin.select:
-            return
-
-        # Skip spins which have no data.
-        if not hasattr(spin, 'intensities'):
-            return
-
-        # Test if the model is set.
-        if not hasattr(spin, 'model') or not spin.model:
-            raise RelaxNoModelError
-
-        # Loop over the spectral time points.
-        for j in xrange(len(cdp.relax_times)):
-            # Back calculate the value.
-            value = self.back_calc(spin=spin, relax_time_index=j)
-
-            # Append the value.
-            mc_data.append(value)
-
-        # Return the MC data.
-        return mc_data
-
-
-    def data_init(self, spin):
-        """Initialise the spin specific data structures.
-
-        @param spin:    The spin container.
-        @type spin:     SpinContainer instance
-        """
-
-        # Loop over the data structure names.
-        for name in self.data_names():
-            # Data structures which are initially empty arrays.
-            list_data = [ 'params' ]
-            if name in list_data:
-                init_data = []
-
-            # Otherwise initialise the data structure to None.
-            else:
-                init_data = None
-
-            # If the name is not in 'spin', add it.
-            if not hasattr(spin, name):
-                setattr(spin, name, init_data)
-
-
-    def data_names(self, set='all', error_names=False, sim_names=False):
-        """Function for returning a list of names of data structures.
-
-        Description
-        ===========
-
-        The names are as follows:
-
-            - 'params', an array of the parameter names associated with the model.
-            - 'rx', either the R1 or R2 relaxation rate.
-            - 'i0', the initial intensity.
-            - 'iinf', the intensity at infinity.
-            - 'chi2', chi-squared value.
-            - 'iter', iterations.
-            - 'f_count', function count.
-            - 'g_count', gradient count.
-            - 'h_count', hessian count.
-            - 'warning', minimisation warning.
-
-
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all
-                                names, to 'generic' for generic object names, 'params' for
-                                model-free parameter names, or to 'min' for minimisation specific
-                                object names.
-        @type set:              str
-        @keyword error_names:   A flag which if True will add the error object names as well.
-        @type error_names:      bool
-        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object
-                                names as well.
-        @type sim_names:        bool
-        @return:                The list of object names.
-        @rtype:                 list of str
-        """
-
-        # Initialise.
-        names = []
-
-        # Generic.
-        if set == 'all' or set == 'generic':
-            names.append('params')
-
-        # Parameters.
-        if set == 'all' or set == 'params':
-            names.append('rx')
-            names.append('i0')
-            names.append('iinf')
-
-        # Minimisation statistics.
-        if set == 'all' or set == 'min':
-            names.append('chi2')
-            names.append('iter')
-            names.append('f_count')
-            names.append('g_count')
-            names.append('h_count')
-            names.append('warning')
-
-        # Parameter errors.
-        if error_names and (set == 'all' or set == 'params'):
-            names.append('rx_err')
-            names.append('i0_err')
-            names.append('iinf_err')
-
-        # Parameter simulation values.
-        if sim_names and (set == 'all' or set == 'params'):
-            names.append('rx_sim')
-            names.append('i0_sim')
-            names.append('iinf_sim')
-
-        # Return the names.
-        return names
-
-
-    default_value_doc = """
-        Relaxation curve fitting default values
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        These values are completely arbitrary as peak heights (or volumes) are extremely variable
-        and the Rx value is a compensation for both the R1 and R2 values.
-        ___________________________________________________________________
-        |                        |               |                        |
-        | Data type              | Object name   | Value                  |
-        |________________________|_______________|________________________|
-        |                        |               |                        |
-        | Relaxation rate        | 'rx'          | 8.0                    |
-        |                        |               |                        |
-        | Initial intensity      | 'i0'          | 10000.0                |
-        |                        |               |                        |
-        | Intensity at infinity  | 'iinf'        | 0.0                    |
-        |                        |               |                        |
-        |________________________|_______________|________________________|
-
-        """
-
-    def default_value(self, param):
-        """The default relaxation curve-fitting parameter values.
-
-        @param param:   The relaxation curve-fitting parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # Relaxation rate.
-        if param == 'rx':
-            return 8.0
-
-        # Initial intensity.
-        if param == 'i0':
-            return 10000.0
-
-        # Intensity at infinity.
-        if param == 'iinf':
-            return 0.0
-
-
-    def disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
+    def _disassemble_param_vector(self, param_vector=None, spin=None, sim_index=None):
         """Disassemble the parameter vector.
 
         @keyword param_vector:  The parameter vector.
@@ -375,35 +198,7 @@ class Relax_fit(Common_functions):
                 spin.iinf = param_vector[2]
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
-        """The exponential curve fitting grid search function.
-
-        @keyword lower:         The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.
-                                The number of elements in the array must equal to the number of
-                                parameters in the model.
-        @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
-                                parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None,
-                                the normal model is optimised.
-        @type sim_index:        int
-        """
-
-        # Minimisation.
-        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
-
-
-    def grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+    def _grid_search_setup(self, spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
         """The grid search setup function.
 
         @keyword spin:              The spin data container.
@@ -440,73 +235,50 @@ class Relax_fit(Common_functions):
             raise RelaxError("Cannot run a grid search on a model with zero parameters.")
 
         # Lower bounds.
-        if lower != None:
-            if len(lower) != n:
-                raise RelaxLenError('lower bounds', n)
+        if lower != None and len(lower) != n:
+            raise RelaxLenError('lower bounds', n)
 
         # Upper bounds.
-        if upper != None:
-            if len(upper) != n:
-                raise RelaxLenError('upper bounds', n)
+        if upper != None and len(upper) != n:
+            raise RelaxLenError('upper bounds', n)
 
-        # Increment.
-        if isinstance(inc, list):
-            if len(inc) != n:
-                raise RelaxLenError('increment', n)
-            inc = inc
+        # Increments.
+        if isinstance(inc, list) and len(inc) != n:
+            raise RelaxLenError('increment', n)
         elif isinstance(inc, int):
-            temp = []
-            for j in xrange(n):
-                temp.append(inc)
-            inc = temp
+            inc = [inc]*n
 
-        # Minimisation options initialisation.
-        min_options = []
-        j = 0
+        # Set up the default bounds.
+        if not lower:
+            # Init.
+            lower = []
+            upper = []
 
-        # Loop over the parameters.
-        for i in xrange(len(spin.params)):
-            # Relaxation rate (from 0 to 20 s^-1).
-            if spin.params[i] == 'Rx':
-                min_options.append([inc[j], 0.0, 20.0])
+            # Loop over the parameters.
+            for i in range(n):
+                # Relaxation rate (from 0 to 20 s^-1).
+                if spin.params[i] == 'Rx':
+                    lower.append(0.0)
+                    upper.append(20.0)
 
-            # Intensity
-            elif search('^I', spin.params[i]):
-                # Find the position of the first time point.
-                pos = cdp.relax_times.index(min(cdp.relax_times))
+                # Intensity
+                elif search('^I', spin.params[i]):
+                    # Find the position of the first time point.
+                    pos = cdp.relax_times.index(min(cdp.relax_times))
 
-                # Scaling.
-                min_options.append([inc[j], 0.0, average(spin.intensities[pos])])
+                    # Defaults.
+                    lower.append(0.0)
+                    upper.append(average(spin.intensities[pos]))
 
-            # Increment j.
-            j = j + 1
+        # Parameter scaling.
+        for i in range(n):
+            lower[i] = lower[i] / scaling_matrix[i, i]
+            upper[i] = upper[i] / scaling_matrix[i, i]
 
-        # Set the lower and upper bounds if these are supplied.
-        if lower != None:
-            for j in xrange(n):
-                if lower[j] != None:
-                    min_options[j][1] = lower[j]
-        if upper != None:
-            for j in xrange(n):
-                if upper[j] != None:
-                    min_options[j][2] = upper[j]
-
-        # Test if the grid is too large.
-        grid_size = 1
-        for i in xrange(len(min_options)):
-            grid_size = grid_size * min_options[i][0]
-        if isinstance(grid_size, long):
-            raise RelaxError("A grid search of size " + repr(grid_size) + " is too large.")
-
-        # Diagonal scaling of minimisation options.
-        for j in xrange(len(min_options)):
-            min_options[j][1] = min_options[j][1] / scaling_matrix[j, j]
-            min_options[j][2] = min_options[j][2] / scaling_matrix[j, j]
-
-        return grid_size, min_options
+        return inc, lower, upper
 
 
-    def linear_constraints(self, spin=None, scaling_matrix=None):
+    def _linear_constraints(self, spin=None, scaling_matrix=None):
         """Set up the relaxation curve fitting linear constraint matrices A and b.
 
         Standard notation
@@ -577,44 +349,322 @@ class Relax_fit(Common_functions):
         return A, b
 
 
+    def _model_setup(self, model, params):
+        """Update various model specific data structures.
+
+        @param model:   The exponential curve type.
+        @type model:    str
+        @param params:  A list consisting of the model parameters.
+        @type params:   list of str
+        """
+
+        # Set the model.
+        cdp.curve_type = model
+
+        # Loop over the sequence.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Initialise the data structures (if needed).
+            self.data_init(spin)
+
+            # The model and parameter names.
+            spin.model = model
+            spin.params = params
+
+
+    def _relax_time(self, time=0.0, spectrum_id=None):
+        """Set the relaxation time period associated with a given spectrum.
+
+        @keyword time:          The time, in seconds, of the relaxation period.
+        @type time:             float
+        @keyword spectrum_id:   The spectrum identification string.
+        @type spectrum_id:      str
+        """
+
+        # Test if the spectrum id exists.
+        if spectrum_id not in cdp.spectrum_ids:
+            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
+
+        # The index.
+        index = cdp.spectrum_ids.index(spectrum_id)
+
+        # Initialise the global relaxation time data structure if needed.
+        if not hasattr(cdp, 'relax_times'):
+            cdp.relax_times = [None] * len(cdp.spectrum_ids)
+
+        # Index not present in the global relaxation time data structure.
+        while True:
+            if index > len(cdp.relax_times) - 1:
+                cdp.relax_times.append(None)
+            else:
+                break
+
+        # Add the time at the correct position.
+        cdp.relax_times[index] = time
+
+
+    def _select_model(self, model='exp'):
+        """Function for selecting the model of the exponential curve.
+
+        @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
+        @type model:    str
+        """
+
+        # Test if the current pipe exists.
+        pipes.test()
+
+        # Test if the pipe type is set to 'relax_fit'.
+        function_type = cdp.pipe_type
+        if function_type != 'relax_fit':
+            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Two parameter exponential fit.
+        if model == 'exp':
+            print("Two parameter exponential fit.")
+            params = ['Rx', 'I0']
+
+        # Three parameter inversion recovery fit.
+        elif model == 'inv':
+            print("Three parameter inversion recovery fit.")
+            params = ['Rx', 'I0', 'Iinf']
+
+        # Invalid model.
+        else:
+            raise RelaxError("The model '" + model + "' is invalid.")
+
+        # Set up the model.
+        self._model_setup(model, params)
+
+
+    def create_mc_data(self, spin_id=None):
+        """Create the Monte Carlo peak intensity data.
+
+        @keyword spin_id:   The spin identification string, as yielded by the base_data_loop() generator method.
+        @type spin_id:      str
+        @return:            The Monte Carlo simulation data.
+        @rtype:             list of floats
+        """
+
+        # Initialise the MC data data structure.
+        mc_data = []
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Skip deselected spins.
+        if not spin.select:
+            return
+
+        # Skip spins which have no data.
+        if not hasattr(spin, 'intensities'):
+            return
+
+        # Test if the model is set.
+        if not hasattr(spin, 'model') or not spin.model:
+            raise RelaxNoModelError
+
+        # Loop over the spectral time points.
+        for j in xrange(len(cdp.relax_times)):
+            # Back calculate the value.
+            value = self._back_calc(spin=spin, relax_time_index=j)
+
+            # Append the value.
+            mc_data.append(value)
+
+        # Return the MC data.
+        return mc_data
+
+
+    def data_init(self, data_cont, sim=False):
+        """Initialise the spin specific data structures.
+
+        @param data_cont:   The spin container.
+        @type data_cont:    SpinContainer instance
+        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:          bool
+        """
+
+        # Loop over the data structure names.
+        for name in self.data_names():
+            # Data structures which are initially empty arrays.
+            list_data = [ 'params' ]
+            if name in list_data:
+                init_data = []
+
+            # Otherwise initialise the data structure to None.
+            else:
+                init_data = None
+
+            # If the name is not in 'data_cont', add it.
+            if not hasattr(data_cont, name):
+                setattr(data_cont, name, init_data)
+
+
+    def data_names(self, set='all', error_names=False, sim_names=False):
+        """Return a list of names of data structures.
+
+        Description
+        ===========
+
+        The names are as follows:
+
+            - 'params', an array of the parameter names associated with the model.
+            - 'rx', either the R1 or R2 relaxation rate.
+            - 'i0', the initial intensity.
+            - 'iinf', the intensity at infinity.
+            - 'chi2', chi-squared value.
+            - 'iter', iterations.
+            - 'f_count', function count.
+            - 'g_count', gradient count.
+            - 'h_count', hessian count.
+            - 'warning', minimisation warning.
+
+
+        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:              str
+        @keyword error_names:   A flag which if True will add the error object names as well.
+        @type error_names:      bool
+        @keyword sim_names:     A flag which if True will add the Monte Carlo simulation object names as well.
+        @type sim_names:        bool
+        @return:                The list of object names.
+        @rtype:                 list of str
+        """
+
+        # Initialise.
+        names = []
+
+        # Generic.
+        if set == 'all' or set == 'generic':
+            names.append('params')
+
+        # Parameters.
+        if set == 'all' or set == 'params':
+            names.append('rx')
+            names.append('i0')
+            names.append('iinf')
+
+        # Minimisation statistics.
+        if set == 'all' or set == 'min':
+            names.append('chi2')
+            names.append('iter')
+            names.append('f_count')
+            names.append('g_count')
+            names.append('h_count')
+            names.append('warning')
+
+        # Parameter errors.
+        if error_names and (set == 'all' or set == 'params'):
+            names.append('rx_err')
+            names.append('i0_err')
+            names.append('iinf_err')
+
+        # Parameter simulation values.
+        if sim_names and (set == 'all' or set == 'params'):
+            names.append('rx_sim')
+            names.append('i0_sim')
+            names.append('iinf_sim')
+
+        # Return the names.
+        return names
+
+
+    default_value_doc = """
+        Relaxation curve fitting default values
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        These values are completely arbitrary as peak heights (or volumes) are extremely variable
+        and the Rx value is a compensation for both the R1 and R2 values.
+        ___________________________________________________________________
+        |                        |               |                        |
+        | Data type              | Object name   | Value                  |
+        |________________________|_______________|________________________|
+        |                        |               |                        |
+        | Relaxation rate        | 'rx'          | 8.0                    |
+        |                        |               |                        |
+        | Initial intensity      | 'i0'          | 10000.0                |
+        |                        |               |                        |
+        | Intensity at infinity  | 'iinf'        | 0.0                    |
+        |                        |               |                        |
+        |________________________|_______________|________________________|
+
+        """
+
+    def default_value(self, param):
+        """Return the default relaxation curve-fitting parameter values.
+
+        @param param:   The relaxation curve-fitting parameter.
+        @type param:    str
+        @return:        The default value.
+        @rtype:         float
+        """
+
+        # Relaxation rate.
+        if param == 'rx':
+            return 8.0
+
+        # Initial intensity.
+        if param == 'i0':
+            return 10000.0
+
+        # Intensity at infinity.
+        if param == 'iinf':
+            return 0.0
+
+
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+        """The exponential curve fitting grid search method.
+
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:              array of int
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:        int
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:        int
+        """
+
+        # Minimisation.
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
-        """Relaxation curve fitting function.
+        """Relaxation curve fitting minimisation method.
 
         @keyword min_algor:         The minimisation algorithm to use.
         @type min_algor:            str
         @keyword min_options:       An array of options to be used by the minimisation algorithm.
         @type min_options:          array of str
-        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type func_tol:             None or float
-        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type grad_tol:             None or float
         @keyword max_iterations:    The maximum number of iterations for the algorithm.
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
-                                    the problem to be better conditioned.
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
         @type scaling:              bool
-        @keyword verbosity:         The amount of information to print.  The higher the value, the
-                                    greater the verbosity.
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
-        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
-                                    normal optimisation is desired.
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.
-                                    The number of elements in the array must equal to the number of
-                                    parameters in the model.  This argument is only used when doing a
-                                    grid search.
+        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
         @type inc:                  array of int
         """
 
@@ -633,20 +683,22 @@ class Relax_fit(Common_functions):
                 continue
 
             # Create the initial parameter vector.
-            param_vector = self.assemble_param_vector(spin=spin)
+            param_vector = self._assemble_param_vector(spin=spin)
 
             # Diagonal scaling.
-            scaling_matrix = self.assemble_scaling_matrix(spin=spin, scaling=scaling)
+            scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=scaling)
             if len(scaling_matrix):
                 param_vector = dot(inv(scaling_matrix), param_vector)
 
             # Get the grid search minimisation options.
             if match('^[Gg]rid', min_algor):
-                grid_size, min_options = self.grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc, lower, upper = self._grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Linear constraints.
             if constraints:
-                A, b = self.linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+                A, b = self._linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+            else:
+                A, b = None, None
 
             # Print out.
             if verbosity >= 1:
@@ -660,10 +712,6 @@ class Relax_fit(Common_functions):
                 string = "Fitting to spin " + repr(spin_id)
                 print(("\n\n" + string))
                 print((len(string) * '~'))
-
-                # Grid search print out.
-                if match('^[Gg]rid', min_algor):
-                    print(("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n"))
 
 
             # Initialise the function to minimise.
@@ -703,20 +751,31 @@ class Relax_fit(Common_functions):
             # Minimisation.
             ###############
 
-            if constraints:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+            # Grid search.
+            if search('^[Gg]rid', min_algor):
+                results = grid(func=func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+
+                # Unpack the results.
+                param_vector, chi2, iter_count, warning = results
+                f_count = iter_count
+                g_count = 0.0
+                h_count = 0.0
+
+            # Minimisation.
             else:
-                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
-            if results == None:
-                return
-            param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+                results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+
+                # Unpack the results.
+                if results == None:
+                    return
+                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
             if scaling:
                 param_vector = dot(scaling_matrix, param_vector)
 
             # Disassemble the parameter vector.
-            self.disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
+            self._disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
@@ -760,32 +819,6 @@ class Relax_fit(Common_functions):
                 spin.warning = warning
 
 
-    def model_setup(self, model, params):
-        """Update various model specific data structures.
-
-        @param model:   The exponential curve type.
-        @type model:    str
-        @param params:  A list consisting of the model parameters.
-        @type params:   list of str
-        """
-
-        # Set the model.
-        cdp.curve_type = model
-
-        # Loop over the sequence.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-            # The model and parameter names.
-            spin.model = model
-            spin.params = params
-
-
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support minimisation."""
 
@@ -806,40 +839,6 @@ class Relax_fit(Common_functions):
                 continue
 
 
-    def relax_time(self, time=0.0, spectrum_id=None):
-        """Set the relaxation time period associated with a given spectrum.
-
-        @keyword time:          The time, in seconds, of the relaxation period.
-        @type time:             float
-        @keyword spectrum_id:   The spectrum identification string.
-        @type spectrum_id:      str
-        """
-
-        # Test if the spectrum id exists.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError("The peak heights corresponding to spectrum id '%s' have not been loaded." % spectrum_id)
-
-        # Store the relaxation time in the class instance.
-        self.__relax_time = float(time)
-
-        # The index.
-        index = cdp.spectrum_ids.index(spectrum_id)
-
-        # Initialise the global relaxation time data structure if needed.
-        if not hasattr(cdp, 'relax_times'):
-            cdp.relax_times = [None] * len(cdp.spectrum_ids)
-
-        # Index not present in the global relaxation time data structure.
-        while True:
-            if index > len(cdp.relax_times) - 1:
-                cdp.relax_times.append(None)
-            else:
-                break
-
-        # Add the time at the correct position.
-        cdp.relax_times[index] = time
-
-
     def return_data(self, spin):
         """Function for returning the peak intensity data structure.
 
@@ -850,23 +849,6 @@ class Relax_fit(Common_functions):
         """
 
         return spin.intensities
-
-
-    def return_error(self, spin_id):
-        """Return the standard deviation data structure.
-
-        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
-                        method.
-        @type spin_id:  str
-        @return:        The standard deviation data structure.
-        @rtype:         list of float
-        """
-
-        # Get the spin container.
-        spin = return_spin(spin_id)
-
-        # Return the error list.
-        return spin.intensity_err
 
 
     return_data_name_doc = """
@@ -891,41 +873,66 @@ class Relax_fit(Common_functions):
 
         """
 
-    def return_data_name(self, name):
+    def return_data_name(self, param):
         """Return a unique identifying string for the relaxation curve-fitting parameter.
 
-        @param name:    The relaxation curve-fitting parameter.
-        @type name:     str
+        @param param:   The relaxation curve-fitting parameter.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # Relaxation rate.
-        if match('^[Rr]x$', name):
+        if match('^[Rr]x$', param):
             return 'rx'
 
         # Peak intensities (series)
-        if match('^[Ii]nt$', name):
+        if match('^[Ii]nt$', param):
             return 'intensities'
 
         # Initial intensity.
-        if match('^[Ii]0$', name):
+        if match('^[Ii]0$', param):
             return 'i0'
 
         # Intensity at infinity.
-        if match('^[Ii]inf$', name):
+        if match('^[Ii]inf$', param):
             return 'iinf'
 
         # Relaxation period times (series).
-        if match('^[Rr]elax[ -_][Tt]imes$', name):
+        if match('^[Rr]elax[ -_][Tt]imes$', param):
             return 'relax_times'
 
 
-    def return_grace_string(self, data_type):
-        """Function for returning the Grace string representing the data type for axis labelling."""
+    def return_error(self, spin_id):
+        """Return the standard deviation data structure.
+
+        @param spin_id: The spin identification string, as yielded by the base_data_loop() generator
+                        method.
+        @type spin_id:  str
+        @return:        The standard deviation data structure.
+        @rtype:         list of float
+        """
+
+        # Get the spin container.
+        spin = return_spin(spin_id)
+
+        # Return the error list.
+        return spin.intensity_err
+
+
+    def return_grace_string(self, param):
+        """Return the Grace string representation of the parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The relaxation curve-fitting parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
 
         # Get the object name.
-        object_name = self.return_data_name(data_type)
+        object_name = self.return_data_name(param)
 
         # Relaxation rate.
         if object_name == 'rx':
@@ -951,55 +958,21 @@ class Relax_fit(Common_functions):
         return grace_string
 
 
-    def return_units(self, stat_types, spin_id=None):
-        """Dummy function which returns None as the stats have no units.
+    def return_units(self, param, spin=None, spin_id=None):
+        """Dummy method which returns None as the stats have no units.
 
-        @param stat_types:  Not used.
-        @type stat_types:   None
-        @keyword spin_id:   Not used.
-        @type spin_id:      None
-        @return:            Nothing.
-        @rtype:             None
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container.
+        @type spin:     SpinContainer instance
+        @param spin_id: The spin identification string (ignored if the spin container is supplied).
+        @type spin_id:  str
+        @return:        Nothing.
+        @rtype:         None
         """
 
+        # Unitless.
         return None
-
-
-    def select_model(self, model='exp'):
-        """Function for selecting the model of the exponential curve.
-
-        @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
-        @type model:    str
-        """
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'relax_fit'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_fit':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Two parameter exponential fit.
-        if model == 'exp':
-            print("Two parameter exponential fit.")
-            params = ['Rx', 'I0']
-
-        # Three parameter inversion recovery fit.
-        elif model == 'inv':
-            print("Three parameter inversion recovery fit.")
-            params = ['Rx', 'I0', 'Iinf']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '" + model + "' is invalid.")
-
-        # Set up the model.
-        self.model_setup(model, params)
 
 
     set_doc = """
@@ -1015,8 +988,7 @@ class Relax_fit(Common_functions):
     def sim_pack_data(self, spin_id, sim_data):
         """Pack the Monte Carlo simulation data.
 
-        @param spin_id:     The spin identification string, as yielded by the base_data_loop()
-                            generator method.
+        @param spin_id:     The spin identification string, as yielded by the base_data_loop() generator method.
         @type spin_id:      str
         @param sim_data:    The Monte Carlo simulation data.
         @type sim_data:     list of float

@@ -33,7 +33,7 @@ from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, gene
 from generic_fns import pipes
 from generic_fns import value
 from relax_errors import RelaxError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
-from relax_io import extract_data, strip
+from relax_io import read_spin_data
 import specific_fns
 
 
@@ -515,11 +515,11 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, gen_seq=False):
+def pack_data(ri_label, frq_label, frq, values, errors, ids=None, gen_seq=False):
     """Pack the relaxation data into the data pipe and spin containers.
 
-    The values, errors, mol_names, res_nums, res_names, spin_nums, and spin_names arguments must be
-    lists of equal length or None.  Each element i corresponds to a unique spin.
+    The values, errors, and ids arguments must be lists of equal length or None.  Each element i
+    corresponds to a unique spin.
 
     @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
     @type ri_label:         str
@@ -527,16 +527,12 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
     @type frq_label:        str
     @param frq:             The spectrometer proton frequency in Hz.
     @type frq:              float
-    @keyword mol_names:     The list of molecule names for each spin.
-    @type mol_names:        None or list of str
-    @keyword res_nums:      The list of residue numbers for each spin.
-    @type res_nums:         None or list of str
-    @keyword res_names:     The list of residue names for each spin.
-    @type res_names:        None or list of str
-    @keyword spin_nums:     The list of spin numbers.
-    @type spin_nums:        None or list of str
-    @keyword spin_names:    The list of spin names.
-    @type spin_names:       None or list of str
+    @keyword values:        The relaxation data for each spin.
+    @type values:           None or list of str
+    @keyword errors:        The relaxation data errors for each spin.
+    @type errors:           None or list of str
+    @keyword ids:           The list of spin ID strings.
+    @type ids:              list of str
     @keyword gen_seq:       A flag which if True will cause the molecule, residue, and spin sequence
                             data to be generated.
     @type gen_seq:          bool
@@ -545,31 +541,11 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
     # The number of spins.
     N = len(values)
 
-    # Convert None args.
-    if not mol_names:
-        mol_names = [None]*N
-    if not res_nums:
-        res_nums = [None]*N
-    if not res_names:
-        res_names = [None]*N
-    if not spin_nums:
-        spin_nums = [None]*N
-    if not spin_names:
-        spin_names = [None]*N
-
     # Test the data.
     if len(errors) != N:
         raise RelaxError("The length of the errors arg (%s) does not match that of the value arg (%s)." % (len(errors), N))
-    if len(mol_names) != N:
-        raise RelaxError("The length of the mol_names arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
-    if len(res_nums) != N:
-        raise RelaxError("The length of the res_nums arg (%s) does not match that of the value arg (%s)." % (len(res_nums), N))
-    if len(res_names) != N:
-        raise RelaxError("The length of the res_names arg (%s) does not match that of the value arg (%s)." % (len(res_names), N))
-    if len(spin_nums) != N:
-        raise RelaxError("The length of the spin_nums arg (%s) does not match that of the value arg (%s)." % (len(spin_nums), N))
-    if len(spin_names) != N:
-        raise RelaxError("The length of the spin_names arg (%s) does not match that of the value arg (%s)." % (len(spin_names), N))
+    if len(ids) != N:
+        raise RelaxError("The length of the spin ID strings arg (%s) does not match that of the value arg (%s)." % (len(mol_names), N))
 
     # Initialise the global data for the current pipe if necessary.
     data_init(cdp, global_flag=True)
@@ -578,10 +554,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
     update_data_structures_pipe(ri_label, frq_label, frq)
 
     # Loop over the spin data.
-    for value, error, mol_name, res_num, res_name, spin_num, spin_name in zip(values, errors, mol_names, res_nums, res_names, spin_nums, spin_names):
-        # Generate the spin identification string.
-        id = generate_spin_id(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-
+    for value, error, id in zip(values, errors, ids):
         # Skip all rows where the value or error is None.
         if value == None or error == None:
             continue
@@ -599,7 +572,7 @@ def pack_data(ri_label, frq_label, frq, values, errors, mol_names=None, res_nums
         update_data_structures_spin(spin, ri_label, frq_label, frq, value, error)
 
 
-def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, mol_name_col=None, res_num_col=0, res_name_col=1, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None):
+def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
     """Read R1, R2, or NOE relaxation data from a file.
 
     @param ri_label:        The relaxation data type, ie 'R1', 'R2', or 'NOE'.
@@ -617,18 +590,34 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
                             correct format.  The format is a list of lists where the first index
                             corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @param mol_name_col:    The column containing the molecule name information.
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the
+                            mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col
+                            arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied,
+                            spin_id_col must be None.
     @type mol_name_col:     int or None
-    @param res_name_col:    The column containing the residue name information.
+    @keyword res_name_col:  The column containing the residue name information.  If supplied,
+                            spin_id_col must be None.
     @type res_name_col:     int or None
-    @param res_num_col:     The column containing the residue number information.
+    @keyword res_num_col:   The column containing the residue number information.  If supplied,
+                            spin_id_col must be None.
     @type res_num_col:      int or None
-    @param spin_name_col:   The column containing the spin name information.
+    @keyword spin_name_col: The column containing the spin name information.  If supplied,
+                            spin_id_col must be None.
     @type spin_name_col:    int or None
-    @param spin_num_col:    The column containing the spin number information.
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied,
+                            spin_id_col must be None.
     @type spin_num_col:     int or None
-    @param sep:             The column seperator which, if None, defaults to whitespace.
+    @keyword data_col:      The column containing the relaxation data.
+    @type data_col:         int or None
+    @keyword error_col:     The column containing the relaxation data errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all
+                            spins.
+    @type spin_id:          None or str
     """
 
     # Test if the current data pipe exists.
@@ -638,91 +627,30 @@ def read(ri_label=None, frq_label=None, frq=None, file=None, dir=None, file_data
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Minimum number of columns.
-    min_col_num = max(mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col)
-
-    # Extract the data from the file.
-    if not file_data:
-        # Extract.
-        file_data = extract_data(file, dir)
-
-        # Count the number of header lines.
-        header_lines = 0
-        num_col = max(res_num_col, spin_num_col)
-        for i in xrange(len(file_data)):
-            try:
-                int(file_data[i][num_col])
-            except:
-                header_lines = header_lines + 1
-            else:
-                break
-
-        # Remove the header.
-        file_data = file_data[header_lines:]
-
-        # Strip the data.
-        file_data = strip(file_data)
-
-        # Test the validity of the relaxation data.
-        for i in xrange(len(file_data)):
-            # Skip missing data.
-            if len(file_data[i]) <= min_col_num:
-                continue
-            elif file_data[i][data_col] == 'None' or file_data[i][error_col] == 'None':
-                continue
-
-            # Test that the data are numbers.
-            try:
-                if res_num_col != None:
-                    int(file_data[i][res_num_col])
-                if spin_num_col != None:
-                    int(file_data[i][spin_num_col])
-                float(file_data[i][data_col])
-                float(file_data[i][error_col])
-            except ValueError:
-                raise RelaxError("The relaxation data in the line " + repr(file_data[i]) + " is invalid.")
-
     # Loop over the file data to create the data structures for packing.
     values = []
     errors = []
-    mol_names = []
-    res_nums = []
-    res_names = []
-    spin_nums = []
-    spin_names = []
-    for i in xrange(len(file_data)):
-        # Skip missing data.
-        if len(file_data[i]) <= min_col_num:
-            continue
+    ids = []
+    for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
+        # Unpack.
+        if data_col and error_col:
+            id, value, error = data
+        elif data_col:
+            id, value = data
+            error = None
+        else:
+            id, error = data
+            value = None
 
         # Pack the spin ID info.
-        if mol_name_col != None:
-            mol_names.append(file_data[i][mol_name_col])
-        else:
-            mol_names.append(None)
-        if res_num_col != None:
-            res_nums.append(file_data[i][res_num_col])
-        else:
-            res_nums.append(None)
-        if res_name_col != None:
-            res_names.append(file_data[i][res_name_col])
-        else:
-            res_names.append(None)
-        if spin_num_col != None:
-            spin_nums.append(file_data[i][spin_num_col])
-        else:
-            spin_nums.append(None)
-        if spin_name_col != None:
-            spin_names.append(file_data[i][spin_name_col])
-        else:
-            spin_names.append(None)
+        ids.append(id)
 
         # Convert the data.
-        values.append(eval(file_data[i][data_col]))
-        errors.append(eval(file_data[i][error_col]))
+        values.append(value)
+        errors.append(error)
 
     # Pack the data.
-    pack_data(ri_label, frq_label, frq, values, errors, mol_names, res_nums, res_names, spin_nums, spin_names)
+    pack_data(ri_label, frq_label, frq, values, errors, ids)
 
 
 def return_data_desc(name):

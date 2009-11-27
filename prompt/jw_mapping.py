@@ -69,4 +69,4 @@ class Jw_mapping(User_fn_class):
         check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
-        jw_mapping_obj.set_frq(frq=frq)
+        jw_mapping_obj._set_frq(frq=frq)

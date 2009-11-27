@@ -195,8 +195,6 @@ class Minimisation(Basic_class):
         Note
         ~~~~
 
-        --------------------------------------------------------------------------------------------
-
         All the text which follows is a reproduction of the docstring of the generic_minimise
         function from the minfx python package.  Only take note of the minimisation algorithms and
         minimisation options sections, the other sections are not relevant for this function.  The
@@ -205,8 +203,6 @@ class Minimisation(Basic_class):
 
         The section entitled Keyword Arguments is also completely inaccessible therefore please
         ignore that text.
-
-        --------------------------------------------------------------------------------------------
 
         """
 

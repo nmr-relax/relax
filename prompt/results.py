@@ -91,7 +91,7 @@ class Results(User_fn_class):
         results.read(file=file, directory=dir)
 
 
-    def write(self, file='results', dir='pipe_name', force=False, compress_type=1):
+    def write(self, file='results', dir='pipe_name', compress_type=1, force=False):
         """Function for writing results to a file.
 
         Keyword Arguments
@@ -102,9 +102,9 @@ class Results(User_fn_class):
 
         dir:  The directory name.
 
-        force:  A flag which if True will cause the results file to be overwritten.
-
         compress_type:  The type of compression to use when creating the file.
+
+        force:  A flag which if True will cause the results file to be overwritten.
 
 
         Description
@@ -131,15 +131,15 @@ class Results(User_fn_class):
             text = sys.ps3 + "results.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
-            text = text + ", force=" + repr(force)
-            text = text + ", compress_type=" + repr(compress_type) + ")"
+            text = text + ", compress_type=" + repr(compress_type)
+            text = text + ", force=" + repr(force) + ")"
             print(text)
 
         # The argument checks.
         check.is_str_or_inst(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
         check.is_int(compress_type, 'compression type')
+        check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         results.write(file=file, directory=dir, force=force, compress_type=compress_type)

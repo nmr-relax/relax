@@ -53,7 +53,7 @@ import generic_fns
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
-from relax_io import log, tee
+from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
 import version
@@ -112,11 +112,11 @@ class Relax:
 
         # Logging.
         if log_file:
-            log(log_file)
+            io_streams_log(log_file)
 
         # Tee.
         elif tee_file:
-            tee(tee_file)
+            io_streams_tee(tee_file)
 
         # Create a string to pass to the interpreter to print.
         intro_string = self.get_intro_string()

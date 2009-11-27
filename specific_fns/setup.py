@@ -29,6 +29,7 @@ from specific_fns.model_free import Model_free
 from specific_fns.n_state_model import N_state_model
 from specific_fns.noe import Noe
 from specific_fns.relax_fit import Relax_fit
+from specific_fns.srls import SRLS
 from relax_errors import RelaxError, RelaxFuncSetupError
 
 
@@ -41,6 +42,7 @@ model_free_obj = Model_free()
 n_state_model_obj = N_state_model()
 noe_obj = Noe()
 relax_fit_obj = Relax_fit()
+srls_obj = SRLS()
 
 
 # The function for returning the requested specific function.
@@ -55,10 +57,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
 
     # Attempt to retrieve the function.
     try:
-        # Back-calculate function.
-        if eqi == 'back_calc':
-            function = inst.back_calc
-
         # Base data loop generator function.
         if eqi == 'base_data_loop':
             function = inst.base_data_loop
@@ -66,10 +64,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Calculate function.
         if eqi == 'calculate':
             function = inst.calculate
-
-        # Copy function.
-        if eqi == 'copy':
-            function = inst.copy
 
         # Create Monte Carlo data function.
         if eqi == 'create_mc_data':
@@ -231,14 +225,6 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'deselect':
             function = inst.deselect
 
-        # Write results function (Columnar format).
-        if eqi == 'write_columnar_results':
-            function = inst.write_columnar_results
-
-        # Write results function (XML format).
-        #if eqi == 'write_xml_results':
-        #    function = inst.write_xml_results
-
     # Catch if the function is missing.
     except AttributeError:
         function = None
@@ -287,6 +273,10 @@ def get_instance(function_type):
     if function_type == 'hybrid':
         return hybrid_obj
 
+    # SRLS.
+    if function_type == 'srls':
+        return srls_obj
+
     # Unknown analysis.
     raise RelaxError("The function_type " + repr(function_type) + " is unknown.")
 
@@ -325,6 +315,10 @@ def get_string(function_type):
     # Hybrid models.
     if function_type == 'hybrid':
         return "hybrid models"
+
+    # SRLS
+    if function_type == 'srls':
+        return "SRLS analysis"
 
     # Unknown analysis.
     raise RelaxError("The function_type " + repr(function_type) + " is unknown.")

@@ -181,6 +181,13 @@ class Base_struct_API:
         raise RelaxImplementError
 
 
+    def delete(self):
+        """Prototype method stub for deleting all structural data from the current data pipe."""
+
+        # Raise the error.
+        raise RelaxImplementError
+
+
     def from_xml(self, str_node, dir=None, id=None):
         """Recreate the structural object from the XML structural object node.
 

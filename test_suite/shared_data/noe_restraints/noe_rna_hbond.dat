@@ -19,6 +19,7 @@ assign (segid A and resid  3 and name O6 ) (segid B and resid  2 and name N4 )  
 ! C4-G1 Watson-Crick (A-form RNA)
 assign (segid A and resid  4 and name N3 ) (segid B and resid  1 and name H1 )  1.89 0.20 0.20
 assign (segid A and resid  4 and name N3 ) (segid B and resid  1 and name N1 )  2.91 0.20 0.20
+#assign (segid A and resid  4 and name N3 ) (segid B and resid  1 and name N1 )  2.91 0.20 0.20
 assign (segid A and resid  4 and name O2 ) (segid B and resid  1 and name H22)  2.08 0.20 0.20
 assign (segid A and resid  4 and name O2 ) (segid B and resid  1 and name N2 )  3.08 0.20 0.20
 assign (segid A and resid  4 and name H42)
