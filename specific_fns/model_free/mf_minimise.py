@@ -1616,14 +1616,9 @@ class Mf_minimise:
                     else:
                         command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, verbosity=verbosity)
 
-<<<<<<< .working
                     # Set up the model-free memo and add it to the processor queue.
                     memo = MF_grid_memo(super_grid_memo)
                     processor.add_to_queue(command, memo)
-=======
-            # Disassemble the parameter vector.
-            self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
->>>>>>> .merge-right.r9986
 
             # Minimisation of all other model types.
             else:
@@ -1647,23 +1642,3 @@ class Mf_minimise:
                 # Set up the model-free memo and add it to the processor queue.
                 memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)
                 processor.add_to_queue(command, memo)
-
-                # Global minimisation statistics.
-                elif model_type == 'diff' or model_type == 'all':
-                    # Chi-squared statistic.
-                    cdp.chi2 = func
-
-                    # Iterations.
-                    cdp.iter = iter_count
-
-                    # Function evaluations.
-                    cdp.f_count = f_count
-
-                    # Gradient evaluations.
-                    cdp.g_count = g_count
-
-                    # Hessian evaluations.
-                    cdp.h_count = h_count
-
-                    # Warning.
-                    cdp.warning = warning
