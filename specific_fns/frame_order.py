@@ -832,6 +832,19 @@ class Frame_order(API_base):
         self.minimise(min_algor='grid', min_options=grid, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
+    def is_spin_param(self, name):
+        """State that the parameter is not spin specific.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        False.
+        @rtype:         bool
+        """
+
+        # Not spin specific!
+        return False
+
+
     def map_bounds(self, param, spin_id=None):
         """Create bounds for the OpenDX mapping function.
 
