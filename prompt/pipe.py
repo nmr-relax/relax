@@ -252,7 +252,7 @@ class Pipe(User_fn_class):
         check.is_str_list(pipes, 'data pipes')
 
         # Execute the functional code.
-        hybrid_obj.hybridise(hybrid=hybrid, pipe_list=pipes)
+        hybrid_obj._hybridise(hybrid=hybrid, pipe_list=pipes)
 
 
     def switch(self, pipe_name=None):

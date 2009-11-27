@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006 Edward d'Auvergne                                        #
+# Copyright (C) 2006, 2009 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,8 +23,7 @@
 
 # Import statements.
 from glob import glob
-from os import F_OK, access, chdir, getcwd, path, remove, sep, system
-from shutil import move
+from os import F_OK, access, chdir, getcwd, path, remove, rename, sep, system
 import sys
 
 from version import version
@@ -371,7 +370,7 @@ def compile_user_manual_pdf(target, source, env):
     if access('relax.ps', F_OK):
         remove('relax.ps')
     if access('relax.pdf', F_OK):
-        move('relax.pdf', path.pardir)
+        rename('relax.pdf', path.pardir+path.sep+'relax.pdf')
 
     # Return to the base directory.
     chdir(base_dir)

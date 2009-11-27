@@ -56,7 +56,7 @@ class Deselect(User_fn_class):
         selection.desel_all()
 
 
-    def read(self, file=None, dir=None, mol_name_col=None, res_num_col=0, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, change_all=False):
+    def read(self, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=0, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False):
         """Function for deselecting the spins contained in a file.
 
         Keyword Arguments
@@ -66,23 +66,42 @@ class Deselect(User_fn_class):
 
         dir:  The directory where the file is located.
 
-        mol_name_col:  The molecule name column (this defaults to no column).
+        spin_id_col:  The spin ID string column (an alternative to the mol, res, and spin name and
+            number columns).
 
-        res_num_col:  The residue number column (the default is 0, i.e. the first column).
+        mol_name_col:  The molecule name column (alternative to the spin_id_col).
 
-        res_name_col:  The residue name column (this defaults to no column).
+        res_num_col:  The residue number column (alternative to the spin_id_col).
 
-        spin_num_col:  The spin number column (this defaults to no column).
+        res_name_col:  The residue name column (alternative to the spin_id_col).
 
-        spin_name_col:  The spin name column (this defaults to no column).
+        spin_num_col:  The spin number column (alternative to the spin_id_col).
+
+        spin_name_col:  The spin name column (alternative to the spin_id_col).
+
+        data_col:  The RDC data column.
+
+        error_col:  The experimental error column.
 
         sep:  The column separator (the default is white space).
+
+        spin_id:  The spin ID string to restrict the loading of data to certain spin subsets.
+
+        boolean:  The boolean operator specifying how spins should be selected.
 
         change_all:  A flag specifying if all other spins should be changed.
 
 
         Description
         ~~~~~~~~~~~
+
+        The spin system can be identified in the file using two different formats.  The first is the
+        spin ID string column which can include the molecule name, the residue name and number, and
+        the spin name and number.  Alternatively the mol_name_col, res_num_col, res_name_col,
+        spin_num_col, and/or spin_name_col arguments can be supplied allowing this information to be
+        in separate columns.  Note that the numbering of columns starts at one.  The spin_id
+        argument can be used to restrict the reading to certain spin types, for example only 15N
+        spins when only residue information is in the file.
 
         Empty lines and lines beginning with a hash are ignored.
 
@@ -97,14 +116,14 @@ class Deselect(User_fn_class):
         To deselect all overlapped residues listed with residue numbers in the first column of the
         file 'unresolved', type:
 
-        relax> deselect.read('unresolved')
-        relax> deselect.read(file='unresolved')
+        relax> deselect.read('unresolved', res_num_col=1)
+        relax> deselect.read(file='unresolved', res_num_col=1)
 
         To deselect the spins in the second column of the relaxation data file 'r1.600' while
         selecting all other spins, for example type:
 
-        relax> deselect.read('r1.600', res_num_col=None, spin_num_col=1, change_all=True)
-        relax> deselect.read(file='r1.600', res_num_col=None, spin_num_col=1, change_all=True)
+        relax> deselect.read('r1.600', spin_num_col=2, change_all=True)
+        relax> deselect.read(file='r1.600', spin_num_col=2, change_all=True)
         """
 
         # Function intro test.
@@ -112,28 +131,34 @@ class Deselect(User_fn_class):
             text = sys.ps3 + "deselect.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
+            text = text + ", spin_id_col=" + repr(spin_id_col)
             text = text + ", mol_name_col=" + repr(mol_name_col)
             text = text + ", res_num_col=" + repr(res_num_col)
             text = text + ", res_name_col=" + repr(res_name_col)
             text = text + ", spin_num_col=" + repr(spin_num_col)
             text = text + ", spin_name_col=" + repr(spin_name_col)
             text = text + ", sep=" + repr(sep)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", boolean=" + repr(boolean)
             text = text + ", change_all=" + repr(change_all) + ")"
             print(text)
 
         # The argument checks.
         check.is_str(file, 'file name')
         check.is_str(dir, 'directory name', can_be_none=True)
+        check.is_int(spin_id_col, 'spin ID string column', can_be_none=True)
         check.is_int(mol_name_col, 'molecule name column', can_be_none=True)
         check.is_int(res_num_col, 'residue number column', can_be_none=True)
         check.is_int(res_name_col, 'residue name column', can_be_none=True)
         check.is_int(spin_num_col, 'spin number column', can_be_none=True)
         check.is_int(spin_name_col, 'spin name column', can_be_none=True)
         check.is_str(sep, 'column separator', can_be_none=True)
+        check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        check.is_str(boolean, 'boolean operator')
         check.is_bool(change_all, 'change all')
 
         # Execute the functional code.
-        selection.desel_read(file=file, dir=dir, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, change_all=change_all)
+        selection.desel_read(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id, boolean=boolean, change_all=change_all)
 
 
     def reverse(self, spin_id=None):

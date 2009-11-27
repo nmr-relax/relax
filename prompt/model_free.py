@@ -131,7 +131,7 @@ class Model_free(User_fn_class):
         check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        model_free_obj.create_model(model=model, equation=equation, params=params, spin_id=spin_id)
+        model_free_obj._create_model(model=model, equation=equation, params=params, spin_id=spin_id)
 
 
     def delete(self):
@@ -151,7 +151,7 @@ class Model_free(User_fn_class):
             print(text)
 
         # Execute the functional code.
-        model_free_obj.delete()
+        model_free_obj._delete()
 
 
     def remove_tm(self, spin_id=None):
@@ -190,7 +190,7 @@ class Model_free(User_fn_class):
         check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        model_free_obj.remove_tm(spin_id=spin_id)
+        model_free_obj._remove_tm(spin_id=spin_id)
 
 
     def select_model(self, model=None, spin_id=None):
@@ -339,4 +339,4 @@ class Model_free(User_fn_class):
         check.is_str(spin_id, 'spin identification string', can_be_none=True)
 
         # Execute the functional code.
-        model_free_obj.select_model(model=model, spin_id=spin_id)
+        model_free_obj._select_model(model=model, spin_id=spin_id)

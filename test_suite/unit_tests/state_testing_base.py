@@ -73,7 +73,7 @@ class State_base_class:
             path = sys.path[-1]
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir_name=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -102,7 +102,7 @@ class State_base_class:
             path = sys.path[-1]
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir_name=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Add a new data pipe and some data to it.
         ds.add('new', 'jw_mapping')
@@ -137,7 +137,7 @@ class State_base_class:
             path = sys.path[-1]
 
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir_name=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Reset.
         ds.__reset__()

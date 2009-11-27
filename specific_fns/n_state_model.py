@@ -26,6 +26,7 @@
 # Python module imports.
 from math import acos, cos, pi, sqrt
 from minfx.generic import generic_minimise
+from minfx.grid import grid
 from numpy import array, dot, float64, identity, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
@@ -41,18 +42,18 @@ from generic_fns.structure.internal import Internal
 import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
-from maths_fns.rotation_matrix import R_2vect, R_euler_zyz
+from maths_fns.rotation_matrix import two_vect_to_R, euler_zyz_to_R
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.base_class import Common_functions
+from specific_fns.api_base import API_base
 
 
-class N_state_model(Common_functions):
+class N_state_model(API_base):
     """Class containing functions for the N-state model."""
 
-    def __assemble_param_vector(self, sim_index=None):
+    def _assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
 
         @param sim_index:       The index of the simulation to optimise.  This should be None if
@@ -67,7 +68,7 @@ class N_state_model(Common_functions):
             raise RelaxNoModelError
 
         # Determine the data type.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Initialise the parameter vector.
         param_vector = []
@@ -122,7 +123,7 @@ class N_state_model(Common_functions):
         return array(param_vector, float64)
 
 
-    def __assemble_scaling_matrix(self, data_types=None, scaling=True):
+    def _assemble_scaling_matrix(self, data_types=None, scaling=True):
         """Create and return the scaling matrix.
 
         @keyword data_types:    The base data types used in the optimisation.  This list can contain
@@ -135,7 +136,7 @@ class N_state_model(Common_functions):
         """
 
         # Initialise.
-        scaling_matrix = identity(self.param_num(), float64)
+        scaling_matrix = identity(self._param_num(), float64)
 
         # Return the identity matrix.
         if not scaling:
@@ -156,7 +157,7 @@ class N_state_model(Common_functions):
         return scaling_matrix
 
 
-    def __base_data_types(self):
+    def _base_data_types(self):
         """Determine all the base data types.
 
         The base data types can include::
@@ -200,7 +201,220 @@ class N_state_model(Common_functions):
         return list
 
 
-    def __disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
+    def _calc_ave_dist(self, atom1, atom2, exp=1):
+        """Calculate the average distances.
+
+        The formula used is::
+
+                      _N_
+                  / 1 \                  \ 1/exp
+            <r> = | -  > |p1i - p2i|^exp |
+                  \ N /__                /
+                       i
+
+        where i are the members of the ensemble, N is the total number of structural models, and p1
+        and p2 at the two atom positions.
+
+
+        @param atom1:   The atom identification string of the first atom.
+        @type atom1:    str
+        @param atom2:   The atom identification string of the second atom.
+        @type atom2:    str
+        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
+                        r^-6 NOE averaging.
+        @type exp:      int
+        @return:        The average distance between the two atoms.
+        @rtype:         float
+        """
+
+        # Get the spin containers.
+        spin1 = return_spin(atom1)
+        spin2 = return_spin(atom2)
+
+        # Loop over each model.
+        num_models = len(spin1.pos)
+        ave_dist = 0.0
+        for i in range(num_models):
+            # Distance to the minus sixth power.
+            dist = norm(spin1.pos[i] - spin2.pos[i])
+            ave_dist = ave_dist + dist**(exp)
+
+        # Average.
+        ave_dist = ave_dist / num_models
+
+        # The exponent.
+        ave_dist = ave_dist**(1.0/exp)
+
+        # Return the average distance.
+        return ave_dist
+
+
+    def _CoM(self, pivot_point=None, centre=None):
+        """Centre of mass analysis.
+
+        This function does an analysis of the centre of mass (CoM) of the N states.  This includes
+        calculating the order parameter associated with the pivot-CoM vector, and the associated
+        cone of motions.  The pivot_point argument must be supplied.  If centre is None, then the
+        CoM will be calculated from the selected parts of the loaded structure.  Otherwise it will
+        be set to the centre arg.
+
+        @param pivot_point: The pivot point in the structural file(s).
+        @type pivot_point:  list of float of length 3
+        @param centre:      The optional centre of mass vector.
+        @type centre:       list of float of length 3
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Set the pivot point.
+        cdp.pivot_point = pivot_point
+
+        # The centre has been supplied.
+        if centre:
+            cdp.CoM = centre
+
+        # Calculate from the structure file.
+        else:
+            cdp.CoM = generic_fns.structure.mass.centre_of_mass()
+
+        # Calculate the vector between the pivot and CoM points.
+        cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
+
+        # Calculate the unit vector between the pivot and CoM points.
+        unit_vect = cdp.pivot_CoM / norm(cdp.pivot_CoM)
+
+        # Initilise some data structures.
+        R = zeros((3, 3), float64)
+        vectors = zeros((cdp.N, 3), float64)
+
+        # Loop over the N states.
+        for c in xrange(cdp.N):
+            # Generate the rotation matrix.
+            euler_zyz_to_R(cdp.alpha[c], cdp.beta[c], cdp.gamma[c], R)
+
+            # Rotate the unit vector.
+            vectors[c] = dot(R, unit_vect)
+
+            # Multiply by the probability.
+            vectors[c] = vectors[c] * cdp.probs[c]
+
+        # Average of the unit vectors.
+        cdp.ave_unit_pivot_CoM = sum(vectors)
+
+        # The length reduction.
+        cdp.ave_pivot_CoM_red = norm(cdp.ave_unit_pivot_CoM)
+
+        # The aveage pivot-CoM vector.
+        cdp.ave_pivot_CoM = norm(cdp.pivot_CoM) * cdp.ave_unit_pivot_CoM
+
+        # The full length rotated pivot-CoM vector.
+        cdp.full_ave_pivot_CoM = cdp.ave_pivot_CoM / cdp.ave_pivot_CoM_red
+
+        # The cone angle for diffusion on an axially symmetric cone.
+        cdp.theta_diff_on_cone = acos(cdp.ave_pivot_CoM_red)
+        cdp.S_diff_on_cone = (3.0*cos(cdp.theta_diff_on_cone)**2 - 1.0) / 2.0
+
+        # The cone angle and order parameter for diffusion in an axially symmetric cone.
+        cdp.theta_diff_in_cone = acos(2.*cdp.ave_pivot_CoM_red - 1.)
+        cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
+
+        # Print out.
+        print(("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))))
+        print(("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))))
+        print(("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))))
+        print(("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))))
+        print(("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))))
+        print(("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))))
+        print(("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))))
+        print(("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))))
+        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)))
+        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)))
+        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)))
+        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)))
+        print("\n\n")
+
+
+    def _cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
+        """Create a PDB file containing a geometric object representing the various cone models.
+
+        Currently the only cone types supported are 'diff in cone' and 'diff on cone'.
+
+
+        @param cone_type:   The type of cone model to represent.
+        @type cone_type:    str
+        @param scale:       The size of the geometric object is eqaul to the average pivot-CoM
+                            vector length multiplied by this scaling factor.
+        @type scale:        float
+        @param file:        The name of the PDB file to create.
+        @type file:         str
+        @param dir:         The name of the directory to place the PDB file into.
+        @type dir:          str
+        @param force:       Flag which if set to True will cause any pre-existing file to be
+                            overwritten.
+        @type force:        int
+        """
+
+        # Test if the cone models have been determined.
+        if cone_type == 'diff in cone':
+            if not hasattr(cdp, 'S_diff_in_cone'):
+                raise RelaxError("The diffusion in a cone model has not yet been determined.")
+        elif cone_type == 'diff on cone':
+            if not hasattr(cdp, 'S_diff_on_cone'):
+                raise RelaxError("The diffusion on a cone model has not yet been determined.")
+        else:
+            raise RelaxError("The cone type " + repr(cone_type) + " is unknown.")
+
+        # The number of increments for the filling of the cone objects.
+        inc = 20
+
+        # The rotation matrix.
+        R = zeros((3, 3), float64)
+        two_vect_to_R(array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), R)
+
+        # Create the structural object.
+        structure = Internal()
+
+        # Add a structure.
+        structure.add_struct(name='cone')
+
+        # Alias the single molecule from the single model.
+        mol = structure.structural_data[0].mol[0]
+
+        # Add the pivot point.
+        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
+
+        # Generate the average pivot-CoM vectors.
+        print("\nGenerating the average pivot-CoM vectors.")
+        sim_vectors = None
+        if hasattr(cdp, 'ave_pivot_CoM_sim'):
+            sim_vectors = cdp.ave_pivot_CoM_sim
+        res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+
+        # Generate the cone outer edge.
+        print("\nGenerating the cone outer edge.")
+        if cone_type == 'diff in cone':
+            angle = cdp.theta_diff_in_cone
+        elif cone_type == 'diff on cone':
+            angle = cdp.theta_diff_on_cone
+        cap_start_atom = mol.atom_num[-1]+1
+        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
+
+        # Generate the cone cap, and stitch it to the cone edge.
+        if cone_type == 'diff in cone':
+            print("\nGenerating the cone cap.")
+            cone_start_atom = mol.atom_num[-1]+1
+            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
+            generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
+
+        # Create the PDB file.
+        print("\nGenerating the PDB file.")
+        pdb_file = open_write_file(file, dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
+
+
+    def _disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
         """Disassemble the parameter vector and place the values into the relevant variables.
 
         For the 2-domain N-state model, the parameters are stored in the probability and Euler angle
@@ -274,7 +488,7 @@ class N_state_model(Common_functions):
                 gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
 
 
-    def __linear_constraints(self, data_types=None, scaling_matrix=None):
+    def _linear_constraints(self, data_types=None, scaling_matrix=None):
         """Function for setting up the linear constraint matrices A and b.
 
         Standard notation
@@ -349,7 +563,7 @@ class N_state_model(Common_functions):
         # Initialisation (0..j..m).
         A = []
         b = []
-        zero_array = zeros(self.param_num(), float64)
+        zero_array = zeros(self._param_num(), float64)
         i = pop_start
         j = 0
 
@@ -372,7 +586,7 @@ class N_state_model(Common_functions):
             # Add the inequalities for pN.
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
-            for i in xrange(pop_start, self.param_num()):
+            for i in xrange(pop_start, self._param_num()):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
             b.append(-1.0)
@@ -386,7 +600,7 @@ class N_state_model(Common_functions):
         return A, b
 
 
-    def __minimise_bc_data(self, model):
+    def _minimise_bc_data(self, model):
         """Extract and unpack the back calculated data.
 
         @param model:   The instantiated class containing the target function.
@@ -412,7 +626,7 @@ class N_state_model(Common_functions):
                     spin.pcs_bc[i] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
-                if hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect'):
+                if hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
                         spin.rdc_bc = [None] * model.num_align
@@ -421,11 +635,11 @@ class N_state_model(Common_functions):
                     spin.rdc_bc[i] = model.Dij_theta[i, data_index]
 
                 # Increment the spin index if it contains data.
-                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and hasattr(spin, 'xh_vect')):
+                if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
                     data_index = data_index + 1
 
 
-    def __minimise_setup_pcs(self):
+    def _minimise_setup_pcs(self):
         """Set up the data structures for optimisation using PCSs as base data sets.
 
         @return:    The assembled data structures for using PCSs as the base data for optimisation.
@@ -556,13 +770,13 @@ class N_state_model(Common_functions):
         return pcs_numpy, pcs_err_numpy, unit_vect_numpy, array(pcs_const)
 
 
-    def __minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
+    def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
         """Set up the data structures for optimisation using RDCs as base data sets.
 
         @return:    The assembled data structures for using RDCs as the base data for optimisation.
                     These include:
                         - rdcs, the RDC values.
-                        - xh_vectors, the heteronucleus to proton vectors.
+                        - vectors, the heteronucleus to proton vectors.
                         - dj, the dipolar constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
@@ -570,7 +784,7 @@ class N_state_model(Common_functions):
         # Initialise.
         rdcs = []
         rdc_err = []
-        xh_vectors = []
+        vectors = []
         dj = []
 
         # Spin loop.
@@ -585,14 +799,14 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
                     rdc_err.append([None]*len(cdp.align_tensors))
-                    xh_vectors.append([None]*3)
+                    vectors.append([None]*3)
                     dj.append(None)
 
                 # Jump to the next spin.
                 continue
 
             # RDC data exists but the XH bond vectors are missing?
-            if not hasattr(spin, 'xh_vect'):
+            if not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect'):
                 # Throw a warning.
                 warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin " + spin_id))
 
@@ -600,18 +814,22 @@ class N_state_model(Common_functions):
                 if hasattr(spin, 'pcs'):
                     rdcs.append([None]*len(cdp.align_tensors))
                     rdc_err.append([None]*len(cdp.align_tensors))
-                    xh_vectors.append([None]*3)
+                    vectors.append([None]*3)
                     dj.append(None)
 
                 # Jump to the next spin.
                 continue
 
             # Append the RDC and XH vectors to the lists.
-            rdcs.append(spin.rdc)
-            if isinstance(spin.xh_vect[0], float):
-                xh_vectors.append([spin.xh_vect])
+            if hasattr(spin, 'xh_vect'):
+                obj = getattr(spin, 'xh_vect')
             else:
-                xh_vectors.append(spin.xh_vect)
+                obj = getattr(spin, 'bond_vect')
+            rdcs.append(spin.rdc)
+            if isinstance(obj[0], float):
+                vectors.append([obj])
+            else:
+                vectors.append(obj)
 
             # Append the PCS errors (or a list of None).
             if hasattr(spin, 'rdc_err'):
@@ -629,7 +847,7 @@ class N_state_model(Common_functions):
         # Initialise the numpy objects (the rdc matrix is transposed!).
         rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
         rdc_err_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        xh_vect_numpy = zeros((len(xh_vectors), len(xh_vectors[0]), 3), float64)
+        vect_numpy = zeros((len(vectors), len(vectors[0]), 3), float64)
 
         # Loop over the spins.
         for spin_index in xrange(len(rdcs)):
@@ -640,15 +858,15 @@ class N_state_model(Common_functions):
                 rdc_err_numpy[align_index, spin_index] = rdc_err[spin_index][align_index]
 
             # Loop over the N states.
-            for state_index in xrange(len(xh_vectors[spin_index])):
+            for state_index in xrange(len(vectors[spin_index])):
                 # Store the unit vector.
-                xh_vect_numpy[spin_index, state_index] = xh_vectors[spin_index][state_index]
+                vect_numpy[spin_index, state_index] = vectors[spin_index][state_index]
 
         # Return the data structures.
-        return rdcs_numpy, rdc_err_numpy, xh_vect_numpy, array(dj, float64)
+        return rdcs_numpy, rdc_err_numpy, vect_numpy, array(dj, float64)
 
 
-    def __minimise_setup_tensors(self, sim_index=None):
+    def _minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
         @keyword sim_index: The index of the simulation to optimise.  This should be None if
@@ -674,7 +892,7 @@ class N_state_model(Common_functions):
         full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
-        for i, tensor in self.__tensor_loop(red=False):
+        for i, tensor in self._tensor_loop(red=False):
             # The full tensor.
             full_tensors[5*i + 0] = tensor.Axx
             full_tensors[5*i + 1] = tensor.Ayy
@@ -687,7 +905,7 @@ class N_state_model(Common_functions):
                 full_in_ref_frame[i] = 1
 
         # Loop over the reduced tensors.
-        for i, tensor in self.__tensor_loop(red=True):
+        for i, tensor in self._tensor_loop(red=True):
             # The reduced tensor (simulation data).
             if sim_index != None:
                 red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
@@ -716,35 +934,127 @@ class N_state_model(Common_functions):
         return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
-    def __tensor_loop(self, red=False):
-        """Generator method for looping over the full or reduced tensors.
+    def _num_data_points(self):
+        """Determine the number of data points used in the model.
 
-        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
-                        the full tensors are returned.
-        @type red:      bool
-        @return:        The tensor index and the tensor.
-        @rtype:         (int, AlignTensorData instance)
+        @return:    The number, n, of data points in the model.
+        @rtype:     int
         """
 
-        # Number of tensor pairs.
-        n = len(cdp.align_tensors.reduction)
+        # Determine the data type.
+        data_types = self._base_data_types()
 
-        # Alias.
-        data = cdp.align_tensors
-        list = data.reduction
+        # Init.
+        n = 0
 
-        # Full or reduced index.
-        if red:
-            index = 1
-        else:
-            index = 0
+        # Spin loop.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
 
-        # Loop over the reduction list.
-        for i in range(n):
-            yield i, data[list[i][index]]
+            # RDC data (skipping array elements set to None).
+            if 'rdc' in data_types:
+                if hasattr(spin, 'rdc'):
+                    for rdc in spin.rdc:
+                        if isinstance(rdc, float):
+                            n = n + 1
+
+            # PCS data (skipping array elements set to None).
+            if 'pcs' in data_types:
+                if hasattr(spin, 'pcs'):
+                    for pcs in spin.pcs:
+                        if isinstance(pcs, float):
+                            n = n + 1
+
+        # Alignment tensors.
+        if 'tensor' in data_types:
+            n = n + 5*len(cdp.align_tensors)
+
+        # Return the value.
+        return n
 
 
-    def __q_factors_rdc(self):
+    def _number_of_states(self, N=None):
+        """Set the number of states in the N-state model.
+
+        @param N:   The number of states.
+        @type N:    int
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # Set the value of N.
+        cdp.N = N
+
+        # Update the model.
+        self._update_model()
+
+
+    def _param_model_index(self, param):
+        """Return the N-state model index for the given parameter.
+
+        @param param:   The N-state model parameter.
+        @type param:    str
+        @return:        The N-state model index.
+        @rtype:         str
+        """
+
+        # Probability.
+        if search('^p[0-9]*$', param):
+            return int(param[1:])
+
+        # Alpha Euler angle.
+        if search('^alpha', param):
+            return int(param[5:])
+
+        # Beta Euler angle.
+        if search('^beta', param):
+            return int(param[4:])
+
+        # Gamma Euler angle.
+        if search('^gamma', param):
+            return int(param[5:])
+
+        # Model independent parameter.
+        return None
+
+
+    def _param_num(self):
+        """Determine the number of parameters in the model.
+
+        @return:    The number of model parameters.
+        @rtype:     int
+        """
+
+        # Determine the data type.
+        data_types = self._base_data_types()
+
+        # Init.
+        num = 0
+
+        # Alignment tensor params.
+        if 'rdc' in data_types or 'pcs' in data_types:
+            num = num + 5*len(cdp.align_tensors)
+
+        # Populations.
+        if cdp.model in ['2-domain', 'population']:
+            num = num + (cdp.N - 1)
+
+        # Euler angles.
+        if cdp.model == '2-domain':
+            num = num + 3*cdp.N
+
+        # Return the param number.
+        return num
+
+
+    def _q_factors_rdc(self):
         """Calculate the Q-factors for the RDC data."""
 
         # Q-factor list.
@@ -814,7 +1124,7 @@ class N_state_model(Common_functions):
         cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
-    def __q_factors_pcs(self):
+    def _q_factors_pcs(self):
         """Calculate the Q-factors for the PCS data."""
 
         # Q-factor list.
@@ -854,7 +1164,96 @@ class N_state_model(Common_functions):
         cdp.q_pcs = sqrt(cdp.q_pcs)
 
 
-    def __update_model(self):
+    def _ref_domain(self, ref=None):
+        """Set the reference domain for the '2-domain' N-state model.
+
+        @param ref: The reference domain.
+        @type ref:  str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # Test that the correct model is set.
+        if cdp.model != '2-domain':
+            raise RelaxError("Setting the reference domain is only possible for the '2-domain' N-state model.")
+
+        # Test if the reference domain exists.
+        exists = False
+        for tensor_cont in cdp.align_tensors:
+            if tensor_cont.domain == ref:
+                exists = True
+        if not exists:
+            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
+
+        # Set the reference domain.
+        cdp.ref_domain = ref
+
+        # Update the model.
+        self._update_model()
+
+
+    def _select_model(self, model=None):
+        """Select the N-state model type.
+
+        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
+        @type model:    str
+        """
+
+        # Test if the current data pipe exists.
+        pipes.test()
+
+        # Test if the model is setup.
+        if hasattr(cdp, 'model'):
+            raise RelaxModelError('N-state')
+
+        # Test if the model name exists.
+        if not model in ['2-domain', 'population', 'fixed']:
+            raise RelaxError("The model name " + repr(model) + " is invalid.")
+
+        # Set the model
+        cdp.model = model
+
+        # Initialise the list of model parameters.
+        cdp.params = []
+
+        # Update the model.
+        self._update_model()
+
+
+    def _tensor_loop(self, red=False):
+        """Generator method for looping over the full or reduced tensors.
+
+        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
+                        the full tensors are returned.
+        @type red:      bool
+        @return:        The tensor index and the tensor.
+        @rtype:         (int, AlignTensorData instance)
+        """
+
+        # Number of tensor pairs.
+        n = len(cdp.align_tensors.reduction)
+
+        # Alias.
+        data = cdp.align_tensors
+        list = data.reduction
+
+        # Full or reduced index.
+        if red:
+            index = 1
+        else:
+            index = 0
+
+        # Loop over the reduction list.
+        for i in range(n):
+            yield i, data[list[i][index]]
+
+
+    def _update_model(self):
         """Update the model parameters as necessary."""
 
         # Initialise the list of model parameters.
@@ -898,7 +1297,7 @@ class N_state_model(Common_functions):
                 cdp.gamma = [None] * cdp.N
 
         # Determine the data type.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Set up alignment tensors for each alignment.
         ids = []
@@ -924,63 +1323,18 @@ class N_state_model(Common_functions):
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
-    def calc_ave_dist(self, atom1, atom2, exp=1):
-        """Calculate the average distances.
-
-        The formula used is::
-
-                      _N_
-                  / 1 \                  \ 1/exp
-            <r> = | -  > |p1i - p2i|^exp |
-                  \ N /__                /
-                       i
-
-        where i are the members of the ensemble, N is the total number of structural models, and p1
-        and p2 at the two atom positions.
-
-
-        @param atom1:   The atom identification string of the first atom.
-        @type atom1:    str
-        @param atom2:   The atom identification string of the second atom.
-        @type atom2:    str
-        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
-                        r^-6 NOE averaging.
-        @type exp:      int
-        @return:        The average distance between the two atoms.
-        @rtype:         float
-        """
-
-        # Get the spin containers.
-        spin1 = return_spin(atom1)
-        spin2 = return_spin(atom2)
-
-        # Loop over each model.
-        num_models = len(spin1.pos)
-        ave_dist = 0.0
-        for i in range(num_models):
-            # Distance to the minus sixth power.
-            dist = norm(spin1.pos[i] - spin2.pos[i])
-            ave_dist = ave_dist + dist**(exp)
-
-        # Average.
-        ave_dist = ave_dist / num_models
-
-        # The exponent.
-        ave_dist = ave_dist**(1.0/exp)
-
-        # Return the average distance.
-        return ave_dist
-
-
-    def calculate(self, verbosity=1):
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
         """Calculation function.
 
         Currently this function simply calculates the NOESY flat-bottom quadratic energy potential,
         if NOE restraints are available.
 
-        @param verbosity:       A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
-        @type verbosity:        int
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None or str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The MC simulation index (unused).
+        @type sim_index:    None
         """
 
         # Test if the N-state model has been set up.
@@ -1001,7 +1355,7 @@ class N_state_model(Common_functions):
             upper[i] = cdp.noe_restraints[i][3]
 
             # Calculate the average distances, using -6 power averaging.
-            dist[i] = self.calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+            dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
 
         # Calculate the quadratic potential.
         quad_pot(dist, pot, lower, upper) 
@@ -1012,171 +1366,6 @@ class N_state_model(Common_functions):
         for i in range(num_restraints):
             cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
             cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
-
-
-    def CoM(self, pivot_point=None, centre=None):
-        """Centre of mass analysis.
-
-        This function does an analysis of the centre of mass (CoM) of the N states.  This includes
-        calculating the order parameter associated with the pivot-CoM vector, and the associated
-        cone of motions.  The pivot_point argument must be supplied.  If centre is None, then the
-        CoM will be calculated from the selected parts of the loaded structure.  Otherwise it will
-        be set to the centre arg.
-
-        @param pivot_point: The pivot point in the structural file(s).
-        @type pivot_point:  list of float of length 3
-        @param centre:      The optional centre of mass vector.
-        @type centre:       list of float of length 3
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Set the pivot point.
-        cdp.pivot_point = pivot_point
-
-        # The centre has been supplied.
-        if centre:
-            cdp.CoM = centre
-
-        # Calculate from the structure file.
-        else:
-            cdp.CoM = generic_fns.structure.mass.centre_of_mass()
-
-        # Calculate the vector between the pivot and CoM points.
-        cdp.pivot_CoM = array(cdp.CoM, float64) - array(cdp.pivot_point, float64)
-
-        # Calculate the unit vector between the pivot and CoM points.
-        unit_vect = cdp.pivot_CoM / norm(cdp.pivot_CoM)
-
-        # Initilise some data structures.
-        R = zeros((3, 3), float64)
-        vectors = zeros((cdp.N, 3), float64)
-
-        # Loop over the N states.
-        for c in xrange(cdp.N):
-            # Generate the rotation matrix.
-            R_euler_zyz(R, cdp.alpha[c], cdp.beta[c], cdp.gamma[c])
-
-            # Rotate the unit vector.
-            vectors[c] = dot(R, unit_vect)
-
-            # Multiply by the probability.
-            vectors[c] = vectors[c] * cdp.probs[c]
-
-        # Average of the unit vectors.
-        cdp.ave_unit_pivot_CoM = sum(vectors)
-
-        # The length reduction.
-        cdp.ave_pivot_CoM_red = norm(cdp.ave_unit_pivot_CoM)
-
-        # The aveage pivot-CoM vector.
-        cdp.ave_pivot_CoM = norm(cdp.pivot_CoM) * cdp.ave_unit_pivot_CoM
-
-        # The full length rotated pivot-CoM vector.
-        cdp.full_ave_pivot_CoM = cdp.ave_pivot_CoM / cdp.ave_pivot_CoM_red
-
-        # The cone angle for diffusion on an axially symmetric cone.
-        cdp.theta_diff_on_cone = acos(cdp.ave_pivot_CoM_red)
-        cdp.S_diff_on_cone = (3.0*cos(cdp.theta_diff_on_cone)**2 - 1.0) / 2.0
-
-        # The cone angle and order parameter for diffusion in an axially symmetric cone.
-        cdp.theta_diff_in_cone = acos(2.*cdp.ave_pivot_CoM_red - 1.)
-        cdp.S_diff_in_cone = cos(cdp.theta_diff_in_cone) * (1 + cos(cdp.theta_diff_in_cone)) / 2.0
-
-        # Print out.
-        print(("\n%-40s %-20s" % ("Pivot point:", repr(cdp.pivot_point))))
-        print(("%-40s %-20s" % ("Moving domain CoM (prior to rotation):", repr(cdp.CoM))))
-        print(("%-40s %-20s" % ("Pivot-CoM vector", repr(cdp.pivot_CoM))))
-        print(("%-40s %-20s" % ("Pivot-CoM unit vector:", repr(unit_vect))))
-        print(("%-40s %-20s" % ("Average of the unit pivot-CoM vectors:", repr(cdp.ave_unit_pivot_CoM))))
-        print(("%-40s %-20s" % ("Average of the pivot-CoM vector:", repr(cdp.ave_pivot_CoM))))
-        print(("%-40s %-20s" % ("Full length rotated pivot-CoM vector:", repr(cdp.full_ave_pivot_CoM))))
-        print(("%-40s %-20s" % ("Length reduction from unity:", repr(cdp.ave_pivot_CoM_red))))
-        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion on a cone)", cdp.theta_diff_on_cone, cdp.theta_diff_on_cone / (2*pi) *360.)))
-        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion on a cone)", cdp.S_diff_on_cone, cdp.S_diff_on_cone**2)))
-        print(("%-40s %.5f rad (%.5f deg)" % ("Cone angle (diffusion in a cone)", cdp.theta_diff_in_cone, cdp.theta_diff_in_cone / (2*pi) *360.)))
-        print(("%-40s S_cone = %.5f (S^2 = %.5f)" % ("S_cone (diffusion in a cone)", cdp.S_diff_in_cone, cdp.S_diff_in_cone**2)))
-        print("\n\n")
-
-
-    def cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
-        """Create a PDB file containing a geometric object representing the various cone models.
-
-        Currently the only cone types supported are 'diff in cone' and 'diff on cone'.
-
-
-        @param cone_type:   The type of cone model to represent.
-        @type cone_type:    str
-        @param scale:       The size of the geometric object is eqaul to the average pivot-CoM
-                            vector length multiplied by this scaling factor.
-        @type scale:        float
-        @param file:        The name of the PDB file to create.
-        @type file:         str
-        @param dir:         The name of the directory to place the PDB file into.
-        @type dir:          str
-        @param force:       Flag which if set to True will cause any pre-existing file to be
-                            overwritten.
-        @type force:        int
-        """
-
-        # Test if the cone models have been determined.
-        if cone_type == 'diff in cone':
-            if not hasattr(cdp, 'S_diff_in_cone'):
-                raise RelaxError("The diffusion in a cone model has not yet been determined.")
-        elif cone_type == 'diff on cone':
-            if not hasattr(cdp, 'S_diff_on_cone'):
-                raise RelaxError("The diffusion on a cone model has not yet been determined.")
-        else:
-            raise RelaxError("The cone type " + repr(cone_type) + " is unknown.")
-
-        # The number of increments for the filling of the cone objects.
-        inc = 20
-
-        # The rotation matrix.
-        R = zeros((3, 3), float64)
-        R_2vect(R, array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM))
-
-        # Create the structural object.
-        structure = Internal()
-
-        # Add a structure.
-        structure.add_struct(name='cone')
-
-        # Alias the single molecule from the single model.
-        mol = structure.structural_data[0].mol[0]
-
-        # Add the pivot point.
-        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot_point, element='C')
-
-        # Generate the average pivot-CoM vectors.
-        print("\nGenerating the average pivot-CoM vectors.")
-        sim_vectors = None
-        if hasattr(cdp, 'ave_pivot_CoM_sim'):
-            sim_vectors = cdp.ave_pivot_CoM_sim
-        res_num = generic_fns.structure.geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
-
-        # Generate the cone outer edge.
-        print("\nGenerating the cone outer edge.")
-        if cone_type == 'diff in cone':
-            angle = cdp.theta_diff_in_cone
-        elif cone_type == 'diff on cone':
-            angle = cdp.theta_diff_on_cone
-        cap_start_atom = mol.atom_num[-1]+1
-        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
-
-        # Generate the cone cap, and stitch it to the cone edge.
-        if cone_type == 'diff in cone':
-            print("\nGenerating the cone cap.")
-            cone_start_atom = mol.atom_num[-1]+1
-            generic_fns.structure.geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, max_angle=angle, scale=norm(cdp.pivot_CoM), inc=inc)
-            generic_fns.structure.geometric.stitch_cap_to_cone(mol=mol, cone_start=cone_start_atom, cap_start=cap_start_atom+1, max_angle=angle, inc=inc)
-
-        # Create the PDB file.
-        print("\nGenerating the PDB file.")
-        pdb_file = open_write_file(file, dir, force=force)
-        structure.write_pdb(pdb_file)
-        pdb_file.close()
 
 
     default_value_doc = """
@@ -1215,7 +1404,8 @@ class N_state_model(Common_functions):
         """
 
         # Split the parameter into its base name and index.
-        name, index = self.return_data_name(param, index=True)
+        name = self.return_data_name(param)
+        index = self._param_model_index(param)
 
         # The number of states as a float.
         N = float(cdp.N)
@@ -1229,7 +1419,7 @@ class N_state_model(Common_functions):
             return (float(index)+1) * pi / (N+1.0)
 
 
-    def grid_search(self, lower, upper, inc, constraints=False, verbosity=0, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
 
         @param lower:       The lower bounds of the grid search which must be equal to the number of
@@ -1255,7 +1445,7 @@ class N_state_model(Common_functions):
             raise RelaxNoModelError('N-state')
 
         # The number of parameters.
-        n = self.param_num()
+        n = self._param_num()
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
@@ -1267,45 +1457,38 @@ class N_state_model(Common_functions):
 
         # If inc is a single int, convert it into an array of that value.
         if isinstance(inc, int):
-            temp = []
-            for j in xrange(n):
-                temp.append(inc)
-            inc = temp
+            inc = [inc]*n
 
-        # Initialise the grid_ops structure.
-        grid_ops = []
-        """This structure is a list of lists.  The first dimension corresponds to the model
-        parameter.  The second dimension has the elements: 0, the number of increments in that
-        dimension; 1, the lower limit of the grid; 2, the upper limit of the grid."""
+        # Setup the default bounds.
+        if not lower:
+            # Init.
+            lower = []
+            upper = []
 
-        # Set the grid search options.
-        for i in xrange(n):
-            # i is in the parameter array.
-            if i < len(cdp.params):
-                # Probabilities (default values).
-                if search('^p', cdp.params[i]):
-                    grid_ops.append([inc[i], 0.0, 1.0])
+            # Loop over the parameters.
+            for i in range(n):
+                # i is in the parameter array.
+                if i < len(cdp.params):
+                    # Probabilities (default values).
+                    if search('^p', cdp.params[i]):
+                        lower.append(0.0)
+                        upper.append(1.0)
 
-                # Angles (default values).
-                if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
-                    grid_ops.append([inc[i], 0.0, 2*pi])
-                elif search('^beta', cdp.params[i]):
-                    grid_ops.append([inc[i], 0.0, pi])
-
-            # Otherwise this must be an alignment tensor component.
-            else:
-                grid_ops.append([inc[i], -1e-3, 1e-3])
-
-            # Lower bound (if supplied).
-            if lower:
-                grid_ops[i][1] = lower[i]
-
-            # Upper bound (if supplied).
-            if upper:
-                grid_ops[i][1] = upper[i]
+                    # Angles (default values).
+                    if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
+                        lower.append(0.0)
+                        upper.append(2*pi)
+                    elif search('^beta', cdp.params[i]):
+                        lower.append(0.0)
+                        upper.append(pi)
+    
+                # Otherwise this must be an alignment tensor component.
+                else:
+                    lower.append(-1e-3)
+                    upper.append(1e-3)
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=grid_ops, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', min_options=[inc, lower, upper], constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
@@ -1325,7 +1508,7 @@ class N_state_model(Common_functions):
         return False
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation function.
 
         @param min_algor:       The minimisation algorithm to use.
@@ -1351,6 +1534,12 @@ class N_state_model(Common_functions):
         @param sim_index:       The index of the simulation to optimise.  This should be None if
                                 normal optimisation is desired.
         @type sim_index:        None or int
+        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:              array of int
         """
 
         # Test if the N-state model has been set up.
@@ -1378,50 +1567,60 @@ class N_state_model(Common_functions):
                 min_options = min_options[1:]
 
         # Update the model parameters if necessary.
-        self.__update_model()
+        self._update_model()
 
         # Create the initial parameter vector.
-        param_vector = self.__assemble_param_vector(sim_index=sim_index)
+        param_vector = self._assemble_param_vector(sim_index=sim_index)
 
         # Determine if alignment tensors or RDCs are to be used.
-        data_types = self.__base_data_types()
+        data_types = self._base_data_types()
 
         # Diagonal scaling.
-        scaling_matrix = self.__assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+        scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
         param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Linear constraints.
         if constraints:
-            A, b = self.__linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
+            A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
+        else:
+            A, b = None, None
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
         if 'tensor' in data_types:
-            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self.__minimise_setup_tensors(sim_index=sim_index)
+            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_vect, pcs_dj = self.__minimise_setup_pcs()
+            pcs, pcs_err, pcs_vect, pcs_dj = self._minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, xh_vect, rdc_dj = self.__minimise_setup_rdcs()
+            rdcs, rdc_err, xh_vect, rdc_dj = self._minimise_setup_rdcs()
 
         # Set up the class instance containing the target function.
         model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
-        # Minimisation.
-        if constraints:
-            results = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
-        else:
-            results = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=1, print_flag=verbosity)
-        if results == None:
-            return
+        # Grid search.
+        if search('^[Gg]rid', min_algor):
+            results = grid(func=model.func, args=(), num_incs=min_options[0], lower=min_options[1], upper=min_options[2], A=A, b=b, verbosity=verbosity)
 
-        # Disassemble the results.
-        param_vector, func, iter_count, f_count, g_count, h_count, warning = results
+            # Unpack the results.
+            param_vector, func, iter_count, warning = results
+            f_count = iter_count
+            g_count = 0.0
+            h_count = 0.0
+
+        # Minimisation.
+        else:
+            results = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=1, print_flag=verbosity)
+
+            # Unpack the results.
+            if results == None:
+                return
+            param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
         # Catch infinite chi-squared values.
         if isInf(func):
@@ -1436,7 +1635,7 @@ class N_state_model(Common_functions):
             param_vector = dot(scaling_matrix, param_vector)
 
         # Disassemble the parameter vector.
-        self.__disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
+        self._disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
         if sim_index != None:
@@ -1481,18 +1680,18 @@ class N_state_model(Common_functions):
         # Statistical analysis.
         if 'rdc' in data_types or 'pcs' in data_types:
             # Get the final back calculated data (for the Q-factor and
-            self.__minimise_bc_data(model)
+            self._minimise_bc_data(model)
 
             # Calculate the RDC Q-factors.
             if 'rdc' in data_types:
-                self.__q_factors_rdc()
+                self._q_factors_rdc()
 
             # Calculate the PCS Q-factors.
             if 'pcs' in data_types:
-                self.__q_factors_pcs()
+                self._q_factors_pcs()
 
 
-    def model_statistics(self, instance=None, spin_id=None, global_stats=None):
+    def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
         """Return the k, n, and chi2 model statistics.
 
         k - number of parameters.
@@ -1500,148 +1699,18 @@ class N_state_model(Common_functions):
         chi2 - the chi-squared value.
 
 
-        @keyword instance:      This is the optimisation instance index.  This should always be the
-                                value of 1 for the N-state model.  As it is ignored, this arg can be
-                                anything.
-        @type instance:         None or int
-        @keyword spin_id:       The spin identification string.  This is ignored in the N-state
-                                model.
+        @keyword model_info:    The data returned from model_loop() (unused).
+        @type model_info:       None
+        @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
         @type spin_id:          None or str
-        @keyword global_stats:  A parameter which determines if global or local statistics are
-                                returned.  For the N-state model, this argument is ignored.
+        @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
         @type global_stats:     None or bool
-        @return:                The optimisation statistics, in tuple format, of the number of
-                                parameters (k), the number of data points (n), and the chi-squared
-                                value (chi2).
+        @return:                The optimisation statistics, in tuple format, of the number of parameters (k), the number of data points (n), and the chi-squared value (chi2).
         @rtype:                 tuple of (int, int, float)
         """
 
         # Return the values.
-        return self.param_num(), self.num_data_points(), cdp.chi2
-
-
-    def num_data_points(self):
-        """Determine the number of data points used in the model.
-
-        @return:    The number, n, of data points in the model.
-        @rtype:     int
-        """
-
-        # Determine the data type.
-        data_types = self.__base_data_types()
-
-        # Init.
-        n = 0
-
-        # Spin loop.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # RDC data (skipping array elements set to None).
-            if 'rdc' in data_types:
-                if hasattr(spin, 'rdc'):
-                    for rdc in spin.rdc:
-                        if isinstance(rdc, float):
-                            n = n + 1
-
-            # PCS data (skipping array elements set to None).
-            if 'pcs' in data_types:
-                if hasattr(spin, 'pcs'):
-                    for pcs in spin.pcs:
-                        if isinstance(pcs, float):
-                            n = n + 1
-
-        # Alignment tensors.
-        if 'tensor' in data_types:
-            n = n + 5*len(cdp.align_tensors)
-
-        # Return the value.
-        return n
-
-
-    def number_of_states(self, N=None):
-        """Set the number of states in the N-state model.
-
-        @param N:   The number of states.
-        @type N:    int
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
-        # Set the value of N.
-        cdp.N = N
-
-        # Update the model.
-        self.__update_model()
-
-
-    def ref_domain(self, ref=None):
-        """Set the reference domain for the '2-domain' N-state model.
-
-        @param ref: The reference domain.
-        @type ref:  str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
-        # Test that the correct model is set.
-        if cdp.model != '2-domain':
-            raise RelaxError("Setting the reference domain is only possible for the '2-domain' N-state model.")
-
-        # Test if the reference domain exists.
-        exists = False
-        for tensor_cont in cdp.align_tensors:
-            if tensor_cont.domain == ref:
-                exists = True
-        if not exists:
-            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
-
-        # Set the reference domain.
-        cdp.ref_domain = ref
-
-        # Update the model.
-        self.__update_model()
-
-
-    def param_num(self):
-        """Determine the number of parameters in the model.
-
-        @return:    The number of model parameters.
-        @rtype:     int
-        """
-
-        # Determine the data type.
-        data_types = self.__base_data_types()
-
-        # Init.
-        num = 0
-
-        # Alignment tensor params.
-        if 'rdc' in data_types or 'pcs' in data_types:
-            num = num + 5*len(cdp.align_tensors)
-
-        # Populations.
-        if cdp.model in ['2-domain', 'population']:
-            num = num + (cdp.N - 1)
-
-        # Euler angles.
-        if cdp.model == '2-domain':
-            num = num + 3*cdp.N
-
-        # Return the param number.
-        return num
+        return self._param_num(), self._num_data_points(), cdp.chi2
 
 
     return_data_name_doc = """
@@ -1672,128 +1741,43 @@ class N_state_model(Common_functions):
         corrsponding to each state.
         """
 
-    def return_data_name(self, name, index=None):
+    def return_data_name(self, param):
         """Return a unique identifying string for the N-state model parameter.
 
-        @param name:    The N-state model parameter.
-        @type name:     str
-        @keyword index: The probability parameter index.
-        @type index:    None or int
+        @param param:   The N-state model parameter.
+        @type param:    str
         @return:        The unique parameter identifying string.
         @rtype:         str
         """
 
         # Probability.
-        if search('^p[0-9]*$', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[1:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'probs', i
-            else:
-                return 'probs'
+        if search('^p[0-9]*$', param):
+            return 'probs'
 
         # Alpha Euler angle.
-        if search('^alpha', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[5:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'alpha', i
-            else:
-                return 'alpha'
+        if search('^alpha', param):
+            return 'alpha'
 
         # Beta Euler angle.
-        if search('^beta', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[4:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'beta', i
-            else:
-                return 'beta'
+        if search('^beta', param):
+            return 'beta'
 
         # Gamma Euler angle.
-        if search('^gamma', name):
-            # Get the state index, otherwise return with nothing if there is an error (parameter unknown).
-            try:
-                i = int(name[5:])
-            except ValueError:
-                return
-
-            # Return the name (and maybe index).
-            if index:
-                return 'gamma', i
-            else:
-                return 'gamma'
+        if search('^gamma', param):
+            return 'gamma'
 
 
         # Bond length.
-        if search('^r$', name) or search('[Bb]ond[ -_][Ll]ength', name):
-            if index:
-                return 'r', None
-            else:
-                return 'r'
+        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
+            return 'r'
 
         # Heteronucleus type.
-        if search('^[Hh]eteronucleus$', name):
-            if index:
-                return 'heteronuc_type', None
-            else:
-                return 'heteronuc_type'
+        if search('^[Hh]eteronucleus$', param):
+            return 'heteronuc_type'
 
         # Proton type.
-        if search('^[Pp]roton$', name):
-            if index:
-                return 'proton_type', None
-            else:
-                return 'proton_type'
-
-        # Return nothing.
-        if index:
-            return None, None
-        else:
-            return None
-
-
-    def select_model(self, model=None):
-        """Select the N-state model type.
-
-        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
-        @type model:    str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('N-state')
-
-        # Test if the model name exists.
-        if not model in ['2-domain', 'population', 'fixed']:
-            raise RelaxError("The model name " + repr(model) + " is invalid.")
-
-        # Set the model
-        cdp.model = model
-
-        # Initialise the list of model parameters.
-        cdp.params = []
-
-        # Update the model.
-        self.__update_model()
+        if search('^[Pp]roton$', param):
+            return 'proton_type'
 
 
     set_doc = """
@@ -1839,9 +1823,10 @@ class N_state_model(Common_functions):
         # Set the parameter values.
         for i in xrange(len(param)):
             # Get the object name and the parameter index.
-            object_name, index = self.return_data_name(param[i], index=True)
+            object_name = self.return_data_name(param[i])
             if not object_name:
                 raise RelaxError("The data type " + repr(param[i]) + " does not exist.")
+            index = self._param_model_index(param[i])
 
             # Simple objects (not a list).
             if index == None:

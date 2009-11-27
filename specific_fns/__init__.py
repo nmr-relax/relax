@@ -25,7 +25,7 @@
 
 
 # The available modules.
-__all__ = [ 'base_class',
+__all__ = [ 'api_base',
             'consistency_tests',
             'frame_order',
             'hybrid',
@@ -34,5 +34,6 @@ __all__ = [ 'base_class',
             'n_state_model',
             'noe',
             'relax_fit',
-            'setup'
+            'setup',
+            'srls'
 ]

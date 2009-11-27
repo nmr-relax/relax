@@ -666,7 +666,7 @@ class Test_mol_res_spin(TestCase):
         data = ['1', 'GLY']
 
         # The ID.
-        id = mol_res_spin.generate_spin_id_data_array(data)
+        id = mol_res_spin.generate_spin_id_data_array(data, res_num_col=1, res_name_col=2)
 
         # Test the string.
         self.assertEqual(id, ':1&:GLY')
@@ -682,7 +682,7 @@ class Test_mol_res_spin(TestCase):
         data = ['1', 'GLY', '234', 'NH']
 
         # The ID.
-        id = mol_res_spin.generate_spin_id_data_array(data, spin_num_col=2, spin_name_col=3)
+        id = mol_res_spin.generate_spin_id_data_array(data, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
 
         # Test the string.
         self.assertEqual(id, ':1&:GLY@234&@NH')
@@ -698,7 +698,7 @@ class Test_mol_res_spin(TestCase):
         data = ['Ap4Aase', '234', 'NH']
 
         # The ID.
-        id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=0, res_num_col=None, res_name_col=None, spin_num_col=1, spin_name_col=2)
+        id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=1, res_num_col=None, res_name_col=None, spin_num_col=2, spin_name_col=3)
 
         # Test the string.
         self.assertEqual(id, '#Ap4Aase@234&@NH')
@@ -714,7 +714,7 @@ class Test_mol_res_spin(TestCase):
         data = ['Ap4Aase', '1', 'GLY']
 
         # The ID.
-        id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=0, res_num_col=1, res_name_col=2)
+        id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=1, res_num_col=2, res_name_col=3)
 
         # Test the string.
         self.assertEqual(id, '#Ap4Aase:1&:GLY')
@@ -730,7 +730,7 @@ class Test_mol_res_spin(TestCase):
         data = ['Ap4Aase', '1', 'GLY', '234', 'NH']
 
         # The ID.
-        id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=0, res_num_col=1, res_name_col=2, spin_num_col=3, spin_name_col=4)
+        id = mol_res_spin.generate_spin_id_data_array(data, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
         # Test the string.
         self.assertEqual(id, '#Ap4Aase:1&:GLY@234&@NH')
@@ -746,7 +746,7 @@ class Test_mol_res_spin(TestCase):
         data = ['1', 'GLY', None, None]
 
         # The ID.
-        id = mol_res_spin.generate_spin_id_data_array(data)
+        id = mol_res_spin.generate_spin_id_data_array(data, res_num_col=1, res_name_col=2)
 
         # Test the string.
         self.assertEqual(id, ':1&:GLY')

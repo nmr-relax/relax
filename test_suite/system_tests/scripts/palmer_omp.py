@@ -60,7 +60,7 @@ def exec_stage_1(pipes):
         palmer.execute(dir=ds.tmpdir + sep + name, force=True)
 
     # Save the program state.
-    state.save(state='stage1.save', dir_name=ds.tmpdir, force=True)
+    state.save(state='stage1.save', dir=ds.tmpdir, force=True)
 
 
 def exec_stage_2(pipes):
@@ -90,7 +90,7 @@ def exec_stage_2(pipes):
     results.write(file='results', dir=ds.tmpdir, force=True)
 
     # Save the program state.
-    state.save(state='stage2.save', dir_name=ds.tmpdir, force=True)
+    state.save(state='stage2.save', dir=ds.tmpdir, force=True)
 
 
 def exec_stage_3():
@@ -115,7 +115,7 @@ def exec_stage_3():
     results.write(file='final', dir=ds.tmpdir, force=True)
 
     # Save the program state.
-    state.save(state='stage3.save', dir_name=ds.tmpdir, force=True)
+    state.save(state='stage3.save', dir=ds.tmpdir, force=True)
 
 
 # Main section of the script.

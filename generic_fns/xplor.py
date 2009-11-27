@@ -198,6 +198,14 @@ def first_parse(lines):
             lower = float(info[1])
             upper = float(info[2])
 
+        # Non-data line.
+        else:
+            # Line index.
+            line_index = line_index + 1
+
+            # Skip to the next line without yielding.
+            continue
+
         # Line index.
         line_index = line_index + 1
 

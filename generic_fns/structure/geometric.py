@@ -31,7 +31,7 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from generic_fns import pipes
 from generic_fns.structure.mass import centre_of_mass
 from internal import Internal
-from maths_fns.rotation_matrix import R_2vect
+from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoVectorsError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
@@ -102,7 +102,7 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
 
     # Get the rotation matrix.
     if axis != None:
-        R_2vect(R, array([0, 0, 1], float64), axis)
+        two_vect_to_R(array([0, 0, 1], float64), axis, R)
 
     # Loop over each vector.
     for i in xrange(inc):

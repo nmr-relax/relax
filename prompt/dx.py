@@ -147,20 +147,19 @@ class OpenDX(User_fn_class):
         directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and
         residue number 6 will be mapped.
 
-        relax> dx.map(['S2', 'S2f', 'ts'], ':6')
-        relax> dx.map(['S2', 'S2f', 'ts'], ':6', 20, 'map', 'dx')
-        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6', file='map', dir='dx')
-        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', inc=20, file='map', dir='dx')
-        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', type='Iso3D', inc=20,
-                      file='map', dir='dx')
+        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6')
+        relax> dx.map(['S2', 'S2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')
+        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')
+        relax> dx.map(params=['S2', 'S2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20,
+                      file_prefix='map', dir='dx')
 
 
         To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te,
         Rex}, name the results 'test', and to place the files in the current directory, use one of
         the following commands:
 
-        relax> dx.map(['S2', 'te', 'Rex'], spin_id=':2@N6', file='test', dir=None)
-        relax> dx.map(params=['S2', 'te', 'Rex'], spin_id=':2@N6', inc=100, file='test', dir=None)
+        relax> dx.map(['S2', 'te', 'Rex'], spin_id=':2@N6', file_prefix='test', dir=None)
+        relax> dx.map(params=['S2', 'te', 'Rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)
         """
 
         # Function intro text.
@@ -173,7 +172,7 @@ class OpenDX(User_fn_class):
             text = text + ", lower=" + repr(lower)
             text = text + ", upper=" + repr(upper)
             text = text + ", axis_incs=" + repr(axis_incs)
-            text = text + ", file=" + repr(file)
+            text = text + ", file_prefix=" + repr(file_prefix)
             text = text + ", dir=" + repr(dir)
             text = text + ", point=" + repr(point)
             text = text + ", point_file=" + repr(point_file)
