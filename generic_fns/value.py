@@ -354,7 +354,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
 
     # Set the parameter values.
     for i in range(len(param)):
-        set_param_value(param=param[i], val=val[i], spin_id=spin_id, force=force)
+        set_param_values(param=param[i], val=val[i], spin_id=spin_id, force=force)
 
     # Reset all minimisation statistics.
     if reset:
