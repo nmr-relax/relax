@@ -50,7 +50,8 @@ import sys
 
 # relax modules.
 import generic_fns
-import gui_bieri
+if dep_check.wx_module:
+    import gui_bieri
 from prompt.gpl import gpl
 from prompt import interpreter
 import relax_errors
@@ -322,6 +323,10 @@ class Relax:
                 parser.error("the relax GUI mode and testing modes are mutually exclusive")
             elif options.licence:
                 parser.error("the relax GUI mode and licence mode are mutually exclusive")
+
+            # Missing wx module.
+            if not dep_check.wx_module:
+                parser.error("To use the Bieri GUI, the wx python module must be installed.")
 
             # Set the mode.
             if options.gui == 'bieri' or options.gui_bieri:
