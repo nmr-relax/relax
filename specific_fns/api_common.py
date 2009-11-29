@@ -27,6 +27,7 @@
 from copy import deepcopy
 
 # relax module imports.
+import arg_check
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxLenError, RelaxNoSequenceError
 
@@ -327,6 +328,40 @@ class API_common:
 
             # Increment.
             inc = inc + 1
+
+
+    def _set_param_values_spin(self, param=None, value=None, spin_id=None, force=True):
+        """Set the spin specific parameter values.
+
+        @keyword param:     The parameter name.
+        @type param:        str
+        @keyword value:     The parameter value.
+        @type value:        number
+        @keyword spin_id:   The spin identification string, only used for spin specific parameters.
+        @type spin_id:      None or str
+        @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
+        @type force:        bool
+        """
+
+        # Checks.
+        arg_check.is_str(param, 'parameter name')
+        arg_check.is_num(value, 'parameter value')
+
+        # Get the object's name.
+        obj_name = self.return_data_name(param)
+
+        # Is the parameter is valid?
+        if not obj_name:
+            raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param)
+
+        # Spin loop.
+        for spin in spin_loop(spin_id):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Set the parameter.
+            setattr(spin, obj_name, value)
 
 
     def _set_selected_sim_spin(self, model_info, select_sim):

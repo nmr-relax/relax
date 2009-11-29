@@ -24,7 +24,8 @@
 from re import search
 
 # relax module imports.
-from specific_fns.api_base import API_base
+from api_base import API_base
+from api_common import API_common
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.jw_mapping import Mapping
@@ -32,8 +33,15 @@ from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyrom
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 
 
-class Jw_mapping(API_base):
+class Jw_mapping(API_base, API_common):
     """Class containing functions specific to reduced spectral density mapping."""
+
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Place methods into the API.
+        self.set_param_values = self._set_param_values_spin
+
 
     def _set_frq(self, frq=None):
         """Function for selecting which relaxation data to use in the J(w) mapping."""
