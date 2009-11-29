@@ -321,6 +321,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
     # Specific functions.
     default_value = specific_fns.setup.get_specific_fn('default_value', pipes.get_type())
     get_param_names = specific_fns.setup.get_specific_fn('get_param_names', pipes.get_type())
+    return_data_name = specific_fns.setup.get_specific_fn('return_data_name', pipes.get_type())
     set_param_values = specific_fns.setup.get_specific_fn('set_param_values', pipes.get_type())
 
     # Convert numpy arrays to lists, if necessary.
@@ -350,7 +351,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
         # Loop over the parameters, getting the default values.
         val = []
         for i in range(len(param)):
-            val.append(default_value(param[i]))
+            val.append(default_value(return_data_name(param[i])))
 
     # Set the parameter values.
     for i in range(len(param)):
