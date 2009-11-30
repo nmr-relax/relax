@@ -675,10 +675,10 @@ class API_base:
     def set_param_values(self, param=None, value=None, spin_id=None, force=True):
         """Prototype method for setting model parameter values.
 
-        @keyword param:     The parameter name.
-        @type param:        str
-        @keyword value:     The parameter value.
-        @type value:        number
+        @keyword param:     The parameter name list.
+        @type param:        list of str
+        @keyword value:     The parameter value list.
+        @type value:        list
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
         @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
