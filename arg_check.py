@@ -249,6 +249,24 @@ def is_list(arg, name, size=None, can_be_none=False, can_be_empty=False, list_of
             raise RelaxListError(name, arg)
 
 
+def is_none(arg, name):
+    """Test if the argument is None.
+
+    @param arg:                 The argument.
+    @type arg:                  anything
+    @param name:                The plain English name of the argument.
+    @type name:                 str
+    @raise RelaxNoneError:      If not None.
+    """
+
+    # Check for None.
+    if arg == None:
+        return
+
+    # The RelaxError.
+    raise RelaxNoneError(name, arg)
+
+
 def is_num(arg, name, can_be_none=False):
     """Test if the argument is a number.
 
