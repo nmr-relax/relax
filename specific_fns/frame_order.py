@@ -33,6 +33,8 @@ from re import search
 from warnings import warn
 
 # relax module imports.
+from api_base import API_base
+from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import pipes
 from generic_fns.angles import wrap_angles
@@ -44,11 +46,17 @@ from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.api_base import API_base
 
 
-class Frame_order(API_base):
+class Frame_order(API_base, API_common):
     """Class containing the specific methods of the Frame Order theories."""
+
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Place methods into the API.
+        self.set_param_values = self._set_param_values_global
+
 
     def _assemble_param_vector(self):
         """Assemble and return the parameter vector.
