@@ -177,8 +177,8 @@ class API_common:
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
 
-    def _return_conversion_factor_1(self, param, spin=None, spin_id=None):
-        """Dummy method for returning 1.0.
+    def _return_no_conversion_factor(self, param, spin=None, spin_id=None):
+        """Method for returning 1.0.
 
         @param param:       The parameter name.
         @type param:        str

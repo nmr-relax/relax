@@ -58,6 +58,10 @@ class N_state_model(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
+        # Place methods into the API.
+        self.overfit_deselect = self._overfit_deselect_dummy
+        self.test_grid_ops = self._test_grid_ops_general
+
 
     def _assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.

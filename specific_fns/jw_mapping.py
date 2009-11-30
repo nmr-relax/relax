@@ -40,7 +40,13 @@ class Jw_mapping(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.base_data_loop = self._base_data_loop_spin
+        self.model_loop = self._model_loop_spin
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_error = self._return_error_relax_data
+        self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
+        self.set_selected_sim = self._set_selected_sim_spin
 
 
     def _set_frq(self, frq=None):

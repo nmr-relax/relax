@@ -55,6 +55,8 @@ class Frame_order(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.overfit_deselect = self._overfit_deselect_dummy
+        self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
 
 
