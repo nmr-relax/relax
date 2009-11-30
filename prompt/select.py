@@ -87,7 +87,7 @@ class Select(User_fn_class):
         selection.sel_all()
 
 
-    def read(self, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=0, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='OR', change_all=False):
+    def read(self, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='OR', change_all=False):
         """Function for selecting the spins contained in a file.
 
         Keyword Arguments
