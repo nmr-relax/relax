@@ -85,7 +85,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
         spin_to = return_spin(spin_id, pipe_to)
 
         # Set the values of pipe_to.
-        set_spin_params(spin_to, value=value, error=error, param=param)
+        set(spin_id=spin_to, value=value, error=error, param=param)
 
     # Reset all minimisation statistics.
     minimise.reset_min_stats(pipe_to)
@@ -251,7 +251,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         return_value = minimise.return_value
 
         # Specific set function.
-        set = minimise.set
+        set_fn = minimise.set
 
     # Normal parameter.
     else:
@@ -261,8 +261,8 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         # Specific v
         return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
 
-        # Specific set function.
-        set = set_spin_params
+        # Specific set function.                                                           
+        set_fn = set
 
     # Test data corresponding to param already exists.
     for spin in spin_loop():
@@ -287,26 +287,25 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         else:
             id, error = data
 
-        # Get the corresponding spin container.
-        spin = return_spin([id, spin_id])
-        if spin == None:
-            raise RelaxNoSpinError(id)
-
         # Set the value.
-        set(value=value, error=error, param=param, scaling=scaling, spin=spin)
+        set_fn(val=value, error=error, param=param, spin_id=spin_id)
 
     # Reset the minimisation statistics.
     if not min_stat:
         minimise.reset_min_stats()
 
 
-def set(val=None, param=None, spin_id=None, force=True, reset=True):
+def set(val=None, param=None, error=None, pipe=None, spin_id=None, force=True, reset=True):
     """Set global or spin specific data values.
 
     @keyword val:       The parameter values.
-    @type val:          None, number, or list of numbers
+    @type val:          None or list
     @keyword param:     The parameter names.
     @type param:        None, str, or list of str
+    @keyword error:     The parameter errors.
+    @type error:        None, number, or list of numbers
+    @keyword pipe:      The data pipe the values should be placed in.
+    @type pipe:         None or str
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
     @keyword force:     A flag forcing the overwriting of current values.
@@ -314,6 +313,11 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
     @keyword reset:     A flag which if True will cause all minimisation statistics to be reset.
     @type reset:        bool
     """
+
+    # Switch to the data pipe, storing the original.
+    if pipe:
+        orig_pipe = pipes.cdp_name()
+        pipes.switch(pipe)
 
     # Test if the current data pipe exists.
     pipes.test()
@@ -343,7 +347,7 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
         param = [param]
 
     # Convert the value to a list if needed.
-    if (isinstance(val, float) or isinstance(val, int)):
+    if val != None and not isinstance(val, list):
         val = [val] * len(param)
 
     # Default values.
@@ -353,13 +357,20 @@ def set(val=None, param=None, spin_id=None, force=True, reset=True):
         for i in range(len(param)):
             val.append(default_value(return_data_name(param[i])))
 
+            # Check that there is a default.
+            if val[-1] == None:
+                raise RelaxParamSetError(param[i])
+
     # Set the parameter values.
-    for i in range(len(param)):
-        set_param_values(param=param[i], value=val[i], spin_id=spin_id, force=force)
+    set_param_values(param=param, value=val, spin_id=spin_id, force=force)
 
     # Reset all minimisation statistics.
     if reset:
         minimise.reset_min_stats()
+
+    # Switch back.
+    if pipe:
+        pipes.switch(orig_pipe)
 
 
 def write(param=None, file=None, dir=None, force=False, return_value=None):
