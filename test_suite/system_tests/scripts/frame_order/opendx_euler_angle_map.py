@@ -110,4 +110,4 @@ cdp.phi_axis = atan2(axis[1], axis[0])
 cdp.theta_cone = 40.0 / 360.0 * 2 * pi
 
 # Map the Euler angle space.
-dx.map(['alpha', 'beta', 'gamma'], lower=[0, 0, 0], upper=[2*pi, 2*pi, 2*pi], file_prefix='devnull', point_file='devnull')
+dx.map(['alpha', 'beta', 'gamma'], lower=[0, 0, 0], upper=[2*pi, 2*pi, 2*pi], inc=3, file_prefix='devnull', point_file='devnull')
