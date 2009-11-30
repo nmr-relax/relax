@@ -333,10 +333,10 @@ class API_common:
     def _set_param_values_spin(self, param=None, value=None, spin_id=None, force=True):
         """Set the spin specific parameter values.
 
-        @keyword param:     The parameter name.
-        @type param:        str
-        @keyword value:     The parameter value.
-        @type value:        number
+        @keyword param:     The parameter name list.
+        @type param:        list of str
+        @keyword value:     The parameter value list.
+        @type value:        list
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
         @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
@@ -344,24 +344,26 @@ class API_common:
         """
 
         # Checks.
-        arg_check.is_str(param, 'parameter name')
-        arg_check.is_num(value, 'parameter value')
+        arg_check.is_str_list(param, 'parameter name')
+        arg_check.is_list(value, 'parameter value')
 
-        # Get the object's name.
-        obj_name = self.return_data_name(param)
+        # Loop over the parameters.
+        for i in range(len(param)):
+            # Get the object's name.
+            obj_name = self.return_data_name(param[i])
 
-        # Is the parameter is valid?
-        if not obj_name:
-            raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param)
+            # Is the parameter is valid?
+            if not obj_name:
+                raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
-        # Spin loop.
-        for spin in spin_loop(spin_id):
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+            # Spin loop.
+            for spin in spin_loop(spin_id):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
 
-            # Set the parameter.
-            setattr(spin, obj_name, value)
+                # Set the parameter.
+                setattr(spin, obj_name, value[i])
 
 
     def _set_selected_sim_spin(self, model_info, select_sim):
