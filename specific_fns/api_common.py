@@ -28,6 +28,7 @@ from copy import deepcopy
 
 # relax module imports.
 import arg_check
+from data.mol_res_spin import SpinContainer
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxLenError, RelaxNoSequenceError
 
@@ -314,7 +315,9 @@ class API_common:
         @type error:        float
         """
 
-        # Assume the default of a spin container.
+        # The spin container.
+        if not isinstance(model_info, SpinContainer):
+            raise RelaxError("The model information argument is not a spin container.")
         spin = model_info
 
         # Parameter increment counter.
@@ -410,7 +413,9 @@ class API_common:
         @type select_sim:   bool
         """
 
-        # Assume the default of a spin container.
+        # The spin container.
+        if not isinstance(model_info, SpinContainer):
+            raise RelaxError("The model information argument is not a spin container.")
         spin = model_info
 
         # Set the array.
@@ -509,7 +514,9 @@ class API_common:
         @rtype:             list of float or float
         """
 
-        # Assume the default of a spin container.
+        # The spin container.
+        if not isinstance(model_info, SpinContainer):
+            raise RelaxError("The model information argument is not a spin container.")
         spin = model_info
 
         # Index.
@@ -532,7 +539,9 @@ class API_common:
         @rtype:             list of float
         """
 
-        # Assume the default of a spin container.
+        # The spin container.
+        if not isinstance(model_info, SpinContainer):
+            raise RelaxError("The model information argument is not a spin container.")
         spin = model_info
 
         # Parameter increment counter.
@@ -557,7 +566,9 @@ class API_common:
         @rtype:             list of int
         """
 
-        # Assume the default of a spin container.
+        # The spin container.
+        if not isinstance(model_info, SpinContainer):
+            raise RelaxError("The model information argument is not a spin container.")
         spin = model_info
 
         # Return the array.
