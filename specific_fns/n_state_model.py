@@ -33,6 +33,9 @@ from re import search
 from warnings import warn
 
 # relax module imports.
+from api_base import API_base
+from api_common import API_common
+import arg_check
 from float import isNaN, isInf
 import generic_fns
 from generic_fns.mol_res_spin import return_spin, spin_loop
@@ -47,11 +50,14 @@ from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyrom
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.api_base import API_base
 
 
-class N_state_model(API_base):
+class N_state_model(API_base, API_common):
     """Class containing functions for the N-state model."""
+
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
 
     def _assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
@@ -1791,3 +1797,44 @@ class N_state_model(API_base):
         gamma of the third state is specified using the string 'gamma2'.
 
         """
+
+
+    def set_param_values(self, param=None, value=None, spin_id=None, force=True):
+        """Set the N-state model parameter values.
+
+        @keyword param:     The parameter name list.
+        @type param:        list of str
+        @keyword value:     The parameter value list.
+        @type value:        list
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None
+        @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
+        @type force:        bool
+        """
+
+        # Checks.
+        arg_check.is_str_list(param, 'parameter name')
+        arg_check.is_list(value, 'parameter value')
+
+        # Loop over the parameters.
+        for i in range(len(param)):
+            # Get the object's name.
+            obj_name = self.return_data_name(param[i])
+
+            # Is the parameter is valid?
+            if not obj_name:
+                raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
+
+            # Set the indexed parameter.
+            if obj_name in ['probs', 'alpha', 'beta', 'gamma']:
+                # The index.
+                index = self._param_model_index(param[i])
+
+                # Set.
+                obj = getattr(cdp, obj_name)
+                obj[index] = value[i]
+
+            # Set the spin parameters.
+            else:
+                for spin in spin_loop(spin_id):
+                    setattr(spin, obj_name, value[i])
