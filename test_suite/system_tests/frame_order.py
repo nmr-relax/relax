@@ -110,6 +110,13 @@ class Frame_order(TestCase):
         return string
 
 
+    def test_opendx_map(self):
+        """Test the mapping of the Euler angle parameters for OpenDx viewing."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
+
+
     def test_opt_rigid_no_rot(self):
         """Test the 'rigid' model for unrotated tensors with no motion."""
 

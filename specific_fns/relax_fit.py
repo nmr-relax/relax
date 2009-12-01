@@ -31,8 +31,9 @@ from numpy.linalg import inv
 from re import match, search
 
 # relax module imports.
+from api_base import API_base
+from api_common import API_common
 from dep_check import C_module_exp_fn
-from specific_fns.api_base import API_base
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
@@ -42,8 +43,24 @@ if C_module_exp_fn:
     from maths_fns.relax_fit import setup, func, dfunc, d2func, back_calc_I
 
 
-class Relax_fit(API_base):
+class Relax_fit(API_base, API_common):
     """Class containing functions for relaxation curve fitting."""
+
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Place methods into the API.
+        self.base_data_loop = self._base_data_loop_spin
+        self.model_loop = self._model_loop_spin
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_value = self._return_value_general
+        self.set_error = self._set_error_spin
+        self.set_param_values = self._set_param_values_spin
+        self.set_selected_sim = self._set_selected_sim_spin
+        self.sim_init_values = self._sim_init_values_spin
+        self.sim_return_param = self._sim_return_param_spin
+        self.sim_return_selected = self._sim_return_selected_spin
+
 
     def _assemble_param_vector(self, spin=None, sim_index=None):
         """Assemble the exponential curve parameter vector (as a numpy array).

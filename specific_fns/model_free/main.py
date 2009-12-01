@@ -22,7 +22,6 @@
 
 # Python module imports.
 from copy import deepcopy
-from data.diff_tensor import DiffTensorSimList
 from math import pi
 from numpy import float64, array, identity, transpose, zeros
 from re import match, search
@@ -30,6 +29,8 @@ from string import replace, split
 import sys
 
 # relax module imports.
+import arg_check
+from data.diff_tensor import DiffTensorSimList
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes, relax_data, sequence
 from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, spin_index_loop, spin_loop
@@ -1366,6 +1367,11 @@ class Model_free_main:
         @rtype:         float
         """
 
+        # Diffusion tensor parameter.
+        diff_val = diffusion_tensor.default_value(param)
+        if diff_val != None:
+            return diff_val
+
         # Local tm.
         if param == 'local_tm':
             return 10.0 * 1e-9
@@ -2203,6 +2209,11 @@ class Model_free_main:
         @rtype:         str
         """
 
+        # Diffusion tensor parameters.
+        diff_obj = diffusion_tensor.return_data_name(param)
+        if diff_obj:
+            return diff_obj
+
         # Local tm.
         if search('[Ll]ocal[ -_]tm', param):
             return 'local_tm'
@@ -2488,17 +2499,55 @@ class Model_free_main:
                 inc = inc + 1
 
 
-    def set_non_spin_params(self, value=None, param=None):
-        """Set the non-spin specific model-free params (this is solely the diffusion params).
+    def set_param_values(self, param=None, value=None, spin_id=None, force=True):
+        """Set the model-free parameter values.
 
-        @param value:   The parameter values.
-        @type value:    None, number, or list of numbers
-        @param param:   The parameter names.
-        @type param:    None, str, or list of str
+        @keyword param:     The parameter name list.
+        @type param:        list of str
+        @keyword value:     The parameter value list.
+        @type value:        list
+        @keyword spin_id:   The spin identification string, only used for spin specific parameters.
+        @type spin_id:      None or str
+        @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
+        @type force:        bool
         """
 
-        # Call the diffusion tensor parameter setting function.
-        diffusion_tensor.set(value=value, param=param)
+        # Checks.
+        arg_check.is_str_list(param, 'parameter name')
+
+        # Separate out the diffusion tensor parameters from the model-free parameters.
+        diff_params = []
+        diff_vals = []
+        mf_params = []
+        mf_vals = []
+        for i in range(len(param)):
+            # Diffusion tensor parameter.
+            diff_obj = diffusion_tensor.return_data_name(param[i])
+            if diff_obj:
+                diff_params.append(param[i])
+                diff_vals.append(value[i])
+
+            # Model-free parameter.
+            else:
+                mf_params.append(param[i])
+                mf_vals.append(value[i])
+
+        # Set the diffusion tensor parameters.
+        if diff_params:
+            diffusion_tensor.set(value=diff_vals, param=diff_params)
+
+        # Set the model-free parameters.
+        for i in range(len(mf_params)):
+            # The object name.
+            obj_name = self.return_data_name(mf_params[i])
+
+            # Check if it is a model-free parameter.
+            if obj_name not in self.data_names(set='params') and obj_name not in self.data_names(set='generic'):
+                raise RelaxError("The parameter '%s' is unknown." % mf_params[i])
+
+            # Set the parameter.
+            for spin in spin_loop(spin_id):
+                setattr(spin, obj_name, mf_vals[i])
 
 
     def set_selected_sim(self, model_info, select_sim):

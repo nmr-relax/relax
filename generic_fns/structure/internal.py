@@ -1144,7 +1144,7 @@ class MolContainer:
         # Amino acid atom translation table (note, numbers have been stripped already!).
         table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
                  'N': ['ND', 'NE', 'NH', 'NZ'],
-                 'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HT'],
+                 'H': ['HA', 'HB', 'HG', 'HD', 'HE', 'HH', 'HT', 'HZ'],
                  'O': ['OG', 'OD', 'OE', 'OH'],
                  'S': ['SD', 'SG']
         }
