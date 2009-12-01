@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from specific_fns.setup import jw_mapping_obj
 
 
@@ -66,7 +66,7 @@ class Jw_mapping(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(frq, 'spectrometer frequency')
+        arg_check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         jw_mapping_obj._set_frq(frq=frq)

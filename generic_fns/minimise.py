@@ -27,7 +27,7 @@
 from re import search
 
 # relax module imports.
-from generic_fns.mol_res_spin import spin_loop
+from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 from multi.processor import Processor_box
 from relax_errors import RelaxError
@@ -433,7 +433,7 @@ set_doc = """
         This shouldn't really be executed by a user.
 """
 
-def set(value=None, error=None, param=None, scaling=None, spin=None):
+def set(val=None, error=None, param=None, scaling=None, spin_id=None):
     """Set global or spin specific minimisation parameters.
 
     @keyword val:       The parameter values.
@@ -442,53 +442,56 @@ def set(value=None, error=None, param=None, scaling=None, spin=None):
     @type param:        str
     @keyword scaling:   Unused.
     @type scaling:      float
-    @keyword spin:      The spin container.
-    @type spin:         SpinContainer instance
+    @keyword spin_id:   The spin identification string.
+    @type spin_id:      str
     """
 
     # Get the parameter name.
     param_name = return_data_name(param)
 
     # Global minimisation stats.
-    if spin == None:
+    if spin_id == None:
         # Chi-squared.
         if param_name == 'chi2':
-            cdp.chi2 = value
+            cdp.chi2 = val
 
         # Iteration count.
         elif param_name == 'iter':
-            cdp.iter = value
+            cdp.iter = val
 
         # Function call count.
         elif param_name == 'f_count':
-            cdp.f_count = value
+            cdp.f_count = val
 
         # Gradient call count.
         elif param_name == 'g_count':
-            cdp.g_count = value
+            cdp.g_count = val
 
         # Hessian call count.
         elif param_name == 'h_count':
-            cdp.h_count = value
+            cdp.h_count = val
 
     # Residue specific minimisation.
     else:
+        # Get the spin.
+        spin = return_spin(spin_id)
+
         # Chi-squared.
         if param_name == 'chi2':
-            spin.chi2 = value
+            spin.chi2 = val
 
         # Iteration count.
         elif param_name == 'iter':
-            spin.iter = value
+            spin.iter = val
 
         # Function call count.
         elif param_name == 'f_count':
-            spin.f_count = value
+            spin.f_count = val
 
         # Gradient call count.
         elif param_name == 'g_count':
-            spin.g_count = value
+            spin.g_count = val
 
         # Hessian call count.
         elif param_name == 'h_count':
-            spin.h_count = value
+            spin.h_count = val

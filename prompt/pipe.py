@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import pipes
 from relax_errors import RelaxError
 from specific_fns.setup import hybrid_obj
@@ -78,8 +78,8 @@ class Pipe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -131,8 +131,8 @@ class Pipe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_name, 'data pipe name')
-        check.is_str(pipe_type, 'data pipe type')
+        arg_check.is_str(pipe_name, 'data pipe name')
+        arg_check.is_str(pipe_type, 'data pipe type')
 
         # Execute the functional code.
         pipes.create(pipe_name=pipe_name, pipe_type=pipe_type)
@@ -181,7 +181,7 @@ class Pipe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_name, 'data pipe name', can_be_none=True)
+        arg_check.is_str(pipe_name, 'data pipe name', can_be_none=True)
 
         # Execute the functional code.
         pipes.delete(pipe_name=pipe_name)
@@ -248,8 +248,8 @@ class Pipe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(hybrid, 'hybrid pipe name')
-        check.is_str_list(pipes, 'data pipes')
+        arg_check.is_str(hybrid, 'hybrid pipe name')
+        arg_check.is_str_list(pipes, 'data pipes')
 
         # Execute the functional code.
         hybrid_obj._hybridise(hybrid=hybrid, pipe_list=pipes)
@@ -286,7 +286,7 @@ class Pipe(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_name, 'data pipe name')
+        arg_check.is_str(pipe_name, 'data pipe name')
 
         # Execute the functional code.
         pipes.switch(pipe_name=pipe_name)

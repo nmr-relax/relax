@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import monte_carlo
 
 
@@ -74,7 +74,7 @@ class Monte_carlo(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(method, 'method')
+        arg_check.is_str(method, 'method')
 
         # Execute the functional code.
         monte_carlo.create_data(method=method)
@@ -120,7 +120,7 @@ class Monte_carlo(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num(prune, 'prune')
+        arg_check.is_num(prune, 'prune')
 
         # Execute the functional code.
         monte_carlo.error_analysis(prune=prune)
@@ -200,7 +200,7 @@ class Monte_carlo(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_int(number, 'number of Monte Carlo simulations')
+        arg_check.is_int(number, 'number of Monte Carlo simulations')
 
         # Execute the functional code.
         monte_carlo.setup(number=number)
