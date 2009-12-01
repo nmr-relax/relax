@@ -30,7 +30,7 @@ from types import FunctionType
 
 # relax module imports.
 from base_class import Basic_class
-import check
+import arg_check
 from generic_fns import eliminate
 from relax_errors import RelaxFunctionError, RelaxListStrError, RelaxNoneStrListError, RelaxNoneTupleError
 from specific_fns.model_free import Model_free
@@ -81,9 +81,9 @@ class Eliminate(Basic_class):
             print(text)
 
         # The argument checks.
-        check.is_func(function, 'function', can_be_none=True)
+        arg_check.is_func(function, 'function', can_be_none=True)
         if function:
-            check.is_tuple(args, 'args')
+            arg_check.is_tuple(args, 'args')
 
         # Execute the functional code.
         eliminate.eliminate(function=function, args=args)

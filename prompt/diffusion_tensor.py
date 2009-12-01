@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import diffusion_tensor
 from relax_errors import RelaxError
 
@@ -85,8 +85,8 @@ class Diffusion_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        check.is_str(pipe_to, 'pipe to', can_be_none=True)
+        arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
+        arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Both pipe arguments cannot be None.
         if pipe_from == None and pipe_to == None:
@@ -391,13 +391,13 @@ class Diffusion_tensor(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_num_or_num_tuple(params, 'diffusion parameters', size=[4, 6])
-        check.is_num(time_scale, 'time scale')
-        check.is_num(d_scale, 'D scale')
-        check.is_str(angle_units, 'angle units')
-        check.is_int(param_types, 'parameter types')
-        check.is_str(spheroid_type, 'spheroid type', can_be_none=True)
-        check.is_bool(fixed, 'fixed flag')
+        arg_check.is_num_or_num_tuple(params, 'diffusion parameters', size=[4, 6])
+        arg_check.is_num(time_scale, 'time scale')
+        arg_check.is_num(d_scale, 'D scale')
+        arg_check.is_str(angle_units, 'angle units')
+        arg_check.is_int(param_types, 'parameter types')
+        arg_check.is_str(spheroid_type, 'spheroid type', can_be_none=True)
+        arg_check.is_bool(fixed, 'fixed flag')
 
         # Execute the functional code.
         diffusion_tensor.init(params=params, time_scale=time_scale, d_scale=d_scale, angle_units=angle_units, param_types=param_types, spheroid_type=spheroid_type, fixed=fixed)

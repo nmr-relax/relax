@@ -33,6 +33,9 @@ from re import search
 from warnings import warn
 
 # relax module imports.
+from api_base import API_base
+from api_common import API_common
+import arg_check
 from float import isNaN, isInf
 import generic_fns
 from generic_fns.mol_res_spin import return_spin, spin_loop
@@ -47,11 +50,18 @@ from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyrom
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.api_base import API_base
 
 
-class N_state_model(API_base):
+class N_state_model(API_base, API_common):
     """Class containing functions for the N-state model."""
+
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Place methods into the API.
+        self.overfit_deselect = self._overfit_deselect_dummy
+        self.test_grid_ops = self._test_grid_ops_general
+
 
     def _assemble_param_vector(self, sim_index=None):
         """Assemble all the parameters of the model into a single array.
@@ -1793,49 +1803,42 @@ class N_state_model(API_base):
         """
 
 
-    def set_non_spin_params(self, value=None, param=None):
-        """Function for setting all the N-state model parameter values.
+    def set_param_values(self, param=None, value=None, spin_id=None, force=True):
+        """Set the N-state model parameter values.
 
-        @param value:   The parameter values (for defaults supply [None]).
-        @type value:    list of numbers or [None]
-        @param param:   The parameter names.
-        @type param:    None, str, or list of str
+        @keyword param:     The parameter name list.
+        @type param:        list of str
+        @keyword value:     The parameter value list.
+        @type value:        list
+        @keyword spin_id:   The spin identification string (unused).
+        @type spin_id:      None
+        @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
+        @type force:        bool
         """
 
-        # Get the model parameters if param is None.
-        if param == None:
-            param = cdp.params
+        # Checks.
+        arg_check.is_str_list(param, 'parameter name')
+        arg_check.is_list(value, 'parameter value')
 
-        # Test that the parameter and value lists are the same size.
-        if isinstance(param, list) and value[0] != None and len(param) != len(value):
-            raise RelaxError("The length of " + repr(len(value)) + " of the value array must be equal to the length of the parameter array, " + repr(param) + ".")
+        # Loop over the parameters.
+        for i in range(len(param)):
+            # Get the object's name.
+            obj_name = self.return_data_name(param[i])
 
-        # Convert param to a list (if it is a string).
-        if isinstance(param, str):
-            param = [param]
+            # Is the parameter is valid?
+            if not obj_name:
+                raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
-        # If no value is supplied (i.e. value == [None]), then get the default values.
-        if value == [None]:
-            value = []
-            for i in xrange(len(param)):
-                value.append(self.default_value(param[i]))
+            # Set the indexed parameter.
+            if obj_name in ['probs', 'alpha', 'beta', 'gamma']:
+                # The index.
+                index = self._param_model_index(param[i])
 
-        # Set the parameter values.
-        for i in xrange(len(param)):
-            # Get the object name and the parameter index.
-            object_name = self.return_data_name(param[i])
-            if not object_name:
-                raise RelaxError("The data type " + repr(param[i]) + " does not exist.")
-            index = self._param_model_index(param[i])
+                # Set.
+                obj = getattr(cdp, obj_name)
+                obj[index] = value[i]
 
-            # Simple objects (not a list).
-            if index == None:
-                setattr(cdp, object_name, value[i])
-
-            # List objects.
+            # Set the spin parameters.
             else:
-                # Get the object.
-                object = getattr(cdp, object_name)
-
-                # Set the parameter value.
-                object[index] = value[i]
+                for spin in spin_loop(spin_id):
+                    setattr(spin, obj_name, value[i])
