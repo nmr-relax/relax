@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 import generic_fns.frq
 
 
@@ -61,8 +61,8 @@ class Frq(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(id, 'experiment identification string')
-        check.is_num(frq, 'spectrometer frequency')
+        arg_check.is_str(id, 'experiment identification string')
+        arg_check.is_num(frq, 'spectrometer frequency')
 
         # Execute the functional code.
         generic_fns.frq.set(id=id, frq=frq)

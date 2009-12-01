@@ -26,6 +26,7 @@
 
 # The available modules.
 __all__ = [ 'api_base',
+            'api_common',
             'consistency_tests',
             'frame_order',
             'hybrid',
