@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import dasha
 
 
@@ -78,9 +78,9 @@ class Dasha(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(algor, 'optimisation algorithm')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(algor, 'optimisation algorithm')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         dasha.create(algor=algor, dir=dir, force=force)
@@ -122,9 +122,9 @@ class Dasha(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_bool(force, 'force flag')
-        check.is_str(binary, 'Dasha executable file')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+        arg_check.is_str(binary, 'Dasha executable file')
 
         # Execute the functional code.
         dasha.execute(dir=dir, force=force, binary=binary)
@@ -146,7 +146,7 @@ class Dasha(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
 
         # Execute the functional code.
         dasha.extract(dir=dir)

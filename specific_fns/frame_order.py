@@ -33,6 +33,8 @@ from re import search
 from warnings import warn
 
 # relax module imports.
+from api_base import API_base
+from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import pipes
 from generic_fns.angles import wrap_angles
@@ -44,11 +46,19 @@ from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning
-from specific_fns.api_base import API_base
 
 
-class Frame_order(API_base):
+class Frame_order(API_base, API_common):
     """Class containing the specific methods of the Frame Order theories."""
+
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Place methods into the API.
+        self.overfit_deselect = self._overfit_deselect_dummy
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.set_param_values = self._set_param_values_global
+
 
     def _assemble_param_vector(self):
         """Assemble and return the parameter vector.
@@ -830,6 +840,19 @@ class Frame_order(API_base):
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=grid, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def is_spin_param(self, name):
+        """State that the parameter is not spin specific.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        False.
+        @rtype:         bool
+        """
+
+        # Not spin specific!
+        return False
 
 
     def map_bounds(self, param, spin_id=None):

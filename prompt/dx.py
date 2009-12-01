@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from doc_string import docs
 from generic_fns import diffusion_tensor
 import opendx.main
@@ -68,10 +68,10 @@ class OpenDX(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str(dx_exe, 'OpenDX executable file name')
-        check.is_bool(vp_exec, 'visual program execution flag')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(dx_exe, 'OpenDX executable file name')
+        arg_check.is_bool(vp_exec, 'visual program execution flag')
 
         # Execute the functional code.
         opendx.main.run(file_prefix=file, dir=dir, dx_exe=dx_exe, vp_exec=vp_exec)
@@ -180,23 +180,23 @@ class OpenDX(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str_list(params, 'parameters')
-        check.is_str(map_type, 'map type')
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_int(inc, 'increment')
+        arg_check.is_str_list(params, 'parameters')
+        arg_check.is_str(map_type, 'map type')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_int(inc, 'increment')
         if inc <= 1:
             raise RelaxError("The increment value needs to be greater than 1.")
-        check.is_num_list(lower, 'lower bounds', size=len(params), can_be_none=True)
-        check.is_num_list(upper, 'upper bounds', size=len(params), can_be_none=True)
-        check.is_int(axis_incs, 'axis increments')
+        arg_check.is_num_list(lower, 'lower bounds', size=len(params), can_be_none=True)
+        arg_check.is_num_list(upper, 'upper bounds', size=len(params), can_be_none=True)
+        arg_check.is_int(axis_incs, 'axis increments')
         if axis_incs <= 1:
             raise RelaxError("The axis increment value needs to be greater than 1.")
-        check.is_str(file_prefix, 'file prefix')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_num_list(point, 'point', size=len(params), can_be_none=True)
+        arg_check.is_str(file_prefix, 'file prefix')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_num_list(point, 'point', size=len(params), can_be_none=True)
         if point != None:
-            check.is_str(point_file, 'point file name')
-        check.is_func(remap, 'remap function', can_be_none=True)
+            arg_check.is_str(point_file, 'point file name')
+        arg_check.is_func(remap, 'remap function', can_be_none=True)
 
         # Execute the functional code.
         opendx.main.map(params=params, map_type=map_type, spin_id=spin_id, inc=inc, lower=lower, upper=upper, axis_incs=axis_incs, file_prefix=file_prefix, dir=dir, point=point, point_file=point_file, remap=remap)
