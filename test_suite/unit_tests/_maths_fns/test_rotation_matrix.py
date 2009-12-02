@@ -546,9 +546,9 @@ class Test_rotation_matrix(TestCase):
         print(("gamma: %s\n" % gamma_new))
 
         # Checks.
-        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(alpha+gamma, alpha_new)
         self.assertAlmostEqual(beta, beta_new)
-        self.assertAlmostEqual(gamma, gamma_new)
+        self.assertAlmostEqual(0.0, gamma_new)
 
 
     def test_R_to_euler_zyz_a1_b1_g0(self):
@@ -645,9 +645,9 @@ class Test_rotation_matrix(TestCase):
         print(("gamma: %s\n" % gamma_new))
 
         # Checks.
-        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(alpha+gamma, alpha_new)
         self.assertAlmostEqual(beta, beta_new)
-        self.assertAlmostEqual(gamma, gamma_new)
+        self.assertAlmostEqual(0.0, gamma_new)
 
 
     def test_R_to_euler_zyz_a1_b1_g1(self):
@@ -782,9 +782,9 @@ class Test_rotation_matrix(TestCase):
         a, b, g = reverse_euler_zyz(a, b, g)
 
         # Check the reversed, reverse angles.
-        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(a, euler[0]+euler[2])
         self.assertAlmostEqual(b, euler[1])
-        self.assertAlmostEqual(g, euler[2])
+        self.assertAlmostEqual(g, 0.0)
 
 
     def test_reverse_euler_zyz_a1_b1_g0(self):
@@ -830,9 +830,9 @@ class Test_rotation_matrix(TestCase):
         a, b, g = reverse_euler_zyz(a, b, g)
 
         # Check the reversed, reverse angles.
-        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(a, euler[0]+euler[2])
         self.assertAlmostEqual(b, euler[1])
-        self.assertAlmostEqual(g, euler[2])
+        self.assertAlmostEqual(g, 0.0)
 
 
     def test_reverse_euler_zyz_a1_b1_g1(self):
