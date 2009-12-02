@@ -278,8 +278,7 @@ def R_to_euler_zyz(R):
 
         R = [mux, muy, muz].
 
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles), the rotation matrix for the
-    zyz convention is::
+    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles), the rotation matrix for the zyz convention is::
 
               | -sa*sg + ca*cb*cg    -ca*sg - sa*cb*cg    sb*cg |
         R  =  |  sa*cg + ca*cb*sg     ca*cg - sa*cb*sg    sb*sg |,
@@ -294,11 +293,13 @@ def R_to_euler_zyz(R):
         cg = cos(gamma),
         sg = sin(gamma).
 
+    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
+
 
     @param R:       The 3x3 rotation matrix to update.
     @type R:        3x3 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the z-y-z convention.
-    @rtype:         float, float, float
+    @rtype:         tuple of float
     """
 
     # The beta Euler angle.
