@@ -22,7 +22,7 @@
 
 # Python module imports.
 from math import acos, asin, atan2, cos, pi, sin, sqrt
-from numpy import array, cross, dot, float64, hypot, zeros
+from numpy import array, cross, dot, float64, hypot, transpose, zeros
 from numpy.linalg import norm
 from random import gauss, uniform
 
@@ -428,6 +428,35 @@ def random_rot_axis(axis):
     axis[0] = cos(theta) * sin(phi)
     axis[1] = sin(theta) * sin(phi)
     axis[2] = cos(phi)
+
+
+def reverse_euler_zyz(alpha, beta, gamma):
+    """Convert the given forward rotation Euler angles into the equivalent reverse rotation Euler angles.
+    
+    This if for the z-y-z notation.
+
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The alpha, beta, and gamma Euler angles for the reverse rotation.
+    @rtype:         tuple of float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_zyz_to_R(alpha, beta, gamma, R)
+
+    # Reverse rotation.
+    R = transpose(R)
+
+    # Return the Euler angles.
+    return R_to_euler_zyz(R)
 
 
 def quaternion_to_axis_angle(quat):
