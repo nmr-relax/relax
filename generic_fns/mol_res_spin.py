@@ -83,6 +83,10 @@ class Selection(object):
         @type select_string:    string
         """
 
+        # Handle Unicode.
+        if isinstance(select_string, unicode):
+            select_string = str(select_string)
+
         self._union = None
         self._intersect = None
 
@@ -2011,6 +2015,10 @@ def return_spin(selection=None, pipe=None, full_info=False):
     @rtype:             instance of the SpinContainer class.  If full_info=True, the type is the
                         tuple (SpinContainer, str, int, str).
     """
+
+    # Handle Unicode.
+    if isinstance(selection, unicode):
+        selection = str(selection)
 
     # The data pipe.
     if pipe == None:
