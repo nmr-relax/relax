@@ -304,11 +304,21 @@ def R_to_euler_zyz(R):
     # The beta Euler angle.
     beta = acos(R[2, 2])
 
-    # The alpha Euler angle.
-    alpha = atan2(R[2, 1], -R[2, 0])
+    # Problem case - beta is zero so alpha and gamma are indistinguishable.
+    if R[2, 2] == 1.0:
+        # Put all the rotation into alpha.
+        alpha = atan2(R[1, 0], R[0, 0])
 
-    # The gamma Euler angle.
-    gamma = atan2(R[1, 2], R[0, 2])
+        # Gamma.
+        gamma = 0.0
+
+    # Normal case.
+    else:
+        # The alpha Euler angle.
+        alpha = atan2(R[2, 1], -R[2, 0])
+
+        # The gamma Euler angle.
+        gamma = atan2(R[1, 2], R[0, 2])
 
     # Return the angles.
     return alpha, beta, gamma
