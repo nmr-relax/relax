@@ -29,4 +29,4 @@ for name in pipes:
 eliminate()
 
 # Model selection.
-model_selection(method='AIC', modsel_pipe='aic')
+model_selection(method='AIC', modsel_pipe='aic', pipes=pipes)
