@@ -459,6 +459,54 @@ class Test_rotation_matrix(TestCase):
             self.assertAlmostEqual(quat[i], quat_true[i])
 
 
+    def test_reverse_euler_zyz_a0_b0_g0(self):
+        """Test the reverse Euler angle conversion for {0, 0, 0}."""
+
+        # The forward angles.
+        euler = [0.0, 0.0, 0.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a1_b0_g0(self):
+        """Test the reverse Euler angle conversion for {1, 0, 0}."""
+
+        # The forward angles.
+        euler = [1.0, 0.0, 0.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a1_b0_5_g3(self):
+        """Test the reverse Euler angle conversion for {1, 0.5, 3}."""
+
+        # The forward angles.
+        euler = [1.0, 0.5, 3.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
     def test_quaternion_to_axis_angle_no_rot(self):
         """Test the quaternion to rotation matrix conversion for a zero angle rotation."""
 
