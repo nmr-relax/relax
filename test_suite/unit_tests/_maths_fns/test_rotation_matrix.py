@@ -419,6 +419,270 @@ class Test_rotation_matrix(TestCase):
         self.assertAlmostEqual(gamma, gamma_new)
 
 
+    def test_R_to_euler_zyz_a0_b0_g0(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {0, 0, 0}."""
+
+        # Starting angles.
+        alpha = 0.0
+        beta = 0.0
+        gamma = 0.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
+    def test_R_to_euler_zyz_a1_b0_g0(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {1, 0, 0}."""
+
+        # Starting angles.
+        alpha = 1.0
+        beta = 0.0
+        gamma = 0.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
+    def test_R_to_euler_zyz_a0_b1_g0(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {0, 1, 0}."""
+
+        # Starting angles.
+        alpha = 0.0
+        beta = 1.0
+        gamma = 0.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
+    def test_R_to_euler_zyz_a0_b0_g1(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {0, 0, 1}."""
+
+        # Starting angles.
+        alpha = 0.0
+        beta = 0.0
+        gamma = 1.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
+    def test_R_to_euler_zyz_a1_b1_g0(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {1, 1, 0}."""
+
+        # Starting angles.
+        alpha = 1.0
+        beta = 1.0
+        gamma = 0.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
+    def test_R_to_euler_zyz_a0_b1_g1(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {0, 1, 1}."""
+
+        # Starting angles.
+        alpha = 0.0
+        beta = 1.0
+        gamma = 1.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
+    def test_R_to_euler_zyz_a1_b0_g1(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {1, 0, 1}."""
+
+        # Starting angles.
+        alpha = 1.0
+        beta = 0.0
+        gamma = 1.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
+    def test_R_to_euler_zyz_a1_b1_g1(self):
+        """Test the rotation matrix to zyz Euler angle conversion for {1, 1, 1}."""
+
+        # Starting angles.
+        alpha = 1.0
+        beta = 1.0
+        gamma = 1.0
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha))
+        print(("beta: %s" % beta))
+        print(("gamma: %s\n" % gamma))
+
+        # Generate the rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_zyz_to_R(alpha, beta, gamma, R)
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
+
+        # Print out.
+        print("New angles:")
+        print(("alpha: %s" % alpha_new))
+        print(("beta: %s" % beta_new))
+        print(("gamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha, alpha_new)
+        self.assertAlmostEqual(beta, beta_new)
+        self.assertAlmostEqual(gamma, gamma_new)
+
+
     def test_R_to_quaternion_no_rot(self):
         """Test the rotation matrix to quaternion conversion for a zero angle rotation."""
 
