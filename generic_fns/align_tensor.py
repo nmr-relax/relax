@@ -226,67 +226,82 @@ def display(tensor):
         data = get_tensor_object(tensor)
 
         # Header.
-        print(("Tensor: " + tensor + "\n"))
+        head = "# Tensor: %s #" % tensor
+        print("\n\n\n" + '#' * len(head) + "\n" + head + "\n" + '#' * len(head))
+
+
+        # The Saupe matrix.
+        ###################
+
+        title = "# Saupe order matrix."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
-        print("Parameters {Sxx, Syy, Sxy, Sxz, Syz}.")
-        print(("%-15s%15.8f" % ("Sxx:  ", data.Sxx)))
-        print(("%-15s%15.8f" % ("Syy:  ", data.Syy)))
-        print(("%-15s%15.8f" % ("Sxy:  ", data.Sxy)))
-        print(("%-15s%15.8f" % ("Sxz:  ", data.Sxz)))
-        print(("%-15s%15.8f" % ("Syz:  ", data.Syz)))
+        print("# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Sxx, data.Syy, data.Sxy, data.Sxz, data.Syz)))
 
         # The parameter set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
-        print("\nParameters {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).")
-        print(("%-15s%15.8f" % ("Szz:  ", data.Szz)))
-        print(("%-15s%15.8f" % ("Sxx-yy:  ", data.Sxxyy)))
-        print(("%-15s%15.8f" % ("Sxy:  ", data.Sxy)))
-        print(("%-15s%15.8f" % ("Sxz:  ", data.Sxz)))
-        print(("%-15s%15.8f" % ("Syz:  ", data.Syz)))
+        print("# 5D, rank-1 notation {Szz, Sxx-yy, Sxy, Sxz, Syz} (the Pales default format).")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Szz, data.Sxxyy, data.Sxy, data.Sxz, data.Syz)))
+
+        # 3D form.
+        print("# 3D, rank-2 notation.")
+        print("%s" % (3.0/2.0 * data.tensor))
+
+
+        # The alignment tensor.
+        #######################
+
+        title = "# Alignment tensor."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
-        print("\nParameters {Axx, Ayy, Axy, Axz, Ayz}.")
-        print(("%-15s%15.8f" % ("Axx:  ", data.Axx)))
-        print(("%-15s%15.8f" % ("Ayy:  ", data.Ayy)))
-        print(("%-15s%15.8f" % ("Axy:  ", data.Axy)))
-        print(("%-15s%15.8f" % ("Axz:  ", data.Axz)))
-        print(("%-15s%15.8f" % ("Ayz:  ", data.Ayz)))
+        print("# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Axx, data.Ayy, data.Axy, data.Axz, data.Ayz)))
 
         # The parameter set {Azz, Axx-yy, Axy, Axz, Ayz}.
-        print("\nParameters {Azz, Axx-yy, Axy, Axz, Ayz}.")
-        print(("%-15s%15.8f" % ("Azz:  ", data.Azz)))
-        print(("%-15s%15.8f" % ("Axx-yy:  ", data.Axxyy)))
-        print(("%-15s%15.8f" % ("Axy:  ", data.Axy)))
-        print(("%-15s%15.8f" % ("Axz:  ", data.Axz)))
-        print(("%-15s%15.8f" % ("Ayz:  ", data.Ayz)))
+        print("# 5D, rank-1 notation {Azz, Axx-yy, Axy, Axz, Ayz} (the Pales default format).")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Azz, data.Axxyy, data.Axy, data.Axz, data.Ayz)))
+
+        # 3D form.
+        print("# 3D, rank-2 notation.")
+        print("%s" % data.tensor)
+
+
+        # The probability tensor.
+        #########################
+
+        title = "# Probability tensor."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
-        print("\nParameters {Pxx, Pyy, Pxy, Pxz, Pyz}.")
-        print(("%-15s%15.8f" % ("Pxx:  ", data.Pxx)))
-        print(("%-15s%15.8f" % ("Pyy:  ", data.Pyy)))
-        print(("%-15s%15.8f" % ("Pxy:  ", data.Pxy)))
-        print(("%-15s%15.8f" % ("Pxz:  ", data.Pxz)))
-        print(("%-15s%15.8f" % ("Pyz:  ", data.Pyz)))
+        print("# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pxx, data.Pyy, data.Pxy, data.Pxz, data.Pyz)))
 
         # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
-        print("\nParameters {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.")
-        print(("%-15s%15.8f" % ("Pzz:  ", data.Pzz)))
-        print(("%-15s%15.8f" % ("Pxx-yy:  ", data.Pxxyy)))
-        print(("%-15s%15.8f" % ("Pxy:  ", data.Pxy)))
-        print(("%-15s%15.8f" % ("Pxz:  ", data.Pxz)))
-        print(("%-15s%15.8f" % ("Pyz:  ", data.Pyz)))
+        print("# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz} (the Pales default format).")
+        print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pzz, data.Pxxyy, data.Pxy, data.Pxz, data.Pyz)))
+
+
+        # The Eigensystem.
+        ##################
+
+        title = "# Eigensystem."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # Eigenvalues.
-        print("\nEigenvalues {Axx, Ayy, Azz}.")
-        print(("%-15s%15.8f" % ("Axx:  ", data.tensor_diag[0, 0])))
-        print(("%-15s%15.8f" % ("Ayy:  ", data.tensor_diag[1, 1])))
-        print(("%-15s%15.8f" % ("Azz:  ", data.tensor_diag[2, 2])))
+        print("# Eigenvalues {Sxx, Syy, Szz}.")
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (3.0/2.0 * data.tensor_diag[0, 0], 3.0/2.0 * data.tensor_diag[1, 1], 3.0/2.0 * data.tensor_diag[2, 2])))
+        print("# Eigenvalues {Axx, Ayy, Azz}.")
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
 
-        # Eigenvalues.
-        print("\nEigenvalues {Sxx, Syy, Szz}.")
-        print(("%-15s%15.8f" % ("Sxx:  ", 3.0/2.0 * data.tensor_diag[0, 0])))
-        print(("%-15s%15.8f" % ("Syy:  ", 3.0/2.0 * data.tensor_diag[1, 1])))
-        print(("%-15s%15.8f" % ("Szz:  ", 3.0/2.0 * data.tensor_diag[2, 2])))
+        # Eigenvectors.
+        #print("# Eigenvector x.")
+        #print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
+        #print("# Eigenvector y.")
+        #print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
+        #print("# Eigenvector z.")
+        #print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
 
         # Some white space.
         print("\n\n\n")
