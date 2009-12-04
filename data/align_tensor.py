@@ -249,16 +249,16 @@ def calc_eigvals(A):
     return [vals[x_index], vals[y_index], vals[z_index]]
 
 
-def calc_euler(R):
+def calc_euler(rotation):
     """Calculate the zyz notation Euler angles.
 
-    @param R:   The rotation matrix.
-    @type R:    numpy 3D, rank-2 array
-    @return:    The Euler angles alpha, beta, and gamma in zyz notation.
-    @rtype:     tuple of float
+    @param rotation:    The rotation matrix.
+    @type rotation:     numpy 3D, rank-2 array
+    @return:            The Euler angles alpha, beta, and gamma in zyz notation.
+    @rtype:             tuple of float
     """
 
-    return R_to_euler_zyz(R)
+    return R_to_euler_zyz(rotation)
 
 
 def calc_S(Sxx, Syy, Szz, Sxy, Sxz, Syz):
@@ -729,7 +729,7 @@ def calc_Pzz(Pxx, Pyy):
     return 1.0 - Pxx - Pyy
 
 
-def calc_R(A):
+def calc_rotation(A):
     """Calculate the rotation matrix from the molecular frame to the tensor frame.
 
     This is defined by::
@@ -759,52 +759,52 @@ def calc_R(A):
     return array([rot[:,x_index], rot[:,y_index], rot[:,z_index]])
 
 
-def calc_unit_x(R):
+def calc_unit_x(rotation):
     """Calculate the x unit vector.
 
     This is given by the eigenvalue decomposition.
 
 
-    @param R:   The rotation matrix.
-    @type R:    numpy 3D, rank-2 array
-    @return:    The x unit vector.
-    @rtype:     numpy array (float64)
+    @param rotation:    The rotation matrix.
+    @type rotation:     numpy 3D, rank-2 array
+    @return:            The x unit vector.
+    @rtype:             numpy array (float64)
     """
 
     # Return the x unit vector.
-    return R[:, 0]
+    return rotation[:, 0]
 
 
-def calc_unit_y(R):
+def calc_unit_y(rotation):
     """Calculate the y unit vector.
 
     This is given by the eigenvalue decomposition.
 
 
-    @param R:   The rotation matrix.
-    @type R:    numpy 3D, rank-2 array
-    @return:    The y unit vector.
-    @rtype:     numpy array (float64)
+    @param rotation:    The rotation matrix.
+    @type rotation:     numpy 3D, rank-2 array
+    @return:            The y unit vector.
+    @rtype:             numpy array (float64)
     """
 
     # Return the y unit vector.
-    return R[:, 1]
+    return rotation[:, 1]
 
 
-def calc_unit_z(R):
+def calc_unit_z(rotation):
     """Calculate the z unit vector.
 
     This is given by the eigenvalue decomposition.
 
 
-    @param R:   The rotation matrix.
-    @type R:    numpy 3D, rank-2 array
-    @return:    The z unit vector.
-    @rtype:     numpy array (float64)
+    @param rotation:    The rotation matrix.
+    @type rotation:     numpy 3D, rank-2 array
+    @return:            The z unit vector.
+    @rtype:             numpy array (float64)
     """
 
     # Return the z unit vector.
-    return R[:, 2]
+    return rotation[:, 2]
 
 
 def dependency_generator():
@@ -837,7 +837,7 @@ def dependency_generator():
     # Secondary objects (dependant on the primary objects).
     yield ('A_diag',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
     yield ('eigvals',       ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
-    yield ('R',             ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
+    yield ('rotation',      ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
 
     yield ('P_diag',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['P'])
     yield ('Pzz',           ['Axx', 'Ayy'],                                 ['Pxx', 'Pyy'])
@@ -852,11 +852,11 @@ def dependency_generator():
     yield ('Aa',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
     yield ('Ar',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
 
-    yield ('unit_x',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['R'])
-    yield ('unit_y',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['R'])
-    yield ('unit_z',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['R'])
+    yield ('unit_x',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
+    yield ('unit_y',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
+    yield ('unit_z',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
 
-    yield ('euler',         ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['R'])
+    yield ('euler',         ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
 
 
 
