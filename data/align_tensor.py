@@ -143,6 +143,44 @@ def calc_A_diag(A):
     tensor_diag[2, 2] = vals[Azz_index]
 
     # Return the tensor.
+def calc_Axxyy(Axx, Ayy):
+    """Function for calculating the Axx-yy value.
+
+    The equation for calculating the parameter is::
+
+        Axx-yy  =  Axx - Ayy.
+
+    @param Axx:     The Axx component of the alignment tensor.
+    @type Axx:      float
+    @param Ayy:     The Ayy component of the alignment tensor.
+    @type Ayy:      float
+    @return:        The Axx-yy component of the alignment tensor.
+    @rtype:         float
+    """
+
+    # Calculate and return the Axx-yy value.
+    return Axx - Ayy
+
+
+def calc_Azz(Axx, Ayy):
+    """Function for calculating the Azz value.
+
+    The equation for calculating the parameter is::
+
+        Azz  =  - Axx - Ayy.
+
+    @param Axx:     The Axx component of the alignment tensor.
+    @type Axx:      float
+    @param Ayy:     The Ayy component of the alignment tensor.
+    @type Ayy:      float
+    @return:        The Azz component of the alignment tensor.
+    @rtype:         float
+    """
+
+    # Calculate and return the Azz value.
+    return - Axx - Ayy
+
+
     return tensor_diag
 
 
@@ -181,124 +219,6 @@ def calc_euler(R):
     """
 
     return R_to_euler_zyz(R)
-
-
-def calc_Sxx(Axx):
-    """Function for calculating the Axx value.
-
-    The equation for calculating the parameter is::
-
-        Sxx  =  3/2 Axx.
-
-    @param Axx:     The Axx component of the alignment tensor.
-    @type Axx:      float
-    @rtype:         float
-    """
-
-    # Calculate and return the Axx value.
-    return 3.0/2.0 * Axx
-
-
-def calc_Syy(Ayy):
-    """Function for calculating the Ayy value.
-
-    The equation for calculating the parameter is::
-
-        Syy  =  3/2 Ayy.
-
-    @param Ayy:     The Ayy component of the alignment tensor.
-    @type Ayy:      float
-    @rtype:         float
-    """
-
-    # Calculate and return the Ayy value.
-    return 3.0/2.0 * Ayy
-
-
-def calc_Sxy(Axy):
-    """Function for calculating the Axy value.
-
-    The equation for calculating the parameter is::
-
-        Sxy  =  3/2 Axy.
-
-    @param Axy:     The Axy component of the alignment tensor.
-    @type Axy:      float
-    @rtype:         float
-    """
-
-    # Calculate and return the Axy value.
-    return 3.0/2.0 * Axy
-
-
-def calc_Sxz(Axz):
-    """Function for calculating the Axz value.
-
-    The equation for calculating the parameter is::
-
-        Sxz  =  3/2 Axz.
-
-    @param Axz:     The Axz component of the alignment tensor.
-    @type Axz:      float
-    @rtype:         float
-    """
-
-    # Calculate and return the Axz value.
-    return 3.0/2.0 * Axz
-
-
-def calc_Syz(Ayz):
-    """Function for calculating the Ayz value.
-
-    The equation for calculating the parameter is::
-
-        Syz  =  3/2 Ayz.
-
-    @param Ayz:     The Ayz component of the alignment tensor.
-    @type Ayz:      float
-    @rtype:         float
-    """
-
-    # Calculate and return the Ayz value.
-    return 3.0/2.0 * Ayz
-
-
-def calc_Axxyy(Axx, Ayy):
-    """Function for calculating the Axx-yy value.
-
-    The equation for calculating the parameter is::
-
-        Axx-yy  =  Axx - Ayy.
-
-    @param Axx:     The Axx component of the alignment tensor.
-    @type Axx:      float
-    @param Ayy:     The Ayy component of the alignment tensor.
-    @type Ayy:      float
-    @return:        The Axx-yy component of the alignment tensor.
-    @rtype:         float
-    """
-
-    # Calculate and return the Axx-yy value.
-    return Axx - Ayy
-
-
-def calc_Azz(Axx, Ayy):
-    """Function for calculating the Azz value.
-
-    The equation for calculating the parameter is::
-
-        Azz  =  - Axx - Ayy.
-
-    @param Axx:     The Axx component of the alignment tensor.
-    @type Axx:      float
-    @param Ayy:     The Ayy component of the alignment tensor.
-    @type Ayy:      float
-    @return:        The Azz component of the alignment tensor.
-    @rtype:         float
-    """
-
-    # Calculate and return the Azz value.
-    return - Axx - Ayy
 
 
 def calc_S(Sxx, Syy, Szz, Sxy, Sxz, Syz):
@@ -412,6 +332,124 @@ def calc_S_diag(tensor):
 
     # Return the tensor.
     return tensor_diag
+
+
+def calc_Sxx(Axx):
+    """Function for calculating the Axx value.
+
+    The equation for calculating the parameter is::
+
+        Sxx  =  3/2 Axx.
+
+    @param Axx:     The Axx component of the alignment tensor.
+    @type Axx:      float
+    @rtype:         float
+    """
+
+    # Calculate and return the Axx value.
+    return 3.0/2.0 * Axx
+
+
+def calc_Sxxyy(Sxx, Syy):
+    """Function for calculating the Sxx-yy value.
+
+    The equation for calculating the parameter is::
+
+        Sxx-yy  =  Sxx - Syy.
+
+    @param Sxx:     The Sxx component of the Saupe order matrix.
+    @type Sxx:      float
+    @param Syy:     The Syy component of the Saupe order matrix.
+    @type Syy:      float
+    @return:        The Sxx-yy component of the Saupe order matrix.
+    @rtype:         float
+    """
+
+    # Calculate and return the Sxx-yy value.
+    return Sxx - Syy
+
+
+def calc_Sxy(Axy):
+    """Function for calculating the Axy value.
+
+    The equation for calculating the parameter is::
+
+        Sxy  =  3/2 Axy.
+
+    @param Axy:     The Axy component of the alignment tensor.
+    @type Axy:      float
+    @rtype:         float
+    """
+
+    # Calculate and return the Axy value.
+    return 3.0/2.0 * Axy
+
+
+def calc_Sxz(Axz):
+    """Function for calculating the Axz value.
+
+    The equation for calculating the parameter is::
+
+        Sxz  =  3/2 Axz.
+
+    @param Axz:     The Axz component of the alignment tensor.
+    @type Axz:      float
+    @rtype:         float
+    """
+
+    # Calculate and return the Axz value.
+    return 3.0/2.0 * Axz
+
+
+def calc_Syy(Ayy):
+    """Function for calculating the Ayy value.
+
+    The equation for calculating the parameter is::
+
+        Syy  =  3/2 Ayy.
+
+    @param Ayy:     The Ayy component of the alignment tensor.
+    @type Ayy:      float
+    @rtype:         float
+    """
+
+    # Calculate and return the Ayy value.
+    return 3.0/2.0 * Ayy
+
+
+def calc_Syz(Ayz):
+    """Function for calculating the Ayz value.
+
+    The equation for calculating the parameter is::
+
+        Syz  =  3/2 Ayz.
+
+    @param Ayz:     The Ayz component of the alignment tensor.
+    @type Ayz:      float
+    @rtype:         float
+    """
+
+    # Calculate and return the Ayz value.
+    return 3.0/2.0 * Ayz
+
+
+def calc_Szz(Sxx, Syy):
+    """Function for calculating the Szz value.
+
+    The equation for calculating the parameter is::
+
+        Szz  =  - Sxx - Syy.
+
+    @param Sxx:     The Sxx component of the Saupe order matrix.
+    @type Sxx:      float
+    @param Syy:     The Syy component of the Saupe order matrix.
+    @type Syy:      float
+    @return:        The Szz component of the Saupe order matrix.
+    @rtype:         float
+    """
+
+    # Calculate and return the Szz value.
+    return - Sxx - Syy
 
 
 def calc_P(Axx, Ayy, Azz, Axy, Axz, Ayz):
@@ -549,20 +587,23 @@ def calc_Pxx(Axx):
     return Axx + 1.0/3.0
 
 
-def calc_Pyy(Ayy):
-    """Function for calculating the Pyy value.
+def calc_Pxxyy(Pxx, Pyy):
+    """Function for calculating the Pxx-yy value.
 
     The equation for calculating the parameter is::
 
-        Pyy  =  Ayy + 1/3.
+        Pxx-yy  =  Pxx - Pyy.
 
-    @param Ayy:     The Ayy component of the alignment tensor.
-    @type Ayy:      float
+    @param Pxx:     The Pxx component of the alignment tensor.
+    @type Pxx:      float
+    @param Pyy:     The Pyy component of the alignment tensor.
+    @type Pyy:      float
+    @return:        The Pxx-yy component of the alignment tensor.
     @rtype:         float
     """
 
-    # Calculate and return the Pyy value.
-    return Ayy + 1.0/3.0
+    # Calculate and return the Pxx-yy value.
+    return Pxx - Pyy
 
 
 def calc_Pxy(Axy):
@@ -597,6 +638,22 @@ def calc_Pxz(Axz):
     return Axz
 
 
+def calc_Pyy(Ayy):
+    """Function for calculating the Pyy value.
+
+    The equation for calculating the parameter is::
+
+        Pyy  =  Ayy + 1/3.
+
+    @param Ayy:     The Ayy component of the alignment tensor.
+    @type Ayy:      float
+    @rtype:         float
+    """
+
+    # Calculate and return the Pyy value.
+    return Ayy + 1.0/3.0
+
+
 def calc_Pyz(Ayz):
     """Function for calculating the Pyz value.
 
@@ -611,25 +668,6 @@ def calc_Pyz(Ayz):
 
     # Calculate and return the Pyz value.
     return Ayz
-
-
-def calc_Pxxyy(Pxx, Pyy):
-    """Function for calculating the Pxx-yy value.
-
-    The equation for calculating the parameter is::
-
-        Pxx-yy  =  Pxx - Pyy.
-
-    @param Pxx:     The Pxx component of the alignment tensor.
-    @type Pxx:      float
-    @param Pyy:     The Pyy component of the alignment tensor.
-    @type Pyy:      float
-    @return:        The Pxx-yy component of the alignment tensor.
-    @rtype:         float
-    """
-
-    # Calculate and return the Pxx-yy value.
-    return Pxx - Pyy
 
 
 def calc_Pzz(Pxx, Pyy):
@@ -649,6 +687,36 @@ def calc_Pzz(Pxx, Pyy):
 
     # Calculate and return the Pzz value.
     return 1.0 - Pxx - Pyy
+
+
+def calc_R(A):
+    """Calculate the rotation matrix from the molecular frame to the tensor frame.
+
+    This is defined by::
+
+        | Azz | >= | Ayy | >= | Axx |.
+
+
+    @param A:       The full alignment tensor.
+    @type A:        numpy array ((3, 3), float64)
+    @return:        The array of x, y, and z indices.
+    @rtype:         list
+    """
+
+    # The eigenvalues.
+    vals, rot = eig(A)
+
+    # Find the |x| < |y| < |z| indices.
+    abs_vals = abs(vals).tolist()
+    x_index = abs_vals.index(min(abs_vals))
+    z_index = abs_vals.index(max(abs_vals))
+    last_index = range(3)
+    last_index.pop(max(x_index, z_index))
+    last_index.pop(min(x_index, z_index))
+    y_index = last_index[0]
+
+    # Return the rotation matrix (with the columns reordered).
+    return array([rot[:,x_index], rot[:,y_index], rot[:,z_index]])
 
 
 def calc_unit_x(R):
@@ -697,74 +765,6 @@ def calc_unit_z(R):
 
     # Return the z unit vector.
     return R[:, 2]
-
-
-def calc_Sxxyy(Sxx, Syy):
-    """Function for calculating the Sxx-yy value.
-
-    The equation for calculating the parameter is::
-
-        Sxx-yy  =  Sxx - Syy.
-
-    @param Sxx:     The Sxx component of the Saupe order matrix.
-    @type Sxx:      float
-    @param Syy:     The Syy component of the Saupe order matrix.
-    @type Syy:      float
-    @return:        The Sxx-yy component of the Saupe order matrix.
-    @rtype:         float
-    """
-
-    # Calculate and return the Sxx-yy value.
-    return Sxx - Syy
-
-
-def calc_Szz(Sxx, Syy):
-    """Function for calculating the Szz value.
-
-    The equation for calculating the parameter is::
-
-        Szz  =  - Sxx - Syy.
-
-    @param Sxx:     The Sxx component of the Saupe order matrix.
-    @type Sxx:      float
-    @param Syy:     The Syy component of the Saupe order matrix.
-    @type Syy:      float
-    @return:        The Szz component of the Saupe order matrix.
-    @rtype:         float
-    """
-
-    # Calculate and return the Szz value.
-    return - Sxx - Syy
-
-
-def calc_R(A):
-    """Calculate the rotation matrix from the molecular frame to the tensor frame.
-
-    This is defined by::
-
-        | Azz | >= | Ayy | >= | Axx |.
-
-
-    @param A:       The full alignment tensor.
-    @type A:        numpy array ((3, 3), float64)
-    @return:        The array of x, y, and z indices.
-    @rtype:         list
-    """
-
-    # The eigenvalues.
-    vals, rot = eig(A)
-
-    # Find the |x| < |y| < |z| indices.
-    abs_vals = abs(vals).tolist()
-    x_index = abs_vals.index(min(abs_vals))
-    z_index = abs_vals.index(max(abs_vals))
-    last_index = range(3)
-    last_index.pop(max(x_index, z_index))
-    last_index.pop(min(x_index, z_index))
-    y_index = last_index[0]
-
-    # Return the rotation matrix (with the columns reordered).
-    return array([rot[:,x_index], rot[:,y_index], rot[:,z_index]])
 
 
 def dependency_generator():
