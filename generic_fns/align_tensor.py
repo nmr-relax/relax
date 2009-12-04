@@ -309,11 +309,30 @@ def display(tensor):
 
         # Rotation matrix.
         print("# Rotation matrix.")
-        print("%s\n" % data.R)
+        print("%s\n" % data.rotation)
 
         # zyz.
         print("# Euler angles in zyz notation {alpha, beta, gamma}.")
         print(("[%25.12f, %25.12f, %25.12f]\n" % (data.euler[0], data.euler[1], data.euler[2])))
+
+
+        # Geometric description.
+        ########################
+
+        title = "# Geometric description."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+
+        # Anisotropy.
+        print("# Axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).")
+        print("Aa = %-25.12e\n" % data.Aa)
+
+        # Rhombicity.
+        print("# Rhombic component (Ar = Axx - Ayy, where Aii are the eigenvalues).")
+        print("Ar = %-25.12e\n" % data.Ar)
+        print("# Rhombicity (R = Ar / Aa).")
+        print("R = %-25.12f\n" % data.R)
+        print("# Asymmetry parameter (eta = (Axx - Ayy) / Azz, where Aii are the eigenvalues).")
+        print("eta = %-25.12f\n" % data.eta)
 
         # Some white space.
         print("\n\n\n")
