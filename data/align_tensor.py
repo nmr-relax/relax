@@ -143,6 +143,9 @@ def calc_A_diag(A):
     tensor_diag[2, 2] = vals[Azz_index]
 
     # Return the tensor.
+    return tensor_diag
+
+
 def calc_Axxyy(Axx, Ayy):
     """Function for calculating the Axx-yy value.
 
@@ -179,9 +182,6 @@ def calc_Azz(Axx, Ayy):
 
     # Calculate and return the Azz value.
     return - Axx - Ayy
-
-
-    return tensor_diag
 
 
 def calc_eigvals(A):
