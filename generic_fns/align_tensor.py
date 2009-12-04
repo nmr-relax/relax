@@ -246,7 +246,7 @@ def display(tensor):
 
         # 3D form.
         print("# 3D, rank-2 notation.")
-        print("%s" % (3.0/2.0 * data.tensor))
+        print("%s" % (data.S))
 
 
         # The alignment tensor.
@@ -265,7 +265,7 @@ def display(tensor):
 
         # 3D form.
         print("# 3D, rank-2 notation.")
-        print("%s" % data.tensor)
+        print("%s" % data.A)
 
 
         # The probability tensor.
@@ -282,6 +282,10 @@ def display(tensor):
         print("# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz} (the Pales default format).")
         print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pzz, data.Pxxyy, data.Pxy, data.Pxz, data.Pyz)))
 
+        # 3D form.
+        print("# 3D, rank-2 notation.")
+        print("%s" % data.P)
+
 
         # The Eigensystem.
         ##################
@@ -291,17 +295,25 @@ def display(tensor):
 
         # Eigenvalues.
         print("# Eigenvalues {Sxx, Syy, Szz}.")
-        print(("[%25.12e, %25.12e, %25.12e]\n" % (3.0/2.0 * data.tensor_diag[0, 0], 3.0/2.0 * data.tensor_diag[1, 1], 3.0/2.0 * data.tensor_diag[2, 2])))
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.S_diag[0, 0], data.S_diag[1, 1], data.S_diag[2, 2])))
         print("# Eigenvalues {Axx, Ayy, Azz}.")
-        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.A_diag[0, 0], data.A_diag[1, 1], data.A_diag[2, 2])))
 
         # Eigenvectors.
-        #print("# Eigenvector x.")
-        #print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
-        #print("# Eigenvector y.")
-        #print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
-        #print("# Eigenvector z.")
-        #print(("[%25.12e, %25.12e, %25.12e]\n" % (data.tensor_diag[0, 0], data.tensor_diag[1, 1], data.tensor_diag[2, 2])))
+        print("# Eigenvector x.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_x[0], data.unit_x[1], data.unit_x[2])))
+        print("# Eigenvector y.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_y[0], data.unit_y[1], data.unit_y[2])))
+        print("# Eigenvector z.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.unit_z[0], data.unit_z[1], data.unit_z[2])))
+
+        # Rotation matrix.
+        print("# Rotation matrix.")
+        print("%s\n" % data.R)
+
+        # zyz.
+        print("# Euler angles in zyz notation {alpha, beta, gamma}.")
+        print(("[%25.12f, %25.12f, %25.12f]\n" % (data.euler[0], data.euler[1], data.euler[2])))
 
         # Some white space.
         print("\n\n\n")
