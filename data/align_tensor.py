@@ -146,6 +146,46 @@ def calc_A_diag(A):
     return tensor_diag
 
 
+def calc_Aa(A):
+    """Calculate the anisotropic parameter Aa.
+
+    This is given by::
+
+        Aa = 3/2Azz = Szz,
+
+    where Azz and Szz are the eigenvalues.
+
+
+    @param A:   The full alignment tensor.
+    @type A:    numpy array ((3, 3), float64)
+    @return:    The Aa parameter
+    @rtype:     float
+    """
+
+    # Return Aa.
+    return 1.5 * A[2, 2]
+
+
+def calc_Ar(A):
+    """Calculate the rhombic parameter Ar.
+
+    This is given by::
+
+        Ar = Axx - Ayy,
+
+    where Axx and Ayy are the eigenvalues.
+
+
+    @param A:   The full alignment tensor.
+    @type A:    numpy array ((3, 3), float64)
+    @return:    The Ar parameter
+    @rtype:     float
+    """
+
+    # Return Ar.
+    return A[0, 0] - A[1, 1]
+
+
 def calc_Axxyy(Axx, Ayy):
     """Function for calculating the Axx-yy value.
 
@@ -809,6 +849,9 @@ def dependency_generator():
     yield ('Szz',           ['Axx', 'Ayy'],                                 ['Sxx', 'Syy'])
 
     # Tertiary objects (dependant on the secondary objects).
+    yield ('Aa',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
+    yield ('Ar',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
+
     yield ('unit_x',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['R'])
     yield ('unit_y',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['R'])
     yield ('unit_z',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['R'])
