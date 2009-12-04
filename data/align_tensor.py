@@ -249,6 +249,26 @@ def calc_eigvals(A):
     return [vals[x_index], vals[y_index], vals[z_index]]
 
 
+def calc_eta(A):
+    """Calculate the asymmetry parameter eta.
+
+    This is given by::
+
+        eta = (Axx - Ayy) / Azz
+
+    where Aii are the eigenvalues.
+
+
+    @param A:   The full alignment tensor.
+    @type A:    numpy array ((3, 3), float64)
+    @return:    The eta parameter
+    @rtype:     float
+    """
+
+    # Return eta.
+    return (A[0, 0] - A[1, 1]) / A[2, 2]
+
+
 def calc_euler(rotation):
     """Calculate the zyz notation Euler angles.
 
@@ -729,6 +749,26 @@ def calc_Pzz(Pxx, Pyy):
     return 1.0 - Pxx - Pyy
 
 
+def calc_R(Aa, Ar):
+    """Calculate the rhombicity parameter R.
+
+    This is given by::
+
+        R = Ar / Aa.
+
+
+    @param Aa:  The Aa parameter.
+    @type Aa:   float
+    @param Ar:  The Ar parameter.
+    @type Ar:   float
+    @return:    The R parameter.
+    @rtype:     float
+    """
+
+    # Return R.
+    return Ar / Aa
+
+
 def calc_rotation(A):
     """Calculate the rotation matrix from the molecular frame to the tensor frame.
 
@@ -851,12 +891,16 @@ def dependency_generator():
     # Tertiary objects (dependant on the secondary objects).
     yield ('Aa',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
     yield ('Ar',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
+    yield ('eta',           ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
 
     yield ('unit_x',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
     yield ('unit_y',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
     yield ('unit_z',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
 
     yield ('euler',         ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
+
+    # Quaternary objects (dependant on the tertiary objects).
+    yield ('R',             ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['Aa', 'Ar'])
 
 
 
