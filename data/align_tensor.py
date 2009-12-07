@@ -146,7 +146,7 @@ def calc_A_diag(A):
     return tensor_diag
 
 
-def calc_Aa(A):
+def calc_Aa(A_diag):
     """Calculate the anisotropic parameter Aa.
 
     This is given by::
@@ -156,17 +156,17 @@ def calc_Aa(A):
     where Azz and Szz are the eigenvalues.
 
 
-    @param A:   The full alignment tensor.
-    @type A:    numpy array ((3, 3), float64)
-    @return:    The Aa parameter
-    @rtype:     float
+    @param A_diag:  The full alignment tensor, diagonalised.
+    @type A_diag:   numpy array ((3, 3), float64)
+    @return:        The Aa parameter
+    @rtype:         float
     """
 
     # Return Aa.
-    return 1.5 * A[2, 2]
+    return 1.5 * A_diag[2, 2]
 
 
-def calc_Ar(A):
+def calc_Ar(A_diag):
     """Calculate the rhombic parameter Ar.
 
     This is given by::
@@ -176,14 +176,14 @@ def calc_Ar(A):
     where Axx and Ayy are the eigenvalues.
 
 
-    @param A:   The full alignment tensor.
-    @type A:    numpy array ((3, 3), float64)
-    @return:    The Ar parameter
-    @rtype:     float
+    @param A_diag:  The full alignment tensor, diagonalised.
+    @type A_diag:   numpy array ((3, 3), float64)
+    @return:        The Ar parameter
+    @rtype:         float
     """
 
     # Return Ar.
-    return A[0, 0] - A[1, 1]
+    return A_diag[0, 0] - A_diag[1, 1]
 
 
 def calc_Axxyy(Axx, Ayy):
@@ -249,7 +249,7 @@ def calc_eigvals(A):
     return [vals[x_index], vals[y_index], vals[z_index]]
 
 
-def calc_eta(A):
+def calc_eta(A_diag):
     """Calculate the asymmetry parameter eta.
 
     This is given by::
@@ -259,14 +259,14 @@ def calc_eta(A):
     where Aii are the eigenvalues.
 
 
-    @param A:   The full alignment tensor.
-    @type A:    numpy array ((3, 3), float64)
-    @return:    The eta parameter
-    @rtype:     float
+    @param A_diag:  The full alignment tensor, diagonalised.
+    @type A_diag:   numpy array ((3, 3), float64)
+    @return:        The eta parameter
+    @rtype:         float
     """
 
     # Return eta.
-    return (A[0, 0] - A[1, 1]) / A[2, 2]
+    return (A_diag[0, 0] - A_diag[1, 1]) / A_diag[2, 2]
 
 
 def calc_euler(rotation):
@@ -889,9 +889,9 @@ def dependency_generator():
     yield ('Szz',           ['Axx', 'Ayy'],                                 ['Sxx', 'Syy'])
 
     # Tertiary objects (dependant on the secondary objects).
-    yield ('Aa',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
-    yield ('Ar',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
-    yield ('eta',           ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A'])
+    yield ('Aa',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A_diag'])
+    yield ('Ar',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A_diag'])
+    yield ('eta',           ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A_diag'])
 
     yield ('unit_x',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
     yield ('unit_y',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['rotation'])
