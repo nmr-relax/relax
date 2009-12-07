@@ -795,8 +795,17 @@ def calc_rotation(A):
     last_index.pop(min(x_index, z_index))
     y_index = last_index[0]
 
-    # Return the rotation matrix (with the columns reordered).
-    return array([rot[:,x_index], rot[:,y_index], rot[:,z_index]])
+    # Empty rotation matrix for index permutations.
+    rot_perm = zeros((3, 3), float64)
+
+    # Permute the rotation matrix.
+    perm = [x_index, y_index, z_index]
+    for i in range(3):
+        for j in range(3):
+            rot_perm[i, j] = rot[i, perm[j]]
+
+    # Return the permuted rotation matrix.
+    return rot_perm
 
 
 def calc_unit_x(rotation):
