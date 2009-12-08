@@ -23,6 +23,9 @@
 # Module docstring.
 """Argument checking functions for the relax user functions."""
 
+# Python module imports.
+from numpy import ndarray
+
 # relax module imports.
 from relax_errors import RelaxBoolError, RelaxFloatError, RelaxFunctionError, RelaxIntError, RelaxIntListIntError, RelaxNoneFloatError, RelaxNoneFunctionError, RelaxListNumError, RelaxListStrError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneListNumError, RelaxNoneListStrError, RelaxNoneNumError, RelaxNoneNumStrListNumStrError, RelaxNoneNumTupleNumError, RelaxNoneStrError, RelaxNoneStrFileError, RelaxNoneStrListNumError, RelaxNoneStrListStrError, RelaxNumError, RelaxNumStrListNumStrError, RelaxNumTupleNumError, RelaxStrError, RelaxStrFileError, RelaxStrListNumError, RelaxStrListStrError, RelaxTupleError, RelaxTupleNumError
 from relax_io import DummyFileObject
@@ -320,7 +323,7 @@ def is_num_list(arg, name, size=None, can_be_none=False, can_be_empty=False):
         return
 
     # Fail if not a list.
-    if not isinstance(arg, list):
+    if not isinstance(arg, list) and not isinstance(arg, ndarray):
         fail = True
 
     # Other checks.
