@@ -2048,8 +2048,6 @@ def R_to_euler_zyx(R):
         cg = cos(gamma),
         sg = sin(gamma).
 
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
 
     @param R:       The 3x3 rotation matrix to update.
     @type R:        3x3 numpy array
@@ -2060,21 +2058,11 @@ def R_to_euler_zyx(R):
     # The beta Euler angle.
     beta = asin(R[0, 2])
 
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[0, 2] == 0.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(R[1, 0], -R[2, 0])
+    # The alpha Euler angle.
+    alpha = atan2(-R[0, 1], R[0, 0])
 
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(-R[0, 1], R[0, 0])
-
-        # The gamma Euler angle.
-        gamma = atan2(-R[1, 2], R[2, 2])
+    # The gamma Euler angle.
+    gamma = atan2(-R[1, 2], R[2, 2])
 
     # Return the angles.
     return alpha, beta, gamma
