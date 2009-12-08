@@ -168,7 +168,7 @@ def centre(pos=None, atom_id=None, pipe=None, ave_pos=False, force=False):
         raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
     # Position is supplied.
-    if pos:
+    if pos != None:
         centre = array(pos)
         num_pos = 1
         full_pos_list = []
