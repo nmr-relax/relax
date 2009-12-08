@@ -54,8 +54,10 @@ class Test_rotation_matrix(TestCase):
 
 
     def check_return_conversion(self, euler_to_R=None, R_to_euler=None, alpha_start=None, beta_start=None, gamma_start=None, alpha_end=None, beta_end=None, gamma_end=None):
-        """Test the rotation matrix to zyz Euler angle conversion."""
+        """Check the Euler angle to rotation matrix to Euler angle conversion."""
 
+        # Print out.
+        print("\n\n# Checking the %s() and %s() conversions.\n" % (euler_to_R.__name__, R_to_euler.__name__))
         # End angles.
         if alpha_end == None:
             alpha_end = alpha_start
@@ -66,15 +68,22 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("Original angles:")
-        print(("alpha: %s" % alpha_start))
-        print(("beta: %s" % beta_start))
-        print(("gamma: %s\n" % gamma_start))
+        print(("\talpha: %s" % alpha_start))
+        print(("\tbeta:  %s" % beta_start))
+        print(("\tgamma: %s\n" % gamma_start))
 
         # Generate the rotation matrix.
         euler_to_R(alpha_start, beta_start, gamma_start, R)
+        print(("R:\n%s\n" % R))
 
         # Get back the angles.
         alpha_new, beta_new, gamma_new = R_to_euler(R)
+
+        # Print out.
+        print("New angles:")
+        print(("\talpha: %s" % alpha_new))
+        print(("\tbeta:  %s" % beta_new))
+        print(("\tgamma: %s\n" % gamma_new))
 
         # Wrap the angles.
         alpha_new = wrap_angles(alpha_new, 0, 2*pi)
@@ -82,10 +91,10 @@ class Test_rotation_matrix(TestCase):
         gamma_new = wrap_angles(gamma_new, 0, 2*pi)
 
         # Print out.
-        print("New angles:")
-        print(("alpha: %s" % alpha_new))
-        print(("beta: %s" % beta_new))
-        print(("gamma: %s\n" % gamma_new))
+        print("New angles (wrapped):")
+        print(("\talpha: %s" % alpha_new))
+        print(("\tbeta:  %s" % beta_new))
+        print(("\tgamma: %s\n" % gamma_new))
 
         # Checks.
         self.assertAlmostEqual(alpha_end, alpha_new)
