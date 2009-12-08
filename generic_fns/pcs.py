@@ -135,7 +135,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
         spin.relax_sim_data.append(values)
 
 
-def centre(pos=None, atom_id=None, pipe=None, ave_pos=False):
+def centre(pos=None, atom_id=None, pipe=None, ave_pos=False, force=False):
     """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
 
     @keyword pos:       The atomic position.  If set, the atom_id string will be ignored.
@@ -144,9 +144,9 @@ def centre(pos=None, atom_id=None, pipe=None, ave_pos=False):
     @type atom_id:      str
     @keyword pipe:      An alternative data pipe to extract the paramagnetic centre from.
     @type pipe:         None or str
-    @keyword ave_pos:   A flag which if True causes the atomic positions from multiple models to be
-                        averaged.
+    @keyword ave_pos:   A flag which if True causes the atomic positions from multiple models to be averaged.
     @type ave_pos:      bool
+    @keyword force:     A flag which if True will cause the current PCS centre to be overwritten.
     """
 
     # The data pipe.
@@ -164,7 +164,7 @@ def centre(pos=None, atom_id=None, pipe=None, ave_pos=False):
         raise RelaxNoPdbError
 
     # Test the centre has already been set.
-    if hasattr(cdp, 'paramagnetic_centre'):
+    if not force and hasattr(cdp, 'paramagnetic_centre'):
         raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
     # Position is supplied.
