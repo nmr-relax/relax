@@ -135,9 +135,11 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
         spin.relax_sim_data.append(values)
 
 
-def centre(atom_id=None, pipe=None, ave_pos=False):
+def centre(pos=None, atom_id=None, pipe=None, ave_pos=False):
     """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
 
+    @keyword pos:       The atomic position.  If set, the atom_id string will be ignored.
+    @type pos:          list of float
     @keyword atom_id:   The atom identification string.
     @type atom_id:      str
     @keyword pipe:      An alternative data pipe to extract the paramagnetic centre from.
@@ -165,30 +167,38 @@ def centre(atom_id=None, pipe=None, ave_pos=False):
     if hasattr(cdp, 'paramagnetic_centre'):
         raise RelaxError("The paramagnetic centre has already been set to the coordinates " + repr(cdp.paramagnetic_centre) + ".")
 
-    # Get the positions.
-    centre = zeros(3, float64)
-    full_pos_list = []
-    num_pos = 0
-    for spin, spin_id in spin_loop(atom_id, pipe=pipe, return_id=True):
-        # No atomic positions.
-        if not hasattr(spin, 'pos'):
-            continue
+    # Position is supplied.
+    if pos:
+        centre = array(pos)
+        num_pos = 1
+        full_pos_list = []
 
-        # Spin position list.
-        if isinstance(spin.pos[0], float) or isinstance(spin.pos[0], float64):
-            pos_list = [spin.pos]
-        else:
-            pos_list = spin.pos
-
-        # Loop over the model positions.
-        for pos in pos_list:
-            full_pos_list.append(pos)
-            centre = centre + array(pos)
-            num_pos = num_pos + 1
-
-    # No positional information!
-    if not num_pos:
-        raise RelaxError("No positional information could be found for the spin '%s'." % atom_id)
+    # Position from a loaded structure.
+    else:
+        # Get the positions.
+        centre = zeros(3, float64)
+        full_pos_list = []
+        num_pos = 0
+        for spin, spin_id in spin_loop(atom_id, pipe=pipe, return_id=True):
+            # No atomic positions.
+            if not hasattr(spin, 'pos'):
+                continue
+    
+            # Spin position list.
+            if isinstance(spin.pos[0], float) or isinstance(spin.pos[0], float64):
+                pos_list = [spin.pos]
+            else:
+                pos_list = spin.pos
+    
+            # Loop over the model positions.
+            for pos in pos_list:
+                full_pos_list.append(pos)
+                centre = centre + array(pos)
+                num_pos = num_pos + 1
+    
+        # No positional information!
+        if not num_pos:
+            raise RelaxError("No positional information could be found for the spin '%s'." % atom_id)
 
     # Averaging.
     centre = centre / float(num_pos)

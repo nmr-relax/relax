@@ -59,11 +59,13 @@ class PCS(User_fn_class):
         pcs.back_calc(align_id=align_id)
 
 
-    def centre(self, atom_id=None, pipe=None, ave_pos=True):
+    def centre(self, pos=None, atom_id=None, pipe=None, ave_pos=True):
         """Specify which atom is the paramagnetic centre.
 
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
+
+        pos:  The atomic position.
 
         atom_id:  The atom ID string.
 
@@ -103,23 +105,30 @@ class PCS(User_fn_class):
         centre, then type:
 
         relax> pcs.centre(':4@C1')
+        
+        To state that the Dy3+ atomic position is [0.136, 12.543, 4.356], type one of:
+
+        relax> pcs.centre([0.136, 12.543, 4.356])
+        relax> pcs.centre(pos=[0.136, 12.543, 4.356])
         """
 
         # Function intro text.
         if self.__relax__.interpreter.intro:
             text = sys.ps3 + "pcs.centre("
-            text = text + "atom_id=" + repr(atom_id)
+            text = text + "pos=" + repr(pos)
+            text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
 
         # The argument checks.
-        arg_check.is_str(atom_id, 'atom ID string')
+        arg_check.is_num_list(pos, 'atomic position', can_be_none=True)
+        arg_check.is_str(atom_id, 'atom ID string', can_be_none=True)
         arg_check.is_str(pipe, 'data pipe', can_be_none=True)
         arg_check.is_bool(ave_pos, 'average position flag')
 
         # Execute the functional code.
-        pcs.centre(atom_id=atom_id, pipe=pipe, ave_pos=ave_pos)
+        pcs.centre(pos=pos, atom_id=atom_id, pipe=pipe, ave_pos=ave_pos)
 
 
     def copy(self, pipe_from=None, pipe_to=None, align_id=None):
