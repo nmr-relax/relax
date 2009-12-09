@@ -575,7 +575,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 1.0, 1.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi/2, 0.5, alpha_end=0.5, gamma_end=0.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi, 0.5)
 
 
