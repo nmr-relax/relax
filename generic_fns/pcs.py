@@ -135,7 +135,7 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
         spin.relax_sim_data.append(values)
 
 
-def centre(pos=None, atom_id=None, pipe=None, ave_pos=False, force=False):
+def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=False):
     """Specify the atom in the loaded structure corresponding to the paramagnetic centre.
 
     @keyword pos:       The atomic position.  If set, the atom_id string will be ignored.
@@ -144,6 +144,8 @@ def centre(pos=None, atom_id=None, pipe=None, ave_pos=False, force=False):
     @type atom_id:      str
     @keyword pipe:      An alternative data pipe to extract the paramagnetic centre from.
     @type pipe:         None or str
+    @keyword verbosity: The amount of information to print out.  The bigger the number, the more information.
+    @type verbosity:    int
     @keyword ave_pos:   A flag which if True causes the atomic positions from multiple models to be averaged.
     @type ave_pos:      bool
     @keyword force:     A flag which if True will cause the current PCS centre to be overwritten.
@@ -204,18 +206,21 @@ def centre(pos=None, atom_id=None, pipe=None, ave_pos=False, force=False):
     centre = centre / float(num_pos)
 
     # Print out.
-    print("Paramagnetic centres located at:")
-    for pos in full_pos_list:
-        print(("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])))
-    print("\nAverage paramagnetic centre located at:")
-    print(("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])))
+    if verbosity:
+        print("Paramagnetic centres located at:")
+        for pos in full_pos_list:
+            print(("    [%8.3f, %8.3f, %8.3f]" % (pos[0], pos[1], pos[2])))
+        print("\nAverage paramagnetic centre located at:")
+        print(("    [%8.3f, %8.3f, %8.3f]" % (centre[0], centre[1], centre[2])))
 
     # Set the centre (place it into the current data pipe).
     if ave_pos:
-        print("\nUsing the average paramagnetic position.")
+        if verbosity:
+            print("\nUsing the average paramagnetic position.")
         cdp.paramagnetic_centre = centre
     else:
-        print("\nUsing all paramagnetic positions.")
+        if verbosity:
+            print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
 
 

@@ -59,7 +59,7 @@ class PCS(User_fn_class):
         pcs.back_calc(align_id=align_id)
 
 
-    def centre(self, pos=None, atom_id=None, pipe=None, ave_pos=True, force=False):
+    def centre(self, pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=True, force=False):
         """Specify which atom is the paramagnetic centre.
 
         Keyword Arguments
@@ -70,6 +70,8 @@ class PCS(User_fn_class):
         atom_id:  The atom ID string.
 
         pipe:  The data pipe containing the structures to extract the centre from.
+
+        verbosity:  The amount of information to print out.
 
         ave_pos:  A flag specifying if the position of the atom is to be averaged across all models.
 
@@ -120,6 +122,7 @@ class PCS(User_fn_class):
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
+            text = text + ", verbosity=" + repr(verbosity)
             text = text + ", ave_pos=" + repr(ave_pos)
             text = text + ", force=" + repr(force) + ")"
             print(text)
@@ -128,11 +131,12 @@ class PCS(User_fn_class):
         arg_check.is_num_list(pos, 'atomic position', can_be_none=True)
         arg_check.is_str(atom_id, 'atom ID string', can_be_none=True)
         arg_check.is_str(pipe, 'data pipe', can_be_none=True)
+        arg_check.is_int(verbosity, 'verbosity level')
         arg_check.is_bool(ave_pos, 'average position flag')
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        pcs.centre(pos=pos, atom_id=atom_id, pipe=pipe, ave_pos=ave_pos, force=force)
+        pcs.centre(pos=pos, atom_id=atom_id, pipe=pipe, verbosity=verbosity, ave_pos=ave_pos, force=force)
 
 
     def copy(self, pipe_from=None, pipe_to=None, align_id=None):
