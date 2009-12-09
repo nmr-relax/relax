@@ -629,6 +629,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, pi/2, 0.5)
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, pi, 0.5)
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, -pi/2, 0.5, alpha_end=1.0+pi, beta_end=pi/2, gamma_end=0.5+pi)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 1.5*pi, 0.5, alpha_end=1.0+pi, beta_end=pi/2, gamma_end=0.5+pi)
 
 
     def test_R_to_quaternion_no_rot(self):
