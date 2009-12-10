@@ -91,7 +91,7 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
 
     # Averaging factor.
     if weights == None:
-        c = 1.0 / N
+        pc = 1.0 / N
 
     # Loop over the structures k.
     for c in xrange(N):
