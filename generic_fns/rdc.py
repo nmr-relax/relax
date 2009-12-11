@@ -25,11 +25,16 @@
 
 # Python module imports.
 from copy import deepcopy
+from math import pi
+from numpy import float64, ones, zeros
+from numpy.linalg import norm
 import sys
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
+from maths_fns.rdc import ave_rdc_tensor
+from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
 from relax_io import read_spin_data, write_spin_data
 
@@ -133,6 +138,48 @@ def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=Non
 
         # Append the simulation's relaxation data.
         spin.relax_sim_data.append(values)
+
+
+def back_calc(align_id=None):
+    """Back calculate the RDC from the alignment tensor and unit bond vectors.
+
+    @keyword align_id:      The alignment tensor ID string.
+    @type align_id:         str
+    """
+
+    # The weights.
+    weights = ones(cdp.N, float64) / cdp.N
+
+    # Unit vector data structure init.
+    unit_vect = zeros((cdp.N, 3), float64)
+
+    # Loop over the spins.
+    for spin in spin_loop():
+        # Skip spins with no bond vectors.
+        if not hasattr(spin, 'bond_vect') and not hasattr(spin, 'xh_vect'):
+            continue
+
+        # Alias.
+        if hasattr(spin, 'bond_vect'):
+            vectors = spin.bond_vect
+        else:
+            vectors = spin.xh_vect
+
+        # Loop over each alignment.
+        for i in range(len(cdp.align_tensors)):
+            # Gyromagnetic ratios.
+            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+            gh = return_gyromagnetic_ratio(spin.proton_type)
+
+            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+            dj = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+
+            # Unit vectors.
+            for c in range(cdp.N):
+                unit_vect[c] = vectors[c] / norm(vectors[c])
+
+            # Calculate the RDC.
+            spin.rdc_bc = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
 
 
 def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
