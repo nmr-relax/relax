@@ -294,7 +294,7 @@ def select(method=None, modsel_pipe=None, pipes=None):
             switch(best_model)
 
             # Duplicate.
-            duplicate_data[best_model](best_model, modsel_pipe, model_info, verbose=False)
+            duplicate_data[best_model](best_model, modsel_pipe, model_info, global_stats=global_flag, verbose=False)
 
             # Model selection pipe now exists.
             modsel_pipe_exists = True
