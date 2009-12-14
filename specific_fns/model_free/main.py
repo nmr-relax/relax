@@ -27,6 +27,7 @@ from numpy import float64, array, identity, transpose, zeros
 from re import match, search
 from string import replace, split
 import sys
+from warnings import warn
 
 # relax module imports.
 import arg_check
