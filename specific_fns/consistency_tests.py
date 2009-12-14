@@ -361,8 +361,7 @@ class Consistency_tests(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Loop over spin data:
-        for spin in spin_loop():
-
+        for spin, spin_id in spin_loop(return_id=True):
             # Check for sufficient data
             if not hasattr(spin, 'relax_data'):
                 warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))

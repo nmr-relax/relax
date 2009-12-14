@@ -849,7 +849,7 @@ class Relax_fit(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Loop over spin data.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
                 warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
