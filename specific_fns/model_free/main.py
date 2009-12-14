@@ -2028,7 +2028,7 @@ class Model_free_main:
         for spin, spin_id in spin_loop(return_id=True):
             # Relaxation data must exist!
             if not hasattr(spin, 'relax_data'):
-                warn(RelaxDeselectWarning(spin_id, 'relaxation data is missing'))
+                warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
 
             # Require 3 or more relaxation data points.
@@ -2043,10 +2043,10 @@ class Model_free_main:
 
             # Test for structural data if required.
             elif need_vect and not hasattr(spin, 'xh_vect'):
-                warn(RelaxDeselectWarning(spin_id, 'structural data missing'))
+                warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
                 spin.select = False
             elif need_vect and spin.xh_vect == None:
-                warn(RelaxDeselectWarning(spin_id, 'structural data missing'))
+                warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
                 spin.select = False
 
 

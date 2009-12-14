@@ -852,7 +852,7 @@ class Relax_fit(API_base, API_common):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
-                warn(RelaxDeselectWarning(spin_id, 'intensity data is missing'))
+                warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
                 spin.select = False
 
             # Require 3 or more data points.

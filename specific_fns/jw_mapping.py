@@ -339,7 +339,7 @@ class Jw_mapping(API_base, API_common):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'relax_data'):
-                warn(RelaxDeselectWarning(spin_id, 'relaxation data is missing'))
+                warn(RelaxDeselectWarning(spin_id, 'missing relaxation data'))
                 spin.select = False
 
             # Require 3 or more data points.
