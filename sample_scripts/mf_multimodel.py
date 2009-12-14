@@ -39,7 +39,7 @@ for name in pipes:
     structure.read_pdb('example.pdb')
 
     # Set the spin name and then load the NH vectors.
-    spin.name('N')
+    spin.name(name='N')
     structure.vectors(spin_id='@N', attached='H*', ave=False)
 
     # Load the relaxation data.
