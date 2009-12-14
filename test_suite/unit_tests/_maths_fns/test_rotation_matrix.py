@@ -58,6 +58,10 @@ class Test_rotation_matrix(TestCase):
 
         # Print out.
         print("\n\n# Checking the %s() and %s() conversions.\n" % (euler_to_R.__name__, R_to_euler.__name__))
+
+        # A small number.
+        epsilon = 1e-15
+
         # End angles.
         if alpha_end == None:
             alpha_end = alpha_start
@@ -71,6 +75,11 @@ class Test_rotation_matrix(TestCase):
         print(("\talpha: %s" % alpha_start))
         print(("\tbeta:  %s" % beta_start))
         print(("\tgamma: %s\n" % gamma_start))
+        print("End angles:")
+        print(("\talpha: %s" % alpha_end))
+        print(("\tbeta:  %s" % beta_end))
+        print(("\tgamma: %s\n" % gamma_end))
+
 
         # Generate the rotation matrix.
         euler_to_R(alpha_start, beta_start, gamma_start, R)
@@ -86,15 +95,38 @@ class Test_rotation_matrix(TestCase):
         print(("\tgamma: %s\n" % gamma_new))
 
         # Wrap the angles.
-        alpha_new = wrap_angles(alpha_new, 0, 2*pi)
-        beta_new = wrap_angles(beta_new, 0, 2*pi)
-        gamma_new = wrap_angles(gamma_new, 0, 2*pi)
+        alpha_new = wrap_angles(alpha_new, 0-epsilon, 2*pi-epsilon)
+        beta_new = wrap_angles(beta_new, 0-epsilon, 2*pi-epsilon)
+        gamma_new = wrap_angles(gamma_new, 0-epsilon, 2*pi-epsilon)
 
         # Print out.
         print("New angles (wrapped):")
         print(("\talpha: %s" % alpha_new))
         print(("\tbeta:  %s" % beta_new))
         print(("\tgamma: %s\n" % gamma_new))
+
+        # Second solution required!
+        if abs(beta_end - beta_new) > 1e-7:
+            # Collapse the multiple beta solutions.
+            if beta_new < pi:
+                alpha_new = alpha_new + pi
+                beta_new = pi - beta_new
+                gamma_new = gamma_new + pi
+            else:
+                alpha_new = alpha_new + pi
+                beta_new = 3*pi - beta_new
+                gamma_new = gamma_new + pi
+
+            # Wrap the angles.
+            alpha_new = wrap_angles(alpha_new, 0-epsilon, 2*pi-epsilon)
+            beta_new = wrap_angles(beta_new, 0-epsilon, 2*pi-epsilon)
+            gamma_new = wrap_angles(gamma_new, 0-epsilon, 2*pi-epsilon)
+
+            # Print out.
+            print("New angles (second solution):")
+            print(("\talpha: %s" % alpha_new))
+            print(("\tbeta:  %s" % beta_new))
+            print(("\tgamma: %s\n" % gamma_new))
 
         # Checks.
         self.assertAlmostEqual(alpha_end, alpha_new)
@@ -570,13 +602,15 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 0.0, 0.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 0.0, 0.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 1.0, 0.0)
-        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 0.0, 1.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.0, 0.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 1.0, 1.0)
-        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi/2, 0.5, alpha_end=0.5, gamma_end=0.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi/2, 0.5)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, -pi/2, 0.5, beta_end=-pi/2+2*pi)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.5*pi, 0.5, beta_end=pi/2)
 
 
     def test_R_to_euler_zxz(self):
@@ -600,6 +634,7 @@ class Test_rotation_matrix(TestCase):
         """Test the rotation matrix to zyx Euler angle conversion."""
 
         # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 5.0, 2.0, 1.0)
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 0.0, 0.0, 0.0)
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 0.0, 0.0)
@@ -610,7 +645,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 1.0, 1.0)
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi/2, 0.5)
-        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi, 0.5, alpha_end=1.0+pi, beta_end=0.0, gamma_end=0.5+pi)
 
 
     def test_R_to_euler_zyz(self):
