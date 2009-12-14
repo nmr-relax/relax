@@ -37,8 +37,9 @@ from generic_fns.mol_res_spin import convert_from_global_index, count_spins, exi
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
 from physical_constants import N15_CSA, NH_BOND_LENGTH
-from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
 import specific_fns
+from relax_errors import RelaxError, RelaxFuncSetupError, RelaxInfError, RelaxInvalidDataError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoSpinSpecError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxTensorError
+from relax_warnings import RelaxDeselectWarning
 
 
 
@@ -2010,6 +2011,9 @@ class Model_free_main:
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support minimisation."""
 
+        # Print out.
+        print("\n\nOver-fit spin deselection.\n")
+
         # Test if sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
@@ -2020,23 +2024,28 @@ class Model_free_main:
             need_vect = True
 
         # Loop over the sequence.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Relaxation data must exist!
             if not hasattr(spin, 'relax_data'):
+                warn(RelaxDeselectWarning(spin_id, 'relaxation data is missing'))
                 spin.select = False
 
             # Require 3 or more relaxation data points.
             elif len(spin.relax_data) < 3:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
 
             # Require at least as many data points as params to prevent over-fitting.
             elif hasattr(spin, 'params') and spin.params and len(spin.params) > len(spin.relax_data):
+                warn(RelaxDeselectWarning(spin_id, 'over-fitting - more parameters than data points'))
                 spin.select = False
 
             # Test for structural data if required.
             elif need_vect and not hasattr(spin, 'xh_vect'):
+                warn(RelaxDeselectWarning(spin_id, 'structural data missing'))
                 spin.select = False
             elif need_vect and spin.xh_vect == None:
+                warn(RelaxDeselectWarning(spin_id, 'structural data missing'))
                 spin.select = False
 
 

@@ -22,6 +22,7 @@
 
 # Python module imports.
 from re import search
+from warnings import warn
 
 # relax module imports.
 from api_base import API_base
@@ -31,6 +32,7 @@ from generic_fns import pipes
 from maths_fns.jw_mapping import Mapping
 from physical_constants import N15_CSA, NH_BOND_LENGTH, h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
+from relax_warnings import RelaxDeselectWarning
 
 
 class Jw_mapping(API_base, API_common):
@@ -326,6 +328,9 @@ class Jw_mapping(API_base, API_common):
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support calculation."""
 
+        # Print out.
+        print("\n\nOver-fit spin deselection.\n")
+
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
@@ -334,13 +339,13 @@ class Jw_mapping(API_base, API_common):
         for spin in spin_loop():
             # Check if data exists.
             if not hasattr(spin, 'relax_data'):
+                warn(RelaxDeselectWarning(spin_id, 'relaxation data is missing'))
                 spin.select = False
-                continue
 
             # Require 3 or more data points.
-            if len(spin.relax_data) < 3:
+            elif len(spin.relax_data) < 3:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient relaxation data, 3 or more data points are required'))
                 spin.select = False
-                continue
 
 
     return_data_name_doc = """

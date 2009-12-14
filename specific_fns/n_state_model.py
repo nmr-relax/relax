@@ -49,7 +49,7 @@ from maths_fns.rotation_matrix import two_vect_to_R, euler_zyz_to_R
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
-from relax_warnings import RelaxWarning
+from relax_warnings import RelaxWarning, RelaxDeselectWarning
 
 
 class N_state_model(API_base, API_common):
