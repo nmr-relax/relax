@@ -34,7 +34,7 @@ import sys
 from angles import wrap_angles
 from data.align_tensor import AlignTensorList
 from generic_fns import pipes
-from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
+from physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -63,6 +63,32 @@ def align_data_exists(tensor, pipe=None):
                 return True
     else:
         return False
+
+
+def calc_chi_tensor(A, B0, T):
+    """Convert the alignment tensor into the magnetic susceptibility (chi) tensor.
+
+    A can be either the full tensor (3D or 5D), a component Aij of the tensor, Aa, or Ar, anything that can be multiplied by the constants to convert from one to the other.
+
+
+    @param A:       The alignment tensor or alignment tensor component.
+    @type A:        numpy array or float
+    @param B0:      The magnetic field strength in Hz.
+    @type B0:       float
+    @param T:       The temperature in Kalvin.
+    @type T:        float
+    @return:        A multiplied by the PCS constant.
+    @rtype:         numpy array or float
+    """
+
+    # B0 in Tesla.
+    B0 = 2.0 * pi * B0 / g1H
+
+    # The conversion factor.
+    conv = 15.0 * mu0 * kB * T / B0**2
+
+    # Return the converted value.
+    return conv * A
 
 
 def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
@@ -279,12 +305,64 @@ def display(tensor):
         print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pxx, data.Pyy, data.Pxy, data.Pxz, data.Pyz)))
 
         # The parameter set {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
-        print("# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz} (the Pales default format).")
+        print("# 5D, rank-1 notation {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.")
         print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (data.Pzz, data.Pxxyy, data.Pxy, data.Pxz, data.Pyz)))
 
         # 3D form.
         print("# 3D, rank-2 notation.")
         print("%s" % data.P)
+
+
+        # The magnetic susceptibility tensor.
+        #####################################
+
+        title = "# Magnetic susceptibility tensor."
+        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        chi_tensor = True
+
+        # The field strength.
+        print("# The magnetic field strength (MHz):")
+        if hasattr(cdp, 'frq') and tensor in cdp.frq:
+            print(("%s\n" % (cdp.frq[tensor] / 1e6)))
+        else:
+            print(("Not set.\n"))
+            chi_tensor = False
+
+        # The temperature.
+        print("# The temperature (K):")
+        if hasattr(cdp, 'temperature') and tensor in cdp.temperature:
+            print(("%s\n" % cdp.temperature[tensor]))
+        else:
+            print(("Not set.\n"))
+            chi_tensor = False
+
+        # No chi tensor.
+        if not chi_tensor:
+            print("# The chi tensor:\nN/A.\n")
+
+        # Calculate the chi tensor.
+        else:
+            # Conversions.
+            chi_xx =    calc_chi_tensor(data.Axx, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_xy =    calc_chi_tensor(data.Axy, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_xz =    calc_chi_tensor(data.Axz, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_yy =    calc_chi_tensor(data.Ayy, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_yz =    calc_chi_tensor(data.Ayz, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_zz =    calc_chi_tensor(data.Azz, cdp.frq[tensor], cdp.temperature[tensor])
+            chi_xxyy =  calc_chi_tensor(data.Axxyy, cdp.frq[tensor], cdp.temperature[tensor])
+            chi =       calc_chi_tensor(data.A, cdp.frq[tensor], cdp.temperature[tensor])
+
+            # The parameter set {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}.
+            print("# 5D, rank-1 notation {chi_xx, chi_yy, chi_xy, chi_xz, chi_yz}:")
+            print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_xx, chi_yy, chi_xy, chi_xz, chi_yz)))
+
+            # The parameter set {chi_zz, chi_xx-yy, chi_xy, chi_xz, chi_yz}.
+            print("# 5D, rank-1 notation {chi_zz, chi_xx-yy, chi_xy, chi_xz, chi_yz}.")
+            print(("[%25.12e, %25.12e, %25.12e, %25.12e, %25.12e]\n" % (chi_zz, chi_xxyy, chi_xy, chi_xz, chi_yz)))
+
+            # 3D form.
+            print("# 3D, rank-2 notation.")
+            print("%s" % chi)
 
 
         # The Eigensystem.
@@ -294,10 +372,16 @@ def display(tensor):
         print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # Eigenvalues.
-        print("# Eigenvalues {Sxx, Syy, Szz}.")
+        print("# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.")
         print(("[%25.12e, %25.12e, %25.12e]\n" % (data.S_diag[0, 0], data.S_diag[1, 1], data.S_diag[2, 2])))
-        print("# Eigenvalues {Axx, Ayy, Azz}.")
+        print("# Alignment tensor eigenvalues {Axx, Ayy, Azz}.")
         print(("[%25.12e, %25.12e, %25.12e]\n" % (data.A_diag[0, 0], data.A_diag[1, 1], data.A_diag[2, 2])))
+        print("# Probability tensor eigenvalues {Pxx, Pyy, Pzz}.")
+        print(("[%25.12e, %25.12e, %25.12e]\n" % (data.P_diag[0, 0], data.P_diag[1, 1], data.P_diag[2, 2])))
+        if chi_tensor:
+            chi_diag =       calc_chi_tensor(data.A_diag, cdp.frq[tensor], cdp.temperature[tensor])
+            print("# Magnetic susceptibility eigenvalues {chi_xx, chi_yy, chi_zz}.")
+            print(("[%25.12e, %25.12e, %25.12e]\n" % (chi_diag[0, 0], chi_diag[1, 1], chi_diag[2, 2])))
 
         # Eigenvectors.
         print("# Eigenvector x.")
@@ -323,7 +407,7 @@ def display(tensor):
         print("\n\n" + title + '\n' + '#'*len(title) + '\n')
 
         # Anisotropy.
-        print("# Axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).")
+        print("# Alignment tensor axial component (Aa = 3/2 * Azz, where Aii are the eigenvalues).")
         print("Aa = %-25.12e\n" % data.Aa)
 
         # Rhombicity.
@@ -333,6 +417,16 @@ def display(tensor):
         print("R = %-25.12f\n" % data.R)
         print("# Asymmetry parameter (eta = (Axx - Ayy) / Azz, where Aii are the eigenvalues).")
         print("eta = %-25.12f\n" % data.eta)
+
+        # Magnetic susceptibility tensor.
+        if chi_tensor:
+            # Chi tensor anisotropy.
+            print("# Magnetic susceptibility axial parameter (chi_ax = chi_zz - (chi_xx + chi_yy)/2, where chi_ii are the eigenvalues).")
+            print("chi_ax = %-25.12e\n" % (chi_diag[2, 2] - (chi_diag[0, 0] + chi_diag[1, 1])/2.0))
+
+            # Chi tensor rhombicity.
+            print("# Magnetic susceptibility rhombicity parameter (chi_rh = chi_xx - chi_yy, where chi_ii are the eigenvalues).")
+            print("chi_rh = %-25.12e\n" % (chi_diag[0, 0] - chi_diag[1, 1]))
 
         # Some white space.
         print("\n\n\n")
