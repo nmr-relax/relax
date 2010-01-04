@@ -50,4 +50,4 @@ def set(id=None, temp=None):
         raise RelaxError("The temperature for the experiment " + repr(id) + " has already been set.")
 
     # Set the temperature.
-    cdp.temperature[id] = temp
+    cdp.temperature[id] = float(temp)

@@ -102,7 +102,7 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Axxyy_sim[0], Axxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor_sim[0].tostring(), tensor.tostring())
+        self.assertEqual(self.align_data.A_sim[0].tostring(), tensor.tostring())
 
 
     def test_set_Szz(self):
@@ -155,7 +155,7 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Axxyy_err, Axxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor_err.tostring(), tensor.tostring())
+        self.assertEqual(self.align_data.A_err.tostring(), tensor.tostring())
 
 
     def test_set_params(self):
@@ -198,7 +198,7 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Axxyy, Axxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor.tostring(), tensor.tostring())
+        self.assertEqual(self.align_data.A.tostring(), tensor.tostring())
 
 
     def test_set_sim(self):
@@ -263,7 +263,7 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.Axxyy_sim[0], Axxyy)
 
         # Test the matrices.
-        self.assertEqual(self.align_data.tensor_sim[0].tostring(), tensor.tostring())
+        self.assertEqual(self.align_data.A_sim[0].tostring(), tensor.tostring())
 
 
     def test_set_Axx(self):
