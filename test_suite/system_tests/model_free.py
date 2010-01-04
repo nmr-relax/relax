@@ -166,6 +166,20 @@ class Mf(TestCase):
         self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_14872_unicode_selection.py')
 
 
+    def test_bug_14941_local_tm_global_selection(self):
+        """Test catching bug #14941, the local tm global model selection problem as submitted by Mikaela Stewart (mikaela dot stewart att gmail dot com)."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_14941_local_tm_global_selection.py')
+
+
+    def test_bug_15050(self):
+        """Test catching bug #15050, 'PipeContainer' object has no attribute 'diff_tensor' error as submitted by Tiago Pais (https://gna.org/users/tpais)."""
+
+        # Execute the script.
+        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_15050.py')
+
+
     def test_bugs_12582_12591_12607(self):
         """Test catching bugs #12582, #12591 and #12607 as submitted by Chris Brosey."""
 
