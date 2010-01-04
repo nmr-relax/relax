@@ -672,9 +672,8 @@ class Model_free_main:
     def _determine_model_type(self):
         """Determine the global model type.
 
-        @return:    The name of the model type, which will be one of 'all', 'diff', 'mf', or
-                    'local_tm'.
-        @rtype:     str
+        @return:    The name of the model type, which will be one of 'all', 'diff', 'mf', or 'local_tm'.  If all parameters are fixed (and no spins selected), None is returned.
+        @rtype:     str or None
         """
 
         # Test if sequence data is loaded.
@@ -718,8 +717,8 @@ class Model_free_main:
         # No spins selected?!?
         if mf_all_deselected:
             # All parameters fixed!
-            if cdp.diff_tensor.fixed:
-                raise RelaxError("All parameters are fixed.")
+            if not hasattr(cdp, 'diff_tensor') or cdp.diff_tensor.fixed:
+                return None
 
             return 'diff'
 
@@ -741,7 +740,7 @@ class Model_free_main:
         if mf_all_fixed:
             # All parameters fixed!
             if cdp.diff_tensor.fixed:
-                raise RelaxError("All parameters are fixed.")
+                return None
 
             return 'diff'
 
