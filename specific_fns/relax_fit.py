@@ -29,6 +29,7 @@ from minfx.grid import grid
 from numpy import array, average, dot, float64, identity, zeros
 from numpy.linalg import inv
 from re import match, search
+from warnings import warn
 
 # relax module imports.
 from api_base import API_base
@@ -37,6 +38,7 @@ from dep_check import C_module_exp_fn
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_loop
 from relax_errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError
+from relax_warnings import RelaxDeselectWarning
 
 # C modules.
 if C_module_exp_fn:
@@ -839,21 +841,24 @@ class Relax_fit(API_base, API_common):
     def overfit_deselect(self):
         """Deselect spins which have insufficient data to support minimisation."""
 
+        # Print out.
+        print("\n\nOver-fit spin deselection.\n")
+
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
         # Loop over spin data.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
+                warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
                 spin.select = False
-                continue
 
             # Require 3 or more data points.
-            if len(spin.intensities) < 3:
+            elif len(spin.intensities) < 3:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient data, 3 or more data points are required'))
                 spin.select = False
-                continue
 
 
     def return_data(self, spin):

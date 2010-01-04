@@ -32,6 +32,10 @@ from generic_fns.angles import wrap_angles
 from maths_fns.rotation_matrix import *
 
 
+# Global variables (reusable storage).
+R = zeros((3, 3), float64)
+
+
 class Test_rotation_matrix(TestCase):
     """Unit tests for the maths_fns.rotation_matrix relax module."""
 
@@ -47,6 +51,87 @@ class Test_rotation_matrix(TestCase):
         self.x_axis_neg = array([-1, 0, 0], float64)
         self.y_axis_neg = array([0, -1, 0], float64)
         self.z_axis_neg = array([0, 0, -1], float64)
+
+
+    def check_return_conversion(self, euler_to_R=None, R_to_euler=None, alpha_start=None, beta_start=None, gamma_start=None, alpha_end=None, beta_end=None, gamma_end=None):
+        """Check the Euler angle to rotation matrix to Euler angle conversion."""
+
+        # Print out.
+        print("\n\n# Checking the %s() and %s() conversions.\n" % (euler_to_R.__name__, R_to_euler.__name__))
+
+        # A small number.
+        epsilon = 1e-15
+
+        # End angles.
+        if alpha_end == None:
+            alpha_end = alpha_start
+        if beta_end == None:
+            beta_end = beta_start
+        if gamma_end == None:
+            gamma_end = gamma_start
+
+        # Print out.
+        print("Original angles:")
+        print(("\talpha: %s" % alpha_start))
+        print(("\tbeta:  %s" % beta_start))
+        print(("\tgamma: %s\n" % gamma_start))
+        print("End angles:")
+        print(("\talpha: %s" % alpha_end))
+        print(("\tbeta:  %s" % beta_end))
+        print(("\tgamma: %s\n" % gamma_end))
+
+
+        # Generate the rotation matrix.
+        euler_to_R(alpha_start, beta_start, gamma_start, R)
+        print(("R:\n%s\n" % R))
+
+        # Get back the angles.
+        alpha_new, beta_new, gamma_new = R_to_euler(R)
+
+        # Print out.
+        print("New angles:")
+        print(("\talpha: %s" % alpha_new))
+        print(("\tbeta:  %s" % beta_new))
+        print(("\tgamma: %s\n" % gamma_new))
+
+        # Wrap the angles.
+        alpha_new = wrap_angles(alpha_new, 0-epsilon, 2*pi-epsilon)
+        beta_new = wrap_angles(beta_new, 0-epsilon, 2*pi-epsilon)
+        gamma_new = wrap_angles(gamma_new, 0-epsilon, 2*pi-epsilon)
+
+        # Print out.
+        print("New angles (wrapped):")
+        print(("\talpha: %s" % alpha_new))
+        print(("\tbeta:  %s" % beta_new))
+        print(("\tgamma: %s\n" % gamma_new))
+
+        # Second solution required!
+        if abs(beta_end - beta_new) > 1e-7:
+            # Collapse the multiple beta solutions.
+            if beta_new < pi:
+                alpha_new = alpha_new + pi
+                beta_new = pi - beta_new
+                gamma_new = gamma_new + pi
+            else:
+                alpha_new = alpha_new + pi
+                beta_new = 3*pi - beta_new
+                gamma_new = gamma_new + pi
+
+            # Wrap the angles.
+            alpha_new = wrap_angles(alpha_new, 0-epsilon, 2*pi-epsilon)
+            beta_new = wrap_angles(beta_new, 0-epsilon, 2*pi-epsilon)
+            gamma_new = wrap_angles(gamma_new, 0-epsilon, 2*pi-epsilon)
+
+            # Print out.
+            print("New angles (second solution):")
+            print(("\talpha: %s" % alpha_new))
+            print(("\tbeta:  %s" % beta_new))
+            print(("\tgamma: %s\n" % gamma_new))
+
+        # Checks.
+        self.assertAlmostEqual(alpha_end, alpha_new)
+        self.assertAlmostEqual(beta_end, beta_new)
+        self.assertAlmostEqual(gamma_end, gamma_new)
 
 
     def check_rotation(self, R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg):
@@ -96,7 +181,6 @@ class Test_rotation_matrix(TestCase):
         angle = 0.0
 
         # The rotation matrix.
-        R = zeros((3, 3), float64)
         axis_angle_to_R(axis, angle, R)
         print("Rotation matrix:\n%s" % R)
 
@@ -157,7 +241,6 @@ class Test_rotation_matrix(TestCase):
         angle = pi / 6
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         axis_angle_to_R(axis, angle, R)
         print("Rotation matrix:\n%s" % R)
 
@@ -183,7 +266,6 @@ class Test_rotation_matrix(TestCase):
         angle = 2 * pi / 3
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         axis_angle_to_R(axis, angle, R)
         print("Rotation matrix:\n%s" % R)
 
@@ -218,7 +300,6 @@ class Test_rotation_matrix(TestCase):
         # Init.
         axis = zeros(3, float64)
         quat = zeros(4, float64)
-        R = zeros((3, 3), float64)
 
         # 1) Euler angles to rotation matrix.
         euler_zyz_to_R(alpha, beta, gamma, R)
@@ -271,7 +352,6 @@ class Test_rotation_matrix(TestCase):
         """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         euler_zyz_to_R(pi/6, 0.0, 0.0, R)
 
         # Rotated pos axes (real values).
@@ -292,7 +372,6 @@ class Test_rotation_matrix(TestCase):
         """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         euler_zyz_to_R(0.0, pi/4, 0.0, R)
 
         # Rotated pos axes (real values).
@@ -313,7 +392,6 @@ class Test_rotation_matrix(TestCase):
         """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         euler_zyz_to_R(0.0, 0.0, pi/12, R)
 
         # Rotated pos axes (real values).
@@ -334,7 +412,6 @@ class Test_rotation_matrix(TestCase):
         """Test the rotation matrix from zyz Euler angle conversion using a beta angle of pi/4."""
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         euler_zyz_to_R(pi/12, 0.0, pi/12, R)
 
         # Rotated pos axes (real values).
@@ -381,42 +458,213 @@ class Test_rotation_matrix(TestCase):
             self.assertAlmostEqual(axis[i], 1.0/sqrt(3))
 
 
+    def test_R_to_euler_xyx(self):
+        """Test the rotation matrix to xyx Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_xyz(self):
+        """Test the rotation matrix to xyz Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_xzx(self):
+        """Test the rotation matrix to xzx Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_xzy(self):
+        """Test the rotation matrix to xzy Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_yxy(self):
+        """Test the rotation matrix to yxy Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_yxz(self):
+        """Test the rotation matrix to yxz Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_yzx(self):
+        """Test the rotation matrix to yzx Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_yzy(self):
+        """Test the rotation matrix to yzy Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_zxy(self):
+        """Test the rotation matrix to zxy Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 0.0, 1.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 0.0, 1.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, -pi/2, 0.5, beta_end=-pi/2+2*pi)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.5*pi, 0.5, beta_end=pi/2)
+
+
+    def test_R_to_euler_zxz(self):
+        """Test the rotation matrix to zxz Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, pi, 0.5)
+
+
+    def test_R_to_euler_zyx(self):
+        """Test the rotation matrix to zyx Euler angle conversion."""
+
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 5.0, 2.0, 1.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 0.0, 0.0, 1.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 0.0, 1.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi, 0.5, alpha_end=1.0+pi, beta_end=0.0, gamma_end=0.5+pi)
+
+
     def test_R_to_euler_zyz(self):
         """Test the rotation matrix to zyz Euler angle conversion."""
 
-        # Starting angles.
-        alpha = uniform(0, 2*pi)
-        beta =  uniform(0, pi)
-        gamma = uniform(0, 2*pi)
-
-        # Print out.
-        print("Original angles:")
-        print(("alpha: %s" % alpha))
-        print(("beta: %s" % beta))
-        print(("gamma: %s\n" % gamma))
-
-        # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
-        euler_zyz_to_R(alpha, beta, gamma, R)
-
-        # Get back the angles.
-        alpha_new, beta_new, gamma_new = R_to_euler_zyz(R)
-
-        # Wrap the angles.
-        alpha_new = wrap_angles(alpha_new, 0, 2*pi)
-        beta_new = wrap_angles(beta_new, 0, 2*pi)
-        gamma_new = wrap_angles(gamma_new, 0, 2*pi)
-
-        # Print out.
-        print("New angles:")
-        print(("alpha: %s" % alpha_new))
-        print(("beta: %s" % beta_new))
-        print(("gamma: %s\n" % gamma_new))
-
-        # Checks.
-        self.assertAlmostEqual(alpha, alpha_new)
-        self.assertAlmostEqual(beta, beta_new)
-        self.assertAlmostEqual(gamma, gamma_new)
+        # Check random numbers, then the problematic angles.
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, uniform(0, 2*pi), uniform(0, pi), uniform(0, 2*pi))
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 0.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 0.0, 0.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 0.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 1.0, 0.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 0.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 1.0, 1.0)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, -pi/2, 0.5, alpha_end=1.0+pi, beta_end=pi/2, gamma_end=0.5+pi)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 1.5*pi, 0.5, alpha_end=1.0+pi, beta_end=pi/2, gamma_end=0.5+pi)
 
 
     def test_R_to_quaternion_no_rot(self):
@@ -457,6 +705,150 @@ class Test_rotation_matrix(TestCase):
         self.assertEqual(norm(quat), 1)
         for i in range(4):
             self.assertAlmostEqual(quat[i], quat_true[i])
+
+
+    def test_reverse_euler_zyz_a0_b0_g0(self):
+        """Test the reverse Euler angle conversion for {0, 0, 0}."""
+
+        # The forward angles.
+        euler = [0.0, 0.0, 0.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a1_b0_g0(self):
+        """Test the reverse Euler angle conversion for {1, 0, 0}."""
+
+        # The forward angles.
+        euler = [1.0, 0.0, 0.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a0_b1_g0(self):
+        """Test the reverse Euler angle conversion for {0, 1, 0}."""
+
+        # The forward angles.
+        euler = [0.0, 1.0, 0.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a0_b0_g1(self):
+        """Test the reverse Euler angle conversion for {0, 0, 1}."""
+
+        # The forward angles.
+        euler = [0.0, 0.0, 1.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0]+euler[2])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, 0.0)
+
+
+    def test_reverse_euler_zyz_a1_b1_g0(self):
+        """Test the reverse Euler angle conversion for {1, 1, 0}."""
+
+        # The forward angles.
+        euler = [1.0, 1.0, 0.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a0_b1_g1(self):
+        """Test the reverse Euler angle conversion for {0, 1, 1}."""
+
+        # The forward angles.
+        euler = [0.0, 1.0, 1.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a1_b0_g1(self):
+        """Test the reverse Euler angle conversion for {1, 0, 1}."""
+
+        # The forward angles.
+        euler = [1.0, 0.0, 1.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0]+euler[2])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, 0.0)
+
+
+    def test_reverse_euler_zyz_a1_b1_g1(self):
+        """Test the reverse Euler angle conversion for {1, 1, 1}."""
+
+        # The forward angles.
+        euler = [1.0, 1.0, 1.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
+
+
+    def test_reverse_euler_zyz_a1_b0_5_g3(self):
+        """Test the reverse Euler angle conversion for {1, 0.5, 3}."""
+
+        # The forward angles.
+        euler = [1.0, 0.5, 3.0]
+
+        # Convert twice.
+        a, b, g = reverse_euler_zyz(euler[0], euler[1], euler[2])
+        a, b, g = reverse_euler_zyz(a, b, g)
+
+        # Check the reversed, reverse angles.
+        self.assertAlmostEqual(a, euler[0])
+        self.assertAlmostEqual(b, euler[1])
+        self.assertAlmostEqual(g, euler[2])
 
 
     def test_quaternion_to_axis_angle_no_rot(self):
@@ -501,7 +893,6 @@ class Test_rotation_matrix(TestCase):
         quat = array([1, 0, 0, 0], float64)
 
         # The rotation matrix.
-        R = zeros((3, 3), float64)
         quaternion_to_R(quat, R)
         print("Rotation matrix:\n%s" % R)
 
@@ -541,7 +932,6 @@ class Test_rotation_matrix(TestCase):
         self.assertEqual(norm(quat), 1)
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         quaternion_to_R(quat, R)
         print("Rotation matrix:\n%s" % R)
 
@@ -586,7 +976,6 @@ class Test_rotation_matrix(TestCase):
         self.assertEqual(norm(quat), 1)
 
         # Generate the rotation matrix.
-        R = zeros((3, 3), float64)
         quaternion_to_R(quat, R)
         print("Rotation matrix:\n%s" % R)
 

@@ -1257,6 +1257,8 @@ class Mf_minimise:
 
         # Determine the model type.
         model_type = self._determine_model_type()
+        if not model_type:
+            return
 
         # Model type for the back-calculate function.
         if min_algor == 'back_calc' and model_type != 'local_tm':

@@ -20,12 +20,16 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from warnings import warn
+
 # relax module imports.
 from generic_fns import pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
 from generic_fns.sequence import compare_sequence
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 import setup
+from relax_warnings import RelaxDeselectWarning
 
 
 class Hybrid:
