@@ -154,7 +154,10 @@ class Noe(API_base, API_common):
 
 
     def overfit_deselect(self):
-        """Deselect spins which have insufficient data to support calculation"""
+        """Deselect spins which have insufficient data to support calculation."""
+
+        # Print out.
+        print("\n\nOver-fit spin deselection.\n")
 
         # Test the sequence data exists.
         if not exists_mol_res_spin_data():
