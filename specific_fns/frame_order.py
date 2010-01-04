@@ -45,7 +45,7 @@ from maths_fns.frame_order_matrix_ops import generate_vector
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from relax_io import open_write_file
-from relax_warnings import RelaxWarning
+from relax_warnings import RelaxWarning, RelaxDeselectWarning
 
 
 class Frame_order(API_base, API_common):

@@ -49,7 +49,7 @@ from maths_fns.rotation_matrix import two_vect_to_R, euler_zyz_to_R
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
-from relax_warnings import RelaxWarning
+from relax_warnings import RelaxWarning, RelaxDeselectWarning
 
 
 class N_state_model(API_base, API_common):
@@ -87,7 +87,7 @@ class N_state_model(API_base, API_common):
         if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
-                param_vector = param_vector + list(cdp.align_tensors[i].tensor_5D)
+                param_vector = param_vector + list(cdp.align_tensors[i].A_5D)
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -1110,7 +1110,7 @@ class N_state_model(API_base, API_common):
                 N = N + 1
 
             # Normalisation factor of 2Da^2(4 + 3R)/5.
-            D = dj * cdp.align_tensors[i].tensor_diag
+            D = dj * cdp.align_tensors[i].A_diag
             Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
             Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
             R = Dr / Da

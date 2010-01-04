@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -36,7 +36,11 @@ for name in pipes:
     sequence.read('noe.500.out', res_num_col=1)
 
     # Load a PDB file.
-    #structure.read_pdb('example.pdb')
+    structure.read_pdb('example.pdb')
+
+    # Set the spin name and then load the NH vectors.
+    spin.name(name='N')
+    structure.vectors(spin_id='@N', attached='H*', ave=False)
 
     # Load the relaxation data.
     relax_data.read('R1', '600', 600.0 * 1e6, 'r1.600.out', res_num_col=1, data_col=3, error_col=4)
