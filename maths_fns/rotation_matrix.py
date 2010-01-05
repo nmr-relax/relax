@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2008-2009 Edward d'Auvergne                        #
+# Copyright (C) 2004-2005, 2008-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,10 +21,37 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from math import acos, asin, atan2, cos, pi, sin, sqrt
-from numpy import array, cross, dot, float64, hypot, transpose, zeros
+from numpy import array, cross, dot, float64, hypot, sign, transpose, zeros
 from numpy.linalg import norm
 from random import gauss, uniform
+
+# relax module imports.
+import generic_fns
+
+
+# Global variables.
+EULER_NEXT = [1, 2, 0, 1]    # Used in the matrix_indices() function.
+EULER_TRANS_TABLE = {
+        'xzx': [0, 1, 1],
+        'yxy': [1, 1, 1],
+        'zyz': [2, 1, 1],
+
+        'xzy': [0, 1, 0],
+        'yxz': [1, 1, 0],
+        'zyx': [2, 1, 0],
+
+        'xyx': [0, 0, 1],
+        'yzy': [1, 0, 1],
+        'zxz': [2, 0, 1],
+
+        'xyz': [0, 0, 0],
+        'yzx': [1, 0, 0],
+        'zxy': [2, 0, 0]
+}
+EULER_EPSILON = 1e-5
+
 
 
 def axis_angle_to_euler_xyx(axis, angle):
@@ -1413,6 +1440,38 @@ def euler_zyz_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_b
 
 
+def matrix_indices(i, neg, alt):
+    """Calculate the parameteric indices i, j, k, and h.
+
+    This is one of the algorithms of Ken Shoemake in "Euler Angle Conversion. Graphics Gems IV. Paul Heckbert (ed.). Academic Press, 1994, ISBN: 0123361567. pp. 222-229."  (http://www.graphicsgems.org/).
+
+    The indices (i, j, k) are a permutation of (x, y, z), and the index h corresponds to the row containing the Givens argument a.
+
+
+    @param i:   The index i.
+    @type i:    int
+    @param neg: Zero if (i, j, k) is an even permutation of (x, y, z) or one if odd.
+    @type neg:  int
+    @param alt: Zero if the first and last system axes are the same, or one if they are different.
+    @type alt:  int
+    @return:    The values of j, k, and h.
+    @rtype:     tuple of int
+    """
+
+    # Calculate the indices.
+    j = EULER_NEXT[i + neg]
+    k = EULER_NEXT[i+1 - neg]
+
+    # The Givens rotation row index.
+    if alt:
+        h = k
+    else:
+        h = i
+
+    # Return.
+    return j, k, h
+
+
 def R_to_axis_angle(R):
     """Convert the rotation matrix into the axis-angle notation.
 
@@ -1453,676 +1512,263 @@ def R_to_axis_angle(R):
     return axis, theta
 
 
+def R_to_euler(R, notation, axes_rot='static', second_sol=False):
+    """Convert the rotation matrix to the given Euler angles.
+
+    This uses the algorithms of Ken Shoemake in "Euler Angle Conversion. Graphics Gems IV. Paul Heckbert (ed.). Academic Press, 1994, ISBN: 0123361567. pp. 222-229." (http://www.graphicsgems.org/).
+
+
+    The Euler angle notation can be one of:
+        - xyx
+        - xyz
+        - xzx
+        - xzy
+        - yxy
+        - yxz
+        - yzx
+        - yzy
+        - zxy
+        - zxz
+        - zyx
+        - zyz
+
+
+    @param R:               The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:                3D, rank-2 numpy array
+    @param notation:        The Euler angle notation to use.
+    @type notation:         str
+    @keyword axes_rot:      The axes rotation - either 'static', the static axes or 'rotating', the rotating axes.
+    @type axes_rot:         str
+    @keyword second_sol:    Return the second solution instead (currently unused).
+    @type second_sol:       bool
+    @return:                The alpha, beta, and gamma Euler angles in the given convention.
+    @rtype:                 tuple of float
+    """
+
+    # Duplicate R to avoid its modification.
+    R = deepcopy(R)
+
+    # Get the Euler angle info.
+    i, neg, alt = EULER_TRANS_TABLE[notation]
+
+    # Axis rotations.
+    rev = 0
+    if axes_rot != 'static':
+        rev = 1
+
+    # Find the other indices.
+    j, k, h = matrix_indices(i, neg, alt)
+
+    # No axis repetition.
+    if alt:
+        # Sine of the beta angle.
+        sin_beta = sqrt(R[i, j]**2 + R[i, k]**2)
+
+        # Non-zero sin(beta).
+        if sin_beta > EULER_EPSILON:
+            alpha = atan2( R[i, j],   R[i, k])
+            beta  = atan2( sin_beta,  R[i, i])
+            gamma = atan2( R[j, i],  -R[k, i])
+
+        # sin(beta) is zero.
+        else:
+            alpha = atan2(-R[j, k],   R[j, j])
+            beta  = atan2( sin_beta,  R[i, i])
+            gamma = 0.0
+
+    # Axis repetition.
+    else:
+        # Cosine of the beta angle.
+        cos_beta = sqrt(R[i, i]**2 + R[j, i]**2)
+
+        # Non-zero cos(beta).
+        if cos_beta > EULER_EPSILON:
+            alpha = atan2( R[k, j],   R[k, k])
+            beta  = atan2(-R[k, i],   cos_beta)
+            gamma = atan2( R[j, i],   R[i, i])
+
+        # cos(beta) is zero.
+        else:
+            alpha = atan2(-R[j, k],  R[j, j])
+            beta  = atan2(-R[k, i],   cos_beta)
+            gamma = 0.0
+
+    # Remapping.
+    if neg:
+        alpha, beta, gamma = -alpha, -beta, -gamma
+    if rev:
+        alpha_old = alpha
+        alpha = gamma
+        gamma = alpha_old
+
+    # Angle wrapping.
+    if -pi < beta < 0.0:
+        alpha = alpha + pi
+        beta = -beta
+        gamma = gamma + pi
+
+    alpha = generic_fns.angles.wrap_angles(alpha, 0.0, 2.0*pi)
+    beta  = generic_fns.angles.wrap_angles(beta,  0.0, 2.0*pi)
+    gamma = generic_fns.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+
+    # Return the Euler angles.
+    return alpha, beta, gamma
+
+
 def R_to_euler_xyx(R):
     """Convert the rotation matrix to the xyx Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xyx convention is::
-
-              |  cb                  sa*sb               ca*sb            |
-        R  =  |  sb*sg               ca*cg - sa*cb*sg   -sa*cg - ca*cb*sg |,
-              | -sb*cg               ca*sg + sa*cb*cg   -sa*sg + ca*cb*cg |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the xyx convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = acos(R[0, 0])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[0, 0] == 1.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(-R[1, 2], R[2, 2])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[0, 1], R[0, 2])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[1, 0], -R[2, 0])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'xyx')
 
 
 def R_to_euler_xyz(R):
     """Convert the rotation matrix to the xyz Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xyz convention is::
-
-              |  cb*cg              -ca*sg + sa*sb*cg    sa*sg + ca*sb*cg |
-        R  =  |  cb*sg               ca*cg + sa*sb*sg   -sa*cg + ca*sb*sg |,
-              | -sb                  sa*cb               ca*cb            |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the xyz convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = asin(-R[2, 0])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if -R[2, 0] == 0.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(-R[1, 2], -R[0, 2])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[2, 1], R[2, 2])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[1, 0], -R[0, 0])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'xyz')
 
 
 def R_to_euler_xzx(R):
     """Convert the rotation matrix to the xzx Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xzx convention is::
-
-              |  cb                 -ca*sb               sa*sb            |
-        R  =  |  sb*cg              -sa*sg + ca*cb*cg   -ca*sg - sa*cb*cg |,
-              |  sb*sg               sa*cg + ca*cb*sg    ca*cg - sa*cb*sg |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rxx element is one), then the rotation angle is determined from the yz sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the xzx convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = acos(R[0, 0])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[0, 0] == 1.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(R[2, 1], R[1, 1])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[0, 2], -R[0, 1])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[2, 0], R[1, 0])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'xzx')
 
 
 def R_to_euler_xzy(R):
     """Convert the rotation matrix to the xzy Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xzy convention is::
-
-              |  cb*cg               sa*sg - ca*sb*cg    ca*sg + sa*sb*cg |
-        R  =  |  sb                  ca*cb              -sa*cb            |,
-              | -cb*sg               sa*cg + ca*sb*sg    ca*cg - sa*sb*sg |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Ryx element is zero), then the rotation angle is determined from the sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the xzy convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = asin(R[1, 0])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[1, 0] == 0.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(-R[0, 1], R[2, 2])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(-R[1, 2], R[1, 1])
-
-        # The gamma Euler angle.
-        gamma = atan2(-R[2, 0], R[0, 0])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'xzy')
 
 
 def R_to_euler_yxy(R):
     """Convert the rotation matrix to the yxy Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yxy convention is::
-
-              |  ca*cg - sa*cb*sg    sb*sg               sa*cg + ca*cb*sg |
-        R  =  |  sa*sb               cb                 -ca*sb            |,
-              | -ca*sg - sa*cb*cg    sb*cg              -sa*sg + ca*cb*cg |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the yxy convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = acos(R[1, 1])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[1, 1] == 1.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(R[0, 2], R[2, 2])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[1, 0], -R[1, 2])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[0, 1], R[2, 1])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'yxy')
 
 
 def R_to_euler_yxz(R):
     """Convert the rotation matrix to the yxz Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yxz convention is::
-
-              |  ca*cg - sa*sb*sg   -cb*sg               sa*cg + ca*sb*sg |
-        R  =  |  ca*sg + sa*sb*cg    cb*cg               sa*sg - ca*sb*cg |,
-              | -sa*cb               sb                  ca*cb            |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the yxz convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = asin(R[2, 1])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[2, 1] == 0.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(R[0, 2], -R[1, 2])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(-R[2, 0], R[2, 2])
-
-        # The gamma Euler angle.
-        gamma = atan2(-R[0, 1], R[1, 1])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'yxz')
 
 
 def R_to_euler_yzx(R):
     """Convert the rotation matrix to the yzx Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yzx convention is::
-
-              |  ca*cb              -sb                  sa*cb            |
-        R  =  |  sa*sg + ca*sb*cg    cb*cg              -ca*sg + sa*sb*cg |,
-              | -sa*cg + ca*sb*sg    cb*sg               ca*cg + sa*sb*sg |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the yzx convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = asin(-R[0, 1])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if -R[0, 1] == 0.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(-R[2, 0], -R[1, 0])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[0, 2], R[0, 0])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[2, 1], R[1, 1])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'yzx')
 
 
 def R_to_euler_yzy(R):
     """Convert the rotation matrix to the yzy Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the yzy convention is::
-
-              | -sa*sg + ca*cb*cg   -sb*cg               ca*sg + sa*cb*cg |
-        R  =  |  ca*sb               cb                  sa*sb            |,
-              | -sa*cg - ca*cb*sg    sb*sg               ca*cg - sa*cb*sg |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the yzy convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = acos(R[1, 1])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[1, 1] == 1.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(-R[2, 0], R[0, 0])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[1, 2], R[1, 0])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[2, 1], -R[0, 1])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'yzy')
 
 
 def R_to_euler_zxy(R):
     """Convert the rotation matrix to the zxy Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zxy convention is::
-
-              |  ca*cg + sa*sb*sg   -sa*cg + ca*sb*sg    cb*sg            |
-        R  =  |  sa*cb               ca*cb              -sb               |,
-              | -ca*sg + sa*sb*cg    sa*sg + ca*sb*cg    cb*cg            |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the zxy convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = asin(-R[1, 2])
-
-    # Problem case - beta is pi/2 so alpha and gamma are indistinguishable.
-    if beta == pi/2:
-        # Put all the rotation into alpha.
-        alpha = atan2(-R[0, 1], R[0, 0])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[1, 0], R[1, 1])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[0, 2], R[2, 2])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'zxy')
 
 
 def R_to_euler_zxz(R):
     """Convert the rotation matrix to the zxz Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zxz convention is::
-
-              |  ca*cg - sa*cb*sg   -sa*cg - ca*cb*sg    sb*sg            |
-        R  =  |  ca*sg + sa*cb*cg   -sa*sg + ca*cb*cg   -sb*cg            |,
-              |  sa*sb               ca*sb               cb               |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the zxz convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = acos(R[2, 2])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[2, 2] == 1.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(-R[0, 1], R[1, 1])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[2, 0], R[2, 1])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[0, 2], -R[1, 2])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'zxz')
 
 
 def R_to_euler_zyx(R):
     """Convert the rotation matrix to the zyx Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zyx convention is::
-
-              |  ca*cb              -sa*cb               sb               |
-        R  =  |  sa*cg + ca*sb*sg    ca*cg - sa*sb*sg   -cb*sg            |,
-              |  sa*sg - ca*sb*cg    ca*sg + sa*sb*cg    cb*cg            |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the zyx convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = asin(R[0, 2])
-
-    # The alpha Euler angle.
-    alpha = atan2(-R[0, 1], R[0, 0])
-
-    # The gamma Euler angle.
-    gamma = atan2(-R[1, 2], R[2, 2])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'zyx')
 
 
 def R_to_euler_zyz(R):
     """Convert the rotation matrix to the zyz Euler angles.
 
-    Rotation matrix
-    ===============
-
-    The rotation matrix is defined as the vector of unit vectors::
-
-        R = [mux, muy, muz].
-
-    According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the zyz convention is::
-
-              | -sa*sg + ca*cb*cg   -ca*sg - sa*cb*cg    sb*cg            |
-        R  =  |  sa*cg + ca*cb*sg    ca*cg - sa*cb*sg    sb*sg            |,
-              | -ca*sb               sa*sb               cb               |
-
-    where::
-
-        ca = cos(alpha),
-        sa = sin(alpha),
-        cb = cos(beta),
-        sb = sin(beta),
-        cg = cos(gamma),
-        sg = sin(gamma).
-
-    If beta is zero degrees (i.e. the Rzz element is one), then the rotation angle is determined from the xy sub-matrix elements.  All of the rotation is assumed to be in alpha, while gamma stays at zero.
-
-
-    @param R:       The 3x3 rotation matrix to update.
-    @type R:        3x3 numpy array
+    @param R:       The 3x3 rotation matrix to extract the Euler angles from.
+    @type R:        3D, rank-2 numpy array
     @return:        The alpha, beta, and gamma Euler angles in the zyz convention.
     @rtype:         tuple of float
     """
 
-    # The beta Euler angle.
-    beta = acos(R[2, 2])
-
-    # Problem case - beta is zero so alpha and gamma are indistinguishable.
-    if R[2, 2] == 1.0:
-        # Put all the rotation into alpha.
-        alpha = atan2(R[1, 0], R[0, 0])
-
-        # Gamma.
-        gamma = 0.0
-
-    # Normal case.
-    else:
-        # The alpha Euler angle.
-        alpha = atan2(R[2, 1], -R[2, 0])
-
-        # The gamma Euler angle.
-        gamma = atan2(R[1, 2], R[0, 2])
-
-    # Return the angles.
-    return alpha, beta, gamma
+    # Redirect to R_to_euler()
+    return R_to_euler(R, 'zyz')
 
 
 def R_random_axis(R, angle=0.0):
