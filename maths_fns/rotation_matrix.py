@@ -458,7 +458,7 @@ def euler_xyx_to_R(alpha, beta, gamma, R):
     According to wikipedia (http://en.wikipedia.org/wiki/Euler_angles#Table_of_matrices), the rotation matrix for the xyx convention is::
 
               |  cb                  sa*sb               ca*sb            |
-        R  =  |  sa*sb               ca*cg - sa*cb*sg   -sa*cg - ca*cb*sg |,
+        R  =  |  sb*sg               ca*cg - sa*cb*sg   -sa*cg - ca*cb*sg |,
               | -sb*cg               ca*sg + sa*cb*cg   -sa*sg + ca*cb*cg |
 
     where::
@@ -491,7 +491,7 @@ def euler_xyx_to_R(alpha, beta, gamma, R):
 
     # The unit mux vector component of the rotation matrix.
     R[0, 0] =  cos_b
-    R[1, 0] =  sin_a * sin_b
+    R[1, 0] =  sin_b * sin_g
     R[2, 0] = -sin_b * cos_g
 
     # The unit muy vector component of the rotation matrix.
