@@ -278,9 +278,9 @@ class Molecule(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(mol_id, 'molecule identification string', can_be_none=True)
-        check.is_str(type, 'molecule type')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(mol_id, 'molecule identification string', can_be_none=True)
+        arg_check.is_str(type, 'molecule type')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         type_molecule(mol_id=mol_id, type=type, force=force)

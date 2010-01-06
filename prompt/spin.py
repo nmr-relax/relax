@@ -298,9 +298,9 @@ class Spin(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(spin_id, 'spin identification string', can_be_none=True)
-        check.is_str(element, 'IUPAC element name')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(spin_id, 'spin identification string', can_be_none=True)
+        arg_check.is_str(element, 'IUPAC element name')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         set_spin_element(spin_id=spin_id, element=element, force=force)

@@ -229,9 +229,9 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_str(type, 'peak intensity type')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(type, 'peak intensity type')
 
         # Execute the functional code.
         relax_data.peak_intensity_type(ri_label=ri_label, frq_label=frq_label, type=type)
@@ -395,9 +395,9 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_str(method, 'temperature calibration method')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(method, 'temperature calibration method')
 
         # Execute the functional code.
         relax_data.temp_calibration(ri_label=ri_label, frq_label=frq_label, method=method)
@@ -439,9 +439,9 @@ class Relax_data(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(ri_label, 'relaxation label')
-        check.is_str(frq_label, 'frequency label')
-        check.is_str(method, 'temperature control method')
+        arg_check.is_str(ri_label, 'relaxation label')
+        arg_check.is_str(frq_label, 'frequency label')
+        arg_check.is_str(method, 'temperature control method')
 
         # Execute the functional code.
         relax_data.temp_control(ri_label=ri_label, frq_label=frq_label, method=method)

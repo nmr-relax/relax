@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2008-2009 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2008-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,7 +29,7 @@ import sys
 
 # relax module imports.
 from base_class import User_fn_class
-import check
+import arg_check
 from generic_fns import bmrb, exp_info
 from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxStrError, RelaxStrFileError
 
@@ -145,21 +145,21 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(cite_id, 'citation ID string')
-        check.is_str_list(authors, 'authors', list_of_lists=True)
-        check.is_str(doi, 'DOI number', can_be_none=True)
-        check.is_str(pubmed_id, 'Pubmed ID number', can_be_none=True)
-        check.is_str(full_citation, 'full citation')
-        check.is_str(title, 'title')
-        check.is_str(status, 'status')
-        check.is_str(type, 'type')
-        check.is_str(journal_abbrev, 'journal abbreviation', can_be_none=True)
-        check.is_str(journal_full, 'full journal name', can_be_none=True)
-        check.is_int(volume, 'volume', can_be_none=True)
-        check.is_int(issue, 'issue', can_be_none=True)
-        check.is_int(page_first, 'first page number', can_be_none=True)
-        check.is_int(page_last, 'last page number', can_be_none=True)
-        check.is_int(year, 'publication year')
+        arg_check.is_str(cite_id, 'citation ID string')
+        arg_check.is_str_list(authors, 'authors', list_of_lists=True)
+        arg_check.is_str(doi, 'DOI number', can_be_none=True)
+        arg_check.is_str(pubmed_id, 'Pubmed ID number', can_be_none=True)
+        arg_check.is_str(full_citation, 'full citation')
+        arg_check.is_str(title, 'title')
+        arg_check.is_str(status, 'status')
+        arg_check.is_str(type, 'type')
+        arg_check.is_str(journal_abbrev, 'journal abbreviation', can_be_none=True)
+        arg_check.is_str(journal_full, 'full journal name', can_be_none=True)
+        arg_check.is_int(volume, 'volume', can_be_none=True)
+        arg_check.is_int(issue, 'issue', can_be_none=True)
+        arg_check.is_int(page_first, 'first page number', can_be_none=True)
+        arg_check.is_int(page_last, 'last page number', can_be_none=True)
+        arg_check.is_int(year, 'publication year')
 
         # Execute the functional code.
         exp_info.citation(cite_id=cite_id, authors=authors, doi=doi, pubmed_id=pubmed_id, full_citation=full_citation, title=title, status=status, type=type, journal_abbrev=journal_abbrev, journal_full=journal_full, volume=volume, issue=issue, page_first=page_first, page_last=page_last, year=year)
@@ -204,9 +204,9 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str(version, 'NMR-STAR dictionary version')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(version, 'NMR-STAR dictionary version')
 
         # Execute the functional code.
         bmrb.read(file=file, directory=dir, version=version)
@@ -311,13 +311,13 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'script file')
-        check.is_str(dir, 'directory', can_be_none=True)
-        check.is_str(analysis_type, 'analysis type')
-        check.is_str(model_selection, 'model selection', can_be_none=True)
-        check.is_str(engine, 'engine')
-        check.is_bool(model_elim, 'model elimination flag')
-        check.is_bool(universal_solution, 'universal solution flag')
+        arg_check.is_str(file, 'script file')
+        arg_check.is_str(dir, 'directory', can_be_none=True)
+        arg_check.is_str(analysis_type, 'analysis type')
+        arg_check.is_str(model_selection, 'model selection', can_be_none=True)
+        arg_check.is_str(engine, 'engine')
+        arg_check.is_bool(model_elim, 'model elimination flag')
+        arg_check.is_bool(universal_solution, 'universal solution flag')
 
         # Execute the functional code.
         exp_info.script(file=file, dir=dir, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
@@ -385,12 +385,12 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(name, 'program name')
-        check.is_str(version, 'version', can_be_none=True)
-        check.is_str(url, 'url', can_be_none=True)
-        check.is_str(vendor_name, 'vendor_name', can_be_none=True)
-        check.is_str_list(cite_ids, 'citation ID numbers', can_be_none=True)
-        check.is_str_list(tasks, 'tasks', can_be_none=True)
+        arg_check.is_str(name, 'program name')
+        arg_check.is_str(version, 'version', can_be_none=True)
+        arg_check.is_str(url, 'url', can_be_none=True)
+        arg_check.is_str(vendor_name, 'vendor_name', can_be_none=True)
+        arg_check.is_str_list(cite_ids, 'citation ID numbers', can_be_none=True)
+        arg_check.is_str_list(tasks, 'tasks', can_be_none=True)
 
         # Execute the functional code.
         exp_info.software(name=name, version=version, url=url, vendor_name=vendor_name, cite_ids=cite_ids, tasks=tasks)
@@ -439,8 +439,8 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(name, 'program name')
-        check.is_str(version, 'version', can_be_none=True)
+        arg_check.is_str(name, 'program name')
+        arg_check.is_str(version, 'version', can_be_none=True)
 
         # Execute the functional code.
         exp_info.software_select(name=name, version=version)
@@ -491,7 +491,7 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(state, 'thiol state')
+        arg_check.is_str(state, 'thiol state')
 
         # Execute the functional code.
         exp_info.thiol_state(state=state)
@@ -531,10 +531,10 @@ class BMRB(User_fn_class):
             print(text)
 
         # The argument checks.
-        check.is_str(file, 'file name')
-        check.is_str(dir, 'directory name', can_be_none=True)
-        check.is_str(version, 'NMR-STAR dictionary version')
-        check.is_bool(force, 'force flag')
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_str(version, 'NMR-STAR dictionary version')
+        arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
         bmrb.write(file=file, directory=dir, version=version, force=force)
