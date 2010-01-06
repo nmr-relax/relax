@@ -546,9 +546,15 @@ class Processor(object):
         @type stdio_capture:    list of two file-like objects
         '''
 
+        # Store the original STDOUT and STDERR for restoring later on.
+        self.orig_stdout = sys.stdout
+        self.orig_stderr = sys.stderr
+
+        # Default to self.stdio_capture if stdio_capture is not supplied.
         if stdio_capture == None:
             stdio_capture = self.stdio_capture
 
+        # IO redirection.
         sys.stdout = self.stdio_capture[0]
         sys.stderr = self.stdio_capture[1]
 
@@ -735,8 +741,9 @@ class Processor(object):
         @note:  sys.stdout and sys.stderr are replaced with sys.__stdout__ ans sys.__stderr__.
         '''
 
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
+        # Restore the IO streams.
+        sys.stdout = self.orig_stdout
+        sys.stderr = self.orig_stderr
 
 
     def return_object(self, result):
