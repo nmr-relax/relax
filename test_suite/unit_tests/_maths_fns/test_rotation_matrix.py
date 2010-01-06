@@ -57,7 +57,8 @@ class Test_rotation_matrix(TestCase):
         """Check the Euler angle to rotation matrix to Euler angle conversion."""
 
         # Print out.
-        print("\n\n# Checking the %s() and %s() conversions.\n" % (euler_to_R.__name__, R_to_euler.__name__))
+        print_out = ""
+        print_out = print_out + "\n\n# Checking the %s() and %s() conversions.\n\n" % (euler_to_R.__name__, R_to_euler.__name__)
 
         # A small number.
         epsilon = 1e-15
@@ -70,29 +71,19 @@ class Test_rotation_matrix(TestCase):
         if gamma_end == None:
             gamma_end = gamma_start
 
-        # Print out.
-        print("Original angles:")
-        print(("\talpha: %s" % alpha_start))
-        print(("\tbeta:  %s" % beta_start))
-        print(("\tgamma: %s\n" % gamma_start))
-        print("End angles:")
-        print(("\talpha: %s" % alpha_end))
-        print(("\tbeta:  %s" % beta_end))
-        print(("\tgamma: %s\n" % gamma_end))
-
-
         # Generate the rotation matrix.
         euler_to_R(alpha_start, beta_start, gamma_start, R)
-        print(("R:\n%s\n" % R))
+        print_out = print_out + "R: |%8.5f, %8.5f, %8.5f|\n" % (R[0, 0], R[0, 1], R[0, 2])
+        print_out = print_out + "   |%8.5f, %8.5f, %8.5f|\n" % (R[1, 0], R[1, 1], R[1, 2])
+        print_out = print_out + "   |%8.5f, %8.5f, %8.5f|\n" % (R[2, 0], R[2, 1], R[2, 2])
 
         # Get back the angles.
         alpha_new, beta_new, gamma_new = R_to_euler(R)
 
         # Print out.
-        print("New angles:")
-        print(("\talpha: %s" % alpha_new))
-        print(("\tbeta:  %s" % beta_new))
-        print(("\tgamma: %s\n" % gamma_new))
+        print_out = print_out + "Original angles:     (%8.5f, %8.5f, %8.5f)\n" % (alpha_start, beta_start, gamma_start)
+        print_out = print_out + "End angles:          (%8.5f, %8.5f, %8.5f)\n" % (alpha_end, beta_end, gamma_end)
+        print_out = print_out + "New angles:          (%8.5f, %8.5f, %8.5f)\n" % (alpha_new, beta_new, gamma_new)
 
         # Wrap the angles.
         alpha_new = wrap_angles(alpha_new, 0-epsilon, 2*pi-epsilon)
@@ -100,10 +91,7 @@ class Test_rotation_matrix(TestCase):
         gamma_new = wrap_angles(gamma_new, 0-epsilon, 2*pi-epsilon)
 
         # Print out.
-        print("New angles (wrapped):")
-        print(("\talpha: %s" % alpha_new))
-        print(("\tbeta:  %s" % beta_new))
-        print(("\tgamma: %s\n" % gamma_new))
+        print_out = print_out + "New angles (wrapped) (%8.5f, %8.5f, %8.5f)\n" % (alpha_new, beta_new, gamma_new)
 
         # Second solution required!
         if abs(beta_end - beta_new) > 1e-7:
@@ -123,10 +111,12 @@ class Test_rotation_matrix(TestCase):
             gamma_new = wrap_angles(gamma_new, 0-epsilon, 2*pi-epsilon)
 
             # Print out.
-            print("New angles (second solution):")
-            print(("\talpha: %s" % alpha_new))
-            print(("\tbeta:  %s" % beta_new))
-            print(("\tgamma: %s\n" % gamma_new))
+            print_out = print_out + "New angles (2nd sol) (%8.5f, %8.5f, %8.5f)\n" % (alpha_new, beta_new, gamma_new)
+
+        # Print out.
+        eps = 1e-5
+        if abs(alpha_new - alpha_end) > eps or abs(beta_new - beta_end) > eps or abs(gamma_new - gamma_end) > eps:
+            print(print_out)
 
         # Checks.
         self.assertAlmostEqual(alpha_end, alpha_new)
@@ -472,7 +462,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
         self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, 1.0, 1.0)
         self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, pi/2, 0.5)
-        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_xyx_to_R, R_to_euler_xyx, 1.0, pi, 0.5, alpha_end=0.5, gamma_end=0.0)
 
 
     def test_R_to_euler_xyz(self):
@@ -483,12 +473,12 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 0.0, 0.0)
         self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 0.0, 0.0)
         self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 1.0, 0.0)
-        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 0.0, 1.0)
         self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 1.0, 0.0)
         self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 0.0, 1.0, 1.0)
-        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, pi/2, 0.5, alpha_end=0.5, gamma_end=0.0)
         self.check_return_conversion(euler_xyz_to_R, R_to_euler_xyz, 1.0, pi, 0.5)
 
 
@@ -506,7 +496,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
         self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, 1.0, 1.0)
         self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, pi/2, 0.5)
-        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_xzx_to_R, R_to_euler_xzx, 1.0, pi, 0.5, alpha_end=0.5, gamma_end=0.0)
 
 
     def test_R_to_euler_xzy(self):
@@ -517,12 +507,12 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 0.0, 0.0)
         self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 0.0, 0.0)
         self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 1.0, 0.0)
-        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 0.0, 1.0)
         self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 1.0, 0.0)
         self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 0.0, 1.0, 1.0)
-        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, pi/2, 0.5, alpha_end=1.5, gamma_end=0.0)
         self.check_return_conversion(euler_xzy_to_R, R_to_euler_xzy, 1.0, pi, 0.5)
 
 
@@ -540,7 +530,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
         self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, 1.0, 1.0)
         self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, pi/2, 0.5)
-        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_yxy_to_R, R_to_euler_yxy, 1.0, pi, 0.5, alpha_end=0.5, gamma_end=0.0)
 
 
     def test_R_to_euler_yxz(self):
@@ -551,12 +541,12 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 0.0, 0.0)
         self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 0.0, 0.0)
         self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 1.0, 0.0)
-        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 0.0, 1.0)
         self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 1.0, 0.0)
         self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 0.0, 1.0, 1.0)
-        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, pi/2, 0.5, alpha_end=1.5, gamma_end=0.0)
         self.check_return_conversion(euler_yxz_to_R, R_to_euler_yxz, 1.0, pi, 0.5)
 
 
@@ -568,12 +558,12 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 0.0, 0.0)
         self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 0.0, 0.0)
         self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 1.0, 0.0)
-        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 0.0, 1.0, alpha_end=1.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 0.0, 1.0)
         self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 1.0, 0.0)
         self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 0.0, 1.0, 1.0)
-        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, pi/2, 0.5, alpha_end=0.5, gamma_end=0.0)
         self.check_return_conversion(euler_yzx_to_R, R_to_euler_yzx, 1.0, pi, 0.5)
 
 
@@ -591,7 +581,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
         self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, 1.0, 1.0)
         self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, pi/2, 0.5)
-        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_yzy_to_R, R_to_euler_yzy, 1.0, pi, 0.5, alpha_end=0.5, gamma_end=0.0)
 
 
     def test_R_to_euler_zxy(self):
@@ -607,10 +597,8 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 0.0, 1.0, 1.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi/2, 0.5, alpha_end=0.5, gamma_end=0.0)
         self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, pi, 0.5)
-        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, -pi/2, 0.5, beta_end=-pi/2+2*pi)
-        self.check_return_conversion(euler_zxy_to_R, R_to_euler_zxy, 1.0, 1.5*pi, 0.5, beta_end=pi/2)
 
 
     def test_R_to_euler_zxz(self):
@@ -627,7 +615,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
         self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, 1.0, 1.0)
         self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, pi/2, 0.5)
-        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_zxz_to_R, R_to_euler_zxz, 1.0, pi, 0.5, alpha_end=0.5, gamma_end=0.0)
 
 
     def test_R_to_euler_zyx(self):
@@ -644,7 +632,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 0.0, 1.0, 1.0)
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 0.0, 1.0)
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, 1.0, 1.0)
-        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi/2, 0.5)
+        self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi/2, 0.5, alpha_end=1.5, gamma_end=0.0)
         self.check_return_conversion(euler_zyx_to_R, R_to_euler_zyx, 1.0, pi, 0.5, alpha_end=1.0+pi, beta_end=0.0, gamma_end=0.5+pi)
 
 
@@ -662,7 +650,7 @@ class Test_rotation_matrix(TestCase):
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 0.0, 1.0, alpha_end=2.0, gamma_end=0.0)
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 1.0, 1.0)
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, pi/2, 0.5)
-        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, pi, 0.5)
+        self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, pi, 0.5, alpha_end=0.5, gamma_end=0.0)
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, -pi/2, 0.5, alpha_end=1.0+pi, beta_end=pi/2, gamma_end=0.5+pi)
         self.check_return_conversion(euler_zyz_to_R, R_to_euler_zyz, 1.0, 1.5*pi, 0.5, alpha_end=1.0+pi, beta_end=pi/2, gamma_end=0.5+pi)
 
