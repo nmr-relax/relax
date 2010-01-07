@@ -308,7 +308,7 @@ class MF_result_command(Result_command):
 
     def run(self, processor, memo):
         """Disassemble the model-free optimisation results.
-        
+
         @param processor:   Unused!
         @type processor:    None
         @param memo:        The model-free memo.
