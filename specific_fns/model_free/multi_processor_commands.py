@@ -173,17 +173,13 @@ class MF_minimise_command(Slave_command):
     def initial_printout(self):
         """Generate some print outs for normal analysis."""
 
-        # Only print out if verbosity is turned on.
+        # Print out.
         if self.minimise_map['print_flag'] >= 1:
-            # Monte Carlo simulation print out.
-            if self.info_map['sim_index'] != None and self.info_map['index'] == 0:
-                print('Simulation '+ repr(self.info_map['sim_index'])+ '\n')
-
-            # Individual spin print out.
+            # Individual spin stuff.
             if self.model_type == 'mf' or self.model_type == 'local_tm':
                 if self.minimise_map['print_flag'] >= 2:
                     print("\n\n")
-                string = "Fitting to spin: " + self.info_map['spin_id']
+                string = "Fitting to spin " + repr(self.info_map['spin_id'])
                 print("\n\n" + string)
                 print(len(string) * '~')
 
