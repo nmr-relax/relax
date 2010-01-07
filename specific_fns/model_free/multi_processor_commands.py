@@ -269,16 +269,34 @@ class MF_grid_command(MF_minimise_command):
         self.silence = True
 
 
-    def initial_printout(self, processor):
-        """Dummy method to overwrite the base class method."""
-
-        pass
-
-
     def process_results(self, results, processor, completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
         processor.return_object(MF_grid_result_command(processor, result_string, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=completed))
+
+
+    def run(self, processor, completed):
+        """Execute the model-free optimisation."""
+
+        # Silencing.
+        if self.silence:
+            self.minimise_map['print_flag'] = 0
+
+        # Run catching all errors.
+        try:
+            # Minimisation.
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+
+            # Processing.
+            self.process_results(results, processor, completed)
+
+        # An error occurred.
+        except Exception, e :
+            if isinstance(e, Capturing_exception):
+                raise e
+            else:
+                raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
+
 
 
 class MF_result_command(Result_command):
