@@ -168,9 +168,12 @@ class MF_minimise_command(Slave_command):
         # A map containing generic information.
         self.info_map = {'spin_id':None, 'sim_index':None, 'grid_size':1}
 
+        # A flag for silencing output.
+        self.silence = False
 
-    def do_feedback(self):
-        """Minimisation print out."""
+
+    def initial_printout(self):
+        """Generate some print outs for normal analysis."""
 
         # Only print out if verbosity is turned on.
         if self.minimise_map['print_flag'] >= 1:
@@ -185,14 +188,6 @@ class MF_minimise_command(Slave_command):
                 string = "Fitting to spin: " + self.info_map['spin_id']
                 print("\n\n" + string)
                 print(len(string) * '~')
-
-
-    def post_command_feedback(self, results, processor):
-        pass
-
-
-    def pre_command_feed_back(self, processor):
-        self.do_feedback()
 
 
     # rename confusing with processor process_results
@@ -215,10 +210,14 @@ class MF_minimise_command(Slave_command):
     def run(self, processor, completed):
         """Execute the model-free optimisation."""
 
+        # Silencing.
+        if self.silence:
+            self.minimise_map['print_flag'] = 0
+
         # Run catching all errors.
         try:
-            # Set up.
-            self.pre_command_feed_back(processor)
+            # Initial print outs.
+            self.initial_printout()
 
             # Initialise the function to minimise.
             self.mf = Mf(**self.mf_map)
@@ -227,7 +226,6 @@ class MF_minimise_command(Slave_command):
             results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
             # Processing.
-            self.post_command_feedback(results, processor)
             self.process_results(results, processor, completed)
 
         # An error occurred.
@@ -276,15 +274,14 @@ class MF_grid_command(MF_minimise_command):
         # Execute the base class __init__() method.
         super(MF_grid_command, self).__init__()
 
-
-    def post_command_feedback(self, results, processor):
-        set_generic_pre_and_post_amble(True)
-        set_grid_pre_and_post_amble(True)
+        # A flag for silencing output.
+        self.silence = True
 
 
-    def pre_command_feed_back(self, processor):
-        set_generic_pre_and_post_amble(False)
-        set_grid_pre_and_post_amble(False)
+    def initial_printout(self, processor):
+        """Dummy method to overwrite the base class method."""
+
+        pass
 
 
     def process_results(self, results, processor, completed):
