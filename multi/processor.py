@@ -749,7 +749,11 @@ class Processor(object):
         @note:  sys.stdout and sys.stderr are replaced with sys.__stdout__ ans sys.__stderr__.
         '''
 
-        # Restore the IO streams.
+        # First flush.
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+        # Then restore the IO streams.
         sys.stdout = self.orig_stdout
         sys.stderr = self.orig_stderr
 
