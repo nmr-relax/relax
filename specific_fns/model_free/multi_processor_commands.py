@@ -161,10 +161,6 @@ class MF_minimise_command(Slave_command):
         self.info_map = {'spin_id':None, 'sim_index':None, 'grid_size':1}
 
 
-    def build_mf(self):
-        return Mf(**self.mf_map)
-
-
     def do_feedback(self):
         """Minimisation print out."""
 
@@ -223,9 +219,17 @@ class MF_minimise_command(Slave_command):
 
         # Run catching all errors.
         try:
+            # Set up.
             self.pre_run(processor)
             self.pre_command_feed_back(processor)
-            results = self.run_command(processor)
+
+            # Initialise the function to minimise.
+            self.mf = Mf(**self.mf_map)
+
+            # Minimisation.
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+
+            # Processing.
             self.post_command_feedback(results, processor)
             self.process_results(results, processor, completed)
             self.post_run(processor)
@@ -236,11 +240,6 @@ class MF_minimise_command(Slave_command):
                 raise e
             else:
                 raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
-
-
-    def run_command(self, processor):
-        self.mf = self.build_mf()
-        return generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
 
     #FIXME: bad names
