@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,8 +32,6 @@ from re import match
 # relax module imports.
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
-#from minimise.generic import set_pre_and_post_amble as set_generic_pre_and_post_amble
-#from minimise.grid import set_pre_and_post_amble as set_grid_pre_and_post_amble
 from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
 
 
