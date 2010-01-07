@@ -167,23 +167,6 @@ class MF_minimise_command(Slave_command):
         self.info_map = {'mf':None, 'model_type':None, 'spin_id':None, 'sim_index':None, 'grid_size':1}
 
 
-    # rename confusing with processor process_results
-    def process_results(self, results, processor, completed):
-
-        # Disassemble the results list.
-        param_vector, func, iter, fc, gc, hc, warning = results
-
-        # Get the STDOUT and STDERR messages.
-        #FIXME: we need to interleave stdout and stderr
-        (stdout, stderr)= processor.get_stdio_capture()
-        result_string = stdout.getvalue() + stderr.getvalue()
-        stdout.truncate(0)
-        stderr.truncate(0)
-
-        processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=False))
-        processor.return_object(Result_string(processor, result_string, completed=completed))
-
-
     def run(self, processor, completed):
         """Execute the model-free optimisation."""
 
@@ -202,8 +185,18 @@ class MF_minimise_command(Slave_command):
             # Minimisation.
             results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
-            # Processing.
-            self.process_results(results, processor, completed)
+            # Disassemble the results list.
+            param_vector, func, iter, fc, gc, hc, warning = results
+
+            # Get the STDOUT and STDERR messages.
+            #FIXME: we need to interleave stdout and stderr
+            (stdout, stderr)= processor.get_stdio_capture()
+            result_string = stdout.getvalue() + stderr.getvalue()
+            stdout.truncate(0)
+            stderr.truncate(0)
+
+            processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=False))
+            processor.return_object(Result_string(processor, result_string, completed=completed))
 
         # An error occurred.
         except Exception, e :
