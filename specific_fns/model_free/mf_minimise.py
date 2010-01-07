@@ -22,8 +22,6 @@
 
 # Python module imports.
 from math import pi
-from minfx.generic import generic_minimise
-from minfx.grid import grid
 from numpy import float64, array, dot, zeros
 from numpy.linalg import inv
 from re import match, search

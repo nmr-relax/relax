@@ -31,6 +31,7 @@ from re import match
 # relax module imports.
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
+from minfx.grid import grid
 from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
 
 
