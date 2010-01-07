@@ -196,42 +196,6 @@ class MF_minimise_command(Slave_command):
                 print(len(string) * '~')
 
 
-#    def do_minimise(self, memo):
-#
-## FIXME: add to checking class
-##        new_mf_map = self.get_hash_map(self.mf)
-##        self.assert_hash_map_same(self.mf_hash_map, new_mf_map)
-##        new_minimise_map = self.get_hash_map(self.minimise)
-##        self.assert_hash_map_same(self.minimise_hash_map, new_minimise_map)
-#
-#        mf = self.build_mf()
-#        results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
-#
-#        m_f = memo.model_free
-#        param_vector, func, iter, fc, gc, hc, warning = results
-#        m_f.disassemble_result(param_vector=param_vector, func=func, iter=iter, fc=fc, gc=gc, hc=hc, warning=warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
-
-
-# FIXME: add to checking class
-#    def get_hash_map(self, map):
-#        import Numeric
-#        result = {}
-#        for key, elem in map.items():
-#            #print key, elem, type(elem), dir(type(elem))
-#            #if isinstance(elem, Numeric.array):
-#            #    print '*** here 888'
-#            #    elem = tuple(elem.aslist())
-#            #elem.__class__.__name__
-#            result[key] = (`elem`)
-#        return result
-
-# FIXME: add to checking class
-#    def assert_hash_map_same(self, ref_map, new_map):
-#        for key in ref_map.keys():
-#            if ref_map[key] != new_map[key]:
-#                print 'bad compare ' + key
-
-
     def post_command_feedback(self, results, processor):
         pass
 
@@ -248,10 +212,6 @@ class MF_minimise_command(Slave_command):
     def pre_run(self, processor):
        pass
        #FIXME: move to processor startup
-
-
-#    def process_result(self, processor):
-#        self.process_results(self.results, processor, completed)
 
 
     # rename confusing with processor process_results
@@ -298,9 +258,6 @@ class MF_minimise_command(Slave_command):
         # Fill out the mf_map using the keyword args.
         self.mf_map.update(kwargs)
 
-        # FIXME: add to checking class
-        #self.mf_hash_map = self.get_hash_map(self.mf_map)
-
 
     def set_minimise(self, **kwargs):
         """Place the minimisation and other information into the appropriate maps."""
@@ -322,9 +279,6 @@ class MF_minimise_command(Slave_command):
         # Fill out the minimise_map using the remaining keyword args.
         self.minimise_map.update(kwargs)
 
-        # FIXME: add to checking class
-        #self.mf_minimise_map = self.get_hash_map(self.minimise_map)
-
 
 class MF_grid_command(MF_minimise_command):
     def __init__(self):
@@ -337,46 +291,14 @@ class MF_grid_command(MF_minimise_command):
 
 
     def pre_command_feed_back(self, processor):
-#        print_prefix = self.minimise_map['print_prefix']
-#        verbosity = self.minimise_map['print_flag']
-#        grid_step = self.minimise_map['min_options'].start
-#        grid_size = self.minimise_map['min_options'].steps
-#        full_output = self.minimise_map['full_output']
-#        A = self.minimise_map['A']
-#        b = self.minimise_map['b']
-
         set_generic_pre_and_post_amble(False)
         set_grid_pre_and_post_amble(False)
-#        if grid_step == 0:
-#            print "Unconstrained grid search size: " + `grid_size` + " (constraints may decrease this size).\n"
-#
-#            if verbosity:
-#                if verbosity >= 2:
-#                    print print_prefix
-#                print print_prefix
-#                print print_prefix + "Grid search"
-#                print print_prefix + "~~~~~~~~~~~"
-#
-#            # Linear constraints.
-#            if A != None and b != None:
-#                if verbosity >= 3:
-#                    print print_prefix + "Linear constraint matrices."
-#                    print print_prefix + "A: " + `A`
-#                    print print_prefix + "b: " + `b`
 
 
     def process_results(self, results, processor, completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
         processor.return_object(MF_grid_result_command(processor, result_string, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=completed))
-
-
-#    def run(self, processor, completed):
-#        pass
-
-
-    #def run_command()
-    #    return super(MF_grid_command, self).run(processor, completed)
 
 
 class MF_result_command(Result_command):
@@ -398,7 +320,6 @@ class MF_result_command(Result_command):
         m_f.f_count = 0
         m_f.g_count = 0
         m_f.h_count = 0
-        #raise Exception()
         m_f._disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
 
 
@@ -428,13 +349,8 @@ class MF_super_grid_memo(MF_memo):
 
 
     def add_result(self, sub_memo, results):
-#        print '**** add result ****', sub_memo.memo_id(), results[OFFSET_FK], len(self.sub_memos)
-#        print results
-#        print self.full_output
-#        print results[OFFSET_FK], self.fk
         if self.full_output:
             if results[OFFSET_FK] < self.fk:
-                #print 'adding ******'
                 self.xk = results[OFFSET_XK]
                 self.fk = results[OFFSET_FK]
             self.k += results[OFFSET_K]
@@ -466,7 +382,6 @@ class MF_super_grid_memo(MF_memo):
 
         if self.first_time == None:
             self.first_time = True
-        #print '****', self.xk, self.fk, self.k, self.f_count, self.g_count, self.h_count, self.warning
 
 
     def add_sub_memo(self, memo):
