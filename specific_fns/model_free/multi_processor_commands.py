@@ -26,7 +26,6 @@
 
 # Python module imports.
 import sys
-import traceback
 from re import match
 
 # relax module imports.
