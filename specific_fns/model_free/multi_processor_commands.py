@@ -170,20 +170,6 @@ class MF_minimise_command(Slave_command):
         self.silence = False
 
 
-    def initial_printout(self):
-        """Generate some print outs for normal analysis."""
-
-        # Print out.
-        if self.minimise_map['print_flag'] >= 1:
-            # Individual spin stuff.
-            if self.model_type == 'mf' or self.model_type == 'local_tm':
-                if self.minimise_map['print_flag'] >= 2:
-                    print("\n\n")
-                string = "Fitting to spin " + repr(self.info_map['spin_id'])
-                print("\n\n" + string)
-                print(len(string) * '~')
-
-
     # rename confusing with processor process_results
     def process_results(self, results, processor, completed):
 
@@ -210,8 +196,15 @@ class MF_minimise_command(Slave_command):
 
         # Run catching all errors.
         try:
-            # Initial print outs.
-            self.initial_printout()
+            # Print out.
+            if self.minimise_map['print_flag'] >= 1:
+                # Individual spin stuff.
+                if self.model_type == 'mf' or self.model_type == 'local_tm':
+                    if self.minimise_map['print_flag'] >= 2:
+                        print("\n\n")
+                    string = "Fitting to spin " + repr(self.info_map['spin_id'])
+                    print("\n\n" + string)
+                    print(len(string) * '~')
 
             # Minimisation.
             results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
