@@ -245,17 +245,20 @@ class MF_minimise_command(Slave_command):
 class MF_grid_command(MF_minimise_command):
     """Command class for the model-free grid search."""
 
-    def __init__(self):
-        """Execute the MF_minimise_command __init__() method."""
+    def __init__(self, mf, inc=None, lower=None, upper=None, A=None, b=None, verbosity=0):
+        """Execute the MF_minimise_command __init__() method and store all the data."""
 
         # Execute the base class __init__() method.
         super(MF_grid_command, self).__init__()
 
-
-    def process_results(self, results, processor, completed):
-        param_vector, func, iter, fc, gc, hc, warning = results
-
-        processor.return_object(MF_grid_result_command(processor, result_string, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=completed))
+        # Store the data.
+        self.mf = mf
+        self.inc = inc
+        self.lower = lower
+        self.upper = upper
+        self.A = A
+        self.b = b
+        self.verbosity = verbosity
 
 
     def run(self, processor, completed):
@@ -263,11 +266,17 @@ class MF_grid_command(MF_minimise_command):
 
         # Run catching all errors.
         try:
-            # Minimisation.
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+            # Grid search.
+            results = grid(func=self.mf.func, args=(), num_incs=self.inc, lower=self.lower, upper=self.upper, A=self.A, b=self.b, verbosity=self.verbosity)
+
+            # Unpack the results.
+            param_vector, func, iter, warning = results
+            fc = iter
+            gc = 0.0
+            hc = 0.0
 
             # Processing.
-            self.process_results(results, processor, completed)
+            processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=completed))
 
         # An error occurred.
         except Exception, e :
