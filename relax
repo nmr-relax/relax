@@ -426,23 +426,22 @@ class RelaxParser(OptionParser):
 
 if __name__ == "__main__":
     # Change this flag to True for code profiling.
-    profile_flag = False
+    profile_flag = True
+
+    # Instantiate the main class.
+    relax_instance = Relax()
+
+    # Process the command line arguments.
+    relax_instance.arguments()
+
+    # Set up the multi-processor elements.
+    callbacks = Application_callback(master=relax_instance)
+    relax_instance.processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
 
     # Normal relax operation.
     if not profile_flag:
-        # Instantiate the main class.
-        relax_instance = Relax()
-
-        # Process the command line arguments.
-        relax_instance.arguments()
-
-        # Set up the multi-processor elements.
-        callbacks = Application_callback(master=relax_instance)
-        multi_processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
-        relax_instance.processor = multi_processor
-
         # Execute relax in multi-processor mode (this includes the uni-processor for normal operation).
-        multi_processor.run()
+        relax_instance.processor.run()
 
     # relax in profiling mode.
     else:
@@ -458,4 +457,4 @@ if __name__ == "__main__":
 
         # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
-        profile.run('Relax()')
+        profile.run('relax_instance.processor.run()')
