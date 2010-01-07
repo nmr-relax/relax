@@ -192,11 +192,6 @@ class MF_minimise_command(Slave_command):
         self.do_feedback()
 
 
-    def pre_run(self, processor):
-       pass
-       #FIXME: move to processor startup
-
-
     # rename confusing with processor process_results
     def process_results(self, results, processor, completed):
 
@@ -220,7 +215,6 @@ class MF_minimise_command(Slave_command):
         # Run catching all errors.
         try:
             # Set up.
-            self.pre_run(processor)
             self.pre_command_feed_back(processor)
 
             # Initialise the function to minimise.
