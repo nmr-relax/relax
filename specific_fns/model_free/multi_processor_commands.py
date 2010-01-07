@@ -256,7 +256,16 @@ class MF_minimise_command(Slave_command):
 
     # rename confusing with processor process_results
     def process_results(self, results, processor, completed):
+        
+        # Disassemble the results list.
         param_vector, func, iter, fc, gc, hc, warning = results
+
+        # Get the STDOUT and STDERR messages.
+        #FIXME: we need to interleave stdout and stderr
+        (stdout, stderr)= processor.get_stdio_capture()
+        result_string = stdout.getvalue() + stderr.getvalue()
+        stdout.truncate(0)
+        stderr.truncate(0)
 
         processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=False))
         processor.return_object(Result_string(processor, result_string, completed=completed))
