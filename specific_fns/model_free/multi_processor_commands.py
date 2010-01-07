@@ -191,11 +191,6 @@ class MF_minimise_command(Slave_command):
         pass
 
 
-    def post_run(self, processor):
-        #FIXME: move to processor startup
-        pass
-
-
     def pre_command_feed_back(self, processor):
         self.do_feedback()
 
@@ -234,7 +229,6 @@ class MF_minimise_command(Slave_command):
             # Processing.
             self.post_command_feedback(results, processor)
             self.process_results(results, processor, completed)
-            self.post_run(processor)
 
         # An error occurred.
         except Exception, e :
