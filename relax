@@ -423,7 +423,7 @@ class RelaxParser(OptionParser):
 
 if __name__ == "__main__":
     # Change this flag to True for code profiling.
-    profile_flag = True
+    profile_flag = False
 
     # Instantiate the main class.
     relax_instance = Relax()
