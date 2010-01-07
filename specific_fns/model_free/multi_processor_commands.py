@@ -216,7 +216,7 @@ class MF_minimise_command(Slave_command):
 
     # rename confusing with processor process_results
     def process_results(self, results, processor, completed):
-        
+
         # Disassemble the results list.
         param_vector, func, iter, fc, gc, hc, warning = results
 
@@ -355,7 +355,7 @@ class MF_super_grid_memo(MF_memo):
                 self.fk = results[OFFSET_FK]
             self.k += results[OFFSET_K]
             self.f_count += results[OFFSET_F_COUNT]
- 
+
             self.g_count += results[OFFSET_G_COUNT]
             self.h_count += results[OFFSET_H_COUNT]
             if results[OFFSET_WARNING] != None:
