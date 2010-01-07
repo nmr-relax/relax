@@ -52,8 +52,6 @@ class Uni_processor(Processor):
         self.command_queue = []
         self.memo_map = {}
 
-        self.slave_stdio_capture = self.std_stdio_capture(pre_strings=('', ''))
-
 
     def add_to_queue(self, command, memo=None):
         self.command_queue.append(command)
@@ -137,7 +135,7 @@ class Uni_processor(Processor):
         for i, command  in enumerate(self.command_queue):
             completed = (i == last_command)
 
-            self.capture_stdio(self.slave_stdio_capture)
+            self.capture_stdio(self.std_stdio_capture(pre_strings=('', '')))
             command.run(self, completed)
             self.restore_stdio()
 

@@ -487,6 +487,10 @@ class Processor(object):
         self._processor_size = processor_size
         '''Number of slave processors available in this processor.'''
 
+        # Default STDOUT and STDERR for restoring later on.
+        self.orig_stdout = sys.__stdout__
+        self.orig_stderr = sys.__stderr__
+
         # CHECKME: integration with with stdo capture on slaves
         # setup captured std output and error streams used for capturing and modifying proccessor
         # output on masters and slaves
@@ -554,9 +558,13 @@ class Processor(object):
         if stdio_capture == None:
             stdio_capture = self.stdio_capture
 
-        # IO redirection.
-        sys.stdout = self.stdio_capture[0]
-        sys.stderr = self.stdio_capture[1]
+        # First flush.
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+        # Then redirect IO.
+        sys.stdout = stdio_capture[0]
+        sys.stderr = stdio_capture[1]
 
 
     # FIXME is this used?
@@ -850,7 +858,7 @@ class Processor(object):
         if self.rank() == 0:
             stdout_capture = PrependOut(pre_strings[0], sys.stdout)
             #FIXME: seems to be that writing to stderr results leads to incorrect serialisation of output
-            stderr_capture = PrependOut(pre_strings[1], sys.__stdout__)
+            stderr_capture = PrependOut(pre_strings[1], sys.stderr)
         else:
             stdout_capture = PrependStringIO(pre_strings[0])
             stderr_capture = PrependStringIO(pre_strings[1], target_stream=stdout_capture)
