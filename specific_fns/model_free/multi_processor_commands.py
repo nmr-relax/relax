@@ -166,9 +166,6 @@ class MF_minimise_command(Slave_command):
         # A map containing generic information.
         self.info_map = {'mf':None, 'model_type':None, 'spin_id':None, 'sim_index':None, 'grid_size':1}
 
-        # A flag for silencing output.
-        self.silence = False
-
 
     # rename confusing with processor process_results
     def process_results(self, results, processor, completed):
@@ -189,10 +186,6 @@ class MF_minimise_command(Slave_command):
 
     def run(self, processor, completed):
         """Execute the model-free optimisation."""
-
-        # Silencing.
-        if self.silence:
-            self.minimise_map['print_flag'] = 0
 
         # Run catching all errors.
         try:
@@ -258,9 +251,6 @@ class MF_grid_command(MF_minimise_command):
         # Execute the base class __init__() method.
         super(MF_grid_command, self).__init__()
 
-        # A flag for silencing output.
-        self.silence = True
-
 
     def process_results(self, results, processor, completed):
         param_vector, func, iter, fc, gc, hc, warning = results
@@ -270,10 +260,6 @@ class MF_grid_command(MF_minimise_command):
 
     def run(self, processor, completed):
         """Execute the model-free optimisation."""
-
-        # Silencing.
-        if self.silence:
-            self.minimise_map['print_flag'] = 0
 
         # Run catching all errors.
         try:
