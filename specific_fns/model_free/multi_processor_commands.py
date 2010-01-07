@@ -109,7 +109,7 @@ class MF_grid_result_command(Result_command):
                     print(print_prefix + "b: " + repr(b))
 
         # we don't want to prepend the masters stdout tag
-        sys.__stdout__.write('\n'+self.result_string),
+        sys.stdout.write('\n'+self.result_string),
 
         if sgm.completed:
             if verbosity and results != None:
@@ -260,24 +260,11 @@ class MF_minimise_command(Slave_command):
     def process_results(self, results, processor, completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
-        #FIXME: we need to interleave stdout and stderr
-        (stdout, stderr) = processor.get_stdio_capture()
-        result_string = stdout.getvalue() + stderr.getvalue()
-        stdout.truncate(0)
-        stderr.truncate(0)
-
         processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=False))
         processor.return_object(Result_string(processor, result_string, completed=completed))
 
 
     def run(self, processor, completed):
-#        #FIXME: move to processor startup
-#        save_stdout = sys.stdout
-#        save_stderr = sys.stderr
-#        pre_string = processor.rank_format_string() % processor.rank()
-#        # add debug flag or extra channels that output immediately
-#        sys.stdout = PrependStringIO(pre_string + ' S> ')
-#        sys.stderr = PrependStringIO(pre_string + ' E> ')
         try:
             self.pre_run(processor)
             self.pre_command_feed_back(processor)
@@ -286,17 +273,10 @@ class MF_minimise_command(Slave_command):
             self.process_results(results, processor, completed)
             self.post_run(processor)
         except Exception, e :
-            processor.restore_stdio()
             if isinstance(e, Capturing_exception):
                 raise e
             else:
                 raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
-
-#        #FIXME: move to processor startup
-#        sys.stdout.close()
-#        sys.stderr.close()
-#        sys.stdout = save_stdout
-#        sys.stderr = save_stderr
 
 
     def run_command(self, processor):
@@ -381,11 +361,6 @@ class MF_grid_command(MF_minimise_command):
     def process_results(self, results, processor, completed):
         param_vector, func, iter, fc, gc, hc, warning = results
 
-        (stdout, stderr) = processor.get_stdio_capture()
-        result_string = stdout.getvalue() + stderr.getvalue()
-        stdout.truncate(0)
-        stderr.truncate(0)
-
         processor.return_object(MF_grid_result_command(processor, result_string, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=completed))
 
 
@@ -450,7 +425,6 @@ class MF_super_grid_memo(MF_memo):
 #        print results
 #        print self.full_output
 #        print results[OFFSET_FK], self.fk
-        sys.stdout.flush()
         if self.full_output:
             if results[OFFSET_FK] < self.fk:
                 #print 'adding ******'
