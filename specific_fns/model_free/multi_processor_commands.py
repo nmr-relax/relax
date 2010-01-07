@@ -36,7 +36,10 @@ from multi.processor import Capturing_exception, Memo, Result_command, Result_st
 
 class MF_grid_memo(Memo):
     def __init__(self, super_grid_memo):
+
+        # Execute the base class __init__() method.
         super(MF_grid_memo, self).__init__()
+
         self.super_grid_memo = super_grid_memo
         self.super_grid_memo.add_sub_memo(self)
 
@@ -47,7 +50,10 @@ class MF_grid_memo(Memo):
 
 class MF_grid_result_command(Result_command):
     def __init__(self, processor, result_string, memo_id, param_vector, func, iter, fc, gc, hc, warning, completed):
+
+        # Execute the base class __init__() method.
         super(MF_grid_result_command, self).__init__(processor=processor, completed=completed)
+
         self.result_string = result_string
         self.memo_id = memo_id
         self.param_vector = param_vector
@@ -133,7 +139,9 @@ class MF_memo(Memo):
     def __init__(self, model_free, spin, sim_index, model_type, scaling, scaling_matrix):
         """Initialise the model-free memo class."""
 
+        # Execute the base class __init__() method.
         super(MF_memo, self).__init__()
+
         self.spin = spin
         self.sim_index = sim_index
         self.model_type = model_type
@@ -266,7 +274,12 @@ class MF_minimise_command(Slave_command):
 
 
 class MF_grid_command(MF_minimise_command):
+    """Command class for the model-free grid search."""
+
     def __init__(self):
+        """Execute the MF_minimise_command __init__() method."""
+
+        # Execute the base class __init__() method.
         super(MF_grid_command, self).__init__()
 
 
@@ -288,7 +301,10 @@ class MF_grid_command(MF_minimise_command):
 
 class MF_result_command(Result_command):
     def __init__(self, processor, memo_id, param_vector, func, iter, fc, gc, hc, warning, completed):
+
+        # Execute the base class __init__() method.
         super(MF_result_command, self).__init__(processor=processor, completed=completed)
+
         self.memo_id = memo_id
         self.param_vector = param_vector
         self.func = func
@@ -320,7 +336,10 @@ class MF_result_command(Result_command):
 
 class MF_super_grid_memo(MF_memo):
     def __init__(self, model_free, spin, sim_index, model_type, scaling, scaling_matrix, print_prefix, verbosity, full_output, A, b, grid_size):
+
+        # Execute the base class __init__() method.
         super(MF_super_grid_memo, self).__init__(model_free, spin, sim_index, model_type, scaling, scaling_matrix)
+
         self.full_output = full_output
         self.print_prefix = print_prefix
         self.verbosity = verbosity
