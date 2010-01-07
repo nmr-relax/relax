@@ -1632,10 +1632,7 @@ class Mf_minimise:
             # Minimisation of all other model types.
             else:
                 # Minimisation initialisation.
-                command = MF_minimise_command()
-
-                # Set up for optimisation.
-                command.set_minimise(mf=self.mf, model_type=model_type, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, spin_id=spin_id, sim_index=sim_index, full_output=True, print_flag=verbosity)
+                command = MF_minimise_command(self.mf, model_type=model_type, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, spin_id=spin_id, sim_index=sim_index, full_output=True, verbosity=verbosity)
 
             # Set up the model-free memo and add it to the processor queue.
             memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)

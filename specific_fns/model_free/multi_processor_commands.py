@@ -154,17 +154,28 @@ class MF_memo(Memo):
 class MF_minimise_command(Slave_command):
     """Command class for standard model-free minimisation."""
 
-    def __init__(self):
-        """Initialise the class with empty maps."""
+    def __init__(self, mf, model_type=None, args=None, x0=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, maxiter=None, A=None, b=None, spin_id=None, sim_index=None, full_output=None, verbosity=None):
+        """Initialise all the data."""
 
         # Execute the base class __init__() method.
         super(MF_minimise_command, self).__init__()
 
-        # The minimisation map containing the minimisation information.
-        self.minimise_map = {'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None, 'maxiter':1e6, 'A':None, 'b':None, 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None, 'dc':None, 'd2c':None, 'full_output':0, 'print_flag':0, 'print_prefix':""}
-
-        # A map containing generic information.
-        self.info_map = {'mf':None, 'model_type':None, 'spin_id':None, 'sim_index':None, 'grid_size':1}
+        # Store the data.
+        self.mf = mf
+        self.model_type = model_type
+        self.args = args
+        self.x0 = x0
+        self.min_algor = min_algor
+        self.min_options = min_options
+        self.func_tol = func_tol
+        self.grad_tol = grad_tol
+        self.maxiter = maxiter
+        self.A = A
+        self.b = b
+        self.spin_id = spin_id
+        self.sim_index = sim_index
+        self.full_output = full_output
+        self.verbosity = verbosity
 
 
     def run(self, processor, completed):
@@ -173,17 +184,17 @@ class MF_minimise_command(Slave_command):
         # Run catching all errors.
         try:
             # Print out.
-            if self.minimise_map['print_flag'] >= 1:
+            if self.verbosity >= 1:
                 # Individual spin stuff.
                 if self.model_type == 'mf' or self.model_type == 'local_tm':
-                    if self.minimise_map['print_flag'] >= 2:
+                    if self.verbosity >= 2:
                         print("\n\n")
-                    string = "Fitting to spin " + repr(self.info_map['spin_id'])
+                    string = "Fitting to spin " + repr(self.spin_id)
                     print("\n\n" + string)
                     print(len(string) * '~')
 
             # Minimisation.
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
+            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.args, x0=self.x0, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.maxiter, A=self.A, b=self.b, full_output=self.full_output, print_flag=self.verbosity)
 
             # Disassemble the results list.
             param_vector, func, iter, fc, gc, hc, warning = results
@@ -206,40 +217,11 @@ class MF_minimise_command(Slave_command):
                 raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
 
 
-    def set_minimise(self, **kwargs):
-        """Place the minimisation and other information into the appropriate maps."""
-
-        # The optimisation class.
-        self.mf = kwargs['mf']
-        del kwargs['mf']
-
-        # The model type.
-        self.model_type = kwargs['model_type']
-        del kwargs['model_type']
-
-        # Strip out and store special arguments into the info_map.
-        if 'spin_id' in kwargs:
-           self.info_map['spin_id'] = kwargs['spin_id']
-           del kwargs['spin_id']
-        if 'index' in kwargs:
-           self.info_map['index'] = kwargs['index']
-           del kwargs['index']
-        if 'grid_size' in kwargs:
-           self.info_map['grid_size'] = kwargs['grid_size']
-           del kwargs['grid_size']
-        if 'sim_index' in kwargs:
-           self.info_map['sim_index'] = kwargs['sim_index']
-           del kwargs['sim_index']
-
-        # Fill out the minimise_map using the remaining keyword args.
-        self.minimise_map.update(kwargs)
-
-
-class MF_grid_command(MF_minimise_command):
+class MF_grid_command(Slave_command):
     """Command class for the model-free grid search."""
 
     def __init__(self, mf, inc=None, lower=None, upper=None, A=None, b=None, verbosity=0):
-        """Execute the MF_minimise_command __init__() method and store all the data."""
+        """Initialise all the data."""
 
         # Execute the base class __init__() method.
         super(MF_grid_command, self).__init__()
