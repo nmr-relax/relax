@@ -1544,8 +1544,6 @@ class Mf_minimise:
             relax_data, relax_error, equations, param_types, param_values, r, csa, num_frq, frq, num_ri, remap_table, noe_r1_table, ri_labels, gx, gh, num_params, xh_unit_vectors, diff_type, diff_params = self._minimise_data_setup(model_type, min_algor, num_data_sets, min_options, spin=spin, sim_index=sim_index)
 
 
-            #test.assert_mf_equivalent(self.mf)
-            ##self.mf=test.mf
             # Setup the minimisation algorithm when constraints are present.
             ################################################################
 
@@ -1577,6 +1575,12 @@ class Mf_minimise:
             # Back-calculation.
             ###################
 
+            if min_algor == 'back_calc':
+                # Initialise the model-free class.
+                self.mf = Mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
+
+                # Return the back-calculated Ri data.
+                return self.mf.calc_ri()
 
 
             # Minimisation.
@@ -1587,11 +1591,7 @@ class Mf_minimise:
             processor = processor_box.processor
 
             # Parallelised grid search for the diffusion parameter space.
-            #FIXME??? strange contraints
             if match('^[Gg]rid', min_algor) and model_type == 'diff' :
-                # Determine the number of processors.
-                processors = processor.processor_size()
-
                 # Split up the grid into chunks for each processor.
                 full_grid_info = Grid_info(min_options)
                 sub_grid_list = full_grid_info.sub_divide(processor.processor_size())
@@ -1626,20 +1626,12 @@ class Mf_minimise:
             else:
                 # Minimisation initialisation.
                 command = MF_minimise_command()
+
+                # Set up the model-free data.
                 command.set_mf(init_params=param_vector, model_type=model_type, diff_type=diff_type, diff_params=diff_params, scaling_matrix=scaling_matrix, num_spins=num_spins, equations=equations, param_types=param_types, param_values=param_values, relax_data=relax_data, errors=relax_error, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
-                # Back calculation.
-                #FIXME could be neater?
-                if min_algor == 'back_calc':
-                    return command.build_mf().calc_ri()
-
-                # Constrained optimisation.
-                if constraints:
-                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, spin_id=spin_id, sim_index=sim_index, full_output=True, print_flag=verbosity)
-
-                # Unconstrained optimisation.
-                else:
-                    command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, spin_id=spin_id, sim_index=sim_index, full_output=True, print_flag=verbosity)
+                # Set up for optimisation.
+                command.set_minimise(args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, spin_id=spin_id, sim_index=sim_index, full_output=True, print_flag=verbosity)
 
                 # Set up the model-free memo and add it to the processor queue.
                 memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)

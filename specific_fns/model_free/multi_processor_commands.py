@@ -35,19 +35,6 @@ from minfx.generic import generic_minimise
 from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
 
 
-OFFSET_XK = 0      # The array of minimised parameter values
-OFFSET_FK = 1      # The minimised function value,
-OFFSET_K = 2       # The number of iterations,
-OFFSET_F_COUNT = 3 # The number of function calls,
-OFFSET_G_COUNT = 4 # The number of gradient calls,
-OFFSET_H_COUNT = 5 # The number of Hessian calls,
-OFFSET_WARNING = 6 # The warning string.
-
-OFFSET_SHORT_MIN_PARAMS = 0
-OFFSET_SHORT_FK = 1
-OFFSET_SHORT_K = 2
-
-
 class MF_grid_memo(Memo):
     def __init__(self, super_grid_memo):
         super(MF_grid_memo, self).__init__()
@@ -128,13 +115,14 @@ class MF_grid_result_command(Result_command):
                     print(print_prefix + "Parameter values: " + repr(sgm.short_results))
                 print("")
 
-            m_f = sgm.model_free
-            m_f.iter_count = 0
-            m_f.f_count = 0
-            m_f.g_count = 0
-            m_f.h_count = 0
-            #raise Exception()
-            m_f.disassemble_result(param_vector=sgm.xk, func=sgm.fk, iter=sgm.k, fc=sgm.f_count, gc=sgm.g_count, hc=sgm.h_count, warning=sgm.warning, spin=sgm.spin, sim_index=sgm.sim_index, model_type=sgm.model_type, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
+            # Initialise the iteration counter and function, gradient, and Hessian call counters.
+            sgm.model_free.iter_count = 0
+            sgm.model_free.f_count = 0
+            sgm.model_free.g_count = 0
+            sgm.model_free.h_count = 0
+
+            # Disassemble the results.
+            sgm.model_free._disassemble_result(param_vector=sgm.xk, func=sgm.fk, iter=sgm.k, fc=sgm.f_count, gc=sgm.g_count, hc=sgm.h_count, warning=sgm.warning, spin=sgm.spin, sim_index=sgm.sim_index, model_type=sgm.model_type, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
 
 
 class MF_memo(Memo):
@@ -232,6 +220,9 @@ class MF_minimise_command(Slave_command):
 
 
     def run(self, processor, completed):
+        """Execute the model-free optimisation."""
+
+        # Run catching all errors.
         try:
             self.pre_run(processor)
             self.pre_command_feed_back(processor)
@@ -239,6 +230,8 @@ class MF_minimise_command(Slave_command):
             self.post_command_feedback(results, processor)
             self.process_results(results, processor, completed)
             self.post_run(processor)
+
+        # An error occurred.
         except Exception, e :
             if isinstance(e, Capturing_exception):
                 raise e
@@ -315,12 +308,22 @@ class MF_result_command(Result_command):
 
 
     def run(self, processor, memo):
-        m_f = memo.model_free
-        m_f.iter_count = 0
-        m_f.f_count = 0
-        m_f.g_count = 0
-        m_f.h_count = 0
-        m_f._disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
+        """Disassemble the model-free optimisation results.
+        
+        @param processor:   Unused!
+        @type processor:    None
+        @param memo:        The model-free memo.
+        @type memo:         memo
+        """
+
+        # Initialise the iteration counter and function, gradient, and Hessian call counters.
+        memo.model_free.iter_count = 0
+        memo.model_free.f_count = 0
+        memo.model_free.g_count = 0
+        memo.model_free.h_count = 0
+
+        # Disassemble the results.
+        memo.model_free._disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
 
 
 class MF_super_grid_memo(MF_memo):
@@ -337,7 +340,6 @@ class MF_super_grid_memo(MF_memo):
         self.grid_size = grid_size
         # aggregated results
         #             min_params, f_min, k
-        short_result = [None, None, 0]
         self.xk = None
         self.fk = 1e300
         self.k = 0
@@ -349,20 +351,29 @@ class MF_super_grid_memo(MF_memo):
 
 
     def add_result(self, sub_memo, results):
+
+        # Normal minimisation.
         if self.full_output:
-            if results[OFFSET_FK] < self.fk:
-                self.xk = results[OFFSET_XK]
-                self.fk = results[OFFSET_FK]
-            self.k += results[OFFSET_K]
-            self.f_count += results[OFFSET_F_COUNT]
+            # Unpack the results.
+            param_vector, func, iter, fc, gc, hc, warning = results
 
-            self.g_count += results[OFFSET_G_COUNT]
-            self.h_count += results[OFFSET_H_COUNT]
-            if results[OFFSET_WARNING] != None:
-                self.warning.append(results[OFFSET_WARNING])
+            if func < self.fk:
+                self.xk = param_vector
+                self.fk = func
+            self.k += iter
+            self.f_count += fc
 
+            self.g_count += gc
+            self.h_count += hc
+            if warning != None:
+                self.warning.append(warning)
+
+        # Grid search.
         #FIXME: TESTME: do we use short results?
         else:
+            # Unpack the results.
+            param_vector, func, iter, warning = results
+
             if results[OFFSET_SHORT_FK] < self.short_result[OFFSET_SHORT_FK]:
                 self.short_result[OFFSET_SHORT_MIN_PARAMS] = results[OFFSET_SHORT_MIN_PARAMS]
                 self.short_result[OFFSET_SHORT_FK] = results[OFFSET_SHORT_FK]
