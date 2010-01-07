@@ -1580,7 +1580,6 @@ class Mf_minimise:
             ###################
 
             if min_algor == 'back_calc':
-                # Return the back-calculated Ri data.
                 return self.mf.calc_ri()
 
 
