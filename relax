@@ -421,9 +421,6 @@ class RelaxParser(OptionParser):
         sys.exit()
 
 
-# FIXME: code shared with unit testing framework not changed from unit tests version
-# replace unit test version with this
-
 if __name__ == "__main__":
     # Change this flag to True for code profiling.
     profile_flag = True
