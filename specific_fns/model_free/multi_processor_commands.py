@@ -163,11 +163,8 @@ class MF_minimise_command(Slave_command):
         # The minimisation map containing the minimisation information.
         self.minimise_map = {'args':(), 'x0':None, 'min_algor':None, 'min_options':None, 'func_tol':1e-25, 'grad_tol':None, 'maxiter':1e6, 'A':None, 'b':None, 'l':None, 'u':None, 'c':None, 'dc':None, 'd2c':None, 'dc':None, 'd2c':None, 'full_output':0, 'print_flag':0, 'print_prefix':""}
 
-        # The map containing the model-free information.
-        self.mf_map = {'init_params':None, 'model_type':None, 'diff_type':None, 'diff_params':None, 'scaling_matrix':None, 'num_spins':None, 'equations':None, 'param_types':None, 'param_values':None, 'relax_data':None, 'errors':None, 'bond_length':None, 'csa':None, 'num_frq':0, 'frq':None, 'num_ri':None, 'remap_table':None, 'noe_r1_table':None, 'ri_labels':None, 'gx':0, 'gh':0, 'h_bar':0, 'mu0':0, 'num_params':None, 'vectors':None}
-
         # A map containing generic information.
-        self.info_map = {'spin_id':None, 'sim_index':None, 'grid_size':1}
+        self.info_map = {'mf':None, 'model_type':None, 'spin_id':None, 'sim_index':None, 'grid_size':1}
 
         # A flag for silencing output.
         self.silence = False
@@ -183,7 +180,7 @@ class MF_minimise_command(Slave_command):
                 print('Simulation '+ repr(self.info_map['sim_index'])+ '\n')
 
             # Individual spin print out.
-            if self.mf_map['model_type'] == 'mf' or self.mf_map['model_type'] == 'local_tm':
+            if self.model_type == 'mf' or self.model_type == 'local_tm':
                 if self.minimise_map['print_flag'] >= 2:
                     print("\n\n")
                 string = "Fitting to spin: " + self.info_map['spin_id']
@@ -220,9 +217,6 @@ class MF_minimise_command(Slave_command):
             # Initial print outs.
             self.initial_printout()
 
-            # Initialise the function to minimise.
-            self.mf = Mf(**self.mf_map)
-
             # Minimisation.
             results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, **self.minimise_map)
 
@@ -237,16 +231,16 @@ class MF_minimise_command(Slave_command):
                 raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
 
 
-    #FIXME: bad names
-    def set_mf(self, **kwargs):
-        """Place the model-free information into the mf_map."""
-
-        # Fill out the mf_map using the keyword args.
-        self.mf_map.update(kwargs)
-
-
     def set_minimise(self, **kwargs):
         """Place the minimisation and other information into the appropriate maps."""
+
+        # The optimisation class.
+        self.mf = kwargs['mf']
+        del kwargs['mf']
+
+        # The model type.
+        self.model_type = kwargs['model_type']
+        del kwargs['model_type']
 
         # Strip out and store special arguments into the info_map.
         if 'spin_id' in kwargs:
