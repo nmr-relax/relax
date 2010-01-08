@@ -1617,12 +1617,12 @@ class Mf_minimise:
             # Normal grid search.
             if search('^[Gg]rid', min_algor):
                 # Minimisation initialisation.
-                command = MF_grid_command(self.mf, inc=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+                command = MF_grid_command(self.mf, model_type=model_type, spin_id=spin_id, inc=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
 
             # Minimisation of all other model types.
             else:
                 # Minimisation initialisation.
-                command = MF_minimise_command(self.mf, model_type=model_type, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, spin_id=spin_id, sim_index=sim_index, full_output=True, verbosity=verbosity)
+                command = MF_minimise_command(self.mf, model_type=model_type, spin_id=spin_id, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, sim_index=sim_index, full_output=True, verbosity=verbosity)
 
             # Set up the model-free memo and add it to the processor queue.
             memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=model_type, scaling=scaling, scaling_matrix=scaling_matrix)

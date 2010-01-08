@@ -35,6 +35,26 @@ from minfx.grid import grid
 from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
 
 
+
+def spin_print(spin_id, verbosity):
+    """Print out some header text for the spin.
+
+    @param spin_id:     The spin ID string.
+    @type spin_id:      str
+    @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:    int
+    """
+
+    # Some extra spacing for verbose printouts.
+    if verbosity >= 2:
+        print("\n\n")
+
+    # The header.
+    string = "Fitting to spin " + repr(spin_id)
+    print("\n\n" + string)
+    print(len(string) * '~')
+
+
 class MF_grid_memo(Memo):
     def __init__(self, super_grid_memo):
 
@@ -154,7 +174,7 @@ class MF_memo(Memo):
 class MF_minimise_command(Slave_command):
     """Command class for standard model-free minimisation."""
 
-    def __init__(self, mf, model_type=None, args=None, x0=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, maxiter=None, A=None, b=None, spin_id=None, sim_index=None, full_output=None, verbosity=None):
+    def __init__(self, mf, model_type=None, spin_id=None, args=None, x0=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, maxiter=None, A=None, b=None, sim_index=None, full_output=None, verbosity=None):
         """Initialise all the data."""
 
         # Execute the base class __init__() method.
@@ -163,6 +183,7 @@ class MF_minimise_command(Slave_command):
         # Store the data.
         self.mf = mf
         self.model_type = model_type
+        self.spin_id = spin_id
         self.args = args
         self.x0 = x0
         self.min_algor = min_algor
@@ -172,7 +193,6 @@ class MF_minimise_command(Slave_command):
         self.maxiter = maxiter
         self.A = A
         self.b = b
-        self.spin_id = spin_id
         self.sim_index = sim_index
         self.full_output = full_output
         self.verbosity = verbosity
@@ -184,14 +204,8 @@ class MF_minimise_command(Slave_command):
         # Run catching all errors.
         try:
             # Print out.
-            if self.verbosity >= 1:
-                # Individual spin stuff.
-                if self.model_type == 'mf' or self.model_type == 'local_tm':
-                    if self.verbosity >= 2:
-                        print("\n\n")
-                    string = "Fitting to spin " + repr(self.spin_id)
-                    print("\n\n" + string)
-                    print(len(string) * '~')
+            if self.verbosity >= 1 and (self.model_type == 'mf' or self.model_type == 'local_tm'):
+                spin_print(self.spin_id, self.verbosity)
 
             # Minimisation.
             results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.args, x0=self.x0, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.maxiter, A=self.A, b=self.b, full_output=self.full_output, print_flag=self.verbosity)
@@ -220,7 +234,7 @@ class MF_minimise_command(Slave_command):
 class MF_grid_command(Slave_command):
     """Command class for the model-free grid search."""
 
-    def __init__(self, mf, inc=None, lower=None, upper=None, A=None, b=None, verbosity=0):
+    def __init__(self, mf, model_type=None, spin_id=None, inc=None, lower=None, upper=None, A=None, b=None, verbosity=0):
         """Initialise all the data."""
 
         # Execute the base class __init__() method.
@@ -228,6 +242,8 @@ class MF_grid_command(Slave_command):
 
         # Store the data.
         self.mf = mf
+        self.model_type = model_type
+        self.spin_id = spin_id
         self.inc = inc
         self.lower = lower
         self.upper = upper
@@ -241,6 +257,10 @@ class MF_grid_command(Slave_command):
 
         # Run catching all errors.
         try:
+            # Print out.
+            if self.verbosity >= 1 and (self.model_type == 'mf' or self.model_type == 'local_tm'):
+                spin_print(self.spin_id, self.verbosity)
+
             # Grid search.
             results = grid(func=self.mf.func, args=(), num_incs=self.inc, lower=self.lower, upper=self.upper, A=self.A, b=self.b, verbosity=self.verbosity)
 
