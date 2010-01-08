@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -1391,7 +1391,7 @@ class Mf_minimise:
 
             # Configure the grid search.
             if match('^[Gg]rid', min_algor):
-                inc, lower, upper = self._grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                inc_new, lower_new, upper_new = self._grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
@@ -1459,7 +1459,7 @@ class Mf_minimise:
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
-                results = grid(func=self.mf.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+                results = grid(func=self.mf.func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
 
                 # Unpack the results.
                 param_vector, func, iter, warning = results
