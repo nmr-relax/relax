@@ -1494,16 +1494,6 @@ class Mf_minimise:
                 if not hasattr(spin, 'relax_data') or not hasattr(spin, 'relax_error'):
                     continue
 
-            # Print out.
-            if verbosity >= 1:
-                # Individual spin stuff.
-                if model_type == 'mf' or model_type == 'local_tm':
-                    if verbosity >= 2:
-                        print("\n\n")
-                    string = "Fitting to spin " + repr(spin_id)
-                    print(("\n\n" + string))
-                    print((len(string) * '~'))
-
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
