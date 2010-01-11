@@ -218,30 +218,42 @@ class Grid_info(object):
 
 
     def sub_divide(self, steps):
+        """Split up the grid.
+
+        @param steps:   The number of sub-grids.
+        @type steps:    int
+        @return:        A list of all the sub-grids.
+        @rtype:         list of Grid_info instances
+        """
+
+        # Sanity check.
         if steps > self.range:
             steps = self.range
 
-        increment = self.range/(steps * 1.0)
+        # Calculate the step size and end point.
+        increment = self.range / (steps * 1.0)
         max_div_end = self.start + self.range
 
+        # Loop over the sub-grids.
         divs = []
         last_div = self.start
         for i in range(steps):
+            # Calculate the end point.
             div_end = int(math.ceil(self.start + ((i+1) * increment)))
 
-            # this garuntees completion in the face of roundoff errors
+            # This guarantees completion in the face of roundoff errors.
             if div_end > max_div_end:
                 div_end = max_div_end
 
+            # Calculate the range of the sub-grid.
             div_range = div_end - last_div
-            divs.append(self.sub_grid(start= last_div, range=div_range))
             last_div = div_end
 
+            # Create and append the sub-grid.
+            divs.append(Grid_info(lower=self.lower, upper=self.upper, inc=self.inc, n=self.n, start=last_div, range=div_range))
+
+        # Return the list of sub-grids.
         return divs
-
-
-    def sub_grid(self, start, range):
-        return Grid_info(self.grid_ops, start=start, range=range)
 
 
 
