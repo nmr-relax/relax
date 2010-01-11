@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -61,14 +62,14 @@ except ImportError:
 def broadcast_command(command):
     for i in range(1, MPI.COMM_WORLD.size):
         if i != 0:
-            MPI.COMM_WORLD.Send(buf=command, dest=i)
+            MPI.COMM_WORLD.send(obj=command, dest=i)
 
 
 def ditch_all_results():
     for i in range(1, MPI.COMM_WORLD.size):
         if i != 0:
             while True:
-                result = MPI.COMM_WORLD.Recv(source=i)
+                result = MPI.COMM_WORLD.recv(source=i)
                 if result.completed:
                     break
 
@@ -105,6 +106,8 @@ class Mpi4py_processor(Multi_processor):
     """The mpi4py multi-processor class."""
 
     def __init__(self, processor_size, callback):
+        """Initialise the mpi4py processor."""
+
         mpi_processor_size = MPI.COMM_WORLD.size-1
 
         if processor_size == -1:
@@ -148,11 +151,11 @@ class Mpi4py_processor(Multi_processor):
 
 
     def master_queue_command(self, command, dest):
-        MPI.COMM_WORLD.Send(buf=command, dest=dest)
+        MPI.COMM_WORLD.send(obj=command, dest=dest)
 
 
     def master_recieve_result(self):
-        return MPI.COMM_WORLD.Recv(source=MPI.ANY_SOURCE)
+        return MPI.COMM_WORLD.recv(source=MPI.ANY_SOURCE)
 
 
     def rank(self):
@@ -160,7 +163,7 @@ class Mpi4py_processor(Multi_processor):
 
 
     def return_result_command(self, result_object):
-        MPI.COMM_WORLD.Send(buf=result_object, dest=0)
+        MPI.COMM_WORLD.send(obj=result_object, dest=0)
 
 
     def run(self):
@@ -171,4 +174,4 @@ class Mpi4py_processor(Multi_processor):
 
 
     def slave_recieve_commands(self):
-        return MPI.COMM_WORLD.Recv(source=0)
+        return MPI.COMM_WORLD.recv(source=0)
