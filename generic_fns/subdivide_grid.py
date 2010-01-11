@@ -77,6 +77,12 @@ class Grid_info(object):
 
 
     def __iter__(self):
+        """Convert the class into an iterable object.
+
+        @return:    An iterator object.
+        @rtype:     Iterator instance
+        """
+
         return Iterator(self, self.start, self.start+self.range)
 
 
