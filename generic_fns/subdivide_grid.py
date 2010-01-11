@@ -22,11 +22,11 @@
 ###############################################################################
 
 #FIXME exceptiosn not progated properly in main loop
-import math
-from Numeric import Float
-from textwrap import dedent
 
-from Numeric import Float64, ones
+# Python module imports.
+import math
+from numpy import float, ones
+from textwrap import dedent
 
 
 #constants
@@ -193,7 +193,7 @@ class Grid_info(object):
 
     def get_params(self, offsets, params=None):
         if params == None:
-            params = ones(len(offsets), Float)
+            params = ones(len(offsets), float)
 
         for i, offset in enumerate(offsets):
             params[i] = self.values[i][offset]
