@@ -174,41 +174,41 @@ class MF_memo(Memo):
 class MF_minimise_command(Slave_command):
     """Command class for standard model-free minimisation."""
 
-    def __init__(self, mf, model_type=None, spin_id=None, args=None, x0=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, maxiter=None, A=None, b=None, sim_index=None, full_output=None, verbosity=None):
-        """Initialise all the data."""
+    def __init__(self):
+        """Initialise the base class."""
 
         # Execute the base class __init__() method.
         super(MF_minimise_command, self).__init__()
 
-        # Store the data.
-        self.mf = mf
-        self.model_type = model_type
-        self.spin_id = spin_id
-        self.args = args
-        self.x0 = x0
-        self.min_algor = min_algor
-        self.min_options = min_options
-        self.func_tol = func_tol
-        self.grad_tol = grad_tol
-        self.maxiter = maxiter
-        self.A = A
-        self.b = b
-        self.sim_index = sim_index
-        self.full_output = full_output
-        self.verbosity = verbosity
+
+    def optimise(self):
+        """Model-free optimisation.
+
+        @return:    The optimisation results consisting of the parameter vector, function value, iteration count, function count, gradient count, Hessian count, and warnings.
+        @rtype:     tuple of numpy array, float, int, int, int, int, str
+        """
+
+        # Minimisation.
+        results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=(), x0=self.opt_params.param_vector, min_algor=self.opt_params.min_algor, min_options=self.opt_params.min_options, func_tol=self.opt_params.func_tol, grad_tol=self.opt_params.grad_tol, maxiter=self.opt_params.max_iterations, A=self.opt_params.A, b=self.opt_params.b, full_output=True, print_flag=self.opt_params.verbosity)
+
+        # Return the minfx results unmodified.
+        return results
 
 
     def run(self, processor, completed):
-        """Execute the model-free optimisation."""
+        """Setup and perform the model-free optimisation."""
 
         # Run catching all errors.
         try:
-            # Print out.
-            if self.verbosity >= 1 and (self.model_type == 'mf' or self.model_type == 'local_tm'):
-                spin_print(self.spin_id, self.verbosity)
+            # Initialise the function to minimise.
+            self.mf = Mf(init_params=self.opt_params.param_vector, model_type=self.data.model_type, diff_type=self.data.diff_type, diff_params=self.data.diff_params, scaling_matrix=self.data.scaling_matrix, num_spins=self.data.num_spins, equations=self.data.equations, param_types=self.data.param_types, param_values=self.data.param_values, relax_data=self.data.relax_data, errors=self.data.relax_error, bond_length=self.data.r, csa=self.data.csa, num_frq=self.data.num_frq, frq=self.data.frq, num_ri=self.data.num_ri, remap_table=self.data.remap_table, noe_r1_table=self.data.noe_r1_table, ri_labels=self.data.ri_labels, gx=self.data.gx, gh=self.data.gh, h_bar=self.data.h_bar, mu0=self.data.mu0, num_params=self.data.num_params, vectors=self.data.xh_unit_vectors)
 
-            # Minimisation.
-            results = generic_minimise(func=self.mf.func, dfunc=self.mf.dfunc, d2func=self.mf.d2func, args=self.args, x0=self.x0, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.maxiter, A=self.A, b=self.b, full_output=self.full_output, print_flag=self.verbosity)
+            # Print out.
+            if self.opt_params.verbosity >= 1 and (self.data.model_type == 'mf' or self.data.model_type == 'local_tm'):
+                spin_print(self.data.spin_id, self.opt_params.verbosity)
+
+            # Preform optimisation.
+            results = self.optimise()
 
             # Disassemble the results list.
             param_vector, func, iter, fc, gc, hc, warning = results
@@ -231,55 +231,49 @@ class MF_minimise_command(Slave_command):
                 raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
 
 
-class MF_grid_command(Slave_command):
+    def store_data(self, data, opt_params):
+        """Store all the data required for model-free optimisation.
+
+        @param data:        The data used to initialise the model-free target function class.
+        @type data:         class instance
+        @param opt_params:  The parameters and data required for optimisation using minfx.
+        @type opt_params:   class instance
+        """
+
+        # Store the data.
+        self.data = data
+        self.opt_params = opt_params
+
+
+
+class MF_grid_command(MF_minimise_command):
     """Command class for the model-free grid search."""
 
-    def __init__(self, mf, model_type=None, spin_id=None, inc=None, lower=None, upper=None, A=None, b=None, verbosity=0):
+    def __init__(self):
         """Initialise all the data."""
 
         # Execute the base class __init__() method.
         super(MF_grid_command, self).__init__()
 
-        # Store the data.
-        self.mf = mf
-        self.model_type = model_type
-        self.spin_id = spin_id
-        self.inc = inc
-        self.lower = lower
-        self.upper = upper
-        self.A = A
-        self.b = b
-        self.verbosity = verbosity
 
+    def optimise(self):
+        """Model-free grid search.
 
-    def run(self, processor, completed):
-        """Execute the model-free optimisation."""
+        @return:    The optimisation results consisting of the parameter vector, function value, iteration count, function count, gradient count, Hessian count, and warnings.
+        @rtype:     tuple of numpy array, float, int, int, int, int, str
+        """
 
-        # Run catching all errors.
-        try:
-            # Print out.
-            if self.verbosity >= 1 and (self.model_type == 'mf' or self.model_type == 'local_tm'):
-                spin_print(self.spin_id, self.verbosity)
+        # Grid search.
+        results = grid(func=self.mf.func, args=(), num_incs=self.opt_params.inc, lower=self.opt_params.lower, upper=self.opt_params.upper, A=self.opt_params.A, b=self.opt_params.b, verbosity=self.opt_params.verbosity)
 
-            # Grid search.
-            results = grid(func=self.mf.func, args=(), num_incs=self.inc, lower=self.lower, upper=self.upper, A=self.A, b=self.b, verbosity=self.verbosity)
+        # Unpack the results.
+        param_vector, func, iter, warning = results
+        fc = iter
+        gc = 0.0
+        hc = 0.0
 
-            # Unpack the results.
-            param_vector, func, iter, warning = results
-            fc = iter
-            gc = 0.0
-            hc = 0.0
-
-            # Processing.
-            processor.return_object(MF_result_command(processor, self.memo_id, param_vector, func, iter, fc, gc, hc, warning, completed=completed))
-
-        # An error occurred.
-        except Exception, e :
-            if isinstance(e, Capturing_exception):
-                raise e
-            else:
-                raise Capturing_exception(rank=processor.rank(), name=processor.get_name())
-
+        # Return everything.
+        return param_vector, func, iter, fc, gc, hc, warning
 
 
 class MF_result_command(Result_command):
