@@ -47,7 +47,7 @@ class Grid_info(object):
         @type upper:    array of numbers
         @keyword inc:   The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
         @type inc:      array of int
-        @keyword n:     The number of parameters.
+        @keyword n:     The number of parameters, i.e. the dimensionality of the space.
         @type n:        int
         @keyword start: Unknown?
         @type start:    int
@@ -55,21 +55,23 @@ class Grid_info(object):
         @type range:    int
         """
 
-        self.grid_ops = grid_ops
-        for op in self.grid_ops:
-            op[GRID_LOWER] = float(op[GRID_LOWER])
-            op[GRID_UPPER] = float(op[GRID_UPPER])
-        self.steps = self.count_grid_steps(grid_ops)
-        self.grid_dimension = len(grid_ops)
-        self.values = self.calc_grid_values(grid_ops)
-        self.strides = self.calc_strides(grid_ops)
+        # Store the args.
+        self.lower = lower
+        self.upper = upper
+        self.inc = inc
+        self.n = n
         self.start = start
+        self.range = range
+
+        # Calculate the data structures used to sub-divide the grid.
+        self.steps = self.calc_grid_size()
+        self.values = self.calc_grid_values()
+        self.strides = self.calc_strides()
 
         #FIXME needs range checking i.e. is start = range > info.steps
         # need checks for empty/fractional ranges
-
         if range == None:
-            self.range = self.steps-start
+            self.range = self.steps - start
         else:
             self.range = range
 
@@ -101,39 +103,62 @@ class Grid_info(object):
         return divs
 
 
-    def calc_strides(self, grid_ops):
+    def calc_strides(self):
+        """Calculate the strides data structure for dividing up the grid.
+
+        @return:    The strides data structure.
+        @rtype:     list of int
+        """
+
+        # Build the data structure.
         stride = 1
-        result = []
-        for op in grid_ops:
-            result.append(stride)
-            stride = stride*op[GRID_STEPS]
+        data = []
+        for i in range(self.n):
+            data.append(stride)
+            stride = stride * self.inc[i]
 
-        return result
-
-
-    def count_grid_steps(self, grid_ops=None):
-        """ calculate the number of steps in a grid search """
-
-        result = 1
-        for op in grid_ops:
-            result = result * op[GRID_STEPS]
-
-        return result
+        # Return the strides data structure.
+        return data
 
 
-    def calc_grid_values(self, grid_ops=None):
-        """ calculate the values the points along each grid dimension can take"""
+    def calc_grid_size(self):
+        """Calculate the total number of grid points.
 
-        result = []
-        for op in grid_ops:
+        @return:    The number of grid points.
+        @rtype:     int
+        """
+
+        # Multiply the increments of all dimensions.
+        size = 1
+        for inc in self.inc:
+            size = size * inc
+
+        # Return the size.
+        return size
+
+
+    def calc_grid_values(self):
+        """Calculate the coordinates of all grid points.
+
+        @return:    A list of lists of coordinates for each grid point.  The first index corresponds to the dimensionality of the grid and the second is the increment values.
+        @rtype:     list of lists of float
+        """
+
+        # Initialise the coordinate list.
+        coords = []
+
+        # Loop over the dimensions.
+        for i in range(self.n):
+            # Initialise the list of values for the dimension and add it to the coordinate list.
             values = []
-            result.append(values)
+            coords.append(values)
 
-            op_range = op[GRID_UPPER] - op[GRID_LOWER]
-            for i in xrange(op[GRID_STEPS]):
-                values.append(op[GRID_LOWER] + i * op_range / (op[GRID_STEPS] - 1))
+            # Loop over the increments.
+            for j in range(self.inc[i]):
+                values.append(self.lower[i] + j * (self.upper[i] - self.lower[i]) / (self.inc[i] - 1.0))
 
-        return result
+        # Return the grid points.
+        return coords
 
 
     def __str__(self):
@@ -148,7 +173,7 @@ class Grid_info(object):
 
                   '''
         message = dedent(message)
-        message = message % (self.grid_dimension, self.steps, self.start, self.start+self.range)
+        message = message % (self.n, self.steps, self.start, self.start+self.range)
 
         op_message_list = []
         for i, op in enumerate(self.grid_ops):
@@ -172,7 +197,7 @@ class Grid_info(object):
         for i in xrange(self.start, self.start+self.range):
 
             print `i+1` + '. ', self.get_params(offsets)
-            for j in range(self.grid_dimension):
+            for j in range(self.n):
                 if offsets[j] < self.grid_ops[j][GRID_STEPS]-1:
                     offsets[j] = offsets[j] + 1
 
@@ -245,7 +270,7 @@ class Grid_info(object):
 
         def increment(self):
             # Increment the grid search.
-            for j in xrange(self.info.grid_dimension):
+            for j in xrange(self.info.n):
                 if self.offsets[j] < self.info.grid_ops[j][GRID_STEPS]-1:
                     self.offsets[j] = self.offsets[j] + 1
 
