@@ -64,9 +64,9 @@ class Grid_info(object):
         self.range = range
 
         # Calculate the data structures used to sub-divide the grid.
-        self.steps = self.calc_grid_size()
-        self.values = self.calc_grid_values()
-        self.strides = self.calc_strides()
+        self.steps = self._calc_grid_size()
+        self.values = self._calc_grid_values()
+        self.strides = self._calc_strides()
 
         #FIXME needs range checking i.e. is start = range > info.steps
         # need checks for empty/fractional ranges
@@ -113,7 +113,7 @@ class Grid_info(object):
         return message
 
 
-    def calc_grid_size(self):
+    def _calc_grid_size(self):
         """Calculate the total number of grid points.
 
         @return:    The number of grid points.
@@ -129,7 +129,7 @@ class Grid_info(object):
         return size
 
 
-    def calc_grid_values(self):
+    def _calc_grid_values(self):
         """Calculate the coordinates of all grid points.
 
         @return:    A list of lists of coordinates for each grid point.  The first index corresponds to the dimensionality of the grid and the second is the increment values.
@@ -153,7 +153,7 @@ class Grid_info(object):
         return coords
 
 
-    def calc_strides(self):
+    def _calc_strides(self):
         """Calculate the strides data structure for dividing up the grid.
 
         @return:    The strides data structure.
@@ -283,7 +283,7 @@ class Iterator(object):
                    params  %s ''' % (`self.info`, self.start, self.end, self.step, `self.offsets`, `self.params`)
 
 
-    def increment(self):
+    def _increment(self):
         # Increment the grid search.
         for j in xrange(self.info.n):
             if self.offsets[j] < self.info.grid_ops[j][GRID_STEPS]-1:
@@ -302,6 +302,6 @@ class Iterator(object):
         self.params = self.info.get_params(self.offsets, self.params)
 
         self.step = self.step + 1
-        self.increment()
+        self._increment()
 
         return self.params
