@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -122,6 +122,24 @@ try:
 except ImportError:
     vmd_module = False
 
+# mpi4py.
+try:
+    import mpi4py
+    del mpi4py
+    mpi4py_import = True
+except ImportError, message:
+    mpi4py_import = False
+
+    # The error message.
+    mpi4py_message = """The dependency 'mpi4py' has not been installed. You should either:
+
+1. Run without multiprocessor support i.e. remove the --multi mpi4py flag from the command line.
+
+2. Install mpi4py.
+
+3. Choose another multi processor method to give to the --multi command line flag.\n
+    """
+ 
 
 # Compiled C modules.
 #####################

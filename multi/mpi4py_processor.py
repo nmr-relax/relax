@@ -24,7 +24,12 @@
 # TODO: clone communicators & resize
 # TODO: check exceptions on master
 
+# Dependency check module.
+import dep_check
+
 # Python module imports.
+if dep_check.mpi4py_import:
+    from mpi4py import MPI
 import os
 import sys
 import textwrap
@@ -38,25 +43,6 @@ from multi.multi_processor_base import Multi_processor, Too_few_slaves_exception
 _sys_exit = sys.exit
 
 in_main_loop = False
-
-# load mpi
-try:
-    from mpi4py import MPI
-except ImportError:
-    msg = '''The dependency 'mpi4py' has not been installed. You should either
-
-                 1. Run without multiprocessor support i.e. remove the
-                    --multi mpi4py flag from the command line.
-
-                 2. Install mpi4py.
-
-                 3. Choose another multi processor method to give to the
-                    --multi command line flag.\n'''
-    #FIXME dedent not working
-    msg = textwrap.dedent(msg)
-    sys.stderr.write(msg)
-    sys.stderr.write('exiting...\n\n')
-    sys.exit()
 
 
 def broadcast_command(command):
