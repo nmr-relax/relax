@@ -77,7 +77,7 @@ class Grid_info(object):
 
 
     def __iter__(self):
-        return Grid_info.Iterator(self, self.start, self.start+self.range)
+        return Iterator(self, self.start, self.start+self.range)
 
 
     def __str__(self):
@@ -239,63 +239,63 @@ class Grid_info(object):
 
 
 
-    class Iterator(object):
-        def __init__(self, info, start, end):
-            self.info = info
+class Iterator(object):
+    def __init__(self, info, start, end):
+        self.info = info
 
-            # start point
-            self.start = start
+        # start point
+        self.start = start
 
-            # end of range
-            self.end = end
+        # end of range
+        self.end = end
 
-            #current step
-            self.step = start
+        #current step
+        self.step = start
 
-            self.offsets = info.get_step_offset(self.step)
-            self.params = self.info.get_params(self.offsets)
-
-
-        def __iter__(self):
-            return self
+        self.offsets = info.get_step_offset(self.step)
+        self.params = self.info.get_params(self.offsets)
 
 
-        def __str__(self):
-            print type(self.start)
-            print type(self.end)
-            print type(self.step)
-            return ''' info:
-
-                       %s
-
-                       iter:
-
-                       start %d
-                       end   %d
-                       step  %d
-                       offsets %s
-                       params  %s ''' % (`self.info`, self.start, self.end, self.step, `self.offsets`, `self.params`)
+    def __iter__(self):
+        return self
 
 
-        def increment(self):
-            # Increment the grid search.
-            for j in xrange(self.info.n):
-                if self.offsets[j] < self.info.grid_ops[j][GRID_STEPS]-1:
-                    self.offsets[j] = self.offsets[j] + 1
+    def __str__(self):
+        print type(self.start)
+        print type(self.end)
+        print type(self.step)
+        return ''' info:
 
-                    # Exit so that the other step numbers are not incremented.
-                    break
-                else:
-                    self.offsets[j] = 0
+                   %s
+
+                   iter:
+
+                   start %d
+                   end   %d
+                   step  %d
+                   offsets %s
+                   params  %s ''' % (`self.info`, self.start, self.end, self.step, `self.offsets`, `self.params`)
 
 
-        def next(self):
-            if self.step >= self.end:
-                raise StopIteration()
+    def increment(self):
+        # Increment the grid search.
+        for j in xrange(self.info.n):
+            if self.offsets[j] < self.info.grid_ops[j][GRID_STEPS]-1:
+                self.offsets[j] = self.offsets[j] + 1
 
-            self.params = self.info.get_params(self.offsets, self.params)
+                # Exit so that the other step numbers are not incremented.
+                break
+            else:
+                self.offsets[j] = 0
 
-            self.step = self.step + 1
-            self.increment()
 
-            return self.params
+    def next(self):
+        if self.step >= self.end:
+            raise StopIteration()
+
+        self.params = self.info.get_params(self.offsets, self.params)
+
+        self.step = self.step + 1
+        self.increment()
+
+        return self.params
