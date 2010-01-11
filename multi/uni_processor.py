@@ -85,10 +85,22 @@ class Uni_processor(Processor):
 
 
     def processor_size(self):
+        """Return 1 as this is the uni-processor.
+
+        @return:    The number of processors.
+        @rtype:     int
+        """
+
         return 1
 
 
     def rank(self):
+        """The uni-processor is always of rank 0.
+
+        @return:    The processor rank.
+        @rtype:     int
+        """
+
         return 0
 
 
