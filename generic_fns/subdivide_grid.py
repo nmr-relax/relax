@@ -76,49 +76,35 @@ class Grid_info(object):
             self.range = range
 
 
-    def sub_grid(self, start, range):
-        return Grid_info(self.grid_ops, start=start, range=range)
+    def __iter__(self):
+        return Grid_info.Iterator(self, self.start, self.start+self.range)
 
 
-    def sub_divide(self, steps):
-        if steps > self.range:
-            steps = self.range
+    def __str__(self):
+        message = '''\
+                        grid info:
 
-        increment = self.range/(steps * 1.0)
-        max_div_end = self.start + self.range
+                        number of axes:        %d
+                        full number of steps:  %d
+                        sub range indices:     %d - %d
 
-        divs = []
-        last_div = self.start
-        for i in range(steps):
-            div_end = int(math.ceil(self.start + ((i+1) * increment)))
+                        full grid range:
 
-            # this garuntees completion in the face of roundoff errors
-            if div_end > max_div_end:
-                div_end = max_div_end
+                  '''
+        message = dedent(message)
+        message = message % (self.n, self.steps, self.start, self.start+self.range)
 
-            div_range = div_end - last_div
-            divs.append(self.sub_grid(start= last_div, range=div_range))
-            last_div = div_end
+        op_message_list = []
+        for i, op in enumerate(self.grid_ops):
+            op_message = '%d.  %f...[%d steps]...%f'
+            op_list = (i+1, op[GRID_LOWER], op[GRID_STEPS], op[GRID_UPPER])
+            op_message_list .append(op_message % op_list)
 
-        return divs
+        op_message = '\n'.join(op_message_list)
 
+        message = message + op_message
 
-    def calc_strides(self):
-        """Calculate the strides data structure for dividing up the grid.
-
-        @return:    The strides data structure.
-        @rtype:     list of int
-        """
-
-        # Build the data structure.
-        stride = 1
-        data = []
-        for i in range(self.n):
-            data.append(stride)
-            stride = stride * self.inc[i]
-
-        # Return the strides data structure.
-        return data
+        return message
 
 
     def calc_grid_size(self):
@@ -161,31 +147,49 @@ class Grid_info(object):
         return coords
 
 
-    def __str__(self):
-        message = '''\
-                        grid info:
+    def calc_strides(self):
+        """Calculate the strides data structure for dividing up the grid.
 
-                        number of axes:        %d
-                        full number of steps:  %d
-                        sub range indices:     %d - %d
+        @return:    The strides data structure.
+        @rtype:     list of int
+        """
 
-                        full grid range:
+        # Build the data structure.
+        stride = 1
+        data = []
+        for i in range(self.n):
+            data.append(stride)
+            stride = stride * self.inc[i]
 
-                  '''
-        message = dedent(message)
-        message = message % (self.n, self.steps, self.start, self.start+self.range)
+        # Return the strides data structure.
+        return data
 
-        op_message_list = []
-        for i, op in enumerate(self.grid_ops):
-            op_message = '%d.  %f...[%d steps]...%f'
-            op_list = (i+1, op[GRID_LOWER], op[GRID_STEPS], op[GRID_UPPER])
-            op_message_list .append(op_message % op_list)
 
-        op_message = '\n'.join(op_message_list)
+    def get_params(self, offsets, params=None):
+        if params == None:
+            params = ones(len(offsets), float)
 
-        message = message + op_message
+        for i, offset in enumerate(offsets):
+            params[i] = self.values[i][offset]
 
-        return message
+        return params
+
+
+    def get_step_offset(self, step):
+        result = []
+        for stride in self.strides[-1::-1]:
+            offset = step / stride
+            result.append(offset)
+            step = step - stride*offset
+
+        result.reverse()
+
+        return result
+        #res_values = []
+        #for i, elem in enumerate(result):
+        #    res_values.append(self.values[i][elem])
+        #
+        #return res_values
 
 
     def print_steps(self):
@@ -207,31 +211,31 @@ class Grid_info(object):
                     offsets[j] = 0
 
 
-    def get_step_offset(self, step):
-        result = []
-        for stride in self.strides[-1::-1]:
-            offset = step / stride
-            result.append(offset)
-            step = step - stride*offset
+    def sub_divide(self, steps):
+        if steps > self.range:
+            steps = self.range
 
-        result.reverse()
+        increment = self.range/(steps * 1.0)
+        max_div_end = self.start + self.range
 
-        return result
-        #res_values = []
-        #for i, elem in enumerate(result):
-        #    res_values.append(self.values[i][elem])
-        #
-        #return res_values
+        divs = []
+        last_div = self.start
+        for i in range(steps):
+            div_end = int(math.ceil(self.start + ((i+1) * increment)))
+
+            # this garuntees completion in the face of roundoff errors
+            if div_end > max_div_end:
+                div_end = max_div_end
+
+            div_range = div_end - last_div
+            divs.append(self.sub_grid(start= last_div, range=div_range))
+            last_div = div_end
+
+        return divs
 
 
-    def get_params(self, offsets, params=None):
-        if params == None:
-            params = ones(len(offsets), float)
-
-        for i, offset in enumerate(offsets):
-            params[i] = self.values[i][offset]
-
-        return params
+    def sub_grid(self, start, range):
+        return Grid_info(self.grid_ops, start=start, range=range)
 
 
 
@@ -256,30 +260,6 @@ class Grid_info(object):
             return self
 
 
-        def next(self):
-            if self.step >= self.end:
-                raise StopIteration()
-
-            self.params = self.info.get_params(self.offsets, self.params)
-
-            self.step = self.step + 1
-            self.increment()
-
-            return self.params
-
-
-        def increment(self):
-            # Increment the grid search.
-            for j in xrange(self.info.n):
-                if self.offsets[j] < self.info.grid_ops[j][GRID_STEPS]-1:
-                    self.offsets[j] = self.offsets[j] + 1
-
-                    # Exit so that the other step numbers are not incremented.
-                    break
-                else:
-                    self.offsets[j] = 0
-
-
         def __str__(self):
             print type(self.start)
             print type(self.end)
@@ -297,5 +277,25 @@ class Grid_info(object):
                        params  %s ''' % (`self.info`, self.start, self.end, self.step, `self.offsets`, `self.params`)
 
 
-    def __iter__(self):
-        return Grid_info.Iterator(self, self.start, self.start+self.range)
+        def increment(self):
+            # Increment the grid search.
+            for j in xrange(self.info.n):
+                if self.offsets[j] < self.info.grid_ops[j][GRID_STEPS]-1:
+                    self.offsets[j] = self.offsets[j] + 1
+
+                    # Exit so that the other step numbers are not incremented.
+                    break
+                else:
+                    self.offsets[j] = 0
+
+
+        def next(self):
+            if self.step >= self.end:
+                raise StopIteration()
+
+            self.params = self.info.get_params(self.offsets, self.params)
+
+            self.step = self.step + 1
+            self.increment()
+
+            return self.params
