@@ -84,6 +84,10 @@ class Uni_processor(Processor):
 #        return True
 
 
+    def post_run(self):
+        """Dummy function for preventing the printing of the run time."""
+
+
     def processor_size(self):
         """Return 1 as this is the uni-processor.
 
