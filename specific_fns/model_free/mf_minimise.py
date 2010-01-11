@@ -1587,7 +1587,7 @@ class Mf_minimise:
             # Parallelised grid search for the diffusion parameter space.
             if match('^[Gg]rid', min_algor) and data_store.model_type == 'diff' :
                 # Split up the grid into chunks for each processor.
-                full_grid_info = Grid_info(opt_params.min_options)
+                full_grid_info = Grid_info(lower=lower, upper=upper, inc=inc, n=num_params)
                 sub_grid_list = full_grid_info.sub_divide(processor.processor_size())
 
                 # Set up the constrained super grid memo.

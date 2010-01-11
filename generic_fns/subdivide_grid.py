@@ -38,7 +38,23 @@ GRID_UPPER = 2
 
 
 class Grid_info(object):
-    def __init__(self, grid_ops, start=0, range=None):
+    def __init__(self, lower=None, upper=None, inc=None, n=None, start=0, range=None):
+        """Initialise the grid sub-division object.
+
+        @keyword lower: The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:    array of numbers
+        @keyword upper: The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:    array of numbers
+        @keyword inc:   The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:      array of int
+        @keyword n:     The number of parameters.
+        @type n:        int
+        @keyword start: Unknown?
+        @type start:    int
+        @keyword range: Unknown?
+        @type range:    int
+        """
+
         self.grid_ops = grid_ops
         for op in self.grid_ops:
             op[GRID_LOWER] = float(op[GRID_LOWER])
