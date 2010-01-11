@@ -36,14 +36,6 @@ GRID_STEPS = 0
 GRID_LOWER = 1
 GRID_UPPER = 2
 
-# FIXME: a somewhat inglorious hack, printing needs to be revisited in the light of multiprocessing
-pre_and_post_amble = True
-
-
-def set_pre_and_post_amble(value):
-    global pre_and_post_amble
-    pre_and_post_amble = value
-
 
 class Grid_info(object):
     def __init__(self, grid_ops, start=0, range=None):
