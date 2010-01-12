@@ -2226,7 +2226,7 @@ def reverse_euler_zyz(alpha, beta, gamma):
     R = zeros((3, 3), float64)
 
     # Get the rotation.
-    euler_zyz_to_R(alpha, beta, gamma, R)
+    euler_to_R_zyz(alpha, beta, gamma, R)
 
     # Reverse rotation.
     R = transpose(R)
