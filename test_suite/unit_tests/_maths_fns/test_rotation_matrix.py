@@ -273,6 +273,144 @@ class Test_rotation_matrix(TestCase):
         self.check_rotation(R, x_real_pos, y_real_pos, z_real_pos, x_real_neg, y_real_neg, z_real_neg)
 
 
+    def test_euler_cycle_1(self):
+        """Cycle through all the hard-coded conversion functions returning to the starting point.
+
+        The nested cycling is as follows:
+            - start with random Euler angles alpha, beta, gamma,
+            - convert to a rotation matrix using euler_to_R_xyx(),
+            - xyx cycle:
+                - R_to_euler_xyx()
+                - euler_to_R_xyx(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_xyx(),
+                - euler_to_axis_angle_xyx(),
+                - axis_angle_to_R(),
+            - xyz cycle:
+                - R_to_euler_xyz()
+                - euler_to_R_xyz(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_xyz(),
+                - euler_to_axis_angle_xyz(),
+                - axis_angle_to_R(),
+            - xzx cycle:
+                - R_to_euler_xzx()
+                - euler_to_R_xzx(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_xzx(),
+                - euler_to_axis_angle_xzx(),
+                - axis_angle_to_R(),
+             - xzy cycle:
+                - R_to_euler_xzy()
+                - euler_to_R_xzy(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_xzy(),
+                - euler_to_axis_angle_xzy(),
+                - axis_angle_to_R(),
+             - yxy cycle:
+                - R_to_euler_yxy()
+                - euler_to_R_yxy(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_yxy(),
+                - euler_to_axis_angle_yxy(),
+                - axis_angle_to_R(),
+             - yxz cycle:
+                - R_to_euler_yxz()
+                - euler_to_R_yxz(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_yxz(),
+                - euler_to_axis_angle_yxz(),
+                - axis_angle_to_R(),
+             - yzx cycle:
+                - R_to_euler_yzx()
+                - euler_to_R_yzx(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_yzx(),
+                - euler_to_axis_angle_yzx(),
+                - axis_angle_to_R(),
+             - yzy cycle:
+                - R_to_euler_yzy()
+                - euler_to_R_yzy(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_yzy(),
+                - euler_to_axis_angle_yzy(),
+                - axis_angle_to_R(),
+             - zxy cycle:
+                - R_to_euler_zxy()
+                - euler_to_R_zxy(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_zxy(),
+                - euler_to_axis_angle_zxy(),
+                - axis_angle_to_R(),
+             - zxz cycle:
+                - R_to_euler_zxz()
+                - euler_to_R_zxz(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_zxz(),
+                - euler_to_axis_angle_zxz(),
+                - axis_angle_to_R(),
+             - zyx cycle:
+                - R_to_euler_zyx()
+                - euler_to_R_zyx(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_zyx(),
+                - euler_to_axis_angle_zyx(),
+                - axis_angle_to_R(),
+             - zyz cycle:
+                - R_to_euler_zyz()
+                - euler_to_R_zyz(),
+                - R_to_axis_angle(),
+                - axis_angle_to_euler_zyz(),
+                - euler_to_axis_angle_zyz(),
+                - axis_angle_to_R(),
+            - return to start with R_to_euler_xyx().
+         """
+
+        # Starting angles.
+        alpha_init = uniform(0, 2*pi)
+        beta_init =  uniform(0, pi)
+        gamma_init = uniform(0, 2*pi)
+
+        # Print out.
+        print("Original angles:")
+        print(("alpha: %s" % alpha_init))
+        print(("beta: %s" % beta_init))
+        print(("gamma: %s\n" % gamma_init))
+
+        # The start point.
+        euler_to_R_xyx(alpha_init, beta_init, gamma_init, R)
+
+        # Cycle over the notations.
+        for set in ['xyx', 'xyz', 'xzx', 'xzy', 'yxy', 'yxz', 'yzx', 'yzy', 'zxy', 'zxz', 'zyx', 'zyz']:
+            # Alias the functions.
+            axis_angle_to_euler = globals()['axis_angle_to_euler_'+set]
+            euler_to_axis_angle = globals()['euler_to_axis_angle_'+set]
+            euler_to_R = globals()['euler_to_R_'+set]
+            R_to_euler = globals()['R_to_euler_'+set]
+
+            # The conversion cycle (starting with R and ending with R).
+            a, b, g = R_to_euler(R)
+            euler_to_R(a, b, g, R)
+            axis, angle = R_to_axis_angle(R)
+            a, b, g = axis_angle_to_euler(axis, angle)
+            axis, angle = euler_to_axis_angle(a, b, g)
+            axis_angle_to_R(axis, angle, R)
+ 
+        # The end point.
+        alpha_end, beta_end, gamma_end = R_to_euler_xyx(R)
+
+        # Print out.
+        print("End angles:")
+        print(("alpha: %s" % alpha_end))
+        print(("beta: %s" % beta_end))
+        print(("gamma: %s\n" % gamma_end))
+
+        # Checks.
+        self.assertAlmostEqual(alpha_init, alpha_end)
+        self.assertAlmostEqual(beta_init, beta_end)
+        self.assertAlmostEqual(gamma_init, gamma_end)
+
+
     def test_euler_zyz_to_euler_zyz(self):
         """Bounce around all the conversion functions to see if the original angles are returned."""
 
