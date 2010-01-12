@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from math import acos, asin, pi, sqrt
 from numpy import array, eye, float64, zeros
 from numpy.linalg import norm
@@ -429,7 +430,7 @@ class Test_rotation_matrix(TestCase):
             for i in range(3):
                 for j in range(3):
                     self.assertAlmostEqual(R[i, j], R2[i, j])
- 
+
         # The end point.
         alpha_end, beta_end, gamma_end = R_to_euler_xyx(R)
 
@@ -619,6 +620,210 @@ class Test_rotation_matrix(TestCase):
         # Test the vector.
         for i in range(3):
             self.assertAlmostEqual(axis[i], 1.0/sqrt(3))
+
+
+    def test_R_to_euler_to_R_xyx(self):
+        """Test the rotation matrix to xyx Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_xyx(R)
+        euler_to_R_xyx(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_xyz(self):
+        """Test the rotation matrix to xyz Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_xyz(R)
+        euler_to_R_xyz(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_xzx(self):
+        """Test the rotation matrix to xzx Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_xzx(R)
+        euler_to_R_xzx(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_xzy(self):
+        """Test the rotation matrix to xzy Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_xzy(R)
+        euler_to_R_xzy(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_yxy(self):
+        """Test the rotation matrix to yxy Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_yxy(R)
+        euler_to_R_yxy(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_yxz(self):
+        """Test the rotation matrix to yxz Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_yxz(R)
+        euler_to_R_yxz(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_yzx(self):
+        """Test the rotation matrix to yzx Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_yzx(R)
+        euler_to_R_yzx(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_yzy(self):
+        """Test the rotation matrix to yzy Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_yzy(R)
+        euler_to_R_yzy(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_zxy(self):
+        """Test the rotation matrix to zxy Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_zxy(R)
+        euler_to_R_zxy(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_zxz(self):
+        """Test the rotation matrix to zxz Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_zxz(R)
+        euler_to_R_zxz(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_zyx(self):
+        """Test the rotation matrix to zyx Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_zyx(R)
+        euler_to_R_zyx(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
+
+
+    def test_R_to_euler_to_R_zyz(self):
+        """Test the rotation matrix to zyz Euler angle conversion and back again."""
+
+        # Random rotation matrix.
+        R_random_hypersphere(R)
+        R_orig = deepcopy(R)
+
+        # Convert.
+        a, b, g = R_to_euler_zyz(R)
+        euler_to_R_zyz(a, b, g, R2)
+
+        # Check the rotation matrix.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(R_orig[i, j], R2[i, j])
 
 
     def test_R_to_euler_xyx(self):
