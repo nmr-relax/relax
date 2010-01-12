@@ -489,7 +489,7 @@ def euler_to_axis_angle_xzx(alpha, beta, gamma):
     R = zeros((3, 3), float64)
 
     # Get the rotation.
-    euler_xzx_to_R(alpha, beta, gamma, R)
+    euler_to_R_xzx(alpha, beta, gamma, R)
 
     # Return the axis and angle.
     return R_to_axis_angle(R)
