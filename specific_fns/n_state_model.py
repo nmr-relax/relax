@@ -45,7 +45,7 @@ from generic_fns.structure.internal import Internal
 import generic_fns.structure.mass
 from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
-from maths_fns.rotation_matrix import two_vect_to_R, euler_zyz_to_R
+from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
 from relax_io import open_write_file
@@ -301,7 +301,7 @@ class N_state_model(API_base, API_common):
         # Loop over the N states.
         for c in xrange(cdp.N):
             # Generate the rotation matrix.
-            euler_zyz_to_R(cdp.alpha[c], cdp.beta[c], cdp.gamma[c], R)
+            euler_to_R_zyz(cdp.alpha[c], cdp.beta[c], cdp.gamma[c], R)
 
             # Rotate the unit vector.
             vectors[c] = dot(R, unit_vect)
