@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 from math import acos, asin, pi, sqrt
 from numpy import array, eye, float64, zeros
 from numpy.linalg import norm
-from random import uniform
+from random import shuffle, uniform
 from unittest import TestCase
 
 # relax module imports.
@@ -34,6 +34,7 @@ from maths_fns.rotation_matrix import *
 
 # Global variables (reusable storage).
 R = zeros((3, 3), float64)
+R2 = zeros((3, 3), float64)
 
 
 class Test_rotation_matrix(TestCase):
@@ -371,39 +372,73 @@ class Test_rotation_matrix(TestCase):
         beta_init =  uniform(0, pi)
         gamma_init = uniform(0, 2*pi)
 
+        # The start point.
+        euler_to_R_xyx(alpha_init, beta_init, gamma_init, R)
+        euler_to_R_xyx(alpha_init, beta_init, gamma_init, R2)
+
         # Print out.
-        print("Original angles:")
+        print("Original data:")
         print(("alpha: %s" % alpha_init))
         print(("beta: %s" % beta_init))
         print(("gamma: %s\n" % gamma_init))
+        print(("R:\n%s\n" % R2))
 
-        # The start point.
-        euler_to_R_xyx(alpha_init, beta_init, gamma_init, R)
+        # The different notations.
+        sets = ['xyx', 'xyz', 'xzx', 'xzy', 'yxy', 'yxz', 'yzx', 'yzy', 'zxy', 'zxz', 'zyx', 'zyz']
+        shuffle(sets)
 
         # Cycle over the notations.
-        for set in ['xyx', 'xyz', 'xzx', 'xzy', 'yxy', 'yxz', 'yzx', 'yzy', 'zxy', 'zxz', 'zyx', 'zyz']:
+        for set in sets:
+            # Header printout.
+            print("\n\n# %s cycle.\n" % set)
+
             # Alias the functions.
             axis_angle_to_euler = globals()['axis_angle_to_euler_'+set]
             euler_to_axis_angle = globals()['euler_to_axis_angle_'+set]
             euler_to_R = globals()['euler_to_R_'+set]
             R_to_euler = globals()['R_to_euler_'+set]
 
-            # The conversion cycle (starting with R and ending with R).
+            # R -> Euler.
             a, b, g = R_to_euler(R)
+            print("R -> Euler: [%-8.5f, %-8.5f, %-8.5f]\n" % (a, b, g))
+
+            # Euler -> R
             euler_to_R(a, b, g, R)
+            print(("Euler -> R:\n%s\n" % R))
+
+            # R -> axis, angle.
             axis, angle = R_to_axis_angle(R)
+            print("R -> axis, angle: [%-8.5f, %-8.5f, %-8.5f], %s\n" % (axis[0], axis[1], axis[2], angle))
+
+            # axis, angle -> Euler.
             a, b, g = axis_angle_to_euler(axis, angle)
+            print("axis, angle -> Euler: [%-8.5f, %-8.5f, %-8.5f]\n" % (a, b, g))
+
+            # Euler -> axis, angle.
             axis, angle = euler_to_axis_angle(a, b, g)
+            print("Euler -> axis, angle: [%-8.5f, %-8.5f, %-8.5f], %s\n" % (axis[0], axis[1], axis[2], angle))
+
+            # axis, angle -> R.
             axis_angle_to_R(axis, angle, R)
+            print(("axis, angle -> R:\n%s\n" % R))
+
+            # Print out the rotation matrix.
+            print("Rotation matrix difference:\n%s\n" % (R2-R))
+
+            # Check the rotation matrix.
+            for i in range(3):
+                for j in range(3):
+                    self.assertAlmostEqual(R[i, j], R2[i, j])
  
         # The end point.
         alpha_end, beta_end, gamma_end = R_to_euler_xyx(R)
 
         # Print out.
-        print("End angles:")
+        print("End data:")
         print(("alpha: %s" % alpha_end))
         print(("beta: %s" % beta_end))
         print(("gamma: %s\n" % gamma_end))
+        print(("R:\n%s\n" % R))
 
         # Checks.
         self.assertAlmostEqual(alpha_init, alpha_end)
