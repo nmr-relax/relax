@@ -1602,7 +1602,7 @@ def R_to_euler(R, notation, axes_rot='static', second_sol=False):
         gamma = alpha_old
 
     # Angle wrapping.
-    if -pi < beta < 0.0:
+    if alt and -pi < beta < 0.0:
         alpha = alpha + pi
         beta = -beta
         gamma = gamma + pi
