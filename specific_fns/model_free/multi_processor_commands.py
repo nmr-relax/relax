@@ -157,18 +157,34 @@ class MF_memo(Memo):
     Not quite a momento so a memo.
     """
 
-    def __init__(self, model_free, spin, sim_index, model_type, scaling, scaling_matrix):
-        """Initialise the model-free memo class."""
+    def __init__(self, model_free=None, model_type=None, spin=None, sim_index=None, scaling=None, scaling_matrix=None):
+        """Initialise the model-free memo class.
+
+        This memo stores the model-free class instance so that the _disassemble_result() method can be called to store the optimisation results.  The other args are those required by this method but not generated through optimisation.
+
+        @keyword model_free:        The model-free class instance.
+        @type model_free:           specific_fns.model_free.Model_free instance
+        @keyword spin:              The spin data container.  If this argument is supplied, then the spin_id argument will be ignored.
+        @type spin:                 SpinContainer instance
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            int
+        @keyword scaling:           If True, diagonal scaling is enabled.
+        @type scaling:              bool
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        """
 
         # Execute the base class __init__() method.
         super(MF_memo, self).__init__()
 
+        # Store the arguments.
+        self.model_free = model_free
+        self.model_type = model_type
         self.spin = spin
         self.sim_index = sim_index
-        self.model_type = model_type
-        self.model_free = model_free
         self.scaling = scaling
         self.scaling_matrix = scaling_matrix
+
 
 
 class MF_minimise_command(Slave_command):
@@ -277,11 +293,15 @@ class MF_grid_command(MF_minimise_command):
 
 
 class MF_result_command(Result_command):
+    """Class for processing the model-free results."""
+
     def __init__(self, processor, memo_id, param_vector, func, iter, fc, gc, hc, warning, completed):
+        """Set up the class, placing the minimisation results here."""
 
         # Execute the base class __init__() method.
         super(MF_result_command, self).__init__(processor=processor, completed=completed)
 
+        # Store the arguments.
         self.memo_id = memo_id
         self.param_vector = param_vector
         self.func = func
