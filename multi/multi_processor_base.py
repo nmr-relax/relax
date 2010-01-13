@@ -317,8 +317,10 @@ class Multi_processor(Processor):
                         idle_set.add(result.rank)
                         running_set.remove(result.rank)
 
+                    # Add to the result queue for instant or threaded processing.
                     result_queue.put(result)
 
+            # Process the threaded results.
             if self.threaded_result_processing:
                 result_queue.run_all()
 
