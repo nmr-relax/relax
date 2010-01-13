@@ -369,7 +369,7 @@ class Relax:
 
         # Multi processor string component.
         if not self.mode == 'prompt' or not self.multiprocessor_type == 'uni':
-            intro_string  = intro_string  + '\nProcessor model:  %s\n' % self.processor.get_intro_string()
+            intro_string  = intro_string  + '\nProcessor model:  %s\n' % self.processor_intro_string
 
         # Return the string.
         return intro_string
@@ -440,12 +440,15 @@ if __name__ == "__main__":
 
     # Set up the multi-processor elements.
     callbacks = Application_callback(master=relax_instance)
-    relax_instance.processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
+    processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
+
+    # Store the processor intro string.
+    relax_instance.processor_intro_string = processor.get_intro_string()
 
     # Normal relax operation.
     if not profile_flag:
         # Execute relax in multi-processor mode (this includes the uni-processor for normal operation).
-        relax_instance.processor.run()
+        processor.run()
 
     # relax in profiling mode.
     else:
@@ -461,4 +464,4 @@ if __name__ == "__main__":
 
         # Run relax in profiling mode.
         profile.Profile.print_stats = print_stats
-        profile.run('relax_instance.processor.run()')
+        profile.run('processor.run()')
