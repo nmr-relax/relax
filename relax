@@ -433,17 +433,17 @@ if __name__ == "__main__":
     profile_flag = False
 
     # Instantiate the main class.
-    relax_instance = Relax()
+    relax = Relax()
 
     # Process the command line arguments.
-    relax_instance.arguments()
+    relax.arguments()
 
     # Set up the multi-processor elements.
-    callbacks = Application_callback(master=relax_instance)
-    processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
+    callbacks = Application_callback(master=relax)
+    processor = Processor.load_multiprocessor(relax.multiprocessor_type, callbacks, processor_size=relax.n_processors)
 
     # Store the processor intro string.
-    relax_instance.processor_intro_string = processor.get_intro_string()
+    relax.processor_intro_string = processor.get_intro_string()
 
     # Normal relax operation.
     if not profile_flag:
