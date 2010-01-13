@@ -105,7 +105,10 @@ class Relax:
 
 
     def run(self):
-        """Execute relax."""
+        """Execute relax.
+
+        This is the application callback method executed by the multi-processor framework.
+        """
 
         # Show the version number and exit.
         if self.mode == 'version':
