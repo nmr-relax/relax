@@ -256,11 +256,11 @@ class Frame_order:
 
             # Rotate the tensor (normal R.X.RT rotation).
             if self.full_in_ref_frame[i]:
-                self.tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
+                self.tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
 
             # Rotate the tensor (inverse RT.X.R rotation).
             else:
-                self.tensor_3D = dot(transpose(self.rot), dot(self.tensor_3D, self.rot))
+                self.tensor_3D = dot(self.rot, dot(self.tensor_3D, transpose(self.rot)))
 
             # Convert the tensor back to 5D, rank-1 form.
             to_5D(self.red_tensors_bc[index1:index2], self.tensor_3D)
