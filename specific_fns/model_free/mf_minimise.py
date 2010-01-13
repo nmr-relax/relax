@@ -1630,5 +1630,5 @@ class Mf_minimise:
             command.store_data(data_store, opt_params)
 
             # Set up the model-free memo and add it to the processor queue.
-            memo = MF_memo(model_free=self, spin=spin, sim_index=sim_index, model_type=data_store.model_type, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+            memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
             processor.add_to_queue(command, memo)
