@@ -44,9 +44,10 @@ Users of the processor framework will typically use the following methodology:
 
      2. Create an Application_callback object.  For example:
             relax_instance = Relax()
+            callbacks = Application_callback(master=relax_instance)
 
      3. Dynamically load a processor implementation using the name of the processor and the number of required slave processors.  For example:
-            processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, relax_instance, processor_size=relax_instance.n_processors)
+            processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, callbacks, processor_size=relax_instance.n_processors)
 
      4. Call run on the processor instance returned above and handle all Exceptions.  For example:
             processor.run()
