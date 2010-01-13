@@ -312,9 +312,8 @@ class Multi_processor(Processor):
                     print('\nIdle set:    %s' % idle_set)
                     print('Running set: %s' % running_set)
 
-                    # Completed.
+                    # Shift the processor rank to the idle set.
                     if result.completed:
-                        # Shift the processor rank to the idle set.
                         idle_set.add(result.rank)
                         running_set.remove(result.rank)
 
