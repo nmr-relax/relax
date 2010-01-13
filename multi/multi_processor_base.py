@@ -303,16 +303,23 @@ class Multi_processor(Processor):
                     else:
                         break
 
+                # Loop until the queue of calculations is depleted.
                 while len(running_set) != 0:
+                    # Get the result.
                     result = self.master_recieve_result()
-                    #if isinstance(result, Result_exception):
-                    #    print 'result', result
-                    #    sys.exit()
 
+                    # Print out.
+                    print('\nIdle set:    %s' % idle_set)
+                    print('Running set: %s' % running_set)
+
+                    # Completed.
                     if result.completed:
+                        # First flush the buffers.
+                        sys.stdout.flush()
+                        sys.stderr.flush()
+
+                        # Shift the processor rank to the idle set.
                         idle_set.add(result.rank)
-                        print('idle set', repr(idle_set))
-                        print('running_set', repr(running_set))
                         running_set.remove(result.rank)
 
                     result_queue.put(result)
