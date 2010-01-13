@@ -40,32 +40,24 @@ Using the processor framework
 
 Users of the processor framework will typically use the following methodology:
 
-     1. At application startup determine the name of the required processor implementation and the
-        number of slave processors requested.
+     1. At application startup determine the name of the required processor implementation and the number of slave processors requested.
 
-     2. Create an Application_callback object.
+     2. Create an Application_callback object.  For example:
+            relax_instance = Relax()
 
-     3. Dynamically load a processor implementation using the name of the processor and the number
-        of required slave processors using:
-            processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type,
-                    callbacks, processor_size=relax_instance.n_processors)
+     3. Dynamically load a processor implementation using the name of the processor and the number of required slave processors.  For example:
+            processor = Processor.load_multiprocessor(relax_instance.multiprocessor_type, relax_instance, processor_size=relax_instance.n_processors)
 
-     4. Call run on the processor instance returned above and handle all Exceptions.
+     4. Call run on the processor instance returned above and handle all Exceptions.  For example:
+            processor.run()
 
-     5. After calling run, the processor will call back to Application_callback.init_master from
-        which you should call you main program (Application_callback defaults to self.master.run()).
+     5. After calling run, the processor will call back to Application_callback.init_master from which you should call you main program (Application_callback defaults to self.master.run()).
 
-     6. Once in the main program you should call processor.add_to_queue with a series of
-        multi.Slave_command objects you wish to be run across the slave processor pool and then call
-        processor.run_queue to actually execute the commands remotely while blocking.
+     6. Once in the main program you should call processor.add_to_queue with a series of multi.Slave_command objects you wish to be run across the slave processor pool and then call processor.run_queue to actually execute the commands remotely while blocking.
         >>>
         example here...
 
-     7. Processor.Slave_commands will then run remotely on the slaves and any thrown exceptions and
-        processor.result_commands queued to processor.return_object will be returned to the master
-        processor and handled or executed. The slave processors also provide facilities for capturing
-        the STDERR and STDOUT streams and returning their contents as strings for display on the
-        master's STDOUT and STDERR streams (***more**?).
+     7. Processor.Slave_commands will then run remotely on the slaves and any thrown exceptions and processor.result_commands queued to processor.return_object will be returned to the master processor and handled or executed. The slave processors also provide facilities for capturing the STDERR and STDOUT streams and returning their contents as strings for display on the master's STDOUT and STDERR streams (***more**?).
 
 
 Extending the processor framework with a new interprocess communication fabric
