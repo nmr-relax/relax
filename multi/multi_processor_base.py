@@ -314,10 +314,6 @@ class Multi_processor(Processor):
 
                     # Completed.
                     if result.completed:
-                        # First flush the buffers.
-                        sys.stdout.flush()
-                        sys.stderr.flush()
-
                         # Shift the processor rank to the idle set.
                         idle_set.add(result.rank)
                         running_set.remove(result.rank)
