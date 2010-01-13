@@ -321,12 +321,6 @@ class MF_result_command(Result_command):
         @type memo:         memo
         """
 
-        # Initialise the iteration counter and function, gradient, and Hessian call counters.
-        memo.model_free.iter_count = 0
-        memo.model_free.f_count = 0
-        memo.model_free.g_count = 0
-        memo.model_free.h_count = 0
-
         # Disassemble the results.
         memo.model_free._disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
 
