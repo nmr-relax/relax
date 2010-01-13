@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from math import pi
 from numpy import float64, array, dot, zeros
 from numpy.linalg import inv
@@ -1627,7 +1628,7 @@ class Mf_minimise:
                 command = MF_minimise_command()
 
             # Pass in the data and optimisation parameters.
-            command.store_data(data_store, opt_params)
+            command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
             # Set up the model-free memo and add it to the processor queue.
             memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
