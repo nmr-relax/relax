@@ -1934,7 +1934,7 @@ class main(wx.Frame):
             self.resultsdir_r21_copy_2.SetValue(newdir + sep + 'model_free')
 
             dir_message('Folder structure created for Model-free analysis:\n\n\n' + newdir + sep + 'NOE_1\n' + newdir + sep + 'NOE_2\n' + newdir + sep + 'NOE_3\n' + newdir + sep + 'R1_1\n' + newdir + sep + 'R1_2\n' + newdir + sep + 'R1_3\n' + newdir + sep + 'R2_1\n' + newdir + sep + 'R2_2\n' + newdir + sep + 'R2_3\n' + newdir + sep + 'model-free')
-         event.Skip()
+        event.Skip()
 
 
     def references(self, event):
