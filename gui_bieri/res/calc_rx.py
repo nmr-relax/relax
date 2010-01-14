@@ -41,30 +41,30 @@ from generic_fns import monte_carlo
 from minfx.generic import generic_minimise
 
 
-def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, unres, self, freqno):
+def make_rx(target_dir, relax_times, structure_pdb, nmr_freq, r1_r2, freq_no, unres, self, freqno):
 
         success = False
         resultsdir = str(target_dir)
         gracedir = str(target_dir) + sep + 'grace'
-        savefile = str(target_dir) + sep + 'r' + str(t1_t2) + '.' + str(nmr_freq)  + '.out'
+        savefile = str(target_dir) + sep + 'r' + str(r1_r2) + '.' + str(nmr_freq)  + '.out'
 
 
         # Select Peak Lists and Relaxation Times 
-        if t1_t2 == 1:
+        if r1_r2 == 1:
             if freq_no == 1:
-              peakfiles = t1_list
+              peakfiles = r1_list
             if freq_no == 2:
-              peakfiles = t1_list2
+              peakfiles = r1_list2
             if freq_no == 3:
-              peakfiles = t1_list3
+              peakfiles = r1_list3
 
-        if t1_t2 == 2:
+        if r1_r2 == 2:
             if freq_no == 1:
-              peakfiles = t2_list
+              peakfiles = r2_list
             if freq_no == 2:
-              peakfiles = t2_list2
+              peakfiles = r2_list2
             if freq_no == 3:
-              peakfiles = t2_list3
+              peakfiles = r2_list3
 
         #create unresolved file
         unres = replace(unres, ",","\n")
@@ -73,7 +73,7 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
         file.write(unres)
         file.close()
 
-        pipename = 'Tx ' + str(time.asctime(time.localtime()))
+        pipename = 'Rx ' + str(time.asctime(time.localtime()))
 
         # Create the NOE data pipe.
         pipe.create(pipename, 'relax_fit')
@@ -153,21 +153,21 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
         print "calculation finished"
         print ""
 
-        msgbox(msg='T' + str(t1_t2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
+        msgbox(msg='T' + str(r1_r2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
         # list files to results
-        self.list_tx.Append(target_dir + sep + 'grace' + sep + 'rx.' + str(nmr_freq) + '.agr')
-        self.list_tx.Append(target_dir + sep + 'grace' + sep + 'intensities_norm.' + str(nmr_freq) + '.agr')
+        self.list_rx.Append(target_dir + sep + 'grace' + sep + 'rx.' + str(nmr_freq) + '.agr')
+        self.list_rx.Append(target_dir + sep + 'grace' + sep + 'intensities_norm.' + str(nmr_freq) + '.agr')
 
         # add files to model-free tab
-        if t1_t2 == 1:
+        if r1_r2 == 1:
                     if freqno == 1:
                       self.m_r1_1.SetValue(target_dir + sep + 'r1.' + str(nmr_freq) + '.out')
                     if freqno == 2:
                       self.m_r1_2.SetValue(target_dir + sep + 'r1.' + str(nmr_freq) + '.out')
                     if freqno == 3:
                       self.m_r1_3.SetValue(target_dir + sep + 'r1.' + str(nmr_freq) + '.out')
-        if t1_t2 == 2:
+        if r1_r2 == 2:
                     if freqno == 1:
                       self.m_r2_1.SetValue(target_dir + sep + 'r2.' + str(nmr_freq) + '.out')
                     if freqno == 2:

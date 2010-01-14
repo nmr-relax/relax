@@ -52,45 +52,45 @@ def create_save_file(self, filename):
            savenoe2 = [str(self.nmrfreq_value_noe1_copy.GetValue()), str(self.noe_sat_1_copy.GetValue()), str(self.noe_sat_err_1_copy.GetValue()), str(self.noe_ref_1_copy.GetValue()), str(self.noe_ref_err_1_copy.GetValue()), str(self.structure_noe1_copy.GetValue()), str(self.unres_noe1_copy.GetValue()), str(self.res_noe1_copy.GetValue())]
            savenoe3 = [str(self.nmrfreq_value_noe1_copy_1.GetValue()), str(self.noe_sat_1_copy_1.GetValue()), str(self.noe_sat_err_1_copy_1.GetValue()), str(self.noe_ref_1_copy_1.GetValue()), str(self.noe_ref_err_1_copy_1.GetValue()), str(self.structure_noe1_copy_1.GetValue()), str(self.unres_noe1_copy_1.GetValue()), str(self.res_noe1_copy_1.GetValue())]
 
-           #T1
-           t1_list_1 = str(self.t1_list_1.GetLabel()) + ', ' + str(self.t1_list_2.GetLabel()) + ', ' + str(self.t1_list_3.GetLabel()) + ', ' + str(self.t1_list_4.GetLabel()) + ', ' + str(self.t1_list_5.GetLabel()) + ', ' + str(self.t1_list_6.GetLabel()) + ', ' + str(self.t1_list_7.GetLabel()) + ', ' + str(self.t1_list_8.GetLabel()) + ', ' + str(self.t1_list_9.GetLabel()) + ', ' + str(self.t1_list_10.GetLabel()) + ', ' + str(self.t1_list_11.GetLabel()) + ', ' + str(self.t1_list_12.GetLabel()) + ', ' + str(self.t1_list_1_copy_11.GetLabel()) + ', ' + str(self.t1_list_14.GetLabel())
-           t1_time_1 = str(self.t1_time_1.GetValue()) + ', ' + str(self.t1_time_2.GetValue()) + ', ' + str(self.t1_time_3.GetValue()) + ', ' + str(self.t1_time_4.GetValue()) + ', ' + str(self.t1_time_5.GetValue()) + ', ' + str(self.t1_time_6.GetValue()) + ', ' + str(self.t1_time_7.GetValue()) + ', ' + str(self.t1_time_8.GetValue()) + ', ' + str(self.t1_time_9.GetValue()) + ', ' + str(self.t1_time_10.GetValue()) + ', ' + str(self.t1_time_11.GetValue()) + ', ' + str(self.t1_time_12.GetValue()) + ', ' + str(self.t1_time_13.GetValue()) + ', ' + str(self.t1_time_1_4.GetValue()) 
+           #R1
+           r1_list_1 = str(self.r1_list_1.GetLabel()) + ', ' + str(self.r1_list_2.GetLabel()) + ', ' + str(self.r1_list_3.GetLabel()) + ', ' + str(self.r1_list_4.GetLabel()) + ', ' + str(self.r1_list_5.GetLabel()) + ', ' + str(self.r1_list_6.GetLabel()) + ', ' + str(self.r1_list_7.GetLabel()) + ', ' + str(self.r1_list_8.GetLabel()) + ', ' + str(self.r1_list_9.GetLabel()) + ', ' + str(self.r1_list_10.GetLabel()) + ', ' + str(self.r1_list_11.GetLabel()) + ', ' + str(self.r1_list_12.GetLabel()) + ', ' + str(self.r1_list_1_copy_11.GetLabel()) + ', ' + str(self.r1_list_14.GetLabel())
+           r1_time_1 = str(self.r1_time_1.GetValue()) + ', ' + str(self.r1_time_2.GetValue()) + ', ' + str(self.r1_time_3.GetValue()) + ', ' + str(self.r1_time_4.GetValue()) + ', ' + str(self.r1_time_5.GetValue()) + ', ' + str(self.r1_time_6.GetValue()) + ', ' + str(self.r1_time_7.GetValue()) + ', ' + str(self.r1_time_8.GetValue()) + ', ' + str(self.r1_time_9.GetValue()) + ', ' + str(self.r1_time_10.GetValue()) + ', ' + str(self.r1_time_11.GetValue()) + ', ' + str(self.r1_time_12.GetValue()) + ', ' + str(self.r1_time_13.GetValue()) + ', ' + str(self.r1_time_1_4.GetValue()) 
 
-           t1_list_2 = str(self.t1_list_1_copy.GetLabel()) + ', ' + str(self.t1_list_2_copy.GetLabel()) + ', ' + str(self.t1_list_3_copy.GetLabel()) + ', ' + str(self.t1_list_4_copy.GetLabel()) + ', ' + str(self.t1_list_5_copy.GetLabel()) + ', ' + str(self.t1_list_6_copy.GetLabel()) + ', ' + str(self.t1_list_7_copy.GetLabel()) + ', ' + str(self.t1_list_8_copy.GetLabel()) + ', ' + str(self.t1_list_9_copy.GetLabel()) + ', ' + str(self.t1_list_10_copy.GetLabel()) + ', ' + str(self.t1_list_11_copy.GetLabel()) + ', ' + str(self.t1_list_12_copy.GetLabel()) + ', ' + str(self.t1_list_1_copy_11_copy.GetLabel()) + ', ' + str(self.t1_list_14_copy.GetLabel())
-           t1_time_2 = str(self.t1_time_1_copy.GetValue()) + ', ' + str(self.t1_time_2_copy.GetValue()) + ', ' + str(self.t1_time_3_copy.GetValue()) + ', ' + str(self.t1_time_4_copy.GetValue()) + ', ' + str(self.t1_time_5_copy.GetValue()) + ', ' + str(self.t1_time_6_copy.GetValue()) + ', ' + str(self.t1_time_7_copy.GetValue()) + ', ' + str(self.t1_time_8_copy.GetValue()) + ', ' + str(self.t1_time_9_copy.GetValue()) + ', ' + str(self.t1_time_10_copy.GetValue()) + ', ' + str(self.t1_time_11_copy.GetValue()) + ', ' + str(self.t1_time_12_copy.GetValue()) + ', ' + str(self.t1_time_13_copy.GetValue()) + ', ' + str(self.t1_time_1_4_copy.GetValue()) 
+           r1_list_2 = str(self.r1_list_1_copy.GetLabel()) + ', ' + str(self.r1_list_2_copy.GetLabel()) + ', ' + str(self.r1_list_3_copy.GetLabel()) + ', ' + str(self.r1_list_4_copy.GetLabel()) + ', ' + str(self.r1_list_5_copy.GetLabel()) + ', ' + str(self.r1_list_6_copy.GetLabel()) + ', ' + str(self.r1_list_7_copy.GetLabel()) + ', ' + str(self.r1_list_8_copy.GetLabel()) + ', ' + str(self.r1_list_9_copy.GetLabel()) + ', ' + str(self.r1_list_10_copy.GetLabel()) + ', ' + str(self.r1_list_11_copy.GetLabel()) + ', ' + str(self.r1_list_12_copy.GetLabel()) + ', ' + str(self.r1_list_1_copy_11_copy.GetLabel()) + ', ' + str(self.r1_list_14_copy.GetLabel())
+           r1_time_2 = str(self.r1_time_1_copy.GetValue()) + ', ' + str(self.r1_time_2_copy.GetValue()) + ', ' + str(self.r1_time_3_copy.GetValue()) + ', ' + str(self.r1_time_4_copy.GetValue()) + ', ' + str(self.r1_time_5_copy.GetValue()) + ', ' + str(self.r1_time_6_copy.GetValue()) + ', ' + str(self.r1_time_7_copy.GetValue()) + ', ' + str(self.r1_time_8_copy.GetValue()) + ', ' + str(self.r1_time_9_copy.GetValue()) + ', ' + str(self.r1_time_10_copy.GetValue()) + ', ' + str(self.r1_time_11_copy.GetValue()) + ', ' + str(self.r1_time_12_copy.GetValue()) + ', ' + str(self.r1_time_13_copy.GetValue()) + ', ' + str(self.r1_time_1_4_copy.GetValue()) 
 
-           t1_list_3 = str(self.t1_list_1_copy_1.GetLabel()) + ', ' + str(self.t1_list_2_copy_1.GetLabel()) + ', ' + str(self.t1_list_3_copy_1.GetLabel()) + ', ' + str(self.t1_list_4_copy_1.GetLabel()) + ', ' + str(self.t1_list_5_copy_1.GetLabel()) + ', ' + str(self.t1_list_6_copy_1.GetLabel()) + ', ' + str(self.t1_list_7_copy_1.GetLabel()) + ', ' + str(self.t1_list_8_copy_1.GetLabel()) + ', ' + str(self.t1_list_9_copy_1.GetLabel()) + ', ' + str(self.t1_list_10_copy_1.GetLabel()) + ', ' + str(self.t1_list_11_copy_1.GetLabel()) + ', ' + str(self.t1_list_12_copy_1.GetLabel()) + ', ' + str(self.t1_list_1_copy_11_copy_1.GetLabel()) + ', ' + str(self.t1_list_14_copy_1.GetLabel())
-           t1_time_3 = str(self.t1_time_1_copy_1.GetValue()) + ', ' + str(self.t1_time_2_copy_1.GetValue()) + ', ' + str(self.t1_time_3_copy_1.GetValue()) + ', ' + str(self.t1_time_4_copy_1.GetValue()) + ', ' + str(self.t1_time_5_copy_1.GetValue()) + ', ' + str(self.t1_time_6_copy_1.GetValue()) + ', ' + str(self.t1_time_7_copy_1.GetValue()) + ', ' + str(self.t1_time_8_copy_1.GetValue()) + ', ' + str(self.t1_time_9_copy_1.GetValue()) + ', ' + str(self.t1_time_10_copy_1.GetValue()) + ', ' + str(self.t1_time_11_copy_1.GetValue()) + ', ' + str(self.t1_time_12_copy_1.GetValue()) + ', ' + str(self.t1_time_13_copy_1.GetValue()) + ', ' + str(self.t1_time_1_4_copy_1.GetValue()) 
+           r1_list_3 = str(self.r1_list_1_copy_1.GetLabel()) + ', ' + str(self.r1_list_2_copy_1.GetLabel()) + ', ' + str(self.r1_list_3_copy_1.GetLabel()) + ', ' + str(self.r1_list_4_copy_1.GetLabel()) + ', ' + str(self.r1_list_5_copy_1.GetLabel()) + ', ' + str(self.r1_list_6_copy_1.GetLabel()) + ', ' + str(self.r1_list_7_copy_1.GetLabel()) + ', ' + str(self.r1_list_8_copy_1.GetLabel()) + ', ' + str(self.r1_list_9_copy_1.GetLabel()) + ', ' + str(self.r1_list_10_copy_1.GetLabel()) + ', ' + str(self.r1_list_11_copy_1.GetLabel()) + ', ' + str(self.r1_list_12_copy_1.GetLabel()) + ', ' + str(self.r1_list_1_copy_11_copy_1.GetLabel()) + ', ' + str(self.r1_list_14_copy_1.GetLabel())
+           r1_time_3 = str(self.r1_time_1_copy_1.GetValue()) + ', ' + str(self.r1_time_2_copy_1.GetValue()) + ', ' + str(self.r1_time_3_copy_1.GetValue()) + ', ' + str(self.r1_time_4_copy_1.GetValue()) + ', ' + str(self.r1_time_5_copy_1.GetValue()) + ', ' + str(self.r1_time_6_copy_1.GetValue()) + ', ' + str(self.r1_time_7_copy_1.GetValue()) + ', ' + str(self.r1_time_8_copy_1.GetValue()) + ', ' + str(self.r1_time_9_copy_1.GetValue()) + ', ' + str(self.r1_time_10_copy_1.GetValue()) + ', ' + str(self.r1_time_11_copy_1.GetValue()) + ', ' + str(self.r1_time_12_copy_1.GetValue()) + ', ' + str(self.r1_time_13_copy_1.GetValue()) + ', ' + str(self.r1_time_1_4_copy_1.GetValue()) 
 
-           savet11 = [str(self.nmrfreq_value_t11.GetValue()), str(self.resultsdir_t11.GetValue()), replace(str(self.unresolved_t11.GetValue()),',',';'), t1_list_1, t1_time_1]
-           savet12 = [str(self.nmrfreq_value_t11_copy.GetValue()), str(self.resultsdir_t11_copy.GetValue()), replace(str(self.unresolved_t11_copy.GetValue()),',',';'), t1_list_2, t1_time_2]
-           savet13 = [str(self.nmrfreq_value_t11_copy_1.GetValue()), str(self.resultsdir_t11_copy_1.GetValue()), replace(str(self.unresolved_t11_copy_1.GetValue()),',',';'), t1_list_3, t1_time_3]
+           saver11 = [str(self.nmrfreq_value_r11.GetValue()), str(self.resultsdir_r11.GetValue()), replace(str(self.unresolved_r11.GetValue()),',',';'), r1_list_1, r1_time_1]
+           saver12 = [str(self.nmrfreq_value_r11_copy.GetValue()), str(self.resultsdir_r11_copy.GetValue()), replace(str(self.unresolved_r11_copy.GetValue()),',',';'), r1_list_2, r1_time_2]
+           saver13 = [str(self.nmrfreq_value_r11_copy_1.GetValue()), str(self.resultsdir_r11_copy_1.GetValue()), replace(str(self.unresolved_r11_copy_1.GetValue()),',',';'), r1_list_3, r1_time_3]
 
-           #T2
-           t2_list_1 = str(self.t2_list_1.GetLabel()) + ', ' + str(self.t2_list_2.GetLabel()) + ', ' + str(self.t2_list_3.GetLabel()) + ', ' + str(self.t2_list_4.GetLabel()) + ', ' + str(self.t2_list_5.GetLabel()) + ', ' + str(self.t2_list_6.GetLabel()) + ', ' + str(self.t2_list_7.GetLabel()) + ', ' + str(self.t2_list_8.GetLabel()) + ', ' + str(self.t2_list_9.GetLabel()) + ', ' + str(self.t2_list_10.GetLabel()) + ', ' + str(self.t2_list_11.GetLabel()) + ', ' + str(self.t2_list_12.GetLabel()) + ', ' + str(self.t2_list_13.GetLabel()) + ', ' + str(self.t2_list_14.GetLabel())
-           t2_time_1 = str(self.t2_time_1.GetValue()) + ', ' + str(self.t2_time_2.GetValue()) + ', ' + str(self.t2_time_3.GetValue()) + ', ' + str(self.t2_time_4.GetValue()) + ', ' + str(self.t2_time_5.GetValue()) + ', ' + str(self.t2_time_6.GetValue()) + ', ' + str(self.t2_time_7.GetValue()) + ', ' + str(self.t2_time_8.GetValue()) + ', ' + str(self.t2_time_9.GetValue()) + ', ' + str(self.t2_time_10.GetValue()) + ', ' + str(self.t2_time_11.GetValue()) + ', ' + str(self.t2_time_12.GetValue()) + ', ' + str(self.t2_time_13.GetValue()) + ', ' + str(self.t2_time_14.GetValue()) 
+           #R2
+           r2_list_1 = str(self.r2_list_1.GetLabel()) + ', ' + str(self.r2_list_2.GetLabel()) + ', ' + str(self.r2_list_3.GetLabel()) + ', ' + str(self.r2_list_4.GetLabel()) + ', ' + str(self.r2_list_5.GetLabel()) + ', ' + str(self.r2_list_6.GetLabel()) + ', ' + str(self.r2_list_7.GetLabel()) + ', ' + str(self.r2_list_8.GetLabel()) + ', ' + str(self.r2_list_9.GetLabel()) + ', ' + str(self.r2_list_10.GetLabel()) + ', ' + str(self.r2_list_11.GetLabel()) + ', ' + str(self.r2_list_12.GetLabel()) + ', ' + str(self.r2_list_13.GetLabel()) + ', ' + str(self.r2_list_14.GetLabel())
+           r2_time_1 = str(self.r2_time_1.GetValue()) + ', ' + str(self.r2_time_2.GetValue()) + ', ' + str(self.r2_time_3.GetValue()) + ', ' + str(self.r2_time_4.GetValue()) + ', ' + str(self.r2_time_5.GetValue()) + ', ' + str(self.r2_time_6.GetValue()) + ', ' + str(self.r2_time_7.GetValue()) + ', ' + str(self.r2_time_8.GetValue()) + ', ' + str(self.r2_time_9.GetValue()) + ', ' + str(self.r2_time_10.GetValue()) + ', ' + str(self.r2_time_11.GetValue()) + ', ' + str(self.r2_time_12.GetValue()) + ', ' + str(self.r2_time_13.GetValue()) + ', ' + str(self.r2_time_14.GetValue()) 
 
-           t2_list_2 = str(self.t2_list_1_copy.GetLabel()) + ', ' + str(self.t2_list_2_copy.GetLabel()) + ', ' + str(self.t2_list_3_copy.GetLabel()) + ', ' + str(self.t2_list_4_copy.GetLabel()) + ', ' + str(self.t2_list_5_copy.GetLabel()) + ', ' + str(self.t2_list_6_copy.GetLabel()) + ', ' + str(self.t2_list_7_copy.GetLabel()) + ', ' + str(self.t2_list_8_copy.GetLabel()) + ', ' + str(self.t2_list_9_copy.GetLabel()) + ', ' + str(self.t2_list_10_copy.GetLabel()) + ', ' + str(self.t2_list_11_copy.GetLabel()) + ', ' + str(self.t2_list_12_copy.GetLabel()) + ', ' + str(self.t2_list_13_copy.GetLabel()) + ', ' + str(self.t2_list_14_copy.GetLabel())
-           t2_time_2 = str(self.t2_time_1_copy.GetValue()) + ', ' + str(self.t2_time_2_copy.GetValue()) + ', ' + str(self.t2_time_3_copy.GetValue()) + ', ' + str(self.t2_time_4_copy.GetValue()) + ', ' + str(self.t2_time_5_copy.GetValue()) + ', ' + str(self.t2_time_6_copy.GetValue()) + ', ' + str(self.t2_time_7_copy.GetValue()) + ', ' + str(self.t2_time_8_copy.GetValue()) + ', ' + str(self.t2_time_9_copy.GetValue()) + ', ' + str(self.t2_time_10_copy.GetValue()) + ', ' + str(self.t2_time_11_copy.GetValue()) + ', ' + str(self.t2_time_12_copy.GetValue()) + ', ' + str(self.t2_time_13_copy.GetValue()) + ', ' + str(self.t2_time_14_copy.GetValue()) 
+           r2_list_2 = str(self.r2_list_1_copy.GetLabel()) + ', ' + str(self.r2_list_2_copy.GetLabel()) + ', ' + str(self.r2_list_3_copy.GetLabel()) + ', ' + str(self.r2_list_4_copy.GetLabel()) + ', ' + str(self.r2_list_5_copy.GetLabel()) + ', ' + str(self.r2_list_6_copy.GetLabel()) + ', ' + str(self.r2_list_7_copy.GetLabel()) + ', ' + str(self.r2_list_8_copy.GetLabel()) + ', ' + str(self.r2_list_9_copy.GetLabel()) + ', ' + str(self.r2_list_10_copy.GetLabel()) + ', ' + str(self.r2_list_11_copy.GetLabel()) + ', ' + str(self.r2_list_12_copy.GetLabel()) + ', ' + str(self.r2_list_13_copy.GetLabel()) + ', ' + str(self.r2_list_14_copy.GetLabel())
+           r2_time_2 = str(self.r2_time_1_copy.GetValue()) + ', ' + str(self.r2_time_2_copy.GetValue()) + ', ' + str(self.r2_time_3_copy.GetValue()) + ', ' + str(self.r2_time_4_copy.GetValue()) + ', ' + str(self.r2_time_5_copy.GetValue()) + ', ' + str(self.r2_time_6_copy.GetValue()) + ', ' + str(self.r2_time_7_copy.GetValue()) + ', ' + str(self.r2_time_8_copy.GetValue()) + ', ' + str(self.r2_time_9_copy.GetValue()) + ', ' + str(self.r2_time_10_copy.GetValue()) + ', ' + str(self.r2_time_11_copy.GetValue()) + ', ' + str(self.r2_time_12_copy.GetValue()) + ', ' + str(self.r2_time_13_copy.GetValue()) + ', ' + str(self.r2_time_14_copy.GetValue()) 
 
-           t2_list_3 = str(self.t2_list_1_copy_1.GetLabel()) + ', ' + str(self.t2_list_2_copy_1.GetLabel()) + ', ' + str(self.t2_list_3_copy_1.GetLabel()) + ', ' + str(self.t2_list_4_copy_1.GetLabel()) + ', ' + str(self.t2_list_5_copy_1.GetLabel()) + ', ' + str(self.t2_list_6_copy_1.GetLabel()) + ', ' + str(self.t2_list_7_copy_1.GetLabel()) + ', ' + str(self.t2_list_8_copy_1.GetLabel()) + ', ' + str(self.t2_list_9_copy_1.GetLabel()) + ', ' + str(self.t2_list_10_copy_1.GetLabel()) + ', ' + str(self.t2_list_11_copy_1.GetLabel()) + ', ' + str(self.t2_list_12_copy_1.GetLabel()) + ', ' + str(self.t2_list_13_copy_1.GetLabel()) + ', ' + str(self.t2_list_14_copy_1.GetLabel())
-           t2_time_3 = str(self.t2_time_1_copy_1.GetValue()) + ', ' + str(self.t2_time_2_copy_1.GetValue()) + ', ' + str(self.t2_time_3_copy_1.GetValue()) + ', ' + str(self.t2_time_4_copy_1.GetValue()) + ', ' + str(self.t2_time_5_copy_1.GetValue()) + ', ' + str(self.t2_time_6_copy_1.GetValue()) + ', ' + str(self.t2_time_7_copy_1.GetValue()) + ', ' + str(self.t2_time_8_copy_1.GetValue()) + ', ' + str(self.t2_time_9_copy_1.GetValue()) + ', ' + str(self.t2_time_10_copy_1.GetValue()) + ', ' + str(self.t2_time_11_copy_1.GetValue()) + ', ' + str(self.t2_time_12_copy_1.GetValue()) + ', ' + str(self.t2_time_13_copy_1.GetValue()) + ', ' + str(self.t2_time_14_copy_1.GetValue()) 
+           r2_list_3 = str(self.r2_list_1_copy_1.GetLabel()) + ', ' + str(self.r2_list_2_copy_1.GetLabel()) + ', ' + str(self.r2_list_3_copy_1.GetLabel()) + ', ' + str(self.r2_list_4_copy_1.GetLabel()) + ', ' + str(self.r2_list_5_copy_1.GetLabel()) + ', ' + str(self.r2_list_6_copy_1.GetLabel()) + ', ' + str(self.r2_list_7_copy_1.GetLabel()) + ', ' + str(self.r2_list_8_copy_1.GetLabel()) + ', ' + str(self.r2_list_9_copy_1.GetLabel()) + ', ' + str(self.r2_list_10_copy_1.GetLabel()) + ', ' + str(self.r2_list_11_copy_1.GetLabel()) + ', ' + str(self.r2_list_12_copy_1.GetLabel()) + ', ' + str(self.r2_list_13_copy_1.GetLabel()) + ', ' + str(self.r2_list_14_copy_1.GetLabel())
+           r2_time_3 = str(self.r2_time_1_copy_1.GetValue()) + ', ' + str(self.r2_time_2_copy_1.GetValue()) + ', ' + str(self.r2_time_3_copy_1.GetValue()) + ', ' + str(self.r2_time_4_copy_1.GetValue()) + ', ' + str(self.r2_time_5_copy_1.GetValue()) + ', ' + str(self.r2_time_6_copy_1.GetValue()) + ', ' + str(self.r2_time_7_copy_1.GetValue()) + ', ' + str(self.r2_time_8_copy_1.GetValue()) + ', ' + str(self.r2_time_9_copy_1.GetValue()) + ', ' + str(self.r2_time_10_copy_1.GetValue()) + ', ' + str(self.r2_time_11_copy_1.GetValue()) + ', ' + str(self.r2_time_12_copy_1.GetValue()) + ', ' + str(self.r2_time_13_copy_1.GetValue()) + ', ' + str(self.r2_time_14_copy_1.GetValue()) 
 
-           savet21 = [str(self.nmrfreq_value_t21.GetValue()), str(self.resultsdir_t21.GetValue()), replace(str(self.unresolved_t21.GetValue()),',',';'), t2_list_1, t2_time_1]
-           savet22 = [str(self.nmrfreq_value_t21_copy.GetValue()), str(self.resultsdir_t21_copy.GetValue()), replace(str(self.unresolved_t21_copy.GetValue()),',',';'), t2_list_2, t2_time_2]
-           savet23 = [str(self.nmrfreq_value_t21_copy_1.GetValue()), str(self.resultsdir_t21_copy_1.GetValue()), replace(str(self.unresolved_t21_copy_1.GetValue()),',',';'), t2_list_3, t2_time_3]
+           saver21 = [str(self.nmrfreq_value_r21.GetValue()), str(self.resultsdir_r21.GetValue()), replace(str(self.unresolved_r21.GetValue()),',',';'), r2_list_1, r2_time_1]
+           saver22 = [str(self.nmrfreq_value_r21_copy.GetValue()), str(self.resultsdir_r21_copy.GetValue()), replace(str(self.unresolved_r21_copy.GetValue()),',',';'), r2_list_2, r2_time_2]
+           saver23 = [str(self.nmrfreq_value_r21_copy_1.GetValue()), str(self.resultsdir_r21_copy_1.GetValue()), replace(str(self.unresolved_r21_copy_1.GetValue()),',',';'), r2_list_3, r2_time_3]
            
 
            #model-free
-           savemodel = [str(self.modelfreefreq1.GetValue()), str(self.m_noe_1.GetValue()), str(self.m_r1_1.GetValue()), str(self.m_r2_1.GetValue()), str(self.modelfreefreq2.GetValue()), str(self.m_noe_2.GetValue()), str(self.m_r1_2.GetValue()), str(self.m_r2_2.GetValue()), str(self.modelfreefreq3.GetValue()), str(self.m_noe_3.GetValue()), str(self.m_r1_3.GetValue()), str(self.m_r2_3.GetValue()), str(self. unresolved_t21_copy_1_copy.GetValue()), str(self.resultsdir_t21_copy_2.GetValue())]
+           savemodel = [str(self.modelfreefreq1.GetValue()), str(self.m_noe_1.GetValue()), str(self.m_r1_1.GetValue()), str(self.m_r2_1.GetValue()), str(self.modelfreefreq2.GetValue()), str(self.m_noe_2.GetValue()), str(self.m_r1_2.GetValue()), str(self.m_r2_2.GetValue()), str(self.modelfreefreq3.GetValue()), str(self.m_noe_3.GetValue()), str(self.m_r1_3.GetValue()), str(self.m_r2_3.GetValue()), str(self. unresolved_r21_copy_1_copy.GetValue()), str(self.resultsdir_r21_copy_2.GetValue())]
 
            #results
            noeresult = []
            for i in range(0,self.list_noe.GetCount()):
               noeresult.append(str(self.list_noe.GetString(i)))
-           txresult = []
-           for i in range(0,self.list_tx.GetCount()):
-              txresult.append(str(self.list_tx.GetString(i)))
+           rxresult = []
+           for i in range(0,self.list_rx.GetCount()):
+              rxresult.append(str(self.list_rx.GetString(i)))
            modelresult = []
            for i in range(0,self.list_modelfree.GetCount()):
               modelresult.append(str(self.list_modelfree.GetString(i)))
@@ -104,19 +104,19 @@ def create_save_file(self, filename):
            file.write(str(savenoe1) + '\n')
            file.write(str(savenoe2) + '\n')
            file.write(str(savenoe3) + '\n')
-           file.write('T1\n')
-           file.write(str(savet11) + '\n')
-           file.write(str(savet12) + '\n')
-           file.write(str(savet13) + '\n')
-           file.write('T2\n')
-           file.write(str(savet21) + '\n')
-           file.write(str(savet22) + '\n')
-           file.write(str(savet23) + '\n')
+           file.write('R1\n')
+           file.write(str(saver11) + '\n')
+           file.write(str(saver12) + '\n')
+           file.write(str(saver13) + '\n')
+           file.write('R2\n')
+           file.write(str(saver21) + '\n')
+           file.write(str(saver22) + '\n')
+           file.write(str(saver23) + '\n')
            file.write('Model-free\n')
            file.write(str(savemodel) + '\n')
            file.write('Results\n')
            file.write(str(noeresult) +'\n')
-           file.write(str(txresult) +'\n')
+           file.write(str(rxresult) +'\n')
            file.write(str(modelresult) +'\n')
            file.close()
 
@@ -145,15 +145,15 @@ def open_file(self, filename):
            param = stringtolist(saved[3])
            structure_file_pdb = param[0]
            self.structure_noe1.SetValue(structure_file_pdb)
-           self.structure_t11.SetValue(structure_file_pdb)
-           self.structure_t21.SetValue(structure_file_pdb)
+           self.structure_r11.SetValue(structure_file_pdb)
+           self.structure_r21.SetValue(structure_file_pdb)
            self.structure_noe1_copy.SetValue(structure_file_pdb)
-           self.structure_t11_copy.SetValue(structure_file_pdb)
-           self.structure_t21_copy.SetValue(structure_file_pdb)
+           self.structure_r11_copy.SetValue(structure_file_pdb)
+           self.structure_r21_copy.SetValue(structure_file_pdb)
            self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-           self.structure_t11_copy_1.SetValue(structure_file_pdb)
-           self.structure_t21_copy_1.SetValue(structure_file_pdb)
-           self.structure_t21_copy_1_copy.SetValue(structure_file_pdb)
+           self.structure_r11_copy_1.SetValue(structure_file_pdb)
+           self.structure_r21_copy_1.SetValue(structure_file_pdb)
+           self.structure_r21_copy_1_copy.SetValue(structure_file_pdb)
 
            # load NOE 1
            noes = stringtolist(saved[5])
@@ -188,41 +188,41 @@ def open_file(self, filename):
            self.unres_noe1_copy_1.SetValue(noes[6])
            self.res_noe1_copy_1.SetValue(noes[7])
 
-           #load T1
-           tx = stringtolist(saved[9])
-           self.nmrfreq_value_t11.SetValue(tx[0])
-           self.resultsdir_t11.SetValue(tx[1])
-           self.unresolved_t11.SetValue(tx[2])
+           #load R1
+           rx = stringtolist(saved[9])
+           self.nmrfreq_value_r11.SetValue(rx[0])
+           self.resultsdir_r11.SetValue(rx[1])
+           self.unresolved_r11.SetValue(rx[2])
 
-           #load T1 2
-           tx = stringtolist(saved[10])
-           self.nmrfreq_value_t11_copy.SetValue(tx[0])
-           self.resultsdir_t11_copy.SetValue(tx[1])
-           self.unresolved_t11_copy.SetValue(tx[2])
+           #load R1 2
+           rx = stringtolist(saved[10])
+           self.nmrfreq_value_r11_copy.SetValue(rx[0])
+           self.resultsdir_r11_copy.SetValue(rx[1])
+           self.unresolved_r11_copy.SetValue(rx[2])
 
-           #load T1 3
-           tx = stringtolist(saved[11])
-           self.nmrfreq_value_t21_copy_1.SetValue(tx[0])
-           self.resultsdir_t21_copy_1.SetValue(tx[1])
-           self.unresolved_t21_copy_1.SetValue(tx[2])
+           #load R1 3
+           rx = stringtolist(saved[11])
+           self.nmrfreq_value_r21_copy_1.SetValue(rx[0])
+           self.resultsdir_r21_copy_1.SetValue(rx[1])
+           self.unresolved_r21_copy_1.SetValue(rx[2])
 
-           #load T1
-           tx = stringtolist(saved[13])
-           self.nmrfreq_value_t21.SetValue(tx[0])
-           self.resultsdir_t21.SetValue(tx[1])
-           self.unresolved_t21.SetValue(tx[2])
+           #load R1
+           rx = stringtolist(saved[13])
+           self.nmrfreq_value_r21.SetValue(rx[0])
+           self.resultsdir_r21.SetValue(rx[1])
+           self.unresolved_r21.SetValue(rx[2])
 
-           #load T1 2
-           tx = stringtolist(saved[14])
-           self.nmrfreq_value_t21_copy.SetValue(tx[0])
-           self.resultsdir_t21_copy.SetValue(tx[1])
-           self.unresolved_t21_copy.SetValue(tx[2])
+           #load R1 2
+           rx = stringtolist(saved[14])
+           self.nmrfreq_value_r21_copy.SetValue(rx[0])
+           self.resultsdir_r21_copy.SetValue(rx[1])
+           self.unresolved_r21_copy.SetValue(rx[2])
 
-           #load T1 3
-           tx = stringtolist(saved[15])
-           self.nmrfreq_value_t21_copy_1.SetValue(tx[0])
-           self.resultsdir_t21_copy_1.SetValue(tx[1])
-           self.unresolved_t21_copy_1.SetValue(tx[2])
+           #load R1 3
+           rx = stringtolist(saved[15])
+           self.nmrfreq_value_r21_copy_1.SetValue(rx[0])
+           self.resultsdir_r21_copy_1.SetValue(rx[1])
+           self.unresolved_r21_copy_1.SetValue(rx[2])
 
            #model-free
            openmodel = stringtolist(saved[17])
@@ -238,12 +238,12 @@ def open_file(self, filename):
            self.m_noe_3.SetValue(openmodel[9])
            self.m_r1_3.SetValue(openmodel[10])
            self.m_r2_3.SetValue(openmodel[11])
-           self.unresolved_t21_copy_1_copy.SetValue(openmodel[12])
-           self.resultsdir_t21_copy_2.SetValue(openmodel[13])
+           self.unresolved_r21_copy_1_copy.SetValue(openmodel[12])
+           self.resultsdir_r21_copy_2.SetValue(openmodel[13])
 
            #results
            self.list_noe.Clear()  
-           self.list_tx.Clear()  
+           self.list_rx.Clear()  
            self.list_modelfree.Clear()  
 
            results = stringtolist(saved[19])
@@ -252,7 +252,7 @@ def open_file(self, filename):
 
            results = stringtolist(saved[20])
            for i in range(0,len(results)):
-              self.list_tx.Append(str(results[i]))
+              self.list_rx.Append(str(results[i]))
 
            results = stringtolist(saved[21])
            for i in range(0,len(results)):

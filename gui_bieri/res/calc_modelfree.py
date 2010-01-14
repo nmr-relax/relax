@@ -50,8 +50,8 @@ from message import relax_run_ok
 
 def start_model_free(self, model):
 
-        target_dir = str(self.resultsdir_t21_copy_2.GetValue())
-        unres = str(self.unresolved_t21_copy_1_copy.GetValue())
+        target_dir = str(self.resultsdir_r21_copy_2.GetValue())
+        unres = str(self.unresolved_r21_copy_1_copy.GetValue())
         nmr_freq1 = str(self.modelfreefreq1.GetValue())
         nmr_freq2 = str(self.modelfreefreq2.GetValue())
         nmr_freq3 = str(self.modelfreefreq3.GetValue())
@@ -133,7 +133,7 @@ def start_model_free(self, model):
         # User variables.
         #################
 
-        PDB_FILE = str(self.structure_t21_copy_1_copy.GetValue())
+        PDB_FILE = str(self.structure_r21_copy_1_copy.GetValue())
         gracedir = target_dir + sep + 'grace'
         resultsdir = target_dir + sep
         m_method = selection
