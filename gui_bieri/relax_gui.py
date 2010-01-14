@@ -1941,53 +1941,6 @@ class main(wx.Frame):
         webbrowser.open_new('http://www.nmr-relax.com/refs.html')
         event.Skip()
 
-
-    def import_seq(self, event): # open load sequence panel
-        global sequencefile  #load global variable
-        temp = load_sequence(self)
-        if not temp == None:
-           sequencefile = temp #set sequence file
-          
-           # set entries in pdb text box
-           structure_file_pdb = '!!! Sequence file selected !!!'
-           self.structure_noe1.SetValue(structure_file_pdb)
-           self.structure_t11.SetValue(structure_file_pdb)
-           self.structure_t21.SetValue(structure_file_pdb)
-           self.structure_noe1_copy.SetValue(structure_file_pdb)
-           self.structure_t11_copy.SetValue(structure_file_pdb)
-           self.structure_t21_copy.SetValue(structure_file_pdb)
-           self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-           self.structure_t11_copy_1.SetValue(structure_file_pdb)
-           self.structure_t21_copy_1.SetValue(structure_file_pdb)
-        event.Skip()
-
-
-    def settings(self, event): # set up for relax variables
-        global global_setting #import global variable
-        tmp_global = relax_global_settings(global_setting)
-        if not tmp_global == None:
-            if question('Do you realy want to change relax settings?'):
-              global_setting = tmp_global 
-        event.Skip()
-
-
-    def param_file_setting(self, event): # set up parameter files
-        global file_setting # import global variable
-        tmp_setting = import_file_settings(file_setting)
-        if not tmp_setting == None:
-            if question('Do you realy want to change import file settings?'):
-             file_setting = tmp_setting
-        event.Skip()
-
-
-    def reset_setting(self, event): #reset all settings
-        global global_setting #import global variable
-        global file_setting # import global variable
-        if question('Do you realy want to change relax settings?'):
-            global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-            file_setting = ['0', '1', '2', '3', '4', '5', '6']
-
-
     def openGUI(self, event): # Open
         filename = openfile('Select file to open', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
         if not filename == None:
