@@ -29,7 +29,6 @@ from re import search
 from string import lower
 import wx
 import time
-import res
 from string import replace
 from string import lowercase
 from os import getcwd
@@ -44,7 +43,19 @@ from generic_fns import pipes
 from relax_errors import RelaxError
 from version import version
 
+# relaxGUI module import
+from res.about import *
+from res.settings import *
+from res.calc_noe import *
+from res.calc_rx import *
+from res.calc_modelfree import start_model_free
+from res.filedialog import *
+from res.message import *
+from res.results_analysis import *
+from res.select_model_calc import *
+from res.project import *
 
+ 
 #####################################################################################################################
 #####################################################################################################################
 #####################################################################################################################

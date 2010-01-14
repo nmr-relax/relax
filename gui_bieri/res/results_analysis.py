@@ -30,9 +30,6 @@ from string import lower
 import wx
 import time
 import res
-from res.easygui import *
-from res.about import *
-from res.settings import *
 from string import replace
 from string import lowercase
 from os import getcwd, sep

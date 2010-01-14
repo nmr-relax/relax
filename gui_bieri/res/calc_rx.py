@@ -41,7 +41,11 @@ from generic_fns.state import save_state
 from generic_fns import monte_carlo
 from minfx.generic import generic_minimise
 
+# relaxGUI module import
+from results_analysis import color_code_noe
+from message import relax_run_ok
 
+ 
 def make_rx(target_dir, relax_times, structure_pdb, nmr_freq, r1_r2, freq_no, unres, self, freqno):
 
         success = False
