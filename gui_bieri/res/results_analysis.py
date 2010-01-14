@@ -29,7 +29,6 @@ from re import search
 from string import lower
 import wx
 import time
-import res
 from string import replace
 from string import lowercase
 from os import getcwd, sep
