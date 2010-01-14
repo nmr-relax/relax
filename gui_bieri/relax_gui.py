@@ -42,6 +42,8 @@ from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError
+from version import version
+
 
 #####################################################################################################################
 #####################################################################################################################
@@ -50,6 +52,10 @@ from relax_errors import RelaxError
 #####################################################################################################################
 
 # Variables
+
+######################
+GUI_version = '1.00'
+######################
 
 # Define Global Variables
 structure_file_pdb = "please insert .pdb file"
@@ -716,14 +722,14 @@ class main(wx.Frame):
 
     def __set_properties(self):
         # begin wxGlade: main.__set_properties
-        self.SetTitle("relaxGUI")
+        self.SetTitle("relaxGUI " + GUI_version)
         _icon = wx.EmptyIcon()
         _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((1000, 600))
         self.frame_1_statusbar.SetStatusWidths([770, 50, -1])
         # statusbar fields
-        frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", "waiting"]
+        frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
         for i in range(len(frame_1_statusbar_fields)):
             self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
         self.label_4_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
