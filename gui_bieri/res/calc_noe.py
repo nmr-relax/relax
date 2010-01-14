@@ -46,8 +46,8 @@ from message import relax_run_ok
 def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_pdb, unres, execute, self, freqno):
         success = False
         resultsdir = str(target_dir)
-        gracedir = str(target_dir) + '/grace'
-        save_file = str(target_dir) + '/noe.' + str(nmr_freq)  + '.out'
+        gracedir = str(target_dir) + sep + 'grace'
+        save_file = str(target_dir) + sep + 'noe.' + str(nmr_freq)  + '.out'
         noe_ref_1 = noe_ref
         noe_sat_1 = noe_sat
         unres = str(unres)
@@ -55,7 +55,7 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         #create unresolved file
         unres = replace(unres, ",","\n")
         unres = replace(unres, " ","")
-        filename3 = target_dir + '/unresolved'
+        filename3 = target_dir + sep + 'unresolved'
         unresolved = open(filename3, 'w')
         unresolved.write(unres)
         unresolved.close()
@@ -85,7 +85,7 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         spectrum.error_analysis()
         
         # Deselect unresolved residues.
-        deselect.read(file=resultsdir + '/unresolved')
+        deselect.read(file=resultsdir + sep + 'unresolved')
         
         # Calculate the NOEs.
         calc()
@@ -113,12 +113,12 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         print "calculation finished"
         print ""
         if freqno == 1:
-                     self.m_noe_1.SetValue(target_dir + '/noe.' + str(nmr_freq) + '.out')
+                     self.m_noe_1.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
         if freqno == 2:
-                     self.m_noe_2.SetValue(target_dir + '/noe.' + str(nmr_freq) + '.out')
+                     self.m_noe_2.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
         if freqno == 3:
-                     self.m_noe_3.SetValue(target_dir + '/noe.' + str(nmr_freq) + '.out')
-        self.list_noe.Append(target_dir + '/grace/noe.' + str(nmr_freq) + '.agr')
+                     self.m_noe_3.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
+        self.list_noe.Append(target_dir + sep + 'grace' + sep + 'noe.' + str(nmr_freq) + '.agr')
         success = True
 
         # Create PyMol Macro

@@ -73,7 +73,7 @@ def start_model_free(self, model):
             selection = "BIC" 
 
         #create unresolved file
-        filename2 =  target_dir + '/unresolved'
+        filename2 =  target_dir + sep + 'unresolved'
         file = open(filename2, 'w')
         unres = replace(unres, ",","\n")
         file.write(unres)
@@ -134,8 +134,8 @@ def start_model_free(self, model):
         #################
 
         PDB_FILE = str(self.structure_t21_copy_1_copy.GetValue())
-        gracedir = target_dir + '/grace'
-        resultsdir = target_dir + '/'
+        gracedir = target_dir + sep + 'grace'
+        resultsdir = target_dir + sep
         m_method = selection
 
         if selection == "AIC":
@@ -226,7 +226,7 @@ def start_model_free(self, model):
         
                 if DIFF_MODEL == 'local_tm':
                     # Base directory to place files into.
-                    self.base_dir = resultsdir + 'local_tm/'
+                    self.base_dir = resultsdir + 'local_tm' + sep
         
                     # Sequential optimisation of all model-free models (function must be modified to suit).
                     self.multi_model(local_tm=True)
@@ -248,7 +248,7 @@ def start_model_free(self, model):
                         # Inital round of optimisation for diffusion models MII to MV.
                         if self.round == 0:
                             # Base directory to place files into.
-                            self.base_dir = resultsdir + DIFF_MODEL + '/init/'
+                            self.base_dir = resultsdir + DIFF_MODEL + sep + 'init' + sep
         
                             # Run name.
                             name = DIFF_MODEL
@@ -257,7 +257,7 @@ def start_model_free(self, model):
                             pipe.create(name, 'mf')
         
                             # Load the local tm diffusion model MI results.
-                            results.read(file='results', dir=resultsdir + 'local_tm/'+modelselection)
+                            results.read(file='results', dir=resultsdir + 'local_tm' + sep+modelselection)
         
                             # Remove the tm parameter.
                             model_free.remove_tm()
@@ -297,7 +297,7 @@ def start_model_free(self, model):
                         # Normal round of optimisation for diffusion models MII to MV.
                         else:
                             # Base directory to place files into.
-                            self.base_dir = resultsdir + DIFF_MODEL + '/round_' + `self.round` + '/'
+                            self.base_dir = resultsdir + DIFF_MODEL + sep + 'round_' + `self.round` + sep
         
                             # Load the optimised diffusion tensor from either the previous round.
                             self.load_tensor()
@@ -340,7 +340,7 @@ def start_model_free(self, model):
                     pipe.create('local_tm', 'mf')
         
                     # Load the local tm diffusion model MI results.
-                    results.read(file='results', dir=resultsdir + 'local_tm/'+modelselection)
+                    results.read(file='results', dir=resultsdir + 'local_tm' + sep+modelselection)
         
                     # Loop over models MII to MV.
                     for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -361,7 +361,7 @@ def start_model_free(self, model):
                         pipe.create(model, 'mf')
         
                         # Load the diffusion model results.
-                        results.read(file='results', dir=resultsdir + model + '/round_' + `self.round` + '/opt')
+                        results.read(file='results', dir=resultsdir + model + sep + 'round_' + `self.round` + sep + 'opt')
         
                     # Model selection between MI to MV.
                     self.model_selection(modsel_pipe='final', write_flag=False)
@@ -594,11 +594,11 @@ def start_model_free(self, model):
         
                 # Load the optimised diffusion tensor from the initial round.
                 if self.round == 1:
-                    results.read('results', resultsdir + DIFF_MODEL + '/init')
+                    results.read('results', resultsdir + DIFF_MODEL + sep + 'init')
         
                 # Load the optimised diffusion tensor from the previous round.
                 else:
-                    results.read('results', resultsdir + DIFF_MODEL + '/round_' + `self.round - 1` + '/opt')
+                    results.read('results', resultsdir + DIFF_MODEL + sep + 'round_' + `self.round - 1` + sep + 'opt')
         
         
             def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
@@ -689,10 +689,10 @@ def start_model_free(self, model):
         #create results file
         if model == 'final':
            model_free_results(self, target_dir)
-           self.list_modelfree.Append(target_dir + '/final/grace/s2.agr')
-           self.list_modelfree.Append(target_dir + '/final/Model-free_Results.txt')
-           self.list_modelfree.Append(target_dir + '/final/s2.pml')
-           self.list_modelfree.Append(target_dir + '/final/rex.pml')
+           self.list_modelfree.Append(target_dir + sep + 'final' + sep + 'grace' + sep + 's2.agr')
+           self.list_modelfree.Append(target_dir + sep + 'final' + sep + 'Model-free_Results.txt')
+           self.list_modelfree.Append(target_dir + sep + 'final' + sep + 's2.pml')
+           self.list_modelfree.Append(target_dir + sep + 'final' + sep + 'rex.pml')
 
 
 

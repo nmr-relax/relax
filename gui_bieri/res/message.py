@@ -20,7 +20,10 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports
+from os import sep
 import wx
+
 
 class relax_is_running(wx.Dialog):
     def __init__(self, *args, **kwds):
@@ -28,7 +31,7 @@ class relax_is_running(wx.Dialog):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
         self.label_1 = wx.StaticText(self, -1, "relax is running...")
-        self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap("/home/michael/Dokumente/relaxGUI/res/pics/relax.gif", wx.BITMAP_TYPE_ANY))
+        self.bitmap_1 = wx.StaticBitmap(self, -1, wx.Bitmap(sep+'home'+sep+'michael'+sep+'Dokumente'+sep+'relaxGUI'+sep+'res'+sep+'pics'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.abort_relax = wx.Button(self, -1, "Cancel")
 
         self.__set_properties()
@@ -41,7 +44,7 @@ class relax_is_running(wx.Dialog):
         # begin relax_is_running.__set_properties
         self.SetTitle("relaxGUI")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap("/home/michael/Dokumente/relaxGUI/res/pics/relax_start.gif", wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(sep+'home'+sep+'michael'+sep+'Dokumente'+sep+'relaxGUI'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.label_1.SetFont(wx.Font(11, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         # end 

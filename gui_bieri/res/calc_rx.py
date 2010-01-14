@@ -45,8 +45,8 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
 
         success = False
         resultsdir = str(target_dir)
-        gracedir = str(target_dir) + '/grace'
-        savefile = str(target_dir) + '/r' + str(t1_t2) + '.' + str(nmr_freq)  + '.out'
+        gracedir = str(target_dir) + sep + 'grace'
+        savefile = str(target_dir) + sep + 'r' + str(t1_t2) + '.' + str(nmr_freq)  + '.out'
 
 
         # Select Peak Lists and Relaxation Times 
@@ -68,7 +68,7 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
 
         #create unresolved file
         unres = replace(unres, ",","\n")
-        filename2 = target_dir + '/unresolved'
+        filename2 = target_dir + sep + 'unresolved'
         file = open(filename2, 'w')
         file.write(unres)
         file.close()
@@ -108,7 +108,7 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
         spectrum.error_analysis()
         
         # Deselect unresolved spins.
-        deselect.read(file=resultsdir + '/unresolved')
+        deselect.read(file=resultsdir + sep + 'unresolved')
         
         # Set the relaxation curve type.
         relax_fit.select_model('exp')
@@ -156,21 +156,21 @@ def make_tx(target_dir, relax_times, structure_pdb, nmr_freq, t1_t2, freq_no, un
         msgbox(msg='T' + str(t1_t2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
 
         # list files to results
-        self.list_tx.Append(target_dir + '/grace/rx.' + str(nmr_freq) + '.agr')
-        self.list_tx.Append(target_dir + '/grace/intensities_norm.' + str(nmr_freq) + '.agr')
+        self.list_tx.Append(target_dir + sep + 'grace' + sep + 'rx.' + str(nmr_freq) + '.agr')
+        self.list_tx.Append(target_dir + sep + 'grace' + sep + 'intensities_norm.' + str(nmr_freq) + '.agr')
 
         # add files to model-free tab
         if t1_t2 == 1:
                     if freqno == 1:
-                      self.m_r1_1.SetValue(target_dir + '/r1.' + str(nmr_freq) + '.out')
+                      self.m_r1_1.SetValue(target_dir + sep + 'r1.' + str(nmr_freq) + '.out')
                     if freqno == 2:
-                      self.m_r1_2.SetValue(target_dir + '/r1.' + str(nmr_freq) + '.out')
+                      self.m_r1_2.SetValue(target_dir + sep + 'r1.' + str(nmr_freq) + '.out')
                     if freqno == 3:
-                      self.m_r1_3.SetValue(target_dir + '/r1.' + str(nmr_freq) + '.out')
+                      self.m_r1_3.SetValue(target_dir + sep + 'r1.' + str(nmr_freq) + '.out')
         if t1_t2 == 2:
                     if freqno == 1:
-                      self.m_r2_1.SetValue(target_dir + '/r2.' + str(nmr_freq) + '.out')
+                      self.m_r2_1.SetValue(target_dir + sep + 'r2.' + str(nmr_freq) + '.out')
                     if freqno == 2:
-                      self.m_r2_2.SetValue(target_dir + '/r2.' + str(nmr_freq) + '.out')
+                      self.m_r2_2.SetValue(target_dir + sep + 'r2.' + str(nmr_freq) + '.out')
                     if freqno == 3:
-                      self.m_r2_3.SetValue(target_dir + '/r2.' + str(nmr_freq) + '.out')
+                      self.m_r2_3.SetValue(target_dir + sep + 'r2.' + str(nmr_freq) + '.out')
