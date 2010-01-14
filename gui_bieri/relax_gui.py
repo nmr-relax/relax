@@ -1989,13 +1989,13 @@ class main(wx.Frame):
 
 
     def openGUI(self, event): # Open
-        filename = fileopenbox(msg=None, title='Open relaxGUI save file', default = "*.relaxGUI")
+        filename = openfile('Select file to open', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
         if not filename == None:
            open_file(self, filename)
         event.Skip()
 
     def saveGUI(self, event): # Save
-     filename = filesavebox(msg=None, title='Save File as', default = "*.relaxGUI")
+     filename = savefile('Select file to save', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
      if not filename == None: 
         create_save_file(self, filename)
      event.Skip()
@@ -2020,7 +2020,7 @@ class main(wx.Frame):
 
     def sat_noe1(self, event): # saturated noe 1
         backup = self.noe_sat_1.GetValue()
-        noesat[0] = fileopenbox(msg='Select saturated NOE file ('+ str(nmrfreq[0]) + ' MHz)', title='relaxGUI', default=self.res_noe1.GetValue() + sep, filetypes=None)
+        noesat[0] = openfile('Select saturated NOE', self.res_noe1.GetValue() + sep, '*.*', 'all files (*.*)|*.*')
         if noesat[0] == None:
            noesat[0] = backup
         self.noe_sat_1.SetValue(noesat[0])
@@ -2028,7 +2028,7 @@ class main(wx.Frame):
 
     def ref_noe(self, event): # reference noe 1
         backup = self.noe_ref_1.GetValue()
-        noeref[0] = fileopenbox(msg='Select reference NOE file ('+ str(nmrfreq[0]) + ' MHz)', title='relaxGUI', default=self.res_noe1.GetValue() + sep, filetypes=None)
+        noeref[0] = openfile('Select reference NOE', self.res_noe1.GetValue() + sep, '*.*', 'all files (*.*)|*.*')
         if noeref[0] == None:
            noeref[0] = backup
         self.noe_ref_1.SetValue(noeref[0])
@@ -2036,7 +2036,7 @@ class main(wx.Frame):
 
     def structure_pdb(self, event): # structure file
         backup = self.structure_noe1.GetValue()
-        structure_file_pdb = fileopenbox(msg='Select PDB file', title='relaxGUI', default=self.res_noe1.GetValue() + sep, filetypes=None)
+        structure_file_pdb = openfile('Select PDB File', self.res_noe1.GetValue() + sep, '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
         if structure_file_pdb == None:
            structure_file_pdb = backup
         self.structure_noe1.SetValue(structure_file_pdb)
@@ -2082,7 +2082,7 @@ class main(wx.Frame):
     def add_r1_1(self, event): # add a r1 peak list
 
         if len(r1_list) < 14:
-             r1_entry = fileopenbox(msg='Select R1 peak list file', title=None, default=self.resultsdir_r11.GetValue() + sep, filetypes=None)
+             r1_entry = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r1_entry == None:
                 r1_list.append(r1_entry)
 
@@ -2168,7 +2168,7 @@ class main(wx.Frame):
 
     def add_r2_1(self, event): # add a r2 peak list
         if len(r2_list) < 14:
-             r2_entry = fileopenbox(msg='Select R2 peak list file', title='relaxGUI', default=self.resultsdir_r21.GetValue() + sep, filetypes=None)
+             r2_entry = multi_openfile('Select R2 peak list file', self.resultsdir_r21.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r2_entry == None:
                 r2_list.append(r2_entry)
         if len(r2_list) == 1:
@@ -2245,7 +2245,7 @@ class main(wx.Frame):
 
     def sat_noe2(self, event): # saturated noe no. 2
         backup = self.noe_sat_1_copy.GetValue()
-        noesat[1] = fileopenbox(msg='Select saturated NOE file ('+ str(nmrfreq[1]) + ' MHz)', title=None, default= self.res_noe1_copy.GetValue() + sep, filetypes=None)
+        noesat[1] = openfile('Select saturated NOE file', self.res_noe1_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
         if noesat[1] == None:
            noesat[1] = backup
         self.noe_sat_1_copy.SetValue(noesat[1])
@@ -2253,7 +2253,7 @@ class main(wx.Frame):
 
     def ref_noe2(self, event): # reference noe no. 2
         backup = self.noe_ref_1_copy.GetValue()
-        noeref[1] = fileopenbox(msg='Select reference NOE file ('+ str(nmrfreq[1]) + ' MHz)', title=None, default=self.res_noe1_copy.GetValue() + sep, filetypes=None)
+        noeref[1] = openfile('Select reference NOE file', self.res_noe1_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
         if noeref[1] == None:
            noeref[1] = backup
         self.noe_ref_1_copy.SetValue(noeref[1])
@@ -2285,7 +2285,7 @@ class main(wx.Frame):
 
     def add_r1_2(self, event): # wxGlade: main.<event_handler>
         if len(r1_list2) < 14:
-             r1_entry2 = fileopenbox(msg='Select R1 peak list file', title=None, default=self.resultsdir_r11_copy.GetValue() + sep, filetypes=None)
+             r1_entry2 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r1_entry2 == None:
                 r1_list2.append(r1_entry2)
         if len(r1_list2) == 1:
@@ -2372,7 +2372,7 @@ class main(wx.Frame):
 
     def add_r2_2(self, event): # add a r2 peak list
         if len(r2_list2) < 14:
-             r2_entry2 = fileopenbox(msg='Select R2 peak list file', title='relaxGUI', default=self.resultsdir_r21_copy.GetValue() + sep, filetypes=None)
+             r2_entry2 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r2_entry2 == None:
                 r2_list2.append(r2_entry2)
         if len(r2_list2) == 1:
@@ -2451,7 +2451,7 @@ class main(wx.Frame):
 
     def sat_noe3(self, event): # saturated noe no. 3
         backup = self.noe_sat_1_copy_1.GetValue()
-        noesat[2] = fileopenbox(msg='Select saturated NOE file ('+ str(nmrfreq[2]) + ' MHz)', title='relaxGUI', default= self.res_noe1_copy_1.GetValue() + sep, filetypes=None)
+        noesat[2] = openfile('Select saturated NOE file', self.res_noe1_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
         if noesat[2] == None:
            noesat[2] = backup
         self.noe_sat_1_copy_1.SetValue(noesat[2])
@@ -2459,7 +2459,7 @@ class main(wx.Frame):
 
     def ref_noe3(self, event): # refererence noe 3
         backup = self.noe_ref_1_copy_1.GetValue()
-        noeref[2] = fileopenbox(msg='Select reference NOE file ('+ str(nmrfreq[2]) + ' MHz)', title=None, default=self.res_noe1_copy_1.GetValue() + sep, filetypes=None)
+        noeref[2] = openfile('Select reference NOE file', self.res_noe1_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
         if noeref[2] == None:
            noeref[2] = backup
         self.noe_ref_1_copy_1.SetValue(noeref[2])
@@ -2491,7 +2491,7 @@ class main(wx.Frame):
 
     def add_r1_3(self, event): # wxGlade: main.<event_handler>
         if len(r1_list3) < 14:
-             r1_entry3 = fileopenbox(msg='Select R1 peak list file', title=None, default=self.resultsdir_r11_copy_1.GetValue() + sep, filetypes=None)
+             r1_entry3 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r1_entry3 == None:
                 r1_list3.append(r1_entry3)
 
@@ -2578,7 +2578,7 @@ class main(wx.Frame):
 
     def add_r2_3(self, event): # add R2 peakfile no. 3
         if len(r2_list3) < 14:
-             r2_entry3 = fileopenbox(msg='Select R2 peak list file', title='relaxGUI', default=self.resultsdir_r21_copy_1.GetValue() + sep, filetypes=None)
+             r2_entry3 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r2_entry3 == None:
                 r2_list3.append(r2_entry3)
         if len(r2_list3) == 1:
@@ -2656,7 +2656,7 @@ class main(wx.Frame):
 
     def model_noe1(self, event): # load noe1
         backup = self.m_noe_1.GetValue() 
-        paramfiles1[0] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_noe_1.GetValue() + sep, filetypes=None)
+        paramfiles1[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles1[0] == None:
            paramfiles1[0] = backup
         self.m_noe_1.SetValue(paramfiles1[0])
@@ -2664,7 +2664,7 @@ class main(wx.Frame):
 
     def model_r11(self, event): # 
         backup = self.m_r1_1.GetValue() 
-        paramfiles1[1] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_r1_1.GetValue() + sep, filetypes=None)
+        paramfiles1[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles1[1] == None:
            paramfiles1[1] = backup
         self.m_r1_1.SetValue(paramfiles1[1])
@@ -2672,7 +2672,7 @@ class main(wx.Frame):
 
     def model_r21(self, event): # 
         backup = self.m_r2_1.GetValue() 
-        paramfiles1[2] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_r2_1.GetValue() + sep, filetypes=None)
+        paramfiles1[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles1[2] == None:
            paramfiles1[2] = backup
         self.m_r2_1.SetValue(paramfiles1[2])
@@ -2680,7 +2680,7 @@ class main(wx.Frame):
 
     def model_noe2(self, event): # load noe1
         backup = self.m_noe_2.GetValue() 
-        paramfiles2[0] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_noe_2.GetValue() + sep, filetypes=None)
+        paramfiles2[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles2[0] == None:
            paramfiles2[0] = backup
         self.m_noe_2.SetValue(paramfiles2[0])
@@ -2688,7 +2688,7 @@ class main(wx.Frame):
 
     def model_r12(self, event): # 
         backup = self.m_r1_2.GetValue() 
-        paramfiles2[1] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_r1_2.GetValue() + sep, filetypes=None)
+        paramfiles2[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles2[1] == None:
            paramfiles2[1] = backup
         self.m_r1_2.SetValue(paramfiles2[1])
@@ -2696,7 +2696,7 @@ class main(wx.Frame):
 
     def model_r22(self, event): # 
         backup = self.m_r2_2.GetValue() 
-        paramfiles2[2] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_r2_2.GetValue() + sep, filetypes=None)
+        paramfiles2[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles2[2] == None:
            paramfiles2[2] = backup
         self.m_r2_2.SetValue(paramfiles2[2])
@@ -2704,7 +2704,7 @@ class main(wx.Frame):
 
     def model_noe3(self, event): # load noe1
         backup = self.m_noe_3.GetValue() 
-        paramfiles3[0] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_noe_3.GetValue() + sep, filetypes=None)
+        paramfiles3[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles3[0] == None:
            paramfiles3[0] = backup
         self.m_noe_3.SetValue(paramfiles3[0])
@@ -2712,7 +2712,7 @@ class main(wx.Frame):
 
     def model_r13(self, event): 
         backup = self.m_r1_3.GetValue() 
-        paramfiles3[1] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_r1_3.GetValue() + sep, filetypes=None)
+        paramfiles3[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles3[1] == None:
            paramfiles3[1] = backup
         self.m_r1_3.SetValue(paramfiles3[1])
@@ -2720,7 +2720,7 @@ class main(wx.Frame):
 
     def model_r23(self, event): 
         backup = self.m_r2_3.GetValue() 
-        paramfiles3[2] = fileopenbox(msg='Select NOE peak list file', title='relaxGUI', default=self.m_r2_3.GetValue() + sep, filetypes=None)
+        paramfiles3[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
         if paramfiles3[2] == None:
            paramfiles3[2] = backup
         self.m_r2_3.SetValue(paramfiles3[2])
