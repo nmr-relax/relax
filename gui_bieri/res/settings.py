@@ -21,152 +21,235 @@
 ###############################################################################
 
 # Python module imports.
-from wxPython.wx import wxFrame
+from os import sep
+import sys
 import wx
 
 
-class Settings(wxFrame):
+
+
+class globalparam(wx.Dialog):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: Settings.__init__
-        kwds["style"] = wxDEFAULT_FRAME_STYLE|wx.STAY_ON_TOP
-        wxFrame.__init__(self, *args, **kwds)
-        self.panel_1 = wxPanel(self, -1)
-        self.title = wxStaticText(self, -1, "relaxGUI Global Settings", style=wxALIGN_CENTRE)
-        self.label_1 = wxStaticText(self, -1, "Global Settings:")
-        self.label_2 = wxStaticText(self, -1, "Bond length:")
-        self.bond = wxTextCtrl(self, -1, "1.02 * 1e-10")
-        self.label_3 = wxStaticText(self, -1, "CSA:")
-        self.csa = wxTextCtrl(self, -1, "-172 * 1e-6")
-        self.label_4 = wxStaticText(self, -1, "Grid search increase:")
-        self.grid_inc = wxTextCtrl(self, -1, "11")
-        self.label_5 = wxStaticText(self, -1, "Number of Monte Carlo\nSimulations:")
-        self.mc_no = wxTextCtrl(self, -1, "500")
-        self.label_6 = wxStaticText(self, -1, "Minimisation algorithm:")
-        self.minimisation = wxTextCtrl(self, -1, "")
-        self.label_7 = wxStaticText(self, -1, "Peak Lists (colons):")
-        self.label_8 = wxStaticText(self, -1, "Residue number:")
-        self.res_col = wxTextCtrl(self, -1, "")
-        self.label_9 = wxStaticText(self, -1, "Intensities:")
-        self.int_col = wxTextCtrl(self, -1, "")
-        self.label_10 = wxStaticText(self, -1, "Error:")
-        self.err_col = wxTextCtrl(self, -1, "")
-        self.label_11 = wxStaticText(self, -1, "")
-        self.save_button = wxButton(self.panel_1, -1, "Save")
-        self.cancel_button = wxButton(self.panel_1, -1, "Cancel")
+        # begin globalparam.__init__
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        wx.Dialog.__init__(self, *args, **kwds)
+        self.label_1_copy = wx.StaticText(self, -1, "Global Parameters for relax")
+        self.bitmap_1_copy = wx.StaticBitmap(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.label_2_copy = wx.StaticText(self, -1, "Bond Length:")
+        self.bond = wx.TextCtrl(self, -1, old_settings[0])
+        self.label_3_copy = wx.StaticText(self, -1, "CSA")
+        self.csa = wx.TextCtrl(self, -1, old_settings[1])
+        self.label_5_copy = wx.StaticText(self, -1, "Hetero Nucleus")
+        self.hetero = wx.TextCtrl(self, -1, old_settings[2])
+        self.label_6_copy = wx.StaticText(self, -1, "Proton")
+        self.prot = wx.TextCtrl(self, -1, old_settings[3])
+        self.label_9_copy = wx.StaticText(self, -1, "Grid Search Increase")
+        self.grid = wx.TextCtrl(self, -1, old_settings[4])
+        self.label_7_copy = wx.StaticText(self, -1, "Minimisation Algrithm")
+        self.minim = wx.TextCtrl(self, -1, old_settings[5])
+        self.label_8_copy = wx.StaticText(self, -1, "Monte Carlo Simulations")
+        self.monte = wx.TextCtrl(self, -1, old_settings[6])
+        self.ok_copy = wx.Button(self, -1, "Ok")
+        self.cancel_copy = wx.Button(self, -1, "Cancel")
 
         self.__set_properties()
         self.__do_layout()
 
-        EVT_BUTTON(self, self.save_button.GetId(), self.save)
-        EVT_BUTTON(self, self.cancel_button.GetId(), self.cancel)
-        # end wxGlade
+        self.Bind(wx.EVT_BUTTON, self.accept_settings, self.ok_copy)
+        self.Bind(wx.EVT_BUTTON, self.cancel_settings, self.cancel_copy)
+        # end 
 
     def __set_properties(self):
-        # begin wxGlade: Settings.__set_properties
-        self.SetTitle("Settings")
-        _icon = wxEmptyIcon()
-        _icon.CopyFromBitmap(wxBitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wxBITMAP_TYPE_ANY))
+        # begin globalparam.__set_properties
+        self.SetTitle("relaxGUI")
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
-        self.title.SetFont(wxFont(15, wxDEFAULT, wxITALIC, wxNORMAL, 0, ""))
-        self.label_1.SetMinSize((155, 17))
-        self.label_1.SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxBOLD, 0, ""))
-        self.label_2.SetMinSize((155, 17))
-        self.bond.SetMinSize((100, 27))
-        self.label_3.SetMinSize((155, 17))
-        self.csa.SetMinSize((100, 27))
-        self.label_4.SetMinSize((155, 17))
-        self.grid_inc.SetMinSize((100, 27))
-        self.label_5.SetMinSize((155, 34))
-        self.mc_no.SetMinSize((100, 27))
-        self.label_6.SetMinSize((155, 17))
-        self.minimisation.SetMinSize((100, 27))
-        self.label_7.SetMinSize((155, 17))
-        self.label_7.SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxBOLD, 0, ""))
-        self.label_8.SetMinSize((155, 17))
-        self.res_col.SetMinSize((100, 27))
-        self.label_9.SetMinSize((155, 17))
-        self.int_col.SetMinSize((100, 27))
-        self.label_10.SetMinSize((155, 17))
-        self.err_col.SetMinSize((100, 27))
-        self.save_button.SetMinSize((103, 27))
-        self.cancel_button.SetMinSize((103, 27))
-        self.panel_1.SetMinSize((251, 5))
-        # end wxGlade
+        self.label_1_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.bond.SetMinSize((150, 27))
+        self.csa.SetMinSize((150, 27))
+        self.hetero.SetMinSize((150, 27))
+        self.prot.SetMinSize((150, 27))
+        self.grid.SetMinSize((150, 27))
+        self.minim.SetMinSize((150, 27))
+        self.label_8_copy.SetMinSize((156, 17))
+        self.monte.SetMinSize((150, 27))
+        # end 
 
     def __do_layout(self):
-        # begin wxGlade: Settings.__do_layout
-        sizer_2 = wxBoxSizer(wxVERTICAL)
-        sizer_3 = wxBoxSizer(wxHORIZONTAL)
-        sizer_5 = wxBoxSizer(wxVERTICAL)
-        sizer_16 = wxBoxSizer(wxHORIZONTAL)
-        sizer_15 = wxBoxSizer(wxHORIZONTAL)
-        sizer_14 = wxBoxSizer(wxHORIZONTAL)
-        sizer_13 = wxBoxSizer(wxHORIZONTAL)
-        sizer_12 = wxBoxSizer(wxHORIZONTAL)
-        sizer_11 = wxBoxSizer(wxHORIZONTAL)
-        sizer_10 = wxBoxSizer(wxHORIZONTAL)
-        sizer_9 = wxBoxSizer(wxHORIZONTAL)
-        sizer_8 = wxBoxSizer(wxHORIZONTAL)
-        sizer_7 = wxBoxSizer(wxHORIZONTAL)
-        sizer_6 = wxBoxSizer(wxHORIZONTAL)
-        sizer_2.Add(self.title, 0, wxALL|wxADJUST_MINSIZE, 10)
-        sizer_6.Add(self.label_1, 0, wxTOP|wxADJUST_MINSIZE, 2)
-        sizer_5.Add(sizer_6, 1, wxEXPAND, 0)
-        sizer_7.Add(self.label_2, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_7.Add(self.bond, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_7, 1, wxEXPAND, 0)
-        sizer_8.Add(self.label_3, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_8.Add(self.csa, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_8, 1, wxEXPAND, 0)
-        sizer_9.Add(self.label_4, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_9.Add(self.grid_inc, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_9, 1, wxEXPAND, 0)
-        sizer_10.Add(self.label_5, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_10.Add(self.mc_no, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_10, 1, wxEXPAND, 0)
-        sizer_11.Add(self.label_6, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_11.Add(self.minimisation, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_11, 1, wxEXPAND, 0)
-        sizer_12.Add(self.label_7, 0, wxTOP|wxADJUST_MINSIZE, 6)
-        sizer_5.Add(sizer_12, 1, wxEXPAND, 0)
-        sizer_13.Add(self.label_8, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_13.Add(self.res_col, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_13, 1, wxEXPAND, 0)
-        sizer_14.Add(self.label_9, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_14.Add(self.int_col, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_14, 1, wxEXPAND, 0)
-        sizer_15.Add(self.label_10, 0, wxTOP|wxBOTTOM|wxADJUST_MINSIZE, 3)
-        sizer_15.Add(self.err_col, 0, wxADJUST_MINSIZE, 0)
-        sizer_5.Add(sizer_15, 1, wxEXPAND, 0)
-        sizer_5.Add(self.label_11, 0, wxADJUST_MINSIZE, 0)
-        sizer_16.Add(self.save_button, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxADJUST_MINSIZE, 0)
-        sizer_16.Add(self.cancel_button, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxADJUST_MINSIZE, 0)
-        self.panel_1.SetSizer(sizer_16)
-        sizer_5.Add(self.panel_1, 1, wxEXPAND, 0)
-        sizer_3.Add(sizer_5, 1, wxLEFT|wxSHAPED, 5)
-        sizer_2.Add(sizer_3, 1, wxEXPAND, 0)
-        self.SetSizer(sizer_2)
-        sizer_2.Fit(self)
+        # begin  globalparam.__do_layout
+        sizer_1_copy = wx.BoxSizer(wx.VERTICAL)
+        grid_sizer_1_copy = wx.GridSizer(8, 2, 0, 0)
+        sizer_1_copy.Add(self.label_1_copy, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5)
+        sizer_1_copy.Add(self.bitmap_1_copy, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5)
+        grid_sizer_1_copy.Add(self.label_2_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.bond, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_3_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.csa, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_5_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.hetero, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_6_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.prot, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_9_copy, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.grid, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_7_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.minim, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_8_copy, 0, wx.LEFT|wx.RIGHT, 5)
+        grid_sizer_1_copy.Add(self.monte, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.ok_copy, 0, wx.ALL|wx.ALIGN_RIGHT, 5)
+        grid_sizer_1_copy.Add(self.cancel_copy, 0, wx.ALL, 5)
+        sizer_1_copy.Add(grid_sizer_1_copy, 1, wx.SHAPED, 0)
+        self.SetSizer(sizer_1_copy)
+        sizer_1_copy.Fit(self)
         self.Layout()
-        self.Centre()
-        # end wxGlade
+        # end dialog
 
-    def save(self, event): 
-        print "Save settings not yet implemented!"
-        self.Close()
+    def accept_settings(self, event): # change settings
+        global settings
+        settings = []
+        settings.append(str(self.bond.GetValue()))
+        settings.append(str(self.csa.GetValue()))
+        settings.append(str(self.hetero.GetValue()))
+        settings.append(str(self.prot.GetValue()))
+        settings.append(str(self.grid.GetValue()))
+        settings.append(str(self.minim.GetValue()))
+        settings.append(str(self.monte.GetValue()))
+        self.Destroy()
         event.Skip()
 
-    def cancel(self, event): 
-        self.Close()
+    def cancel_settings(self, event): # do not change settings
+        global settings
+        settings = None
+        self.Destroy()
         event.Skip()
 
-# end of class Settings
+# end of class globalparam
 
 
-def relax_settings():
+
+
+
+class inputfile(wx.Dialog):
+    def __init__(self, *args, **kwds):
+        # begin inputfile.__init__
+        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        wx.Dialog.__init__(self, *args, **kwds)
+        self.label_1_copy_copy = wx.StaticText(self, -1, "Parameter File Settings")
+        self.bitmap_1_copy_copy = wx.StaticBitmap(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.label_2_copy_copy = wx.StaticText(self, -1, "Molecule Name")
+        self.mol_nam = wx.TextCtrl(self, -1, old_settings[0])
+        self.label_3_copy_copy = wx.StaticText(self, -1, "Residue Number")
+        self.res_num_col = wx.TextCtrl(self, -1, old_settings[1])
+        self.label_5_copy_copy = wx.StaticText(self, -1, "Residue Name")
+        self.res_nam_col = wx.TextCtrl(self, -1, old_settings[2])
+        self.label_6_copy_copy = wx.StaticText(self, -1, "Spin Number")
+        self.spin_num_col = wx.TextCtrl(self, -1, old_settings[3])
+        self.label_9_copy_copy = wx.StaticText(self, -1, "Spin Name")
+        self.spin_nam_col = wx.TextCtrl(self, -1, old_settings[4])
+        self.label_7_copy_copy = wx.StaticText(self, -1, "Values")
+        self.value_col = wx.TextCtrl(self, -1, old_settings[5])
+        self.label_8_copy_copy = wx.StaticText(self, -1, "Errors")
+        self.error_col = wx.TextCtrl(self, -1, old_settings[6])
+        self.ok_copy_copy = wx.Button(self, -1, "Ok")
+        self.cancel_copy_copy = wx.Button(self, -1, "Cancel")
+
+        self.__set_properties()
+        self.__do_layout()
+
+        self.Bind(wx.EVT_BUTTON, self.accept_settings, self.ok_copy_copy)
+        self.Bind(wx.EVT_BUTTON, self.cancel_settings, self.cancel_copy_copy)
+        # end 
+
+    def __set_properties(self):
+        # begin inputfile.__set_properties
+        self.SetTitle("relaxGUI")
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.SetIcon(_icon)
+        self.label_1_copy_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.mol_nam.SetMinSize((150, 27))
+        self.res_num_col.SetMinSize((150, 27))
+        self.res_nam_col.SetMinSize((150, 27))
+        self.spin_num_col.SetMinSize((150, 27))
+        self.spin_nam_col.SetMinSize((150, 27))
+        self.value_col.SetMinSize((150, 27))
+        self.label_8_copy_copy.SetMinSize((156, 17))
+        self.error_col.SetMinSize((150, 27))
+        # end 
+
+    def __do_layout(self):
+        # begin inputfile.__do_layout
+        sizer_1_copy_copy = wx.BoxSizer(wx.VERTICAL)
+        grid_sizer_1_copy_copy = wx.GridSizer(8, 2, 0, 0)
+        sizer_1_copy_copy.Add(self.label_1_copy_copy, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5)
+        sizer_1_copy_copy.Add(self.bitmap_1_copy_copy, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5)
+        grid_sizer_1_copy_copy.Add(self.label_2_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy_copy.Add(self.mol_nam, 0, 0, 0)
+        grid_sizer_1_copy_copy.Add(self.label_3_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy_copy.Add(self.res_num_col, 0, 0, 0)
+        grid_sizer_1_copy_copy.Add(self.label_5_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy_copy.Add(self.res_nam_col, 0, 0, 0)
+        grid_sizer_1_copy_copy.Add(self.label_6_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy_copy.Add(self.spin_num_col, 0, 0, 0)
+        grid_sizer_1_copy_copy.Add(self.label_9_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy_copy.Add(self.spin_nam_col, 0, 0, 0)
+        grid_sizer_1_copy_copy.Add(self.label_7_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy_copy.Add(self.value_col, 0, 0, 0)
+        grid_sizer_1_copy_copy.Add(self.label_8_copy_copy, 0, wx.LEFT|wx.RIGHT, 5)
+        grid_sizer_1_copy_copy.Add(self.error_col, 0, 0, 0)
+        grid_sizer_1_copy_copy.Add(self.ok_copy_copy, 0, wx.ALL|wx.ALIGN_RIGHT, 5)
+        grid_sizer_1_copy_copy.Add(self.cancel_copy_copy, 0, wx.ALL, 5)
+        sizer_1_copy_copy.Add(grid_sizer_1_copy_copy, 1, wx.SHAPED, 0)
+        self.SetSizer(sizer_1_copy_copy)
+        sizer_1_copy_copy.Fit(self)
+        self.Layout()
+        # end 
+
+    def accept_settings(self, event): # change settings
+        global settings
+        settings = []
+        settings.append(str(self.mol_nam.GetValue()))
+        settings.append(str(self.res_num_col.GetValue()))
+        settings.append(str(self.res_nam_col.GetValue()))
+        settings.append(str(self.spin_num_col.GetValue()))
+        settings.append(str(self.spin_nam_col.GetValue()))
+        settings.append(str(self.value_col.GetValue()))
+        settings.append(str(self.error_col.GetValue()))
+        self.Destroy()
+        event.Skip()
+
+    def cancel_settings(self, event): # cancel
+        global settings
+        settings = None
+        self.Destroy()
+        event.Skip()
+
+# end of class inputfile
+
+
+
+
+def relax_global_settings(oldsettings):
+    global settings
+    global old_settings
+    settings = []
+    old_settings = oldsettings
+    set_relax_params = globalparam(None, -1, "")
+    set_relax_params.ShowModal()
+    return settings
+
+def import_file_settings(oldsettings):
+    global settings
+    global old_settings
+    settings = []
+    old_settings = oldsettings
     app = wx.PySimpleApp(0)
     wx.InitAllImageHandlers()
-    start = Settings(None, -1, "")
-    app.SetTopWindow(start)
-    start.Show()
-    app.MainLoop()
+    set_relax_params = inputfile(None, -1, "")
+    app.SetTopWindow(set_relax_params)
+    set_relax_params.ShowModal()
+    return settings
+
+def load_sequence(self):
+     seqfile = openfile('Choose Sequence File',sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+     return seqfile
