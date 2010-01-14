@@ -1908,7 +1908,7 @@ class main(wx.Frame):
 #menu
 
     def newGUI(self, event): # New
-        newdir = diropenbox(msg='Select results directory', title='relaxGUI', default='*')
+        newdir = opendir('Select results directory', '*')
         if not newdir == None:
             #create directories
             os.system('mkdir ' + newdir + sep + 'NOE_1')
@@ -2053,7 +2053,7 @@ class main(wx.Frame):
 
     def resdir_noe1(self, event): # noe 1 results dir
         backup = self.res_noe1.GetValue()
-        noe_savedir[0] = diropenbox(msg='Select results directory', title='relaxGUI', default=self.res_noe1.GetValue() + sep)
+        noe_savedir[0] = opendir('Select results directory', self.res_noe1.GetValue())
         if noe_savedir[0] == None:
            noe_savedir[0] = backup
         self.res_noe1.SetValue(noe_savedir[0])
@@ -2072,7 +2072,7 @@ class main(wx.Frame):
 
     def resdir_r1_1(self, event): # R1 results dir 1
         backup = self.resultsdir_r11.GetValue()
-        r1_savedir[0] = diropenbox(msg='Select results directory)', title='relaxGUI', default=self.resultsdir_r11.GetValue() + sep)
+        r1_savedir[0] = opendir('Select results directory)', default=self.resultsdir_r11.GetValue())
         if r1_savedir[0] == None:
            r1_savedir[0] = backup
         self.resultsdir_r11.SetValue(r1_savedir[0])
@@ -2160,7 +2160,7 @@ class main(wx.Frame):
 
     def resdir_r2_1(self, event): # wxGlade: main.<event_handler>
         backup = self.resultsdir_r21.GetValue()
-        r2_savedir[0] = diropenbox(msg='Select results directory)', title='relaxGUI', default=self.resultsdir_r21.GetValue() + sep)
+        r2_savedir[0] = opendir('Select results directory)', self.resultsdir_r21.GetValue())
         if r2_savedir[0] == None:
            r2_savedir[0] = backup
         self.resultsdir_r21.SetValue(r2_savedir[0])
@@ -2261,7 +2261,7 @@ class main(wx.Frame):
 
     def resdir_noe2(self, event): # noe results dir no. 2
         backup = self.res_noe1_copy.GetValue()
-        noe_savedir[1] = diropenbox(msg='Select results directory', title='relaxGUI', default = self.res_noe1_copy.GetValue() + sep)
+        noe_savedir[1] = opendir('Select results directory', self.res_noe1_copy.GetValue())
         if noe_savedir[1] == None:
            noe_savedir[1] = backup
         self.res_noe1_copy.SetValue(noe_savedir[1])
@@ -2277,7 +2277,7 @@ class main(wx.Frame):
 
     def resdir_r1_2(self, event): # wxGlade: main.<event_handler>
         backup = self.resultsdir_r11_copy.GetValue()
-        r1_savedir[1] = diropenbox(msg='Select results directory', title='relaxGUI', default=self.resultsdir_r11_copy.GetValue() + sep)
+        r1_savedir[1] = opendir('Select results directory', self.resultsdir_r11_copy.GetValue())
         if r1_savedir[1] == None:
            r1_savedir[1] = backup
         self.resultsdir_r11_copy.SetValue(r1_savedir[1])
@@ -2364,7 +2364,7 @@ class main(wx.Frame):
 
     def resdir_r2_2(self, event): # wxGlade: main.<event_handler>
         backup = self.resultsdir_r21_copy.GetValue()
-        r2_savedir[1] = diropenbox(msg='Select results directory)', title='relaxGUI', default=self.resultsdir_r21_copy.GetValue() + sep)
+        r2_savedir[1] = opendir('Select results directory)', self.resultsdir_r21_copy.GetValue() + '/')
         if r2_savedir[1] == None:
            r2_savedir[1] = backup
         self.resultsdir_r21_copy.SetValue(r2_savedir[1])
@@ -2467,7 +2467,7 @@ class main(wx.Frame):
 
     def resdir_noe3(self, event): # noe 3 results dir
         backup = self.res_noe1_copy_1.GetValue()
-        noe_savedir[2] = diropenbox(msg='Select results directory)', title='relaxGUI', default=self.res_noe1_copy_1.GetValue() + sep)
+        noe_savedir[2] = opendir('Select results directory)', self.res_noe1_copy_1.GetValue() + sep)
         if noe_savedir[2] == None:
            noe_savedir[2] = backup
         self.res_noe1_copy_1.SetValue(noe_savedir[2])
@@ -2483,7 +2483,7 @@ class main(wx.Frame):
 
     def resdir_r1_3(self, event): # wxGlade: main.<event_handler>
         backup = self.resultsdir_r11_copy_1.GetValue()
-        r1_savedir[2] = diropenbox(msg='Select results directory', title='relaxGUI', default=self.resultsdir_r11_copy_1.GetValue() + sep)
+        r1_savedir[2] = opendir('Select results directory', self.resultsdir_r11_copy_1.GetValue())
         if r1_savedir[2] == None:
            r1_savedir[2] = backup
         self.resultsdir_r11_copy_1.SetValue(r1_savedir[2])
@@ -2570,7 +2570,7 @@ class main(wx.Frame):
 
     def resdir_r2_3(self, event): # results dir R2 3
         backup = self.resultsdir_r21_copy_1.GetValue()
-        r2_savedir[2] = diropenbox(msg='Select results directory', title='relaxGUI', default=self.resultsdir_r21_copy_1.GetValue() + sep)
+        r2_savedir[2] = opendir('Select results directory', self.resultsdir_r21_copy_1.GetValue())
         if r2_savedir[2] == None:
            r2_savedir[2] = backup
         self.resultsdir_r21_copy_1.SetValue(r2_savedir[2])
@@ -2736,7 +2736,7 @@ class main(wx.Frame):
 
     def resdir_modelfree(self, event): 
         backup = self.resultsdir_r21_copy_2.GetValue()
-        results_dir_model = diropenbox(msg='Select results directory', title='relaxGUI', default=backup + sep)
+        results_dir_model = opendir('Select results directory', backup)
         if results_dir_model == None:
            results_dir_model = backup
         self.resultsdir_r21_copy_2.SetValue(results_dir_model)
