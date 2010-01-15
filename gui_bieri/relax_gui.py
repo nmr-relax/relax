@@ -2205,7 +2205,6 @@ class main(wx.Frame):
         if r2_savedir[0] == None:
            r2_savedir[0] = backup
         self.resultsdir_r21.SetValue(r2_savedir[0])
-        event.Skip()
 
     def add_r2_1(self, event): # add a r2 peak list
         if len(r2_list) < 14:
