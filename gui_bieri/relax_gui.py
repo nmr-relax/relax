@@ -1991,9 +1991,17 @@ class main(wx.Frame):
      event.Skip()
 
     def exitGUI(self, event): # Exit
-        doexit = ynbox(msg='Do you wand to quit relaxGUI?', title='relaxGUI', choices=('Yes', 'No'), image=None)
+        doexit = question('Do you wand to quit relaxGUI?')
         if doexit == True:
-           print "\n\n\nExiting relaxGUI......\n\n\n"
+           print"\n==================================================\n\n"
+           print "\nThank you for citing:"
+           print ""
+           print "relaxGUI:\nin progress...."
+           print ""
+           print "relax:"
+           print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119."
+           print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133." 
+           print "\nExiting relaxGUI......\n"
            sys.exit(0)
         event.Skip()
 
