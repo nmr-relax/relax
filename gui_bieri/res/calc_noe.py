@@ -70,28 +70,42 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
            unresolved.write(unres)
            unresolved.close()
 
+
         pipename = 'NOE ' + str(time.asctime(time.localtime()))
 
         # Create the NOE data pipe.
-        pipe.create(pipename, 'noe')
+        print "pipe.create("+pipename+")"
+        pipes.create(pipename, 'noe')
+
+        # Load Sequence
+        if str(struct_pdb) == '!!! Sequence file selected !!!':
+            
+             # Read sequence file
+             print "\nLoad sequence from "+ sequencefile
+             sequence.read(sequencefile, res_name_col = 1)
         
-        # Load the backbone amide 15N spins from a PDB file.
-        structure.read_pdb(str(struct_pdb))
-        structure.load_spins(spin_id='@N')
+        else:
+             # Load the backbone amide 15N spins from a PDB file.
+             print "\nLoad sequence from "+ str(struct_pdb)
+             generic_fns.structure.main.read_pdb(str(struct_pdb))
+             generic_fns.structure.main.load_spins(spin_id='@N')
         
         # Load the reference spectrum and saturated spectrum peak intensities.
-        spectrum.read_intensities(file=str(noe_ref), spectrum_id='ref_ave')
-        spectrum.read_intensities(file=str(noe_sat), spectrum_id='sat_ave')
+        print "\nspectrum.read(file="+str(noe_ref)+", spectrum_id='ref_spec', heteronuc="+hetero+", proton="+prot+", int_method='height')"
+        spectrum.read(file=str(noe_ref), spectrum_id='ref_spec', heteronuc=hetero, proton=prot, int_method='height')
+        print "\nspectrum.read(file="+str(noe_sat)+", spectrum_id='sat_spec', heteronuc="+hetero+", proton="+prot+", int_method='height')"
+        spectrum.read(file=str(noe_sat), spectrum_id='sat_spec', heteronuc=hetero, proton=prot, int_method='height')
         
         # Set the spectrum types.
-        noe.spectrum_type('ref', 'ref_ave')
-        noe.spectrum_type('sat', 'sat_ave')
+        noe_obj._spectrum_type('ref', 'ref_spec')
+        noe_obj._spectrum_type('sat', 'sat_spec')
         
         # Set the errors.
-        spectrum.baseplane_rmsd(error=int(rmsd_ref), spectrum_id='ref_ave')
-        spectrum.baseplane_rmsd(error=int(rmsd_sat), spectrum_id='sat_ave')
+        spectrum.baseplane_rmsd(error=int(rmsd_ref), spectrum_id='ref_spec')
+        spectrum.baseplane_rmsd(error=int(rmsd_sat), spectrum_id='sat_spec')
         
         # Peak intensity error analysis.
+        print "\nspectrum.error_analysis()"
         spectrum.error_analysis()
         
         # Deselect unresolved residues.
@@ -100,22 +114,24 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
            selection.desel_read(file=resultsdir + sep + 'unresolved', res_num_col= 1)
         
         # Calculate the NOEs.
-        calc()
+        print "\nminimise.calc()"
+        minimise.calc()
         
         # Save the NOEs.
+        print "\nSave Files:\n"
         value.write(param='noe', file=save_file, force=True)
         
         # Create grace files.
-        grace.write(y_data_type='ref_ave', file='ref.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)
-        grace.write(y_data_type='sat_ave', file='sat.' + str(nmr_freq) + '.agr', dir = gracedir,force=True)
+        grace.write(y_data_type='ref_spec', file='ref.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)
+        grace.write(y_data_type='sat_spec', file='sat.' + str(nmr_freq) + '.agr', dir = gracedir,force=True)
         grace.write(y_data_type='noe', file='noe.' + str(nmr_freq) + '.agr', dir = gracedir,force=True)
         
         
         # Write the results.
-        results.write(file='results', dir=resultsdir, force=True)
+        results.write(file='results', directory=resultsdir, force=True)
         
         # Save the program state.
-        state.save('save', dir_name = resultsdir, force=True)
+        save_state('save', dir = resultsdir, force=True)
         
         print ""
         print ""

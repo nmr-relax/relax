@@ -85,11 +85,20 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
         pipename = 'Rx ' + str(time.asctime(time.localtime()))
 
         # Create the NOE data pipe.
-        pipe.create(pipename, 'relax_fit')
+        pipes.create(pipename, 'relax_fit')
 
-        # Load the backbone amide 15N spins from a PDB file.
-        structure.read_pdb(str(structure_pdb))
-        structure.load_spins(spin_id='@N')
+        # Load Sequence
+        if str(structure_pdb) == '!!! Sequence file selected !!!':
+            
+             # Read sequence file
+             print "Reading Suquence from "+ sequencefile
+             sequence.read(sequencefile)
+        
+        else:
+             # Load the backbone amide 15N spins from a PDB file.
+             print "\nReading sequence from " + str(structure_pdb)
+             generic_fns.structure.main.read_pdb(str(structure_pdb))
+             generic_fns.structure.main.load_spins(spin_id='@N')
 
         # Spectrum names.
         names = peakfiles
@@ -98,22 +107,28 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
         times = relax_times
 
         # Loop over the spectra.
+        print '\n'
         for i in xrange(len(names)):
             # Load the peak intensities.
-            spectrum.read_intensities(file=names[i], spectrum_id=names[i], int_method='height')
+            print "\nspectrum.read(file=str("+names[i]+"), spectrum_id=str("+names[i]+"), int_method='height', heteronuc="+str(hetero)+", proton="+str(prot)+")"
+            spectrum.read(file=str(names[i]), spectrum_id=str(names[i]), int_method='height', heteronuc=hetero, proton=prot)
 
             # Set the relaxation times.
-            relax_fit.relax_time(time=float(times[i]), spectrum_id=names[i])
+            print "\nrelax_fit_obj._relax_time(time=float("+times[i]+"), spectrum_id="+names[i]+")"
+            relax_fit_obj._relax_time(time=float(times[i]), spectrum_id=names[i])
 
         # Specify the duplicated spectra.
+        print '\n'
         for i in range(0,(len(names))):
             for j in range(i,(len(names))):
-               if relax_times[i] == times[j]:
-                  if not i == j:   
+               if times[i] == times[j]:
+                  if not i == j:
+                     print "spectrum.replicated(spectrum_ids=[" + names[i] + ", "+names[j]+"])"   
                      spectrum.replicated(spectrum_ids=[names[i], names[j]])
 
 
         # Peak intensity error analysis.
+        print "spectrum.error_analysis()"
         spectrum.error_analysis()
         
         # Deselect unresolved spins.
@@ -122,39 +137,52 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
            selection.desel_read(file=resultsdir + sep + 'unresolved', res_num_col= 1)
 
         # Set the relaxation curve type.
-        relax_fit.select_model('exp')
+        print "\nrelax_fit_obj._select_model('exp')"
+        relax_fit_obj._select_model('exp')
         
         # Grid search.
-        grid_search(inc=11)
+        print "\nminimise.grid_search(inc=11)"
+        minimise.grid_search(inc=11)
         
         # Minimise.
-        minimise('simplex', scaling=False, constraints=False)
+        print "minimise.minimise(min_algor='simplex', min_options=6, func_tol=1e-25, grad_tol=None, max_iterations=10000000, constraints=False, scaling=False, verbosity=1)"
+        minimise.minimise(min_algor='simplex', min_options=6, func_tol=1e-25, grad_tol=None, max_iterations=10000000, constraints=False, scaling=False, verbosity=1)
         
         # Monte Carlo simulations.
+        print "\nmonte_carlo.setup(number=500)"
         monte_carlo.setup(number=500)
-        monte_carlo.create_data()
+
+        print "\nmonte_carlo.create_data('back_calc')"
+        monte_carlo.create_data('back_calc')
+ 
+        print "\nmonte_carlo.initial_values()"
         monte_carlo.initial_values()
-        minimise('simplex', scaling=False, constraints=False)
-        monte_carlo.error_analysis()
+
+        print "minimise.minimise(min_algor='simplex', min_options=6, func_tol=1e-25, grad_tol=None, max_iterations=10000000, constraints=False, scaling=False, verbosity=1)"
+        minimise.minimise(min_algor='simplex', min_options=6, func_tol=1e-25, grad_tol=None, max_iterations=10000000, constraints=False, scaling=False, verbosity=1)
+
+        print "\nmonte_carlo.error_analysis(prune= 0.0)"
+        monte_carlo.error_analysis(prune= 0.0)
         
         # Save the relaxation rates.
+        print "\nSaving Files:"
         value.write(param='rx', file= savefile, force=True)
         
         
         # Create Grace plots of the data.
         grace.write(y_data_type='chi2', file='chi2.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Minimised chi-squared value.
         grace.write(y_data_type='i0', file='i0.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Initial peak intensity.
-        grace.write(y_data_type='rx', file='rx.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Relaxation rate.
+        grace.write(y_data_type='rx', file='r' + str(r1_r2)+'.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Relaxation rate.
         grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Average peak intensities.
         grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.' + str(nmr_freq) + '.agr', dir = gracedir, force=True)    # Average peak intensities (normalised).
         
         
         
         # Write the results.
-        results.write(file='results', dir=resultsdir, force=True)
+        results.write(file='results', directory=resultsdir, force=True)
         
         # Save the program state.
-        state.save('save', dir_name = resultsdir, force=True)
+        save_state('save', dir = resultsdir, force=True)
         
         print ""
         print ""
@@ -165,7 +193,7 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
         print ""
 
         # list files to results
-        self.list_rx.Append(target_dir + sep + 'grace' + sep + 'rx.' + str(nmr_freq) + '.agr')
+        self.list_rx.Append(target_dir + sep + 'grace' + sep + 'r' + str(r1_r2)+'.' + str(nmr_freq) + '.agr')
         self.list_rx.Append(target_dir + sep + 'grace' + sep + 'intensities_norm.' + str(nmr_freq) + '.agr')
 
         # add files to model-free tab
