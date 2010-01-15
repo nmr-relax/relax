@@ -683,6 +683,10 @@ class main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.aboutrelax, id=6)
         self.Bind(wx.EVT_MENU, self.settings, id=7)
         self.Bind(wx.EVT_MENU, self.references, id=9)
+        self.Bind(wx.EVT_MENU, self.structure_pdb, id=11)
+        self.Bind(wx.EVT_MENU, self.import_seq, id=12)
+        self.Bind(wx.EVT_MENU, self.param_file_setting, id=13)
+        self.Bind(wx.EVT_MENU, self.reset_setting, id=14)
 
         #button actions
         self.Bind(wx.EVT_BUTTON, self.sat_noe1, self.sat_noe_copy_1)
