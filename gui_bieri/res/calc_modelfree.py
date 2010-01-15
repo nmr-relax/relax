@@ -49,8 +49,19 @@ from message import relax_run_ok
 
 ### Model-free
 
-def start_model_free(self, model):
+def start_model_free(self, model, automatic, global_setting, file_setting, sequencefile):
 
+        # Set relax and file settings from dialog 
+        hetero = global_setting[2]
+        prot = global_setting[3]
+        intcol = int(file_setting[5])
+        mol_name = int(file_setting[0])
+        res_num = int(file_setting[1])
+        res_name = int(file_setting[2])
+        spin_num = int(file_setting[3])
+        spin_name = int(file_setting[4])
+
+        # get target directory, unresolved residues and NMR frequencies 
         target_dir = str(self.resultsdir_r21_copy_2.GetValue())
         unres = str(self.unresolved_r21_copy_1_copy.GetValue())
         nmr_freq1 = str(self.modelfreefreq1.GetValue())

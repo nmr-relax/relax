@@ -43,7 +43,7 @@ def stringtolist(string):
 
 ## save relaxGUI project
 
-def create_save_file(self, filename):
+def create_save_file(self, filename, results_table, global_setting, file_setting, sequencefile):
 
            #global definitions 
            globalsave = [str(self.structure_noe1.GetValue())]
@@ -119,6 +119,16 @@ def create_save_file(self, filename):
            file.write(str(noeresult) +'\n')
            file.write(str(rxresult) +'\n')
            file.write(str(modelresult) +'\n')
+           file.write('Settings\n')
+           file.write(str(global_setting) + '\n')
+           file.write(str(file_setting) + '\n')
+           file.write(sequencefile + '\n')
+           file.write('Results Table\n')
+           file.write(str(results_table[0]) + '\n')
+           file.write(str(results_table[1]) + '\n')
+           file.write(str(results_table[2]) + '\n')
+           file.write(str(results_table[3]) + '\n')
+           file.write(str(results_table[4]) + '\n')
            file.close()
 
            print '\n\nProject successfully saved in ' + filename + '\n\n'
@@ -259,5 +269,18 @@ def open_file(self, filename):
            for i in range(0,len(results)):
               self.list_modelfree.Append(str(results[i]))
 
+           # relax and relaxGUI settings
+           global_setting = stringtolist(saved[23])     
+           file_setting = stringtolist(saved[24])
+           sequencefile = saved[25]   
+           resiude = stringtolist(saved[27])
+           model = stringtolist(saved[28])
+           s2 = stringtolist(saved[29])
+           rex = stringtolist(saved[30])
+           te = stringtolist(saved[31])
+
            print '\n\nSuccessfully opened Project ' + filename + '\n\n' 
 
+           #create return list
+           returnlist = [global_setting, file_setting, sequencefile, resiude, model, s2, rex, te]
+           return returnlist
