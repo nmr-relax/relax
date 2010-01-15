@@ -54,12 +54,14 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         unres = str(unres)
 
         #create unresolved file
-        unres = replace(unres, ",","\n")
-        unres = replace(unres, " ","")
-        filename3 = target_dir + sep + 'unresolved'
-        unresolved = open(filename3, 'w')
-        unresolved.write(unres)
-        unresolved.close()
+        if not unres == '':
+           print "\nCreate unresolved file"
+           unres = replace(unres, ",","\n")
+           unres = replace(unres, " ","")
+           filename3 = target_dir + sep + 'unresolved'
+           unresolved = open(filename3, 'w')
+           unresolved.write(unres)
+           unresolved.close()
 
         pipename = 'NOE ' + str(time.asctime(time.localtime()))
 
@@ -86,7 +88,9 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         spectrum.error_analysis()
         
         # Deselect unresolved residues.
-        deselect.read(file=resultsdir + sep + 'unresolved')
+        if not unres == '':
+           print "\nDeselect residues" 
+           selection.desel_read(file=resultsdir + sep + 'unresolved', res_num_col= 1)
         
         # Calculate the NOEs.
         calc()

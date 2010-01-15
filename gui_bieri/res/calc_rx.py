@@ -72,11 +72,14 @@ def make_rx(target_dir, relax_times, structure_pdb, nmr_freq, r1_r2, freq_no, un
               peakfiles = r2_list3
 
         #create unresolved file
-        unres = replace(unres, ",","\n")
-        filename2 = target_dir + sep + 'unresolved'
-        file = open(filename2, 'w')
-        file.write(unres)
-        file.close()
+        if not unres == '':
+           print "\nCreating unresolved file"
+           unres = replace(unres, ",","\n")
+           unres = replace(unres, " ","")
+           filename2 = target_dir + sep + 'unresolved'
+           file = open(filename2, 'w')
+           file.write(unres)
+           file.close()
 
         pipename = 'Rx ' + str(time.asctime(time.localtime()))
 
@@ -113,8 +116,10 @@ def make_rx(target_dir, relax_times, structure_pdb, nmr_freq, r1_r2, freq_no, un
         spectrum.error_analysis()
         
         # Deselect unresolved spins.
-        deselect.read(file=resultsdir + sep + 'unresolved')
-        
+        if not unres == '':
+           print '\nDeselect Residues'
+           selection.desel_read(file=resultsdir + sep + 'unresolved', res_num_col= 1)
+
         # Set the relaxation curve type.
         relax_fit.select_model('exp')
         

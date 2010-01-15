@@ -74,11 +74,12 @@ def start_model_free(self, model):
             selection = "BIC" 
 
         #create unresolved file
-        filename2 =  target_dir + sep + 'unresolved'
-        file = open(filename2, 'w')
-        unres = replace(unres, ",","\n")
-        file.write(unres)
-        file.close()
+        if not unres == '':
+           filename2 =  target_dir + sep + 'unresolved'
+           file = open(filename2, 'w')
+           unres = replace(unres, ",","\n")
+           file.write(unres)
+           file.close()
 
         #create models list
         models = []

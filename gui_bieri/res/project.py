@@ -83,7 +83,7 @@ def create_save_file(self, filename):
            
 
            #model-free
-           savemodel = [str(self.modelfreefreq1.GetValue()), str(self.m_noe_1.GetValue()), str(self.m_r1_1.GetValue()), str(self.m_r2_1.GetValue()), str(self.modelfreefreq2.GetValue()), str(self.m_noe_2.GetValue()), str(self.m_r1_2.GetValue()), str(self.m_r2_2.GetValue()), str(self.modelfreefreq3.GetValue()), str(self.m_noe_3.GetValue()), str(self.m_r1_3.GetValue()), str(self.m_r2_3.GetValue()), str(self. unresolved_r21_copy_1_copy.GetValue()), str(self.resultsdir_r21_copy_2.GetValue())]
+           savemodel = [str(self.modelfreefreq1.GetValue()), str(self.m_noe_1.GetValue()), str(self.m_r1_1.GetValue()), str(self.m_r2_1.GetValue()), str(self.modelfreefreq2.GetValue()), str(self.m_noe_2.GetValue()), str(self.m_r1_2.GetValue()), str(self.m_r2_2.GetValue()), str(self.modelfreefreq3.GetValue()), str(self.m_noe_3.GetValue()), str(self.m_r1_3.GetValue()), str(self.m_r2_3.GetValue()), replace(str(self. unresolved_r21_copy_1_copy.GetValue()),',',';'), str(self.resultsdir_r21_copy_2.GetValue())]
 
            #results
            noeresult = []
@@ -164,7 +164,7 @@ def open_file(self, filename):
            self.noe_ref_1.SetValue(noes[3])
            self.noe_ref_err_1.SetValue(noes[4])
            self.structure_noe1.SetValue(noes[5])
-           self.unres_noe1.SetValue(noes[6])
+           self.unres_noe1.SetValue(replace(noes[6],';',','))
            self.res_noe1.SetValue(noes[7])
 
            # load NOE 2
@@ -175,7 +175,7 @@ def open_file(self, filename):
            self.noe_ref_1_copy.SetValue(noes[3])
            self.noe_ref_err_1_copy.SetValue(noes[4])
            self.structure_noe1_copy.SetValue(noes[5])
-           self.unres_noe1_copy.SetValue(noes[6])
+           self.unres_noe1_copy.SetValue(replace(noes[6],';',','))
            self.res_noe1_copy.SetValue(noes[7])
 
            # load NOE 3
@@ -186,44 +186,44 @@ def open_file(self, filename):
            self.noe_ref_1_copy_1.SetValue(noes[3])
            self.noe_ref_err_1_copy_1.SetValue(noes[4])
            self.structure_noe1_copy_1.SetValue(noes[5])
-           self.unres_noe1_copy_1.SetValue(noes[6])
+           self.unres_noe1_copy_1.SetValue(replace(noes[6],';',','))
            self.res_noe1_copy_1.SetValue(noes[7])
 
            #load R1
            rx = stringtolist(saved[9])
            self.nmrfreq_value_r11.SetValue(rx[0])
            self.resultsdir_r11.SetValue(rx[1])
-           self.unresolved_r11.SetValue(rx[2])
+           self.unresolved_r11.SetValue(replace(rx[2],';',','))
 
            #load R1 2
            rx = stringtolist(saved[10])
            self.nmrfreq_value_r11_copy.SetValue(rx[0])
            self.resultsdir_r11_copy.SetValue(rx[1])
-           self.unresolved_r11_copy.SetValue(rx[2])
+           self.unresolved_r11_copy.SetValue(replace(rx[2],';',','))
 
            #load R1 3
            rx = stringtolist(saved[11])
            self.nmrfreq_value_r21_copy_1.SetValue(rx[0])
            self.resultsdir_r21_copy_1.SetValue(rx[1])
-           self.unresolved_r21_copy_1.SetValue(rx[2])
+           self.unresolved_r21_copy_1.SetValue(replace(rx[2],';',','))
 
            #load R1
            rx = stringtolist(saved[13])
            self.nmrfreq_value_r21.SetValue(rx[0])
            self.resultsdir_r21.SetValue(rx[1])
-           self.unresolved_r21.SetValue(rx[2])
+           self.unresolved_r21.SetValue(replace(rx[2],';',','))
 
            #load R1 2
            rx = stringtolist(saved[14])
            self.nmrfreq_value_r21_copy.SetValue(rx[0])
            self.resultsdir_r21_copy.SetValue(rx[1])
-           self.unresolved_r21_copy.SetValue(rx[2])
+           self.unresolved_r21_copy.SetValue(replace(rx[2],';',','))
 
            #load R1 3
            rx = stringtolist(saved[15])
            self.nmrfreq_value_r21_copy_1.SetValue(rx[0])
            self.resultsdir_r21_copy_1.SetValue(rx[1])
-           self.unresolved_r21_copy_1.SetValue(rx[2])
+           self.unresolved_r21_copy_1.SetValue(replace(rx[2],';',','))
 
            #model-free
            openmodel = stringtolist(saved[17])
@@ -239,7 +239,7 @@ def open_file(self, filename):
            self.m_noe_3.SetValue(openmodel[9])
            self.m_r1_3.SetValue(openmodel[10])
            self.m_r2_3.SetValue(openmodel[11])
-           self.unresolved_r21_copy_1_copy.SetValue(openmodel[12])
+           self.unresolved_r21_copy_1_copy.SetValue(replace(openmodel[12], ';',','))
            self.resultsdir_r21_copy_2.SetValue(openmodel[13])
 
            #results
