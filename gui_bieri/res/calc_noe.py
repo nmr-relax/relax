@@ -131,12 +131,8 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         if freqno == 3:
                      self.m_noe_3.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
         self.list_noe.Append(target_dir + sep + 'grace' + sep + 'noe.' + str(nmr_freq) + '.agr')
-        success = True
 
         # Create PyMol Macro
         color_code_noe(self, target_dir)
 
-        msgbox(msg='NOE calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
-
-
-
+        relax_run_ok('NOE calculation was successful !')

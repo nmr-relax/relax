@@ -164,8 +164,6 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
         print "calculation finished"
         print ""
 
-        msgbox(msg='T' + str(r1_r2) +' calculation was successfull !', title='relaxGUI ', ok_button='OK', image=sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', root=None)
-
         # list files to results
         self.list_rx.Append(target_dir + sep + 'grace' + sep + 'rx.' + str(nmr_freq) + '.agr')
         self.list_rx.Append(target_dir + sep + 'grace' + sep + 'intensities_norm.' + str(nmr_freq) + '.agr')
@@ -185,3 +183,6 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
                       self.m_r2_2.SetValue(target_dir + sep + 'r2.' + str(nmr_freq) + '.out')
                     if freqno == 3:
                       self.m_r2_3.SetValue(target_dir + sep + 'r2.' + str(nmr_freq) + '.out')
+
+        # Feedback
+        relax_run_ok('T' + str(r1_r2) +' calculation was successful !') 
