@@ -119,7 +119,7 @@ def results_table(import_results):
 ## Create PyMol Macro for NOE colouring
 
 def color_code_noe(self, target_dir):
-        pdbfile = str(self.structure_t21_copy_1_copy.GetValue())
+        pdbfile = str(self.structure_r21_copy_1_copy.GetValue())
         directory = target_dir
 
         #create file
