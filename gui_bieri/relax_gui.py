@@ -2127,33 +2127,33 @@ class main(wx.Frame):
              if not r1_entry == None:
                 r1_list.append(r1_entry)
 
-        if len(r1_list) == 1:
+        if len(r1_list) >= 1:
             self.r1_list_1.SetLabel(r1_list[0]) 
-        if len(r1_list) == 2:
+        if len(r1_list) >= 2:
             self.r1_list_2.SetLabel(r1_list[1]) 
-        if len(r1_list) == 3:
+        if len(r1_list) >= 3:
             self.r1_list_3.SetLabel(r1_list[2]) 
-        if len(r1_list) == 4:
+        if len(r1_list) >= 4:
             self.r1_list_4.SetLabel(r1_list[3]) 
-        if len(r1_list) == 5:
+        if len(r1_list) >= 5:
             self.r1_list_5.SetLabel(r1_list[4]) 
-        if len(r1_list) == 6:
+        if len(r1_list) >= 6:
             self.r1_list_6.SetLabel(r1_list[5]) 
-        if len(r1_list) == 7:
+        if len(r1_list) >= 7:
             self.r1_list_7.SetLabel(r1_list[6]) 
-        if len(r1_list) == 8:
+        if len(r1_list) >= 8:
             self.r1_list_8.SetLabel(r1_list[7]) 
-        if len(r1_list) == 9:
+        if len(r1_list) >= 9:
             self.r1_list_9.SetLabel(r1_list[8]) 
-        if len(r1_list) == 10:
+        if len(r1_list) >= 10:
             self.r1_list_10.SetLabel(r1_list[9]) 
-        if len(r1_list) == 11:
+        if len(r1_list) >= 11:
             self.r1_list_11.SetLabel(r1_list[10]) 
-        if len(r1_list) == 12:
+        if len(r1_list) >= 12:
             self.r1_list_12.SetLabel(r1_list[11]) 
-        if len(r1_list) == 13:
+        if len(r1_list) >= 13:
             self.r1_list_1_copy_11.SetLabel(r1_list[12]) 
-        if len(r1_list) == 14:
+        if len(r1_list) >= 14:
             self.r1_list_14.SetLabel(r1_list[13])              
         event.Skip()
 
@@ -2211,34 +2211,35 @@ class main(wx.Frame):
         if len(r2_list) < 14:
              r2_entry = multi_openfile('Select R2 peak list file', self.resultsdir_r21.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r2_entry == None:
-                r2_list.append(r2_entry)
-        if len(r2_list) == 1:
+                for i in range(0,(len(r2_entry))):
+                 r2_list.append(str(r2_entry[i]))
+        if len(r2_list) >= 1:
             self.r2_list_1.SetLabel(r2_list[0]) 
-        if len(r2_list) == 2:
+        if len(r2_list) >= 2:
             self.r2_list_2.SetLabel(r2_list[1]) 
-        if len(r2_list) == 3:
+        if len(r2_list) >= 3:
             self.r2_list_3.SetLabel(r2_list[2]) 
-        if len(r2_list) == 4:
+        if len(r2_list) >= 4:
             self.r2_list_4.SetLabel(r2_list[3]) 
-        if len(r2_list) == 5:
+        if len(r2_list) >= 5:
             self.r2_list_5.SetLabel(r2_list[4]) 
-        if len(r2_list) == 6:
+        if len(r2_list) >= 6:
             self.r2_list_6.SetLabel(r2_list[5]) 
-        if len(r2_list) == 7:
+        if len(r2_list) >= 7:
             self.r2_list_7.SetLabel(r2_list[6]) 
-        if len(r2_list) == 8:
+        if len(r2_list) >= 8:
             self.r2_list_8.SetLabel(r2_list[7]) 
-        if len(r2_list) == 9:
+        if len(r2_list) >= 9:
             self.r2_list_9.SetLabel(r2_list[8]) 
-        if len(r2_list) == 10:
+        if len(r2_list) >= 10:
             self.r2_list_10.SetLabel(r2_list[9]) 
-        if len(r2_list) == 11:
+        if len(r2_list) >= 11:
             self.r2_list_11.SetLabel(r2_list[10]) 
-        if len(r2_list) == 12:
+        if len(r2_list) >= 12:
             self.r2_list_12.SetLabel(r2_list[11]) 
-        if len(r2_list) == 13:
+        if len(r2_list) >= 13:
             self.r2_list_13.SetLabel(r2_list[12]) 
-        if len(r2_list) == 14:
+        if len(r2_list) >= 14:
             self.r2_list_14.SetLabel(r2_list[13])              
         event.Skip()
 
@@ -2328,34 +2329,35 @@ class main(wx.Frame):
         if len(r1_list2) < 14:
              r1_entry2 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r1_entry2 == None:
-                r1_list2.append(r1_entry2)
-        if len(r1_list2) == 1:
+                for i in range(0,(len(r1_entry2))):
+                 r1_list2.append(str(r1_entry2[i]))
+        if len(r1_list2) >= 1:
             self.r1_list_1_copy.SetLabel(r1_list2[0]) 
-        if len(r1_list2) == 2:
+        if len(r1_list2) >= 2:
             self.r1_list_2_copy.SetLabel(r1_list2[1]) 
-        if len(r1_list2) == 3:
+        if len(r1_list2) >= 3:
             self.r1_list_3_copy.SetLabel(r1_list2[2]) 
-        if len(r1_list2) == 4:
+        if len(r1_list2) >= 4:
             self.r1_list_4_copy.SetLabel(r1_list2[3]) 
-        if len(r1_list2) == 5:
+        if len(r1_list2) >= 5:
             self.r1_list_5_copy.SetLabel(r1_list2[4]) 
-        if len(r1_list2) == 6:
+        if len(r1_list2) >= 6:
             self.r1_list_6_copy.SetLabel(r1_list2[5]) 
-        if len(r1_list2) == 7:
+        if len(r1_list2) >= 7:
             self.r1_list_7_copy.SetLabel(r1_list2[6]) 
-        if len(r1_list2) == 8:
+        if len(r1_list2) >= 8:
             self.r1_list_8_copy.SetLabel(r1_list2[7]) 
-        if len(r1_list2) == 9:
+        if len(r1_list2) >= 9:
             self.r1_list_9_copy.SetLabel(r1_list2[8]) 
-        if len(r1_list2) == 10:
+        if len(r1_list2) >= 10:
             self.r1_list_10_copy.SetLabel(r1_list2[9]) 
-        if len(r1_list2) == 11:
+        if len(r1_list2) >= 11:
             self.r1_list_11_copy.SetLabel(r1_list2[10]) 
-        if len(r1_list2) == 12:
+        if len(r1_list2) >= 12:
             self.r1_list_12_copy.SetLabel(r1_list2[11]) 
-        if len(r1_list2) == 13:
+        if len(r1_list2) >= 13:
             self.r1_list_1_copy_11_copy.SetLabel(r1_list2[12]) 
-        if len(r1_list2) == 14:
+        if len(r1_list2) >= 14:
             self.r1_list_14_copy.SetLabel(r1_list2[13])              
         event.Skip()
 
@@ -2415,34 +2417,35 @@ class main(wx.Frame):
         if len(r2_list2) < 14:
              r2_entry2 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r2_entry2 == None:
-                r2_list2.append(r2_entry2)
-        if len(r2_list2) == 1:
+                for i in range(0,(len(r2_entry2))):
+                 r2_list2.append(str(r2_entry2[i]))
+        if len(r2_list2) >= 1:
             self.r2_list_1_copy.SetLabel(r2_list2[0]) 
-        if len(r2_list2) == 2:
+        if len(r2_list2) >= 2:
             self.r2_list_2_copy.SetLabel(r2_list2[1]) 
-        if len(r2_list2) == 3:
+        if len(r2_list2) >= 3:
             self.r2_list_3_copy.SetLabel(r2_list2[2]) 
-        if len(r2_list2) == 4:
+        if len(r2_list2) >= 4:
             self.r2_list_4_copy.SetLabel(r2_list2[3]) 
-        if len(r2_list2) == 5:
+        if len(r2_list2) >= 5:
             self.r2_list_5_copy.SetLabel(r2_list2[4]) 
-        if len(r2_list2) == 6:
+        if len(r2_list2) >= 6:
             self.r2_list_6_copy.SetLabel(r2_list2[5]) 
-        if len(r2_list2) == 7:
+        if len(r2_list2) >= 7:
             self.r2_list_7_copy.SetLabel(r2_list2[6]) 
-        if len(r2_list2) == 8:
+        if len(r2_list2) >= 8:
             self.r2_list_8_copy.SetLabel(r2_list2[7]) 
-        if len(r2_list2) == 9:
+        if len(r2_list2) >= 9:
             self.r2_list_9_copy.SetLabel(r2_list2[8]) 
-        if len(r2_list2) == 10:
+        if len(r2_list2) >= 10:
             self.r2_list_10_copy.SetLabel(r2_list2[9]) 
-        if len(r2_list2) == 11:
+        if len(r2_list2) >= 11:
             self.r2_list_11_copy.SetLabel(r2_list2[10]) 
-        if len(r2_list2) == 12:
+        if len(r2_list2) >= 12:
             self.r2_list_12_copy.SetLabel(r2_list2[11]) 
-        if len(r2_list2) == 13:
+        if len(r2_list2) >= 13:
             self.r2_list_13_copy.SetLabel(r2_list2[12]) 
-        if len(r2_list2) == 14:
+        if len(r2_list2) >= 14:
             self.r2_list_14_copy.SetLabel(r2_list2[13])              
         event.Skip()
 
@@ -2534,35 +2537,36 @@ class main(wx.Frame):
         if len(r1_list3) < 14:
              r1_entry3 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r1_entry3 == None:
-                r1_list3.append(r1_entry3)
+                for i in range(0,(len(r1_entry3))):
+                 r1_list3.append(str(r1_entry3[i]))
 
-        if len(r1_list3) == 1:
+        if len(r1_list3) >= 1:
             self.r1_list_1_copy_1.SetLabel(r1_list3[0]) 
-        if len(r1_list3) == 2:
+        if len(r1_list3) >= 2:
             self.r1_list_2_copy_1.SetLabel(r1_list3[1]) 
-        if len(r1_list3) == 3:
+        if len(r1_list3) >= 3:
             self.r1_list_3_copy_1.SetLabel(r1_list3[2]) 
-        if len(r1_list3) == 4:
+        if len(r1_list3) >= 4:
             self.r1_list_4_copy_1.SetLabel(r1_list3[3]) 
-        if len(r1_list3) == 5:
+        if len(r1_list3) >= 5:
             self.r1_list_5_copy_1.SetLabel(r1_list3[4]) 
-        if len(r1_list3) == 6:
+        if len(r1_list3) >= 6:
             self.r1_list_6_copy_1.SetLabel(r1_list3[5]) 
-        if len(r1_list3) == 7:
+        if len(r1_list3) >= 7:
             self.r1_list_7_copy_1.SetLabel(r1_list3[6]) 
-        if len(r1_list3) == 8:
+        if len(r1_list3) >= 8:
             self.r1_list_8_copy_1.SetLabel(r1_list3[7]) 
-        if len(r1_list3) == 9:
+        if len(r1_list3) >= 9:
             self.r1_list_9_copy_1.SetLabel(r1_list3[8]) 
-        if len(r1_list3) == 10:
+        if len(r1_list3) >= 10:
             self.r1_list_10_copy_1.SetLabel(r1_list3[9]) 
-        if len(r1_list3) == 11:
+        if len(r1_list3) >= 11:
             self.r1_list_11_copy_1.SetLabel(r1_list3[10]) 
-        if len(r1_list3) == 12:
+        if len(r1_list3) >= 12:
             self.r1_list_12_copy_1.SetLabel(r1_list3[11]) 
-        if len(r1_list3) == 13:
+        if len(r1_list3) >= 13:
             self.r1_list_1_copy_11_copy_1.SetLabel(r1_list3[12]) 
-        if len(r1_list3) == 14:
+        if len(r1_list3) >= 14:
             self.r1_list_14_copy_1.SetLabel(r1_list3[13])              
         event.Skip()
 
@@ -2621,34 +2625,35 @@ class main(wx.Frame):
         if len(r2_list3) < 14:
              r2_entry3 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r2_entry3 == None:
-                r2_list3.append(r2_entry3)
-        if len(r2_list3) == 1:
+                for i in range(0,(len(r2_entry3))):
+                 r2_list3.append(str(r2_entry3[i]))
+        if len(r2_list3) >= 1:
             self.r2_list_1_copy_1.SetLabel(r2_list3[0]) 
-        if len(r2_list3) == 2:
+        if len(r2_list3) >= 2:
             self.r2_list_2_copy_1.SetLabel(r2_list3[1]) 
-        if len(r2_list3) == 3:
+        if len(r2_list3) >= 3:
             self.r2_list_3_copy_1.SetLabel(r2_list3[2]) 
-        if len(r2_list3) == 4:
+        if len(r2_list3) >= 4:
             self.r2_list_4_copy_1.SetLabel(r2_list3[3]) 
-        if len(r2_list3) == 5:
+        if len(r2_list3) >= 5:
             self.r2_list_5_copy_1.SetLabel(r2_list3[4]) 
-        if len(r2_list3) == 6:
+        if len(r2_list3) >= 6:
             self.r2_list_6_copy_1.SetLabel(r2_list3[5]) 
-        if len(r2_list3) == 7:
+        if len(r2_list3) >= 7:
             self.r2_list_7_copy_1.SetLabel(r2_list3[6]) 
-        if len(r2_list3) == 8:
+        if len(r2_list3) >= 8:
             self.r2_list_8_copy_1.SetLabel(r2_list3[7]) 
-        if len(r2_list3) == 9:
+        if len(r2_list3) >= 9:
             self.r2_list_9_copy_1.SetLabel(r2_list3[8]) 
-        if len(r2_list3) == 10:
+        if len(r2_list3) >= 10:
             self.r2_list_10_copy_1.SetLabel(r2_list3[9]) 
-        if len(r2_list3) == 11:
+        if len(r2_list3) >= 11:
             self.r2_list_11_copy_1.SetLabel(r2_list3[10]) 
-        if len(r2_list3) == 12:
+        if len(r2_list3) >= 12:
             self.r2_list_12_copy_1.SetLabel(r2_list3[11]) 
-        if len(r2_list3) == 13:
+        if len(r2_list3) >= 13:
             self.r2_list_13_copy_1.SetLabel(r2_list3[12]) 
-        if len(r2_list3) == 14:
+        if len(r2_list3) >= 14:
             self.r2_list_14_copy_1.SetLabel(r2_list3[13])              
         event.Skip()
 

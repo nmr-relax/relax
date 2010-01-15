@@ -62,13 +62,7 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
 
 
         # Select Peak Lists and Relaxation Times 
-        if r1_r2 == 1:
-            if freq_no == 1:
-              peakfiles = r1_list
-            if freq_no == 2:
-              peakfiles = r1_list2
-            if freq_no == 3:
-              peakfiles = r1_list3
+        peakfiles = rx_list
 
         if r1_r2 == 2:
             if freq_no == 1:
