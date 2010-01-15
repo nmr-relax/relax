@@ -36,12 +36,10 @@ def openfile(msg, directory, filetype, default): # open a file
        #openfile('select file to open','/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*') 
        #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
 
-	application = wx.PySimpleApp()
-        newfile = None
-	dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN, defaultDir= directory, defaultFile = filetype, wildcard = default)
-	if dialog.ShowModal() == wx.ID_OK:
-	   newfile = dialog.GetPath()
-	dialog.Destroy()
+    newfile = None
+    dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN, defaultDir= directory, defaultFile = filetype, wildcard = default)
+    if dialog.ShowModal() == wx.ID_OK:
+        newfile = dialog.GetPath()
         return newfile
 
 def multi_openfile(msg, directory, filetype, default): # open multiple file
@@ -56,12 +54,10 @@ def multi_openfile(msg, directory, filetype, default): # open multiple file
        #openfile('select file to open','/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*') 
        #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
 
-	application = wx.PySimpleApp()
-        newfile = []
-	dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN | wx.FD_MULTIPLE, defaultDir= directory, defaultFile = filetype, wildcard = default)
-	if dialog.ShowModal() == wx.ID_OK:
-	   newfile = dialog.GetPaths()
-	dialog.Destroy()
+    newfile = []
+    dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN | wx.FD_MULTIPLE, defaultDir= directory, defaultFile = filetype, wildcard = default)
+
+    if dialog.ShowModal() == wx.ID_OK:
         return newfile
 
 def savefile(msg, directory, filetype, default): # save a file
@@ -76,20 +72,16 @@ def savefile(msg, directory, filetype, default): # save a file
        #savefile('select file to save', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*') 
        #suggests to save /usr/save.relaxGUI, supported files to save are: *.relaxGUI, *.*
 
-	application = wx.PySimpleApp()
-        newfile = None
-	dialog = wx.FileDialog ( None, message = msg, style = wx.SAVE, defaultDir= directory, defaultFile = filetype, wildcard = default)
-	if dialog.ShowModal() == wx.ID_OK:
-	   newfile = dialog.GetPath()
-	dialog.Destroy()
+    newfile = None
+    dialog = wx.FileDialog ( None, message = msg, style = wx.SAVE, defaultDir= directory, defaultFile = filetype, wildcard = default)
+    if dialog.ShowModal() == wx.ID_OK:
+        newfile = dialog.GetPath()
         return newfile
 
 def opendir(msg, default): # select directory, msg is message to display, default is starting directory
-	application = wx.PySimpleApp()
         newdir = None
         dlg = wx.DirDialog(None, message = msg, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON, defaultPath = default)
         if dlg.ShowModal() == wx.ID_OK:
             newdir= dlg.GetPath() 
-	dlg.Destroy()
-        return newdir
+            return newdir
 
