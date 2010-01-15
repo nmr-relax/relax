@@ -135,7 +135,7 @@ results_dir_model = getcwd()
 #####################################################################################################################
 #####################################################################################################################
 
-# GUI
+# generating the GUI
 
 
 class main(wx.Frame):
@@ -674,6 +674,7 @@ class main(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
+        # Menu actions
         self.Bind(wx.EVT_MENU, self.newGUI, id=1)
         self.Bind(wx.EVT_MENU, self.openGUI, id=2)
         self.Bind(wx.EVT_MENU, self.saveGUI, id=3)
@@ -682,6 +683,8 @@ class main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.aboutrelax, id=6)
         self.Bind(wx.EVT_MENU, self.settings, id=7)
         self.Bind(wx.EVT_MENU, self.references, id=9)
+
+        #button actions
         self.Bind(wx.EVT_BUTTON, self.sat_noe1, self.sat_noe_copy_1)
         self.Bind(wx.EVT_BUTTON, self.ref_noe, self.noe_ref_err_copy_1)
         self.Bind(wx.EVT_BUTTON, self.structure_pdb, self.ref_noe_copy_1)
@@ -2507,7 +2510,7 @@ class main(wx.Frame):
 
 ### R1 no. 3
 
-    def resdir_r1_3(self, event): # wxGlade: main.<event_handler>
+    def resdir_r1_3(self, event): # results R1 no 3
         backup = self.resultsdir_r11_copy_1.GetValue()
         r1_savedir[2] = opendir('Select results directory', self.resultsdir_r11_copy_1.GetValue())
         if r1_savedir[2] == None:
@@ -2515,7 +2518,7 @@ class main(wx.Frame):
         self.resultsdir_r11_copy_1.SetValue(r1_savedir[2])
         event.Skip()
 
-    def add_r1_3(self, event): # wxGlade: main.<event_handler>
+    def add_r1_3(self, event): # add file
         if len(r1_list3) < 14:
              r1_entry3 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
              if not r1_entry3 == None:
@@ -2774,17 +2777,17 @@ class main(wx.Frame):
            start_model_free(self, which_model)
         event.Skip()   
 
-    def open_noe_results_exe(self, event): 
+    def open_noe_results_exe(self, event): #open results of noe run
         choice = self.list_noe.GetStringSelection()
         see_results(choice, None)
         event.Skip()
 
-    def open_rx_results_exe(self, event): 
+    def open_rx_results_exe(self, event): # open results of r1 and r2 runs
         choice = self.list_rx.GetStringSelection()
         see_results(choice, None)
         event.Skip()
 
-    def open_model_results_exe(self, event): 
+    def open_model_results_exe(self, event):    # open model-free results
         choice = self.list_modelfree.GetStringSelection()
         model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
         see_results(choice, model_result)
