@@ -2101,7 +2101,7 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_noe1(self, event): # Start NOE calculation no. 1
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
 
         if start_relax == True:
            make_noe(self.res_noe1.GetValue(), self.noe_ref_1.GetValue(), self.noe_sat_1.GetValue(), self.noe_ref_err_1.GetValue(), self.noe_sat_err_1.GetValue(), self.nmrfreq_value_noe1.GetValue(),self.structure_noe1.GetValue(), self.unres_noe1.GetValue(), start_relax, self, 1, global_setting, file_setting, sequencefile)
@@ -2192,7 +2192,7 @@ class main(wx.Frame):
         relax_times_r1_1[11] = str(self.r1_time_12.GetValue()) 
         relax_times_r1_1[12] = str(self.r1_time_13.GetValue()) 
         relax_times_r1_1[13] = str(self.r1_time_1_4.GetValue()) 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_rx(self.resultsdir_r11.GetValue(), r1_list, relax_times_r1_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 1, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
         event.Skip()
@@ -2277,7 +2277,7 @@ class main(wx.Frame):
         relax_times_r2_1[11] = str(self.r2_time_12.GetValue()) 
         relax_times_r2_1[12] = str(self.r2_time_13.GetValue()) 
         relax_times_r2_1[13] = str(self.r2_time_14.GetValue()) 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.unresolved_r11.GetValue(), self,1, global_setting, file_setting, sequencefile)
         event.Skip()
@@ -2309,7 +2309,7 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_noe2(self, event): # start noe 2 calculation
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_noe(self.res_noe1_copy.GetValue(), self.noe_ref_1_copy.GetValue(), self.noe_sat_1_copy.GetValue(), self.noe_ref_err_1_copy.GetValue(), self.noe_sat_err_1_copy.GetValue(), self.nmrfreq_value_noe1_copy.GetValue(),self.structure_noe1_copy.GetValue(), self.unres_noe1_copy.GetValue(), start_relax, self, 2, global_setting, file_setting, sequencefile)
         event.Skip()
@@ -2396,7 +2396,7 @@ class main(wx.Frame):
         relax_times_r1_2[12] = str(self.r1_time_13_copy.GetValue()) 
         relax_times_r1_2[13] = str(self.r1_time_1_4_copy.GetValue()) 
 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_rx(self.resultsdir_r11_copy.GetValue(), r1_list2, relax_times_r1_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 1, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
         event.Skip()
@@ -2483,7 +2483,7 @@ class main(wx.Frame):
         relax_times_r2_2[12] = str(self.r2_time_13_copy.GetValue()) 
         relax_times_r2_2[13] = str(self.r2_time_14_copy.GetValue()) 
 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_rx(self.resultsdir_r21_copy.GetValue(), r2_list2, relax_times_r2_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 2, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
         event.Skip()
@@ -2515,7 +2515,7 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_noe3(self, event): # calculate noe 3
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_noe(self.res_noe1_copy_1.GetValue(), self.noe_ref_1_copy_1.GetValue(), self.noe_sat_1_copy_1.GetValue(), self.noe_ref_err_1_copy_1.GetValue(), self.noe_sat_err_1_copy_1.GetValue(), self.nmrfreq_value_noe1_copy_1.GetValue(),self.structure_noe1_copy_1.GetValue(), self.unres_noe1_copy_1.GetValue(), start_relax, self, 3, global_setting, file_setting, sequencefile)
         event.Skip()
@@ -2601,7 +2601,7 @@ class main(wx.Frame):
         relax_times_r1_3[11] = str(self.r1_time_12_copy_1.GetValue()) 
         relax_times_r1_3[12] = str(self.r1_time_13_copy_1.GetValue()) 
         relax_times_r1_3[13] = str(self.r1_time_1_4_copy_1.GetValue()) 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_rx(self.resultsdir_r11_copy_1.GetValue(), r1_list3, relax_times_r1_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 1, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
         event.Skip()
@@ -2688,7 +2688,7 @@ class main(wx.Frame):
         relax_times_r2_3[12] = str(self.r2_time_13_copy_1.GetValue()) 
         relax_times_r2_3[13] = str(self.r2_time_14_copy_1.GetValue()) 
 
-        start_relax = boolbox(msg='Start relax?', title='relaxGUI ', choices=('Yes', 'No'), image= sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif')
+        start_relax = exec_relax()
         if start_relax == True:
            make_rx(self.resultsdir_r21_copy_1.GetValue(), r2_list3, relax_times_r2_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 2, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
         event.Skip()
