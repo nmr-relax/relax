@@ -223,9 +223,7 @@ def check_entries(self):
 def whichmodel():
     global selection
     selection = None
-    application = wx.PySimpleApp()
     dlg = select_tensor(None, -1, "")
-    application.SetTopWindow(dlg)
     dlg.ShowModal()
     return selection
 
