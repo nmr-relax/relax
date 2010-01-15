@@ -70,11 +70,9 @@ class relax_is_running(wx.Dialog):
 
 
 def relax_run_ok(msg1):
-    appilcation = wx.PySimpleApp()
     wx.MessageBox(msg1, style = wx.OK)
 
 def exec_relax():
-    application = wx.PySimpleApp()
     check = False
     startrelax = wx.MessageDialog(None, message = 'Start relax?', style = wx.YES_NO | wx.NO_DEFAULT)
     if startrelax.ShowModal() == wx.ID_YES:
@@ -84,11 +82,9 @@ def exec_relax():
     return check
 
 def missing_data():
-    application = wx.PySimpleApp()
     wx.MessageBox('Missing Data!', style = wx.OK | wx.ICON_ERROR)
 
 def question(msg):
-    application = wx.PySimpleApp()
     check = False
     startrelax = wx.MessageDialog(None, message = msg, style = wx.YES_NO | wx.NO_DEFAULT)
     if startrelax.ShowModal() == wx.ID_YES:
@@ -98,7 +94,6 @@ def question(msg):
     return check
 
 def dir_message(msg):
-    application = wx.PySimpleApp()
     wx.MessageBox(msg, style = wx.OK | wx.ICON_INFORMATION)
 
     
