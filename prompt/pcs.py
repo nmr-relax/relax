@@ -128,7 +128,7 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_num_list(pos, 'atomic position', can_be_none=True)
+        arg_check.is_num_list(pos, 'atomic position', size=3, can_be_none=True)
         arg_check.is_str(atom_id, 'atom ID string', can_be_none=True)
         arg_check.is_str(pipe, 'data pipe', can_be_none=True)
         arg_check.is_int(verbosity, 'verbosity level')
