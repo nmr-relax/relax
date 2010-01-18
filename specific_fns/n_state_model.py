@@ -1405,35 +1405,42 @@ class N_state_model(API_base, API_common):
         @type sim_index:    None
         """
 
-        # Test if the N-state model has been set up.                                                                                                        
-        if not hasattr(cdp, 'model'):                                                                                                                       
-            raise RelaxNoModelError('N-state')                                                                                                              
+        # Set up the target function for direct calculation.
+        model, param_vector, data_types, scaling_matrix = self._target_fn_setup()
 
-        # Init some numpy arrays.
-        num_restraints = len(cdp.noe_restraints)
-        dist = zeros(num_restraints, float64)
-        pot = zeros(num_restraints, float64)
-        lower = zeros(num_restraints, float64)
-        upper = zeros(num_restraints, float64)
+        # Make a function call.
+        chi2 = model.func(param_vector)
 
-        # Loop over the NOEs.
-        for i in range(num_restraints):
-            # Create arrays of the NOEs.
-            lower[i] = cdp.noe_restraints[i][2]
-            upper[i] = cdp.noe_restraints[i][3]
+        # Store the global chi-squared value.
+        cdp.chi2 = chi2
 
-            # Calculate the average distances, using -6 power averaging.
-            dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+        # NOE potential.
+        if hasattr(cdp, 'noe_restraints'):
+            # Init some numpy arrays.
+            num_restraints = len(cdp.noe_restraints)
+            dist = zeros(num_restraints, float64)
+            pot = zeros(num_restraints, float64)
+            lower = zeros(num_restraints, float64)
+            upper = zeros(num_restraints, float64)
 
-        # Calculate the quadratic potential.
-        quad_pot(dist, pot, lower, upper)
+            # Loop over the NOEs.
+            for i in range(num_restraints):
+                # Create arrays of the NOEs.
+                lower[i] = cdp.noe_restraints[i][2]
+                upper[i] = cdp.noe_restraints[i][3]
 
-        # Store the distance and potential information.
-        cdp.ave_dist = []
-        cdp.quad_pot = []
-        for i in range(num_restraints):
-            cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
-            cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
+                # Calculate the average distances, using -6 power averaging.
+                dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+
+            # Calculate the quadratic potential.
+            quad_pot(dist, pot, lower, upper)
+
+            # Store the distance and potential information.
+            cdp.ave_dist = []
+            cdp.quad_pot = []
+            for i in range(num_restraints):
+                cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
+                cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
 
 
     default_value_doc = """
