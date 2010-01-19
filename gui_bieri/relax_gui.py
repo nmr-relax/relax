@@ -188,8 +188,10 @@ class main(wx.Frame):
         # Menu Bar
         ##########
 
-        # The 'File' menu.
+        # Create the menu bar GUI item.
         self.frame_1_menubar = wx.MenuBar()
+
+        # The 'File' menu.
         wxglade_tmp_menu = wx.Menu()
         wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=1, text="&New", icon=NEW_ICON))
         wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=2, text="&Open", icon=OPEN_ICON))
@@ -202,6 +204,8 @@ class main(wx.Frame):
         wxglade_tmp_menu.Append(11, "Load &PDB File", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.Append(12, "Load Se&quence File", "", wx.ITEM_NORMAL)
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Molecule")
+
+        # The 'Settings' menu.
         wxglade_tmp_menu = wx.Menu()
         self.SetMenuBar(self.frame_1_menubar)
         wxglade_tmp_menu.Append(7, "&Global relax Settings", "", wx.ITEM_NORMAL)
@@ -209,16 +213,18 @@ class main(wx.Frame):
         wxglade_tmp_menu.Append(14, "Reset a&ll Settings", "", wx.ITEM_NORMAL)
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Settings")
 
+        # The 'Extras' menu.
         wxglade_tmp_menu = wx.Menu()
         wxglade_tmp_menu.Append(8, "&Contact relaxGUI", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.Append(9, "&References", "", wx.ITEM_NORMAL)
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Extras")
+
+        # The 'Help' menu.
         wxglade_tmp_menu = wx.Menu()
         wxglade_tmp_menu.Append(10, "&Manual", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.Append(5, "About relaxG&UI", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.Append(6, "About rela&x", "", wx.ITEM_NORMAL)
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Help")
-        # Menu Bar end
 
 
         # NOE 1 no. 1
