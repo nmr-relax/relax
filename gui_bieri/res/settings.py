@@ -243,10 +243,7 @@ def import_file_settings(oldsettings):
     global old_settings
     settings = []
     old_settings = oldsettings
-    app = wx.PySimpleApp(0)
-    wx.InitAllImageHandlers()
     set_relax_params = inputfile(None, -1, "")
-    app.SetTopWindow(set_relax_params)
     set_relax_params.ShowModal()
     return settings
 
