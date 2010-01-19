@@ -131,10 +131,18 @@ results_dir_model = getcwd()
 
 # GUI icons.
 ICON_PATH = sys.path[0]+sep+'gui_bieri'+sep+'oxygen_icons'+sep
+ABOUT_RELAX_ICON = sys.path[0]+sep+'gui_bieri'+sep+'relax_bitmaps'+sep+'relax_16x16.png'
+ABOUT_RELAXGUI_ICON = sys.path[0]+sep+'gui_bieri'+sep+'relax_bitmaps'+sep+'relax_16x16.png'
+CONTACT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'mail-mark-unread-new.png'
 EXIT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'system-shutdown.png'
-OPEN_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-open.png'
+MANUAL_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'help-contents.png'
 NEW_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-new.png'
+OPEN_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-open.png'
 SAVE_AS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-save-as.png'
+SETTINGS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-properties.png'
+SETTINGS_GLOBAL_ICON = ICON_PATH + '16x16'+sep+'categories'+sep+'preferences-system.png'
+SETTINGS_RESET_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'edit-delete.png'
+REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
 
 
 #####################################################################################################################
@@ -201,29 +209,29 @@ class main(wx.Frame):
 
         # The 'Molecule' menu.
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(11, "Load &PDB File", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(12, "Load Se&quence File", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=11, text="Load &PDB File", icon=OPEN_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=12, text="Load se&quence file", icon=OPEN_ICON))
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Molecule")
 
         # The 'Settings' menu.
         wxglade_tmp_menu = wx.Menu()
         self.SetMenuBar(self.frame_1_menubar)
-        wxglade_tmp_menu.Append(7, "&Global relax Settings", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(13, "&Parameter File Settings", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(14, "Reset a&ll Settings", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=7, text="&Global relax settings", icon=SETTINGS_GLOBAL_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=13, text="&Parameter file settings", icon=SETTINGS_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=14, text="Reset a&ll settings", icon=SETTINGS_RESET_ICON))
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Settings")
 
         # The 'Extras' menu.
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(8, "&Contact relaxGUI", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(9, "&References", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=8, text="&Contact relaxGUI", icon=CONTACT_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=9, text="&References", icon=REF_ICON))
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Extras")
 
         # The 'Help' menu.
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(10, "&Manual", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(5, "About relaxG&UI", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(6, "About rela&x", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=10, text="&Manual", icon=MANUAL_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=5, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=6, text="About rela&x", icon=ABOUT_RELAX_ICON))
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Help")
 
 
