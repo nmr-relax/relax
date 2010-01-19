@@ -38,31 +38,31 @@ class select_tensor(wx.Dialog):
         self.label_2_copy_copy_copy = wx.StaticText(self, -1, "Automatic")
         self.button_4_copy_copy = wx.Button(self, -1, "Full Analysis")
         self.label_7_copy_copy_copy = wx.StaticText(self, -1, "Local tm")
-        self.button_2_copy_copy = wx.Button(self, -1, "Local tm")
+        self.local_tm_button = wx.Button(self, -1, "Local tm")
         self.label_8_copy_copy = wx.StaticText(self, -1, "Sphere")
-        self.bitmap_button_1_copy_copy = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'sphere.jpg', wx.BITMAP_TYPE_ANY))
+        self.sphere_button = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'sphere.jpg', wx.BITMAP_TYPE_ANY))
         self.label_9_copy_copy_copy = wx.StaticText(self, -1, "Prolate")
-        self.bitmap_button_2_copy_copy = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'prolate.jpg', wx.BITMAP_TYPE_ANY))
+        self.oblate_button = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'prolate.jpg', wx.BITMAP_TYPE_ANY))
         self.label_10_copy_copy_copy = wx.StaticText(self, -1, "Oblate")
-        self.bitmap_button_3_copy_copy = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'oblate.jpg', wx.BITMAP_TYPE_ANY))
+        self.prolate_button = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'oblate.jpg', wx.BITMAP_TYPE_ANY))
         self.label_11_copy_copy_copy = wx.StaticText(self, -1, "Ellipsoid")
-        self.bitmap_button_4_copy_copy = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'ellipsoid.jpg', wx.BITMAP_TYPE_ANY))
+        self.ellipsoid_button = wx.BitmapButton(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'ellipsoid.jpg', wx.BITMAP_TYPE_ANY))
         self.label_12_copy_copy_copy = wx.StaticText(self, -1, "Final")
-        self.button_3_copy_copy = wx.Button(self, -1, "Final")
+        self.final_button = wx.Button(self, -1, "Final")
         self.panel_2_copy = wx.Panel(self, -1)
-        self.button_1_copy_copy_copy = wx.Button(self, -1, "Cancel")
+        self.cancel_button = wx.Button(self, -1, "Cancel")
 
         self.__set_properties()
         self.__do_layout()
 
         self.Bind(wx.EVT_BUTTON, self.full, self.button_4_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.sphere, self.bitmap_button_1_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.prolate, self.bitmap_button_2_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.oblate, self.bitmap_button_3_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.ellipsoid, self.bitmap_button_4_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.final, self.button_3_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.cancel, self.button_1_copy_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.local, self.button_2_copy_copy)
+        self.Bind(wx.EVT_BUTTON, self.sphere, self.sphere_button)
+        self.Bind(wx.EVT_BUTTON, self.prolate, self.oblate_button)
+        self.Bind(wx.EVT_BUTTON, self.oblate, self.prolate_button)
+        self.Bind(wx.EVT_BUTTON, self.ellipsoid, self.ellipsoid_button)
+        self.Bind(wx.EVT_BUTTON, self.final, self.final_button)
+        self.Bind(wx.EVT_BUTTON, self.cancel, self.cancel_button)
+        self.Bind(wx.EVT_BUTTON, self.local, self.local_tm_button)
         # end 
 
     def __set_properties(self):
@@ -75,19 +75,27 @@ class select_tensor(wx.Dialog):
         self.label_2_copy_copy_copy.SetMinSize((100, 29))
         self.button_4_copy_copy.SetMinSize((111, 29))
         self.label_7_copy_copy_copy.SetMinSize((100, 17))
-        self.button_2_copy_copy.SetMinSize((111, 29))
+        self.local_tm_button.SetMinSize((111, 29))
         self.label_8_copy_copy.SetMinSize((100, 17))
-        self.bitmap_button_1_copy_copy.SetSize(self.bitmap_button_1_copy_copy.GetBestSize())
+        self.sphere_button.SetSize(self.sphere_button.GetBestSize())
         self.label_9_copy_copy_copy.SetMinSize((100, 17))
-        self.bitmap_button_2_copy_copy.SetSize(self.bitmap_button_2_copy_copy.GetBestSize())
+        self.oblate_button.SetSize(self.oblate_button.GetBestSize())
         self.label_10_copy_copy_copy.SetMinSize((100, 17))
-        self.bitmap_button_3_copy_copy.SetSize(self.bitmap_button_3_copy_copy.GetBestSize())
+        self.prolate_button.SetSize(self.prolate_button.GetBestSize())
         self.label_11_copy_copy_copy.SetMinSize((100, 17))
-        self.bitmap_button_4_copy_copy.SetSize(self.bitmap_button_4_copy_copy.GetBestSize())
+        self.ellipsoid_button.SetSize(self.ellipsoid_button.GetBestSize())
         self.label_12_copy_copy_copy.SetMinSize((100, 28))
-        self.button_3_copy_copy.SetMinSize((111, 29))
+        self.final_button.SetMinSize((111, 29))
         self.panel_2_copy.SetMinSize((100, 29))
-        self.button_1_copy_copy_copy.SetMinSize((111, 29))
+        self.cancel_button.SetMinSize((111, 29))
+
+        # enable or disable buttons if local_tm was calculate
+        self.sphere_button.Enable(LOCAL_TM) # sphere button
+        self.oblate_button.Enable(LOCAL_TM)  # prolate button
+        self.prolate_button.Enable(LOCAL_TM)  # oblate button
+        self.ellipsoid_button.Enable(LOCAL_TM)  # ellipsoid button
+        self.final_button.Enable(LOCAL_TM)  # final button
+
         # end 
 
     def __do_layout(self):
@@ -98,19 +106,19 @@ class select_tensor(wx.Dialog):
         grid_sizer_1_copy.Add(self.label_2_copy_copy_copy, 0, wx.LEFT|wx.TOP|wx.SHAPED, 5)
         grid_sizer_1_copy.Add(self.button_4_copy_copy, 0, 0, 0)
         grid_sizer_1_copy.Add(self.label_7_copy_copy_copy, 0, wx.LEFT|wx.EXPAND, 5)
-        grid_sizer_1_copy.Add(self.button_2_copy_copy, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.local_tm_button, 0, wx.SHAPED, 0)
         grid_sizer_1_copy.Add(self.label_8_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.bitmap_button_1_copy_copy, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.sphere_button, 0, wx.SHAPED, 0)
         grid_sizer_1_copy.Add(self.label_9_copy_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.bitmap_button_2_copy_copy, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.oblate_button, 0, wx.SHAPED, 0)
         grid_sizer_1_copy.Add(self.label_10_copy_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.bitmap_button_3_copy_copy, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.prolate_button, 0, wx.SHAPED, 0)
         grid_sizer_1_copy.Add(self.label_11_copy_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.bitmap_button_4_copy_copy, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.ellipsoid_button, 0, 0, 0)
         grid_sizer_1_copy.Add(self.label_12_copy_copy_copy, 0, wx.LEFT|wx.SHAPED, 5)
-        grid_sizer_1_copy.Add(self.button_3_copy_copy, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.final_button, 0, 0, 0)
         grid_sizer_1_copy.Add(self.panel_2_copy, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy.Add(self.button_1_copy_copy_copy, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.cancel_button, 0, 0, 0)
         sizer_9.Add(grid_sizer_1_copy, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_9)
         sizer_9.Fit(self)
@@ -220,8 +228,10 @@ def check_entries(self):
     return check
 
 
-def whichmodel():
+def whichmodel(is_local_tm):
     global selection
+    global LOCAL_TM
+    LOCAL_TM = is_local_tm
     selection = None
     dlg = select_tensor(None, -1, "")
     dlg.ShowModal()
