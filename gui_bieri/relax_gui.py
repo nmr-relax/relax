@@ -135,6 +135,7 @@ ABOUT_RELAX_ICON = sys.path[0]+sep+'gui_bieri'+sep+'relax_bitmaps'+sep+'relax_16
 ABOUT_RELAXGUI_ICON = sys.path[0]+sep+'gui_bieri'+sep+'relax_bitmaps'+sep+'relax_16x16.png'
 CONTACT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'mail-mark-unread-new.png'
 EXIT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'system-shutdown.png'
+LOAD_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'arrow-right.png'
 MANUAL_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'help-contents.png'
 NEW_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-new.png'
 OPEN_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-open.png'
@@ -209,8 +210,8 @@ class main(wx.Frame):
 
         # The 'Molecule' menu.
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=11, text="Load &PDB File", icon=OPEN_ICON))
-        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=12, text="Load se&quence file", icon=OPEN_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=11, text="Load &PDB File", icon=LOAD_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=12, text="Load se&quence file", icon=LOAD_ICON))
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&Molecule")
 
         # The 'Settings' menu.
