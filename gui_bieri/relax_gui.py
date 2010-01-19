@@ -130,7 +130,11 @@ paramfiles3 = ["","",""]
 results_dir_model = getcwd()
 
 # GUI icons.
-OPEN_ICON = sys.path[0]+sep+'gui_bieri'+sep+'oxygen_icons'+sep+'16x16'+sep+'actions'+sep+'document-open.png'
+ICON_PATH = sys.path[0]+sep+'gui_bieri'+sep+'oxygen_icons'+sep
+EXIT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'system-shutdown.png'
+OPEN_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-open.png'
+NEW_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-new.png'
+SAVE_AS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-save-as.png'
 
 
 #####################################################################################################################
@@ -182,13 +186,18 @@ class main(wx.Frame):
         self.noe1 = wx.Panel(self.notebook_3, -1)
         
         # Menu Bar
+        ##########
+
+        # The 'File' menu.
         self.frame_1_menubar = wx.MenuBar()
         wxglade_tmp_menu = wx.Menu()
-        wxglade_tmp_menu.Append(1, "&New", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(2, "&Open", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(3, "S&ave as...", "", wx.ITEM_NORMAL)
-        wxglade_tmp_menu.Append(4, "E&xit", "", wx.ITEM_NORMAL)
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=1, text="&New", icon=NEW_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=2, text="&Open", icon=OPEN_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=3, text="S&ave as...", icon=SAVE_AS_ICON))
+        wxglade_tmp_menu.AppendItem(self.build_menu_sub_item(id=4, text="E&xit", icon=EXIT_ICON))
         self.frame_1_menubar.Append(wxglade_tmp_menu, "&File")
+
+        # The 'Molecule' menu.
         wxglade_tmp_menu = wx.Menu()
         wxglade_tmp_menu.Append(11, "Load &PDB File", "", wx.ITEM_NORMAL)
         wxglade_tmp_menu.Append(12, "Load Se&quence File", "", wx.ITEM_NORMAL)
@@ -1913,6 +1922,34 @@ class main(wx.Frame):
         self.SetSize((1000, 600))
         self.Centre()
         # end wxGlade
+
+
+    def build_menu_sub_item(self, id=None, text=None, icon=None, kind=wx.ITEM_NORMAL):
+        """Construct and return the menu sub-item.
+
+        @keyword id:    The element identification number.
+        @type id:       int
+        @keyword text:  The text for the menu entry.
+        @type text:     str
+        @keyword icon:  The bitmap icon path.
+        @type icon:     str
+        @keyword kind:  The item type, which defaults to wx.ITEM_NORMAL.
+        @type kind:     int
+        @return:        The initialised wx.MenuItem() instance.
+        @rtype:         wx.MenuItem() instance
+        """
+
+        # Initialise the GUI element.
+        element = wx.MenuItem()
+
+        # Set up the element.
+        element.SetId(id)
+        element.SetBitmap(wx.Bitmap(icon))
+        element.SetText(text)
+        element.SetKind(kind)
+
+        # Return the element.
+        return element
 
 
 #####################################################################################################################
