@@ -62,6 +62,10 @@ def run(intro_string):
     sys.stdout.write('##############################################\n')
     sys.stdout.write('\n\n\n\n')
 
+    # start wx Application
+    relaxGUI = wx.PySimpleApp(0)
+    wx.InitAllImageHandlers()
+
     # show about panel
     about_relax()
 
@@ -71,8 +75,6 @@ def run(intro_string):
         sys.exit()
 
     # Build the GUI.
-    relaxGUI = wx.PySimpleApp(0)
-    wx.InitAllImageHandlers()
     relaxGUI_main = main(None, -1, "")
     relaxGUI.SetTopWindow(relaxGUI_main)
     relaxGUI_main.Show()
