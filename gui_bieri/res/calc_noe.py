@@ -27,11 +27,12 @@ from string import replace
 import time
 import sys
 import os
+import wx
 
 # relax module imports.
 from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-from generic_fns import pipes
+from generic_fns import pipes, spectrum, value, grace, minimise, selection, results
 import generic_fns.structure.main
 from relax_errors import RelaxError
 from specific_fns.setup import noe_obj
@@ -42,9 +43,48 @@ from results_analysis import color_code_noe
 from message import relax_run_ok
 
 
+####### Class to redirect relax output to relaxGUI - log panel and progress bar
+class RedirectText(object):
+    def __init__(self,aWxTextCtrl):
+        self.out=aWxTextCtrl
+ 
+    def write(self,string):
+        global progress
+
+        wx.CallAfter(self.out.log_panel.WriteText, string)
+        time.sleep(0.001)  # allow relaxGUI log panel to get refreshed
+
+        # split print out into list
+        a = str(string)
+        check = []
+        check = a.split()
+        
+        # update progress bar
+        if 'Simulation' in string:          
+            add = round(progress)
+            add_int = int(add)
+            wx.CallAfter(self.out.progress_bar.SetValue, add_int)
+            progress = ( (int(check[1]) * 100) / float(montecarlo + 6)) + 5
+            time.sleep(0.001)  # allow relaxGUI progressbar to get refreshed
+
+
 #NOE calculation
 
-def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_pdb, unres, execute, self, freqno, global_setting, file_setting, sequencefile):
+def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_pdb, unres, execute, main, freqno, global_setting, file_setting, sequencefile, self):
+
+        # Number of Monte Carlo simulations
+        global montecarlo
+        montecarlo = int(global_setting[6]) 
+
+        # value for progress bar during monte carlo simulation
+        global progress
+        progress = 5.0
+
+        # redirect relax output and errors to relaxGUI - log panel
+        redir=RedirectText(self)
+        sys.stdout=redir
+        sys.stderr=redir
+
         hetero = global_setting[2]
         prot = global_setting[3]
         intcol = int(file_setting[5])
@@ -59,6 +99,9 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         noe_ref_1 = noe_ref
         noe_sat_1 = noe_sat
         unres = str(unres)
+
+        wx.CallAfter(self.log_panel.AppendText, ('Starting NOE calculation\n------------------------------------------\n\n') )
+        time.sleep(0.5)
 
         #create unresolved file
         if not unres == '':
@@ -136,19 +179,25 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         print ""
         print ""
         print ""
-        print "____________________________________________________________________________"
+        print "________________________________________________________________________________"
         print ""
         print "calculation finished"
-        print ""
+        print "________________________________________________________________________________"
+
         if freqno == 1:
-                     self.m_noe_1.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
+                     main.m_noe_1.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
         if freqno == 2:
-                     self.m_noe_2.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
+                     main.m_noe_2.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
         if freqno == 3:
-                     self.m_noe_3.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
-        self.list_noe.Append(target_dir + sep + 'grace' + sep + 'noe.' + str(nmr_freq) + '.agr')
+                     main.m_noe_3.SetValue(target_dir + sep + 'noe.' + str(nmr_freq) + '.out')
+        main.list_noe.Append(target_dir + sep + 'grace' + sep + 'noe.' + str(nmr_freq) + '.agr')
 
-        # Create PyMol Macro
-        color_code_noe(self, target_dir)
+        # update progress bar
+        wx.CallAfter(self.progress_bar.SetValue, (100))
 
-        relax_run_ok('NOE calculation was successful !')
+        # enable close button and disable cancel button
+        wx.CallAfter(self.close_button.Enable, True)
+        wx.CallAfter(self.cancel_button.Enable, False)
+
+        # close thread 
+        return
