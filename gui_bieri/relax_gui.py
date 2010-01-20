@@ -44,16 +44,16 @@ from relax_errors import RelaxError
 from version import version
 
 # relaxGUI module import
-from res.about import *
-from res.settings import *
-from res.calc_noe import *
-from res.calc_rx import *
+from res.about import about_relax
+from res.settings import relax_global_settings, import_file_settings, load_sequence
+from res.calc_noe import make_noe
+from res.calc_rx import  make_rx
 from res.calc_modelfree import start_model_free
-from res.filedialog import *
-from res.message import *
-from res.results_analysis import *
-from res.select_model_calc import *
-from res.project import *
+from res.filedialog import openfile, multi_openfile, savefile, opendir
+from res.message import relax_run_ok, missing_data, exec_relax, question, dir_message
+from res.results_analysis import results_table, color_code_noe, model_free_results, see_results
+from res.select_model_calc import whichmodel, check_entries
+from res.project import create_save_file, open_file
 
  
 #####################################################################################################################
