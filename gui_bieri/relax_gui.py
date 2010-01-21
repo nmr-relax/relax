@@ -157,8 +157,8 @@ REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
 
 class main(wx.Frame):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: main.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        # begin 
+        kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN 
         wx.Frame.__init__(self, *args, **kwds)
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
         self.results = wx.Panel(self.notebook_2, -1)
