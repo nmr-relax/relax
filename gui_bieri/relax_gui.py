@@ -1983,16 +1983,17 @@ class main(wx.Frame):
         newdir = opendir('Select results directory', '*')
         if not newdir == None:
             #create directories
-            os.system('mkdir ' + newdir + sep + 'NOE_1')
-            os.system('mkdir ' + newdir + sep + 'NOE_2')
-            os.system('mkdir ' + newdir + sep + 'NOE_3')
-            os.system('mkdir ' + newdir + sep + 'R1_1')
-            os.system('mkdir ' + newdir + sep + 'R1_2')
-            os.system('mkdir ' + newdir + sep + 'R1_3')
-            os.system('mkdir ' + newdir + sep + 'R2_1')
-            os.system('mkdir ' + newdir + sep + 'R2_2')
-            os.system('mkdir ' + newdir + sep + 'R2_3')
-            os.system('mkdir ' + newdir + sep + 'model_free')
+            os.mkdir(newdir + sep + 'NOE_1')
+            os.mkdir(newdir + sep + 'NOE_2')
+            os.mkdir(newdir + sep + 'NOE_3')
+            os.mkdir(newdir + sep + 'R1_1')
+            os.mkdir(newdir + sep + 'R1_2')
+            os.mkdir(newdir + sep + 'R1_3')
+            os.mkdir(newdir + sep + 'R2_1')
+            os.mkdir(newdir + sep + 'R2_2')
+            os.mkdir(newdir + sep + 'R2_3')
+            os.mkdir(newdir + sep + 'model_free')
+
             #insert directories in set up menu
             self.res_noe1.SetValue(newdir + sep + 'NOE_1')
             self.res_noe1_copy.SetValue(newdir + sep + 'NOE_2')
