@@ -33,6 +33,7 @@ import sys
 # relaxGUI modules
 from calc_rx import make_rx
 from calc_noe import make_noe
+from calc_modelfree import start_model_free
 
 
 class log_window(wx.Dialog):
@@ -71,6 +72,9 @@ class log_window(wx.Dialog):
         if WHICH_CALC == 'Noe':
             thread.start_new_thread(make_noe, (PARAMETERS[0], PARAMETERS[1], PARAMETERS[2], PARAMETERS[3], PARAMETERS[4], PARAMETERS[5], PARAMETERS[6], PARAMETERS[7], PARAMETERS[8], PARAMETERS[9], PARAMETERS[10], PARAMETERS[11], PARAMETERS[12], PARAMETERS[13], self))
 
+        if WHICH_CALC == 'Model-free':
+            thread.start_new_thread(start_model_free, (PARAMETERS[0], PARAMETERS[1], PARAMETERS[2], PARAMETERS[3], PARAMETERS[4], PARAMETERS[5],  self))
+
 
 
     def __set_properties(self):
@@ -78,7 +82,7 @@ class log_window(wx.Dialog):
         # properties of GUI elements (used at start up)
         self.SetTitle("relaxGUI - Log Window")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap("/home/michael/Programme/bieri_gui/gui_bieri/res/pics/relax.gif", wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((600, 600))
         self.header_log.SetMinSize((600, 18))
@@ -156,6 +160,27 @@ def start_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct
     global PARAMETERS
     main = self
     PARAMETERS = [target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_pdb, unres, execute, main, freqno, global_setting, file_setting, sequencefile]
+
+    # launch log dialog
+    logwindow = log_window(None, -1, "")
+    logwindow.ShowModal()
+    sys.stdout = sys.__stdout__ 
+    sys.stderr = sys.__stderr__ 
+    return ''
+
+
+# Model-free Calculation
+
+def start_modelfree(self, model, automatic, global_setting, file_setting, sequencefile):
+
+    # define calculation
+    global WHICH_CALC
+    WHICH_CALC = 'Model-free'
+
+    # Parameters for calculation
+    global PARAMETERS
+    main = self
+    PARAMETERS = [main, model, automatic, global_setting, file_setting, sequencefile]
 
     # launch log dialog
     logwindow = log_window(None, -1, "")
