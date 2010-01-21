@@ -2161,7 +2161,7 @@ class main(wx.Frame):
         start_relax = exec_relax()
 
         if start_relax == True:
-           make_noe(self.res_noe1.GetValue(), self.noe_ref_1.GetValue(), self.noe_sat_1.GetValue(), self.noe_ref_err_1.GetValue(), self.noe_sat_err_1.GetValue(), self.nmrfreq_value_noe1.GetValue(),self.structure_noe1.GetValue(), self.unres_noe1.GetValue(), start_relax, self, 1, global_setting, file_setting, sequencefile)
+           start_noe(self.res_noe1.GetValue(), self.noe_ref_1.GetValue(), self.noe_sat_1.GetValue(), self.noe_ref_err_1.GetValue(), self.noe_sat_err_1.GetValue(), self.nmrfreq_value_noe1.GetValue(),self.structure_noe1.GetValue(), self.unres_noe1.GetValue(), start_relax, self, 1, global_setting, file_setting, sequencefile)
         event.Skip()
 
           
@@ -2251,7 +2251,7 @@ class main(wx.Frame):
         relax_times_r1_1[13] = str(self.r1_time_1_4.GetValue()) 
         start_relax = exec_relax()
         if start_relax == True:
-           make_rx(self.resultsdir_r11.GetValue(), r1_list, relax_times_r1_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 1, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
+           start_rx(self.resultsdir_r11.GetValue(), r1_list, relax_times_r1_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 1, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
         event.Skip()
 
 ### Execute R2 no. 1
@@ -2336,7 +2336,7 @@ class main(wx.Frame):
         relax_times_r2_1[13] = str(self.r2_time_14.GetValue()) 
         start_relax = exec_relax()
         if start_relax == True:
-           make_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.unresolved_r11.GetValue(), self,1, global_setting, file_setting, sequencefile)
+           start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.unresolved_r11.GetValue(), self,1, global_setting, file_setting, sequencefile)
         event.Skip()
 
 ### NOE no. 2
@@ -2368,7 +2368,7 @@ class main(wx.Frame):
     def exec_noe2(self, event): # start noe 2 calculation
         start_relax = exec_relax()
         if start_relax == True:
-           make_noe(self.res_noe1_copy.GetValue(), self.noe_ref_1_copy.GetValue(), self.noe_sat_1_copy.GetValue(), self.noe_ref_err_1_copy.GetValue(), self.noe_sat_err_1_copy.GetValue(), self.nmrfreq_value_noe1_copy.GetValue(),self.structure_noe1_copy.GetValue(), self.unres_noe1_copy.GetValue(), start_relax, self, 2, global_setting, file_setting, sequencefile)
+           start_noe(self.res_noe1_copy.GetValue(), self.noe_ref_1_copy.GetValue(), self.noe_sat_1_copy.GetValue(), self.noe_ref_err_1_copy.GetValue(), self.noe_sat_err_1_copy.GetValue(), self.nmrfreq_value_noe1_copy.GetValue(),self.structure_noe1_copy.GetValue(), self.unres_noe1_copy.GetValue(), start_relax, self, 2, global_setting, file_setting, sequencefile)
         event.Skip()
 
 ### R1 no. 2
@@ -2456,7 +2456,7 @@ class main(wx.Frame):
 
         start_relax = exec_relax()
         if start_relax == True:
-           make_rx(self.resultsdir_r11_copy.GetValue(), r1_list2, relax_times_r1_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 1, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
+           start_rx(self.resultsdir_r11_copy.GetValue(), r1_list2, relax_times_r1_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 1, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
         event.Skip()
 
 ### R2 no. 2
@@ -2544,7 +2544,7 @@ class main(wx.Frame):
 
         start_relax = exec_relax()
         if start_relax == True:
-           make_rx(self.resultsdir_r21_copy.GetValue(), r2_list2, relax_times_r2_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 2, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
+           start_rx(self.resultsdir_r21_copy.GetValue(), r2_list2, relax_times_r2_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 2, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
         event.Skip()
 
 ### NOE no. 3
@@ -2576,7 +2576,7 @@ class main(wx.Frame):
     def exec_noe3(self, event): # calculate noe 3
         start_relax = exec_relax()
         if start_relax == True:
-           make_noe(self.res_noe1_copy_1.GetValue(), self.noe_ref_1_copy_1.GetValue(), self.noe_sat_1_copy_1.GetValue(), self.noe_ref_err_1_copy_1.GetValue(), self.noe_sat_err_1_copy_1.GetValue(), self.nmrfreq_value_noe1_copy_1.GetValue(),self.structure_noe1_copy_1.GetValue(), self.unres_noe1_copy_1.GetValue(), start_relax, self, 3, global_setting, file_setting, sequencefile)
+           start_noe(self.res_noe1_copy_1.GetValue(), self.noe_ref_1_copy_1.GetValue(), self.noe_sat_1_copy_1.GetValue(), self.noe_ref_err_1_copy_1.GetValue(), self.noe_sat_err_1_copy_1.GetValue(), self.nmrfreq_value_noe1_copy_1.GetValue(),self.structure_noe1_copy_1.GetValue(), self.unres_noe1_copy_1.GetValue(), start_relax, self, 3, global_setting, file_setting, sequencefile)
         event.Skip()
 
 ### R1 no. 3
@@ -2663,7 +2663,7 @@ class main(wx.Frame):
         relax_times_r1_3[13] = str(self.r1_time_1_4_copy_1.GetValue()) 
         start_relax = exec_relax()
         if start_relax == True:
-           make_rx(self.resultsdir_r11_copy_1.GetValue(), r1_list3, relax_times_r1_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 1, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
+           start_rx(self.resultsdir_r11_copy_1.GetValue(), r1_list3, relax_times_r1_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 1, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
         event.Skip()
 
 
@@ -2751,7 +2751,7 @@ class main(wx.Frame):
 
         start_relax = exec_relax()
         if start_relax == True:
-           make_rx(self.resultsdir_r21_copy_1.GetValue(), r2_list3, relax_times_r2_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 2, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
+           start_rx(self.resultsdir_r21_copy_1.GetValue(), r2_list3, relax_times_r2_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 2, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
         event.Skip()
 
 ### Model-free analysis
