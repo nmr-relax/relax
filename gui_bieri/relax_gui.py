@@ -792,7 +792,7 @@ class main(wx.Frame):
         _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'res'+sep+'pics'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((1000, 600))
-        self.frame_1_statusbar.SetStatusWidths([900, 50, -1])
+        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
         # statusbar fields
         frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
         for i in range(len(frame_1_statusbar_fields)):
