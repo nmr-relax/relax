@@ -2859,11 +2859,15 @@ class main(wx.Frame):
               if not which_model == 'final':
 
                  # run sphere, prolate, oblate or ellipsoid
-                 start_model_free(self, which_model, False, global_setting, file_setting, sequencefile)
+                 enable_models = False   
+                 enable_models = start_modelfree(self, which_model, False, global_setting, file_setting, sequencefile)
+
+                 if enable_models:
+                    LOCAL_TM = True
               else:
  
                  # run final run
-                 results_for_table = start_model_free(self, which_model, False, global_setting, file_setting, sequencefile) 
+                 results_for_table = startmodelfree(self, which_model, False, global_setting, file_setting, sequencefile) 
 
                  # import global variables for results table
                  global table_residue
