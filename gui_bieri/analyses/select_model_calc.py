@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,12 +21,14 @@
 #                                                                             #
 ###############################################################################
 
-import wx
-import sys
+# Python module imports.
 from os import sep
-import time
+import sys
+import wx
 
-from message import missing_data
+# relax GUI module imports.
+from gui_bieri.message import missing_data
+
 
 selection = None
 
