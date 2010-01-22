@@ -24,23 +24,14 @@
 # Python module imports.
 from os import getcwd, listdir, sep
 from string import replace
-import time
 import sys
-import os
+import time
 import wx
 
 # relax module imports.
-from float import floatAsByteArray
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-from generic_fns import pipes, spectrum, value, grace, minimise, selection, results
+from generic_fns import grace, minimise, pipes, results, selection, spectrum, state, value
 import generic_fns.structure.main
-from relax_errors import RelaxError
 from specific_fns.setup import noe_obj
-from generic_fns.state import save_state
-
-# relaxGUI module import
-from results_analysis import color_code_noe
-from message import relax_run_ok
 
 
 ####### Class to redirect relax output to relaxGUI - log panel and progress bar
@@ -174,7 +165,7 @@ def make_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_
         results.write(file='results', directory=resultsdir, force=True)
         
         # Save the program state.
-        save_state('save', dir = resultsdir, force=True)
+        state.save_state('save', dir = resultsdir, force=True)
         
         print ""
         print ""

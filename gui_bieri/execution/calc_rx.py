@@ -24,26 +24,15 @@
 # script to calculate rx
 
 # Python module imports.
-from os import getcwd, listdir, sep
 from string import replace
-import time
 import sys
-import os
+import time
 import wx
 
 # relax module imports.
-from float import floatAsByteArray
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
+from generic_fns import monte_carlo, results, minimise, pipes, sequence, spectrum, selection, value, grace, state
 import generic_fns.structure.main
-from relax_errors import RelaxError
 from specific_fns.setup import relax_fit_obj
-from generic_fns.state import save_state
-from generic_fns import monte_carlo, results, minimise, pipes, diffusion_tensor, fix, sequence, spectrum, relax_data, selection, value, grace, eliminate
-from minfx.generic import generic_minimise
-
-# relaxGUI module import
-from results_analysis import color_code_noe
-from message import relax_run_ok, question
 
 
 ####### Class to redirect relax output to relaxGUI - log panel and progress bar
@@ -242,7 +231,7 @@ def make_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, fr
         results.write(file='results', directory=resultsdir, force=True)
         
         # Save the program state.
-        save_state('save', dir = resultsdir, force=True)
+        state.save_state('save', dir = resultsdir, force=True)
         
         print ""
         print ""

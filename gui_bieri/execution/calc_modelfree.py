@@ -24,27 +24,21 @@
 # script to calculate model-free models
 
 # Python module imports.
-from os import getcwd, listdir, sep
-from string import replace
+from os import listdir, sep
 from re import search
+from string import replace
 import time
-import sys
-import os
 
 # relax module imports.
 from float import floatAsByteArray
+from generic_fns import diffusion_tensor, eliminate, fix, grace, minimise, model_selection, monte_carlo, pipes, relax_data, results, selection, sequence, spectrum, value
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-from generic_fns import pipes
 import generic_fns.structure.main
 from relax_errors import RelaxError
-from specific_fns.setup import relax_fit_obj, model_free_obj
-from generic_fns.state import save_state
-from generic_fns import monte_carlo, results, minimise, pipes, diffusion_tensor, fix, sequence, spectrum, relax_data, selection, value, grace, eliminate, model_selection
-from minfx.generic import generic_minimise
-import generic_fns.structure.geometric
+from specific_fns.setup import model_free_obj
 
-# relaxGUI module import
-from message import relax_run_ok
+# relaxGUI module imports.
+from gui_bieri.message import relax_run_ok
 
 
 ### Model-free
