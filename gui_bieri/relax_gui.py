@@ -48,6 +48,7 @@ from analyses.results_analysis import color_code_noe, model_free_results, result
 from analyses.select_model_calc import check_entries, whichmodel
 from filedialog import multi_openfile, opendir, openfile, savefile
 from message import dir_message, exec_relax, missing_data, question, relax_run_ok
+from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from settings import import_file_settings, load_sequence, relax_global_settings
 
  
@@ -124,22 +125,6 @@ paramfiles1 = ["","",""]
 paramfiles2 = ["","",""]
 paramfiles3 = ["","",""]
 results_dir_model = getcwd()
-
-# GUI icons.
-ICON_PATH = sys.path[0]+sep+'gui_bieri'+sep+'oxygen_icons'+sep
-ABOUT_RELAX_ICON = sys.path[0]+sep+'gui_bieri'+sep+'images'+sep+'relax_16x16.png'
-ABOUT_RELAXGUI_ICON = sys.path[0]+sep+'gui_bieri'+sep+'images'+sep+'relax_16x16.png'
-CONTACT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'mail-mark-unread-new.png'
-EXIT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'system-shutdown.png'
-LOAD_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'arrow-right.png'
-MANUAL_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'help-contents.png'
-NEW_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-new.png'
-OPEN_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-open.png'
-SAVE_AS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-save-as.png'
-SETTINGS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-properties.png'
-SETTINGS_GLOBAL_ICON = ICON_PATH + '16x16'+sep+'categories'+sep+'preferences-system.png'
-SETTINGS_RESET_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'edit-delete.png'
-REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
 
 
 #####################################################################################################################
@@ -235,7 +220,7 @@ class main(wx.Frame):
 
         # NOE 1 no. 1
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
-        self.bitmap_1_copy_1 = wx.StaticBitmap(self.noe1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'noe.gif', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_1 = wx.StaticBitmap(self.noe1, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1 = wx.StaticText(self.noe1, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3 = wx.StaticText(self.noe1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_noe1 = wx.TextCtrl(self.noe1, -1, str(nmrfreq[0]) )
@@ -260,11 +245,11 @@ class main(wx.Frame):
         self.chandir_noe1 = wx.Button(self.noe1, -1, "Change")
         self.label_2_copy_2 = wx.StaticText(self.noe1, -1, "")
         self.label_5_copy_1 = wx.StaticText(self.noe1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_noe1 = wx.BitmapButton(self.noe1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_noe1 = wx.BitmapButton(self.noe1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         # R1 no. 1
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.r1_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'r1.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy = wx.StaticBitmap(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy = wx.StaticText(self.r1_1, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.r1_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r11 = wx.TextCtrl(self.r1_1, -1, str(nmrfreq[0]))
@@ -311,11 +296,11 @@ class main(wx.Frame):
         self.r1_list_14 = wx.StaticText(self.panel_3, -1, "")
         self.r1_time_1_4 = wx.TextCtrl(self.panel_3, -1, "")
         self.label_5_copy_1_copy = wx.StaticText(self.r1_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1 = wx.BitmapButton(self.r1_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_r1_1 = wx.BitmapButton(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #R2 no. 1
-        self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.r2_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'r2.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.r2_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1 = wx.StaticText(self.r2_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r21 = wx.TextCtrl(self.r2_1, -1, str(nmrfreq[0]))
@@ -362,11 +347,11 @@ class main(wx.Frame):
         self.r2_list_14 = wx.StaticText(self.panel_3_copy, -1, "")
         self.r2_time_14 = wx.TextCtrl(self.panel_3_copy, -1, "")
         self.label_5_copy_1_copy_copy = wx.StaticText(self.r2_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy = wx.BitmapButton(self.r2_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_r1_1_copy = wx.BitmapButton(self.r2_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #Noe no.2
-        self.bitmap_1_copy_1_copy = wx.StaticBitmap(self.noe1_copy, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'noe.gif', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_1_copy = wx.StaticBitmap(self.noe1_copy, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy = wx.StaticText(self.noe1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, str(nmrfreq[1]))
@@ -391,11 +376,11 @@ class main(wx.Frame):
         self.chandir_noe1_copy = wx.Button(self.noe1_copy, -1, "Change")
         self.label_2_copy_2_copy = wx.StaticText(self.noe1_copy, -1, "")
         self.label_5_copy_1_copy_1 = wx.StaticText(self.noe1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_noe1_copy = wx.BitmapButton(self.noe1_copy, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_noe1_copy = wx.BitmapButton(self.noe1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #R1 no. 2
-        self.bitmap_1_copy_copy_copy_1 = wx.StaticBitmap(self.r1_1_copy, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'r1.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_1 = wx.StaticBitmap(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_2 = wx.StaticText(self.r1_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, str(nmrfreq[1]))
@@ -441,10 +426,10 @@ class main(wx.Frame):
         self.r1_list_14_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
         self.r1_time_1_4_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
         self.label_5_copy_1_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_1 = wx.BitmapButton(self.r1_1_copy, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_r1_1_copy_1 = wx.BitmapButton(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #R2 no. 2
-        self.bitmap_1_copy_copy_copy_copy = wx.StaticBitmap(self.r2_1_copy, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'r2.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_copy = wx.StaticBitmap(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy = wx.StaticText(self.r2_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, str(nmrfreq[1]))
@@ -491,10 +476,10 @@ class main(wx.Frame):
         self.r2_list_14_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
         self.r2_time_14_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
         self.label_5_copy_1_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_copy = wx.BitmapButton(self.r2_1_copy, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_r1_1_copy_copy = wx.BitmapButton(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #NOE no. 3
-        self.bitmap_1_copy_1_copy_1 = wx.StaticBitmap(self.noe1_copy_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'noe.gif', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_1_copy_1 = wx.StaticBitmap(self.noe1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, str(nmrfreq[2]))
@@ -519,11 +504,11 @@ class main(wx.Frame):
         self.chandir_noe1_copy_1 = wx.Button(self.noe1_copy_1, -1, "Change")
         self.label_2_copy_2_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "")
         self.label_5_copy_1_copy_2 = wx.StaticText(self.noe1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_noe1_copy_1 = wx.BitmapButton(self.noe1_copy_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_noe1_copy_1 = wx.BitmapButton(self.noe1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #R1 no. 3
-        self.bitmap_1_copy_copy_copy_2 = wx.StaticBitmap(self.r1_1_copy_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'r1.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_2 = wx.StaticBitmap(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_3 = wx.StaticText(self.r1_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, str(nmrfreq[2]))
@@ -570,10 +555,10 @@ class main(wx.Frame):
         self.r1_list_14_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
         self.r1_time_1_4_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
         self.label_5_copy_1_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_2 = wx.BitmapButton(self.r1_1_copy_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_r1_1_copy_2 = wx.BitmapButton(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #R2 no. 3
-        self.bitmap_1_copy_copy_copy_copy_1 = wx.StaticBitmap(self.r2_1_copy_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'r2.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy_copy_copy_1 = wx.StaticBitmap(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, str(nmrfreq[2]))
@@ -620,11 +605,11 @@ class main(wx.Frame):
         self.r2_list_14_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
         self.r2_time_14_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
         self.label_5_copy_1_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_copy_1 = wx.BitmapButton(self.r2_1_copy_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_r1_1_copy_copy_1 = wx.BitmapButton(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
         #Model-free
-        self.bitmap_2 = wx.StaticBitmap(self.modelfree, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'modelfree.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_2 = wx.StaticBitmap(self.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Set-up for Model-free analysis:")
         self.label_7 = wx.StaticText(self.panel_4, -1, "NMR freq 1:")
         self.modelfreefreq1 = wx.TextCtrl(self.panel_4, -1, "")
@@ -683,7 +668,7 @@ class main(wx.Frame):
         self.resultsdir_r21_copy_2 = wx.TextCtrl(self.modelfree, -1, results_dir_model)
         self.results_directory_r21_copy_2 = wx.Button(self.modelfree, -1, "Change")
         self.label_5_copy_1_copy_3 = wx.StaticText(self.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_modelfree = wx.BitmapButton(self.modelfree, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_start_modelfree = wx.BitmapButton(self.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         ## results
         self.label_11 = wx.StaticText(self.results, -1, "NOE analysis")
@@ -785,7 +770,7 @@ class main(wx.Frame):
         # begin wxGlade: main.__set_properties
         self.SetTitle("relaxGUI " + GUI_version)
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((1000, 600))
         self.frame_1_statusbar.SetStatusWidths([800, 50, -1])

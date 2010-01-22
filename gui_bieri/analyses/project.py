@@ -24,11 +24,8 @@
 # script to organize project
 
 # Python module imports.
-from os import getcwd, listdir, sep
 from string import replace
-import time
-import sys
-import os
+
 
 #create list from string
 

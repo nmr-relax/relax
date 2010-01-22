@@ -28,13 +28,15 @@ from string import lower
 import wx
 import time
 from string import replace
-import sys
 import os
 import wx
 import wx.grid
 
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
+
+# relax GUI module imports.
+from gui_bieri.paths import IMAGE_PATH
 
 
 class final_results(wx.Dialog):        # Dialog that displays relax results in window
@@ -57,7 +59,7 @@ class final_results(wx.Dialog):        # Dialog that displays relax results in w
         # begin final_results.__set_properties
         self.SetTitle("relaxGUI")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((700, 600))
         self.label_1.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))

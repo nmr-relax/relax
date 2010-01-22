@@ -25,7 +25,8 @@ from os import sep
 import sys
 import wx
 
-
+# relax GUI module imports.
+from paths import IMAGE_PATH
 
 
 class globalparam(wx.Dialog):
@@ -34,7 +35,7 @@ class globalparam(wx.Dialog):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
         self.label_1_copy = wx.StaticText(self, -1, "Global Parameters for relax")
-        self.bitmap_1_copy = wx.StaticBitmap(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.label_2_copy = wx.StaticText(self, -1, "Bond Length:")
         self.bond = wx.TextCtrl(self, -1, old_settings[0])
         self.label_3_copy = wx.StaticText(self, -1, "CSA")
@@ -63,7 +64,7 @@ class globalparam(wx.Dialog):
         # begin globalparam.__set_properties
         self.SetTitle("relaxGUI")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.label_1_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.bond.SetMinSize((150, 27))
@@ -135,7 +136,7 @@ class inputfile(wx.Dialog):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
         self.label_1_copy_copy = wx.StaticText(self, -1, "Parameter File Settings")
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.label_2_copy_copy = wx.StaticText(self, -1, "Molecule Name")
         self.mol_nam = wx.TextCtrl(self, -1, old_settings[0])
         self.label_3_copy_copy = wx.StaticText(self, -1, "Residue Number")
@@ -164,7 +165,7 @@ class inputfile(wx.Dialog):
         # begin inputfile.__set_properties
         self.SetTitle("relaxGUI")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.label_1_copy_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.mol_nam.SetMinSize((150, 27))

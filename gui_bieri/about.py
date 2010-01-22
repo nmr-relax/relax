@@ -23,7 +23,9 @@
 # Python module imports.
 from os import sep
 import wx
-import sys
+
+# relax GUI module imports.
+from paths import IMAGE_PATH
 
 
 class MyFrame(wx.Dialog):
@@ -33,7 +35,7 @@ class MyFrame(wx.Dialog):
         wx.Dialog.__init__(self, *args, **kwds)
         self.panel_1 = wx.Panel(self, -1)
         self.panel_2 = wx.Panel(self, -1)
-        self.bitmap_1 = wx.StaticBitmap(self.panel_1, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'start.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1 = wx.StaticBitmap(self.panel_1, -1, wx.Bitmap(IMAGE_PATH+'start.png', wx.BITMAP_TYPE_ANY))
         self.button_1 = wx.Button(self, -1, "Ok")
 
         self.__set_properties()
@@ -46,7 +48,7 @@ class MyFrame(wx.Dialog):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("relaxGUI")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((640, 540))
         self.SetBackgroundColour(wx.Colour(0, 0, 0))

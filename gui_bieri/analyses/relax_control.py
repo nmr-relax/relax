@@ -32,6 +32,7 @@ import wx
 from gui_bieri.execution.calc_modelfree import start_model_free
 from gui_bieri.execution.calc_noe import make_noe
 from gui_bieri.execution.calc_rx import make_rx
+from gui_bieri.paths import IMAGE_PATH
 
 
 class log_window(wx.Dialog):
@@ -42,7 +43,7 @@ class log_window(wx.Dialog):
         wx.Dialog.__init__(self, *args, **kwds)
 
         # header
-        self.relax_logo = wx.StaticBitmap(self, -1, wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.relax_logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.header_log = wx.StaticText(self, -1, "", style=wx.ALIGN_CENTRE)
 
         # Log panel
@@ -80,7 +81,7 @@ class log_window(wx.Dialog):
         # properties of GUI elements (used at start up)
         self.SetTitle("relaxGUI - Log Window")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(sys.path[-1]+sep+'gui_bieri'+sep+'images'+sep+'relax.gif', wx.BITMAP_TYPE_ANY))
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((600, 600))
         self.header_log.SetMinSize((600, 18))
