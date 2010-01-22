@@ -22,18 +22,16 @@
 
 # Log window of relax GUI controlling all calculations
 
-
-# Python Modules
-import wx
+# Python module imports.
 from os import sep
-import thread
 import sys
+import thread
+import wx
 
-
-# relaxGUI modules
-from calc_rx import make_rx
-from calc_noe import make_noe
-from calc_modelfree import start_model_free
+# relaxGUI module imports.
+from gui_bieri.execution.calc_modelfree import start_model_free
+from gui_bieri.execution.calc_noe import make_noe
+from gui_bieri.execution.calc_rx import make_rx
 
 
 class log_window(wx.Dialog):
