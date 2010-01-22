@@ -24,17 +24,13 @@
 # Graphical User Interface for relax
 
 # Python module imports.
-from os import getcwd, listdir, sep
+from os import getcwd, mkdir, sep
 from re import search
-from string import lower
-import wx
-import time
-from string import replace
-from string import lowercase
-from os import getcwd
+from string import lower, lowercase, replace
 import sys
-import os
+import time
 import webbrowser
+import wx
 
 # relax module imports.
 from float import floatAsByteArray
@@ -1983,16 +1979,16 @@ class main(wx.Frame):
         newdir = opendir('Select results directory', '*')
         if not newdir == None:
             #create directories
-            os.mkdir(newdir + sep + 'NOE_1')
-            os.mkdir(newdir + sep + 'NOE_2')
-            os.mkdir(newdir + sep + 'NOE_3')
-            os.mkdir(newdir + sep + 'R1_1')
-            os.mkdir(newdir + sep + 'R1_2')
-            os.mkdir(newdir + sep + 'R1_3')
-            os.mkdir(newdir + sep + 'R2_1')
-            os.mkdir(newdir + sep + 'R2_2')
-            os.mkdir(newdir + sep + 'R2_3')
-            os.mkdir(newdir + sep + 'model_free')
+            mkdir(newdir + sep + 'NOE_1')
+            mkdir(newdir + sep + 'NOE_2')
+            mkdir(newdir + sep + 'NOE_3')
+            mkdir(newdir + sep + 'R1_1')
+            mkdir(newdir + sep + 'R1_2')
+            mkdir(newdir + sep + 'R1_3')
+            mkdir(newdir + sep + 'R2_1')
+            mkdir(newdir + sep + 'R2_2')
+            mkdir(newdir + sep + 'R2_3')
+            mkdir(newdir + sep + 'model_free')
 
             #insert directories in set up menu
             self.res_noe1.SetValue(newdir + sep + 'NOE_1')
