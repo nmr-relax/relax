@@ -21,7 +21,8 @@
 #                                                                             #
 ###############################################################################
 
-# Graphical User Interface for relax
+# Module docstring.
+"""Main module for the relax graphical user interface."""
 
 # Python module imports.
 from os import getcwd, mkdir, sep
