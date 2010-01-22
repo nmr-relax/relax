@@ -127,8 +127,8 @@ results_dir_model = getcwd()
 
 # GUI icons.
 ICON_PATH = sys.path[0]+sep+'gui_bieri'+sep+'oxygen_icons'+sep
-ABOUT_RELAX_ICON = sys.path[0]+sep+'gui_bieri'+sep+'relax_bitmaps'+sep+'relax_16x16.png'
-ABOUT_RELAXGUI_ICON = sys.path[0]+sep+'gui_bieri'+sep+'relax_bitmaps'+sep+'relax_16x16.png'
+ABOUT_RELAX_ICON = sys.path[0]+sep+'gui_bieri'+sep+'images'+sep+'relax_16x16.png'
+ABOUT_RELAXGUI_ICON = sys.path[0]+sep+'gui_bieri'+sep+'images'+sep+'relax_16x16.png'
 CONTACT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'mail-mark-unread-new.png'
 EXIT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'system-shutdown.png'
 LOAD_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'arrow-right.png'
