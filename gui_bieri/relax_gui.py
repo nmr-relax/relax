@@ -43,15 +43,15 @@ from generic_fns import pipes
 from relax_errors import RelaxError
 from version import version
 
-# relaxGUI module import
-from res.about import about_relax
-from res.settings import relax_global_settings, import_file_settings, load_sequence
-from res.filedialog import openfile, multi_openfile, savefile, opendir
-from res.message import relax_run_ok, missing_data, exec_relax, question, dir_message
-from res.results_analysis import results_table, color_code_noe, model_free_results, see_results
-from res.select_model_calc import whichmodel, check_entries
-from res.project import create_save_file, open_file
-from res.relax_control import start_rx, start_noe, start_modelfree
+# relaxGUI module imports.
+from about import about_relax
+from analyses.project import create_save_file, open_file
+from analyses.relax_control import start_modelfree, start_noe, start_rx
+from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
+from analyses.select_model_calc import check_entries, whichmodel
+from filedialog import multi_openfile, opendir, openfile, savefile
+from message import dir_message, exec_relax, missing_data, question, relax_run_ok
+from settings import import_file_settings, load_sequence, relax_global_settings
 
  
 #####################################################################################################################
