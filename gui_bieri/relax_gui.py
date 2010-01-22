@@ -75,6 +75,7 @@ results_model_free = []
 global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
 file_setting = ['0', '1', '2', '3', '4', '5', '6']
 sequencefile = ''
+LOCAL_TM = False
 
 # Table of relax Results
 table_residue = []
@@ -2844,12 +2845,13 @@ class main(wx.Frame):
         event.Skip()
 
     def exec_model_free(self, event):     # start model-free calculation by relax
+        global LOCAL_TM
         
         checkpoint = check_entries(self)
         if checkpoint == False:
            which_model = None
         else:
-           which_model = whichmodel() 
+           which_model = whichmodel(LOCAL_TM) 
 
         # start individual calculations
         if not which_model == None:
