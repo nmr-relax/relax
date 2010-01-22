@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -1235,6 +1235,64 @@ class N_state_model(API_base, API_common):
         self._update_model()
 
 
+    def _target_fn_setup(self, sim_index=None, scaling=True):
+        """Initialise the target function for optimisation or direct calculation.
+
+        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:        None or int
+        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+        @type scaling:          bool
+        """
+
+        # Test if the N-state model has been set up.
+        if not hasattr(cdp, 'model'):
+            raise RelaxNoModelError('N-state')
+
+        # '2-domain' model setup tests.
+        if cdp.model == '2-domain':
+            # The number of states.
+            if not hasattr(cdp, 'N'):
+                raise RelaxError("The number of states has not been set.")
+
+            # The reference domain.
+            if not hasattr(cdp, 'ref_domain'):
+                raise RelaxError("The reference domain has not been set.")
+
+        # Update the model parameters if necessary.
+        self._update_model()
+
+        # Create the initial parameter vector.
+        param_vector = self._assemble_param_vector(sim_index=sim_index)
+
+        # Determine if alignment tensors or RDCs are to be used.
+        data_types = self._base_data_types()
+
+        # Diagonal scaling.
+        scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+        param_vector = dot(inv(scaling_matrix), param_vector)
+
+        # Get the data structures for optimisation using the tensors as base data sets.
+        full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
+        if 'tensor' in data_types:
+            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
+
+        # Get the data structures for optimisation using PCSs as base data sets.
+        pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
+        if 'pcs' in data_types:
+            pcs, pcs_err, pcs_vect, pcs_dj = self._minimise_setup_pcs()
+
+        # Get the data structures for optimisation using RDCs as base data sets.
+        rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
+        if 'rdc' in data_types:
+            rdcs, rdc_err, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+
+        # Set up the class instance containing the target function.
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+
+        # Return the data.
+        return model, param_vector, data_types, scaling_matrix
+
+
     def _tensor_loop(self, red=False):
         """Generator method for looping over the full or reduced tensors.
 
@@ -1347,35 +1405,42 @@ class N_state_model(API_base, API_common):
         @type sim_index:    None
         """
 
-        # Test if the N-state model has been set up.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
+        # Set up the target function for direct calculation.
+        model, param_vector, data_types, scaling_matrix = self._target_fn_setup()
 
-        # Init some numpy arrays.
-        num_restraints = len(cdp.noe_restraints)
-        dist = zeros(num_restraints, float64)
-        pot = zeros(num_restraints, float64)
-        lower = zeros(num_restraints, float64)
-        upper = zeros(num_restraints, float64)
+        # Make a function call.
+        chi2 = model.func(param_vector)
 
-        # Loop over the NOEs.
-        for i in range(num_restraints):
-            # Create arrays of the NOEs.
-            lower[i] = cdp.noe_restraints[i][2]
-            upper[i] = cdp.noe_restraints[i][3]
+        # Store the global chi-squared value.
+        cdp.chi2 = chi2
 
-            # Calculate the average distances, using -6 power averaging.
-            dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+        # NOE potential.
+        if hasattr(cdp, 'noe_restraints'):
+            # Init some numpy arrays.
+            num_restraints = len(cdp.noe_restraints)
+            dist = zeros(num_restraints, float64)
+            pot = zeros(num_restraints, float64)
+            lower = zeros(num_restraints, float64)
+            upper = zeros(num_restraints, float64)
 
-        # Calculate the quadratic potential.
-        quad_pot(dist, pot, lower, upper) 
+            # Loop over the NOEs.
+            for i in range(num_restraints):
+                # Create arrays of the NOEs.
+                lower[i] = cdp.noe_restraints[i][2]
+                upper[i] = cdp.noe_restraints[i][3]
 
-        # Store the distance and potential information.
-        cdp.ave_dist = []
-        cdp.quad_pot = []
-        for i in range(num_restraints):
-            cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
-            cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
+                # Calculate the average distances, using -6 power averaging.
+                dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+
+            # Calculate the quadratic potential.
+            quad_pot(dist, pot, lower, upper)
+
+            # Store the distance and potential information.
+            cdp.ave_dist = []
+            cdp.quad_pot = []
+            for i in range(num_restraints):
+                cdp.ave_dist.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], dist[i]])
+                cdp.quad_pot.append([cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], pot[i]])
 
 
     default_value_doc = """
@@ -1491,7 +1556,7 @@ class N_state_model(API_base, API_common):
                     elif search('^beta', cdp.params[i]):
                         lower.append(0.0)
                         upper.append(pi)
-    
+
                 # Otherwise this must be an alignment tensor component.
                 else:
                     lower.append(-1e-3)
@@ -1525,24 +1590,19 @@ class N_state_model(API_base, API_common):
         @type min_algor:        str
         @param min_options:     An array of options to be used by the minimisation algorithm.
         @type min_options:      array of str
-        @param func_tol:        The function tolerance which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
+        @param func_tol:        The function tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
         @type func_tol:         None or float
-        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.
-                                Setting this to None turns of the check.
+        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
         @type grad_tol:         None or float
         @param max_iterations:  The maximum number of iterations for the algorithm.
         @type max_iterations:   int
         @param constraints:     If True, constraints are used during optimisation.
         @type constraints:      bool
-        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow
-                                the problem to be better conditioned.
+        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
         @type scaling:          bool
-        @param verbosity:       A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
+        @param verbosity:       A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:        int
-        @param sim_index:       The index of the simulation to optimise.  This should be None if
-                                normal optimisation is desired.
+        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:        None or int
         @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:            array of numbers
@@ -1552,19 +1612,8 @@ class N_state_model(API_base, API_common):
         @type inc:              array of int
         """
 
-        # Test if the N-state model has been set up.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
-        # '2-domain' model setup tests.
-        if cdp.model == '2-domain':
-            # The number of states.
-            if not hasattr(cdp, 'N'):
-                raise RelaxError("The number of states has not been set.")
-
-            # The reference domain.
-            if not hasattr(cdp, 'ref_domain'):
-                raise RelaxError("The reference domain has not been set.")
+        # Set up the target function for direct calculation.
+        model, param_vector, data_types, scaling_matrix = self._target_fn_setup(sim_index=sim_index, scaling=scaling)
 
         # Right, constraints cannot be used for the 'fixed' model.
         if constraints and cdp.model == 'fixed':
@@ -1576,42 +1625,11 @@ class N_state_model(API_base, API_common):
                 min_algor = min_options[0]
                 min_options = min_options[1:]
 
-        # Update the model parameters if necessary.
-        self._update_model()
-
-        # Create the initial parameter vector.
-        param_vector = self._assemble_param_vector(sim_index=sim_index)
-
-        # Determine if alignment tensors or RDCs are to be used.
-        data_types = self._base_data_types()
-
-        # Diagonal scaling.
-        scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
-        param_vector = dot(inv(scaling_matrix), param_vector)
-
         # Linear constraints.
         if constraints:
             A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
         else:
             A, b = None, None
-
-        # Get the data structures for optimisation using the tensors as base data sets.
-        full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
-        if 'tensor' in data_types:
-            full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
-
-        # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
-        if 'pcs' in data_types:
-            pcs, pcs_err, pcs_vect, pcs_dj = self._minimise_setup_pcs()
-
-        # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
-        if 'rdc' in data_types:
-            rdcs, rdc_err, xh_vect, rdc_dj = self._minimise_setup_rdcs()
-
-        # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
