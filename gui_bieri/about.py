@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -28,6 +29,13 @@ import wx
 from paths import IMAGE_PATH
 
 
+
+def about_relax():
+    about = MyFrame(None, -1, "")
+    about.ShowModal()
+
+
+
 class MyFrame(wx.Dialog):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
@@ -42,24 +50,7 @@ class MyFrame(wx.Dialog):
         self.__do_layout()
 
         self.Bind(wx.EVT_BUTTON, self.start, self.button_1)
-        # end wxGlade
 
-    def __set_properties(self):
-        # begin wxGlade: MyFrame.__set_properties
-        self.SetTitle("relaxGUI")
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.SetSize((640, 540))
-        self.SetBackgroundColour(wx.Colour(0, 0, 0))
-        self.panel_2.SetMinSize((640, 30))
-        self.panel_2.SetBackgroundColour(wx.Colour(0, 0, 0))
-        self.panel_1.SetMinSize((640,480))
-        self.panel_1.SetBackgroundColour(wx.Colour(255, 255, 255))
-        self.button_1.SetBackgroundColour(wx.Colour(50, 50, 50))
-        self.button_1.SetForegroundColour(wx.Colour(0, 0, 0))
-        self.button_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: MyFrame.__do_layout
@@ -73,15 +64,25 @@ class MyFrame(wx.Dialog):
         self.SetSizer(sizer_1)
         self.Layout()
         self.Centre()
-        # end wxGlade
+
+
+    def __set_properties(self):
+        # begin wxGlade: MyFrame.__set_properties
+        self.SetTitle("relaxGUI")
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.SetIcon(_icon)
+        self.SetSize((640, 540))
+        self.SetBackgroundColour(wx.Colour(0, 0, 0))
+        self.panel_2.SetMinSize((640, 30))
+        self.panel_2.SetBackgroundColour(wx.Colour(0, 0, 0))
+        self.panel_1.SetMinSize((640, 480))
+        self.panel_1.SetBackgroundColour(wx.Colour(255, 255, 255))
+        self.button_1.SetBackgroundColour(wx.Colour(50, 50, 50))
+        self.button_1.SetForegroundColour(wx.Colour(0, 0, 0))
+        self.button_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+
 
     def start(self, event): # wxGlade: MyFrame.<event_handler>
         self.Close()
         event.Skip()
-
-# end of class MyFrame
-
-
-def about_relax():
-    about = MyFrame(None, -1, "")
-    about.ShowModal()

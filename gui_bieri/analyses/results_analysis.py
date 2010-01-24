@@ -22,13 +22,8 @@
 ###############################################################################
 
 # Python module imports.
-from os import getcwd, listdir, sep
-from re import search
-from string import lower
-import wx
+from os import sep, system
 import time
-from string import replace
-import os
 import wx
 import wx.grid
 
@@ -39,7 +34,343 @@ from generic_fns.mol_res_spin import spin_loop
 from gui_bieri.paths import IMAGE_PATH
 
 
-class final_results(wx.Dialog):        # Dialog that displays relax results in window
+def color_code_noe(self, target_dir):
+    """Create PyMol Macro for NOE colouring."""
+
+    pdbfile = str(self.structure_r21_copy_1_copy.GetValue())
+    directory = target_dir
+
+    #create file
+    file = open(directory + sep + 'noe.pml', 'w')
+    file.write("load " + pdbfile + '\n')
+    file.write("bg_color white\n")
+    file.write("color gray90\n")
+    file.write("hide all\n")
+    file.write("show ribbon\n")
+
+    for spin, spin_id in spin_loop(return_id=True):
+        #select residue
+        spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+
+        #ribbon color
+        if hasattr(spin, 'noe'):
+            noe = str(spin.noe)
+            if spin.noe == None:
+                file.write("")
+            else:
+                width = ((1-spin.noe) * 2)
+                green = 1 - ((spin.noe)**3)
+                green = green * green * green #* green * green
+                green = 1 - green
+                file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
+                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+
+    file.write("hide all\n")
+    file.write("show sticks, name C+N+CA\n")
+    file.write("set stick_quality, 10\n")
+    file.write("ray\n")
+    file.close()
+
+    # add macro to results tab
+    self.list_noe.Append(directory + sep + 'noe.pml')
+
+
+def model_free_results(self):
+    """Create the model-free results."""
+
+    directory = str(self.resultsdir_r21_copy_2.GetValue()) + sep + 'final'
+    pdbfile = str(self.structure_noe1.GetValue())
+
+    #Read results
+    pipename = 'Data_extraction ' + str(time.asctime(time.localtime()))
+    pipe.create(pipename, 'mf')
+    results.read()
+
+    #create a table file and variables for results table
+
+    residue = []
+    model = []
+    s2 = []
+    rex = []
+    te = []
+
+    #create file
+    file = open(str(directory) + sep + 'Model-free_Results.txt', 'w')
+    file.write('Data Extraction by relaxGUI, (C) 2009 Michael Bieri')
+    file.write("\n")
+    file.write("\n")
+    "self.file.write(""Residue\t\tModel\tS2\t\t\tRex [1/s]\t\tTe\t\t\tRelaxation Parameters\n"")"
+    file.write("\n")
+
+    #loop over residues
+    for spin, spin_id in spin_loop(return_id=True):
+        # The spin ID string.
+        spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+        spin_res = spin_id[spin_id.index('&')+2:spin_id.index('@')]
+        file.write((spin_res) + " " + (spin_no))
+        residue.append(spin_res)
+        # The spin is not selected.
+        if not spin.select:
+            file.write("\n")
+            continue
+
+        # The model-free model.
+        if hasattr(spin, 'model'):
+            spin.model = spin.model[1:2]
+            file.write("\t\t" + spin.model)
+            model.append(spin.model)
+
+        # S2.
+        if hasattr(spin, 's2'):
+            s2 = str(spin.s2)
+            s2_err = str(spin.s2_err)
+            if spin.s2 == None:
+                file.write("")
+                s2.appen('')
+            else:
+                file.write("\t" + s2[0:5]+ " +/- " + s2_err[0:4])
+                s2.appen(s2[0:5]+ " +/- " + s2_err[0:4])
+
+        # Rex.
+        if hasattr(spin, 'rex'):
+            rex = str(spin.rex)
+            rex_err = str(spin.rex_err)
+            if spin.rex == None:
+                file.write("\t\t\t")
+                rex.appen('')
+            else:
+                rex_eff = spin.rex * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
+                rex = str(rex_eff)
+                rex_err_eff = spin.rex_err * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
+                rex_err = str(rex_err_eff)
+                file.write("\t\t" + rex[0:5]+ " +/- " + rex_err[0:4])
+                rex.appen(rex[0:5]+ " +/- " + rex_err[0:4])
+
+        # Te
+        if hasattr(spin, 'te'):
+            if spin.te == None:
+                file.write("\t\t")
+                te.appen('')
+            else:
+                te_ps = spin.te * 1e-12
+                te = str(te_ps)
+                te_err = str(spin.te_err)
+                file.write("\t\t" + te[0:5]+ " +/- " + te_err[0:4])
+                te.appen(te[0:5]+ " +/- " + te_err[0:4])
+
+        # Parameters.
+        if hasattr(spin, 'params'):
+            file.write("\t\t\t" + str(spin.params[0:len(spin.params)]))
+        else:
+            file.write("\\n")
+            continue
+
+        # Start a new line.
+        file.write("\n")
+
+    file.close()
+
+    ##################################################################################################
+
+    #Create Single Data Files
+
+    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='s2', file='s2.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='s2f', file='s2f.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='s2s', file='s2s.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='te', file='te.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='tf', file='tf.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='ts', file='ts.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='r', file='r.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='csa', file='csa.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    value.write(param='local_tm', file='local_tm.txt', dir=str(directory) + sep + 'final_results', force=True)
+
+    ##################################################################################################
+
+    #Create Grace Plots
+
+    grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=str(directory) + sep + 'grace', force=True)
+    grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=str(directory) + sep + 'grace', force=True)
+    grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=str(directory) + sep + 'grace', force=True)
+    grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=str(directory) + sep + 'grace', force=True)
+    grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=str(directory) + sep + 'grace', force=True)
+    grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=str(directory) + sep + 'grace', force=True)
+    grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', dir=str(directory) + sep + 'grace', force=True)
+    grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', dir=str(directory) + sep + 'grace', force=True)
+
+    ##################################################################################################
+
+    #Create Diffusion Tensor
+
+    # Display the diffusion tensor.
+    diffusion_tensor.display()
+
+    # Create the tensor PDB file.
+    tensor_file = 'tensor.pdb'
+    structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + sep, force=True)
+
+    # create diffusion tensor macro
+    file = open(str(directory) + sep + 'diffusion_tensor.pml', 'w')
+    file.write('load ' + pdbfile + '\n')
+    file.write('color red, ss h\n')
+    file.write('color yellow, ss s\n')
+    file.write('color green, ss l+''\n')
+    file.write('set cartoon_discrete_colors, 1\n')
+    file.write('hide all')
+    file.write('show cartoon')
+    file.write('load ' + str(directory) + sep + 'tensor.pdb' + '\n')
+    file.close()
+
+    ##################################################################################################
+
+    # Create S2 Macro for PyMol
+
+    #create file
+
+    file = open(str(directory) +sep + 's2.pml', 'w')
+    file.write("load " + pdbfile + '\n')
+    file.write("bg_color white\n")
+    file.write("color gray90\n")
+    file.write("hide all\n")
+    file.write("show ribbon\n")
+
+    for spin, spin_id in spin_loop(return_id=True):
+        #select residue
+        spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+
+        #ribbon color
+        if hasattr(spin, 's2'):
+            s2 = str(spin.s2)
+            if spin.s2 == None:
+                file.write("")
+            else:
+                width = ((1-spin.s2) * 2)
+                green = 1 - ((spin.s2)**3)
+                green = green * green * green #* green * green
+                green = 1 - green
+                file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
+                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+
+    file.write("hide all\n")
+    file.write("show sticks, name C+N+CA\n")
+    file.write("set stick_quality, 10\n")
+    file.write("ray\n")
+    file.close()
+
+    ##################################################################################################
+
+    # Create Rex Macro for PyMol
+
+    #create file
+
+    file = open(str(directory) + sep + 'rex.pml', 'w')
+    file.write("load " + pdbfile + '\n')
+    file.write("bg_color white\n")
+    file.write("color gray90\n")
+    file.write("hide all\n")
+    file.write("show ribbon\n")
+
+    max_rex = 0
+
+    #find max Rex
+    for spin, spin_id in spin_loop(return_id=True):
+        if hasattr(spin, 'rex'):
+            if not spin.rex == None:
+                if spin.rex > max_rex:
+                    max_rex = spin.rex
+
+
+    for spin, spin_id in spin_loop(return_id=True):
+        #select residue
+        spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
+
+        #ribbon color
+        if hasattr(spin, 'rex'):
+            rex = str(spin.rex)
+            if spin.rex == None:
+                file.write("")
+            else:
+                rel_rex = spin.rex / max_rex
+                width = ((rel_rex) * 2)
+                green = ((rel_rex))
+                green = green * green * green #* green * green
+                green = 1 - green
+                file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
+                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
+                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
+
+    file.write("hide all\n")
+    file.write("show sticks, name C+N+CA\n")
+    file.write("set stick_quality, 10\n")
+    file.write("ray\n")
+    file.close()
+
+    ##################################################################################################
+
+    print ""
+    print ""
+    print " ---------- done ----------------"
+    print ""
+    print ""
+    print "Grace Plots are in Folder /grace/"
+    print ""
+    print "Signle Text Files for Relaxation Parameters are in Folder /final_results/"
+    print ""
+    print "Diffusion Tensor is in current Folder"
+    print ""
+    print "PyMol Macros are in current Folder - execute in PyMol with Command:"
+    print "@diffusion_tensor.pml, @rex.pml and @s2.pml"
+
+    self.list_modelfree.Append(str(directory) + sep + 'grace' + sep + 's2.agr')
+    self.list_modelfree.Append(str(directory) + sep + 'Model-free_Results.txt')
+    self.list_modelfree.Append(str(directory) + sep + 'diffusion_tensor.pml')
+    self.list_modelfree.Append(str(directory) + sep + 's2.pml')
+    self.list_modelfree.Append(str(directory) + sep + 'rex.pml')
+    self.list_modelfree.Append('Table_of_Results')
+
+    returnstring = [residue, model, s2, rex, te]
+    return returnstring # return data for results table dialog
+
+
+def results_table(import_results):
+    global residue
+    global model
+    global s2
+    global rex
+    global te
+    residue = import_results[0]
+    model = import_results[1]
+    s2 = import_results[2]
+    rex = import_results[3]
+    te = import_results[4]
+
+    frame_3 = final_results(None, -1, "")
+    frame_3.ShowModal()
+
+
+def see_results(openfile, import_results):
+    """Open results."""
+
+    if '.agr' in openfile:
+        system('xmgrace ' + openfile + ' &')
+
+    if '.txt' in openfile:
+        system('gedit ' + openfile + ' &')
+
+    if '.pml' in openfile:
+        system('pymol ' + openfile + ' &')
+
+    if 'Table_of_Results' in openfile:
+        results_table(import_results)
+
+
+
+class Final_results(wx.Dialog):        # Dialog that displays relax results in window
     def __init__(self, *args, **kwds):
         # begin final_results.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -53,7 +384,17 @@ class final_results(wx.Dialog):        # Dialog that displays relax results in w
         self._fill_values()
 
         self.Bind(wx.EVT_BUTTON, self.close_table, self.close_button)
-        # end 
+
+
+    def __do_layout(self):
+        # begin final_results.__do_layout
+        sizer_2 = wx.BoxSizer(wx.VERTICAL)
+        sizer_2.Add(self.label_1, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
+        sizer_2.Add(self.grid_1, 1, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_2.Add(self.close_button, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        self.SetSizer(sizer_2)
+        self.Layout()
+
 
     def __set_properties(self):
         # begin final_results.__set_properties
@@ -74,387 +415,17 @@ class final_results(wx.Dialog):        # Dialog that displays relax results in w
         self.grid_1.SetColSize(3, 150)
         self.grid_1.SetColLabelValue(4, "te")
         self.grid_1.SetColSize(4, 150)
-        # end 
 
-    def __do_layout(self):
-        # begin final_results.__do_layout
-        sizer_2 = wx.BoxSizer(wx.VERTICAL)
-        sizer_2.Add(self.label_1, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 10)
-        sizer_2.Add(self.grid_1, 1, wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 0)
-        sizer_2.Add(self.close_button, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        self.SetSizer(sizer_2)
-        self.Layout()
-        # end 
 
     def _fill_values(self):  # fill entries in table
-        for i in range(0,len(residue)):
-         self.grid_1.SetCellValue(i,0,residue[i])
-         self.grid_1.SetCellValue(i,1,model[i])
-         self.grid_1.SetCellValue(i,2,s2[i])
-         self.grid_1.SetCellValue(i,3,rex[i])
-         self.grid_1.SetCellValue(i,4,te[i])
+        for i in range(0, len(residue)):
+            self.grid_1.SetCellValue(i, 0, residue[i])
+            self.grid_1.SetCellValue(i, 1, model[i])
+            self.grid_1.SetCellValue(i, 2, s2[i])
+            self.grid_1.SetCellValue(i, 3, rex[i])
+            self.grid_1.SetCellValue(i, 4, te[i])
+
 
     def close_table(self, event): # close
         self.Destroy()
         event.Skip()
-
-# end of class final_results
-
-
-def results_table(import_results):
-    global residue
-    global model
-    global s2
-    global rex
-    global te
-    residue = import_results[0]
-    model = import_results[1]
-    s2 = import_results[2]
-    rex = import_results[3]
-    te = import_results[4]
-
-    frame_3 = final_results(None, -1, "")
-    frame_3.ShowModal()
-
-
-
-## Create PyMol Macro for NOE colouring
-
-def color_code_noe(self, target_dir):
-        pdbfile = str(self.structure_r21_copy_1_copy.GetValue())
-        directory = target_dir
-
-        #create file
-        file = open(directory + sep + 'noe.pml', 'w')
-        file.write("load " + pdbfile + '\n')
-        file.write("bg_color white\n")
-        file.write("color gray90\n")
-        file.write("hide all\n")
-        file.write("show ribbon\n")
-        
-        for spin, spin_id in spin_loop(return_id=True):
-        
-        #select residue
-                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-        
-        #ribbon color
-                    if  hasattr(spin, 'noe'):
-                        noe = str(spin.noe)
-                        if spin.noe == None:
-                                file.write("")
-                        else:
-                                width = ((1-spin.noe) * 2)
-                                green = 1 - ((spin.noe)**3) 
-                                green = green * green * green #* green * green
-                                green = 1 - green
-                                file.write("set_color resicolor" + spin_no + ", [0," + str(green) + ",1]\n")
-                                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-                                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
-        
-        file.write("hide all\n")
-        file.write("show sticks, name C+N+CA\n")
-        file.write("set stick_quality, 10\n")
-        file.write("ray\n")
-        file.close()
-
-        # add macro to results tab
-        self.list_noe.Append(directory + sep + 'noe.pml')
-
-
-
-
-# create model-free results
-
-def model_free_results(self):
-        directory = str(self.resultsdir_r21_copy_2.GetValue()) + sep + 'final'
-        pdbfile = str(self.structure_noe1.GetValue())
-
-        #Read results
-        pipename = 'Data_extraction ' + str(time.asctime(time.localtime()))
-        pipe.create(pipename ,'mf')
-        results.read()
-
-        #create a table file and variables for results table
-
-        residue = []
-        model = []
-        s2 = []
-        rex = []
-        te = [] 
-
-        #create file
-        file = open(str(directory) + sep + 'Model-free_Results.txt', 'w')
-        file.write('Data Extraction by relaxGUI, (C) 2009 Michael Bieri')
-        file.write("\n")
-        file.write("\n")
-        "self.file.write(""Residue		Model	S2			Rex [1/s]		Te			Relaxation Parameters\n"")"
-        file.write("\n")
-
-        #loop over residues
-        for spin, spin_id in spin_loop(return_id=True):
-                    # The spin ID string.
-                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-                    spin_res = spin_id[spin_id.index('&')+2:spin_id.index('@')]
-                    file.write((spin_res) + " " + (spin_no))
-                    residue.append(spin_res)
-                    # The spin is not selected.
-                    if not spin.select:
-                        file.write("\n")
-                        continue
-        
-        
-        # The model-free model.
-                    if hasattr(spin, 'model'):
-                        spin.model = spin.model[1:2]
-                        file.write(""		"" + spin.model)
-                        model.append(spin.model)
-        
-        
-        # S2.
-                    if  hasattr(spin, 's2'):
-                        s2 = str(spin.s2)
-                        s2_err = str(spin.s2_err)
-                        if spin.s2 == None:
-                                file.write("")
-                                s2.appen('') 
-                        else:
-                                file.write("	" + s2[0:5]+ " +/- " + s2_err[0:4])
-                                s2.appen(s2[0:5]+ " +/- " + s2_err[0:4]) 
-        
-        
-        # Rex.
-                    if hasattr(spin, 'rex'):
-                        rex = str(spin.rex)
-                        rex_err = str(spin.rex_err)
-                        if spin.rex == None:
-                                file.write("			")
-                                rex.appen('') 
-                        else:
-                                rex_eff = spin.rex * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
-                                rex = str(rex_eff)
-                                rex_err_eff = spin.rex_err * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
-                                rex_err = str(rex_err_eff)
-                                file.write("		" + rex[0:5]+ " +/- " + rex_err[0:4])
-                                rex.appen(rex[0:5]+ " +/- " + rex_err[0:4]) 
-        
-        
-        # Te
-                    if  hasattr(spin, 'te'):
-                        if spin.te == None:
-                                file.write("		")
-                                te.appen('') 
-                        else:
-                                te_ps = spin.te * 1e-12
-                                te = str(te_ps)
-                                te_err = str(spin.te_err)
-                                file.write("		" + te[0:5]+ " +/- " + te_err[0:4])
-                                te.appen(te[0:5]+ " +/- " + te_err[0:4]) 
-        
-        
-        
-        # Parameters.
-                    if hasattr(spin, 'params'):
-                        file.write("			" + str(spin.params[0:len(spin.params)]))
-                    else:
-                        file.write("\\n")
-                        continue
-        
-        
-        
-        # Start a new line.
-                    file.write("\n")
-
-        file.close()
-        
-        ##################################################################################################
-        
-        #Create Single Data Files
-        	
-        value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='s2', file='s2.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='s2f', file='s2f.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='s2s', file='s2s.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='te', file='te.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='tf', file='tf.txt', dir=str(directory) + sep + 'final_results',  force=True)
-        value.write(param='ts', file='ts.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='r', file='r.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='csa', file='csa.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-        value.write(param='local_tm', file='local_tm.txt', dir=str(directory) + sep + 'final_results', force=True)
-        
-        ##################################################################################################
-        
-        #Create Grace Plots
-        
-        grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=str(directory) + sep + 'grace', force=True)
-        grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=str(directory) + sep + 'grace', force=True)
-        grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=str(directory) + sep + 'grace', force=True)
-        grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=str(directory) + sep + 'grace', force=True)
-        grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=str(directory) + sep + 'grace', force=True)
-        grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=str(directory) + sep + 'grace', force=True)
-        grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', dir=str(directory) + sep + 'grace', force=True)
-        grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', dir=str(directory) + sep + 'grace', force=True)
-        
-        ##################################################################################################
-        
-        #Create Diffusion Tensor
-        
-        # Display the diffusion tensor.
-        diffusion_tensor.display()
-        
-        # Create the tensor PDB file.
-        tensor_file = 'tensor.pdb'
-        structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + sep, force=True)
-
-        # create diffusion tensor macro
-        file = open(str(directory) + sep + 'diffusion_tensor.pml', 'w')  
-        file.write('load ' + pdbfile + '\n')    
-        file.write('color red, ss h\n')  
-        file.write('color yellow, ss s\n')
-        file.write('color green, ss l+''\n')
-        file.write('set cartoon_discrete_colors, 1\n')
-        file.write('hide all') 
-        file.write('show cartoon')
-        file.write('load ' + str(directory) + sep + 'tensor.pdb' + '\n')  
-        file.close()
-
-        
-        ##################################################################################################
-        
-        # Create S2 Macro for PyMol
-        
-        #create file
-        
-        file = open(str(directory) +sep + 's2.pml', 'w')
-        file.write("load " + pdbfile + '\n')
-        file.write("bg_color white\n")
-        file.write("color gray90\n")
-        file.write("hide all\n")
-        file.write("show ribbon\n")
-        
-        for spin, spin_id in spin_loop(return_id=True):
-        
-        #select residue
-                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-        
-        
-        #ribbon color
-                    if  hasattr(spin, 's2'):
-                        s2 = str(spin.s2)
-                        if spin.s2 == None:
-                                file.write("")
-                        else:
-                                width = ((1-spin.s2) * 2)
-                                green = 1 - ((spin.s2)**3)
-                                green = green * green * green #* green * green
-                                green = 1 - green
-                                file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
-                                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-                                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
-        
-        
-        
-        file.write("hide all\n")
-        file.write("show sticks, name C+N+CA\n")
-        file.write("set stick_quality, 10\n")
-        file.write("ray\n")
-        file.close()
-        
-        
-        ##################################################################################################
-        
-        # Create Rex Macro for PyMol
-        
-        #create file
-        
-        file = open(str(directory) + sep + 'rex.pml', 'w')
-        file.write("load " + pdbfile + '\n')
-        file.write("bg_color white\n")
-        file.write("color gray90\n")
-        file.write("hide all\n")
-        file.write("show ribbon\n")
-        
-        max_rex = 0
-        
-        #find max Rex
-        for spin, spin_id in spin_loop(return_id=True):
-        
-                    if  hasattr(spin, 'rex'):
-        
-                          if not spin.rex == None:
-                               if spin.rex > max_rex:
-                                     max_rex = spin.rex
-        
-        
-        for spin, spin_id in spin_loop(return_id=True):
-        
-        #select residue
-                    spin_no = spin_id[spin_id.index(':')+1:spin_id.index('&')]
-        #ribbon color
-                    if  hasattr(spin, 'rex'):
-                        rex = str(spin.rex)
-                        if spin.rex == None:
-                                file.write("")
-                        else:
-                                rel_rex = spin.rex / max_rex
-                                width = ((rel_rex) * 2)
-                                green = ((rel_rex))
-                                green = green * green * green #* green * green
-                                green = 1 - green
-                                file.write("set_color resicolor" + spin_no + ", [1," + str(green) + ",0]\n")
-                                file.write("color resicolor" + spin_no + ", resi " + spin_no + "\n")
-                                file.write("set_bond stick_radius, " + str(width) + ", resi " + spin_no + "\n")
-        
-        
-        
-        file.write("hide all\n")
-        file.write("show sticks, name C+N+CA\n")
-        file.write("set stick_quality, 10\n")
-        file.write("ray\n")
-        file.close()
-        
-        ##################################################################################################
-        
-        print ""
-        print ""
-        print " ---------- done ----------------"
-        print ""
-        print ""
-        print "Grace Plots are in Folder /grace/"
-        print ""
-        print "Signle Text Files for Relaxation Parameters are in Folder /final_results/"
-        print ""
-        print "Diffusion Tensor is in current Folder"
-        print ""
-        print "PyMol Macros are in current Folder - execute in PyMol with Command:"
-        print "@diffusion_tensor.pml, @rex.pml and @s2.pml"
-
-        self.list_modelfree.Append(str(directory) + sep + 'grace' + sep + 's2.agr')
-        self.list_modelfree.Append(str(directory) + sep + 'Model-free_Results.txt')
-        self.list_modelfree.Append(str(directory) + sep + 'diffusion_tensor.pml')
-        self.list_modelfree.Append(str(directory) + sep + 's2.pml')
-        self.list_modelfree.Append(str(directory) + sep + 'rex.pml')
-        self.list_modelfree.Append('Table_of_Results')
-       
-        returnstring = [residue, model, s2, rex, te]
-        return returnstring # return data for results table dialog
-
-
-
-
-
-#open Results
-
-def see_results(openfile, import_results):
-       if '.agr' in openfile:
-            os.system('xmgrace ' + openfile + ' &')
-
-       if '.txt' in openfile:
-            os.system('gedit ' + openfile + ' &')
-         
-       if '.pml' in openfile:
-            os.system('pymol ' + openfile + ' &')
-       if 'Table_of_Results' in openfile:
-            results_table(import_results)

@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,7 +30,33 @@ import wx
 from paths import IMAGE_PATH
 
 
-class globalparam(wx.Dialog):
+def relax_global_settings(oldsettings):
+    global settings
+    global old_settings
+    settings = []
+    old_settings = oldsettings
+    set_relax_params = Globalparam(None, -1, "")
+    set_relax_params.ShowModal()
+    return settings
+
+
+def import_file_settings(oldsettings):
+    global settings
+    global old_settings
+    settings = []
+    old_settings = oldsettings
+    set_relax_params = Inputfile(None, -1, "")
+    set_relax_params.ShowModal()
+    return settings
+
+
+def load_sequence(self):
+    seqfile = openfile('Choose Sequence File', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+    return seqfile
+
+
+
+class Globalparam(wx.Dialog):
     def __init__(self, *args, **kwds):
         # begin globalparam.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -58,24 +85,7 @@ class globalparam(wx.Dialog):
 
         self.Bind(wx.EVT_BUTTON, self.accept_settings, self.ok_copy)
         self.Bind(wx.EVT_BUTTON, self.cancel_settings, self.cancel_copy)
-        # end 
 
-    def __set_properties(self):
-        # begin globalparam.__set_properties
-        self.SetTitle("relaxGUI")
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.label_1_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.bond.SetMinSize((150, 27))
-        self.csa.SetMinSize((150, 27))
-        self.hetero.SetMinSize((150, 27))
-        self.prot.SetMinSize((150, 27))
-        self.grid.SetMinSize((150, 27))
-        self.minim.SetMinSize((150, 27))
-        self.label_8_copy.SetMinSize((156, 17))
-        self.monte.SetMinSize((150, 27))
-        # end 
 
     def __do_layout(self):
         # begin  globalparam.__do_layout
@@ -103,7 +113,24 @@ class globalparam(wx.Dialog):
         self.SetSizer(sizer_1_copy)
         sizer_1_copy.Fit(self)
         self.Layout()
-        # end dialog
+
+
+    def __set_properties(self):
+        # begin globalparam.__set_properties
+        self.SetTitle("relaxGUI")
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.SetIcon(_icon)
+        self.label_1_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.bond.SetMinSize((150, 27))
+        self.csa.SetMinSize((150, 27))
+        self.hetero.SetMinSize((150, 27))
+        self.prot.SetMinSize((150, 27))
+        self.grid.SetMinSize((150, 27))
+        self.minim.SetMinSize((150, 27))
+        self.label_8_copy.SetMinSize((156, 17))
+        self.monte.SetMinSize((150, 27))
+
 
     def accept_settings(self, event): # change settings
         global settings
@@ -118,19 +145,16 @@ class globalparam(wx.Dialog):
         self.Destroy()
         event.Skip()
 
+
     def cancel_settings(self, event): # do not change settings
         global settings
         settings = None
         self.Destroy()
         event.Skip()
 
-# end of class globalparam
 
 
-
-
-
-class inputfile(wx.Dialog):
+class Inputfile(wx.Dialog):
     def __init__(self, *args, **kwds):
         # begin inputfile.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -159,24 +183,7 @@ class inputfile(wx.Dialog):
 
         self.Bind(wx.EVT_BUTTON, self.accept_settings, self.ok_copy_copy)
         self.Bind(wx.EVT_BUTTON, self.cancel_settings, self.cancel_copy_copy)
-        # end 
 
-    def __set_properties(self):
-        # begin inputfile.__set_properties
-        self.SetTitle("relaxGUI")
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.label_1_copy_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.mol_nam.SetMinSize((150, 27))
-        self.res_num_col.SetMinSize((150, 27))
-        self.res_nam_col.SetMinSize((150, 27))
-        self.spin_num_col.SetMinSize((150, 27))
-        self.spin_nam_col.SetMinSize((150, 27))
-        self.value_col.SetMinSize((150, 27))
-        self.label_8_copy_copy.SetMinSize((156, 17))
-        self.error_col.SetMinSize((150, 27))
-        # end 
 
     def __do_layout(self):
         # begin inputfile.__do_layout
@@ -204,7 +211,24 @@ class inputfile(wx.Dialog):
         self.SetSizer(sizer_1_copy_copy)
         sizer_1_copy_copy.Fit(self)
         self.Layout()
-        # end 
+
+
+    def __set_properties(self):
+        # begin inputfile.__set_properties
+        self.SetTitle("relaxGUI")
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.SetIcon(_icon)
+        self.label_1_copy_copy.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.mol_nam.SetMinSize((150, 27))
+        self.res_num_col.SetMinSize((150, 27))
+        self.res_nam_col.SetMinSize((150, 27))
+        self.spin_num_col.SetMinSize((150, 27))
+        self.spin_nam_col.SetMinSize((150, 27))
+        self.value_col.SetMinSize((150, 27))
+        self.label_8_copy_copy.SetMinSize((156, 17))
+        self.error_col.SetMinSize((150, 27))
+
 
     def accept_settings(self, event): # change settings
         global settings
@@ -219,35 +243,9 @@ class inputfile(wx.Dialog):
         self.Destroy()
         event.Skip()
 
+
     def cancel_settings(self, event): # cancel
         global settings
         settings = None
         self.Destroy()
         event.Skip()
-
-# end of class inputfile
-
-
-
-
-def relax_global_settings(oldsettings):
-    global settings
-    global old_settings
-    settings = []
-    old_settings = oldsettings
-    set_relax_params = globalparam(None, -1, "")
-    set_relax_params.ShowModal()
-    return settings
-
-def import_file_settings(oldsettings):
-    global settings
-    global old_settings
-    settings = []
-    old_settings = oldsettings
-    set_relax_params = inputfile(None, -1, "")
-    set_relax_params.ShowModal()
-    return settings
-
-def load_sequence(self):
-     seqfile = openfile('Choose Sequence File',sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-     return seqfile

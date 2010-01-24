@@ -51,7 +51,7 @@ from message import dir_message, exec_relax, missing_data, question, relax_run_o
 from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from settings import import_file_settings, load_sequence, relax_global_settings
 
- 
+
 #####################################################################################################################
 #####################################################################################################################
 #####################################################################################################################
@@ -82,7 +82,7 @@ table_s2 = []
 table_rex = []
 table_te = []
 
-#NOE3 variables 
+#NOE3 variables
 noeref = ["","",""]
 noesat = ["","",""]
 noerefrmsd = [1000, 1000, 1000]
@@ -91,7 +91,7 @@ nmrfreq = [600, 800, 900]
 noe_sourcedir = [getcwd(),getcwd(),getcwd()]
 noe_savedir = [getcwd(),getcwd(),getcwd()]
 
-#R1 variables 
+#R1 variables
 r1_num = 0
 r1_list = []
 r1_list2 = []
@@ -102,7 +102,7 @@ r1_time3 = []
 r1_sourcedir = [getcwd(),getcwd(),getcwd()]
 r1_savedir = [getcwd(),getcwd(),getcwd()]
 
-#R2 variables 
+#R2 variables
 r2_num = 0
 r2_list = []
 r2_list2 = []
@@ -113,7 +113,7 @@ r2_time3 = []
 r2_sourcedir = [getcwd(),getcwd(),getcwd()]
 r2_savedir = [getcwd(),getcwd(),getcwd()]
 
-#Model-free variables 
+#Model-free variables
 model_source = getcwd()
 model_save = getcwd()
 selection = "AIC"
@@ -136,10 +136,10 @@ results_dir_model = getcwd()
 # generating the GUI
 
 
-class main(wx.Frame):
+class Main(wx.Frame):
     def __init__(self, *args, **kwds):
-        # begin 
-        kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN 
+        # begin
+        kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
         wx.Frame.__init__(self, *args, **kwds)
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
         self.results = wx.Panel(self.notebook_2, -1)
@@ -764,435 +764,7 @@ class main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_rx_results_exe, self.open_rx_results)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_model_results_exe, self.list_modelfree)
         self.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
-        # end wxGlade
 
-    def __set_properties(self):
-        # begin wxGlade: main.__set_properties
-        self.SetTitle("relaxGUI " + GUI_version)
-        _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
-        self.SetIcon(_icon)
-        self.SetSize((1000, 600))
-        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
-        # statusbar fields
-        frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
-        for i in range(len(frame_1_statusbar_fields)):
-            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
-        self.label_4_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_3.SetMinSize((230, 17))
-        self.nmrfreq_value_noe1.SetMinSize((350, 27))
-        self.label_2_copy_copy_5.SetMinSize((230, 17))
-        self.noe_sat_1.SetMinSize((350, 27))
-        self.sat_noe_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_copy_2.SetMinSize((230, 17))
-        self.noe_sat_err_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_1_copy_1.SetMinSize((230, 17))
-        self.noe_ref_1.SetMinSize((350, 27))
-        self.noe_ref_err_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_copy_copy_1.SetMinSize((230, 17))
-        self.noe_ref_err_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
-        self.structure_noe1.SetMinSize((350, 27))
-        self.ref_noe_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_1_copy_1.SetMinSize((230, 34))
-        self.unres_noe1.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.res_noe1.SetMinSize((350, 27))
-        self.chandir_noe1.SetMinSize((103, 27))
-        self.label_5_copy_1.SetMinSize((118, 17))
-        self.relax_start_noe1.SetName('hello')
-        self.relax_start_noe1.SetSize(self.relax_start_noe1.GetBestSize())
-        self.label_4_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy.SetMinSize((230, 17))
-        self.nmrfreq_value_r11.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy.SetMinSize((230, 17))
-        self.resultsdir_r11.SetMinSize((350, 27))
-        self.results_directory_copy_copy.SetMinSize((103, 27))
-        self.structure_file.SetMinSize((230, 17))
-        self.structure_r11.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy.SetMinSize((230, 17))
-        self.unresolved_r11.SetMinSize((350, 27))
-        self.panel_2.SetMinSize((688, 5))
-        self.addr11.SetMinSize((60, 27))
-        self.refreshr11.SetMinSize((60, 27))
-        self.label_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r1_time_1.SetMinSize((80, 20))
-        self.r1_time_2.SetMinSize((80, 20))
-        self.r1_time_3.SetMinSize((80, 20))
-        self.r1_time_4.SetMinSize((80, 20))
-        self.r1_time_5.SetMinSize((80, 20))
-        self.r1_time_6.SetMinSize((80, 20))
-        self.r1_time_7.SetMinSize((80, 20))
-        self.r1_time_8.SetMinSize((80, 20))
-        self.r1_time_9.SetMinSize((80, 20))
-        self.r1_time_10.SetMinSize((80, 20))
-        self.r1_time_11.SetMinSize((80, 20))
-        self.r1_time_12.SetMinSize((80, 20))
-        self.r1_time_13.SetMinSize((80, 20))
-        self.r1_time_1_4.SetMinSize((80, 20))
-        self.panel_3.SetMinSize((620, 300))
-        self.panel_3.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1.SetMinSize((688, 300))
-        self.panel_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy.SetMinSize((118, 17))
-        self.relax_start_r1_1.SetName('hello')
-        self.relax_start_r1_1.SetSize(self.relax_start_r1_1.GetBestSize())
-        self.label_4_copy_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_1.SetMinSize((230, 17))
-        self.nmrfreq_value_r21.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy.SetMinSize((230, 17))
-        self.resultsdir_r21.SetMinSize((350, 27))
-        self.results_directory_r21.SetMinSize((103, 27))
-        self.structure_file_copy.SetMinSize((230, 17))
-        self.structure_r21.SetMinSize((350, 27))
-        self.chan_struc_r21.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy.SetMinSize((230, 17))
-        self.unresolved_r21.SetMinSize((350, 27))
-        self.panel_2_copy.SetMinSize((688, 5))
-        self.addr21.SetMinSize((60, 27))
-        self.refreshr21.SetMinSize((60, 27))
-        self.label_3_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r2_time_1.SetMinSize((80, 20))
-        self.r2_time_2.SetMinSize((80, 20))
-        self.r2_time_3.SetMinSize((80, 20))
-        self.r2_time_4.SetMinSize((80, 20))
-        self.r2_time_5.SetMinSize((80, 20))
-        self.r2_time_6.SetMinSize((80, 20))
-        self.r2_time_7.SetMinSize((80, 20))
-        self.r2_time_8.SetMinSize((80, 20))
-        self.r2_time_9.SetMinSize((80, 20))
-        self.r2_time_10.SetMinSize((80, 20))
-        self.r2_time_11.SetMinSize((80, 20))
-        self.r2_time_12.SetMinSize((80, 20))
-        self.r2_time_13.SetMinSize((80, 20))
-        self.r2_time_14.SetMinSize((80, 20))
-        self.panel_3_copy.SetMinSize((620, 300))
-        self.panel_3_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy.SetMinSize((688, 300))
-        self.panel_1_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy.SetName('hello')
-        self.relax_start_r1_1_copy.SetSize(self.relax_start_r1_1_copy.GetBestSize())
-        self.label_4_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_3_copy.SetMinSize((230, 17))
-        self.nmrfreq_value_noe1_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_5_copy.SetMinSize((230, 17))
-        self.noe_sat_1_copy.SetMinSize((350, 27))
-        self.sat_noe_copy_1_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_copy_2_copy.SetMinSize((230, 17))
-        self.noe_sat_err_1_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_1_copy_1_copy.SetMinSize((230, 17))
-        self.noe_ref_1_copy.SetMinSize((350, 27))
-        self.noe_ref_err_copy_1_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_copy_copy_1_copy.SetMinSize((230, 17))
-        self.noe_ref_err_1_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_2_copy_1_copy.SetMinSize((230, 17))
-        self.structure_noe1_copy.SetMinSize((350, 27))
-        self.ref_noe_copy_1_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_1_copy_1_copy.SetMinSize((230, 34))
-        self.unres_noe1_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_1_copy.SetMinSize((230, 17))
-        self.res_noe1_copy.SetMinSize((350, 27))
-        self.chandir_noe1_copy.SetMinSize((103, 27))
-        self.label_5_copy_1_copy_1.SetMinSize((118, 17))
-        self.relax_start_noe1_copy.SetName('hello')
-        self.relax_start_noe1_copy.SetSize(self.relax_start_noe1_copy.GetBestSize())
-        self.label_4_copy_copy_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_2.SetMinSize((230, 17))
-        self.nmrfreq_value_r11_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_1.SetMinSize((230, 17))
-        self.resultsdir_r11_copy.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_1.SetMinSize((103, 27))
-        self.structure_file_copy_1.SetMinSize((230, 17))
-        self.structure_r11_copy.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_1.SetMinSize((230, 17))
-        self.unresolved_r11_copy.SetMinSize((350, 27))
-        self.panel_2_copy_1.SetMinSize((688, 5))
-        self.addr11_copy.SetMinSize((60, 27))
-        self.refreshr11_copy.SetMinSize((60, 27))
-        self.label_3_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r1_time_1_copy.SetMinSize((80, 20))
-        self.r1_time_2_copy.SetMinSize((80, 20))
-        self.r1_time_3_copy.SetMinSize((80, 20))
-        self.r1_time_4_copy.SetMinSize((80, 20))
-        self.r1_time_5_copy.SetMinSize((80, 20))
-        self.r1_time_6_copy.SetMinSize((80, 20))
-        self.r1_time_7_copy.SetMinSize((80, 20))
-        self.r1_time_8_copy.SetMinSize((80, 20))
-        self.r1_time_9_copy.SetMinSize((80, 20))
-        self.r1_time_10_copy.SetMinSize((80, 20))
-        self.r1_time_11_copy.SetMinSize((80, 20))
-        self.r1_time_12_copy.SetMinSize((80, 20))
-        self.r1_time_13_copy.SetMinSize((80, 20))
-        self.r1_time_1_4_copy.SetMinSize((80, 20))
-        self.panel_3_copy_1.SetMinSize((620, 300))
-        self.panel_3_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_1.SetMinSize((688, 300))
-        self.panel_1_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_1.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_1.SetName('hello')
-        self.relax_start_r1_1_copy_1.SetSize(self.relax_start_r1_1_copy_1.GetBestSize())
-        self.label_4_copy_copy_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_1_copy.SetMinSize((230, 17))
-        self.nmrfreq_value_r21_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy.SetMinSize((230, 17))
-        self.resultsdir_r21_copy.SetMinSize((350, 27))
-        self.results_directory_r21_copy.SetMinSize((103, 27))
-        self.structure_file_copy_copy.SetMinSize((230, 17))
-        self.structure_r21_copy.SetMinSize((350, 27))
-        self.chan_struc_r21_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy.SetMinSize((230, 17))
-        self.unresolved_r21_copy.SetMinSize((350, 27))
-        self.panel_2_copy_copy.SetMinSize((688, 5))
-        self.addr21_copy.SetMinSize((60, 27))
-        self.refreshr21_copy.SetMinSize((60, 27))
-        self.label_3_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r2_time_1_copy.SetMinSize((80, 20))
-        self.r2_time_2_copy.SetMinSize((80, 20))
-        self.r2_time_3_copy.SetMinSize((80, 20))
-        self.r2_time_4_copy.SetMinSize((80, 20))
-        self.r2_time_5_copy.SetMinSize((80, 20))
-        self.r2_time_6_copy.SetMinSize((80, 20))
-        self.r2_time_7_copy.SetMinSize((80, 20))
-        self.r2_time_8_copy.SetMinSize((80, 20))
-        self.r2_time_9_copy.SetMinSize((80, 20))
-        self.r2_time_10_copy.SetMinSize((80, 20))
-        self.r2_time_11_copy.SetMinSize((80, 20))
-        self.r2_time_12_copy.SetMinSize((80, 20))
-        self.r2_time_13_copy.SetMinSize((80, 20))
-        self.r2_time_14_copy.SetMinSize((80, 20))
-        self.panel_3_copy_copy.SetMinSize((620, 300))
-        self.panel_3_copy_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_copy.SetMinSize((688, 300))
-        self.panel_1_copy_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_copy.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_copy.SetName('hello')
-        self.relax_start_r1_1_copy_copy.SetSize(self.relax_start_r1_1_copy_copy.GetBestSize())
-        self.label_4_copy_1_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.nmrfreq_value_noe1_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_5_copy_1.SetMinSize((230, 17))
-        self.noe_sat_1_copy_1.SetMinSize((350, 27))
-        self.sat_noe_copy_1_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_copy_2_copy_1.SetMinSize((230, 17))
-        self.noe_sat_err_1_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_1_copy_1_copy_1.SetMinSize((230, 17))
-        self.noe_ref_1_copy_1.SetMinSize((350, 27))
-        self.noe_ref_err_copy_1_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_copy_copy_1_copy_1.SetMinSize((230, 17))
-        self.noe_ref_err_1_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_2_copy_1_copy_1.SetMinSize((230, 17))
-        self.structure_noe1_copy_1.SetMinSize((350, 27))
-        self.ref_noe_copy_1_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_1_copy_1_copy_1.SetMinSize((230, 34))
-        self.unres_noe1_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_1_copy_1.SetMinSize((230, 17))
-        self.res_noe1_copy_1.SetMinSize((350, 27))
-        self.chandir_noe1_copy_1.SetMinSize((103, 27))
-        self.label_5_copy_1_copy_2.SetMinSize((118, 17))
-        self.relax_start_noe1_copy_1.SetName('hello')
-        self.relax_start_noe1_copy_1.SetSize(self.relax_start_noe1_copy_1.GetBestSize())
-        self.label_4_copy_copy_copy_2.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_3.SetMinSize((230, 17))
-        self.nmrfreq_value_r11_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_2.SetMinSize((230, 17))
-        self.resultsdir_r11_copy_1.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_2.SetMinSize((103, 27))
-        self.structure_file_copy_2.SetMinSize((230, 17))
-        self.structure_r11_copy_1.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_2.SetMinSize((230, 17))
-        self.unresolved_r11_copy_1.SetMinSize((350, 27))
-        self.panel_2_copy_2.SetMinSize((688, 5))
-        self.addr11_copy_1.SetMinSize((60, 27))
-        self.refreshr11_copy_1.SetMinSize((60, 27))
-        self.label_3_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r1_time_1_copy_1.SetMinSize((80, 20))
-        self.r1_time_2_copy_1.SetMinSize((80, 20))
-        self.r1_time_3_copy_1.SetMinSize((80, 20))
-        self.r1_time_4_copy_1.SetMinSize((80, 20))
-        self.r1_time_5_copy_1.SetMinSize((80, 20))
-        self.r1_time_6_copy_1.SetMinSize((80, 20))
-        self.r1_time_7_copy_1.SetMinSize((80, 20))
-        self.r1_time_8_copy_1.SetMinSize((80, 20))
-        self.r1_time_9_copy_1.SetMinSize((80, 20))
-        self.r1_time_10_copy_1.SetMinSize((80, 20))
-        self.r1_time_11_copy_1.SetMinSize((80, 20))
-        self.r1_time_12_copy_1.SetMinSize((80, 20))
-        self.r1_time_13_copy_1.SetMinSize((80, 20))
-        self.r1_time_1_4_copy_1.SetMinSize((80, 20))
-        self.panel_3_copy_2.SetMinSize((620, 300))
-        self.panel_3_copy_2.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_2.SetMinSize((688, 300))
-        self.panel_1_copy_2.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_2.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_2.SetName('hello')
-        self.relax_start_r1_1_copy_2.SetSize(self.relax_start_r1_1_copy_2.GetBestSize())
-        self.label_4_copy_copy_copy_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_1_copy_1.SetMinSize((230, 17))
-        self.nmrfreq_value_r21_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_1.SetMinSize((230, 17))
-        self.resultsdir_r21_copy_1.SetMinSize((350, 27))
-        self.results_directory_r21_copy_1.SetMinSize((103, 27))
-        self.structure_file_copy_copy_1.SetMinSize((230, 17))
-        self.structure_r21_copy_1.SetMinSize((350, 27))
-        self.chan_struc_r21_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1.SetMinSize((230, 17))
-        self.unresolved_r21_copy_1.SetMinSize((350, 27))
-        self.panel_2_copy_copy_1.SetMinSize((688, 5))
-        self.addr21_copy_1.SetMinSize((60, 27))
-        self.refreshr21_copy_1.SetMinSize((60, 27))
-        self.label_3_copy_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r2_time_1_copy_1.SetMinSize((80, 20))
-        self.r2_time_2_copy_1.SetMinSize((80, 20))
-        self.r2_time_3_copy_1.SetMinSize((80, 20))
-        self.r2_time_4_copy_1.SetMinSize((80, 20))
-        self.r2_time_5_copy_1.SetMinSize((80, 20))
-        self.r2_time_6_copy_1.SetMinSize((80, 20))
-        self.r2_time_7_copy_1.SetMinSize((80, 20))
-        self.r2_time_8_copy_1.SetMinSize((80, 20))
-        self.r2_time_9_copy_1.SetMinSize((80, 20))
-        self.r2_time_10_copy_1.SetMinSize((80, 20))
-        self.r2_time_11_copy_1.SetMinSize((80, 20))
-        self.r2_time_12_copy_1.SetMinSize((80, 20))
-        self.r2_time_13_copy_1.SetMinSize((80, 20))
-        self.r2_time_14_copy_1.SetMinSize((80, 20))
-        self.panel_3_copy_copy_1.SetMinSize((620, 300))
-        self.panel_3_copy_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_copy_1.SetMinSize((688, 300))
-        self.panel_1_copy_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_copy_1.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_copy_1.SetName('hello')
-        self.relax_start_r1_1_copy_copy_1.SetSize(self.relax_start_r1_1_copy_copy_1.GetBestSize())
-        self.label_4_copy_copy_copy_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_7.SetMinSize((80, 17))
-        self.modelfreefreq1.SetMinSize((80, 20))
-        self.label_8.SetMinSize((80, 17))
-        self.m_noe_1.SetMinSize((120, 20))
-        self.model_noe_1.SetMinSize((20, 20))
-        self.model_noe_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy.SetMinSize((80, 17))
-        self.m_r1_1.SetMinSize((120, 20))
-        self.model_r1_1.SetMinSize((20, 20))
-        self.model_r1_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy.SetMinSize((80, 17))
-        self.m_r2_1.SetMinSize((120, 20))
-        self.model_r2_1.SetMinSize((20, 20))
-        self.model_r2_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.panel_4.SetMinSize((230, 85))
-        self.panel_4.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_7_copy.SetMinSize((80, 17))
-        self.modelfreefreq2.SetMinSize((80, 20))
-        self.label_8_copy_1.SetMinSize((80, 17))
-        self.m_noe_2.SetMinSize((120, 20))
-        self.model_noe_2.SetMinSize((20, 20))
-        self.model_noe_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_1.SetMinSize((80, 17))
-        self.m_r1_2.SetMinSize((120, 20))
-        self.model_r1_2.SetMinSize((20, 20))
-        self.model_r1_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_copy.SetMinSize((80, 17))
-        self.m_r2_2.SetMinSize((120, 20))
-        self.model_r2_2.SetMinSize((20, 20))
-        self.model_r2_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.panel_4_copy.SetMinSize((230, 85))
-        self.panel_4_copy.SetBackgroundColour(wx.Colour(176, 176, 176))
-        self.label_7_copy_copy.SetMinSize((80, 17))
-        self.modelfreefreq3.SetMinSize((80, 20))
-        self.label_8_copy_1_copy.SetMinSize((80, 17))
-        self.m_noe_3.SetMinSize((120, 20))
-        self.model_noe_3.SetMinSize((20, 20))
-        self.model_noe_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_1_copy.SetMinSize((80, 17))
-        self.m_r1_3.SetMinSize((120, 20))
-        self.model_r1_3.SetMinSize((20, 20))
-        self.model_r1_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_copy_copy.SetMinSize((80, 17))
-        self.m_r2_3.SetMinSize((120, 20))
-        self.model_r2_3.SetMinSize((20, 20))
-        self.model_r2_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.panel_4_copy_1.SetMinSize((230, 85))
-        self.panel_4_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.m0.SetMinSize((70, 25))
-        self.m0.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m0.SetToolTipString("{}")
-        self.m0.SetValue(1)
-        self.m1.SetMinSize((70, 25))
-        self.m1.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m1.SetToolTipString("{S2}")
-        self.m1.SetValue(1)
-        self.m2.SetMinSize((70, 25))
-        self.m2.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m2.SetToolTipString("{S2, te}")
-        self.m2.SetValue(1)
-        self.m3.SetMinSize((70, 25))
-        self.m3.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m3.SetToolTipString("{S2, Rex}")
-        self.m3.SetValue(1)
-        self.m4.SetMinSize((70, 25))
-        self.m4.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m4.SetToolTipString("{S2, te, Rex}")
-        self.m4.SetValue(1)
-        self.m5.SetMinSize((70, 25))
-        self.m5.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m5.SetToolTipString("{S2, S2f, ts}")
-        self.m5.SetValue(1)
-        self.m6.SetMinSize((70, 25))
-        self.m6.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m6.SetToolTipString("{S2, tf, S2f, ts}")
-        self.m6.SetValue(1)
-        self.m7.SetMinSize((70, 25))
-        self.m7.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m7.SetToolTipString("{S2, S2f, ts, Rex}")
-        self.m7.SetValue(1)
-        self.m8.SetMinSize((70, 25))
-        self.m8.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m8.SetToolTipString("{S2, tf, S2f, ts, Rex}")
-        self.m8.SetValue(1)
-        self.m9.SetMinSize((70, 25))
-        self.m9.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m9.SetToolTipString("{Rex}")
-        self.m9.SetValue(1)
-        self.label_10.SetMinSize((240, 17))
-        self.label_10.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.aic.SetMinSize((60, 22))
-        self.structure_file_copy_copy_1_copy.SetMinSize((240, 17))
-        self.structure_file_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.structure_r21_copy_1_copy.SetMinSize((350, 27))
-        self.chan_struc_r21_copy_1_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.unresolved_r21_copy_1_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetMinSize((240, 17))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.resultsdir_r21_copy_2.SetMinSize((350, 27))
-        self.results_directory_r21_copy_2.SetMinSize((103, 27))
-        self.label_5_copy_1_copy_3.SetMinSize((118, 17))
-        self.label_5_copy_1_copy_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.relax_start_modelfree.SetName('hello')
-        self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
-        self.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_11.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.list_noe.SetMinSize((800, 150))
-        self.list_noe.SetSelection(0)
-        self.open_noe_results.SetMinSize((80, 32))
-        self.label_11_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.list_rx.SetMinSize((800, 150))
-        self.list_rx.SetSelection(0)
-        self.open_rx_results.SetMinSize((80, 32))
-        self.label_11_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.list_modelfree.SetMinSize((800, 150))
-        self.list_modelfree.SetSelection(0)
-        self.open_model_results.SetMinSize((80, 32))
-        # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: main.__do_layout
@@ -1919,7 +1491,668 @@ class main(wx.Frame):
         self.Layout()
         self.SetSize((1000, 600))
         self.Centre()
-        # end wxGlade
+
+
+    def __set_properties(self):
+        # begin wxGlade: main.__set_properties
+        self.SetTitle("relaxGUI " + GUI_version)
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap(IMAGE_PATH+'relax.gif', wx.BITMAP_TYPE_ANY))
+        self.SetIcon(_icon)
+        self.SetSize((1000, 600))
+        self.frame_1_statusbar.SetStatusWidths([800, 50, -1])
+        # statusbar fields
+        frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
+        for i in range(len(frame_1_statusbar_fields)):
+            self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
+        self.label_4_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_3.SetMinSize((230, 17))
+        self.nmrfreq_value_noe1.SetMinSize((350, 27))
+        self.label_2_copy_copy_5.SetMinSize((230, 17))
+        self.noe_sat_1.SetMinSize((350, 27))
+        self.sat_noe_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_copy_2.SetMinSize((230, 17))
+        self.noe_sat_err_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_1_copy_1.SetMinSize((230, 17))
+        self.noe_ref_1.SetMinSize((350, 27))
+        self.noe_ref_err_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_copy_copy_1.SetMinSize((230, 17))
+        self.noe_ref_err_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
+        self.structure_noe1.SetMinSize((350, 27))
+        self.ref_noe_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_1_copy_1.SetMinSize((230, 34))
+        self.unres_noe1.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
+        self.res_noe1.SetMinSize((350, 27))
+        self.chandir_noe1.SetMinSize((103, 27))
+        self.label_5_copy_1.SetMinSize((118, 17))
+        self.relax_start_noe1.SetName('hello')
+        self.relax_start_noe1.SetSize(self.relax_start_noe1.GetBestSize())
+        self.label_4_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_2_copy.SetMinSize((230, 17))
+        self.nmrfreq_value_r11.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_copy.SetMinSize((230, 17))
+        self.resultsdir_r11.SetMinSize((350, 27))
+        self.results_directory_copy_copy.SetMinSize((103, 27))
+        self.structure_file.SetMinSize((230, 17))
+        self.structure_r11.SetMinSize((350, 27))
+        self.results_directory_copy_copy_copy.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_2_copy_copy.SetMinSize((230, 17))
+        self.unresolved_r11.SetMinSize((350, 27))
+        self.panel_2.SetMinSize((688, 5))
+        self.addr11.SetMinSize((60, 27))
+        self.refreshr11.SetMinSize((60, 27))
+        self.label_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.label_6.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.r1_time_1.SetMinSize((80, 20))
+        self.r1_time_2.SetMinSize((80, 20))
+        self.r1_time_3.SetMinSize((80, 20))
+        self.r1_time_4.SetMinSize((80, 20))
+        self.r1_time_5.SetMinSize((80, 20))
+        self.r1_time_6.SetMinSize((80, 20))
+        self.r1_time_7.SetMinSize((80, 20))
+        self.r1_time_8.SetMinSize((80, 20))
+        self.r1_time_9.SetMinSize((80, 20))
+        self.r1_time_10.SetMinSize((80, 20))
+        self.r1_time_11.SetMinSize((80, 20))
+        self.r1_time_12.SetMinSize((80, 20))
+        self.r1_time_13.SetMinSize((80, 20))
+        self.r1_time_1_4.SetMinSize((80, 20))
+        self.panel_3.SetMinSize((620, 300))
+        self.panel_3.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.panel_1.SetMinSize((688, 300))
+        self.panel_1.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.label_5_copy_1_copy.SetMinSize((118, 17))
+        self.relax_start_r1_1.SetName('hello')
+        self.relax_start_r1_1.SetSize(self.relax_start_r1_1.GetBestSize())
+        self.label_4_copy_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_2_copy_copy_1.SetMinSize((230, 17))
+        self.nmrfreq_value_r21.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_copy_copy.SetMinSize((230, 17))
+        self.resultsdir_r21.SetMinSize((350, 27))
+        self.results_directory_r21.SetMinSize((103, 27))
+        self.structure_file_copy.SetMinSize((230, 17))
+        self.structure_r21.SetMinSize((350, 27))
+        self.chan_struc_r21.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_2_copy_copy_copy.SetMinSize((230, 17))
+        self.unresolved_r21.SetMinSize((350, 27))
+        self.panel_2_copy.SetMinSize((688, 5))
+        self.addr21.SetMinSize((60, 27))
+        self.refreshr21.SetMinSize((60, 27))
+        self.label_3_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.label_6_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.r2_time_1.SetMinSize((80, 20))
+        self.r2_time_2.SetMinSize((80, 20))
+        self.r2_time_3.SetMinSize((80, 20))
+        self.r2_time_4.SetMinSize((80, 20))
+        self.r2_time_5.SetMinSize((80, 20))
+        self.r2_time_6.SetMinSize((80, 20))
+        self.r2_time_7.SetMinSize((80, 20))
+        self.r2_time_8.SetMinSize((80, 20))
+        self.r2_time_9.SetMinSize((80, 20))
+        self.r2_time_10.SetMinSize((80, 20))
+        self.r2_time_11.SetMinSize((80, 20))
+        self.r2_time_12.SetMinSize((80, 20))
+        self.r2_time_13.SetMinSize((80, 20))
+        self.r2_time_14.SetMinSize((80, 20))
+        self.panel_3_copy.SetMinSize((620, 300))
+        self.panel_3_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.panel_1_copy.SetMinSize((688, 300))
+        self.panel_1_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.label_5_copy_1_copy_copy.SetMinSize((118, 17))
+        self.relax_start_r1_1_copy.SetName('hello')
+        self.relax_start_r1_1_copy.SetSize(self.relax_start_r1_1_copy.GetBestSize())
+        self.label_4_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_3_copy.SetMinSize((230, 17))
+        self.nmrfreq_value_noe1_copy.SetMinSize((350, 27))
+        self.label_2_copy_copy_5_copy.SetMinSize((230, 17))
+        self.noe_sat_1_copy.SetMinSize((350, 27))
+        self.sat_noe_copy_1_copy.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_copy_2_copy.SetMinSize((230, 17))
+        self.noe_sat_err_1_copy.SetMinSize((350, 27))
+        self.label_2_copy_copy_1_copy_1_copy.SetMinSize((230, 17))
+        self.noe_ref_1_copy.SetMinSize((350, 27))
+        self.noe_ref_err_copy_1_copy.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_copy_copy_1_copy.SetMinSize((230, 17))
+        self.noe_ref_err_1_copy.SetMinSize((350, 27))
+        self.label_2_copy_copy_2_copy_1_copy.SetMinSize((230, 17))
+        self.structure_noe1_copy.SetMinSize((350, 27))
+        self.ref_noe_copy_1_copy.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_1_copy_1_copy.SetMinSize((230, 34))
+        self.unres_noe1_copy.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_1_copy.SetMinSize((230, 17))
+        self.res_noe1_copy.SetMinSize((350, 27))
+        self.chandir_noe1_copy.SetMinSize((103, 27))
+        self.label_5_copy_1_copy_1.SetMinSize((118, 17))
+        self.relax_start_noe1_copy.SetName('hello')
+        self.relax_start_noe1_copy.SetSize(self.relax_start_noe1_copy.GetBestSize())
+        self.label_4_copy_copy_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_2_copy_copy_2.SetMinSize((230, 17))
+        self.nmrfreq_value_r11_copy.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_copy_copy_1.SetMinSize((230, 17))
+        self.resultsdir_r11_copy.SetMinSize((350, 27))
+        self.results_directory_copy_copy_copy_1.SetMinSize((103, 27))
+        self.structure_file_copy_1.SetMinSize((230, 17))
+        self.structure_r11_copy.SetMinSize((350, 27))
+        self.results_directory_copy_copy_copy_copy.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_1.SetMinSize((230, 17))
+        self.unresolved_r11_copy.SetMinSize((350, 27))
+        self.panel_2_copy_1.SetMinSize((688, 5))
+        self.addr11_copy.SetMinSize((60, 27))
+        self.refreshr11_copy.SetMinSize((60, 27))
+        self.label_3_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.label_6_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.r1_time_1_copy.SetMinSize((80, 20))
+        self.r1_time_2_copy.SetMinSize((80, 20))
+        self.r1_time_3_copy.SetMinSize((80, 20))
+        self.r1_time_4_copy.SetMinSize((80, 20))
+        self.r1_time_5_copy.SetMinSize((80, 20))
+        self.r1_time_6_copy.SetMinSize((80, 20))
+        self.r1_time_7_copy.SetMinSize((80, 20))
+        self.r1_time_8_copy.SetMinSize((80, 20))
+        self.r1_time_9_copy.SetMinSize((80, 20))
+        self.r1_time_10_copy.SetMinSize((80, 20))
+        self.r1_time_11_copy.SetMinSize((80, 20))
+        self.r1_time_12_copy.SetMinSize((80, 20))
+        self.r1_time_13_copy.SetMinSize((80, 20))
+        self.r1_time_1_4_copy.SetMinSize((80, 20))
+        self.panel_3_copy_1.SetMinSize((620, 300))
+        self.panel_3_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.panel_1_copy_1.SetMinSize((688, 300))
+        self.panel_1_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.label_5_copy_1_copy_copy_1.SetMinSize((118, 17))
+        self.relax_start_r1_1_copy_1.SetName('hello')
+        self.relax_start_r1_1_copy_1.SetSize(self.relax_start_r1_1_copy_1.GetBestSize())
+        self.label_4_copy_copy_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_2_copy_copy_1_copy.SetMinSize((230, 17))
+        self.nmrfreq_value_r21_copy.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_copy_copy_copy.SetMinSize((230, 17))
+        self.resultsdir_r21_copy.SetMinSize((350, 27))
+        self.results_directory_r21_copy.SetMinSize((103, 27))
+        self.structure_file_copy_copy.SetMinSize((230, 17))
+        self.structure_r21_copy.SetMinSize((350, 27))
+        self.chan_struc_r21_copy.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy.SetMinSize((230, 17))
+        self.unresolved_r21_copy.SetMinSize((350, 27))
+        self.panel_2_copy_copy.SetMinSize((688, 5))
+        self.addr21_copy.SetMinSize((60, 27))
+        self.refreshr21_copy.SetMinSize((60, 27))
+        self.label_3_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.label_6_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.r2_time_1_copy.SetMinSize((80, 20))
+        self.r2_time_2_copy.SetMinSize((80, 20))
+        self.r2_time_3_copy.SetMinSize((80, 20))
+        self.r2_time_4_copy.SetMinSize((80, 20))
+        self.r2_time_5_copy.SetMinSize((80, 20))
+        self.r2_time_6_copy.SetMinSize((80, 20))
+        self.r2_time_7_copy.SetMinSize((80, 20))
+        self.r2_time_8_copy.SetMinSize((80, 20))
+        self.r2_time_9_copy.SetMinSize((80, 20))
+        self.r2_time_10_copy.SetMinSize((80, 20))
+        self.r2_time_11_copy.SetMinSize((80, 20))
+        self.r2_time_12_copy.SetMinSize((80, 20))
+        self.r2_time_13_copy.SetMinSize((80, 20))
+        self.r2_time_14_copy.SetMinSize((80, 20))
+        self.panel_3_copy_copy.SetMinSize((620, 300))
+        self.panel_3_copy_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.panel_1_copy_copy.SetMinSize((688, 300))
+        self.panel_1_copy_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.label_5_copy_1_copy_copy_copy.SetMinSize((118, 17))
+        self.relax_start_r1_1_copy_copy.SetName('hello')
+        self.relax_start_r1_1_copy_copy.SetSize(self.relax_start_r1_1_copy_copy.GetBestSize())
+        self.label_4_copy_1_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_3_copy_1.SetMinSize((230, 17))
+        self.nmrfreq_value_noe1_copy_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_5_copy_1.SetMinSize((230, 17))
+        self.noe_sat_1_copy_1.SetMinSize((350, 27))
+        self.sat_noe_copy_1_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_copy_2_copy_1.SetMinSize((230, 17))
+        self.noe_sat_err_1_copy_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_1_copy_1_copy_1.SetMinSize((230, 17))
+        self.noe_ref_1_copy_1.SetMinSize((350, 27))
+        self.noe_ref_err_copy_1_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_copy_copy_1_copy_1.SetMinSize((230, 17))
+        self.noe_ref_err_1_copy_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_2_copy_1_copy_1.SetMinSize((230, 17))
+        self.structure_noe1_copy_1.SetMinSize((350, 27))
+        self.ref_noe_copy_1_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_1_copy_1_copy_1.SetMinSize((230, 34))
+        self.unres_noe1_copy_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_1_copy_1.SetMinSize((230, 17))
+        self.res_noe1_copy_1.SetMinSize((350, 27))
+        self.chandir_noe1_copy_1.SetMinSize((103, 27))
+        self.label_5_copy_1_copy_2.SetMinSize((118, 17))
+        self.relax_start_noe1_copy_1.SetName('hello')
+        self.relax_start_noe1_copy_1.SetSize(self.relax_start_noe1_copy_1.GetBestSize())
+        self.label_4_copy_copy_copy_2.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_2_copy_copy_3.SetMinSize((230, 17))
+        self.nmrfreq_value_r11_copy_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_copy_copy_2.SetMinSize((230, 17))
+        self.resultsdir_r11_copy_1.SetMinSize((350, 27))
+        self.results_directory_copy_copy_copy_2.SetMinSize((103, 27))
+        self.structure_file_copy_2.SetMinSize((230, 17))
+        self.structure_r11_copy_1.SetMinSize((350, 27))
+        self.results_directory_copy_copy_copy_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_2.SetMinSize((230, 17))
+        self.unresolved_r11_copy_1.SetMinSize((350, 27))
+        self.panel_2_copy_2.SetMinSize((688, 5))
+        self.addr11_copy_1.SetMinSize((60, 27))
+        self.refreshr11_copy_1.SetMinSize((60, 27))
+        self.label_3_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.label_6_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.r1_time_1_copy_1.SetMinSize((80, 20))
+        self.r1_time_2_copy_1.SetMinSize((80, 20))
+        self.r1_time_3_copy_1.SetMinSize((80, 20))
+        self.r1_time_4_copy_1.SetMinSize((80, 20))
+        self.r1_time_5_copy_1.SetMinSize((80, 20))
+        self.r1_time_6_copy_1.SetMinSize((80, 20))
+        self.r1_time_7_copy_1.SetMinSize((80, 20))
+        self.r1_time_8_copy_1.SetMinSize((80, 20))
+        self.r1_time_9_copy_1.SetMinSize((80, 20))
+        self.r1_time_10_copy_1.SetMinSize((80, 20))
+        self.r1_time_11_copy_1.SetMinSize((80, 20))
+        self.r1_time_12_copy_1.SetMinSize((80, 20))
+        self.r1_time_13_copy_1.SetMinSize((80, 20))
+        self.r1_time_1_4_copy_1.SetMinSize((80, 20))
+        self.panel_3_copy_2.SetMinSize((620, 300))
+        self.panel_3_copy_2.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.panel_1_copy_2.SetMinSize((688, 300))
+        self.panel_1_copy_2.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.label_5_copy_1_copy_copy_2.SetMinSize((118, 17))
+        self.relax_start_r1_1_copy_2.SetName('hello')
+        self.relax_start_r1_1_copy_2.SetSize(self.relax_start_r1_1_copy_2.GetBestSize())
+        self.label_4_copy_copy_copy_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_2_copy_copy_copy_2_copy_copy_1_copy_1.SetMinSize((230, 17))
+        self.nmrfreq_value_r21_copy_1.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_copy_copy_copy_1.SetMinSize((230, 17))
+        self.resultsdir_r21_copy_1.SetMinSize((350, 27))
+        self.results_directory_r21_copy_1.SetMinSize((103, 27))
+        self.structure_file_copy_copy_1.SetMinSize((230, 17))
+        self.structure_r21_copy_1.SetMinSize((350, 27))
+        self.chan_struc_r21_copy_1.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1.SetMinSize((230, 17))
+        self.unresolved_r21_copy_1.SetMinSize((350, 27))
+        self.panel_2_copy_copy_1.SetMinSize((688, 5))
+        self.addr21_copy_1.SetMinSize((60, 27))
+        self.refreshr21_copy_1.SetMinSize((60, 27))
+        self.label_3_copy_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.label_6_copy_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.r2_time_1_copy_1.SetMinSize((80, 20))
+        self.r2_time_2_copy_1.SetMinSize((80, 20))
+        self.r2_time_3_copy_1.SetMinSize((80, 20))
+        self.r2_time_4_copy_1.SetMinSize((80, 20))
+        self.r2_time_5_copy_1.SetMinSize((80, 20))
+        self.r2_time_6_copy_1.SetMinSize((80, 20))
+        self.r2_time_7_copy_1.SetMinSize((80, 20))
+        self.r2_time_8_copy_1.SetMinSize((80, 20))
+        self.r2_time_9_copy_1.SetMinSize((80, 20))
+        self.r2_time_10_copy_1.SetMinSize((80, 20))
+        self.r2_time_11_copy_1.SetMinSize((80, 20))
+        self.r2_time_12_copy_1.SetMinSize((80, 20))
+        self.r2_time_13_copy_1.SetMinSize((80, 20))
+        self.r2_time_14_copy_1.SetMinSize((80, 20))
+        self.panel_3_copy_copy_1.SetMinSize((620, 300))
+        self.panel_3_copy_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.panel_1_copy_copy_1.SetMinSize((688, 300))
+        self.panel_1_copy_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.label_5_copy_1_copy_copy_copy_1.SetMinSize((118, 17))
+        self.relax_start_r1_1_copy_copy_1.SetName('hello')
+        self.relax_start_r1_1_copy_copy_1.SetSize(self.relax_start_r1_1_copy_copy_1.GetBestSize())
+        self.label_4_copy_copy_copy_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_7.SetMinSize((80, 17))
+        self.modelfreefreq1.SetMinSize((80, 20))
+        self.label_8.SetMinSize((80, 17))
+        self.m_noe_1.SetMinSize((120, 20))
+        self.model_noe_1.SetMinSize((20, 20))
+        self.model_noe_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_8_copy.SetMinSize((80, 17))
+        self.m_r1_1.SetMinSize((120, 20))
+        self.model_r1_1.SetMinSize((20, 20))
+        self.model_r1_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_8_copy_copy.SetMinSize((80, 17))
+        self.m_r2_1.SetMinSize((120, 20))
+        self.model_r2_1.SetMinSize((20, 20))
+        self.model_r2_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.panel_4.SetMinSize((230, 85))
+        self.panel_4.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.label_7_copy.SetMinSize((80, 17))
+        self.modelfreefreq2.SetMinSize((80, 20))
+        self.label_8_copy_1.SetMinSize((80, 17))
+        self.m_noe_2.SetMinSize((120, 20))
+        self.model_noe_2.SetMinSize((20, 20))
+        self.model_noe_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_8_copy_copy_1.SetMinSize((80, 17))
+        self.m_r1_2.SetMinSize((120, 20))
+        self.model_r1_2.SetMinSize((20, 20))
+        self.model_r1_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_8_copy_copy_copy.SetMinSize((80, 17))
+        self.m_r2_2.SetMinSize((120, 20))
+        self.model_r2_2.SetMinSize((20, 20))
+        self.model_r2_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.panel_4_copy.SetMinSize((230, 85))
+        self.panel_4_copy.SetBackgroundColour(wx.Colour(176, 176, 176))
+        self.label_7_copy_copy.SetMinSize((80, 17))
+        self.modelfreefreq3.SetMinSize((80, 20))
+        self.label_8_copy_1_copy.SetMinSize((80, 17))
+        self.m_noe_3.SetMinSize((120, 20))
+        self.model_noe_3.SetMinSize((20, 20))
+        self.model_noe_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_8_copy_copy_1_copy.SetMinSize((80, 17))
+        self.m_r1_3.SetMinSize((120, 20))
+        self.model_r1_3.SetMinSize((20, 20))
+        self.model_r1_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_8_copy_copy_copy_copy.SetMinSize((80, 17))
+        self.m_r2_3.SetMinSize((120, 20))
+        self.model_r2_3.SetMinSize((20, 20))
+        self.model_r2_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.panel_4_copy_1.SetMinSize((230, 85))
+        self.panel_4_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
+        self.m0.SetMinSize((70, 25))
+        self.m0.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m0.SetToolTipString("{}")
+        self.m0.SetValue(1)
+        self.m1.SetMinSize((70, 25))
+        self.m1.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m1.SetToolTipString("{S2}")
+        self.m1.SetValue(1)
+        self.m2.SetMinSize((70, 25))
+        self.m2.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m2.SetToolTipString("{S2, te}")
+        self.m2.SetValue(1)
+        self.m3.SetMinSize((70, 25))
+        self.m3.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m3.SetToolTipString("{S2, Rex}")
+        self.m3.SetValue(1)
+        self.m4.SetMinSize((70, 25))
+        self.m4.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m4.SetToolTipString("{S2, te, Rex}")
+        self.m4.SetValue(1)
+        self.m5.SetMinSize((70, 25))
+        self.m5.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m5.SetToolTipString("{S2, S2f, ts}")
+        self.m5.SetValue(1)
+        self.m6.SetMinSize((70, 25))
+        self.m6.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m6.SetToolTipString("{S2, tf, S2f, ts}")
+        self.m6.SetValue(1)
+        self.m7.SetMinSize((70, 25))
+        self.m7.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m7.SetToolTipString("{S2, S2f, ts, Rex}")
+        self.m7.SetValue(1)
+        self.m8.SetMinSize((70, 25))
+        self.m8.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m8.SetToolTipString("{S2, tf, S2f, ts, Rex}")
+        self.m8.SetValue(1)
+        self.m9.SetMinSize((70, 25))
+        self.m9.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.m9.SetToolTipString("{Rex}")
+        self.m9.SetValue(1)
+        self.label_10.SetMinSize((240, 17))
+        self.label_10.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.aic.SetMinSize((60, 22))
+        self.structure_file_copy_copy_1_copy.SetMinSize((240, 17))
+        self.structure_file_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.structure_r21_copy_1_copy.SetMinSize((350, 27))
+        self.chan_struc_r21_copy_1_copy.SetMinSize((103, 27))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.unresolved_r21_copy_1_copy.SetMinSize((350, 27))
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetMinSize((240, 17))
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.resultsdir_r21_copy_2.SetMinSize((350, 27))
+        self.results_directory_r21_copy_2.SetMinSize((103, 27))
+        self.label_5_copy_1_copy_3.SetMinSize((118, 17))
+        self.label_5_copy_1_copy_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.relax_start_modelfree.SetName('hello')
+        self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
+        self.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.label_11.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.list_noe.SetMinSize((800, 150))
+        self.list_noe.SetSelection(0)
+        self.open_noe_results.SetMinSize((80, 32))
+        self.label_11_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.list_rx.SetMinSize((800, 150))
+        self.list_rx.SetSelection(0)
+        self.open_rx_results.SetMinSize((80, 32))
+        self.label_11_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        self.list_modelfree.SetMinSize((800, 150))
+        self.list_modelfree.SetSelection(0)
+        self.open_model_results.SetMinSize((80, 32))
+
+
+    def aboutGUI(self, event): # About
+        about_relax()
+        event.Skip()
+
+
+    def aboutrelax(self, event): # abour relax
+        webbrowser.open_new('http://www.nmr-relax.com')
+        event.Skip()
+
+
+    def add_r1_1(self, event): # add a r1 peak list
+
+        if len(r1_list) < 14:
+            r1_entry = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
+            if not r1_entry == None:
+                r1_list.append(r1_entry)
+
+        if len(r1_list) >= 1:
+            self.r1_list_1.SetLabel(r1_list[0])
+        if len(r1_list) >= 2:
+            self.r1_list_2.SetLabel(r1_list[1])
+        if len(r1_list) >= 3:
+            self.r1_list_3.SetLabel(r1_list[2])
+        if len(r1_list) >= 4:
+            self.r1_list_4.SetLabel(r1_list[3])
+        if len(r1_list) >= 5:
+            self.r1_list_5.SetLabel(r1_list[4])
+        if len(r1_list) >= 6:
+            self.r1_list_6.SetLabel(r1_list[5])
+        if len(r1_list) >= 7:
+            self.r1_list_7.SetLabel(r1_list[6])
+        if len(r1_list) >= 8:
+            self.r1_list_8.SetLabel(r1_list[7])
+        if len(r1_list) >= 9:
+            self.r1_list_9.SetLabel(r1_list[8])
+        if len(r1_list) >= 10:
+            self.r1_list_10.SetLabel(r1_list[9])
+        if len(r1_list) >= 11:
+            self.r1_list_11.SetLabel(r1_list[10])
+        if len(r1_list) >= 12:
+            self.r1_list_12.SetLabel(r1_list[11])
+        if len(r1_list) >= 13:
+            self.r1_list_1_copy_11.SetLabel(r1_list[12])
+        if len(r1_list) >= 14:
+            self.r1_list_14.SetLabel(r1_list[13])
+        event.Skip()
+
+
+    def add_r1_2(self, event): # wxGlade: main.<event_handler>
+        if len(r1_list2) < 14:
+            r1_entry2 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
+            if not r1_entry2 == None:
+                for i in range(0, (len(r1_entry2))):
+                    r1_list2.append(str(r1_entry2[i]))
+        if len(r1_list2) >= 1:
+            self.r1_list_1_copy.SetLabel(r1_list2[0])
+        if len(r1_list2) >= 2:
+            self.r1_list_2_copy.SetLabel(r1_list2[1])
+        if len(r1_list2) >= 3:
+            self.r1_list_3_copy.SetLabel(r1_list2[2])
+        if len(r1_list2) >= 4:
+            self.r1_list_4_copy.SetLabel(r1_list2[3])
+        if len(r1_list2) >= 5:
+            self.r1_list_5_copy.SetLabel(r1_list2[4])
+        if len(r1_list2) >= 6:
+            self.r1_list_6_copy.SetLabel(r1_list2[5])
+        if len(r1_list2) >= 7:
+            self.r1_list_7_copy.SetLabel(r1_list2[6])
+        if len(r1_list2) >= 8:
+            self.r1_list_8_copy.SetLabel(r1_list2[7])
+        if len(r1_list2) >= 9:
+            self.r1_list_9_copy.SetLabel(r1_list2[8])
+        if len(r1_list2) >= 10:
+            self.r1_list_10_copy.SetLabel(r1_list2[9])
+        if len(r1_list2) >= 11:
+            self.r1_list_11_copy.SetLabel(r1_list2[10])
+        if len(r1_list2) >= 12:
+            self.r1_list_12_copy.SetLabel(r1_list2[11])
+        if len(r1_list2) >= 13:
+            self.r1_list_1_copy_11_copy.SetLabel(r1_list2[12])
+        if len(r1_list2) >= 14:
+            self.r1_list_14_copy.SetLabel(r1_list2[13])
+        event.Skip()
+
+
+    def add_r1_3(self, event): # add file
+        if len(r1_list3) < 14:
+            r1_entry3 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
+            if not r1_entry3 == None:
+                for i in range(0, (len(r1_entry3))):
+                    r1_list3.append(str(r1_entry3[i]))
+
+        if len(r1_list3) >= 1:
+            self.r1_list_1_copy_1.SetLabel(r1_list3[0])
+        if len(r1_list3) >= 2:
+            self.r1_list_2_copy_1.SetLabel(r1_list3[1])
+        if len(r1_list3) >= 3:
+            self.r1_list_3_copy_1.SetLabel(r1_list3[2])
+        if len(r1_list3) >= 4:
+            self.r1_list_4_copy_1.SetLabel(r1_list3[3])
+        if len(r1_list3) >= 5:
+            self.r1_list_5_copy_1.SetLabel(r1_list3[4])
+        if len(r1_list3) >= 6:
+            self.r1_list_6_copy_1.SetLabel(r1_list3[5])
+        if len(r1_list3) >= 7:
+            self.r1_list_7_copy_1.SetLabel(r1_list3[6])
+        if len(r1_list3) >= 8:
+            self.r1_list_8_copy_1.SetLabel(r1_list3[7])
+        if len(r1_list3) >= 9:
+            self.r1_list_9_copy_1.SetLabel(r1_list3[8])
+        if len(r1_list3) >= 10:
+            self.r1_list_10_copy_1.SetLabel(r1_list3[9])
+        if len(r1_list3) >= 11:
+            self.r1_list_11_copy_1.SetLabel(r1_list3[10])
+        if len(r1_list3) >= 12:
+            self.r1_list_12_copy_1.SetLabel(r1_list3[11])
+        if len(r1_list3) >= 13:
+            self.r1_list_1_copy_11_copy_1.SetLabel(r1_list3[12])
+        if len(r1_list3) >= 14:
+            self.r1_list_14_copy_1.SetLabel(r1_list3[13])
+        event.Skip()
+
+
+    def add_r2_1(self, event): # add a r2 peak list
+        if len(r2_list) < 14:
+            r2_entry = multi_openfile('Select R2 peak list file', self.resultsdir_r21.GetValue(), '*.*', 'all files (*.*)|*.*')
+            if not r2_entry == None:
+                for i in range(0, (len(r2_entry))):
+                    r2_list.append(str(r2_entry[i]))
+        if len(r2_list) >= 1:
+            self.r2_list_1.SetLabel(r2_list[0])
+        if len(r2_list) >= 2:
+            self.r2_list_2.SetLabel(r2_list[1])
+        if len(r2_list) >= 3:
+            self.r2_list_3.SetLabel(r2_list[2])
+        if len(r2_list) >= 4:
+            self.r2_list_4.SetLabel(r2_list[3])
+        if len(r2_list) >= 5:
+            self.r2_list_5.SetLabel(r2_list[4])
+        if len(r2_list) >= 6:
+            self.r2_list_6.SetLabel(r2_list[5])
+        if len(r2_list) >= 7:
+            self.r2_list_7.SetLabel(r2_list[6])
+        if len(r2_list) >= 8:
+            self.r2_list_8.SetLabel(r2_list[7])
+        if len(r2_list) >= 9:
+            self.r2_list_9.SetLabel(r2_list[8])
+        if len(r2_list) >= 10:
+            self.r2_list_10.SetLabel(r2_list[9])
+        if len(r2_list) >= 11:
+            self.r2_list_11.SetLabel(r2_list[10])
+        if len(r2_list) >= 12:
+            self.r2_list_12.SetLabel(r2_list[11])
+        if len(r2_list) >= 13:
+            self.r2_list_13.SetLabel(r2_list[12])
+        if len(r2_list) >= 14:
+            self.r2_list_14.SetLabel(r2_list[13])
+        event.Skip()
+
+
+    def add_r2_2(self, event): # add a r2 peak list
+        if len(r2_list2) < 14:
+            r2_entry2 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
+            if not r2_entry2 == None:
+                for i in range(0, (len(r2_entry2))):
+                    r2_list2.append(str(r2_entry2[i]))
+        if len(r2_list2) >= 1:
+            self.r2_list_1_copy.SetLabel(r2_list2[0])
+        if len(r2_list2) >= 2:
+            self.r2_list_2_copy.SetLabel(r2_list2[1])
+        if len(r2_list2) >= 3:
+            self.r2_list_3_copy.SetLabel(r2_list2[2])
+        if len(r2_list2) >= 4:
+            self.r2_list_4_copy.SetLabel(r2_list2[3])
+        if len(r2_list2) >= 5:
+            self.r2_list_5_copy.SetLabel(r2_list2[4])
+        if len(r2_list2) >= 6:
+            self.r2_list_6_copy.SetLabel(r2_list2[5])
+        if len(r2_list2) >= 7:
+            self.r2_list_7_copy.SetLabel(r2_list2[6])
+        if len(r2_list2) >= 8:
+            self.r2_list_8_copy.SetLabel(r2_list2[7])
+        if len(r2_list2) >= 9:
+            self.r2_list_9_copy.SetLabel(r2_list2[8])
+        if len(r2_list2) >= 10:
+            self.r2_list_10_copy.SetLabel(r2_list2[9])
+        if len(r2_list2) >= 11:
+            self.r2_list_11_copy.SetLabel(r2_list2[10])
+        if len(r2_list2) >= 12:
+            self.r2_list_12_copy.SetLabel(r2_list2[11])
+        if len(r2_list2) >= 13:
+            self.r2_list_13_copy.SetLabel(r2_list2[12])
+        if len(r2_list2) >= 14:
+            self.r2_list_14_copy.SetLabel(r2_list2[13])
+        event.Skip()
+
+
+    def add_r2_3(self, event): # add R2 peakfile no. 3
+        if len(r2_list3) < 14:
+            r2_entry3 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
+            if not r2_entry3 == None:
+                for i in range(0, (len(r2_entry3))):
+                    r2_list3.append(str(r2_entry3[i]))
+        if len(r2_list3) >= 1:
+            self.r2_list_1_copy_1.SetLabel(r2_list3[0])
+        if len(r2_list3) >= 2:
+            self.r2_list_2_copy_1.SetLabel(r2_list3[1])
+        if len(r2_list3) >= 3:
+            self.r2_list_3_copy_1.SetLabel(r2_list3[2])
+        if len(r2_list3) >= 4:
+            self.r2_list_4_copy_1.SetLabel(r2_list3[3])
+        if len(r2_list3) >= 5:
+            self.r2_list_5_copy_1.SetLabel(r2_list3[4])
+        if len(r2_list3) >= 6:
+            self.r2_list_6_copy_1.SetLabel(r2_list3[5])
+        if len(r2_list3) >= 7:
+            self.r2_list_7_copy_1.SetLabel(r2_list3[6])
+        if len(r2_list3) >= 8:
+            self.r2_list_8_copy_1.SetLabel(r2_list3[7])
+        if len(r2_list3) >= 9:
+            self.r2_list_9_copy_1.SetLabel(r2_list3[8])
+        if len(r2_list3) >= 10:
+            self.r2_list_10_copy_1.SetLabel(r2_list3[9])
+        if len(r2_list3) >= 11:
+            self.r2_list_11_copy_1.SetLabel(r2_list3[10])
+        if len(r2_list3) >= 12:
+            self.r2_list_12_copy_1.SetLabel(r2_list3[11])
+        if len(r2_list3) >= 13:
+            self.r2_list_13_copy_1.SetLabel(r2_list3[12])
+        if len(r2_list3) >= 14:
+            self.r2_list_14_copy_1.SetLabel(r2_list3[13])
+        event.Skip()
 
 
     def build_menu_sub_item(self, id=None, text=None, icon=None, kind=wx.ITEM_NORMAL):
@@ -1950,16 +2183,343 @@ class main(wx.Frame):
         return element
 
 
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
+    def exec_model_free(self, event):     # start model-free calculation by relax
+        global LOCAL_TM
 
-# GUI actions
+        checkpoint = check_entries(self)
+        if checkpoint == False:
+            which_model = None
+        else:
+            which_model = whichmodel(LOCAL_TM)
+
+        # start individual calculations
+        if not which_model == None:
+
+            if not which_model == 'full':
+                if not which_model == 'final':
+
+                    # run sphere, prolate, oblate or ellipsoid
+                    enable_models = False
+                    enable_models = start_modelfree(self, which_model, False, global_setting, file_setting, sequencefile)
+
+                    if enable_models:
+                        LOCAL_TM = True
+                else:
+
+                    # run final run
+                    results_for_table = startmodelfree(self, which_model, False, global_setting, file_setting, sequencefile)
+
+                    # import global variables for results table
+                    global table_residue
+                    global table_model
+                    global table_s2
+                    global table_rex
+                    global table_te
+
+                    # set global results variables
+                    table_residue = results_for_table[0]
+                    table_model = results_for_table[1]
+                    table_s2 = results_for_table[2]
+                    table_rex = results_for_table[3]
+                    table_te = results_for_table[4]
 
 
-#menu
+            # start full automatic model-free analysis
+            if which_model == 'full':
+                model1 = start_model_free(self, 'local_tm', True, global_setting, file_setting, sequencefile)    # execute local_tm
+                if model1 == 'successful':
+                    model2 = start_model_free(self, 'sphere', True, global_setting, file_setting, sequencefile)        # execute sphere
+                    if model2 == 'successful':
+                        model3 = start_model_free(self, 'prolate', True, global_setting, file_setting, sequencefile)         # execute prolate
+                        if model3 == 'successful':
+                            model4 = start_model_free(self, 'oblate', True, global_setting, file_setting, sequencefile)         # execute oblate
+                            if model4 == 'successful':
+                                model5 = start_model_free(self, 'ellipsoid', True, global_setting, file_setting, sequencefile)      # execute ellipsoid
+                                if model5 == 'successful':
+                                    model6 = start_model_free(self, 'final', False, global_setting, file_setting, sequencefile)        # execute final analysis
+        event.Skip()
+
+
+    def exec_noe1(self, event): # Start NOE calculation no. 1
+        start_relax = exec_relax()
+
+        if start_relax == True:
+            start_noe(self.res_noe1.GetValue(), self.noe_ref_1.GetValue(), self.noe_sat_1.GetValue(), self.noe_ref_err_1.GetValue(), self.noe_sat_err_1.GetValue(), self.nmrfreq_value_noe1.GetValue(), self.structure_noe1.GetValue(), self.unres_noe1.GetValue(), start_relax, self, 1, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_noe2(self, event): # start noe 2 calculation
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_noe(self.res_noe1_copy.GetValue(), self.noe_ref_1_copy.GetValue(), self.noe_sat_1_copy.GetValue(), self.noe_ref_err_1_copy.GetValue(), self.noe_sat_err_1_copy.GetValue(), self.nmrfreq_value_noe1_copy.GetValue(), self.structure_noe1_copy.GetValue(), self.unres_noe1_copy.GetValue(), start_relax, self, 2, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_noe3(self, event): # calculate noe 3
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_noe(self.res_noe1_copy_1.GetValue(), self.noe_ref_1_copy_1.GetValue(), self.noe_sat_1_copy_1.GetValue(), self.noe_ref_err_1_copy_1.GetValue(), self.noe_sat_err_1_copy_1.GetValue(), self.nmrfreq_value_noe1_copy_1.GetValue(), self.structure_noe1_copy_1.GetValue(), self.unres_noe1_copy_1.GetValue(), start_relax, self, 3, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_r1_1(self, event): # start r2 calculation
+        relax_times_r2_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        #create relaxation time list
+        relax_times_r2_1[0] = str(self.r2_time_1.GetValue())
+        relax_times_r2_1[1] = str(self.r2_time_2.GetValue())
+        relax_times_r2_1[2] = str(self.r2_time_3.GetValue())
+        relax_times_r2_1[3] = str(self.r2_time_4.GetValue())
+        relax_times_r2_1[4] = str(self.r2_time_5.GetValue())
+        relax_times_r2_1[5] = str(self.r2_time_6.GetValue())
+        relax_times_r2_1[6] = str(self.r2_time_7.GetValue())
+        relax_times_r2_1[7] = str(self.r2_time_8.GetValue())
+        relax_times_r2_1[8] = str(self.r2_time_9.GetValue())
+        relax_times_r2_1[9] = str(self.r2_time_10.GetValue())
+        relax_times_r2_1[10] = str(self.r2_time_11.GetValue())
+        relax_times_r2_1[11] = str(self.r2_time_12.GetValue())
+        relax_times_r2_1[12] = str(self.r2_time_13.GetValue())
+        relax_times_r2_1[13] = str(self.r2_time_14.GetValue())
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_r1_2(self, event): # execute r1 calculation no. 2
+        relax_times_r1_2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        #create relaxation time list
+
+        relax_times_r1_2[0] = str(self.r1_time_1_copy.GetValue())
+        relax_times_r1_2[1] = str(self.r1_time_2_copy.GetValue())
+        relax_times_r1_2[2] = str(self.r1_time_3_copy.GetValue())
+        relax_times_r1_2[3] = str(self.r1_time_4_copy.GetValue())
+        relax_times_r1_2[4] = str(self.r1_time_5_copy.GetValue())
+        relax_times_r1_2[5] = str(self.r1_time_6_copy.GetValue())
+        relax_times_r1_2[6] = str(self.r1_time_7_copy.GetValue())
+        relax_times_r1_2[7] = str(self.r1_time_8_copy.GetValue())
+        relax_times_r1_2[8] = str(self.r1_time_9_copy.GetValue())
+        relax_times_r1_2[9] = str(self.r1_time_10_copy.GetValue())
+        relax_times_r1_2[10] = str(self.r1_time_11_copy.GetValue())
+        relax_times_r1_2[11] = str(self.r1_time_12_copy.GetValue())
+        relax_times_r1_2[12] = str(self.r1_time_13_copy.GetValue())
+        relax_times_r1_2[13] = str(self.r1_time_1_4_copy.GetValue())
+
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_rx(self.resultsdir_r11_copy.GetValue(), r1_list2, relax_times_r1_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 1, 2, self.unresolved_r11_copy.GetValue(), self, 2, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_r1_3(self, event): # wxGlade: main.<event_handler>
+        relax_times_r1_3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        #create relaxation time list
+        relax_times_r1_3[0] = str(self.r1_time_1_copy_1.GetValue())
+        relax_times_r1_3[1] = str(self.r1_time_2_copy_1.GetValue())
+        relax_times_r1_3[2] = str(self.r1_time_3_copy_1.GetValue())
+        relax_times_r1_3[3] = str(self.r1_time_4_copy_1.GetValue())
+        relax_times_r1_3[4] = str(self.r1_time_5_copy_1.GetValue())
+        relax_times_r1_3[5] = str(self.r1_time_6_copy_1.GetValue())
+        relax_times_r1_3[6] = str(self.r1_time_7_copy_1.GetValue())
+        relax_times_r1_3[7] = str(self.r1_time_8_copy_1.GetValue())
+        relax_times_r1_3[8] = str(self.r1_time_9_copy_1.GetValue())
+        relax_times_r1_3[9] = str(self.r1_time_10_copy_1.GetValue())
+        relax_times_r1_3[10] = str(self.r1_time_11_copy_1.GetValue())
+        relax_times_r1_3[11] = str(self.r1_time_12_copy_1.GetValue())
+        relax_times_r1_3[12] = str(self.r1_time_13_copy_1.GetValue())
+        relax_times_r1_3[13] = str(self.r1_time_1_4_copy_1.GetValue())
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_rx(self.resultsdir_r11_copy_1.GetValue(), r1_list3, relax_times_r1_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 1, 3, self.unresolved_r11_copy_1.GetValue(), self, 3, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_r2_1(self, event): # start r1 calculation no. 1
+        relax_times_r1_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        #create relaxation time list
+        relax_times_r1_1[0] = str(self.r1_time_1.GetValue())
+        relax_times_r1_1[1] = str(self.r1_time_2.GetValue())
+        relax_times_r1_1[2] = str(self.r1_time_3.GetValue())
+        relax_times_r1_1[3] = str(self.r1_time_4.GetValue())
+        relax_times_r1_1[4] = str(self.r1_time_5.GetValue())
+        relax_times_r1_1[5] = str(self.r1_time_6.GetValue())
+        relax_times_r1_1[6] = str(self.r1_time_7.GetValue())
+        relax_times_r1_1[7] = str(self.r1_time_8.GetValue())
+        relax_times_r1_1[8] = str(self.r1_time_9.GetValue())
+        relax_times_r1_1[9] = str(self.r1_time_10.GetValue())
+        relax_times_r1_1[10] = str(self.r1_time_11.GetValue())
+        relax_times_r1_1[11] = str(self.r1_time_12.GetValue())
+        relax_times_r1_1[12] = str(self.r1_time_13.GetValue())
+        relax_times_r1_1[13] = str(self.r1_time_1_4.GetValue())
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_rx(self.resultsdir_r11.GetValue(), r1_list, relax_times_r1_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 1, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_r2_2(self, event): # wxGlade: main.<event_handler>
+        relax_times_r2_2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        #create relaxation time list
+        relax_times_r2_2[0] = str(self.r2_time_1_copy.GetValue())
+        relax_times_r2_2[1] = str(self.r2_time_2_copy.GetValue())
+        relax_times_r2_2[2] = str(self.r2_time_3_copy.GetValue())
+        relax_times_r2_2[3] = str(self.r2_time_4_copy.GetValue())
+        relax_times_r2_2[4] = str(self.r2_time_5_copy.GetValue())
+        relax_times_r2_2[5] = str(self.r2_time_6_copy.GetValue())
+        relax_times_r2_2[6] = str(self.r2_time_7_copy.GetValue())
+        relax_times_r2_2[7] = str(self.r2_time_8_copy.GetValue())
+        relax_times_r2_2[8] = str(self.r2_time_9_copy.GetValue())
+        relax_times_r2_2[9] = str(self.r2_time_10_copy.GetValue())
+        relax_times_r2_2[10] = str(self.r2_time_11_copy.GetValue())
+        relax_times_r2_2[11] = str(self.r2_time_12_copy.GetValue())
+        relax_times_r2_2[12] = str(self.r2_time_13_copy.GetValue())
+        relax_times_r2_2[13] = str(self.r2_time_14_copy.GetValue())
+
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_rx(self.resultsdir_r21_copy.GetValue(), r2_list2, relax_times_r2_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 2, 2, self.unresolved_r11_copy.GetValue(), self, 2, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exec_r2_3(self, event): # wxGlade: main.<event_handler>
+        relax_times_r2_3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        #create relaxation time list
+        relax_times_r2_3[0] = str(self.r2_time_1_copy_1.GetValue())
+        relax_times_r2_3[1] = str(self.r2_time_2_copy_1.GetValue())
+        relax_times_r2_3[2] = str(self.r2_time_3_copy_1.GetValue())
+        relax_times_r2_3[3] = str(self.r2_time_4_copy_1.GetValue())
+        relax_times_r2_3[4] = str(self.r2_time_5_copy_1.GetValue())
+        relax_times_r2_3[5] = str(self.r2_time_6_copy_1.GetValue())
+        relax_times_r2_3[6] = str(self.r2_time_7_copy_1.GetValue())
+        relax_times_r2_3[7] = str(self.r2_time_8_copy_1.GetValue())
+        relax_times_r2_3[8] = str(self.r2_time_9_copy_1.GetValue())
+        relax_times_r2_3[9] = str(self.r2_time_10_copy_1.GetValue())
+        relax_times_r2_3[10] = str(self.r2_time_11_copy_1.GetValue())
+        relax_times_r2_3[11] = str(self.r2_time_12_copy_1.GetValue())
+        relax_times_r2_3[12] = str(self.r2_time_13_copy_1.GetValue())
+        relax_times_r2_3[13] = str(self.r2_time_14_copy_1.GetValue())
+
+        start_relax = exec_relax()
+        if start_relax == True:
+            start_rx(self.resultsdir_r21_copy_1.GetValue(), r2_list3, relax_times_r2_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 2, 3, self.unresolved_r11_copy_1.GetValue(), self, 3, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def exitGUI(self, event): # Exit
+        doexit = question('Do you wand to quit relaxGUI?')
+        if doexit == True:
+            print"\n==================================================\n\n"
+            print "\nThank you for citing:"
+            print ""
+            print "relaxGUI:\nin progress...."
+            print ""
+            print "relax:"
+            print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119."
+            print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133."
+            print "\nExiting relaxGUI......\n"
+            sys.exit(0)
+        event.Skip()
+
+
+    def import_seq(self, event): # open load sequence panel
+        global sequencefile  #load global variable
+        temp = load_sequence(self)
+        if not temp == None:
+            sequencefile = temp #set sequence file
+
+            # set entries in pdb text box
+            structure_file_pdb = '!!! Sequence file selected !!!'
+            self.structure_noe1.SetValue(structure_file_pdb)
+            self.structure_r11.SetValue(structure_file_pdb)
+            self.structure_r21.SetValue(structure_file_pdb)
+            self.structure_noe1_copy.SetValue(structure_file_pdb)
+            self.structure_r11_copy.SetValue(structure_file_pdb)
+            self.structure_r21_copy.SetValue(structure_file_pdb)
+            self.structure_noe1_copy_1.SetValue(structure_file_pdb)
+            self.structure_r11_copy_1.SetValue(structure_file_pdb)
+            self.structure_r21_copy_1.SetValue(structure_file_pdb)
+        event.Skip()
+
+
+    def model_noe1(self, event): # load noe1
+        backup = self.m_noe_1.GetValue()
+        paramfiles1[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles1[0] == None:
+            paramfiles1[0] = backup
+        self.m_noe_1.SetValue(paramfiles1[0])
+        event.Skip()
+
+
+    def model_noe2(self, event): # load noe1
+        backup = self.m_noe_2.GetValue()
+        paramfiles2[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles2[0] == None:
+            paramfiles2[0] = backup
+        self.m_noe_2.SetValue(paramfiles2[0])
+        event.Skip()
+
+
+    def model_noe3(self, event): # load noe1
+        backup = self.m_noe_3.GetValue()
+        paramfiles3[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles3[0] == None:
+            paramfiles3[0] = backup
+        self.m_noe_3.SetValue(paramfiles3[0])
+        event.Skip()
+
+
+    def model_r11(self, event): #
+        backup = self.m_r1_1.GetValue()
+        paramfiles1[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles1[1] == None:
+            paramfiles1[1] = backup
+        self.m_r1_1.SetValue(paramfiles1[1])
+        event.Skip()
+
+
+    def model_r12(self, event): #
+        backup = self.m_r1_2.GetValue()
+        paramfiles2[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles2[1] == None:
+            paramfiles2[1] = backup
+        self.m_r1_2.SetValue(paramfiles2[1])
+        event.Skip()
+
+
+    def model_r13(self, event):
+        backup = self.m_r1_3.GetValue()
+        paramfiles3[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles3[1] == None:
+            paramfiles3[1] = backup
+        self.m_r1_3.SetValue(paramfiles3[1])
+        event.Skip()
+
+
+    def model_r21(self, event): #
+        backup = self.m_r2_1.GetValue()
+        paramfiles1[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles1[2] == None:
+            paramfiles1[2] = backup
+        self.m_r2_1.SetValue(paramfiles1[2])
+        event.Skip()
+
+
+    def model_r22(self, event): #
+        backup = self.m_r2_2.GetValue()
+        paramfiles2[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles2[2] == None:
+            paramfiles2[2] = backup
+        self.m_r2_2.SetValue(paramfiles2[2])
+        event.Skip()
+
+
+    def model_r23(self, event):
+        backup = self.m_r2_3.GetValue()
+        paramfiles3[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles3[2] == None:
+            paramfiles3[2] = backup
+        self.m_r2_3.SetValue(paramfiles3[2])
+        event.Skip()
+
 
     def newGUI(self, event): # New
         newdir = opendir('Select results directory', '*')
@@ -1992,209 +2552,92 @@ class main(wx.Frame):
         event.Skip()
 
 
-    def references(self, event):
-        webbrowser.open_new('http://www.nmr-relax.com/refs.html')
+    def open_model_results_exe(self, event):    # open model-free results
+        choice = self.list_modelfree.GetStringSelection()
+        model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
+        see_results(choice, model_result)
         event.Skip()
+
+
+    def open_noe_results_exe(self, event): #open results of noe run
+        choice = self.list_noe.GetStringSelection()
+        see_results(choice, None)
+        event.Skip()
+
+
+    def open_rx_results_exe(self, event): # open results of r1 and r2 runs
+        choice = self.list_rx.GetStringSelection()
+        see_results(choice, None)
+        event.Skip()
+
 
     def openGUI(self, event): # Open
         filename = openfile('Select file to open', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
         if not filename == None:
-           global_return = open_file(self, filename)
+            global_return = open_file(self, filename)
 
-           # import global parameters
-           global global_setting
-           global file_setting
-           global sequencefile
-           global table_residue
-           global table_model
-           global table_s2
-           global table_rex
-           global table_te 
+            # import global parameters
+            global global_setting
+            global file_setting
+            global sequencefile
+            global table_residue
+            global table_model
+            global table_s2
+            global table_rex
+            global table_te
 
-           # set global parameters
-           global_setting = global_return[0]
-           file_setting = global_return[1]
-           sequencefile = global_return[2]
-           table_residue = global_return[3]
-           table_model = global_return[4]
-           table_s2 = global_return[5]
-           table_rex = global_return[6]
-           table_te  = global_return[7]
+            # set global parameters
+            global_setting = global_return[0]
+            file_setting = global_return[1]
+            sequencefile = global_return[2]
+            table_residue = global_return[3]
+            table_model = global_return[4]
+            table_s2 = global_return[5]
+            table_rex = global_return[6]
+            table_te = global_return[7]
         event.Skip()
 
-    def saveGUI(self, event): # Save
-     filename = savefile('Select file to save', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-     if not filename == None: 
-        model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
-        create_save_file(self, filename, model_result, global_setting, file_setting, sequencefile)
-     event.Skip()
-
-    def exitGUI(self, event): # Exit
-        doexit = question('Do you wand to quit relaxGUI?')
-        if doexit == True:
-           print"\n==================================================\n\n"
-           print "\nThank you for citing:"
-           print ""
-           print "relaxGUI:\nin progress...."
-           print ""
-           print "relax:"
-           print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119."
-           print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133." 
-           print "\nExiting relaxGUI......\n"
-           sys.exit(0)
-        event.Skip()
-
-    def aboutGUI(self, event): # About
-        about_relax()
-        event.Skip()
-
-    def aboutrelax(self, event): # abour relax
-        webbrowser.open_new('http://www.nmr-relax.com')
-        event.Skip()
-
-    def import_seq(self, event): # open load sequence panel
-        global sequencefile  #load global variable
-        temp = load_sequence(self)
-        if not temp == None:
-           sequencefile = temp #set sequence file
-          
-           # set entries in pdb text box
-           structure_file_pdb = '!!! Sequence file selected !!!'
-           self.structure_noe1.SetValue(structure_file_pdb)
-           self.structure_r11.SetValue(structure_file_pdb)
-           self.structure_r21.SetValue(structure_file_pdb)
-           self.structure_noe1_copy.SetValue(structure_file_pdb)
-           self.structure_r11_copy.SetValue(structure_file_pdb)
-           self.structure_r21_copy.SetValue(structure_file_pdb)
-           self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-           self.structure_r11_copy_1.SetValue(structure_file_pdb)
-           self.structure_r21_copy_1.SetValue(structure_file_pdb)
-        event.Skip()
-
-    def settings(self, event): # set up for relax variables
-        global global_setting #import global variable
-        tmp_global = relax_global_settings(global_setting)
-        if not tmp_global == None:
-            if question('Do you realy want to change relax settings?'):
-              global_setting = tmp_global 
-        event.Skip()
 
     def param_file_setting(self, event): # set up parameter files
         global file_setting # import global variable
         tmp_setting = import_file_settings(file_setting)
         if not tmp_setting == None:
             if question('Do you realy want to change import file settings?'):
-             file_setting = tmp_setting
+                file_setting = tmp_setting
         event.Skip()
 
-    def reset_setting(self, event): #reset all settings
-        global global_setting #import global variable
-        global file_setting # import global variable
-        if question('Do you realy want to change relax settings?'):
-            global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-            file_setting = ['0', '1', '2', '3', '4', '5', '6']
-
-
-### NOE no. 1
-
-
-    def sat_noe1(self, event): # saturated noe 1
-        backup = self.noe_sat_1.GetValue()
-        noesat[0] = openfile('Select saturated NOE', self.res_noe1.GetValue() + sep, '*.*', 'all files (*.*)|*.*')
-        if noesat[0] == None:
-           noesat[0] = backup
-        self.noe_sat_1.SetValue(noesat[0])
-        event.Skip()
 
     def ref_noe(self, event): # reference noe 1
         backup = self.noe_ref_1.GetValue()
         noeref[0] = openfile('Select reference NOE', self.res_noe1.GetValue() + sep, '*.*', 'all files (*.*)|*.*')
         if noeref[0] == None:
-           noeref[0] = backup
+            noeref[0] = backup
         self.noe_ref_1.SetValue(noeref[0])
         event.Skip()
 
-    def structure_pdb(self, event): # structure file
-        backup = self.structure_noe1.GetValue()
-        structure_file_pdb = openfile('Select PDB File', self.res_noe1.GetValue() + sep, '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
-        if structure_file_pdb == None:
-           structure_file_pdb = backup
-        self.structure_noe1.SetValue(structure_file_pdb)
-        self.structure_r11.SetValue(structure_file_pdb)
-        self.structure_r21.SetValue(structure_file_pdb)
-        self.structure_noe1_copy.SetValue(structure_file_pdb)
-        self.structure_r11_copy.SetValue(structure_file_pdb)
-        self.structure_r21_copy.SetValue(structure_file_pdb)
-        self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-        self.structure_r11_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1_copy.SetValue(structure_file_pdb)
+
+    def ref_noe2(self, event): # reference noe no. 2
+        backup = self.noe_ref_1_copy.GetValue()
+        noeref[1] = openfile('Select reference NOE file', self.res_noe1_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if noeref[1] == None:
+            noeref[1] = backup
+        self.noe_ref_1_copy.SetValue(noeref[1])
         event.Skip()
 
-    def resdir_noe1(self, event): # noe 1 results dir
-        backup = self.res_noe1.GetValue()
-        noe_savedir[0] = opendir('Select results directory', self.res_noe1.GetValue())
-        if noe_savedir[0] == None:
-           noe_savedir[0] = backup
-        self.res_noe1.SetValue(noe_savedir[0])
+
+    def ref_noe3(self, event): # refererence noe 3
+        backup = self.noe_ref_1_copy_1.GetValue()
+        noeref[2] = openfile('Select reference NOE file', self.res_noe1_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if noeref[2] == None:
+            noeref[2] = backup
+        self.noe_ref_1_copy_1.SetValue(noeref[2])
         event.Skip()
 
-    def exec_noe1(self, event): # Start NOE calculation no. 1
-        start_relax = exec_relax()
 
-        if start_relax == True:
-           start_noe(self.res_noe1.GetValue(), self.noe_ref_1.GetValue(), self.noe_sat_1.GetValue(), self.noe_ref_err_1.GetValue(), self.noe_sat_err_1.GetValue(), self.nmrfreq_value_noe1.GetValue(),self.structure_noe1.GetValue(), self.unres_noe1.GetValue(), start_relax, self, 1, global_setting, file_setting, sequencefile)
+    def references(self, event):
+        webbrowser.open_new('http://www.nmr-relax.com/refs.html')
         event.Skip()
 
-          
-
-##### R1 no. 1
-
-    def resdir_r1_1(self, event): # R1 results dir 1
-        backup = self.resultsdir_r11.GetValue()
-        r1_savedir[0] = opendir('Select results directory)', default=self.resultsdir_r11.GetValue())
-        if r1_savedir[0] == None:
-           r1_savedir[0] = backup
-        self.resultsdir_r11.SetValue(r1_savedir[0])
-
-        event.Skip()
-
-    def add_r1_1(self, event): # add a r1 peak list
-
-        if len(r1_list) < 14:
-             r1_entry = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-             if not r1_entry == None:
-                r1_list.append(r1_entry)
-
-        if len(r1_list) >= 1:
-            self.r1_list_1.SetLabel(r1_list[0]) 
-        if len(r1_list) >= 2:
-            self.r1_list_2.SetLabel(r1_list[1]) 
-        if len(r1_list) >= 3:
-            self.r1_list_3.SetLabel(r1_list[2]) 
-        if len(r1_list) >= 4:
-            self.r1_list_4.SetLabel(r1_list[3]) 
-        if len(r1_list) >= 5:
-            self.r1_list_5.SetLabel(r1_list[4]) 
-        if len(r1_list) >= 6:
-            self.r1_list_6.SetLabel(r1_list[5]) 
-        if len(r1_list) >= 7:
-            self.r1_list_7.SetLabel(r1_list[6]) 
-        if len(r1_list) >= 8:
-            self.r1_list_8.SetLabel(r1_list[7]) 
-        if len(r1_list) >= 9:
-            self.r1_list_9.SetLabel(r1_list[8]) 
-        if len(r1_list) >= 10:
-            self.r1_list_10.SetLabel(r1_list[9]) 
-        if len(r1_list) >= 11:
-            self.r1_list_11.SetLabel(r1_list[10]) 
-        if len(r1_list) >= 12:
-            self.r1_list_12.SetLabel(r1_list[11]) 
-        if len(r1_list) >= 13:
-            self.r1_list_1_copy_11.SetLabel(r1_list[12]) 
-        if len(r1_list) >= 14:
-            self.r1_list_14.SetLabel(r1_list[13])              
-        event.Skip()
 
     def refresh_r1_1(self, event): # refresh r1 list no. 1
         self.r1_list_1.SetLabel('')
@@ -2214,190 +2657,6 @@ class main(wx.Frame):
         del r1_list[0:len(r1_list)]
         event.Skip()
 
-    def exec_r2_1(self, event): # start r1 calculation no. 1
-        relax_times_r1_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r1_1[0] = str(self.r1_time_1.GetValue()) 
-        relax_times_r1_1[1] = str(self.r1_time_2.GetValue()) 
-        relax_times_r1_1[2] = str(self.r1_time_3.GetValue()) 
-        relax_times_r1_1[3] = str(self.r1_time_4.GetValue()) 
-        relax_times_r1_1[4] = str(self.r1_time_5.GetValue()) 
-        relax_times_r1_1[5] = str(self.r1_time_6.GetValue()) 
-        relax_times_r1_1[6] = str(self.r1_time_7.GetValue()) 
-        relax_times_r1_1[7] = str(self.r1_time_8.GetValue()) 
-        relax_times_r1_1[8] = str(self.r1_time_9.GetValue()) 
-        relax_times_r1_1[9] = str(self.r1_time_10.GetValue()) 
-        relax_times_r1_1[10] = str(self.r1_time_11.GetValue()) 
-        relax_times_r1_1[11] = str(self.r1_time_12.GetValue()) 
-        relax_times_r1_1[12] = str(self.r1_time_13.GetValue()) 
-        relax_times_r1_1[13] = str(self.r1_time_1_4.GetValue()) 
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_rx(self.resultsdir_r11.GetValue(), r1_list, relax_times_r1_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 1, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-### Execute R2 no. 1
-
-    def resdir_r2_1(self, event): # wxGlade: main.<event_handler>
-        backup = self.resultsdir_r21.GetValue()
-        r2_savedir[0] = opendir('Select results directory)', self.resultsdir_r21.GetValue())
-        if r2_savedir[0] == None:
-           r2_savedir[0] = backup
-        self.resultsdir_r21.SetValue(r2_savedir[0])
-
-    def add_r2_1(self, event): # add a r2 peak list
-        if len(r2_list) < 14:
-             r2_entry = multi_openfile('Select R2 peak list file', self.resultsdir_r21.GetValue(), '*.*', 'all files (*.*)|*.*')
-             if not r2_entry == None:
-                for i in range(0,(len(r2_entry))):
-                 r2_list.append(str(r2_entry[i]))
-        if len(r2_list) >= 1:
-            self.r2_list_1.SetLabel(r2_list[0]) 
-        if len(r2_list) >= 2:
-            self.r2_list_2.SetLabel(r2_list[1]) 
-        if len(r2_list) >= 3:
-            self.r2_list_3.SetLabel(r2_list[2]) 
-        if len(r2_list) >= 4:
-            self.r2_list_4.SetLabel(r2_list[3]) 
-        if len(r2_list) >= 5:
-            self.r2_list_5.SetLabel(r2_list[4]) 
-        if len(r2_list) >= 6:
-            self.r2_list_6.SetLabel(r2_list[5]) 
-        if len(r2_list) >= 7:
-            self.r2_list_7.SetLabel(r2_list[6]) 
-        if len(r2_list) >= 8:
-            self.r2_list_8.SetLabel(r2_list[7]) 
-        if len(r2_list) >= 9:
-            self.r2_list_9.SetLabel(r2_list[8]) 
-        if len(r2_list) >= 10:
-            self.r2_list_10.SetLabel(r2_list[9]) 
-        if len(r2_list) >= 11:
-            self.r2_list_11.SetLabel(r2_list[10]) 
-        if len(r2_list) >= 12:
-            self.r2_list_12.SetLabel(r2_list[11]) 
-        if len(r2_list) >= 13:
-            self.r2_list_13.SetLabel(r2_list[12]) 
-        if len(r2_list) >= 14:
-            self.r2_list_14.SetLabel(r2_list[13])              
-        event.Skip()
-
-    def refresh_r2_1(self, event): # refresh r2 list no. 1
-        self.r2_list_1.SetLabel('')
-        self.r2_list_2.SetLabel('')
-        self.r2_list_3.SetLabel('')
-        self.r2_list_4.SetLabel('')
-        self.r2_list_5.SetLabel('')
-        self.r2_list_6.SetLabel('')
-        self.r2_list_7.SetLabel('')
-        self.r2_list_8.SetLabel('')
-        self.r2_list_9.SetLabel('')
-        self.r2_list_10.SetLabel('')
-        self.r2_list_11.SetLabel('')
-        self.r2_list_12.SetLabel('')
-        self.r2_list_13.SetLabel('')
-        self.r2_list_14.SetLabel('')
-        del r2_list[0:len(r2_list)]
-        event.Skip()
-
-    def exec_r1_1(self, event): # start r2 calculation
-        relax_times_r2_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r2_1[0] = str(self.r2_time_1.GetValue()) 
-        relax_times_r2_1[1] = str(self.r2_time_2.GetValue()) 
-        relax_times_r2_1[2] = str(self.r2_time_3.GetValue()) 
-        relax_times_r2_1[3] = str(self.r2_time_4.GetValue()) 
-        relax_times_r2_1[4] = str(self.r2_time_5.GetValue()) 
-        relax_times_r2_1[5] = str(self.r2_time_6.GetValue()) 
-        relax_times_r2_1[6] = str(self.r2_time_7.GetValue()) 
-        relax_times_r2_1[7] = str(self.r2_time_8.GetValue()) 
-        relax_times_r2_1[8] = str(self.r2_time_9.GetValue()) 
-        relax_times_r2_1[9] = str(self.r2_time_10.GetValue()) 
-        relax_times_r2_1[10] = str(self.r2_time_11.GetValue()) 
-        relax_times_r2_1[11] = str(self.r2_time_12.GetValue()) 
-        relax_times_r2_1[12] = str(self.r2_time_13.GetValue()) 
-        relax_times_r2_1[13] = str(self.r2_time_14.GetValue()) 
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.unresolved_r11.GetValue(), self,1, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-### NOE no. 2
-
-    def sat_noe2(self, event): # saturated noe no. 2
-        backup = self.noe_sat_1_copy.GetValue()
-        noesat[1] = openfile('Select saturated NOE file', self.res_noe1_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if noesat[1] == None:
-           noesat[1] = backup
-        self.noe_sat_1_copy.SetValue(noesat[1])
-        event.Skip()
-
-    def ref_noe2(self, event): # reference noe no. 2
-        backup = self.noe_ref_1_copy.GetValue()
-        noeref[1] = openfile('Select reference NOE file', self.res_noe1_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if noeref[1] == None:
-           noeref[1] = backup
-        self.noe_ref_1_copy.SetValue(noeref[1])
-        event.Skip()
-
-    def resdir_noe2(self, event): # noe results dir no. 2
-        backup = self.res_noe1_copy.GetValue()
-        noe_savedir[1] = opendir('Select results directory', self.res_noe1_copy.GetValue())
-        if noe_savedir[1] == None:
-           noe_savedir[1] = backup
-        self.res_noe1_copy.SetValue(noe_savedir[1])
-        event.Skip()
-
-    def exec_noe2(self, event): # start noe 2 calculation
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_noe(self.res_noe1_copy.GetValue(), self.noe_ref_1_copy.GetValue(), self.noe_sat_1_copy.GetValue(), self.noe_ref_err_1_copy.GetValue(), self.noe_sat_err_1_copy.GetValue(), self.nmrfreq_value_noe1_copy.GetValue(),self.structure_noe1_copy.GetValue(), self.unres_noe1_copy.GetValue(), start_relax, self, 2, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-### R1 no. 2
-
-    def resdir_r1_2(self, event): # wxGlade: main.<event_handler>
-        backup = self.resultsdir_r11_copy.GetValue()
-        r1_savedir[1] = opendir('Select results directory', self.resultsdir_r11_copy.GetValue())
-        if r1_savedir[1] == None:
-           r1_savedir[1] = backup
-        self.resultsdir_r11_copy.SetValue(r1_savedir[1])
-        event.Skip()
-
-    def add_r1_2(self, event): # wxGlade: main.<event_handler>
-        if len(r1_list2) < 14:
-             r1_entry2 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-             if not r1_entry2 == None:
-                for i in range(0,(len(r1_entry2))):
-                 r1_list2.append(str(r1_entry2[i]))
-        if len(r1_list2) >= 1:
-            self.r1_list_1_copy.SetLabel(r1_list2[0]) 
-        if len(r1_list2) >= 2:
-            self.r1_list_2_copy.SetLabel(r1_list2[1]) 
-        if len(r1_list2) >= 3:
-            self.r1_list_3_copy.SetLabel(r1_list2[2]) 
-        if len(r1_list2) >= 4:
-            self.r1_list_4_copy.SetLabel(r1_list2[3]) 
-        if len(r1_list2) >= 5:
-            self.r1_list_5_copy.SetLabel(r1_list2[4]) 
-        if len(r1_list2) >= 6:
-            self.r1_list_6_copy.SetLabel(r1_list2[5]) 
-        if len(r1_list2) >= 7:
-            self.r1_list_7_copy.SetLabel(r1_list2[6]) 
-        if len(r1_list2) >= 8:
-            self.r1_list_8_copy.SetLabel(r1_list2[7]) 
-        if len(r1_list2) >= 9:
-            self.r1_list_9_copy.SetLabel(r1_list2[8]) 
-        if len(r1_list2) >= 10:
-            self.r1_list_10_copy.SetLabel(r1_list2[9]) 
-        if len(r1_list2) >= 11:
-            self.r1_list_11_copy.SetLabel(r1_list2[10]) 
-        if len(r1_list2) >= 12:
-            self.r1_list_12_copy.SetLabel(r1_list2[11]) 
-        if len(r1_list2) >= 13:
-            self.r1_list_1_copy_11_copy.SetLabel(r1_list2[12]) 
-        if len(r1_list2) >= 14:
-            self.r1_list_14_copy.SetLabel(r1_list2[13])              
-        event.Skip()
 
     def refresh_r1_2(self, event): # refresh R1 no. 2
         self.r1_list_1_copy.SetLabel('')
@@ -2417,75 +2676,44 @@ class main(wx.Frame):
         del r1_list2[0:len(r1_list2)]
         event.Skip()
 
-    def exec_r1_2(self, event): # execute r1 calculation no. 2
-        relax_times_r1_2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
 
-        relax_times_r1_2[0] = str(self.r1_time_1_copy.GetValue()) 
-        relax_times_r1_2[1] = str(self.r1_time_2_copy.GetValue()) 
-        relax_times_r1_2[2] = str(self.r1_time_3_copy.GetValue()) 
-        relax_times_r1_2[3] = str(self.r1_time_4_copy.GetValue()) 
-        relax_times_r1_2[4] = str(self.r1_time_5_copy.GetValue()) 
-        relax_times_r1_2[5] = str(self.r1_time_6_copy.GetValue()) 
-        relax_times_r1_2[6] = str(self.r1_time_7_copy.GetValue()) 
-        relax_times_r1_2[7] = str(self.r1_time_8_copy.GetValue()) 
-        relax_times_r1_2[8] = str(self.r1_time_9_copy.GetValue()) 
-        relax_times_r1_2[9] = str(self.r1_time_10_copy.GetValue()) 
-        relax_times_r1_2[10] = str(self.r1_time_11_copy.GetValue()) 
-        relax_times_r1_2[11] = str(self.r1_time_12_copy.GetValue()) 
-        relax_times_r1_2[12] = str(self.r1_time_13_copy.GetValue()) 
-        relax_times_r1_2[13] = str(self.r1_time_1_4_copy.GetValue()) 
-
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_rx(self.resultsdir_r11_copy.GetValue(), r1_list2, relax_times_r1_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 1, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
+    def refresh_r1_3(self, event): # wxGlade: main.<event_handler>
+        self.r1_list_1_copy_1.SetLabel('')
+        self.r1_list_2_copy_1.SetLabel('')
+        self.r1_list_3_copy_1.SetLabel('')
+        self.r1_list_4_copy_1.SetLabel('')
+        self.r1_list_5_copy_1.SetLabel('')
+        self.r1_list_6_copy_1.SetLabel('')
+        self.r1_list_7_copy_1.SetLabel('')
+        self.r1_list_8_copy_1.SetLabel('')
+        self.r1_list_9_copy_1.SetLabel('')
+        self.r1_list_10_copy_1.SetLabel('')
+        self.r1_list_11_copy_1.SetLabel('')
+        self.r1_list_12_copy_1.SetLabel('')
+        self.r1_list_1_copy_11_copy_1.SetLabel('')
+        self.r1_list_14_copy_1.SetLabel('')
+        del r1_list3[0:len(r1_list3)]
         event.Skip()
 
-### R2 no. 2
 
-    def resdir_r2_2(self, event): # wxGlade: main.<event_handler>
-        backup = self.resultsdir_r21_copy.GetValue()
-        r2_savedir[1] = opendir('Select results directory)', self.resultsdir_r21_copy.GetValue() + '/')
-        if r2_savedir[1] == None:
-           r2_savedir[1] = backup
-        self.resultsdir_r21_copy.SetValue(r2_savedir[1])
+    def refresh_r2_1(self, event): # refresh r2 list no. 1
+        self.r2_list_1.SetLabel('')
+        self.r2_list_2.SetLabel('')
+        self.r2_list_3.SetLabel('')
+        self.r2_list_4.SetLabel('')
+        self.r2_list_5.SetLabel('')
+        self.r2_list_6.SetLabel('')
+        self.r2_list_7.SetLabel('')
+        self.r2_list_8.SetLabel('')
+        self.r2_list_9.SetLabel('')
+        self.r2_list_10.SetLabel('')
+        self.r2_list_11.SetLabel('')
+        self.r2_list_12.SetLabel('')
+        self.r2_list_13.SetLabel('')
+        self.r2_list_14.SetLabel('')
+        del r2_list[0:len(r2_list)]
         event.Skip()
 
-    def add_r2_2(self, event): # add a r2 peak list
-        if len(r2_list2) < 14:
-             r2_entry2 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-             if not r2_entry2 == None:
-                for i in range(0,(len(r2_entry2))):
-                 r2_list2.append(str(r2_entry2[i]))
-        if len(r2_list2) >= 1:
-            self.r2_list_1_copy.SetLabel(r2_list2[0]) 
-        if len(r2_list2) >= 2:
-            self.r2_list_2_copy.SetLabel(r2_list2[1]) 
-        if len(r2_list2) >= 3:
-            self.r2_list_3_copy.SetLabel(r2_list2[2]) 
-        if len(r2_list2) >= 4:
-            self.r2_list_4_copy.SetLabel(r2_list2[3]) 
-        if len(r2_list2) >= 5:
-            self.r2_list_5_copy.SetLabel(r2_list2[4]) 
-        if len(r2_list2) >= 6:
-            self.r2_list_6_copy.SetLabel(r2_list2[5]) 
-        if len(r2_list2) >= 7:
-            self.r2_list_7_copy.SetLabel(r2_list2[6]) 
-        if len(r2_list2) >= 8:
-            self.r2_list_8_copy.SetLabel(r2_list2[7]) 
-        if len(r2_list2) >= 9:
-            self.r2_list_9_copy.SetLabel(r2_list2[8]) 
-        if len(r2_list2) >= 10:
-            self.r2_list_10_copy.SetLabel(r2_list2[9]) 
-        if len(r2_list2) >= 11:
-            self.r2_list_11_copy.SetLabel(r2_list2[10]) 
-        if len(r2_list2) >= 12:
-            self.r2_list_12_copy.SetLabel(r2_list2[11]) 
-        if len(r2_list2) >= 13:
-            self.r2_list_13_copy.SetLabel(r2_list2[12]) 
-        if len(r2_list2) >= 14:
-            self.r2_list_14_copy.SetLabel(r2_list2[13])              
-        event.Skip()
 
     def refresh_r2_2(self, event): # refresh r2 list no. 1
         self.r2_list_1_copy.SetLabel('')
@@ -2506,195 +2734,6 @@ class main(wx.Frame):
         event.Skip()
 
 
-    def exec_r2_2(self, event): # wxGlade: main.<event_handler>
-        relax_times_r2_2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r2_2[0] = str(self.r2_time_1_copy.GetValue()) 
-        relax_times_r2_2[1] = str(self.r2_time_2_copy.GetValue()) 
-        relax_times_r2_2[2] = str(self.r2_time_3_copy.GetValue()) 
-        relax_times_r2_2[3] = str(self.r2_time_4_copy.GetValue()) 
-        relax_times_r2_2[4] = str(self.r2_time_5_copy.GetValue()) 
-        relax_times_r2_2[5] = str(self.r2_time_6_copy.GetValue()) 
-        relax_times_r2_2[6] = str(self.r2_time_7_copy.GetValue()) 
-        relax_times_r2_2[7] = str(self.r2_time_8_copy.GetValue()) 
-        relax_times_r2_2[8] = str(self.r2_time_9_copy.GetValue()) 
-        relax_times_r2_2[9] = str(self.r2_time_10_copy.GetValue()) 
-        relax_times_r2_2[10] = str(self.r2_time_11_copy.GetValue()) 
-        relax_times_r2_2[11] = str(self.r2_time_12_copy.GetValue()) 
-        relax_times_r2_2[12] = str(self.r2_time_13_copy.GetValue()) 
-        relax_times_r2_2[13] = str(self.r2_time_14_copy.GetValue()) 
-
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_rx(self.resultsdir_r21_copy.GetValue(), r2_list2, relax_times_r2_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 2, 2, self.unresolved_r11_copy.GetValue(), self,2, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-### NOE no. 3
-
-    def sat_noe3(self, event): # saturated noe no. 3
-        backup = self.noe_sat_1_copy_1.GetValue()
-        noesat[2] = openfile('Select saturated NOE file', self.res_noe1_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if noesat[2] == None:
-           noesat[2] = backup
-        self.noe_sat_1_copy_1.SetValue(noesat[2])
-        event.Skip()
-
-    def ref_noe3(self, event): # refererence noe 3
-        backup = self.noe_ref_1_copy_1.GetValue()
-        noeref[2] = openfile('Select reference NOE file', self.res_noe1_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if noeref[2] == None:
-           noeref[2] = backup
-        self.noe_ref_1_copy_1.SetValue(noeref[2])
-        event.Skip()
-
-    def resdir_noe3(self, event): # noe 3 results dir
-        backup = self.res_noe1_copy_1.GetValue()
-        noe_savedir[2] = opendir('Select results directory)', self.res_noe1_copy_1.GetValue() + sep)
-        if noe_savedir[2] == None:
-           noe_savedir[2] = backup
-        self.res_noe1_copy_1.SetValue(noe_savedir[2])
-        event.Skip()
-
-    def exec_noe3(self, event): # calculate noe 3
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_noe(self.res_noe1_copy_1.GetValue(), self.noe_ref_1_copy_1.GetValue(), self.noe_sat_1_copy_1.GetValue(), self.noe_ref_err_1_copy_1.GetValue(), self.noe_sat_err_1_copy_1.GetValue(), self.nmrfreq_value_noe1_copy_1.GetValue(),self.structure_noe1_copy_1.GetValue(), self.unres_noe1_copy_1.GetValue(), start_relax, self, 3, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-### R1 no. 3
-
-    def resdir_r1_3(self, event): # results R1 no 3
-        backup = self.resultsdir_r11_copy_1.GetValue()
-        r1_savedir[2] = opendir('Select results directory', self.resultsdir_r11_copy_1.GetValue())
-        if r1_savedir[2] == None:
-           r1_savedir[2] = backup
-        self.resultsdir_r11_copy_1.SetValue(r1_savedir[2])
-        event.Skip()
-
-    def add_r1_3(self, event): # add file
-        if len(r1_list3) < 14:
-             r1_entry3 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
-             if not r1_entry3 == None:
-                for i in range(0,(len(r1_entry3))):
-                 r1_list3.append(str(r1_entry3[i]))
-
-        if len(r1_list3) >= 1:
-            self.r1_list_1_copy_1.SetLabel(r1_list3[0]) 
-        if len(r1_list3) >= 2:
-            self.r1_list_2_copy_1.SetLabel(r1_list3[1]) 
-        if len(r1_list3) >= 3:
-            self.r1_list_3_copy_1.SetLabel(r1_list3[2]) 
-        if len(r1_list3) >= 4:
-            self.r1_list_4_copy_1.SetLabel(r1_list3[3]) 
-        if len(r1_list3) >= 5:
-            self.r1_list_5_copy_1.SetLabel(r1_list3[4]) 
-        if len(r1_list3) >= 6:
-            self.r1_list_6_copy_1.SetLabel(r1_list3[5]) 
-        if len(r1_list3) >= 7:
-            self.r1_list_7_copy_1.SetLabel(r1_list3[6]) 
-        if len(r1_list3) >= 8:
-            self.r1_list_8_copy_1.SetLabel(r1_list3[7]) 
-        if len(r1_list3) >= 9:
-            self.r1_list_9_copy_1.SetLabel(r1_list3[8]) 
-        if len(r1_list3) >= 10:
-            self.r1_list_10_copy_1.SetLabel(r1_list3[9]) 
-        if len(r1_list3) >= 11:
-            self.r1_list_11_copy_1.SetLabel(r1_list3[10]) 
-        if len(r1_list3) >= 12:
-            self.r1_list_12_copy_1.SetLabel(r1_list3[11]) 
-        if len(r1_list3) >= 13:
-            self.r1_list_1_copy_11_copy_1.SetLabel(r1_list3[12]) 
-        if len(r1_list3) >= 14:
-            self.r1_list_14_copy_1.SetLabel(r1_list3[13])              
-        event.Skip()
-
-    def refresh_r1_3(self, event): # wxGlade: main.<event_handler>
-        self.r1_list_1_copy_1.SetLabel('')
-        self.r1_list_2_copy_1.SetLabel('')
-        self.r1_list_3_copy_1.SetLabel('')
-        self.r1_list_4_copy_1.SetLabel('')
-        self.r1_list_5_copy_1.SetLabel('')
-        self.r1_list_6_copy_1.SetLabel('')
-        self.r1_list_7_copy_1.SetLabel('')
-        self.r1_list_8_copy_1.SetLabel('')
-        self.r1_list_9_copy_1.SetLabel('')
-        self.r1_list_10_copy_1.SetLabel('')
-        self.r1_list_11_copy_1.SetLabel('')
-        self.r1_list_12_copy_1.SetLabel('')
-        self.r1_list_1_copy_11_copy_1.SetLabel('')
-        self.r1_list_14_copy_1.SetLabel('')
-        del r1_list3[0:len(r1_list3)]
-        event.Skip()
-
-    def exec_r1_3(self, event): # wxGlade: main.<event_handler>
-        relax_times_r1_3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r1_3[0] = str(self.r1_time_1_copy_1.GetValue()) 
-        relax_times_r1_3[1] = str(self.r1_time_2_copy_1.GetValue()) 
-        relax_times_r1_3[2] = str(self.r1_time_3_copy_1.GetValue()) 
-        relax_times_r1_3[3] = str(self.r1_time_4_copy_1.GetValue()) 
-        relax_times_r1_3[4] = str(self.r1_time_5_copy_1.GetValue()) 
-        relax_times_r1_3[5] = str(self.r1_time_6_copy_1.GetValue()) 
-        relax_times_r1_3[6] = str(self.r1_time_7_copy_1.GetValue()) 
-        relax_times_r1_3[7] = str(self.r1_time_8_copy_1.GetValue()) 
-        relax_times_r1_3[8] = str(self.r1_time_9_copy_1.GetValue()) 
-        relax_times_r1_3[9] = str(self.r1_time_10_copy_1.GetValue()) 
-        relax_times_r1_3[10] = str(self.r1_time_11_copy_1.GetValue()) 
-        relax_times_r1_3[11] = str(self.r1_time_12_copy_1.GetValue()) 
-        relax_times_r1_3[12] = str(self.r1_time_13_copy_1.GetValue()) 
-        relax_times_r1_3[13] = str(self.r1_time_1_4_copy_1.GetValue()) 
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_rx(self.resultsdir_r11_copy_1.GetValue(), r1_list3, relax_times_r1_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 1, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
-### R2 no. 3
-
-    def resdir_r2_3(self, event): # results dir R2 3
-        backup = self.resultsdir_r21_copy_1.GetValue()
-        r2_savedir[2] = opendir('Select results directory', self.resultsdir_r21_copy_1.GetValue())
-        if r2_savedir[2] == None:
-           r2_savedir[2] = backup
-        self.resultsdir_r21_copy_1.SetValue(r2_savedir[2])
-        event.Skip()
-
-    def add_r2_3(self, event): # add R2 peakfile no. 3
-        if len(r2_list3) < 14:
-             r2_entry3 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
-             if not r2_entry3 == None:
-                for i in range(0,(len(r2_entry3))):
-                 r2_list3.append(str(r2_entry3[i]))
-        if len(r2_list3) >= 1:
-            self.r2_list_1_copy_1.SetLabel(r2_list3[0]) 
-        if len(r2_list3) >= 2:
-            self.r2_list_2_copy_1.SetLabel(r2_list3[1]) 
-        if len(r2_list3) >= 3:
-            self.r2_list_3_copy_1.SetLabel(r2_list3[2]) 
-        if len(r2_list3) >= 4:
-            self.r2_list_4_copy_1.SetLabel(r2_list3[3]) 
-        if len(r2_list3) >= 5:
-            self.r2_list_5_copy_1.SetLabel(r2_list3[4]) 
-        if len(r2_list3) >= 6:
-            self.r2_list_6_copy_1.SetLabel(r2_list3[5]) 
-        if len(r2_list3) >= 7:
-            self.r2_list_7_copy_1.SetLabel(r2_list3[6]) 
-        if len(r2_list3) >= 8:
-            self.r2_list_8_copy_1.SetLabel(r2_list3[7]) 
-        if len(r2_list3) >= 9:
-            self.r2_list_9_copy_1.SetLabel(r2_list3[8]) 
-        if len(r2_list3) >= 10:
-            self.r2_list_10_copy_1.SetLabel(r2_list3[9]) 
-        if len(r2_list3) >= 11:
-            self.r2_list_11_copy_1.SetLabel(r2_list3[10]) 
-        if len(r2_list3) >= 12:
-            self.r2_list_12_copy_1.SetLabel(r2_list3[11]) 
-        if len(r2_list3) >= 13:
-            self.r2_list_13_copy_1.SetLabel(r2_list3[12]) 
-        if len(r2_list3) >= 14:
-            self.r2_list_14_copy_1.SetLabel(r2_list3[13])              
-        event.Skip()
-
     def refresh_r2_3(self, event): # refresh r2 list no. 3
         self.r2_list_1_copy_1.SetLabel('')
         self.r2_list_2_copy_1.SetLabel('')
@@ -2713,187 +2752,172 @@ class main(wx.Frame):
         del r2_list3[0:len(r2_list3)]
         event.Skip()
 
-    def exec_r2_3(self, event): # wxGlade: main.<event_handler>
-        relax_times_r2_3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r2_3[0] = str(self.r2_time_1_copy_1.GetValue()) 
-        relax_times_r2_3[1] = str(self.r2_time_2_copy_1.GetValue()) 
-        relax_times_r2_3[2] = str(self.r2_time_3_copy_1.GetValue()) 
-        relax_times_r2_3[3] = str(self.r2_time_4_copy_1.GetValue()) 
-        relax_times_r2_3[4] = str(self.r2_time_5_copy_1.GetValue()) 
-        relax_times_r2_3[5] = str(self.r2_time_6_copy_1.GetValue()) 
-        relax_times_r2_3[6] = str(self.r2_time_7_copy_1.GetValue()) 
-        relax_times_r2_3[7] = str(self.r2_time_8_copy_1.GetValue()) 
-        relax_times_r2_3[8] = str(self.r2_time_9_copy_1.GetValue()) 
-        relax_times_r2_3[9] = str(self.r2_time_10_copy_1.GetValue()) 
-        relax_times_r2_3[10] = str(self.r2_time_11_copy_1.GetValue()) 
-        relax_times_r2_3[11] = str(self.r2_time_12_copy_1.GetValue()) 
-        relax_times_r2_3[12] = str(self.r2_time_13_copy_1.GetValue()) 
-        relax_times_r2_3[13] = str(self.r2_time_14_copy_1.GetValue()) 
 
-        start_relax = exec_relax()
-        if start_relax == True:
-           start_rx(self.resultsdir_r21_copy_1.GetValue(), r2_list3, relax_times_r2_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 2, 3, self.unresolved_r11_copy_1.GetValue(), self,3, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-### Model-free analysis
-
-    def model_noe1(self, event): # load noe1
-        backup = self.m_noe_1.GetValue() 
-        paramfiles1[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[0] == None:
-           paramfiles1[0] = backup
-        self.m_noe_1.SetValue(paramfiles1[0])
-        event.Skip()
-
-    def model_r11(self, event): # 
-        backup = self.m_r1_1.GetValue() 
-        paramfiles1[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[1] == None:
-           paramfiles1[1] = backup
-        self.m_r1_1.SetValue(paramfiles1[1])
-        event.Skip()
-
-    def model_r21(self, event): # 
-        backup = self.m_r2_1.GetValue() 
-        paramfiles1[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[2] == None:
-           paramfiles1[2] = backup
-        self.m_r2_1.SetValue(paramfiles1[2])
-        event.Skip()
-
-    def model_noe2(self, event): # load noe1
-        backup = self.m_noe_2.GetValue() 
-        paramfiles2[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[0] == None:
-           paramfiles2[0] = backup
-        self.m_noe_2.SetValue(paramfiles2[0])
-        event.Skip()
-
-    def model_r12(self, event): # 
-        backup = self.m_r1_2.GetValue() 
-        paramfiles2[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[1] == None:
-           paramfiles2[1] = backup
-        self.m_r1_2.SetValue(paramfiles2[1])
-        event.Skip()
-
-    def model_r22(self, event): # 
-        backup = self.m_r2_2.GetValue() 
-        paramfiles2[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[2] == None:
-           paramfiles2[2] = backup
-        self.m_r2_2.SetValue(paramfiles2[2])
-        event.Skip()
-
-    def model_noe3(self, event): # load noe1
-        backup = self.m_noe_3.GetValue() 
-        paramfiles3[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[0] == None:
-           paramfiles3[0] = backup
-        self.m_noe_3.SetValue(paramfiles3[0])
-        event.Skip()
-
-    def model_r13(self, event): 
-        backup = self.m_r1_3.GetValue() 
-        paramfiles3[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[1] == None:
-           paramfiles3[1] = backup
-        self.m_r1_3.SetValue(paramfiles3[1])
-        event.Skip()
-
-    def model_r23(self, event): 
-        backup = self.m_r2_3.GetValue() 
-        paramfiles3[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[2] == None:
-           paramfiles3[2] = backup
-        self.m_r2_3.SetValue(paramfiles3[2])
-        event.Skip()
-
-    def sel_aic(self, event): 
-        selection = "AIC" 
-        event.Skip()
-
-    def sel_bic(self, event): 
-        selection = "BIC"
-        event.Skip()
-
-    def resdir_modelfree(self, event): 
+    def resdir_modelfree(self, event):
         backup = self.resultsdir_r21_copy_2.GetValue()
         results_dir_model = opendir('Select results directory', backup)
         if results_dir_model == None:
-           results_dir_model = backup
+            results_dir_model = backup
         self.resultsdir_r21_copy_2.SetValue(results_dir_model)
         event.Skip()
 
-    def exec_model_free(self, event):     # start model-free calculation by relax
-        global LOCAL_TM
-        
-        checkpoint = check_entries(self)
-        if checkpoint == False:
-           which_model = None
-        else:
-           which_model = whichmodel(LOCAL_TM) 
 
-        # start individual calculations
-        if not which_model == None:
-     
-           if not which_model == 'full':
-              if not which_model == 'final':
-
-                 # run sphere, prolate, oblate or ellipsoid
-                 enable_models = False   
-                 enable_models = start_modelfree(self, which_model, False, global_setting, file_setting, sequencefile)
-
-                 if enable_models:
-                    LOCAL_TM = True
-              else:
- 
-                 # run final run
-                 results_for_table = startmodelfree(self, which_model, False, global_setting, file_setting, sequencefile) 
-
-                 # import global variables for results table
-                 global table_residue
-                 global table_model
-                 global table_s2
-                 global table_rex
-                 global table_te 
-
-                 # set global results variables
-                 table_residue = results_for_table[0]
-                 table_model = results_for_table[1]
-                 table_s2 = results_for_table[2]
-                 table_rex = results_for_table[3]
-                 table_te = results_for_table[4]
-       
-
-           # start full automatic model-free analysis
-           if which_model == 'full':
-              model1 = start_model_free(self, 'local_tm', True, global_setting, file_setting, sequencefile)    # execute local_tm
-              if model1 == 'successful':
-                 model2 = start_model_free(self, 'sphere', True, global_setting, file_setting, sequencefile)        # execute sphere
-                 if model2 == 'successful':
-                    model3 = start_model_free(self, 'prolate', True, global_setting, file_setting, sequencefile)         # execute prolate
-                    if model3 == 'successful':
-                       model4 = start_model_free(self, 'oblate', True, global_setting, file_setting, sequencefile)         # execute oblate
-                       if model4 == 'successful':
-                          model5 = start_model_free(self, 'ellipsoid', True, global_setting, file_setting, sequencefile)      # execute ellipsoid
-                          if model5 == 'successful':
-                             model6 = start_model_free(self, 'final', False, global_setting, file_setting, sequencefile)        # execute final analysis   
-        event.Skip()   
-
-    def open_noe_results_exe(self, event): #open results of noe run
-        choice = self.list_noe.GetStringSelection()
-        see_results(choice, None)
+    def resdir_noe1(self, event): # noe 1 results dir
+        backup = self.res_noe1.GetValue()
+        noe_savedir[0] = opendir('Select results directory', self.res_noe1.GetValue())
+        if noe_savedir[0] == None:
+            noe_savedir[0] = backup
+        self.res_noe1.SetValue(noe_savedir[0])
         event.Skip()
 
-    def open_rx_results_exe(self, event): # open results of r1 and r2 runs
-        choice = self.list_rx.GetStringSelection()
-        see_results(choice, None)
+
+    def resdir_noe2(self, event): # noe results dir no. 2
+        backup = self.res_noe1_copy.GetValue()
+        noe_savedir[1] = opendir('Select results directory', self.res_noe1_copy.GetValue())
+        if noe_savedir[1] == None:
+            noe_savedir[1] = backup
+        self.res_noe1_copy.SetValue(noe_savedir[1])
         event.Skip()
 
-    def open_model_results_exe(self, event):    # open model-free results
-        choice = self.list_modelfree.GetStringSelection()
-        model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
-        see_results(choice, model_result)
+
+    def resdir_noe3(self, event): # noe 3 results dir
+        backup = self.res_noe1_copy_1.GetValue()
+        noe_savedir[2] = opendir('Select results directory', self.res_noe1_copy_1.GetValue() + sep)
+        if noe_savedir[2] == None:
+            noe_savedir[2] = backup
+        self.res_noe1_copy_1.SetValue(noe_savedir[2])
+        event.Skip()
+
+
+    def resdir_r1_1(self, event): # R1 results dir 1
+        backup = self.resultsdir_r11.GetValue()
+        r1_savedir[0] = opendir('Select results directory', default=self.resultsdir_r11.GetValue())
+        if r1_savedir[0] == None:
+            r1_savedir[0] = backup
+        self.resultsdir_r11.SetValue(r1_savedir[0])
+
+        event.Skip()
+
+
+    def resdir_r1_2(self, event): # wxGlade: main.<event_handler>
+        backup = self.resultsdir_r11_copy.GetValue()
+        r1_savedir[1] = opendir('Select results directory', self.resultsdir_r11_copy.GetValue())
+        if r1_savedir[1] == None:
+            r1_savedir[1] = backup
+        self.resultsdir_r11_copy.SetValue(r1_savedir[1])
+        event.Skip()
+
+
+    def resdir_r1_3(self, event): # results R1 no 3
+        backup = self.resultsdir_r11_copy_1.GetValue()
+        r1_savedir[2] = opendir('Select results directory', self.resultsdir_r11_copy_1.GetValue())
+        if r1_savedir[2] == None:
+            r1_savedir[2] = backup
+        self.resultsdir_r11_copy_1.SetValue(r1_savedir[2])
+        event.Skip()
+
+
+    def resdir_r2_1(self, event): # wxGlade: main.<event_handler>
+        backup = self.resultsdir_r21.GetValue()
+        r2_savedir[0] = opendir('Select results directory)', self.resultsdir_r21.GetValue())
+        if r2_savedir[0] == None:
+            r2_savedir[0] = backup
+        self.resultsdir_r21.SetValue(r2_savedir[0])
+
+
+    def resdir_r2_2(self, event): # wxGlade: main.<event_handler>
+        backup = self.resultsdir_r21_copy.GetValue()
+        r2_savedir[1] = opendir('Select results directory)', self.resultsdir_r21_copy.GetValue() + '/')
+        if r2_savedir[1] == None:
+            r2_savedir[1] = backup
+        self.resultsdir_r21_copy.SetValue(r2_savedir[1])
+        event.Skip()
+
+
+    def resdir_r2_3(self, event): # results dir R2 3
+        backup = self.resultsdir_r21_copy_1.GetValue()
+        r2_savedir[2] = opendir('Select results directory', self.resultsdir_r21_copy_1.GetValue())
+        if r2_savedir[2] == None:
+            r2_savedir[2] = backup
+        self.resultsdir_r21_copy_1.SetValue(r2_savedir[2])
+        event.Skip()
+
+
+    def reset_setting(self, event): #reset all settings
+        global global_setting #import global variable
+        global file_setting # import global variable
+        if question('Do you realy want to change relax settings?'):
+            global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
+            file_setting = ['0', '1', '2', '3', '4', '5', '6']
+
+
+    def sat_noe1(self, event): # saturated noe 1
+        backup = self.noe_sat_1.GetValue()
+        noesat[0] = openfile('Select saturated NOE', self.res_noe1.GetValue() + sep, '*.*', 'all files (*.*)|*.*')
+        if noesat[0] == None:
+            noesat[0] = backup
+        self.noe_sat_1.SetValue(noesat[0])
+        event.Skip()
+
+
+    def sat_noe2(self, event): # saturated noe no. 2
+        backup = self.noe_sat_1_copy.GetValue()
+        noesat[1] = openfile('Select saturated NOE file', self.res_noe1_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if noesat[1] == None:
+            noesat[1] = backup
+        self.noe_sat_1_copy.SetValue(noesat[1])
+        event.Skip()
+
+
+    def sat_noe3(self, event): # saturated noe no. 3
+        backup = self.noe_sat_1_copy_1.GetValue()
+        noesat[2] = openfile('Select saturated NOE file', self.res_noe1_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if noesat[2] == None:
+            noesat[2] = backup
+        self.noe_sat_1_copy_1.SetValue(noesat[2])
+        event.Skip()
+
+
+    def saveGUI(self, event): # Save
+        filename = savefile('Select file to save', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+        if not filename == None:
+            model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
+            create_save_file(self, filename, model_result, global_setting, file_setting, sequencefile)
+        event.Skip()
+
+
+    def sel_aic(self, event):
+        selection = "AIC"
+        event.Skip()
+
+
+    def sel_bic(self, event):
+        selection = "BIC"
+        event.Skip()
+
+
+    def settings(self, event): # set up for relax variables
+        global global_setting #import global variable
+        tmp_global = relax_global_settings(global_setting)
+        if not tmp_global == None:
+            if question('Do you realy want to change relax settings?'):
+                global_setting = tmp_global
+        event.Skip()
+
+
+    def structure_pdb(self, event): # structure file
+        backup = self.structure_noe1.GetValue()
+        structure_file_pdb = openfile('Select PDB File', self.res_noe1.GetValue() + sep, '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
+        if structure_file_pdb == None:
+            structure_file_pdb = backup
+        self.structure_noe1.SetValue(structure_file_pdb)
+        self.structure_r11.SetValue(structure_file_pdb)
+        self.structure_r21.SetValue(structure_file_pdb)
+        self.structure_noe1_copy.SetValue(structure_file_pdb)
+        self.structure_r11_copy.SetValue(structure_file_pdb)
+        self.structure_r21_copy.SetValue(structure_file_pdb)
+        self.structure_noe1_copy_1.SetValue(structure_file_pdb)
+        self.structure_r11_copy_1.SetValue(structure_file_pdb)
+        self.structure_r21_copy_1.SetValue(structure_file_pdb)
+        self.structure_r21_copy_1_copy.SetValue(structure_file_pdb)
         event.Skip()

@@ -30,9 +30,70 @@ from gui_bieri.message import missing_data
 from gui_bieri.paths import IMAGE_PATH
 
 
+def check_entries(self):
+    check = False
+    counter = 0
+
+    # check frq 1
+    if not self.modelfreefreq1.GetValue() == '':
+        counter = counter + 1
+    if not self.m_noe_1.GetValue() == '':
+        counter = counter + 1
+    if not self.m_r1_1.GetValue() == '':
+        counter = counter + 1
+    if not self.m_r2_1.GetValue() == '':
+        counter = counter + 1
+
+    # check frq 1
+    if not self.modelfreefreq2.GetValue() == '':
+        counter = counter + 1
+    if not self.m_noe_2.GetValue() == '':
+        counter = counter + 1
+    if not self.m_r1_2.GetValue() == '':
+        counter = counter + 1
+    if not self.m_r2_2.GetValue() == '':
+        counter = counter + 1
+
+    # check frq 1
+    if not self.modelfreefreq3.GetValue() == '':
+        counter = counter + 1
+    if not self.m_noe_3.GetValue() == '':
+        counter = counter + 1
+    if not self.m_r1_3.GetValue() == '':
+        counter = counter + 1
+    if not self.m_r2_3.GetValue() == '':
+        counter = counter + 1
+
+    # two field strength ok
+    if counter == 8:
+        check = True
+        print '\n\n\nTwo different field strength detected !!\n\n\n'
+
+    # three field strength ok
+    elif counter == 12:
+        check = True
+        print '\n\n\nThree different field strength detected !!\n\n\n'
+
+    # missing data
+    else:
+        missing_data()
+
+    return check
+
+
+def whichmodel(is_local_tm):
+    global selection
+    global LOCAL_TM
+    LOCAL_TM = is_local_tm
+    selection = None
+    dlg = Select_tensor(None, -1, "")
+    dlg.ShowModal()
+    return selection
+
+
 selection = None
 
-class select_tensor(wx.Dialog):
+class Select_tensor(wx.Dialog):
     def __init__(self, *args, **kwds):
         # begin select_tensor.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -66,7 +127,34 @@ class select_tensor(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.final, self.final_button)
         self.Bind(wx.EVT_BUTTON, self.cancel, self.cancel_button)
         self.Bind(wx.EVT_BUTTON, self.local, self.local_tm_button)
-        # end 
+
+
+    def __do_layout(self):
+        # begin select_tensor.__do_layout
+        sizer_9 = wx.BoxSizer(wx.VERTICAL)
+        grid_sizer_1_copy = wx.FlexGridSizer(10, 2, 0, 0)
+        sizer_9.Add(self.label_13, 0, wx.ALL, 5)
+        grid_sizer_1_copy.Add(self.label_2_copy_copy_copy, 0, wx.LEFT|wx.TOP|wx.SHAPED, 5)
+        grid_sizer_1_copy.Add(self.button_4_copy_copy, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_7_copy_copy_copy, 0, wx.LEFT|wx.EXPAND, 5)
+        grid_sizer_1_copy.Add(self.local_tm_button, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.label_8_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.sphere_button, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.label_9_copy_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.oblate_button, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.label_10_copy_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.prolate_button, 0, wx.SHAPED, 0)
+        grid_sizer_1_copy.Add(self.label_11_copy_copy_copy, 0, wx.LEFT, 5)
+        grid_sizer_1_copy.Add(self.ellipsoid_button, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.label_12_copy_copy_copy, 0, wx.LEFT|wx.SHAPED, 5)
+        grid_sizer_1_copy.Add(self.final_button, 0, 0, 0)
+        grid_sizer_1_copy.Add(self.panel_2_copy, 1, wx.EXPAND, 0)
+        grid_sizer_1_copy.Add(self.cancel_button, 0, 0, 0)
+        sizer_9.Add(grid_sizer_1_copy, 1, wx.EXPAND, 0)
+        self.SetSizer(sizer_9)
+        sizer_9.Fit(self)
+        self.Layout()
+
 
     def __set_properties(self):
         # begin  select_tensor.__set_properties
@@ -99,76 +187,6 @@ class select_tensor(wx.Dialog):
         self.ellipsoid_button.Enable(LOCAL_TM)  # ellipsoid button
         self.final_button.Enable(LOCAL_TM)  # final button
 
-        # end 
-
-    def __do_layout(self):
-        # begin select_tensor.__do_layout
-        sizer_9 = wx.BoxSizer(wx.VERTICAL)
-        grid_sizer_1_copy = wx.FlexGridSizer(10, 2, 0, 0)
-        sizer_9.Add(self.label_13, 0, wx.ALL, 5)
-        grid_sizer_1_copy.Add(self.label_2_copy_copy_copy, 0, wx.LEFT|wx.TOP|wx.SHAPED, 5)
-        grid_sizer_1_copy.Add(self.button_4_copy_copy, 0, 0, 0)
-        grid_sizer_1_copy.Add(self.label_7_copy_copy_copy, 0, wx.LEFT|wx.EXPAND, 5)
-        grid_sizer_1_copy.Add(self.local_tm_button, 0, wx.SHAPED, 0)
-        grid_sizer_1_copy.Add(self.label_8_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.sphere_button, 0, wx.SHAPED, 0)
-        grid_sizer_1_copy.Add(self.label_9_copy_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.oblate_button, 0, wx.SHAPED, 0)
-        grid_sizer_1_copy.Add(self.label_10_copy_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.prolate_button, 0, wx.SHAPED, 0)
-        grid_sizer_1_copy.Add(self.label_11_copy_copy_copy, 0, wx.LEFT, 5)
-        grid_sizer_1_copy.Add(self.ellipsoid_button, 0, 0, 0)
-        grid_sizer_1_copy.Add(self.label_12_copy_copy_copy, 0, wx.LEFT|wx.SHAPED, 5)
-        grid_sizer_1_copy.Add(self.final_button, 0, 0, 0)
-        grid_sizer_1_copy.Add(self.panel_2_copy, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy.Add(self.cancel_button, 0, 0, 0)
-        sizer_9.Add(grid_sizer_1_copy, 1, wx.EXPAND, 0)
-        self.SetSizer(sizer_9)
-        sizer_9.Fit(self)
-        self.Layout()
-        # end 
-
-    def local(self, event): # local tm
-        global selection
-        selection = 'local_tm'
-        self.Destroy()
-        event.Skip()
-
-    def full(self, event): # automatic
-        global selection
-        selection = 'full'
-        self.Close()
-        event.Skip()
-
-    def sphere(self, event): # sphere
-        global selection
-        selection = 'sphere'
-        self.Close()
-        event.Skip()
-
-    def prolate(self, event): # prolate
-        global selection
-        selection = 'prolate'
-        self.Destroy()
-        event.Skip()
-
-    def oblate(self, event): # oblate
-        global selection
-        selection = 'oblate'
-        self.Destroy()
-        event.Skip()
-
-    def ellipsoid(self, event): # ellipsoid
-        global selection
-        selection = 'ellipsoid'
-        self.Destroy()
-        event.Skip()
-
-    def final(self, event): # final
-        global selection
-        selection = 'final'
-        self.Destroy()
-        event.Skip()
 
     def cancel(self, event): # cancel
         global selection
@@ -176,68 +194,51 @@ class select_tensor(wx.Dialog):
         self.Destroy()
         event.Skip()
 
-# end of class select_tensor
 
-def check_entries(self):
-    check = False
-    counter = 0
-
-    # check frq 1
-    if not self.modelfreefreq1.GetValue() == '':
-         counter = counter + 1
-    if not self.m_noe_1.GetValue() == '':
-         counter = counter + 1
-    if not self.m_r1_1.GetValue() == '':
-         counter = counter + 1
-    if not self.m_r2_1.GetValue() == '':
-         counter = counter + 1
-
-    # check frq 1
-    if not self.modelfreefreq2.GetValue() == '':
-         counter = counter + 1
-    if not self.m_noe_2.GetValue() == '':
-         counter = counter + 1
-    if not self.m_r1_2.GetValue() == '':
-         counter = counter + 1
-    if not self.m_r2_2.GetValue() == '':
-         counter = counter + 1
-
-    # check frq 1
-    if not self.modelfreefreq3.GetValue() == '':
-         counter = counter + 1
-    if not self.m_noe_3.GetValue() == '':
-         counter = counter + 1
-    if not self.m_r1_3.GetValue() == '':
-         counter = counter + 1
-    if not self.m_r2_3.GetValue() == '':
-         counter = counter + 1
-
-    # two field strength ok
-    if counter == 8:
-      check = True
-      print '\n\n\nTwo different field strength detected !!\n\n\n'
+    def ellipsoid(self, event): # ellipsoid
+        global selection
+        selection = 'ellipsoid'
+        self.Destroy()
+        event.Skip()
 
 
-    # three field strength ok
-    elif counter == 12:
-      check = True
-      print '\n\n\nThree different field strength detected !!\n\n\n'
+    def final(self, event): # final
+        global selection
+        selection = 'final'
+        self.Destroy()
+        event.Skip()
 
 
-    # missing data
-    else:
-      missing_data()       
-
-    return check
-
-
-def whichmodel(is_local_tm):
-    global selection
-    global LOCAL_TM
-    LOCAL_TM = is_local_tm
-    selection = None
-    dlg = select_tensor(None, -1, "")
-    dlg.ShowModal()
-    return selection
+    def full(self, event): # automatic
+        global selection
+        selection = 'full'
+        self.Close()
+        event.Skip()
 
 
+    def local(self, event): # local tm
+        global selection
+        selection = 'local_tm'
+        self.Destroy()
+        event.Skip()
+
+
+    def oblate(self, event): # oblate
+        global selection
+        selection = 'oblate'
+        self.Destroy()
+        event.Skip()
+
+
+    def prolate(self, event): # prolate
+        global selection
+        selection = 'prolate'
+        self.Destroy()
+        event.Skip()
+
+
+    def sphere(self, event): # sphere
+        global selection
+        selection = 'sphere'
+        self.Close()
+        event.Skip()

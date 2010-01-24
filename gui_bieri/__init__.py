@@ -36,7 +36,7 @@ if dep_check.wx_module:
 
 # relax module imports.
 from relax_errors import RelaxError
-from relax_gui import about_relax, main
+from relax_gui import about_relax, Main
 
 
 __all__ = ['relax_gui']
@@ -75,7 +75,7 @@ def run(intro_string):
         sys.exit()
 
     # Build the GUI.
-    relaxGUI_main = main(None, -1, "")
+    relaxGUI_main = Main(None, -1, "")
     relaxGUI.SetTopWindow(relaxGUI_main)
     relaxGUI_main.Show()
     relaxGUI.MainLoop()

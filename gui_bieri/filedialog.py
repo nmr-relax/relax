@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,35 +25,19 @@
 
 import wx
 
-def openfile(msg, directory, filetype, default): # open a file
 
-       #Input format:
-       #msg:              message to display
-       #directory:        directory, where dialog opens as default
-       #filetype:         proposed file to open
-       #default:          list of supported files, indicated as "(Label)|os command|...
-
-       #command: 
-       #openfile('select file to open','/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*') 
-       #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
-
-    newfile = None
-    dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN, defaultDir= directory, defaultFile = filetype, wildcard = default)
-    if dialog.ShowModal() == wx.ID_OK:
-        newfile = dialog.GetPath()
-        return newfile
 
 def multi_openfile(msg, directory, filetype, default): # open multiple file
 
-       #Input format:
-       #msg:              message to display
-       #directory:        directory, where dialog opens as default
-       #filetype:         proposed file to open
-       #default:          list of supported files, indicated as "(Label)|os command|...
+    #Input format:
+    #msg:              message to display
+    #directory:        directory, where dialog opens as default
+    #filetype:         proposed file to open
+    #default:          list of supported files, indicated as "(Label)|os command|...
 
-       #command: 
-       #openfile('select file to open','/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*') 
-       #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
+    #command:
+    #openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+    #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
 
     newfile = []
     dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN | wx.FD_MULTIPLE, defaultDir= directory, defaultFile = filetype, wildcard = default)
@@ -60,28 +45,48 @@ def multi_openfile(msg, directory, filetype, default): # open multiple file
     if dialog.ShowModal() == wx.ID_OK:
         return newfile
 
+
+def opendir(msg, default): # select directory, msg is message to display, default is starting directory
+    newdir = None
+    dlg = wx.DirDialog(None, message = msg, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON, defaultPath = default)
+    if dlg.ShowModal() == wx.ID_OK:
+        newdir = dlg.GetPath()
+        return newdir
+
+
+def openfile(msg, directory, filetype, default): # open a file
+
+    #Input format:
+    #msg:              message to display
+    #directory:        directory, where dialog opens as default
+    #filetype:         proposed file to open
+    #default:          list of supported files, indicated as "(Label)|os command|...
+
+    #command:
+    #openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+    #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
+
+    newfile = None
+    dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN, defaultDir= directory, defaultFile = filetype, wildcard = default)
+    if dialog.ShowModal() == wx.ID_OK:
+        newfile = dialog.GetPath()
+        return newfile
+
+
 def savefile(msg, directory, filetype, default): # save a file
 
-       #Input format:
-       #msg:              message to display
-       #directory:        directory, where dialog opens as default
-       #filetype:         proposed file to save
-       #default:          list of supported files, indicated as "(Label)|os command|...
+    #Input format:
+    #msg:              message to display
+    #directory:        directory, where dialog opens as default
+    #filetype:         proposed file to save
+    #default:          list of supported files, indicated as "(Label)|os command|...
 
-       #command: 
-       #savefile('select file to save', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*') 
-       #suggests to save /usr/save.relaxGUI, supported files to save are: *.relaxGUI, *.*
+    #command:
+    #savefile('select file to save', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+    #suggests to save /usr/save.relaxGUI, supported files to save are: *.relaxGUI, *.*
 
     newfile = None
     dialog = wx.FileDialog ( None, message = msg, style = wx.SAVE, defaultDir= directory, defaultFile = filetype, wildcard = default)
     if dialog.ShowModal() == wx.ID_OK:
         newfile = dialog.GetPath()
         return newfile
-
-def opendir(msg, default): # select directory, msg is message to display, default is starting directory
-        newdir = None
-        dlg = wx.DirDialog(None, message = msg, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON, defaultPath = default)
-        if dlg.ShowModal() == wx.ID_OK:
-            newdir= dlg.GetPath() 
-            return newdir
-
