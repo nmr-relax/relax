@@ -134,7 +134,7 @@ class Relax:
             self.interpreter._on()
 
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner()
             runner.run_all_tests()
 
         # Execute the relax system tests.
@@ -144,13 +144,13 @@ class Relax:
             self.interpreter._on()
 
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner()
             runner.run_system_tests()
 
         # Execute the relax unit tests.
         elif mode == 'unit tests':
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner()
             runner.run_unit_tests()
 
         # Test mode.
