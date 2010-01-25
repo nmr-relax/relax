@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_n_state_model(N_state_model_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.n_state_model' module."""
 
     # Instantiate the user function class.
-    n_state_model_fns = N_state_model(fake_relax.fake_instance())
+    n_state_model_fns = N_state_model()
 
 
     def test_CoM_argfail_pivot_point(self):

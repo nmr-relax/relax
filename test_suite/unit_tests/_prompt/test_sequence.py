@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.sequence_testing_base import Sequence_base_class
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_sequence(Sequence_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.sequence' module."""
 
     # Instantiate the user function class.
-    sequence_fns = Sequence(fake_relax.fake_instance())
+    sequence_fns = Sequence()
 
 
     def test_copy_argfail_pipe_from(self):

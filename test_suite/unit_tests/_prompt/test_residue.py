@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.residue_testing_base import Residue_base_class
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_residue(Residue_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.residue' module."""
 
     # Instantiate the user function class.
-    residue_fns = Residue(fake_relax.fake_instance())
+    residue_fns = Residue()
 
 
     def test_copy_argfail_pipe_from(self):

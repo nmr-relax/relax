@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2008, 2010 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.value_testing_base import Value_base_class
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_value(Value_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.value' module."""
 
     # Instantiate the user function class.
-    value_fns = Value(fake_relax.fake_instance())
+    value_fns = Value()
 
 
     def test_set_argfail_val(self):
