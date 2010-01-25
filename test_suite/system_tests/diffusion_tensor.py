@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,10 +23,10 @@
 # Python module imports.
 from math import pi
 from os import sep
-from unittest import TestCase
 import sys
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
 from generic_fns.pipes import get_pipe
@@ -34,7 +34,7 @@ from relax_io import delete
 from tempfile import mktemp
 
 
-class Diffusion_tensor(TestCase):
+class Diffusion_tensor(SystemTestCase):
     """Class for testing various aspects specific to the diffusion tensor."""
 
     def setUp(self):

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,15 +24,15 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
-class Jw(TestCase):
+class Jw(SystemTestCase):
     """Class for testing various aspects specific to reduced spectral density mapping."""
 
     def setUp(self):

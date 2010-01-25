@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,14 +23,14 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import create_molecule, create_residue, create_spin
 
 
-class Noe_restraints(TestCase):
+class Noe_restraints(SystemTestCase):
     """Class for testing various aspects specific to NOE restraints."""
 
     def setUp(self):

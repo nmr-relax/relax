@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,15 +23,15 @@
 # Python module imports.
 import sys
 from tempfile import mktemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import VALID_TYPES, get_pipe
 from relax_io import delete
 
 
-class State(TestCase):
+class State(SystemTestCase):
     """Class for testing the state saving and loading user functions."""
 
     def setUp(self):

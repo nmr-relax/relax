@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,9 +27,9 @@ import numpy
 from re import search
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from physical_constants import N15_CSA, NH_BOND_LENGTH
@@ -56,7 +56,7 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
 
 
 
-class Mf(TestCase):
+class Mf(SystemTestCase):
     """TestCase class for the functional tests of model-free analysis."""
 
     def setUp(self):

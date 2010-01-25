@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,15 +26,15 @@ from shutil import rmtree
 from string import split
 import sys
 from tempfile import mkdtemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_index_loop, spin_loop
 from generic_fns import pipes
 
 
-class Relax_fit(TestCase):
+class Relax_fit(SystemTestCase):
     """Class for testing various aspects specific to relaxation curve-fitting."""
 
     def setUp(self):

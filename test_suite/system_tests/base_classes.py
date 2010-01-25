@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,33 +20,24 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Base classes for the system tests."""
+
 # Python module imports.
-from os import sep
-import sys
+from unittest import TestCase
 
 # relax module imports.
-from base_classes import SystemTestCase
-from data import Relax_data_store; ds = Relax_data_store()
+from prompt.interpreter import Interpreter
 
 
-class Noe(SystemTestCase):
-    """Class for testing various aspects specific to the NOE analysis."""
+class SystemTestCase(TestCase):
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
 
-    def setUp(self):
-        """Set up for all the functional tests."""
+        # Execute the TestCase __init__ method.
+        super(SystemTestCase, self).__init__(methodName)
 
-        # Create the data pipe.
-        self.relax.interpreter._Pipe.create('noe', 'noe')
-
-
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        ds.__reset__()
-
-
-    def test_noe_analysis(self):
-        """Test the NOE analysis."""
-
-        # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')
+        # Load the interpreter and turn intros on.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter._on()

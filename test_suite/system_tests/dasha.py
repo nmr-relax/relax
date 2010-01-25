@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,14 +26,14 @@ from os import sep
 import sys
 from shutil import rmtree
 from tempfile import mkdtemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import test_binary
 
 
-class Dasha(TestCase):
+class Dasha(SystemTestCase):
     """Class for testing various aspects specific to model-free analysis using the program
     'Dasha'.
     """

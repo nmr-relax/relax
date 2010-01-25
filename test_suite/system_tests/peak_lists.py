@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -24,14 +24,14 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
 
 
-class Peak_lists(TestCase):
+class Peak_lists(SystemTestCase):
     """TestCase class for the functional tests for the support of different peak intensity files."""
 
     def setUp(self):

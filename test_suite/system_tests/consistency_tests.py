@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,15 +25,15 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
-class Ct(TestCase):
+class Ct(SystemTestCase):
     """Class for testing various aspects specific to consistency testing."""
 
 
