@@ -53,8 +53,15 @@ from settings import import_file_settings, load_sequence, relax_global_settings
 
 
 class Auto_model_free:
-    def __init__(self):
-        """Build the automatic model-free protocol GUI element."""
+    def __init__(self, modelfree):
+        """Build the automatic model-free protocol GUI element.
+
+        @param modelfree:   The model-free panel object to pack the GUI element into.
+        @type modelfree:    wx.Panel instance
+        """
+
+        # Store the args in the class namespace.
+        self.modelfree = modelfree
 
         self.bitmap_2 = wx.StaticBitmap(self.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Set-up for Model-free analysis:")
