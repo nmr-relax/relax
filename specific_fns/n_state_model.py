@@ -1267,6 +1267,10 @@ class N_state_model(API_base, API_common):
         # Determine if alignment tensors or RDCs are to be used.
         data_types = self._base_data_types()
 
+        # Nothing more to do!
+        if not param_vector:
+            return None, None, data_types, None
+
         # Diagonal scaling.
         scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
         param_vector = dot(inv(scaling_matrix), param_vector)
@@ -1408,11 +1412,13 @@ class N_state_model(API_base, API_common):
         # Set up the target function for direct calculation.
         model, param_vector, data_types, scaling_matrix = self._target_fn_setup()
 
-        # Make a function call.
-        chi2 = model.func(param_vector)
+        # Calculate the chi-squared value.
+        if model:
+            # Make a function call.
+            chi2 = model.func(param_vector)
 
-        # Store the global chi-squared value.
-        cdp.chi2 = chi2
+            # Store the global chi-squared value.
+            cdp.chi2 = chi2
 
         # NOE potential.
         if hasattr(cdp, 'noe_restraints'):
