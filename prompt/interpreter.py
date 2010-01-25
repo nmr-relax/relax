@@ -225,6 +225,34 @@ class Interpreter:
         return objects
 
 
+    def off(self, verbose=True):
+        """Turn the function introductions off.
+
+        @keyword verbose:   A flag which when True results in a print out message being displayed.
+        @type verbose:      bool
+        """
+
+        self.exec_info.intro = False
+
+        # Print out.
+        if verbose:
+            print("Echoing of user function calls has been disabled.")
+
+
+    def on(self, verbose=True):
+        """Turn the function introductions on.
+
+        @keyword verbose:   A flag which when True results in a print out message being displayed.
+        @type verbose:      bool
+        """
+
+        self.exec_info.intro = True
+
+        # Print out.
+        if verbose:
+            print("Echoing of user function calls has been enabled.")
+
+
     def populate_self(self):
         """Place all user functions and other special objects into self."""
 
@@ -266,34 +294,6 @@ class Interpreter:
         # Go to the prompt.
         else:
             prompt(intro=self.__intro_string, local=locals())
-
-
-    def off(self, verbose=True):
-        """Turn the function introductions off.
-
-        @keyword verbose:   A flag which when True results in a print out message being displayed.
-        @type verbose:      bool
-        """
-
-        self.exec_info.intro = False
-
-        # Print out.
-        if verbose:
-            print("Echoing of user function calls has been disabled.")
-
-
-    def on(self, verbose=True):
-        """Turn the function introductions on.
-
-        @keyword verbose:   A flag which when True results in a print out message being displayed.
-        @type verbose:      bool
-        """
-
-        self.exec_info.intro = True
-
-        # Print out.
-        if verbose:
-            print("Echoing of user function calls has been enabled.")
 
 
     def script(self, file=None, quit=False):
