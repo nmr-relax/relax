@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,30 +20,23 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Base classes for the system tests."""
+
 # Python module imports.
-import sys
+from unittest import TestCase
+
+# relax module imports.
+from prompt.interpreter import Interpreter
 
 
-# Set the variable sys.ps3 (this is required by the user functions).
-sys.ps3 = 'relax> '
+class SystemTestCase(TestCase):
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
 
+        # Execute the TestCase __init__ method.
+        super(SystemTestCase, self).__init__(methodName)
 
-# A class to act as a container.
-class Container:
-    pass
-
-
-# Fake normal relax usage of the user function class.
-def fake_instance():
-    """Function which returns a similar to the relax instance.
-
-    This structure is similar enough to the relax instance for the user functions to execute.
-    """
-
-    # Set up the structure.
-    relax = Container()
-    relax.interpreter = Container()
-    relax.interpreter.intro = True
-
-    # Return the class instance.
-    return relax
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()

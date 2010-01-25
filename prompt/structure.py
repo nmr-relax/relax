@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2006-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'structure' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -133,8 +130,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.create_diff_tensor_pdb("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.create_diff_tensor_pdb("
             text = text + "scale=" + repr(scale)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -184,8 +181,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.create_vector_dist("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.create_vector_dist("
             text = text + "length=" + repr(length)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -239,8 +236,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.get_pos("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.get_pos("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
             print(text)
@@ -272,8 +269,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.delete()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.delete()"
             print(text)
 
         # Execute the functional code.
@@ -330,8 +327,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.load_spins("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.load_spins("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", combine_models=" + repr(combine_models)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
@@ -440,8 +437,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.read_pdb("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.read_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", read_mol=" + repr(read_mol)
@@ -548,8 +545,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.vectors("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.vectors("
             text = text + "attached=" + repr(attached)
             text = text + ", spin_id=" + repr(spin_id)
             text = text + ", model=" + repr(model)
@@ -608,8 +605,8 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "structure.write_pdb("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "structure.write_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", model_num=" + repr(model_num)

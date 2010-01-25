@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007, 2009 Edward d'Auvergne                       #
+# Copyright (C) 2003-2005, 2007, 2009-2010 Edward d'Auvergne                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'state' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -83,8 +80,8 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "state.load("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "state.load("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
@@ -162,8 +159,8 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "state.save("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "state.save("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)

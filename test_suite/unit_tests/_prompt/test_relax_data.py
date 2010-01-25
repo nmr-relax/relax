@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_relax_data(Relax_data_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.relax_data' module."""
 
     # Instantiate the user function class.
-    relax_data_fns = Relax_data(fake_relax.fake_instance())
+    relax_data_fns = Relax_data()
 
 
     def test_back_calc_argfail_ri_label(self):

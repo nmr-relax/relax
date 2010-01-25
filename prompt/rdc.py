@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2009 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,9 +24,6 @@
 """Module containing the 'rdc' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -47,8 +44,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.back_calc("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "rdc.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -96,8 +93,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.copy("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "rdc.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -134,8 +131,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.delete("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "rdc.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -164,8 +161,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.display("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "rdc.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -245,8 +242,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.read("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "rdc.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -304,8 +301,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "rdc.write("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "rdc.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

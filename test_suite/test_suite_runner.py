@@ -43,16 +43,6 @@ class Test_suite_runner:
         - Unit tests.
     """
 
-    def __init__(self, relax):
-        """Run the system/functional and unit test suite components.
-
-        @param relax:   The relax namespace.
-        @type relax:    instance
-        """
-
-        self.relax = relax
-
-
     def run_all_tests(self):
         """Execute all of the test suite test types."""
 
@@ -73,7 +63,7 @@ class Test_suite_runner:
         heading('System / functional tests')
 
         # Run the tests.
-        system_runner = System_test_runner(self.relax)
+        system_runner = System_test_runner()
         self.system_result = system_runner.run()
 
 

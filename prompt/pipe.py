@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'pipe' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -71,8 +68,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.copy("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pipe.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
@@ -124,8 +121,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.create("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pipe.create("
             text = text + "pipe_name=" + repr(pipe_name)
             text = text + ", pipe_type=" + repr(pipe_type) + ")"
             print(text)
@@ -150,8 +147,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.current()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pipe.current()"
             print(text)
 
         # Execute the functional code.
@@ -175,8 +172,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.delete("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pipe.delete("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
             print(text)
 
@@ -199,8 +196,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.display()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pipe.display()"
             print(text)
 
         # Execute the functional code.
@@ -241,8 +238,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.hybridise("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pipe.hybridise("
             text = text + "hybrid=" + repr(hybrid)
             text = text + ", pipes=" + repr(pipes) + ")"
             print(text)
@@ -280,8 +277,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pipe.switch("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pipe.switch("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
             print(text)
 

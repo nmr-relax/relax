@@ -148,12 +148,13 @@ from string import lower
 from float import floatAsByteArray
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from generic_fns import pipes
+from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
 
 
 
 class dAuvergne_protocol:
-    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, conv_loop=True):
+    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
         @keyword diff_model:        The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
@@ -188,6 +189,8 @@ class dAuvergne_protocol:
         @type min_algor:            str
         @keyword mc_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_num:               int
+        @keyword user_fns:          A dictionary of replacement user functions.  These will overwrite the standard user functions.  The key should be the name of the user function or user function class and the value should be the function or class instance.
+        @type user_fns:             dict
         @keyword conv_loop:         Automatic looping over all rounds until convergence.
         @type conv_loop:            bool
         """
@@ -213,6 +216,16 @@ class dAuvergne_protocol:
 
         # User variable checks.
         self.check_vars()
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+
+        # Replacement user functions.
+        if user_fns:
+            for name in user_fns:
+                setattr(self.interpreter, name, user_fns[name])
 
 
         # MI - Local tm.
@@ -248,44 +261,44 @@ class dAuvergne_protocol:
                     name = self.diff_model
 
                     # Create the data pipe.
-                    pipe.create(name, 'mf')
+                    self.interpreter.pipe.create(name, 'mf')
 
                     # Load the local tm diffusion model MI results.
-                    results.read(file='results', dir='local_tm'+sep+'aic')
+                    self.interpreter.results.read(file='results', dir='local_tm'+sep+'aic')
 
                     # Remove the tm parameter.
-                    model_free.remove_tm()
+                    self.interpreter.model_free.remove_tm()
 
                     # Deselect the spins in the exclude list.
                     if self.exclude:
-                        deselect.read(file=self.exclude)
+                        self.interpreter.deselect.read(file=self.exclude)
 
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if self.pdb_file:
-                        structure.read_pdb(self.pdb_file)
-                        structure.vectors(attached='H')
+                        self.interpreter.structure.read_pdb(self.pdb_file)
+                        self.interpreter.structure.vectors(attached='H')
 
                     # Add an arbitrary diffusion tensor which will be optimised.
                     if self.diff_model == 'sphere':
-                        diffusion_tensor.init(10e-9, fixed=False)
+                        self.interpreter.diffusion_tensor.init(10e-9, fixed=False)
                         inc = 11
                     elif self.diff_model == 'prolate':
-                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
+                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
                         inc = 11
                     elif self.diff_model == 'oblate':
-                        diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
+                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
                         inc = 11
                     elif self.diff_model == 'ellipsoid':
-                        diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
+                        self.interpreter.diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
                         inc = 6
 
                     # Minimise just the diffusion tensor.
-                    fix('all_spins')
-                    grid_search(inc=inc)
-                    minimise(self.min_algor)
+                    self.interpreter.fix('all_spins')
+                    self.interpreter.grid_search(inc=inc)
+                    self.interpreter.minimise(self.min_algor)
 
                     # Write the results.
-                    results.write(file='results', dir=self.base_dir, force=True)
+                    self.interpreter.results.write(file='results', dir=self.base_dir, force=True)
 
 
                 # Normal round of optimisation for diffusion models MII to MV.
@@ -303,14 +316,14 @@ class dAuvergne_protocol:
                     self.model_selection(modsel_pipe='aic', dir=self.base_dir + 'aic')
 
                     # Final optimisation of all diffusion and model-free parameters.
-                    fix('all', fixed=False)
+                    self.interpreter.fix('all', fixed=False)
 
                     # Minimise all parameters.
-                    minimise(self.min_algor)
+                    self.interpreter.minimise(self.min_algor)
 
                     # Write the results.
                     dir = self.base_dir + 'opt'
-                    results.write(file='results', dir=dir, force=True)
+                    self.interpreter.results.write(file='results', dir=dir, force=True)
 
                     # Test for convergence.
                     converged = self.convergence()
@@ -331,10 +344,10 @@ class dAuvergne_protocol:
             self.pipes = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid']
 
             # Create the local_tm data pipe.
-            pipe.create('local_tm', 'mf')
+            self.interpreter.pipe.create('local_tm', 'mf')
 
             # Load the local tm diffusion model MI results.
-            results.read(file='results', dir='local_tm'+sep+'aic')
+            self.interpreter.results.read(file='results', dir='local_tm'+sep+'aic')
 
             # Loop over models MII to MV.
             for model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
@@ -352,10 +365,10 @@ class dAuvergne_protocol:
                     raise RelaxError("Multiple rounds of optimisation of the " + name + " (between 8 to 15) are required for the proper execution of this script.")
 
                 # Create the data pipe.
-                pipe.create(model, 'mf')
+                self.interpreter.pipe.create(model, 'mf')
 
                 # Load the diffusion model results.
-                results.read(file='results', dir=model + sep+'round_'+repr(self.round)+sep+'opt')
+                self.interpreter.results.read(file='results', dir=model + sep+'round_'+repr(self.round)+sep+'opt')
 
             # Model selection between MI to MV.
             self.model_selection(modsel_pipe='final', write_flag=False)
@@ -366,21 +379,21 @@ class dAuvergne_protocol:
 
             # Fix the diffusion tensor, if it exists.
             if hasattr(pipes.get_pipe('final'), 'diff_tensor'):
-                fix('diff')
+                self.interpreter.fix('diff')
 
             # Simulations.
-            monte_carlo.setup(number=self.mc_num)
-            monte_carlo.create_data()
-            monte_carlo.initial_values()
-            minimise(self.min_algor)
-            eliminate()
-            monte_carlo.error_analysis()
+            self.interpreter.monte_carlo.setup(number=self.mc_num)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise(self.min_algor)
+            self.interpreter.eliminate()
+            self.interpreter.monte_carlo.error_analysis()
 
 
             # Write the final results.
             ##########################
 
-            results.write(file='results', dir='final', force=True)
+            self.interpreter.results.write(file='results', dir='final', force=True)
 
 
         # Unknown script behaviour.
@@ -679,16 +692,16 @@ class dAuvergne_protocol:
 
         # Create the data pipe for the previous data (deleting the old data pipe first if necessary).
         if pipes.has_pipe('previous'):
-            pipe.delete('previous')
-        pipe.create('previous', 'mf')
+            self.interpreter.pipe.delete('previous')
+        self.interpreter.pipe.create('previous', 'mf')
 
         # Load the optimised diffusion tensor from the initial round.
         if self.round == 1:
-            results.read('results', self.diff_model + sep+'init')
+            self.interpreter.results.read('results', self.diff_model + sep+'init')
 
         # Load the optimised diffusion tensor from the previous round.
         else:
-            results.read('results', self.diff_model + sep+'round_'+repr(self.round-1)+sep+'opt')
+            self.interpreter.results.read('results', self.diff_model + sep+'round_'+repr(self.round-1)+sep+'opt')
 
 
     def model_selection(self, modsel_pipe=None, dir=None, write_flag=True):
@@ -696,16 +709,16 @@ class dAuvergne_protocol:
 
         # Model elimination.
         if modsel_pipe != 'final':
-            eliminate()
+            self.interpreter.eliminate()
 
         # Model selection (delete the model selection pipe if it already exists).
         if pipes.has_pipe(modsel_pipe):
-            pipe.delete(modsel_pipe)
-        model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
+            self.interpreter.pipe.delete(modsel_pipe)
+        self.interpreter.model_selection(method='AIC', modsel_pipe=modsel_pipe, pipes=self.pipes)
 
         # Write the results.
         if write_flag:
-            results.write(file='results', dir=dir, force=True)
+            self.interpreter.results.write(file='results', dir=dir, force=True)
 
 
     def multi_model(self, local_tm=False):
@@ -721,49 +734,49 @@ class dAuvergne_protocol:
         for name in self.pipes:
             # Create the data pipe.
             if pipes.has_pipe(name):
-                pipe.delete(name)
-            pipe.create(name, 'mf')
+                self.interpreter.pipe.delete(name)
+            self.interpreter.pipe.create(name, 'mf')
 
             # Load the sequence.
-            sequence.read(self.seq_args[0], self.seq_args[1], self.seq_args[2], self.seq_args[3], self.seq_args[4], self.seq_args[5], self.seq_args[6], self.seq_args[7])
+            self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
 
             # Name the spins if necessary.
             if self.seq_args[6] == None:
-                spin.name(name=self.het_name)
+                self.interpreter.spin.name(name=self.het_name)
 
             # Load the PDB file and calculate the unit vectors parallel to the XH bond.
             if not local_tm and self.pdb_file:
-                structure.read_pdb(self.pdb_file)
-                structure.vectors(attached='H')
+                self.interpreter.structure.read_pdb(self.pdb_file)
+                self.interpreter.structure.vectors(attached='H')
 
             # Load the relaxation data.
             for data in self.relax_data:
-                relax_data.read(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12])
+                self.interpreter.relax_data.read(ri_label=data[0], frq_label=data[1], frq=data[2], file=data[3], dir=data[4], mol_name_col=data[5], res_num_col=data[6], res_name_col=data[7], spin_num_col=data[8], spin_name_col=data[9], data_col=data[10], error_col=data[11], sep=data[12])
 
             # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if self.unres:
-                deselect.read(file=self.unres)
+                self.interpreter.deselect.read(file=self.unres)
             if self.exclude:
-                deselect.read(file=self.exclude)
+                self.interpreter.deselect.read(file=self.exclude)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
-                diffusion_tensor.copy('previous')
-                fix('diff')
+                self.interpreter.diffusion_tensor.copy('previous')
+                self.interpreter.fix('diff')
 
             # Set all the necessary values.
-            value.set(self.bond_length, 'bond_length')
-            value.set(self.csa, 'csa')
-            value.set(self.hetnuc, 'heteronucleus')
-            value.set(self.proton, 'proton')
+            self.interpreter.value.set(self.bond_length, 'bond_length')
+            self.interpreter.value.set(self.csa, 'csa')
+            self.interpreter.value.set(self.hetnuc, 'heteronucleus')
+            self.interpreter.value.set(self.proton, 'proton')
 
             # Select the model-free model.
-            model_free.select_model(model=name)
+            self.interpreter.model_free.select_model(model=name)
 
             # Minimise.
-            grid_search(inc=self.grid_inc)
-            minimise(self.min_algor)
+            self.interpreter.grid_search(inc=self.grid_inc)
+            self.interpreter.minimise(self.min_algor)
 
             # Write the results.
             dir = self.base_dir + name
-            results.write(file='results', dir=dir, force=True)
+            self.interpreter.results.write(file='results', dir=dir, force=True)
