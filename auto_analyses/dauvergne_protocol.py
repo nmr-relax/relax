@@ -273,6 +273,10 @@ class dAuvergne_protocol:
                     if self.exclude:
                         self.interpreter.deselect.read(file=self.exclude)
 
+                    # Name the spins if necessary.
+                    if self.seq_args[6] == None:
+                        self.interpreter.spin.name(name=self.het_name)
+
                     # Load the PDB file and calculate the unit vectors parallel to the XH bond.
                     if self.pdb_file:
                         self.interpreter.structure.read_pdb(self.pdb_file)
