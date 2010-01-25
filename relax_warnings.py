@@ -113,6 +113,15 @@ class RelaxNoPDBFileWarning(BaseWarning):
         self.text = "The PDB file %s cannot be found, no structures will be loaded." % file
 
 
+# File warnings.
+################
+
+# No data in file.
+class RelaxFileEmptyWarning(BaseWarning):
+    def __init__(self, file):
+        self.text = "The file '%s' contains no data." % file
+
+
 # Misc.
 #######
 
