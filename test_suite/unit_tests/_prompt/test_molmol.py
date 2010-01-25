@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,14 +29,13 @@ from relax_errors import RelaxNoneStrError, RelaxNoneStrListNumError, RelaxStrEr
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_molmol(TestCase):
     """Unit tests for the functions of the 'prompt.molmol' module."""
 
     # Instantiate the user function class.
-    molmol_fns = Molmol(fake_relax.fake_instance())
+    molmol_fns = Molmol()
 
 
     def test_macro_exec_argfail_data_type(self):

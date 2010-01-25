@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from relax_errors import RelaxBoolError, RelaxIntError, RelaxNoneStrError, Relax
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
  
 class Test_state(State_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.state' module."""
 
     # Instantiate the user function class.
-    state = State(fake_relax.fake_instance())
+    state = State()
 
     # Rename the user functions.
     state.load_state = state.load

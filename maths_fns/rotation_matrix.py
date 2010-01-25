@@ -420,7 +420,7 @@ def axis_angle_to_quaternion(axis, angle, quat, norm_flag=True):
     quat[1:] = axis * sin(angle/2)
 
 
-def euler_xyx_to_axis_angle(alpha, beta, gamma):
+def euler_to_axis_angle_xyx(alpha, beta, gamma):
     """Convert the xyx Euler angles to axis-angle notation.
 
     This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
@@ -439,13 +439,288 @@ def euler_xyx_to_axis_angle(alpha, beta, gamma):
     R = zeros((3, 3), float64)
 
     # Get the rotation.
-    euler_xyx_to_R(alpha, beta, gamma, R)
+    euler_to_R_xyx(alpha, beta, gamma, R)
 
     # Return the axis and angle.
     return R_to_axis_angle(R)
 
 
-def euler_xyx_to_R(alpha, beta, gamma, R):
+def euler_to_axis_angle_xyz(alpha, beta, gamma):
+    """Convert the xyz Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_xyz(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_xzx(alpha, beta, gamma):
+    """Convert the xzx Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_xzx(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_xzy(alpha, beta, gamma):
+    """Convert the xzy Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_xzy(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_yxy(alpha, beta, gamma):
+    """Convert the yxy Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_yxy(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_yxz(alpha, beta, gamma):
+    """Convert the yxz Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_yxz(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_yzx(alpha, beta, gamma):
+    """Convert the yzx Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_yzx(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_yzy(alpha, beta, gamma):
+    """Convert the yzy Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_yzy(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_zxy(alpha, beta, gamma):
+    """Convert the zxy Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_zxy(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_zxz(alpha, beta, gamma):
+    """Convert the zxz Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_zxz(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_zyx(alpha, beta, gamma):
+    """Convert the zyx Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_zyx(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_axis_angle_zyz(alpha, beta, gamma):
+    """Convert the zyz Euler angles to axis-angle notation.
+
+    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
+
+    @param alpha:   The alpha Euler angle in rad.
+    @type alpha:    float
+    @param beta:    The beta Euler angle in rad.
+    @type beta:     float
+    @param gamma:   The gamma Euler angle in rad.
+    @type gamma:    float
+    @return:        The 3D rotation axis and angle.
+    @rtype:         numpy 3D rank-1 array, float
+    """
+
+    # Init.
+    R = zeros((3, 3), float64)
+
+    # Get the rotation.
+    euler_to_R_zyz(alpha, beta, gamma, R)
+
+    # Return the axis and angle.
+    return R_to_axis_angle(R)
+
+
+def euler_to_R_xyx(alpha, beta, gamma, R):
     """Generate the x-y-x Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -505,32 +780,7 @@ def euler_xyx_to_R(alpha, beta, gamma, R):
     R[2, 2] = -sin_a * sin_g  +  cos_a * cos_b * cos_g
 
 
-def euler_xyz_to_axis_angle(alpha, beta, gamma):
-    """Convert the xyz Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_xyz_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_xyz_to_R(alpha, beta, gamma, R):
+def euler_to_R_xyz(alpha, beta, gamma, R):
     """Generate the x-y-z Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -590,32 +840,7 @@ def euler_xyz_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_a * cos_b
 
 
-def euler_xzx_to_axis_angle(alpha, beta, gamma):
-    """Convert the xzx Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_xzx_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_xzx_to_R(alpha, beta, gamma, R):
+def euler_to_R_xzx(alpha, beta, gamma, R):
     """Generate the x-z-x Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -675,32 +900,7 @@ def euler_xzx_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_a * cos_g  -  sin_a * cos_b * sin_g
 
 
-def euler_xzy_to_axis_angle(alpha, beta, gamma):
-    """Convert the xzy Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_xzy_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_xzy_to_R(alpha, beta, gamma, R):
+def euler_to_R_xzy(alpha, beta, gamma, R):
     """Generate the x-z-y Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -760,32 +960,7 @@ def euler_xzy_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_a * cos_g  -  sin_a * sin_b * sin_g
 
 
-def euler_yxy_to_axis_angle(alpha, beta, gamma):
-    """Convert the yxy Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_yxy_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_yxy_to_R(alpha, beta, gamma, R):
+def euler_to_R_yxy(alpha, beta, gamma, R):
     """Generate the y-x-y Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -845,32 +1020,7 @@ def euler_yxy_to_R(alpha, beta, gamma, R):
     R[2, 2] = -sin_a * sin_g  +  cos_a * cos_b * cos_g
 
 
-def euler_yxz_to_axis_angle(alpha, beta, gamma):
-    """Convert the yxz Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_yxz_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_yxz_to_R(alpha, beta, gamma, R):
+def euler_to_R_yxz(alpha, beta, gamma, R):
     """Generate the y-x-z Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -930,32 +1080,7 @@ def euler_yxz_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_a * cos_b
 
 
-def euler_yzx_to_axis_angle(alpha, beta, gamma):
-    """Convert the yzx Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_yzx_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_yzx_to_R(alpha, beta, gamma, R):
+def euler_to_R_yzx(alpha, beta, gamma, R):
     """Generate the y-z-x Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -1015,32 +1140,7 @@ def euler_yzx_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_a * cos_g  +  sin_a * sin_b * sin_g
 
 
-def euler_yzy_to_axis_angle(alpha, beta, gamma):
-    """Convert the yzy Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_yzy_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_yzy_to_R(alpha, beta, gamma, R):
+def euler_to_R_yzy(alpha, beta, gamma, R):
     """Generate the y-z-y Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -1100,32 +1200,7 @@ def euler_yzy_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_a * cos_g  -  sin_a * cos_b * sin_g
 
 
-def euler_zxy_to_axis_angle(alpha, beta, gamma):
-    """Convert the zxy Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_zxy_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_zxy_to_R(alpha, beta, gamma, R):
+def euler_to_R_zxy(alpha, beta, gamma, R):
     """Generate the z-x-y Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -1185,32 +1260,7 @@ def euler_zxy_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_b * cos_g
 
 
-def euler_zxz_to_axis_angle(alpha, beta, gamma):
-    """Convert the zxz Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_zxz_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_zxz_to_R(alpha, beta, gamma, R):
+def euler_to_R_zxz(alpha, beta, gamma, R):
     """Generate the z-x-z Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -1270,32 +1320,7 @@ def euler_zxz_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_b
 
 
-def euler_zyx_to_axis_angle(alpha, beta, gamma):
-    """Convert the zyx Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_zyx_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_zyx_to_R(alpha, beta, gamma, R):
+def euler_to_R_zyx(alpha, beta, gamma, R):
     """Generate the z-y-x Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -1355,32 +1380,7 @@ def euler_zyx_to_R(alpha, beta, gamma, R):
     R[2, 2] =  cos_b * cos_g
 
 
-def euler_zyz_to_axis_angle(alpha, beta, gamma):
-    """Convert the zyz Euler angles to axis-angle notation.
-
-    This function first generates a rotation matrix via euler_*_to_R() and then uses R_to_axis_angle() to convert to the axis and angle notation.
-
-    @param alpha:   The alpha Euler angle in rad.
-    @type alpha:    float
-    @param beta:    The beta Euler angle in rad.
-    @type beta:     float
-    @param gamma:   The gamma Euler angle in rad.
-    @type gamma:    float
-    @return:        The 3D rotation axis and angle.
-    @rtype:         numpy 3D rank-1 array, float
-    """
-
-    # Init.
-    R = zeros((3, 3), float64)
-
-    # Get the rotation.
-    euler_zyz_to_R(alpha, beta, gamma, R)
-
-    # Return the axis and angle.
-    return R_to_axis_angle(R)
-
-
-def euler_zyz_to_R(alpha, beta, gamma, R):
+def euler_to_R_zyz(alpha, beta, gamma, R):
     """Generate the z-y-z Euler angle convention rotation matrix.
 
     Rotation matrix
@@ -1602,7 +1602,7 @@ def R_to_euler(R, notation, axes_rot='static', second_sol=False):
         gamma = alpha_old
 
     # Angle wrapping.
-    if -pi < beta < 0.0:
+    if alt and -pi < beta < 0.0:
         alpha = alpha + pi
         beta = -beta
         gamma = gamma + pi
@@ -2226,7 +2226,7 @@ def reverse_euler_zyz(alpha, beta, gamma):
     R = zeros((3, 3), float64)
 
     # Get the rotation.
-    euler_zyz_to_R(alpha, beta, gamma, R)
+    euler_to_R_zyz(alpha, beta, gamma, R)
 
     # Reverse rotation.
     R = transpose(R)

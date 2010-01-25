@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,9 +27,9 @@ from os import sep
 import sys
 from shutil import rmtree
 from tempfile import mkdtemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 from generic_fns.mol_res_spin import return_spin
@@ -36,7 +37,7 @@ from relax_errors import RelaxError
 from relax_io import test_binary
 
 
-class Palmer(TestCase):
+class Palmer(SystemTestCase):
     """Class for testing various aspects specific to model-free analysis using the program
     'Modelfree4'.
     """
@@ -69,7 +70,7 @@ class Palmer(TestCase):
             return
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
         spin = return_spin(':0', pipe='m2')
@@ -169,7 +170,7 @@ class Palmer(TestCase):
             return
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')
 
         # Catch a the old, buggy modelfree4 versions and complain loudly!
         spin = return_spin(':9', pipe='m2')

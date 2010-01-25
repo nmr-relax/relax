@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2003-2006, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'palmer' user function class for controlling the Modelfree4 software."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -94,8 +91,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "palmer.create("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "palmer.create("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary)
@@ -160,8 +157,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "palmer.execute("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "palmer.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
@@ -186,8 +183,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "palmer.extract("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "palmer.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 

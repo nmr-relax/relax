@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -73,7 +73,7 @@ class Frame_order(API_base, API_common):
 
         # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
         elif cdp.model == 'iso cone':
-            return array([cdp.alpha, cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+            return array([cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
 
 
     def _back_calc(self):
@@ -433,9 +433,13 @@ class Frame_order(API_base, API_common):
 
         # Set up the tensor rotation parameter arrays.
         if init:
-            cdp.params.append('alpha')
-            cdp.params.append('beta')
-            cdp.params.append('gamma')
+            if cdp.model == 'iso cone':
+                cdp.params.append('beta')
+                cdp.params.append('gamma')
+            else:
+                cdp.params.append('alpha')
+                cdp.params.append('beta')
+                cdp.params.append('gamma')
 
         # Initialise the tensor rotation angles.
         if not hasattr(cdp, 'alpha'):
@@ -497,7 +501,10 @@ class Frame_order(API_base, API_common):
         # Isotropic cone model.
         elif cdp.model == 'iso cone':
             # Disassemble the parameter vector.
-            alpha, beta, gamma, theta_axis, phi_axis, theta_cone = param_vector
+            beta, gamma, theta_axis, phi_axis, theta_cone = param_vector
+
+            # Alpha is zero in this model!
+            alpha = 0.0
 
             # Wrap the cone angle to be between 0 and pi.
             if theta_cone < 0.0:
@@ -520,17 +527,6 @@ class Frame_order(API_base, API_common):
                 cdp.theta_cone = theta_cone
 
         # Wrap the Euler angles.
-        alpha = wrap_angles(alpha, 0.0, 2.0*pi)
-        beta  = wrap_angles(beta, 0.0, 2.0*pi)
-        gamma = wrap_angles(gamma, 0.0, 2.0*pi)
-
-        # Fold beta to be between 0 and pi.
-        if beta >= pi:
-            alpha = alpha - pi
-            beta = 2*pi - beta
-            gamma = gamma - pi
-
-        # Wrap again.
         alpha = wrap_angles(alpha, 0.0, 2.0*pi)
         beta  = wrap_angles(beta, 0.0, 2.0*pi)
         gamma = wrap_angles(gamma, 0.0, 2.0*pi)
@@ -667,15 +663,22 @@ class Frame_order(API_base, API_common):
 
         # Parameters.
         if set == 'all' or set == 'params':
-            names.append('alpha')
-            names.append('beta')
-            names.append('gamma')
-
             # The isotropic cone model.
             if hasattr(cdp, 'model') and cdp.model == 'iso cone':
+                # Euler angles.
+                names.append('beta')
+                names.append('gamma')
+
+                # Angular cone parameters.
                 names.append('theta_axis')
                 names.append('phi_axis')
                 names.append('theta_cone')
+
+            # All other models.
+            else:
+                names.append('alpha')
+                names.append('beta')
+                names.append('gamma')
 
         # Minimisation statistics.
         if set == 'all' or set == 'min':
@@ -688,27 +691,41 @@ class Frame_order(API_base, API_common):
 
         # Parameter errors.
         if error_names and (set == 'all' or set == 'params'):
-            names.append('alpha_err')
-            names.append('beta_err')
-            names.append('gamma_err')
-
             # The isotropic cone model.
             if hasattr(cdp, 'model') and  cdp.model == 'iso cone':
+                # Euler angles.
+                names.append('beta_err')
+                names.append('gamma_err')
+
+                # Angular cone parameters.
                 names.append('theta_axis_err')
                 names.append('phi_axis_err')
                 names.append('theta_cone_err')
 
+            # All other models.
+            else:
+                names.append('alpha_err')
+                names.append('beta_err')
+                names.append('gamma_err')
+
         # Parameter simulation values.
         if sim_names and (set == 'all' or set == 'params'):
-            names.append('alpha_sim')
-            names.append('beta_sim')
-            names.append('gamma_sim')
-
             # The isotropic cone model.
             if hasattr(cdp, 'model') and  cdp.model == 'iso cone':
+                # Euler angles.
+                names.append('beta_sim')
+                names.append('gamma_sim')
+
+                # Angular cone parameters.
                 names.append('theta_axis_sim')
                 names.append('phi_axis_sim')
                 names.append('theta_cone_sim')
+
+            # All other models.
+            else:
+                names.append('alpha_sim')
+                names.append('beta_sim')
+                names.append('gamma_sim')
 
         # Return the names.
         return names

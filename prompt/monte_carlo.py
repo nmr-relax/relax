@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the Monte Carlo simulation 'monte_carlo' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -68,8 +65,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.create_data("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "monte_carlo.create_data("
             text = text + "method=" + repr(method) + ")"
             print(text)
 
@@ -114,8 +111,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.error_analysis("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "monte_carlo.error_analysis("
             text = text + "prune=" + repr(prune) + ")"
             print(text)
 
@@ -145,8 +142,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.initial_values()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "monte_carlo.initial_values()"
             print(text)
 
         # Execute the functional code.
@@ -157,8 +154,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations off."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.off()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "monte_carlo.off()"
             print(text)
 
         # Execute the functional code.
@@ -169,8 +166,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations on."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.on()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "monte_carlo.on()"
             print(text)
 
         # Execute the functional code.
@@ -194,8 +191,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "monte_carlo.setup("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "monte_carlo.setup("
             text = text + "number=" + repr(number) + ")"
             print(text)
 

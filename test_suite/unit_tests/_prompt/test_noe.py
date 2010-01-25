@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,14 +29,13 @@ from relax_errors import RelaxNoneIntError, RelaxNoneStrError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_noe(TestCase):
     """Unit tests for the functions of the 'prompt.noe' module."""
 
     # Instantiate the user function class.
-    noe_fns = Noe(fake_relax.fake_instance())
+    noe_fns = Noe()
 
 
     def test_read_restraints_argfail_file(self):

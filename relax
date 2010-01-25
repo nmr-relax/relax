@@ -129,33 +129,33 @@ class Relax:
         # Run the interpreter for the prompt or script modes.
         if self.mode == 'prompt' or self.mode == 'script':
             # Run the interpreter.
-            self.interpreter = interpreter.Interpreter(self, intro_string)
+            self.interpreter = interpreter.Interpreter(intro_string)
             self.interpreter.run(self.script_file)
 
         # Execute the relax test suite
         elif self.mode == 'test suite':
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False, raise_relax_error=True)
+            self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter._on()
 
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner()
             runner.run_all_tests()
 
         # Execute the relax system tests.
         elif self.mode == 'system tests':
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False, raise_relax_error=True)
+            self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
             self.interpreter._on()
 
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner()
             runner.run_system_tests()
 
         # Execute the relax unit tests.
         elif self.mode == 'unit tests':
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner()
             runner.run_unit_tests()
 
         # Test mode.

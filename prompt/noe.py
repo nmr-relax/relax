@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'noe' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -83,8 +80,8 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.read_restraints("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "noe.read_restraints("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", proton1_col=" + repr(proton1_col)
@@ -131,8 +128,8 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "noe.spectrum_type("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "noe.spectrum_type("
             text = text + "spectrum_type=" + repr(spectrum_type)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)

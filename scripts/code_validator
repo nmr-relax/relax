@@ -714,23 +714,22 @@ class Validate:
             if not row:
                 continue
 
-            # Skip the line if within an array and ']' is encountered.
-            skip = 0
+            # Count the '[' and ']' characters.
             for char in line:
-                if char == ']':
-                    in_array = in_array - 1
-                    skip = 1
-            if skip:
-                continue
-
-            # Determine if an array has been started.
-            for char in line:
+                # In.
                 if char == '[':
                     in_array = in_array + 1
 
+                # Out.
+                elif char == ']':
+                    in_array = in_array - 1
+
             # Go to the next line if still within an array.
-            if in_array:
+            if in_array > 0:
                 continue
+            elif in_array < 0:
+                print("Bug detected at line %i.  Unpaired terminating ] encountered.")
+                in_array = 0
 
             # Loop over the characters of the line.
             for char in line:

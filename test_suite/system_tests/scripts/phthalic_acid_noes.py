@@ -8,6 +8,14 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 
 
+# Add a date pipe if one doesn't already exist.
+if not ds.keys():
+    pipe.create('test', 'N-state')
+
+# NOE restraint file.
+if not hasattr(ds, 'file_name'):
+    ds.file_name = 'phthalic_acid'
+
 # Path of the relaxation data.
 DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep
 

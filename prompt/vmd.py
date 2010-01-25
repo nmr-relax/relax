@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2009 Edward d'Auvergne                            #
+# Copyright (C) 2003, 2004, 2009-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,9 +24,6 @@
 """Module containing the 'vmd' user function class for controlling VMD."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -46,8 +43,8 @@ class Vmd(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "vmd.view()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "vmd.view()"
             print(text)
 
         # Execute the functional code.

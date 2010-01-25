@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,15 +23,15 @@
 # Python module imports.
 import sys
 from tempfile import mktemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.pipes import VALID_TYPES, get_pipe
 from relax_io import delete
 
 
-class State(TestCase):
+class State(SystemTestCase):
     """Class for testing the state saving and loading user functions."""
 
     def setUp(self):
@@ -55,61 +55,61 @@ class State(TestCase):
         """Test the saving, loading, and second saving and loading of the program state in pickled format."""
 
         # Create a data pipe.
-        self.relax.interpreter._Pipe.create('test', 'mf')
+        self.interpreter.pipe.create('test', 'mf')
 
         # Save the state.
-        self.relax.interpreter._State.save(self.tmpfile, pickle=True, force=True)
+        self.interpreter.state.save(self.tmpfile, pickle=True, force=True)
 
         # Load the state.
-        self.relax.interpreter._State.load(self.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.relax.interpreter._State.save(self.tmpfile, dir=None, pickle=True, force=True)
+        self.interpreter.state.save(self.tmpfile, dir=None, pickle=True, force=True)
 
         # Load the state.
-        self.relax.interpreter._State.load(self.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
 
     def test_state_xml(self):
         """Test the saving, loading, and second saving and loading of the program state in XML format."""
 
         # Create a data pipe.
-        self.relax.interpreter._Pipe.create('test', 'mf')
+        self.interpreter.pipe.create('test', 'mf')
 
         # Save the state.
-        self.relax.interpreter._State.save(self.tmpfile, pickle=False, force=True)
+        self.interpreter.state.save(self.tmpfile, pickle=False, force=True)
 
         # Load the state.
-        self.relax.interpreter._State.load(self.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
         # Save the state.
-        self.relax.interpreter._State.save(self.tmpfile, pickle=False, force=True)
+        self.interpreter.state.save(self.tmpfile, pickle=False, force=True)
 
         # Load the state.
-        self.relax.interpreter._State.load(self.tmpfile, force=True)
+        self.interpreter.state.load(self.tmpfile, force=True)
 
 
     def test_write_read_pipes(self):
         """Test the writing out, and re-reading of data pipes from the state file."""
 
         # Create a data pipe.
-        self.relax.interpreter._Pipe.create('test', 'relax_fit')
+        self.interpreter.pipe.create('test', 'relax_fit')
 
         # Remove the data pipe.
         ds.__reset__()
 
         # Create a few data pipes.
         for i in range(len(VALID_TYPES)):
-            self.relax.interpreter._Pipe.create('test' + repr(i), VALID_TYPES[i])
+            self.interpreter.pipe.create('test' + repr(i), VALID_TYPES[i])
 
         # Write the results.
-        self.relax.interpreter._State.save(self.tmpfile)
+        self.interpreter.state.save(self.tmpfile)
 
         # Reset the relax data storage object.
         ds.__reset__()
 
         # Re-read the results.
-        self.relax.interpreter._State.load(self.tmpfile)
+        self.interpreter.state.load(self.tmpfile)
 
         # Test the pipes.
         for i in range(len(VALID_TYPES)):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,14 +23,14 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 
 
-class Generic(TestCase):
+class Generic(SystemTestCase):
     """Class containing generic tests of relax execution."""
 
     def tearDown(self):
@@ -49,17 +49,17 @@ class Generic(TestCase):
         # Loop over the data pipes to create and fill.
         for i in xrange(3):
             # Create the data pipe.
-            self.relax.interpreter._Pipe.create(pipe_list[i], 'mf')
+            self.interpreter.pipe.create(pipe_list[i], 'mf')
 
             # Load the Lupin Ap4Aase sequence.
-            self.relax.interpreter._Sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+            self.interpreter.sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
             # Only select residue 8.
-            self.relax.interpreter._Select.spin(spin_id=':8', change_all=True)
+            self.interpreter.select.spin(spin_id=':8', change_all=True)
 
             # Set the order parameter value.
             if s2[i]:
-                self.relax.interpreter._Value.set(s2[i], 'S2', spin_id=':8')
+                self.interpreter.value.set(s2[i], 'S2', spin_id=':8')
 
         # Get the data pipes.
         dp_orig1 = pipes.get_pipe('orig1')
@@ -68,7 +68,7 @@ class Generic(TestCase):
 
         # Calculate the difference and assign it to residue 8 (located in position 7).
         diff = dp_orig1.mol[0].res[7].spin[0].s2 - dp_orig2.mol[0].res[7].spin[0].s2
-        self.relax.interpreter._Value.set(diff, 'S2', spin_id=':8')
+        self.interpreter.value.set(diff, 'S2', spin_id=':8')
 
         # Test if the difference is 0.2!
         self.assertAlmostEqual(dp_new.mol[0].res[7].spin[0].s2, 0.2)
@@ -78,4 +78,4 @@ class Generic(TestCase):
         """Test the creation of a PDB representation of the distribution of XH bond vectors."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')

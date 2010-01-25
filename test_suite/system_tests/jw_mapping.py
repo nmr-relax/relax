@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,22 +24,22 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
-class Jw(TestCase):
+class Jw(SystemTestCase):
     """Class for testing various aspects specific to reduced spectral density mapping."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('jw', 'jw')
+        self.interpreter.pipe.create('jw', 'jw')
 
 
     def tearDown(self):
@@ -70,23 +70,23 @@ class Jw(TestCase):
         jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
-            self.relax.interpreter._Relax_data.read(dataTypes[dataSet][0], dataTypes[dataSet][1], dataTypes[dataSet][2], dataPaths[dataSet], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read(dataTypes[dataSet][0], dataTypes[dataSet][1], dataTypes[dataSet][2], dataPaths[dataSet], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set r, csa, heteronucleus type, and proton type.
-        self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
-        self.relax.interpreter._Value.set(N15_CSA, 'csa')
-        self.relax.interpreter._Value.set('15N', 'heteronucleus')
-        self.relax.interpreter._Value.set('1H', 'proton')
+        self.interpreter.value.set(NH_BOND_LENGTH, 'bond_length')
+        self.interpreter.value.set(N15_CSA, 'csa')
+        self.interpreter.value.set('15N', 'heteronucleus')
+        self.interpreter.value.set('1H', 'proton')
 
         # Select the frequency.
-        self.relax.interpreter._Jw_mapping.set_frq(frq=600.0 * 1e6)
+        self.interpreter.jw_mapping.set_frq(frq=600.0 * 1e6)
 
         # Try the reduced spectral density mapping.
-        self.relax.interpreter._Minimisation.calc()
+        self.interpreter.calc()
 
         # Loop over residues.
         index = 0
@@ -108,13 +108,13 @@ class Jw(TestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH
         csa = N15_CSA
-        self.relax.interpreter._Value.set(bond_length, 'bond_length')
-        self.relax.interpreter._Value.set(csa, 'csa')
+        self.interpreter.value.set(bond_length, 'bond_length')
+        self.interpreter.value.set(csa, 'csa')
 
         # Loop over residues.
         for res in residue_loop():
@@ -126,4 +126,4 @@ class Jw(TestCase):
         """Test a complete jw mapping run using a script."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping.py')

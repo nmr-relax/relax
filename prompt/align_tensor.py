@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 __docformat__ = 'plaintext'
 
 # Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -85,8 +84,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.copy("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.copy("
             text = text + "tensor_from=" + repr(tensor_from)
             text = text + ", pipe_from=" + repr(pipe_from)
             text = text + ", tensor_to=" + repr(tensor_to)
@@ -120,8 +119,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.delete("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.delete("
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
@@ -142,8 +141,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.display("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.display("
             text = text + "tensor=" + repr(tensor) + ")"
             print(text)
 
@@ -215,8 +214,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.init("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.init("
             text = text + "tensor=" + repr(tensor)
             text = text + ", params=" + repr(params)
             text = text + ", scale=" + repr(scale)
@@ -259,8 +258,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.matrix_angles("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.matrix_angles("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)
@@ -301,8 +300,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.reduction("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.reduction("
             text = text + "full_tensor=" + repr(full_tensor)
             text = text + ", red_tensor=" + repr(red_tensor) + ")"
             print(text)
@@ -342,8 +341,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.set_domain("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.set_domain("
             text = text + "tensor=" + repr(tensor)
             text = text + ", domain=" + repr(domain) + ")"
             print(text)
@@ -416,8 +415,8 @@ class Align_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "align_tensor.svd("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "align_tensor.svd("
             text = text + "basis_set=" + repr(basis_set)
             text = text + ", tensors=" + repr(tensors) + ")"
             print(text)
