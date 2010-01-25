@@ -140,7 +140,7 @@ The final black-box model-free results will be placed in the file 'final/results
 """
 
 # relax module imports.
-from auto_analyses.dauvergne_protocol import Dauvergne_protocol
+from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 
 
 # The diffusion model.
