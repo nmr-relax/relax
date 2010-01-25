@@ -30,26 +30,46 @@ from string import split, strip
 
 
 class Basic_class:
-    def __init__(self, exec_info):
+    def __init__(self, exec_info=None):
         """All non-user function classes.
 
-        @param exec_info:   The execution information container.  This must contain at least the exec_info.intro boolean variable.
-        @type exec_info:    class instance
+        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
+        @type exec_info:    None or class instance
         """
 
-        # Store the args.
+        # Generate the execution info container.
+        if exec_info == None:
+            exec_info = Exec_info()
+
+        # Store the execution info container.
         self.exec_info = exec_info
 
 
+
+class Exec_info:
+    """Container for execution information."""
+
+    def __init__(self):
+        """Initialise the data of this container."""
+
+        # The user function intro flag.
+        self.intro = True
+
+
+
 class User_fn_class:
-    def __init__(self, exec_info):
+    def __init__(self, exec_info=None):
         """Initialise the user function class, compiling the help string.
 
-        @param exec_info:   The execution information container.  This must contain at least the exec_info.intro boolean variable.
-        @type exec_info:    class instance
+        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
+        @type exec_info:    None or class instance
         """
 
-        # Store the args.
+        # Generate the execution info container.
+        if exec_info == None:
+            exec_info = Exec_info()
+
+        # Store the execution info container.
         self.exec_info = exec_info
 
         # Add the generic help string.

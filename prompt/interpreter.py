@@ -40,8 +40,9 @@ from math import pi
 from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Auxiliary modules.
-from help import _Helper, _Helper_python
+from base_class import Exec_info
 from command import Ls, Lh, Ll, system
+from help import _Helper, _Helper_python
 if dep_check.readline_module:
     from tab_completion import Tab_completion
 
@@ -124,7 +125,7 @@ class Interpreter:
         sys.ps3 = '\nrelax> '
 
         # Initialise the execution information container (info that can change during execution).
-        self.exec_info = _Exec_info
+        self.exec_info = Exec_info
 
         # The function intro flag (store in the execution information container).
         self.exec_info.intro = False
@@ -309,10 +310,6 @@ class Interpreter:
 
         # Return the function intro flag to the original value.
         self.exec_info.intro = orig_intro_state
-
-
-class _Exec_info:
-    """Container for execution information."""
 
 
 class _Exit:
