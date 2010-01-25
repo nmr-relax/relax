@@ -311,7 +311,7 @@ class Interpreter:
         self.exec_info.intro = True
 
         # Execute the script.
-        run_script(local=self.local, script_file=file, quit=quit)
+        run_script(local=self._locals, script_file=file, quit=quit)
 
         # Return the function intro flag to the original value.
         self.exec_info.intro = orig_intro_state
