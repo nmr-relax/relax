@@ -37,6 +37,6 @@ class SystemTestCase(TestCase):
         # Execute the TestCase __init__ method.
         super(SystemTestCase, self).__init__(methodName)
 
-        # Load the interpreter and turn intros on.
+        # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
