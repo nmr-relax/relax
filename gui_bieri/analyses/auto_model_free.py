@@ -28,11 +28,11 @@
 from os import sep
 import wx
 
-# relaxGUI module imports.
-from analyses.relax_control import start_modelfree
-from analyses.results_analysis import model_free_results, see_results
-from analyses.select_model_calc import check_entries, whichmodel
-from filedialog import opendir, openfile
+# relax GUI module imports.
+from gui_bieri.analyses.relax_control import start_modelfree
+from gui_bieri.analyses.results_analysis import model_free_results, see_results
+from gui_bieri.analyses.select_model_calc import check_entries, whichmodel
+from gui_bieri.filedialog import opendir, openfile
 
 
 class Auto_model_free:
