@@ -25,31 +25,14 @@
 """Main module for the relax graphical user interface."""
 
 # Python module imports.
-from os import getcwd, mkdir, sep
-from re import search
-from string import lower, lowercase, replace
-import sys
-import time
-import webbrowser
+from os import sep
 import wx
 
-# relax module imports.
-from float import floatAsByteArray
-from generic_fns import pipes
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-from relax_errors import RelaxError
-from version import version
-
 # relaxGUI module imports.
-from about import about_relax
-from analyses.project import create_save_file, open_file
-from analyses.relax_control import start_modelfree, start_noe, start_rx
-from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
+from analyses.relax_control import start_modelfree
+from analyses.results_analysis import model_free_results, see_results
 from analyses.select_model_calc import check_entries, whichmodel
-from filedialog import multi_openfile, opendir, openfile, savefile
-from message import dir_message, exec_relax, missing_data, question, relax_run_ok
-from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
-from settings import import_file_settings, load_sequence, relax_global_settings
+from filedialog import opendir, openfile
 
 
 class Auto_model_free:
