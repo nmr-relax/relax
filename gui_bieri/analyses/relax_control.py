@@ -21,7 +21,8 @@
 #                                                                             #
 ###############################################################################
 
-# Log window of relax GUI controlling all calculations
+# Module docstring.
+"""Log window of relax GUI controlling all calculations."""
 
 # Python module imports.
 from os import sep
