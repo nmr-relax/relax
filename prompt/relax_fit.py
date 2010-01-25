@@ -24,9 +24,6 @@
 """Module containing the 'relax_fit' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -58,7 +55,7 @@ class Relax_fit(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "relax_fit.relax_time("
+            text = self.exec_info.ps3 + "relax_fit.relax_time("
             text = text + "time=" + repr(time)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)
@@ -95,7 +92,7 @@ class Relax_fit(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "relax_fit.select_model("
+            text = self.exec_info.ps3 + "relax_fit.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

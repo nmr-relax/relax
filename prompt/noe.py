@@ -24,9 +24,6 @@
 """Module containing the 'noe' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -84,7 +81,7 @@ class Noe(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "noe.read_restraints("
+            text = self.exec_info.ps3 + "noe.read_restraints("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", proton1_col=" + repr(proton1_col)
@@ -132,7 +129,7 @@ class Noe(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "noe.spectrum_type("
+            text = self.exec_info.ps3 + "noe.spectrum_type("
             text = text + "spectrum_type=" + repr(spectrum_type)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)

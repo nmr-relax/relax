@@ -24,9 +24,6 @@
 """Module containing the 'molmol' user function class for interacting with MOLMOL."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -43,7 +40,7 @@ class Molmol(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "molmol.clear_history()"
+            text = self.exec_info.ps3 + "molmol.clear_history()"
             print(text)
 
         # Execute the functional code.
@@ -76,7 +73,7 @@ class Molmol(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "molmol.command("
+            text = self.exec_info.ps3 + "molmol.command("
             text = text + "command=" + repr(command) + ")"
             print(text)
 
@@ -143,7 +140,7 @@ class Molmol(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "molmol.macro_exec("
+            text = self.exec_info.ps3 + "molmol.macro_exec("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -188,7 +185,7 @@ class Molmol(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "molmol.ribbon()"
+            text = self.exec_info.ps3 + "molmol.ribbon()"
             print(text)
 
         # Execute the functional code.
@@ -249,7 +246,7 @@ class Molmol(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "molmol.tensor_pdb("
+            text = self.exec_info.ps3 + "molmol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -272,7 +269,7 @@ class Molmol(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "molmol.view()"
+            text = self.exec_info.ps3 + "molmol.view()"
             print(text)
 
         # Execute the functional code.
@@ -343,7 +340,7 @@ class Molmol(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "molmol.write("
+            text = self.exec_info.ps3 + "molmol.write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)

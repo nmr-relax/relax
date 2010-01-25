@@ -24,9 +24,6 @@
 """Module containing the user function class of the Frame Order theories."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -79,7 +76,7 @@ class Frame_order(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "frame_order.cone_pdb("
+            text = self.exec_info.ps3 + "frame_order.cone_pdb("
             text = text + "size=" + repr(size)
             text = text + ", inc=" + repr(inc)
             text = text + ", file=" + repr(file)
@@ -119,7 +116,7 @@ class Frame_order(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "frame_order.pivot("
+            text = self.exec_info.ps3 + "frame_order.pivot("
             text = text + "pivot=" + repr(pivot) + ")"
             print(text)
 
@@ -158,7 +155,7 @@ class Frame_order(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "frame_order.ref_domain("
+            text = self.exec_info.ps3 + "frame_order.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
@@ -197,7 +194,7 @@ class Frame_order(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "frame_order.select_model("
+            text = self.exec_info.ps3 + "frame_order.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

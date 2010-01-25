@@ -24,9 +24,8 @@
 """Module containing molecular viewing 'view()' user function."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
+# relax module imports.
 from base_class import Basic_class
-import sys
 
 
 class View(Basic_class):
@@ -44,7 +43,7 @@ class View(Basic_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "view()"
+            text = self.exec_info.ps3 + "view()"
             print(text)
 
         # Execute the functional code.

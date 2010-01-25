@@ -24,9 +24,6 @@
 """Module containing the 'select' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -80,7 +77,7 @@ class Select(User_fn_class):
 
         # Function intro test.
         if self.exec_info.intro:
-            text = sys.ps3 + "select.all()"
+            text = self.exec_info.ps3 + "select.all()"
             print(text)
 
         # Execute the functional code.
@@ -159,7 +156,7 @@ class Select(User_fn_class):
 
         # Function intro test.
         if self.exec_info.intro:
-            text = sys.ps3 + "select.read("
+            text = self.exec_info.ps3 + "select.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -218,7 +215,7 @@ class Select(User_fn_class):
 
         # Function intro test.
         if self.exec_info.intro:
-            text = sys.ps3 + "select.reverse("
+            text = self.exec_info.ps3 + "select.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -267,7 +264,7 @@ class Select(User_fn_class):
 
         # Function intro test.
         if self.exec_info.intro:
-            text = sys.ps3 + "select.spin("
+            text = self.exec_info.ps3 + "select.spin("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", boolean=" + repr(boolean)
             text = text + ", change_all=" + repr(change_all) + ")"

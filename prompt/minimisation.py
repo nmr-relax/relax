@@ -26,7 +26,6 @@ __docformat__ = 'plaintext'
 
 # Python module imports.
 from string import split
-import sys
 
 # relax module imports.
 from base_class import Basic_class
@@ -51,7 +50,7 @@ class Minimisation(Basic_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "calc("
+            text = self.exec_info.ps3 + "calc("
             text = text + "verbosity=" + repr(verbosity) + ")"
             print(text)
 
@@ -88,7 +87,7 @@ class Minimisation(Basic_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "grid_search("
+            text = self.exec_info.ps3 + "grid_search("
             text = text + "lower=" + repr(lower)
             text = text + ", upper=" + repr(upper)
             text = text + ", inc=" + repr(inc)
@@ -248,7 +247,7 @@ class Minimisation(Basic_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "minimise("
+            text = self.exec_info.ps3 + "minimise("
             text = text + "*args=" + repr(args)
             text = text + ", func_tol=" + repr(func_tol)
             text = text + ", max_iterations=" + repr(max_iterations)

@@ -25,7 +25,6 @@
 __docformat__ = 'plaintext'
 
 # Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -71,7 +70,7 @@ class Dasha(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "dasha.create("
+            text = self.exec_info.ps3 + "dasha.create("
             text = text + "algor=" + repr(algor)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
@@ -115,7 +114,7 @@ class Dasha(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "dasha.execute("
+            text = self.exec_info.ps3 + "dasha.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
@@ -141,7 +140,7 @@ class Dasha(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "dasha.extract("
+            text = self.exec_info.ps3 + "dasha.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 

@@ -24,9 +24,6 @@
 """Module containing the Reduced Spectral Density Mapping 'jw_mapping' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -61,7 +58,7 @@ class Jw_mapping(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "jw_mapping.set_frq("
+            text = self.exec_info.ps3 + "jw_mapping.set_frq("
             text = text + "frq=" + repr(frq) + ")"
             print(text)
 

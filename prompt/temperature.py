@@ -24,9 +24,6 @@
 """Module containing the 'temperature' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import Basic_class
 import arg_check
@@ -56,7 +53,7 @@ class Temp(Basic_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "temperature("
+            text = self.exec_info.ps3 + "temperature("
             text = text + "id=" + repr(id)
             text = text + ", temp=" + repr(temp) + ")"
             print(text)

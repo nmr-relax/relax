@@ -24,9 +24,6 @@
 """Module containing the 'vmd' user function class for controlling VMD."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -47,7 +44,7 @@ class Vmd(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "vmd.view()"
+            text = self.exec_info.ps3 + "vmd.view()"
             print(text)
 
         # Execute the functional code.

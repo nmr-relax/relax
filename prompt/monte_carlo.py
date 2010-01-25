@@ -24,9 +24,6 @@
 """Module containing the Monte Carlo simulation 'monte_carlo' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -69,7 +66,7 @@ class Monte_carlo(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "monte_carlo.create_data("
+            text = self.exec_info.ps3 + "monte_carlo.create_data("
             text = text + "method=" + repr(method) + ")"
             print(text)
 
@@ -115,7 +112,7 @@ class Monte_carlo(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "monte_carlo.error_analysis("
+            text = self.exec_info.ps3 + "monte_carlo.error_analysis("
             text = text + "prune=" + repr(prune) + ")"
             print(text)
 
@@ -146,7 +143,7 @@ class Monte_carlo(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "monte_carlo.initial_values()"
+            text = self.exec_info.ps3 + "monte_carlo.initial_values()"
             print(text)
 
         # Execute the functional code.
@@ -158,7 +155,7 @@ class Monte_carlo(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "monte_carlo.off()"
+            text = self.exec_info.ps3 + "monte_carlo.off()"
             print(text)
 
         # Execute the functional code.
@@ -170,7 +167,7 @@ class Monte_carlo(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "monte_carlo.on()"
+            text = self.exec_info.ps3 + "monte_carlo.on()"
             print(text)
 
         # Execute the functional code.
@@ -195,7 +192,7 @@ class Monte_carlo(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "monte_carlo.setup("
+            text = self.exec_info.ps3 + "monte_carlo.setup("
             text = text + "number=" + repr(number) + ")"
             print(text)
 

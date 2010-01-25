@@ -24,9 +24,6 @@
 """Module containing the 'pcs' pseudocontact shift user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -48,7 +45,7 @@ class PCS(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "pcs.back_calc("
+            text = self.exec_info.ps3 + "pcs.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -118,7 +115,7 @@ class PCS(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "pcs.centre("
+            text = self.exec_info.ps3 + "pcs.centre("
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
@@ -177,7 +174,7 @@ class PCS(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "pcs.copy("
+            text = self.exec_info.ps3 + "pcs.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -215,7 +212,7 @@ class PCS(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "pcs.delete("
+            text = self.exec_info.ps3 + "pcs.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -245,7 +242,7 @@ class PCS(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "pcs.display("
+            text = self.exec_info.ps3 + "pcs.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -320,7 +317,7 @@ class PCS(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "pcs.read("
+            text = self.exec_info.ps3 + "pcs.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -379,7 +376,7 @@ class PCS(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "pcs.write("
+            text = self.exec_info.ps3 + "pcs.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

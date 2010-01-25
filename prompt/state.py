@@ -24,9 +24,6 @@
 """Module containing the 'state' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -84,7 +81,7 @@ class State(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "state.load("
+            text = self.exec_info.ps3 + "state.load("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
@@ -163,7 +160,7 @@ class State(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "state.save("
+            text = self.exec_info.ps3 + "state.save("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)

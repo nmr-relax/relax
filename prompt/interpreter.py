@@ -119,13 +119,13 @@ class Interpreter:
         self.__quit_flag = quit
         self.__raise_relax_error = raise_relax_error
 
-        # The prompts.
-        sys.ps1 = 'relax> '
-        sys.ps2 = 'relax| '
-        sys.ps3 = '\nrelax> '
-
         # Initialise the execution information container (info that can change during execution).
         self.exec_info = Exec_info
+
+        # The prompts (change the Python prompt, as well as the function print outs).
+        sys.ps1 = self.exec_info.ps1
+        sys.ps2 = self.exec_info.ps2
+        sys.ps3 = self.exec_info.ps3
 
         # The function intro flag (store in the execution information container).
         self.exec_info.intro = False
@@ -282,7 +282,7 @@ class Interpreter:
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "script("
+            text = self.exec_info.ps3 + "script("
             text = text + "file=" + repr(file)
             text = text + ", quit=" + repr(quit) + ")"
             print(text)

@@ -24,9 +24,6 @@
 """Module containing the 'spectrum' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -59,7 +56,7 @@ class Spectrum(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "spectrum.baseplane_rmsd("
+            text = self.exec_info.ps3 + "spectrum.baseplane_rmsd("
             text = text + "error=" + repr(error)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -217,7 +214,7 @@ class Spectrum(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "spectrum.error_analysis()"
+            text = self.exec_info.ps3 + "spectrum.error_analysis()"
             print(text)
 
         # Execute the functional code.
@@ -251,7 +248,7 @@ class Spectrum(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "spectrum.integration_points("
+            text = self.exec_info.ps3 + "spectrum.integration_points("
             text = text + "N=" + repr(N)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -399,7 +396,7 @@ class Spectrum(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "spectrum.read_intensities("
+            text = self.exec_info.ps3 + "spectrum.read_intensities("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spectrum_id=" + repr(spectrum_id)
@@ -472,7 +469,7 @@ class Spectrum(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "spectrum.replicated("
+            text = self.exec_info.ps3 + "spectrum.replicated("
             text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
             print(text)
 

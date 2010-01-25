@@ -49,8 +49,16 @@ class Basic_class:
 class Exec_info:
     """Container for execution information."""
 
+    # The hard-coded prompts (to change the Python prompt, as well as the function print outs).
+    ps1 = 'relax> '
+    ps2 = 'relax| '
+    ps3 = '\nrelax> '
+
     def __init__(self):
-        """Initialise the data of this container."""
+        """Initialise the data of this container.
+
+        This includes the introduction flag as well as the strings to change the Python prompts.
+        """
 
         # The user function intro flag.
         self.intro = True

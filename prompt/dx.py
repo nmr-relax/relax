@@ -24,9 +24,6 @@
 """Module containing the 'dx' user function class for controlling the OpenDX visualisation software."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -60,7 +57,7 @@ class OpenDX(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "dx("
+            text = self.exec_info.ps3 + "dx("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", dx_exe=" + repr(dx_exe)
@@ -164,7 +161,7 @@ class OpenDX(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "map("
+            text = self.exec_info.ps3 + "map("
             text = text + "params=" + repr(params)
             text = text + ", map_type=" + repr(map_type)
             text = text + ", spin_id=" + repr(spin_id)

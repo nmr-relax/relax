@@ -24,9 +24,6 @@
 """Module containing the 'grace' user function class for controlling the Grace data viewing software."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -73,7 +70,7 @@ class Grace(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "grace.view("
+            text = self.exec_info.ps3 + "grace.view("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", grace_exe=" + repr(grace_exe) + ")"
@@ -181,7 +178,7 @@ class Grace(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "grace.write("
+            text = self.exec_info.ps3 + "grace.write("
             text = text + "x_data_type=" + repr(x_data_type)
             text = text + ", y_data_type=" + repr(y_data_type)
             text = text + ", spin_id=" + repr(spin_id)

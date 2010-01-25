@@ -24,9 +24,6 @@
 """Module containing the 'fix' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import Basic_class
 import arg_check
@@ -67,7 +64,7 @@ class Fix(Basic_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "fix("
+            text = self.exec_info.ps3 + "fix("
             text = text + "element=" + repr(element)
             text = text + ", fixed=" + repr(fixed) + ")"
             print(text)

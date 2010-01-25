@@ -24,9 +24,6 @@
 """Module containing the 'diffusion_tensor' user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -79,7 +76,7 @@ class Diffusion_tensor(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "diffusion_tensor.copy("
+            text = self.exec_info.ps3 + "diffusion_tensor.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
@@ -107,7 +104,7 @@ class Diffusion_tensor(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "diffusion_tensor.delete()"
+            text = self.exec_info.ps3 + "diffusion_tensor.delete()"
             print(text)
 
         # Execute the functional code.
@@ -119,7 +116,7 @@ class Diffusion_tensor(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "diffusion_tensor.display()"
+            text = self.exec_info.ps3 + "diffusion_tensor.display()"
             print(text)
 
         # Execute the functional code.
@@ -380,7 +377,7 @@ class Diffusion_tensor(User_fn_class):
 
         # Function intro text.
         if self.exec_info.intro:
-            text = sys.ps3 + "diffusion_tensor.init("
+            text = self.exec_info.ps3 + "diffusion_tensor.init("
             text = text + "params=" + repr(params)
             text = text + ", time_scale=" + repr(time_scale)
             text = text + ", d_scale=" + repr(d_scale)
