@@ -212,8 +212,8 @@ class Interpreter:
         objects['vmd'] = Vmd(self.exec_info)
 
         # Builtin interpreter functions.
-        objects['intro_off'] = self._off
-        objects['intro_on'] = self._on
+        objects['intro_off'] = self.off
+        objects['intro_on'] = self.on
         objects['exit'] = objects['bye'] = objects['quit'] = objects['q'] = _Exit()
         objects['script'] = self.script
 
@@ -268,18 +268,32 @@ class Interpreter:
             prompt(intro=self.__intro_string, local=locals())
 
 
-    def _off(self):
-        """Function for turning the function introductions off."""
+    def off(self, verbose=True):
+        """Turn the function introductions off.
+
+        @keyword verbose:   A flag which when True results in a print out message being displayed.
+        @type verbose:      bool
+        """
 
         self.exec_info.intro = False
-        print("Echoing of user function calls has been disabled.")
+
+        # Print out.
+        if verbose:
+            print("Echoing of user function calls has been disabled.")
 
 
-    def _on(self):
-        """Function for turning the function introductions on."""
+    def on(self, verbose=True):
+        """Turn the function introductions on.
+
+        @keyword verbose:   A flag which when True results in a print out message being displayed.
+        @type verbose:      bool
+        """
 
         self.exec_info.intro = True
-        print("Echoing of user function calls has been enabled.")
+
+        # Print out.
+        if verbose:
+            print("Echoing of user function calls has been enabled.")
 
 
     def script(self, file=None, quit=False):
