@@ -2226,17 +2226,17 @@ class Main(wx.Frame):
 
             # start full automatic model-free analysis
             if which_model == 'full':
-                model1 = start_model_free(self, 'local_tm', True, global_setting, file_setting, sequencefile)    # execute local_tm
+                model1 = start_modelfree(self, 'local_tm', True, global_setting, file_setting, sequencefile)    # execute local_tm
                 if model1 == 'successful':
-                    model2 = start_model_free(self, 'sphere', True, global_setting, file_setting, sequencefile)        # execute sphere
+                    model2 = start_modelfree(self, 'sphere', True, global_setting, file_setting, sequencefile)        # execute sphere
                     if model2 == 'successful':
-                        model3 = start_model_free(self, 'prolate', True, global_setting, file_setting, sequencefile)         # execute prolate
+                        model3 = start_modelfree(self, 'prolate', True, global_setting, file_setting, sequencefile)         # execute prolate
                         if model3 == 'successful':
-                            model4 = start_model_free(self, 'oblate', True, global_setting, file_setting, sequencefile)         # execute oblate
+                            model4 = start_modelfree(self, 'oblate', True, global_setting, file_setting, sequencefile)         # execute oblate
                             if model4 == 'successful':
-                                model5 = start_model_free(self, 'ellipsoid', True, global_setting, file_setting, sequencefile)      # execute ellipsoid
+                                model5 = start_modelfree(self, 'ellipsoid', True, global_setting, file_setting, sequencefile)      # execute ellipsoid
                                 if model5 == 'successful':
-                                    model6 = start_model_free(self, 'final', False, global_setting, file_setting, sequencefile)        # execute final analysis
+                                    model6 = start_modelfree(self, 'final', False, global_setting, file_setting, sequencefile)        # execute final analysis
         event.Skip()
 
 
