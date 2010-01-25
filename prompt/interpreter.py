@@ -395,9 +395,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     if intro:
         sys.stdout.write("%s\n" % intro)
 
-    # Turn the intro flag on so functions will print their intro strings.
-    local['self'].intro = True
-
     # Print the script.
     if show_script:
         try:
