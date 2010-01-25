@@ -139,21 +139,9 @@ Once all the diffusion models have converged, the final run can be executed.  Th
 The final black-box model-free results will be placed in the file 'final/results'.
 """
 
-# Python module imports.
-from os import getcwd, listdir, sep
-from re import search
-from string import lower
-
 # relax module imports.
 from auto_analyses.dauvergne_protocol import Dauvergne_protocol
-from float import floatAsByteArray
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-from generic_fns import pipes
-from relax_errors import RelaxError
 
-
-# User variables.
-#################
 
 # The diffusion model.
 DIFF_MODEL = 'local_tm'
