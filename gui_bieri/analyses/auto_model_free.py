@@ -33,6 +33,7 @@ from gui_bieri.analyses.relax_control import start_modelfree
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import check_entries, whichmodel
 from gui_bieri.filedialog import opendir, openfile
+from gui_bieri.paths import IMAGE_PATH
 
 
 class Auto_model_free:
