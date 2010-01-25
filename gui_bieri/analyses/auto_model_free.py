@@ -53,18 +53,18 @@ from settings import import_file_settings, load_sequence, relax_global_settings
 
 
 class Auto_model_free:
-    def __init__(self, modelfree):
+    def __init__(self, gui):
         """Build the automatic model-free protocol GUI element.
 
-        @param modelfree:   The model-free panel object to pack the GUI element into.
-        @type modelfree:    wx.Panel instance
+        @param gui: The main GUI class.
+        @type gui:  gui_bieri.relax_gui.Main instance
         """
 
-        # Store the args in the class namespace.
-        self.modelfree = modelfree
+        # Store the main class.
+        self.gui = gui
 
-        self.bitmap_2 = wx.StaticBitmap(self.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Set-up for Model-free analysis:")
+        self.bitmap_2 = wx.StaticBitmap(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
+        self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
         self.label_7 = wx.StaticText(self.panel_4, -1, "NMR freq 1:")
         self.modelfreefreq1 = wx.TextCtrl(self.panel_4, -1, "")
         self.label_8 = wx.StaticText(self.panel_4, -1, "NOE")
@@ -98,31 +98,31 @@ class Auto_model_free:
         self.label_8_copy_copy_copy_copy = wx.StaticText(self.panel_4_copy_1, -1, "R2")
         self.m_r2_3 = wx.TextCtrl(self.panel_4_copy_1, -1, "")
         self.model_r2_3 = wx.Button(self.panel_4_copy_1, -1, "+")
-        self.label_9 = wx.StaticText(self.modelfree, -1, "Select Model-free models (default = all):")
-        self.m0 = wx.ToggleButton(self.modelfree, -1, "m0")
-        self.m1 = wx.ToggleButton(self.modelfree, -1, "m1")
-        self.m2 = wx.ToggleButton(self.modelfree, -1, "m2")
-        self.m3 = wx.ToggleButton(self.modelfree, -1, "m3")
-        self.m4 = wx.ToggleButton(self.modelfree, -1, "m4")
-        self.m5 = wx.ToggleButton(self.modelfree, -1, "m5")
-        self.m6 = wx.ToggleButton(self.modelfree, -1, "m6")
-        self.m7 = wx.ToggleButton(self.modelfree, -1, "m7")
-        self.m8 = wx.ToggleButton(self.modelfree, -1, "m8")
-        self.m9 = wx.ToggleButton(self.modelfree, -1, "m9")
-        self.label_10 = wx.StaticText(self.modelfree, -1, "Select Model-free selection mode:      ")
-        self.aic = wx.RadioButton(self.modelfree, -1, "AIC")
-        self.bic = wx.RadioButton(self.modelfree, -1, "BIC")
-        self.structure_file_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1_copy = wx.TextCtrl(self.modelfree, -1, structure_file_pdb)
+        self.label_9 = wx.StaticText(self.gui.modelfree, -1, "Select Model-free models (default = all):")
+        self.m0 = wx.ToggleButton(self.gui.modelfree, -1, "m0")
+        self.m1 = wx.ToggleButton(self.gui.modelfree, -1, "m1")
+        self.m2 = wx.ToggleButton(self.gui.modelfree, -1, "m2")
+        self.m3 = wx.ToggleButton(self.gui.modelfree, -1, "m3")
+        self.m4 = wx.ToggleButton(self.gui.modelfree, -1, "m4")
+        self.m5 = wx.ToggleButton(self.gui.modelfree, -1, "m5")
+        self.m6 = wx.ToggleButton(self.gui.modelfree, -1, "m6")
+        self.m7 = wx.ToggleButton(self.gui.modelfree, -1, "m7")
+        self.m8 = wx.ToggleButton(self.gui.modelfree, -1, "m8")
+        self.m9 = wx.ToggleButton(self.gui.modelfree, -1, "m9")
+        self.label_10 = wx.StaticText(self.gui.modelfree, -1, "Select Model-free selection mode:      ")
+        self.aic = wx.RadioButton(self.gui.modelfree, -1, "AIC")
+        self.bic = wx.RadioButton(self.gui.modelfree, -1, "BIC")
+        self.structure_file_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        self.structure_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, structure_file_pdb)
         self.structure_r21_copy_1_copy.SetEditable(False)
-        self.chan_struc_r21_copy_1_copy = wx.Button(self.modelfree, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.modelfree, -1, "")
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.modelfree, -1, results_dir_model)
-        self.results_directory_r21_copy_2 = wx.Button(self.modelfree, -1, "Change")
-        self.label_5_copy_1_copy_3 = wx.StaticText(self.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_modelfree = wx.BitmapButton(self.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        self.chan_struc_r21_copy_1_copy = wx.Button(self.gui.modelfree, -1, "Change")
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, "")
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.gui.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, results_dir_model)
+        self.results_directory_r21_copy_2 = wx.Button(self.gui.modelfree, -1, "Change")
+        self.label_5_copy_1_copy_3 = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
+        self.relax_start_modelfree = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         self.__set_properties()
         self.__do_layout()
@@ -835,7 +835,7 @@ class Auto_model_free:
         exec_relax_copy_1_copy_3.Add(self.relax_start_modelfree, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
         sizer_15.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
         sizer_14.Add(sizer_15, 0, 0, 0)
-        self.modelfree.SetSizer(sizer_14)
+        self.gui.modelfree.SetSizer(sizer_14)
         sizer_22.Add(self.label_11, 0, wx.LEFT|wx.ADJUST_MINSIZE, 10)
         sizer_23.Add(self.list_noe, 0, wx.ADJUST_MINSIZE, 0)
         sizer_23.Add(self.open_noe_results, 0, wx.ADJUST_MINSIZE, 0)
@@ -855,7 +855,7 @@ class Auto_model_free:
         self.notebook_2.AddPage(self.frq1, "Frq. 1")
         self.notebook_2.AddPage(self.frq2, "Frq. 2")
         self.notebook_2.AddPage(self.frq3, "Frq. 3")
-        self.notebook_2.AddPage(self.modelfree, "Model-free")
+        self.notebook_2.AddPage(self.gui.modelfree, "Model-free")
         self.notebook_2.AddPage(self.results, "Results")
         sizer_8.Add(self.notebook_2, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_8)
@@ -1277,7 +1277,7 @@ class Auto_model_free:
         self.label_5_copy_1_copy_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.relax_start_modelfree.SetName('hello')
         self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
-        self.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.label_11.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
         self.list_noe.SetMinSize((800, 150))
         self.list_noe.SetSelection(0)
