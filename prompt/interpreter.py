@@ -228,6 +228,14 @@ class Interpreter:
         return objects
 
 
+    def populate_self(self):
+        """Place all user functions and other special objects into self."""
+
+        # Add the interpreter objects to the class namespace.
+        for name in self._locals.keys():
+            setattr(self, name, self._locals[name])
+
+
     def run(self, script_file=None):
         """Run the python interpreter.
 
