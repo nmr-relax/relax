@@ -254,12 +254,6 @@ class Interpreter:
             # Run the script.
             return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
 
-        # Test for the dummy mode for generating documentation (then exit).
-        elif hasattr(self.relax, 'dummy_mode'):
-            # Place the namespace into self.relax
-            self.relax.local = locals()
-            return
-
         # Go to the prompt.
         else:
             prompt(intro=self.__intro_string, local=locals())
