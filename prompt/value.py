@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'value' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from doc_string import docs
@@ -76,8 +73,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.copy("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "value.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", param=" + repr(param) + ")"
@@ -116,8 +113,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.display("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "value.display("
             text = text + "param=" + repr(param) + ")"
             print(text)
 
@@ -195,8 +192,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.read("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "value.read("
             text = text + "param=" + repr(param)
             text = text + ", scaling=" + repr(scaling)
             text = text + ", file=" + repr(file)
@@ -353,8 +350,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.set("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "value.set("
             text = text + "val=" + repr(val)
             text = text + ", param=" + repr(param)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -422,8 +419,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "value.write("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "value.write("
             text = text + "param=" + repr(param)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

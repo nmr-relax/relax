@@ -88,18 +88,8 @@ __all__ = ['align_tensor',
 class System_test_runner:
     """Class for executing all of the system/functional tests."""
 
-    def __init__(self, relax):
-        """Place the relax namespace into self.relax when instantiating the class.
-
-        @param relax:   The relax namespace.
-        @type relax:    instance
-        """
-
-        self.relax = relax
-
-
     def run(self):
-        """Function for running all of the system/functional tests."""
+        """Run all of the system/functional tests."""
 
         # Create an array of test suites (add your new TestCase classes here).
         suite_array = []
@@ -128,11 +118,6 @@ class System_test_runner:
         suite_array.append(TestLoader().loadTestsFromTestCase(State))
         suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
         suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
-
-        # Add the relax namespace to each TestCase object.
-        for i in xrange(len(suite_array)):
-            for test in suite_array[i]._tests:
-                test.relax = self.relax
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)

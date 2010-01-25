@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2008, 2010 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.diffusion_tensor' module."""
 
     # Instantiate the user function class.
-    diffusion_tensor_fns = Diffusion_tensor(fake_relax.fake_instance())
+    diffusion_tensor_fns = Diffusion_tensor()
 
 
     def test_copy_argfail_pipe_from(self):

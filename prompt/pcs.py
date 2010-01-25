@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2009 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,9 +24,6 @@
 """Module containing the 'pcs' pseudocontact shift user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -47,8 +44,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pcs.back_calc("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pcs.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -117,8 +114,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pcs.centre("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pcs.centre("
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
@@ -128,7 +125,7 @@ class PCS(User_fn_class):
             print(text)
 
         # The argument checks.
-        arg_check.is_num_list(pos, 'atomic position', can_be_none=True)
+        arg_check.is_num_list(pos, 'atomic position', size=3, can_be_none=True)
         arg_check.is_str(atom_id, 'atom ID string', can_be_none=True)
         arg_check.is_str(pipe, 'data pipe', can_be_none=True)
         arg_check.is_int(verbosity, 'verbosity level')
@@ -176,8 +173,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pcs.copy("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pcs.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -214,8 +211,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pcs.delete("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pcs.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -244,8 +241,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pcs.display("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pcs.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -319,8 +316,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pcs.read("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pcs.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -378,8 +375,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "pcs.write("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "pcs.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

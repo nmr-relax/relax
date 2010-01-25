@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,21 +23,21 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import return_spin
 
 
-class Modelim(TestCase):
+class Modelim(SystemTestCase):
     """Class for testing model selection."""
 
     def setUp(self):
         """Set up for these system tests."""
 
         # Create a model-free data pipe.
-        self.relax.interpreter._Pipe.create('elim', 'mf')
+        self.interpreter.pipe.create('elim', 'mf')
 
 
     def tearDown(self):
@@ -50,13 +50,13 @@ class Modelim(TestCase):
         """Test the elimination of a model-free model with te = 200 ns."""
 
         # Read a results file.
-        self.relax.interpreter._Results.read(file='final_results_trunc_1.3', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
+        self.interpreter.results.read(file='final_results_trunc_1.3', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP')
 
         # Set the te value for residue 11 Leu to 200 ns.
-        self.relax.interpreter._Value.set(200*1e-9, 'te', spin_id=":11")
+        self.interpreter.value.set(200*1e-9, 'te', spin_id=":11")
 
         # Model elimination.
-        self.relax.interpreter._Eliminate.eliminate()
+        self.interpreter.eliminate()
 
         # Checks.
         self.assert_(return_spin(':9').select)
@@ -69,7 +69,7 @@ class Modelim(TestCase):
         """Test the elimination of a model-free model with the local tm = 51 ns."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'local_tm_model_elimination.py')
 
         # Checks.
         self.assert_(return_spin(':13').select)

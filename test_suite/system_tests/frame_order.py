@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -27,9 +27,9 @@ import numpy
 from re import search
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 from relax_io import DummyFileObject, open_read_file
@@ -55,14 +55,14 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
 
 
 
-class Frame_order(TestCase):
+class Frame_order(SystemTestCase):
     """TestCase class for the functional tests of the frame order theories."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('test', 'frame order')
+        self.interpreter.pipe.create('test', 'frame order')
 
 
     def tearDown(self):
@@ -114,14 +114,14 @@ class Frame_order(TestCase):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
     def test_opt_rigid_no_rot(self):
         """Test the 'rigid' model for unrotated tensors with no motion."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
 
         # Get the debugging message.
         self.mesg = self.mesg_opt_debug()
@@ -138,7 +138,7 @@ class Frame_order(TestCase):
         """Test the 'rigid' model for randomly rotated tensors with no motion."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
 
         # Get the debugging message.
         self.mesg = self.mesg_opt_debug()

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'n_state_model' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -81,8 +78,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.CoM("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "n_state_model.CoM("
             text = text + "pivot_point=" + repr(pivot_point)
             text = text + ", centre=" + repr(centre) + ")"
             print(text)
@@ -146,8 +143,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.cone_pdb("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "n_state_model.cone_pdb("
             text = text + "cone_type=" + repr(cone_type)
             text = text + ", scale=" + repr(scale)
             text = text + ", file=" + repr(file)
@@ -192,8 +189,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.number_of_states("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "n_state_model.number_of_states("
             text = text + "N=" + repr(N) + ")"
             print(text)
 
@@ -232,8 +229,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.ref_domain("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "n_state_model.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
@@ -281,8 +278,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "n_state_model.select_model("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "n_state_model.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 
