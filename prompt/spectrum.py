@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -58,7 +58,7 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "spectrum.baseplane_rmsd("
             text = text + "error=" + repr(error)
             text = text + ", spectrum_id=" + repr(spectrum_id)
@@ -216,7 +216,7 @@ class Spectrum(User_fn_class):
 
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "spectrum.error_analysis()"
             print(text)
 
@@ -250,7 +250,7 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "spectrum.integration_points("
             text = text + "N=" + repr(N)
             text = text + ", spectrum_id=" + repr(spectrum_id)
@@ -398,7 +398,7 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "spectrum.read_intensities("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -471,7 +471,7 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "spectrum.replicated("
             text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
             print(text)

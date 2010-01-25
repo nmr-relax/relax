@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -42,7 +42,7 @@ class Molmol(User_fn_class):
         """Function for clearing the Molmol command history."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molmol.clear_history()"
             print(text)
 
@@ -75,7 +75,7 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molmol.command("
             text = text + "command=" + repr(command) + ")"
             print(text)
@@ -142,7 +142,7 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molmol.macro_exec("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
@@ -187,7 +187,7 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molmol.ribbon()"
             print(text)
 
@@ -248,7 +248,7 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molmol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
@@ -271,7 +271,7 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molmol.view()"
             print(text)
 
@@ -342,7 +342,7 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molmol.write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)

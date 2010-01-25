@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -70,7 +70,7 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "dasha.create("
             text = text + "algor=" + repr(algor)
             text = text + ", dir=" + repr(dir)
@@ -114,7 +114,7 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "dasha.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
@@ -140,7 +140,7 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "dasha.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)

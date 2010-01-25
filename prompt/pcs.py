@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2009 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -47,7 +47,7 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pcs.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
@@ -117,7 +117,7 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pcs.centre("
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
@@ -176,7 +176,7 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pcs.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -214,7 +214,7 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pcs.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
@@ -244,7 +244,7 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pcs.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
@@ -319,7 +319,7 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pcs.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
@@ -378,7 +378,7 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pcs.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)

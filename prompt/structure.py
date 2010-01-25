@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2006-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -133,7 +133,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.create_diff_tensor_pdb("
             text = text + "scale=" + repr(scale)
             text = text + ", file=" + repr(file)
@@ -184,7 +184,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.create_vector_dist("
             text = text + "length=" + repr(length)
             text = text + ", file=" + repr(file)
@@ -239,7 +239,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.get_pos("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", ave_pos=" + repr(ave_pos) + ")"
@@ -272,7 +272,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.delete()"
             print(text)
 
@@ -330,7 +330,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.load_spins("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", combine_models=" + repr(combine_models)
@@ -440,7 +440,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.read_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -548,7 +548,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.vectors("
             text = text + "attached=" + repr(attached)
             text = text + ", spin_id=" + repr(spin_id)
@@ -608,7 +608,7 @@ class Structure(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "structure.write_pdb("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)

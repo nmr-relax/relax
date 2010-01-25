@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -83,7 +83,7 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "noe.read_restraints("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -131,7 +131,7 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "noe.spectrum_type("
             text = text + "spectrum_type=" + repr(spectrum_type)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"

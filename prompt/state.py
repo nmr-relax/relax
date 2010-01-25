@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007, 2009 Edward d'Auvergne                       #
+# Copyright (C) 2003-2005, 2007, 2009-2010 Edward d'Auvergne                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -83,7 +83,7 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "state.load("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)
@@ -162,7 +162,7 @@ class State(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "state.save("
             text = text + "state=" + repr(state)
             text = text + ", dir=" + repr(dir)

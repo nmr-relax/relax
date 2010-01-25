@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,30 +30,30 @@ from string import split, strip
 
 
 class Basic_class:
-    def __init__(self, relax):
+    def __init__(self, exec_info):
         """All non-user function classes.
 
-        @param relax:   The relax instance.
-        @type relax:    relax instance
+        @param exec_info:   The execution information container.  This must contain at least the exec_info.intro boolean variable.
+        @type exec_info:    class instance
         """
 
-        # Place relax in the class namespace.
-        self.__relax__ = relax
+        # Store the args.
+        self.exec_info = exec_info
 
 
 class User_fn_class:
-    def __init__(self, relax):
+    def __init__(self, exec_info):
         """Initialise the user function class, compiling the help string.
 
-        @param relax:   The relax instance.
-        @type relax:    relax instance
+        @param exec_info:   The execution information container.  This must contain at least the exec_info.intro boolean variable.
+        @type exec_info:    class instance
         """
+
+        # Store the args.
+        self.exec_info = exec_info
 
         # Add the generic help string.
         self.__relax_help__ = self.__doc__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
 
         # Add a description to the help string.
         if hasattr(self, '__description__'):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -123,8 +123,11 @@ class Interpreter:
         sys.ps2 = 'relax| '
         sys.ps3 = '\nrelax> '
 
-        # The function intro flag.
-        self.intro = False
+        # Initialise the execution information container (info that can change during execution).
+        self.exec_info = _Exec_info
+
+        # The function intro flag (store in the execution information container).
+        self.exec_info.intro = False
 
         # Set up the interpreter objects.
         self._locals = self._setup()
@@ -155,14 +158,14 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Initialise the user functions (those not in user function classes)
-        angles = Angles(self.relax)
-        eliminate = Eliminate(self.relax)
-        fix = Fix(self.relax)
-        reset = Reset(self.relax)
-        minimisation = Minimisation(self.relax)
-        modsel = Modsel(self.relax)
-        temp = Temp(self.relax)
-        opendx = OpenDX(self.relax)
+        angles = Angles(self.exec_info)
+        eliminate = Eliminate(self.exec_info)
+        fix = Fix(self.exec_info)
+        reset = Reset(self.exec_info)
+        minimisation = Minimisation(self.exec_info)
+        modsel = Modsel(self.exec_info)
+        temp = Temp(self.exec_info)
+        opendx = OpenDX(self.exec_info)
 
         # Place the user functions in the local namespace.
         objects['angle_diff_frame'] = angles.angle_diff_frame
@@ -176,39 +179,39 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['align_tensor'] = Align_tensor(self.relax)
-        objects['consistency_tests'] = Consistency_tests(self.relax)
-        objects['dasha'] = Dasha(self.relax)
-        objects['deselect'] = Deselect(self.relax)
-        objects['diffusion_tensor'] = Diffusion_tensor(self.relax)
-        objects['frame_order'] = Frame_order(self.relax)
-        objects['dx'] = OpenDX(self.relax)
-        objects['frq'] = Frq(self.relax)
-        objects['grace'] = Grace(self.relax)
-        objects['jw_mapping'] = Jw_mapping(self.relax)
-        objects['model_free'] = Model_free(self.relax)
-        objects['molmol'] = Molmol(self.relax)
-        objects['molecule'] = Molecule(self.relax)
-        objects['monte_carlo'] = Monte_carlo(self.relax)
-        objects['n_state_model'] = N_state_model(self.relax)
-        objects['noe'] = Noe(self.relax)
-        objects['palmer'] = Palmer(self.relax)
-        objects['pcs'] = PCS(self.relax)
-        objects['pymol'] = Pymol(self.relax)
-        objects['rdc'] = RDC(self.relax)
-        objects['relax_data'] = Relax_data(self.relax)
-        objects['relax_fit'] = Relax_fit(self.relax)
-        objects['residue'] = Residue(self.relax)
-        objects['results'] = Results(self.relax)
-        objects['pipe'] = Pipe(self.relax)
-        objects['select'] = Select(self.relax)
-        objects['sequence'] = Sequence(self.relax)
-        objects['spectrum'] = Spectrum(self.relax)
-        objects['spin'] = Spin(self.relax)
-        objects['state'] = State(self.relax)
-        objects['structure'] = Structure(self.relax)
-        objects['value'] = Value(self.relax)
-        objects['vmd'] = Vmd(self.relax)
+        objects['align_tensor'] = Align_tensor(self.exec_info)
+        objects['consistency_tests'] = Consistency_tests(self.exec_info)
+        objects['dasha'] = Dasha(self.exec_info)
+        objects['deselect'] = Deselect(self.exec_info)
+        objects['diffusion_tensor'] = Diffusion_tensor(self.exec_info)
+        objects['frame_order'] = Frame_order(self.exec_info)
+        objects['dx'] = OpenDX(self.exec_info)
+        objects['frq'] = Frq(self.exec_info)
+        objects['grace'] = Grace(self.exec_info)
+        objects['jw_mapping'] = Jw_mapping(self.exec_info)
+        objects['model_free'] = Model_free(self.exec_info)
+        objects['molmol'] = Molmol(self.exec_info)
+        objects['molecule'] = Molecule(self.exec_info)
+        objects['monte_carlo'] = Monte_carlo(self.exec_info)
+        objects['n_state_model'] = N_state_model(self.exec_info)
+        objects['noe'] = Noe(self.exec_info)
+        objects['palmer'] = Palmer(self.exec_info)
+        objects['pcs'] = PCS(self.exec_info)
+        objects['pymol'] = Pymol(self.exec_info)
+        objects['rdc'] = RDC(self.exec_info)
+        objects['relax_data'] = Relax_data(self.exec_info)
+        objects['relax_fit'] = Relax_fit(self.exec_info)
+        objects['residue'] = Residue(self.exec_info)
+        objects['results'] = Results(self.exec_info)
+        objects['pipe'] = Pipe(self.exec_info)
+        objects['select'] = Select(self.exec_info)
+        objects['sequence'] = Sequence(self.exec_info)
+        objects['spectrum'] = Spectrum(self.exec_info)
+        objects['spin'] = Spin(self.exec_info)
+        objects['state'] = State(self.exec_info)
+        objects['structure'] = Structure(self.exec_info)
+        objects['value'] = Value(self.exec_info)
+        objects['vmd'] = Vmd(self.exec_info)
 
         # Builtin interpreter functions.
         objects['intro_off'] = self._off
@@ -249,7 +252,7 @@ class Interpreter:
         # Execute the script file if given.
         if script_file:
             # Turn on the function intro flag.
-            self.intro = True
+            self.exec_info.intro = True
 
             # Run the script.
             return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
@@ -262,14 +265,14 @@ class Interpreter:
     def _off(self):
         """Function for turning the function introductions off."""
 
-        self.intro = False
+        self.exec_info.intro = False
         print("Echoing of user function calls has been disabled.")
 
 
     def _on(self):
         """Function for turning the function introductions on."""
 
-        self.intro = True
+        self.exec_info.intro = True
         print("Echoing of user function calls has been enabled.")
 
 
@@ -277,7 +280,7 @@ class Interpreter:
         """Function for executing a script file."""
 
         # Function intro text.
-        if self.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "script("
             text = text + "file=" + repr(file)
             text = text + ", quit=" + repr(quit) + ")"
@@ -298,14 +301,18 @@ class Interpreter:
             raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
-        orig_intro_state = self.intro
-        self.intro = True
+        orig_intro_state = self.exec_info.intro
+        self.exec_info.intro = True
 
         # Execute the script.
         run_script(local=self.local, script_file=file, quit=quit)
 
         # Return the function intro flag to the original value.
-        self.intro = orig_intro_state
+        self.exec_info.intro = orig_intro_state
+
+
+class _Exec_info:
+    """Container for execution information."""
 
 
 class _Exit:

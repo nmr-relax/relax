@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -64,7 +64,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.cartoon()"
             print(text)
 
@@ -76,7 +76,7 @@ class Pymol(User_fn_class):
         """Function for clearing the PyMOL command history."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.clear_history()"
             print(text)
 
@@ -109,7 +109,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.command("
             text = text + "command=" + repr(command) + ")"
             print(text)
@@ -155,7 +155,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.cone_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
@@ -221,7 +221,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.macro_exec("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
@@ -284,7 +284,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
@@ -320,7 +320,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.vector_dist("
             text = text + "file=" + repr(file) + ")"
             print(text)
@@ -343,7 +343,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.view()"
             print(text)
 
@@ -414,7 +414,7 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "pymol.write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)

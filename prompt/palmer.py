@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2006, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2003-2006, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -94,7 +94,7 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "palmer.create("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
@@ -160,7 +160,7 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "palmer.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
@@ -186,7 +186,7 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "palmer.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)

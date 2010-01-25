@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -72,7 +72,7 @@ class Grace(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "grace.view("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -85,7 +85,7 @@ class Grace(User_fn_class):
         arg_check.is_str(grace_exe, 'Grace executable file')
 
         # Execute the functional code.
-        self.__relax__.generic.grace.view(file=file, dir=dir, grace_exe=grace_exe)
+        self.exec_infoce.view(file=file, dir=dir, grace_exe=grace_exe)
 
 
     def write(self, x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value', file=None, dir='grace', force=False, norm=False):
@@ -180,7 +180,7 @@ class Grace(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "grace.write("
             text = text + "x_data_type=" + repr(x_data_type)
             text = text + ", y_data_type=" + repr(y_data_type)

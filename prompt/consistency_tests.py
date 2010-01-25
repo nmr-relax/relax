@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2005, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2004-2005, 2009-2010 Edward d'Auvergne                        #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -61,7 +61,7 @@ class Consistency_tests(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "consistency_tests.set_frq("
             text = text + "frq=" + repr(frq) + ")"
             print(text)

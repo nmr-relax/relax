@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -59,7 +59,7 @@ class OpenDX(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "dx("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -163,7 +163,7 @@ class OpenDX(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "map("
             text = text + "params=" + repr(params)
             text = text + ", map_type=" + repr(map_type)

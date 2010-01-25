@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2009 Edward d'Auvergne                                  #
+# Copyright (C) 2007, 2009-2010 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -76,7 +76,7 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molecule.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", mol_from=" + repr(mol_from)
@@ -121,7 +121,7 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molecule.create("
             text = text + "mol_name=" + repr(mol_name) + ")"
             print(text)
@@ -149,7 +149,7 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molecule.delete("
             text = text + "mol_id=" + repr(mol_id) + ")"
             print(text)
@@ -171,7 +171,7 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molecule.display("
             text = text + "mol_id=" + repr(mol_id) + ")"
             print(text)
@@ -214,7 +214,7 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "molecule.name("
             text = text + "mol_id=" + repr(mol_id)
             text = text + ", name=" + repr(name)

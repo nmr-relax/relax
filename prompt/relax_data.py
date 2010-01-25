@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005,2007-2009 Edward d'Auvergne                         #
+# Copyright (C) 2003-2005,2007-2010 Edward d'Auvergne                         #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -52,7 +52,7 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "relax_data.back_calc("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
@@ -109,7 +109,7 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "relax_data.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -151,7 +151,7 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "relax_data.delete("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
@@ -185,7 +185,7 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "relax_data.display("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
@@ -282,7 +282,7 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "relax_data.read("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
@@ -348,7 +348,7 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "relax_data.write("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)

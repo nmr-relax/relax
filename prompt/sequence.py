@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2007-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2007-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -78,7 +78,7 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "sequence.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
@@ -117,7 +117,7 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "sequence.display("
             text = text + "sep=" + repr(sep)
             text = text + ", mol_name_flag=" + repr(mol_name_flag)
@@ -217,7 +217,7 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "sequence.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -279,7 +279,7 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "sequence.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)

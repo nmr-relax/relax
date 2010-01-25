@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2006, 2008-2009 Edward d'Auvergne                 #
+# Copyright (C) 2003, 2004, 2006, 2008-2010 Edward d'Auvergne                 #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -79,7 +79,7 @@ class Select(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "select.all()"
             print(text)
 
@@ -158,7 +158,7 @@ class Select(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "select.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -217,7 +217,7 @@ class Select(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "select.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
@@ -266,7 +266,7 @@ class Select(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "select.spin("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", boolean=" + repr(boolean)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -78,7 +78,7 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "frame_order.cone_pdb("
             text = text + "size=" + repr(size)
             text = text + ", inc=" + repr(inc)
@@ -118,7 +118,7 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "frame_order.pivot("
             text = text + "pivot=" + repr(pivot) + ")"
             print(text)
@@ -157,7 +157,7 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "frame_order.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
@@ -196,7 +196,7 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "frame_order.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)

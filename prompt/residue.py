@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2009 Edward d'Auvergne                                  #
+# Copyright (C) 2007, 2009-2010 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -80,7 +80,7 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "residue.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", res_from=" + repr(res_from)
@@ -133,7 +133,7 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "residue.create("
             text = text + "res_num=" + repr(res_num)
             text = text + ", res_name=" + repr(res_name)
@@ -167,7 +167,7 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "residue.delete("
             text = text + "res_id=" + repr(res_id) + ")"
             print(text)
@@ -189,7 +189,7 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "residue.display("
             text = text + "res_id=" + repr(res_id) + ")"
             print(text)
@@ -236,7 +236,7 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "residue.name("
             text = text + "res_id=" + repr(res_id)
             text = text + ", name=" + repr(name)
@@ -284,7 +284,7 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "residue.number("
             text = text + "res_id=" + repr(res_id)
             text = text + ", number=" + repr(number)

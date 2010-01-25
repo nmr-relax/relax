@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -78,7 +78,7 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "diffusion_tensor.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
@@ -106,7 +106,7 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "diffusion_tensor.delete()"
             print(text)
 
@@ -118,7 +118,7 @@ class Diffusion_tensor(User_fn_class):
         """Function for displaying the diffusion tensor information."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "diffusion_tensor.display()"
             print(text)
 
@@ -379,7 +379,7 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
+        if self.exec_info.intro:
             text = sys.ps3 + "diffusion_tensor.init("
             text = text + "params=" + repr(params)
             text = text + ", time_scale=" + repr(time_scale)
