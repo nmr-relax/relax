@@ -93,11 +93,9 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, relax, intro_string=None, show_script=True, quit=True, raise_relax_error=False):
+    def __init__(self, intro_string=None, show_script=True, quit=True, raise_relax_error=False):
         """The interpreter class.
 
-        @param relax:               The relax instance.
-        @type relax:                instance
         @param intro_string:        The string to print at the start of execution.
         @type intro_string:         str
         @param show_script:         If true, the relax will print the script contents prior to
@@ -113,7 +111,6 @@ class Interpreter:
         """
 
         # Place the arguments in the class namespace.
-        self.relax = relax
         self.__intro_string = intro_string
         self.__show_script = show_script
         self.__quit_flag = quit
