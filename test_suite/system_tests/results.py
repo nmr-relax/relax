@@ -38,7 +38,7 @@ class Results(SystemTestCase):
         """Set up for all the functional tests."""
 
         # Create a data pipe.
-        self.relax.interpreter._Pipe.create('test', 'relax_fit')
+        self.interpreter.pipe.create('test', 'relax_fit')
 
         # Create a temporary file name.
         self.tmpfile = mktemp()
@@ -58,11 +58,11 @@ class Results(SystemTestCase):
         """Test the reading of an empty results file."""
 
         # Read the results.
-        self.relax.interpreter._Results.read(file='empty', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'results_files'+sep)
+        self.interpreter.results.read(file='empty', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'results_files'+sep)
 
 
     def test_write_empty_results(self):
         """Test the writing of an empty results file."""
 
         # Write the results.
-        self.relax.interpreter._Results.write(file=self.tmpfile, dir=None)
+        self.interpreter.results.write(file=self.tmpfile, dir=None)

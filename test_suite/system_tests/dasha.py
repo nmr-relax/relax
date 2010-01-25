@@ -43,7 +43,7 @@ class Dasha(SystemTestCase):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('dasha', 'mf')
+        self.interpreter.pipe.create('dasha', 'mf')
 
         # Create a temporary directory for Dasha outputs.
         ds.tmpdir = mkdtemp()
@@ -70,4 +70,4 @@ class Dasha(SystemTestCase):
             return
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')

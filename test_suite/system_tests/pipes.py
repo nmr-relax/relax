@@ -41,4 +41,4 @@ class Pipes(SystemTestCase):
         """Create a data pipe."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('test', 'mf')
+        self.interpreter.pipe.create('test', 'mf')

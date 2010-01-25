@@ -36,7 +36,7 @@ class Noe(SystemTestCase):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('noe', 'noe')
+        self.interpreter.pipe.create('noe', 'noe')
 
 
     def tearDown(self):
@@ -49,4 +49,4 @@ class Noe(SystemTestCase):
         """Test the NOE analysis."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')

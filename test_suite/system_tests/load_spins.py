@@ -37,7 +37,7 @@ class Load_spins(SystemTestCase):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
+        self.interpreter.pipe.create('mf', 'mf')
 
 
     def tearDown(self):
@@ -50,7 +50,7 @@ class Load_spins(SystemTestCase):
         """Test the loading of spins from a small molecule using the Scientific Python PDB data object."""
 
         # Execute a relax script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
 
         # Test the molecule and residue data.
         self.assertEqual(len(cdp.mol), 1)
