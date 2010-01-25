@@ -1268,7 +1268,7 @@ class N_state_model(API_base, API_common):
         data_types = self._base_data_types()
 
         # Nothing more to do!
-        if not param_vector:
+        if not len(param_vector):
             return None, None, data_types, None
 
         # Diagonal scaling.
