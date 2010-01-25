@@ -738,8 +738,7 @@ class dAuvergne_protocol:
             self.interpreter.pipe.create(name, 'mf')
 
             # Load the sequence.
-            print self.seq_args
-            self.interpreter.sequence.read(self.seq_args[0], self.seq_args[1], self.seq_args[2], self.seq_args[3], self.seq_args[4], self.seq_args[5], self.seq_args[6], self.seq_args[7])
+            self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
 
             # Name the spins if necessary.
             if self.seq_args[6] == None:
@@ -752,7 +751,7 @@ class dAuvergne_protocol:
 
             # Load the relaxation data.
             for data in self.relax_data:
-                self.interpreter.relax_data.read(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12])
+                self.interpreter.relax_data.read(ri_label=data[0], frq_label=data[1], frq=data[2], file=data[3], dir=data[4], mol_name_col=data[5], res_num_col=data[6], res_name_col=data[7], spin_num_col=data[8], spin_name_col=data[9], data_col=data[10], error_col=data[11], sep=data[12])
 
             # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if self.unres:
