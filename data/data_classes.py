@@ -184,7 +184,7 @@ class RelaxListType(ListType):
         element.appendChild(list_element)
 
         # Set the list attributes.
-        list_element.setAttribute('desc', self.desc)
+        list_element.setAttribute('desc', self.list_desc)
 
         # Add all simple python objects within the PipeContainer to the pipe element.
         fill_object_contents(doc, list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
