@@ -135,7 +135,7 @@ class Main(wx.Frame):
         kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
 
         # Execute the base class __init__ method.
-        super(wx.Frame, self).__init__(self, *args, **kwds)
+        super(Main, self).__init__(*args, **kwds)
 
         # Build the frame.
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)

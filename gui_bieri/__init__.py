@@ -75,7 +75,7 @@ def run(intro_string):
         sys.exit()
 
     # Build the GUI.
-    relaxGUI_main = Main(None, -1, "")
+    relaxGUI_main = Main(parent=None, id=-1, title="")
     relaxGUI.SetTopWindow(relaxGUI_main)
     relaxGUI_main.Show()
     relaxGUI.MainLoop()
