@@ -56,7 +56,7 @@ def opendir(msg, default): # select directory, msg is message to display, defaul
         return newdir
 
 
-def openfile(msg=None, directory=None, filetype=None, default=None):
+def openfile(msg=None, directory=None, filetype='', default=None):
     """Open a file.
 
     For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
@@ -92,7 +92,7 @@ def openfile(msg=None, directory=None, filetype=None, default=None):
         return dialog.GetPath()
 
 
-def savefile(msg=None, directory=None, filetype=None, default=None):
+def savefile(msg=None, directory=None, filetype='', default=None):
     """Save a file.
 
     For example to save /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
