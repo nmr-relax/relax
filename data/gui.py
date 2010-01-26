@@ -56,9 +56,7 @@ class Analyses(RelaxListType):
 
         # Some generic initial names.
         self.list_name = 'analyses'
-        self.list_desc = 'List of relax analyses'
-        self.element_name = 'analysis'
-        self.element_desc = 'relax analysis'
+        self.list_desc = 'GUI information specific to relax analysis types'
 
 
     def add(self, type=None):
@@ -69,7 +67,7 @@ class Analyses(RelaxListType):
         """
 
         # Append an empty element.
-        self.append(Element())
+        self.append(Element(name='analysis', desc='GUI information for a relax analysis'))
 
-        # Set the analysis name.
-        self.name = type
+        # Set the analysis type.
+        self[-1].analysis_type = type
