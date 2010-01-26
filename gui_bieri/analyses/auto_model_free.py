@@ -132,7 +132,7 @@ class Auto_model_free:
         # Button actions.
         self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
         self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
-        self.gui.Bind(wx.EVT_BUTTON, self.structure_pdb, self.chan_struc_r21_copy_1_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.gui.structure_pdb, self.chan_struc_r21_copy_1_copy)
         self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
         self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
         self.gui.Bind(wx.EVT_BUTTON, self.model_noe1, self.model_noe_1)
@@ -539,22 +539,4 @@ class Auto_model_free:
 
     def sel_bic(self, event):
         selection = "BIC"
-        event.Skip()
-
-
-    def structure_pdb(self, event): # structure file
-        backup = self.structure_noe1.GetValue()
-        structure_file_pdb = openfile('Select PDB File', self.res_noe1.GetValue() + sep, '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
-        if structure_file_pdb == None:
-            structure_file_pdb = backup
-        self.structure_noe1.SetValue(structure_file_pdb)
-        self.structure_r11.SetValue(structure_file_pdb)
-        self.structure_r21.SetValue(structure_file_pdb)
-        self.structure_noe1_copy.SetValue(structure_file_pdb)
-        self.structure_r11_copy.SetValue(structure_file_pdb)
-        self.structure_r21_copy.SetValue(structure_file_pdb)
-        self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-        self.structure_r11_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1_copy.SetValue(structure_file_pdb)
         event.Skip()
