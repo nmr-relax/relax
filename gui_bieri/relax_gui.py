@@ -2075,18 +2075,21 @@ class Main(wx.Frame):
             ds.relax_gui.analyses.add('NOE')
 
             # Initialise the variables.
+            ds.relax_gui.analyses[-1].frq = nmrfreq[i]
             ds.relax_gui.analyses[-1].ref_file = ''
             ds.relax_gui.analyses[-1].sat_file = ''
-            ds.relax_gui.analyses[-1].ref_rmds = 1000
-            ds.relax_gui.analyses[-1].sat_rmds = 1000
+            ds.relax_gui.analyses[-1].ref_rmsd = 1000
+            ds.relax_gui.analyses[-1].sat_rmsd = 1000
 
         # Initialise the 3 R1 and 3 R2 analyses.
         rx = ['R1']*3 + ['R2']*3
+        nmrfreq = nmrfreq * 2
         for name in rx:
             # Add the element.
             ds.relax_gui.analyses.add(name)
 
             # Initialise the variables.
+            ds.relax_gui.analyses[-1].frq = nmrfreq[i]
             ds.relax_gui.analyses[-1].num = 0
             ds.relax_gui.analyses[-1].file_list = []
             ds.relax_gui.analyses[-1].relax_times = []
