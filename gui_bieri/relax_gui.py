@@ -42,6 +42,7 @@ from version import version
 
 # relaxGUI module imports.
 from about import about_relax
+from analyses.auto_model_free import Auto_model_free
 from analyses.project import create_save_file, open_file
 from analyses.relax_control import start_modelfree, start_noe, start_rx
 from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
@@ -65,7 +66,6 @@ GUI_version = '1.00'
 ######################
 
 # Define Global Variables
-structure_file_pdb = "please insert .pdb file"
 unresolved = ""
 results_noe = []
 results_rx = []
@@ -113,19 +113,6 @@ r2_time3 = []
 r2_sourcedir = [getcwd(),getcwd(),getcwd()]
 r2_savedir = [getcwd(),getcwd(),getcwd()]
 
-#Model-free variables
-model_source = getcwd()
-model_save = getcwd()
-selection = "AIC"
-models = ["m0","m1","m2","m3","m4","m5","m6","m7","m8","m9"]
-nmrfreq1 = 600
-nmrfreq2 = 800
-nmrfreq3 = 900
-paramfiles1 = ["","",""]
-paramfiles2 = ["","",""]
-paramfiles3 = ["","",""]
-results_dir_model = getcwd()
-
 
 #####################################################################################################################
 #####################################################################################################################
@@ -137,6 +124,11 @@ results_dir_model = getcwd()
 
 
 class Main(wx.Frame):
+    """The main GUI class."""
+
+    # Hard coded variables.
+    structure_file_pdb_msg = "please insert .pdb file"
+
     def __init__(self, *args, **kwds):
         # begin
         kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
@@ -144,9 +136,6 @@ class Main(wx.Frame):
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
         self.results = wx.Panel(self.notebook_2, -1)
         self.modelfree = wx.Panel(self.notebook_2, -1)
-        self.panel_4_copy_1 = wx.Panel(self.modelfree, -1)
-        self.panel_4_copy = wx.Panel(self.modelfree, -1)
-        self.panel_4 = wx.Panel(self.modelfree, -1)
         self.frq3 = wx.Panel(self.notebook_2, -1)
         self.notebook_3_copy_1 = wx.Notebook(self.frq3, -1, style=0)
         self.r2_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
@@ -235,7 +224,7 @@ class Main(wx.Frame):
         self.label_2_copy_copy_copy_copy_copy_1 = wx.StaticText(self.noe1, -1, "reference NOE background RMSD", style=wx.ALIGN_RIGHT)
         self.noe_ref_err_1 = wx.TextCtrl(self.noe1, -1, str(noerefrmsd[0]))
         self.label_2_copy_copy_2_copy_1 = wx.StaticText(self.noe1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_noe1 = wx.TextCtrl(self.noe1, -1, structure_file_pdb)
+        self.structure_noe1 = wx.TextCtrl(self.noe1, -1, self.structure_file_pdb_msg)
         self.structure_noe1.SetEditable(False)
         self.ref_noe_copy_1 = wx.Button(self.noe1, -1, "Add / Change")
         self.label_2_copy_copy_copy_1_copy_1 = wx.StaticText(self.noe1, -1, "Unresolved Residues\nseparated by comma:")
@@ -257,7 +246,7 @@ class Main(wx.Frame):
         self.resultsdir_r11 = wx.TextCtrl(self.r1_1, -1, r1_savedir[0])
         self.results_directory_copy_copy = wx.Button(self.r1_1, -1, "Change")
         self.structure_file = wx.StaticText(self.r1_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11 = wx.TextCtrl(self.r1_1, -1, structure_file_pdb)
+        self.structure_r11 = wx.TextCtrl(self.r1_1, -1, self.structure_file_pdb_msg)
         self.structure_r11.SetEditable(False)
         self.results_directory_copy_copy_copy = wx.Button(self.r1_1, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy = wx.StaticText(self.r1_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
@@ -308,7 +297,7 @@ class Main(wx.Frame):
         self.resultsdir_r21 = wx.TextCtrl(self.r2_1, -1, r2_savedir[0])
         self.results_directory_r21 = wx.Button(self.r2_1, -1, "Change")
         self.structure_file_copy = wx.StaticText(self.r2_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21 = wx.TextCtrl(self.r2_1, -1, structure_file_pdb)
+        self.structure_r21 = wx.TextCtrl(self.r2_1, -1, self.structure_file_pdb_msg)
         self.structure_r21.SetEditable(False)
         self.chan_struc_r21 = wx.Button(self.r2_1, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
@@ -366,7 +355,7 @@ class Main(wx.Frame):
         self.label_2_copy_copy_copy_copy_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "reference NOE background RMSD", style=wx.ALIGN_RIGHT)
         self.noe_ref_err_1_copy = wx.TextCtrl(self.noe1_copy, -1, "1000")
         self.label_2_copy_copy_2_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, structure_file_pdb)
+        self.structure_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, self.structure_file_pdb_msg)
         self.structure_noe1_copy.SetEditable(False)
         self.ref_noe_copy_1_copy = wx.Button(self.noe1_copy, -1, "Add / Change")
         self.label_2_copy_copy_copy_1_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Unresolved Residues\nseparated by comma:")
@@ -388,7 +377,7 @@ class Main(wx.Frame):
         self.resultsdir_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, r1_savedir[1])
         self.results_directory_copy_copy_copy_1 = wx.Button(self.r1_1_copy, -1, "Change")
         self.structure_file_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, structure_file_pdb)
+        self.structure_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, self.structure_file_pdb_msg)
         self.results_directory_copy_copy_copy_copy = wx.Button(self.r1_1_copy, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
         self.unresolved_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, "")
@@ -437,7 +426,7 @@ class Main(wx.Frame):
         self.resultsdir_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, r2_savedir[1])
         self.results_directory_r21_copy = wx.Button(self.r2_1_copy, -1, "Change")
         self.structure_file_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, structure_file_pdb)
+        self.structure_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, self.structure_file_pdb_msg)
         self.structure_r21_copy.SetEditable(False)
         self.chan_struc_r21_copy = wx.Button(self.r2_1_copy, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
@@ -494,7 +483,7 @@ class Main(wx.Frame):
         self.label_2_copy_copy_copy_copy_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "reference NOE background RMSD", style=wx.ALIGN_RIGHT)
         self.noe_ref_err_1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, "1000")
         self.label_2_copy_copy_2_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, structure_file_pdb)
+        self.structure_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, self.structure_file_pdb_msg)
         self.structure_noe1_copy_1.SetEditable(False)
         self.ref_noe_copy_1_copy_1 = wx.Button(self.noe1_copy_1, -1, "Add / Change")
         self.label_2_copy_copy_copy_1_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Unresolved Residues\nseparated by comma:")
@@ -516,7 +505,7 @@ class Main(wx.Frame):
         self.resultsdir_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, r1_savedir[2])
         self.results_directory_copy_copy_copy_2 = wx.Button(self.r1_1_copy_1, -1, "Change")
         self.structure_file_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, structure_file_pdb)
+        self.structure_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, self.structure_file_pdb_msg)
         self.structure_r11_copy_1.SetEditable(False)
         self.results_directory_copy_copy_copy_copy_1 = wx.Button(self.r1_1_copy_1, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
@@ -566,7 +555,7 @@ class Main(wx.Frame):
         self.resultsdir_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, r2_savedir[2])
         self.results_directory_r21_copy_1 = wx.Button(self.r2_1_copy_1, -1, "Change")
         self.structure_file_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, structure_file_pdb)
+        self.structure_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, self.structure_file_pdb_msg)
         self.structure_r21_copy_1.SetEditable(False)
         self.chan_struc_r21_copy_1 = wx.Button(self.r2_1_copy_1, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
@@ -608,67 +597,8 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_copy_1 = wx.BitmapButton(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
-        #Model-free
-        self.bitmap_2 = wx.StaticBitmap(self.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Set-up for Model-free analysis:")
-        self.label_7 = wx.StaticText(self.panel_4, -1, "NMR freq 1:")
-        self.modelfreefreq1 = wx.TextCtrl(self.panel_4, -1, "")
-        self.label_8 = wx.StaticText(self.panel_4, -1, "NOE")
-        self.m_noe_1 = wx.TextCtrl(self.panel_4, -1, "")
-        self.model_noe_1 = wx.Button(self.panel_4, -1, "+")
-        self.label_8_copy = wx.StaticText(self.panel_4, -1, "R1")
-        self.m_r1_1 = wx.TextCtrl(self.panel_4, -1, "")
-        self.model_r1_1 = wx.Button(self.panel_4, -1, "+")
-        self.label_8_copy_copy = wx.StaticText(self.panel_4, -1, "R2")
-        self.m_r2_1 = wx.TextCtrl(self.panel_4, -1, "")
-        self.model_r2_1 = wx.Button(self.panel_4, -1, "+")
-        self.label_7_copy = wx.StaticText(self.panel_4_copy, -1, "NMR freq 2:")
-        self.modelfreefreq2 = wx.TextCtrl(self.panel_4_copy, -1, "")
-        self.label_8_copy_1 = wx.StaticText(self.panel_4_copy, -1, "NOE")
-        self.m_noe_2 = wx.TextCtrl(self.panel_4_copy, -1, "")
-        self.model_noe_2 = wx.Button(self.panel_4_copy, -1, "+")
-        self.label_8_copy_copy_1 = wx.StaticText(self.panel_4_copy, -1, "R1")
-        self.m_r1_2 = wx.TextCtrl(self.panel_4_copy, -1, "")
-        self.model_r1_2 = wx.Button(self.panel_4_copy, -1, "+")
-        self.label_8_copy_copy_copy = wx.StaticText(self.panel_4_copy, -1, "R2")
-        self.m_r2_2 = wx.TextCtrl(self.panel_4_copy, -1, "")
-        self.model_r2_2 = wx.Button(self.panel_4_copy, -1, "+")
-        self.label_7_copy_copy = wx.StaticText(self.panel_4_copy_1, -1, "NMR freq 3:")
-        self.modelfreefreq3 = wx.TextCtrl(self.panel_4_copy_1, -1, "")
-        self.label_8_copy_1_copy = wx.StaticText(self.panel_4_copy_1, -1, "NOE")
-        self.m_noe_3 = wx.TextCtrl(self.panel_4_copy_1, -1, "")
-        self.model_noe_3 = wx.Button(self.panel_4_copy_1, -1, "+")
-        self.label_8_copy_copy_1_copy = wx.StaticText(self.panel_4_copy_1, -1, "R1")
-        self.m_r1_3 = wx.TextCtrl(self.panel_4_copy_1, -1, "")
-        self.model_r1_3 = wx.Button(self.panel_4_copy_1, -1, "+")
-        self.label_8_copy_copy_copy_copy = wx.StaticText(self.panel_4_copy_1, -1, "R2")
-        self.m_r2_3 = wx.TextCtrl(self.panel_4_copy_1, -1, "")
-        self.model_r2_3 = wx.Button(self.panel_4_copy_1, -1, "+")
-        self.label_9 = wx.StaticText(self.modelfree, -1, "Select Model-free models (default = all):")
-        self.m0 = wx.ToggleButton(self.modelfree, -1, "m0")
-        self.m1 = wx.ToggleButton(self.modelfree, -1, "m1")
-        self.m2 = wx.ToggleButton(self.modelfree, -1, "m2")
-        self.m3 = wx.ToggleButton(self.modelfree, -1, "m3")
-        self.m4 = wx.ToggleButton(self.modelfree, -1, "m4")
-        self.m5 = wx.ToggleButton(self.modelfree, -1, "m5")
-        self.m6 = wx.ToggleButton(self.modelfree, -1, "m6")
-        self.m7 = wx.ToggleButton(self.modelfree, -1, "m7")
-        self.m8 = wx.ToggleButton(self.modelfree, -1, "m8")
-        self.m9 = wx.ToggleButton(self.modelfree, -1, "m9")
-        self.label_10 = wx.StaticText(self.modelfree, -1, "Select Model-free selection mode:      ")
-        self.aic = wx.RadioButton(self.modelfree, -1, "AIC")
-        self.bic = wx.RadioButton(self.modelfree, -1, "BIC")
-        self.structure_file_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1_copy = wx.TextCtrl(self.modelfree, -1, structure_file_pdb)
-        self.structure_r21_copy_1_copy.SetEditable(False)
-        self.chan_struc_r21_copy_1_copy = wx.Button(self.modelfree, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.modelfree, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.modelfree, -1, "")
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.modelfree, -1, results_dir_model)
-        self.results_directory_r21_copy_2 = wx.Button(self.modelfree, -1, "Change")
-        self.label_5_copy_1_copy_3 = wx.StaticText(self.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_modelfree = wx.BitmapButton(self.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        # The automatic model-free protocol GUI element.
+        Auto_model_free(self)
 
         ## results
         self.label_11 = wx.StaticText(self.results, -1, "NOE analysis")
@@ -744,20 +674,6 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.add_r2_3, self.addr21_copy_1)
         self.Bind(wx.EVT_BUTTON, self.refresh_r2_3, self.refreshr21_copy_1)
         self.Bind(wx.EVT_BUTTON, self.exec_r2_3, self.relax_start_r1_1_copy_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.model_noe1, self.model_noe_1)
-        self.Bind(wx.EVT_BUTTON, self.model_r11, self.model_r1_1)
-        self.Bind(wx.EVT_BUTTON, self.model_r21, self.model_r2_1)
-        self.Bind(wx.EVT_BUTTON, self.model_noe2, self.model_noe_2)
-        self.Bind(wx.EVT_BUTTON, self.model_r12, self.model_r1_2)
-        self.Bind(wx.EVT_BUTTON, self.model_r22, self.model_r2_2)
-        self.Bind(wx.EVT_BUTTON, self.model_noe3, self.model_noe_3)
-        self.Bind(wx.EVT_BUTTON, self.model_r13, self.model_r1_3)
-        self.Bind(wx.EVT_BUTTON, self.model_r23, self.model_r2_3)
-        self.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
-        self.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
-        self.Bind(wx.EVT_BUTTON, self.structure_pdb, self.chan_struc_r21_copy_1_copy)
-        self.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
-        self.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_noe_results_exe, self.list_noe)
         self.Bind(wx.EVT_BUTTON, self.open_noe_results_exe, self.open_noe_results)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_rx_results_exe, self.list_rx)
@@ -776,15 +692,6 @@ class Main(wx.Frame):
         sizer_23_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_22 = wx.BoxSizer(wx.VERTICAL)
         sizer_23 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_15 = wx.BoxSizer(wx.VERTICAL)
-        exec_relax_copy_1_copy_3 = wx.BoxSizer(wx.HORIZONTAL)
-        results_dir_copy_copy_copy_1_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        results_dir_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_21 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_20 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_16 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_17_copy_copy = wx.BoxSizer(wx.VERTICAL)
         sizer_19_copy_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_19_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
@@ -795,11 +702,8 @@ class Main(wx.Frame):
         sizer_19_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_19_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_18_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_17 = wx.BoxSizer(wx.VERTICAL)
         sizer_19_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_19_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_19 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_18 = wx.BoxSizer(wx.HORIZONTAL)
         frq1sub_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_10_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_11_copy_copy_1 = wx.BoxSizer(wx.VERTICAL)
@@ -1379,92 +1283,6 @@ class Main(wx.Frame):
         self.notebook_3_copy_1.AddPage(self.r2_1_copy_1, "R2 relaxation")
         frq1sub_copy_1.Add(self.notebook_3_copy_1, 1, wx.EXPAND, 0)
         self.frq3.SetSizer(frq1sub_copy_1)
-        sizer_14.Add(self.bitmap_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(self.label_4_copy_copy_copy_copy_1_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-        sizer_18.Add(self.label_7, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18.Add(self.modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_18, 0, 0, 0)
-        sizer_19.Add(self.label_8, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19.Add(self.m_noe_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19.Add(self.model_noe_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_19, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy.Add(self.label_8_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy.Add(self.m_r1_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy.Add(self.model_r1_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_19_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy.Add(self.label_8_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy.Add(self.m_r2_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy.Add(self.model_r2_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17.Add(sizer_19_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_4.SetSizer(sizer_17)
-        sizer_16.Add(self.panel_4, 0, 0, 0)
-        sizer_18_copy.Add(self.label_7_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18_copy.Add(self.modelfreefreq2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_18_copy, 0, 0, 0)
-        sizer_19_copy_1.Add(self.label_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1.Add(self.m_noe_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1.Add(self.model_noe_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_19_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_1.Add(self.label_8_copy_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1.Add(self.m_r1_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1.Add(self.model_r1_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_19_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_copy.Add(self.label_8_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy.Add(self.m_r2_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy.Add(self.model_r2_2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy.Add(sizer_19_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_4_copy.SetSizer(sizer_17_copy)
-        sizer_16.Add(self.panel_4_copy, 0, 0, 0)
-        sizer_18_copy_copy.Add(self.label_7_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18_copy_copy.Add(self.modelfreefreq3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_18_copy_copy, 0, 0, 0)
-        sizer_19_copy_1_copy.Add(self.label_8_copy_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1_copy.Add(self.m_noe_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_1_copy.Add(self.model_noe_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_19_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_1_copy.Add(self.label_8_copy_copy_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1_copy.Add(self.m_r1_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_1_copy.Add(self.model_r1_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_19_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_19_copy_copy_copy_copy.Add(self.label_8_copy_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy_copy.Add(self.m_r2_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_19_copy_copy_copy_copy.Add(self.model_r2_3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_17_copy_copy.Add(sizer_19_copy_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_4_copy_1.SetSizer(sizer_17_copy_copy)
-        sizer_16.Add(self.panel_4_copy_1, 0, 0, 0)
-        sizer_15.Add(sizer_16, 0, 0, 0)
-        sizer_15.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
-        sizer_20.Add(self.m0, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m4, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m5, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m6, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m7, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m8, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m9, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(sizer_20, 1, wx.EXPAND, 0)
-        sizer_21.Add(self.label_10, 0, wx.TOP|wx.ADJUST_MINSIZE, 1)
-        sizer_21.Add(self.aic, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_21.Add(self.bic, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(sizer_21, 1, wx.TOP|wx.EXPAND, 5)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_file_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.chan_struc_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_15.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.unresolved_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.label_2_copy_copy_3_copy_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.resultsdir_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.results_directory_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_15.Add(results_dir_copy_copy_copy_1_copy_2, 1, wx.EXPAND, 0)
-        exec_relax_copy_1_copy_3.Add(self.label_5_copy_1_copy_3, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_3.Add(self.relax_start_modelfree, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
-        sizer_14.Add(sizer_15, 0, 0, 0)
-        self.modelfree.SetSizer(sizer_14)
         sizer_22.Add(self.label_11, 0, wx.LEFT|wx.ADJUST_MINSIZE, 10)
         sizer_23.Add(self.list_noe, 0, wx.ADJUST_MINSIZE, 0)
         sizer_23.Add(self.open_noe_results, 0, wx.ADJUST_MINSIZE, 0)
@@ -1799,126 +1617,6 @@ class Main(wx.Frame):
         self.label_5_copy_1_copy_copy_copy_1.SetMinSize((118, 17))
         self.relax_start_r1_1_copy_copy_1.SetName('hello')
         self.relax_start_r1_1_copy_copy_1.SetSize(self.relax_start_r1_1_copy_copy_1.GetBestSize())
-        self.label_4_copy_copy_copy_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_7.SetMinSize((80, 17))
-        self.modelfreefreq1.SetMinSize((80, 20))
-        self.label_8.SetMinSize((80, 17))
-        self.m_noe_1.SetMinSize((120, 20))
-        self.model_noe_1.SetMinSize((20, 20))
-        self.model_noe_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy.SetMinSize((80, 17))
-        self.m_r1_1.SetMinSize((120, 20))
-        self.model_r1_1.SetMinSize((20, 20))
-        self.model_r1_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy.SetMinSize((80, 17))
-        self.m_r2_1.SetMinSize((120, 20))
-        self.model_r2_1.SetMinSize((20, 20))
-        self.model_r2_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.panel_4.SetMinSize((230, 85))
-        self.panel_4.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_7_copy.SetMinSize((80, 17))
-        self.modelfreefreq2.SetMinSize((80, 20))
-        self.label_8_copy_1.SetMinSize((80, 17))
-        self.m_noe_2.SetMinSize((120, 20))
-        self.model_noe_2.SetMinSize((20, 20))
-        self.model_noe_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_1.SetMinSize((80, 17))
-        self.m_r1_2.SetMinSize((120, 20))
-        self.model_r1_2.SetMinSize((20, 20))
-        self.model_r1_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_copy.SetMinSize((80, 17))
-        self.m_r2_2.SetMinSize((120, 20))
-        self.model_r2_2.SetMinSize((20, 20))
-        self.model_r2_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.panel_4_copy.SetMinSize((230, 85))
-        self.panel_4_copy.SetBackgroundColour(wx.Colour(176, 176, 176))
-        self.label_7_copy_copy.SetMinSize((80, 17))
-        self.modelfreefreq3.SetMinSize((80, 20))
-        self.label_8_copy_1_copy.SetMinSize((80, 17))
-        self.m_noe_3.SetMinSize((120, 20))
-        self.model_noe_3.SetMinSize((20, 20))
-        self.model_noe_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_1_copy.SetMinSize((80, 17))
-        self.m_r1_3.SetMinSize((120, 20))
-        self.model_r1_3.SetMinSize((20, 20))
-        self.model_r1_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_8_copy_copy_copy_copy.SetMinSize((80, 17))
-        self.m_r2_3.SetMinSize((120, 20))
-        self.model_r2_3.SetMinSize((20, 20))
-        self.model_r2_3.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.panel_4_copy_1.SetMinSize((230, 85))
-        self.panel_4_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.m0.SetMinSize((70, 25))
-        self.m0.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m0.SetToolTipString("{}")
-        self.m0.SetValue(1)
-        self.m1.SetMinSize((70, 25))
-        self.m1.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m1.SetToolTipString("{S2}")
-        self.m1.SetValue(1)
-        self.m2.SetMinSize((70, 25))
-        self.m2.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m2.SetToolTipString("{S2, te}")
-        self.m2.SetValue(1)
-        self.m3.SetMinSize((70, 25))
-        self.m3.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m3.SetToolTipString("{S2, Rex}")
-        self.m3.SetValue(1)
-        self.m4.SetMinSize((70, 25))
-        self.m4.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m4.SetToolTipString("{S2, te, Rex}")
-        self.m4.SetValue(1)
-        self.m5.SetMinSize((70, 25))
-        self.m5.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m5.SetToolTipString("{S2, S2f, ts}")
-        self.m5.SetValue(1)
-        self.m6.SetMinSize((70, 25))
-        self.m6.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m6.SetToolTipString("{S2, tf, S2f, ts}")
-        self.m6.SetValue(1)
-        self.m7.SetMinSize((70, 25))
-        self.m7.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m7.SetToolTipString("{S2, S2f, ts, Rex}")
-        self.m7.SetValue(1)
-        self.m8.SetMinSize((70, 25))
-        self.m8.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m8.SetToolTipString("{S2, tf, S2f, ts, Rex}")
-        self.m8.SetValue(1)
-        self.m9.SetMinSize((70, 25))
-        self.m9.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.m9.SetToolTipString("{Rex}")
-        self.m9.SetValue(1)
-        self.label_10.SetMinSize((240, 17))
-        self.label_10.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.aic.SetMinSize((60, 22))
-        self.structure_file_copy_copy_1_copy.SetMinSize((240, 17))
-        self.structure_file_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.structure_r21_copy_1_copy.SetMinSize((350, 27))
-        self.chan_struc_r21_copy_1_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.unresolved_r21_copy_1_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetMinSize((240, 17))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.resultsdir_r21_copy_2.SetMinSize((350, 27))
-        self.results_directory_r21_copy_2.SetMinSize((103, 27))
-        self.label_5_copy_1_copy_3.SetMinSize((118, 17))
-        self.label_5_copy_1_copy_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.relax_start_modelfree.SetName('hello')
-        self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
-        self.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
-        self.label_11.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.list_noe.SetMinSize((800, 150))
-        self.list_noe.SetSelection(0)
-        self.open_noe_results.SetMinSize((80, 32))
-        self.label_11_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.list_rx.SetMinSize((800, 150))
-        self.list_rx.SetSelection(0)
-        self.open_rx_results.SetMinSize((80, 32))
-        self.label_11_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.list_modelfree.SetMinSize((800, 150))
-        self.list_modelfree.SetSelection(0)
-        self.open_model_results.SetMinSize((80, 32))
 
 
     def aboutGUI(self, event): # About
@@ -2437,87 +2135,6 @@ class Main(wx.Frame):
             self.structure_noe1_copy_1.SetValue(structure_file_pdb)
             self.structure_r11_copy_1.SetValue(structure_file_pdb)
             self.structure_r21_copy_1.SetValue(structure_file_pdb)
-        event.Skip()
-
-
-    def model_noe1(self, event): # load noe1
-        backup = self.m_noe_1.GetValue()
-        paramfiles1[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[0] == None:
-            paramfiles1[0] = backup
-        self.m_noe_1.SetValue(paramfiles1[0])
-        event.Skip()
-
-
-    def model_noe2(self, event): # load noe1
-        backup = self.m_noe_2.GetValue()
-        paramfiles2[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[0] == None:
-            paramfiles2[0] = backup
-        self.m_noe_2.SetValue(paramfiles2[0])
-        event.Skip()
-
-
-    def model_noe3(self, event): # load noe1
-        backup = self.m_noe_3.GetValue()
-        paramfiles3[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[0] == None:
-            paramfiles3[0] = backup
-        self.m_noe_3.SetValue(paramfiles3[0])
-        event.Skip()
-
-
-    def model_r11(self, event): #
-        backup = self.m_r1_1.GetValue()
-        paramfiles1[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[1] == None:
-            paramfiles1[1] = backup
-        self.m_r1_1.SetValue(paramfiles1[1])
-        event.Skip()
-
-
-    def model_r12(self, event): #
-        backup = self.m_r1_2.GetValue()
-        paramfiles2[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[1] == None:
-            paramfiles2[1] = backup
-        self.m_r1_2.SetValue(paramfiles2[1])
-        event.Skip()
-
-
-    def model_r13(self, event):
-        backup = self.m_r1_3.GetValue()
-        paramfiles3[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[1] == None:
-            paramfiles3[1] = backup
-        self.m_r1_3.SetValue(paramfiles3[1])
-        event.Skip()
-
-
-    def model_r21(self, event): #
-        backup = self.m_r2_1.GetValue()
-        paramfiles1[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[2] == None:
-            paramfiles1[2] = backup
-        self.m_r2_1.SetValue(paramfiles1[2])
-        event.Skip()
-
-
-    def model_r22(self, event): #
-        backup = self.m_r2_2.GetValue()
-        paramfiles2[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[2] == None:
-            paramfiles2[2] = backup
-        self.m_r2_2.SetValue(paramfiles2[2])
-        event.Skip()
-
-
-    def model_r23(self, event):
-        backup = self.m_r2_3.GetValue()
-        paramfiles3[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[2] == None:
-            paramfiles3[2] = backup
-        self.m_r2_3.SetValue(paramfiles3[2])
         event.Skip()
 
 
