@@ -99,15 +99,6 @@ class Auto_model_free:
         #self.gui.Bind(wx.EVT_BUTTON, self.gui.structure_pdb, self.chan_struc_r21_copy_1_copy)
         #self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
         #self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe1, self.model_noe_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r11, self.model_r1_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r21, self.model_r2_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe2, self.model_noe_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r12, self.model_r1_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r22, self.model_r2_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe3, self.model_noe_3)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r13, self.model_r1_3)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r23, self.model_r2_3)
 
 
     def __do_layout(self):
@@ -402,6 +393,18 @@ class Auto_model_free:
         sizer_17_copy_copy.Add(sizer_19_copy_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
         sizer_16.Add(panel_4_copy_1, 0, 0, 0)
 
+        # Button actions.
+        self.gui.Bind(wx.EVT_BUTTON, self.model_noe1, model_noe_1)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r11,  model_r1_1)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r21,  model_r2_1)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_noe2, model_noe_2)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r12,  model_r1_2)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r22,  model_r2_2)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_noe3, model_noe_3)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r13,  model_r1_3)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r23,  model_r2_3)
+
+        # Add the sizer to the given box.
         box.Add(sizer_16, 0, 0, 0)
 
 
