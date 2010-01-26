@@ -130,13 +130,13 @@ class Auto_model_free:
         self.__do_layout()
 
         # Button actions.
-        self.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
-        self.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
-        self.Bind(wx.EVT_BUTTON, self.structure_pdb, self.chan_struc_r21_copy_1_copy)
-        self.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
-        self.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_model_results_exe, self.list_modelfree)
-        self.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
+        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
+        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
+        self.gui.Bind(wx.EVT_BUTTON, self.structure_pdb, self.chan_struc_r21_copy_1_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
+        self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
+        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.open_model_results_exe, self.list_modelfree)
+        self.gui.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
 
 
     def __do_layout(self):
