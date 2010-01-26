@@ -54,20 +54,20 @@ def opendir(msg, default): # select directory, msg is message to display, defaul
         return newdir
 
 
-def openfile(msg, directory, filetype, default):
+def openfile(msg=None, directory=None, filetype=None, default=None):
     """Open a file.
 
     For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
         openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
 
 
-    @param msg:         The message to display.
+    @keyword msg:       The message to display.
     @type msg:          str
-    @param directory:   The directory to open in.
+    @keyword directory: The directory to open in.
     @type directory:    str
-    @param filetype:    The file to default selection to.
+    @keyword filetype:  The file to default selection to.
     @type filetype:     str
-    @param default:     A list of supported files, indicated as "(Label)|os command|...
+    @keyword default:   A list of supported files, indicated as "(Label)|os command|...
     @type default:      str
     """
 
