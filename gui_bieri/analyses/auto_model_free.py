@@ -60,6 +60,84 @@ class Auto_model_free:
         self.paramfiles3 = ["", "", ""]
         self.results_dir_model = getcwd()
 
+        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
+        main_box = self.build_main_box()
+        self.gui.modelfree.SetSizer(main_box)
+
+        #self.__set_properties()
+        #self.__do_layout()
+
+
+    def __do_layout(self):
+        # Box layout of elements.
+        sizer_22 = wx.BoxSizer(wx.VERTICAL)
+        sizer_22_copy = wx.BoxSizer(wx.VERTICAL)
+        sizer_22_copy_copy = wx.BoxSizer(wx.VERTICAL)
+        sizer_23 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_23_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_23_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.label_7.SetMinSize((80, 17))
+
+
+    def __set_properties(self):
+        self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+
+
+    def add_execute_relax(self, box):
+        """Create and add the relax execution GUI element to the given box.
+
+        @param box:     The box element to pack the relax execution GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The elements.
+        self.label_5_copy_1_copy_3 = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
+        self.relax_start_modelfree = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+
+        # Properties.
+        self.label_5_copy_1_copy_3.SetMinSize((118, 17))
+        self.label_5_copy_1_copy_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.relax_start_modelfree.SetName('hello')
+        self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
+
+        # Layout.
+        exec_relax_copy_1_copy_3 = wx.BoxSizer(wx.HORIZONTAL)
+        exec_relax_copy_1_copy_3.Add(self.label_5_copy_1_copy_3, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        exec_relax_copy_1_copy_3.Add(self.relax_start_modelfree, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
+
+        # Bind the events.
+        self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
+
+        # Add the element to the box.
+        box.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
+
+
+    def add_frame_title(self, box):
+        """Create and add the frame title to the given box.
+
+        @param box:     The box element to pack the frame title into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The title.
+        label = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
+
+        # The font properties.
+        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+
+        # Pack the title.
+        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+
+
+    def add_mf_models(self, box):
+        """Create and add the model-free model picking GUI element to the given box.
+
+        @param box:     The box element to pack the model-free model picking GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The elements.
         self.label_9 = wx.StaticText(self.gui.modelfree, -1, "Select Model-free models (default = all):")
         self.m0 = wx.ToggleButton(self.gui.modelfree, -1, "m0")
         self.m1 = wx.ToggleButton(self.gui.modelfree, -1, "m1")
@@ -71,79 +149,8 @@ class Auto_model_free:
         self.m7 = wx.ToggleButton(self.gui.modelfree, -1, "m7")
         self.m8 = wx.ToggleButton(self.gui.modelfree, -1, "m8")
         self.m9 = wx.ToggleButton(self.gui.modelfree, -1, "m9")
-        self.label_10 = wx.StaticText(self.gui.modelfree, -1, "Select Model-free selection mode:      ")
-        self.aic = wx.RadioButton(self.gui.modelfree, -1, "AIC")
-        self.bic = wx.RadioButton(self.gui.modelfree, -1, "BIC")
-        self.structure_file_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
-        self.structure_r21_copy_1_copy.SetEditable(False)
-        self.chan_struc_r21_copy_1_copy = wx.Button(self.gui.modelfree, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, "")
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.gui.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, self.results_dir_model)
-        self.results_directory_r21_copy_2 = wx.Button(self.gui.modelfree, -1, "Change")
-        self.label_5_copy_1_copy_3 = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_modelfree = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
-        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        main_box = self.build_main_box()
-        self.gui.modelfree.SetSizer(main_box)
-
-        #self.__set_properties()
-        #self.__do_layout()
-
-        # Button actions.
-        #self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
-        #self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
-        #self.gui.Bind(wx.EVT_BUTTON, self.gui.structure_pdb, self.chan_struc_r21_copy_1_copy)
-        #self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
-        #self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
-
-
-    def __do_layout(self):
-        # Box layout of elements.
-        sizer_20 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_21 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_22 = wx.BoxSizer(wx.VERTICAL)
-        sizer_22_copy = wx.BoxSizer(wx.VERTICAL)
-        sizer_22_copy_copy = wx.BoxSizer(wx.VERTICAL)
-        sizer_23 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_23_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_23_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-
-        results_dir_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        results_dir_copy_copy_copy_1_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        exec_relax_copy_1_copy_3 = wx.BoxSizer(wx.HORIZONTAL)
-
-        sizer_20.Add(self.m0, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m2, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m3, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m4, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m5, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m6, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m7, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m8, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_20.Add(self.m9, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_21.Add(self.label_10, 0, wx.TOP|wx.ADJUST_MINSIZE, 1)
-        sizer_21.Add(self.aic, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_21.Add(self.bic, 0, wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_file_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.chan_struc_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.unresolved_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.label_2_copy_copy_3_copy_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.resultsdir_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_2.Add(self.results_directory_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        exec_relax_copy_1_copy_3.Add(self.label_5_copy_1_copy_3, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_3.Add(self.relax_start_modelfree, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        self.label_7.SetMinSize((80, 17))
-
-
-    def __set_properties(self):
+        # Properties.
         self.m0.SetMinSize((70, 25))
         self.m0.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.m0.SetToolTipString("{}")
@@ -184,42 +191,87 @@ class Auto_model_free:
         self.m9.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         self.m9.SetToolTipString("{Rex}")
         self.m9.SetValue(1)
+
+        # Lay out the model buttons into the sizer.
+        sizer_20 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_20.Add(self.m0, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m4, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m5, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m6, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m7, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m8, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_20.Add(self.m9, 0, wx.ADJUST_MINSIZE, 0)
+
+        # Add the title and box of buttons.
+        box.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
+        box.Add(sizer_20, 1, wx.EXPAND, 0)
+
+
+    def add_modsel_method(self, box):
+        """Create and add the model selection choice GUI element to the given box.
+
+        @param box:     The box element to pack the model selection choice GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The elements.
+        self.label_10 = wx.StaticText(self.gui.modelfree, -1, "Select Model-free selection mode:      ")
+        self.aic = wx.RadioButton(self.gui.modelfree, -1, "AIC")
+        self.bic = wx.RadioButton(self.gui.modelfree, -1, "BIC")
+
+        # Properties.
         self.label_10.SetMinSize((240, 17))
         self.label_10.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.aic.SetMinSize((60, 22))
+
+        # Layout.
+        sizer_21 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_21.Add(self.label_10, 0, wx.TOP|wx.ADJUST_MINSIZE, 1)
+        sizer_21.Add(self.aic, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_21.Add(self.bic, 0, wx.ADJUST_MINSIZE, 0)
+
+        # Bind the events.
+        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
+        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
+
+        # Add the sizer to the box.
+        box.Add(sizer_21, 1, wx.TOP|wx.EXPAND, 5)
+
+
+    def add_pdb_selection(self, box):
+        """Create and add the PDB file selection GUI element to the given box.
+
+        @param box:     The box element to pack the PDB file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The elements.
+        self.structure_file_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        self.structure_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
+        self.structure_r21_copy_1_copy.SetEditable(False)
+        self.chan_struc_r21_copy_1_copy = wx.Button(self.gui.modelfree, -1, "Change")
+
+        # Properties.
         self.structure_file_copy_copy_1_copy.SetMinSize((240, 17))
         self.structure_file_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.structure_r21_copy_1_copy.SetMinSize((350, 27))
         self.chan_struc_r21_copy_1_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.unresolved_r21_copy_1_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetMinSize((240, 17))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.resultsdir_r21_copy_2.SetMinSize((350, 27))
-        self.results_directory_r21_copy_2.SetMinSize((103, 27))
-        self.label_5_copy_1_copy_3.SetMinSize((118, 17))
-        self.label_5_copy_1_copy_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.relax_start_modelfree.SetName('hello')
-        self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
-        self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
+        # Layout.
+        results_dir_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
 
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
+        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_file_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.chan_struc_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
 
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
+        # Bind the events.
+        self.gui.Bind(wx.EVT_BUTTON, self.gui.structure_pdb, self.chan_struc_r21_copy_1_copy)
 
-        # The title.
-        label = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
-
-        # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+        # Add the element to the box.
+        box.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
 
 
     def add_relax_data_input(self, box):
@@ -408,6 +460,65 @@ class Auto_model_free:
         box.Add(sizer_16, 0, 0, 0)
 
 
+    def add_results_dir(self, box):
+        """Create and add the results directory GUI element to the given box.
+
+        @param box:     The box element to pack the results directory GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The elements.
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.gui.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, self.results_dir_model)
+        self.results_directory_r21_copy_2 = wx.Button(self.gui.modelfree, -1, "Change")
+
+        # Properties.
+        results_dir_copy_copy_copy_1_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
+        self.resultsdir_r21_copy_2.SetMinSize((350, 27))
+        self.results_directory_r21_copy_2.SetMinSize((103, 27))
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetMinSize((240, 17))
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+
+        # Layout.
+        results_dir_copy_copy_copy_1_copy_2.Add(self.label_2_copy_copy_3_copy_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        results_dir_copy_copy_copy_1_copy_2.Add(self.resultsdir_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        results_dir_copy_copy_copy_1_copy_2.Add(self.results_directory_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Bind the events.
+        self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
+
+
+        # Add the element to the box.
+        box.Add(results_dir_copy_copy_copy_1_copy_2, 1, wx.EXPAND, 0)
+
+
+    def add_unresolved_spins(self, box):
+        """Create and add the unresolved spins GUI element to the given box.
+
+        @param box:     The box element to pack the unresolved spins GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The elements.
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, "")
+
+        # Properties.
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.unresolved_r21_copy_1_copy.SetMinSize((350, 27))
+
+        # Layout.
+        nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
+        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.unresolved_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Bind the events.
+
+        # Add the element to the box.
+        box.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def build_main_box(self):
         """Construct the highest level box to pack into the automatic model-free analysis frame.
 
@@ -445,28 +556,26 @@ class Auto_model_free:
 
         # Add the relaxation data input GUI element.
         self.add_relax_data_input(box)
-        return box
 
         # Add the model-free models GUI element.
-        box.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
-        box.Add(sizer_20, 1, wx.EXPAND, 0)
+        self.add_mf_models(box)
 
         # Add the model selection GUI element.
-        box.Add(sizer_21, 1, wx.TOP|wx.EXPAND, 5)
+        self.add_modsel_method(box)
 
         # Add the PDB file selection GUI element.
-        box.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
+        self.add_pdb_selection(box)
 
-        # Add the unresolved residues GUI element.
-        box.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+        # Add the unresolved spins GUI element.
+        self.add_unresolved_spins(box)
 
         # Add the results directory GUI element.
-        box.Add(results_dir_copy_copy_copy_1_copy_2, 1, wx.EXPAND, 0)
+        self.add_results_dir(box)
 
         # Add the execution GUI element.
-        box.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
+        self.add_execute_relax(box)
 
-        # Return the box.
+        # Return the packed box.
         return box
 
 
