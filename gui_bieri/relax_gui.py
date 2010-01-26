@@ -2520,21 +2520,3 @@ class Main(wx.Frame):
             if question('Do you realy want to change relax settings?'):
                 global_setting = tmp_global
         event.Skip()
-
-
-    def structure_pdb(self, event): # structure file
-        backup = self.structure_noe1.GetValue()
-        structure_file_pdb = openfile('Select PDB File', self.res_noe1.GetValue() + sep, '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
-        if structure_file_pdb == None:
-            structure_file_pdb = backup
-        self.structure_noe1.SetValue(structure_file_pdb)
-        self.structure_r11.SetValue(structure_file_pdb)
-        self.structure_r21.SetValue(structure_file_pdb)
-        self.structure_noe1_copy.SetValue(structure_file_pdb)
-        self.structure_r11_copy.SetValue(structure_file_pdb)
-        self.structure_r21_copy.SetValue(structure_file_pdb)
-        self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-        self.structure_r11_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1_copy.SetValue(structure_file_pdb)
-        event.Skip()
