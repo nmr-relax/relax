@@ -2084,9 +2084,9 @@ class Main(wx.Frame):
         # Initialise the 3 R1 and 3 R2 analyses.
         rx = ['R1']*3 + ['R2']*3
         nmrfreq = nmrfreq * 2
-        for name in rx:
+        for i in range(len(rx)):
             # Add the element.
-            ds.relax_gui.analyses.add(name)
+            ds.relax_gui.analyses.add(rx[i])
 
             # Initialise the variables.
             ds.relax_gui.analyses[-1].frq = nmrfreq[i]
