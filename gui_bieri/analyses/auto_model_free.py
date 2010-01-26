@@ -25,7 +25,7 @@
 """Main module for the relax graphical user interface."""
 
 # Python module imports.
-from os import sep
+from os import getcwd, sep
 import wx
 
 # relax GUI module imports.
@@ -46,6 +46,19 @@ class Auto_model_free:
 
         # Store the main class.
         self.gui = gui
+
+        # Model-free variables.
+        self.model_source = getcwd()
+        self.model_save = getcwd()
+        self.selection = "AIC"
+        self.models = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9"]
+        self.nmrfreq1 = 600
+        self.nmrfreq2 = 800
+        self.nmrfreq3 = 900
+        self.paramfiles1 = ["", "", ""]
+        self.paramfiles2 = ["", "", ""]
+        self.paramfiles3 = ["", "", ""]
+        self.results_dir_model = getcwd()
 
         # Create the panel.
         self.panel_4_copy_1 = wx.Panel(self.gui.modelfree, -1)
@@ -102,13 +115,13 @@ class Auto_model_free:
         self.aic = wx.RadioButton(self.gui.modelfree, -1, "AIC")
         self.bic = wx.RadioButton(self.gui.modelfree, -1, "BIC")
         self.structure_file_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, structure_file_pdb)
+        self.structure_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
         self.structure_r21_copy_1_copy.SetEditable(False)
         self.chan_struc_r21_copy_1_copy = wx.Button(self.gui.modelfree, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
         self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, "")
         self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.gui.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, results_dir_model)
+        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, self.results_dir_model)
         self.results_directory_r21_copy_2 = wx.Button(self.gui.modelfree, -1, "Change")
         self.label_5_copy_1_copy_3 = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         self.relax_start_modelfree = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
@@ -1347,10 +1360,10 @@ class Auto_model_free:
 
     def resdir_modelfree(self, event):
         backup = self.resultsdir_r21_copy_2.GetValue()
-        results_dir_model = opendir('Select results directory', backup)
-        if results_dir_model == None:
-            results_dir_model = backup
-        self.resultsdir_r21_copy_2.SetValue(results_dir_model)
+        self.results_dir_model = opendir('Select results directory', backup)
+        if self.results_dir_model == None:
+            self.results_dir_model = backup
+        self.resultsdir_r21_copy_2.SetValue(self.results_dir_model)
         event.Skip()
 
 
