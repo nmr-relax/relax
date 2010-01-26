@@ -2497,7 +2497,7 @@ class Main(wx.Frame):
 
 
     def saveGUI(self, event): # Save
-        filename = savefile('Select file to save', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+        filename = savefile(msg='Select file to save', filetype='save.relaxGUI', default='relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
         if not filename == None:
             model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
             create_save_file(self, filename, model_result, global_setting, file_setting, sequencefile)
