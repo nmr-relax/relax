@@ -36,6 +36,7 @@ import xml.dom.minidom
 from pipe_container import PipeContainer
 import generic_fns
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
+from relax_xml import fill_object_contents, xml_to_object
 from version import version
 
 
@@ -326,6 +327,9 @@ class Relax_data_store(dict):
         # Set the relax version number, and add a creation time.
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
+
+        # Add all simple objects in the data store base object to the XML element.
+        fill_object_contents(xmldoc, top_element, object=self, blacklist=['relax_gui'] + list(self.__class__.__dict__.keys() + dict.__dict__.keys()))
 
         # Loop over the pipes.
         for pipe in pipes:
