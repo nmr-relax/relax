@@ -114,21 +114,22 @@ class Main(wx.Frame):
         self.build_menu_bar()
 
         # NOE 1 no. 1
+        rx_data = ds.relax_gui.analyses[0]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
         self.bitmap_1_copy_1 = wx.StaticBitmap(self.noe1, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1 = wx.StaticText(self.noe1, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3 = wx.StaticText(self.noe1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_noe1 = wx.TextCtrl(self.noe1, -1, str(nmrfreq[0]) )
+        self.nmrfreq_value_noe1 = wx.TextCtrl(self.noe1, -1, str(rx_data.frq) )
         self.label_2_copy_copy_5 = wx.StaticText(self.noe1, -1, "saturated NOE peak list", style=wx.ALIGN_RIGHT)
-        self.noe_sat_1 = wx.TextCtrl(self.noe1, -1, noesat[0])
+        self.noe_sat_1 = wx.TextCtrl(self.noe1, -1, rx_data.sat_file)
         self.sat_noe_copy_1 = wx.Button(self.noe1, -1, "Add / Change")
         self.label_2_copy_copy_copy_copy_2 = wx.StaticText(self.noe1, -1, "saturated NOE background RMSD", style=wx.ALIGN_RIGHT)
-        self.noe_sat_err_1 = wx.TextCtrl(self.noe1, -1, str(noesatrmsd[0]))
+        self.noe_sat_err_1 = wx.TextCtrl(self.noe1, -1, str(rx_data.sat_rmsd))
         self.label_2_copy_copy_1_copy_1 = wx.StaticText(self.noe1, -1, "reference NOE peak list", style=wx.ALIGN_RIGHT)
-        self.noe_ref_1 = wx.TextCtrl(self.noe1, -1, noeref[0])
+        self.noe_ref_1 = wx.TextCtrl(self.noe1, -1, rx_data.sat_file)
         self.noe_ref_err_copy_1 = wx.Button(self.noe1, -1, "Add / Change")
         self.label_2_copy_copy_copy_copy_copy_1 = wx.StaticText(self.noe1, -1, "reference NOE background RMSD", style=wx.ALIGN_RIGHT)
-        self.noe_ref_err_1 = wx.TextCtrl(self.noe1, -1, str(noerefrmsd[0]))
+        self.noe_ref_err_1 = wx.TextCtrl(self.noe1, -1, str(rx_data.ref_rmsd))
         self.label_2_copy_copy_2_copy_1 = wx.StaticText(self.noe1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_noe1 = StructureTextCtrl(self.noe1, -1, self.structure_file_pdb_msg)
         self.structure_noe1.SetEditable(False)
@@ -136,7 +137,7 @@ class Main(wx.Frame):
         self.label_2_copy_copy_copy_1_copy_1 = wx.StaticText(self.noe1, -1, "Unresolved Residues\nseparated by comma:")
         self.unres_noe1 = wx.TextCtrl(self.noe1, -1, "")
         self.label_2_copy_copy_3_copy_1 = wx.StaticText(self.noe1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.res_noe1 = wx.TextCtrl(self.noe1, -1, noe_savedir[0])
+        self.res_noe1 = wx.TextCtrl(self.noe1, -1, rx_data.save_dir)
         self.chandir_noe1 = wx.Button(self.noe1, -1, "Change")
         self.label_2_copy_2 = wx.StaticText(self.noe1, -1, "")
         self.label_5_copy_1 = wx.StaticText(self.noe1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
@@ -144,12 +145,13 @@ class Main(wx.Frame):
 
 
         # R1 no. 1
+        rx_data = ds.relax_gui.analyses[3]
         self.bitmap_1_copy_copy = wx.StaticBitmap(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy = wx.StaticText(self.r1_1, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.r1_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11 = wx.TextCtrl(self.r1_1, -1, str(nmrfreq[0]))
+        self.nmrfreq_value_r11 = wx.TextCtrl(self.r1_1, -1, str(rx_data.frq))
         self.label_2_copy_copy_3_copy_copy = wx.StaticText(self.r1_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11 = wx.TextCtrl(self.r1_1, -1, r1_savedir[0])
+        self.resultsdir_r11 = wx.TextCtrl(self.r1_1, -1, rx_data.save_dir)
         self.results_directory_copy_copy = wx.Button(self.r1_1, -1, "Change")
         self.structure_file = wx.StaticText(self.r1_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r11 = StructureTextCtrl(self.r1_1, -1, self.structure_file_pdb_msg)
@@ -195,12 +197,13 @@ class Main(wx.Frame):
 
 
         #R2 no. 1
+        rx_data = ds.relax_gui.analyses[6]
         self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.r2_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1 = wx.StaticText(self.r2_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r21 = wx.TextCtrl(self.r2_1, -1, str(nmrfreq[0]))
+        self.nmrfreq_value_r21 = wx.TextCtrl(self.r2_1, -1, str(rx_data.frq))
         self.label_2_copy_copy_3_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21 = wx.TextCtrl(self.r2_1, -1, r2_savedir[0])
+        self.resultsdir_r21 = wx.TextCtrl(self.r2_1, -1, rx_data.save_dir)
         self.results_directory_r21 = wx.Button(self.r2_1, -1, "Change")
         self.structure_file_copy = wx.StaticText(self.r2_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r21 = StructureTextCtrl(self.r2_1, -1, self.structure_file_pdb_msg)
@@ -246,10 +249,11 @@ class Main(wx.Frame):
 
 
         #Noe no.2
+        rx_data = ds.relax_gui.analyses[1]
         self.bitmap_1_copy_1_copy = wx.StaticBitmap(self.noe1_copy, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy = wx.StaticText(self.noe1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, str(nmrfreq[1]))
+        self.nmrfreq_value_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, str(rx_data.frq))
         self.label_2_copy_copy_5_copy = wx.StaticText(self.noe1_copy, -1, "saturated NOE peak list", style=wx.ALIGN_RIGHT)
         self.noe_sat_1_copy = wx.TextCtrl(self.noe1_copy, -1, "")
         self.sat_noe_copy_1_copy = wx.Button(self.noe1_copy, -1, "Add / Change")
@@ -267,7 +271,7 @@ class Main(wx.Frame):
         self.label_2_copy_copy_copy_1_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Unresolved Residues\nseparated by comma:")
         self.unres_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, "")
         self.label_2_copy_copy_3_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.res_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, noe_savedir[1])
+        self.res_noe1_copy = wx.TextCtrl(self.noe1_copy, -1, rx_data.save_dir)
         self.chandir_noe1_copy = wx.Button(self.noe1_copy, -1, "Change")
         self.label_2_copy_2_copy = wx.StaticText(self.noe1_copy, -1, "")
         self.label_5_copy_1_copy_1 = wx.StaticText(self.noe1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
@@ -275,12 +279,13 @@ class Main(wx.Frame):
 
 
         #R1 no. 2
+        rx_data = ds.relax_gui.analyses[4]
         self.bitmap_1_copy_copy_copy_1 = wx.StaticBitmap(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_2 = wx.StaticText(self.r1_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, str(nmrfreq[1]))
+        self.nmrfreq_value_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, str(rx_data.frq))
         self.label_2_copy_copy_3_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, r1_savedir[1])
+        self.resultsdir_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, rx_data.save_dir)
         self.results_directory_copy_copy_copy_1 = wx.Button(self.r1_1_copy, -1, "Change")
         self.structure_file_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r11_copy = StructureTextCtrl(self.r1_1_copy, -1, self.structure_file_pdb_msg)
@@ -324,12 +329,13 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_1 = wx.BitmapButton(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #R2 no. 2
+        rx_data = ds.relax_gui.analyses[7]
         self.bitmap_1_copy_copy_copy_copy = wx.StaticBitmap(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy = wx.StaticText(self.r2_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, str(nmrfreq[1]))
+        self.nmrfreq_value_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, str(rx_data.frq))
         self.label_2_copy_copy_3_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, r2_savedir[1])
+        self.resultsdir_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, rx_data.save_dir)
         self.results_directory_r21_copy = wx.Button(self.r2_1_copy, -1, "Change")
         self.structure_file_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r21_copy = StructureTextCtrl(self.r2_1_copy, -1, self.structure_file_pdb_msg)
@@ -374,10 +380,11 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_copy = wx.BitmapButton(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #NOE no. 3
+        rx_data = ds.relax_gui.analyses[2]
         self.bitmap_1_copy_1_copy_1 = wx.StaticBitmap(self.noe1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, str(nmrfreq[2]))
+        self.nmrfreq_value_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, str(rx_data.frq))
         self.label_2_copy_copy_5_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "saturated NOE peak list", style=wx.ALIGN_RIGHT)
         self.noe_sat_1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, "")
         self.sat_noe_copy_1_copy_1 = wx.Button(self.noe1_copy_1, -1, "Add / Change")
@@ -395,7 +402,7 @@ class Main(wx.Frame):
         self.label_2_copy_copy_copy_1_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Unresolved Residues\nseparated by comma:")
         self.unres_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, "")
         self.label_2_copy_copy_3_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.res_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, noe_savedir[2])
+        self.res_noe1_copy_1 = wx.TextCtrl(self.noe1_copy_1, -1, rx_data.save_dir)
         self.chandir_noe1_copy_1 = wx.Button(self.noe1_copy_1, -1, "Change")
         self.label_2_copy_2_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "")
         self.label_5_copy_1_copy_2 = wx.StaticText(self.noe1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
@@ -403,12 +410,13 @@ class Main(wx.Frame):
 
 
         #R1 no. 3
+        rx_data = ds.relax_gui.analyses[5]
         self.bitmap_1_copy_copy_copy_2 = wx.StaticBitmap(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_3 = wx.StaticText(self.r1_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, str(nmrfreq[2]))
+        self.nmrfreq_value_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, str(rx_data.frq))
         self.label_2_copy_copy_3_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, r1_savedir[2])
+        self.resultsdir_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, rx_data.save_dir)
         self.results_directory_copy_copy_copy_2 = wx.Button(self.r1_1_copy_1, -1, "Change")
         self.structure_file_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r11_copy_1 = StructureTextCtrl(self.r1_1_copy_1, -1, self.structure_file_pdb_msg)
@@ -453,12 +461,13 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_2 = wx.BitmapButton(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #R2 no. 3
+        rx_data = ds.relax_gui.analyses[8]
         self.bitmap_1_copy_copy_copy_copy_1 = wx.StaticBitmap(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, str(nmrfreq[2]))
+        self.nmrfreq_value_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, str(rx_data.frq))
         self.label_2_copy_copy_3_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, r2_savedir[2])
+        self.resultsdir_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, rx_data.save_dir)
         self.results_directory_r21_copy_1 = wx.Button(self.r2_1_copy_1, -1, "Change")
         self.structure_file_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r21_copy_1 = StructureTextCtrl(self.r2_1_copy_1, -1, self.structure_file_pdb_msg)
