@@ -77,7 +77,6 @@ class Auto_model_free:
         sizer_23_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_23_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.label_7.SetMinSize((80, 17))
 
 
     def __set_properties(self):
@@ -326,6 +325,7 @@ class Auto_model_free:
         model_r2_3 = wx.Button(panel_4_copy_1, -1, "+")
 
         # Properties.
+        label_7.SetMinSize((80, 17))
         modelfreefreq1.SetMinSize((80, 20))
         label_8.SetMinSize((80, 17))
         self.m_noe_1.SetMinSize((120, 20))
