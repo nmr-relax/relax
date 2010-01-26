@@ -186,7 +186,7 @@ class RelaxListType(ListType):
         # Set the list attributes.
         list_element.setAttribute('desc', self.list_desc)
 
-        # Add all simple python objects within the PipeContainer to the pipe element.
+        # Add all simple python objects within the list to the list element.
         fill_object_contents(doc, list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
 
         # Loop over the list.
@@ -197,5 +197,24 @@ class RelaxListType(ListType):
             element.setAttribute('index', repr(i))
             element.setAttribute('desc', self.element_desc)
 
-            # Add all simple python objects within the PipeContainer to the pipe element.
-            fill_object_contents(doc, element, object=self[i], blacklist=list(self[i].__class__.__dict__.keys()))
+            # Blacklisted objects.
+            blacklist = list(self[i].__class__.__dict__.keys())
+
+            # Add objects which have to_xml() methods.
+            for name in dir(self[i]):
+                # Skip blacklisted objects.
+                if name in blacklist:
+                    continue
+
+                # Skip special objects.
+                if search('^_', name):
+                    continue
+
+                # Execute any to_xml() methods, and add that object to the blacklist.
+                obj = getattr(self[i], name)
+                if hasattr(obj, 'to_xml'):
+                    obj.to_xml(doc, element)
+                    blacklist = blacklist + [name]
+
+            # Add all simple python objects within the container to the XML element.
+            fill_object_contents(doc, element, object=self, blacklist=blacklist)
