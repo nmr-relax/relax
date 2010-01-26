@@ -27,23 +27,33 @@
 # Python module imports.
 import wx
 
+# relax GUI module imports.
+from filedialog import openfile
+
+
 
 class StructureTextCtrl(wx.TextCtrl):
     """Class for structural file selection."""
 
-    def open_file(self, event): # structure file
-        backup = self.structure_noe1.GetValue()
-        structure_file_pdb = openfile('Select PDB File', self.res_noe1.GetValue() + sep, '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
-        if structure_file_pdb == None:
-            structure_file_pdb = backup
-        self.structure_noe1.SetValue(structure_file_pdb)
-        self.structure_r11.SetValue(structure_file_pdb)
-        self.structure_r21.SetValue(structure_file_pdb)
-        self.structure_noe1_copy.SetValue(structure_file_pdb)
-        self.structure_r11_copy.SetValue(structure_file_pdb)
-        self.structure_r21_copy.SetValue(structure_file_pdb)
-        self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-        self.structure_r11_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1.SetValue(structure_file_pdb)
-        self.structure_r21_copy_1_copy.SetValue(structure_file_pdb)
+    def open_file(self, event):
+        """Open the structural file.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the original file name in case of failure.
+        backup = self.GetValue()
+
+        # Open the file dialog.
+        file_name = openfile('Select PDB File', getcwd(), '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
+
+        # Restore the original file name.
+        if file_name == None:
+            file_name = backup
+
+        # Set the value.
+        self.SetValue(file_name)
+
+        # Skip the event.
         event.Skip()
