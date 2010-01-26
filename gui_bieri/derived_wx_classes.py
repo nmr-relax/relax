@@ -31,7 +31,7 @@ import wx
 class StructureTextCtrl(wx.TextCtrl):
     """Class for structural file selection."""
 
-    def structure_pdb(self, event): # structure file
+    def open_file(self, event): # structure file
         backup = self.structure_noe1.GetValue()
         structure_file_pdb = openfile('Select PDB File', self.res_noe1.GetValue() + sep, '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
         if structure_file_pdb == None:

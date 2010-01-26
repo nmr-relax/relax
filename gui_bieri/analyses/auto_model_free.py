@@ -253,7 +253,7 @@ class Auto_model_free:
         results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.chan_struc_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
 
         # Bind the events.
-        self.gui.Bind(wx.EVT_BUTTON, self.structure_r21_copy_1_copy.structure_pdb, self.chan_struc_r21_copy_1_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.structure_r21_copy_1_copy.open_file, self.chan_struc_r21_copy_1_copy)
 
         # Add the element to the box.
         box.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
