@@ -1777,8 +1777,8 @@ class Main(wx.Frame):
 
         # The 'File' menu actions.
         self.Bind(wx.EVT_MENU, self.newGUI,     id=0)
-        self.Bind(wx.EVT_MENU, self.openGUI,    id=1)
-        self.Bind(wx.EVT_MENU, self.save_state, id=2)
+        self.Bind(wx.EVT_MENU, self.state_load, id=1)
+        self.Bind(wx.EVT_MENU, self.state_save, id=2)
         self.Bind(wx.EVT_MENU, self.exitGUI,    id=3)
 
         # The 'Molecule' menu entries.
@@ -2153,33 +2153,6 @@ class Main(wx.Frame):
     def open_rx_results_exe(self, event): # open results of r1 and r2 runs
         choice = self.list_rx.GetStringSelection()
         see_results(choice, None)
-        event.Skip()
-
-
-    def openGUI(self, event): # Open
-        filename = openfile('Select file to open', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-        if not filename == None:
-            global_return = open_file(self, filename)
-
-            # import global parameters
-            global global_setting
-            global file_setting
-            global sequencefile
-            global table_residue
-            global table_model
-            global table_s2
-            global table_rex
-            global table_te
-
-            # set global parameters
-            global_setting = global_return[0]
-            file_setting = global_return[1]
-            sequencefile = global_return[2]
-            table_residue = global_return[3]
-            table_model = global_return[4]
-            table_s2 = global_return[5]
-            table_rex = global_return[6]
-            table_te = global_return[7]
         event.Skip()
 
 
@@ -2571,23 +2544,6 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def save_state(self, event):
-        """Save the program state.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Open the dialog.
-        filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
-
-        # Save the relax state.
-        state.save_state(filename, force=True)
-
-        # Skip the event.
-        event.Skip()
-
-
     def sel_aic(self, event):
         selection = "AIC"
         event.Skip()
@@ -2604,4 +2560,48 @@ class Main(wx.Frame):
         if not tmp_global == None:
             if question('Do you realy want to change relax settings?'):
                 global_setting = tmp_global
+        event.Skip()
+
+
+    def state_load(self, event): # Open
+        filename = openfile('Select file to open', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+        if not filename == None:
+            global_return = open_file(self, filename)
+
+            # import global parameters
+            global global_setting
+            global file_setting
+            global sequencefile
+            global table_residue
+            global table_model
+            global table_s2
+            global table_rex
+            global table_te
+
+            # set global parameters
+            global_setting = global_return[0]
+            file_setting = global_return[1]
+            sequencefile = global_return[2]
+            table_residue = global_return[3]
+            table_model = global_return[4]
+            table_s2 = global_return[5]
+            table_rex = global_return[6]
+            table_te = global_return[7]
+        event.Skip()
+
+
+    def state_save(self, event):
+        """Save the program state.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the dialog.
+        filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+
+        # Save the relax state.
+        state.save_state(filename, force=True)
+
+        # Skip the event.
         event.Skip()
