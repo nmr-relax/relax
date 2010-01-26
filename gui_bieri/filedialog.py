@@ -54,23 +54,30 @@ def opendir(msg, default): # select directory, msg is message to display, defaul
         return newdir
 
 
-def openfile(msg, directory, filetype, default): # open a file
+def openfile(msg, directory, filetype, default):
+    """Open a file.
 
-    #Input format:
-    #msg:              message to display
-    #directory:        directory, where dialog opens as default
-    #filetype:         proposed file to open
-    #default:          list of supported files, indicated as "(Label)|os command|...
+    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
+        openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
 
-    #command:
-    #openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-    #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
 
-    newfile = None
-    dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN, defaultDir= directory, defaultFile = filetype, wildcard = default)
+    @param msg:         The message to display.
+    @type msg:          str
+    @param directory:   The directory to open in.
+    @type directory:    str
+    @param filetype:    The file to default selection to.
+    @type filetype:     str
+    @param default:     A list of supported files, indicated as "(Label)|os command|...
+    @type default:      str
+    """
+
+    # Open the dialog.
+    dialog = wx.FileDialog(None, message=msg, style=wx.OPEN, defaultDir=directory, defaultFile=filetype, wildcard=default)
+
+    # A file was selected.
     if dialog.ShowModal() == wx.ID_OK:
-        newfile = dialog.GetPath()
-        return newfile
+        # Return the full file path.
+        return dialog.GetPath()
 
 
 def savefile(msg, directory, filetype, default): # save a file
