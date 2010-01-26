@@ -26,7 +26,6 @@ from os import sep
 import wx
 
 # relax GUI module imports.
-from gui_bieri.message import missing_data
 from gui_bieri.paths import IMAGE_PATH
 
 

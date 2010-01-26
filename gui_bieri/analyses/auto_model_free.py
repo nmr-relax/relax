@@ -33,6 +33,7 @@ from gui_bieri.analyses.relax_control import start_modelfree
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
+from gui_bieri.message import missing_data
 from gui_bieri.paths import IMAGE_PATH
 
 
