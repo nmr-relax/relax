@@ -378,7 +378,11 @@ class Auto_model_free:
 
 
     def build_main_box(self):
-        """Construct the highest level box to pack into the automatic model-free analysis frame."""
+        """Construct the highest level box to pack into the automatic model-free analysis frame.
+
+        @return:    The main box element containing all model-free GUI elements to pack directly into the automatic model-free analysis frame.
+        @rtype:     wx.BoxSizer instance
+        """
 
         # Use a horizontal packing of elements.
         box = wx.BoxSizer(wx.HORIZONTAL)
