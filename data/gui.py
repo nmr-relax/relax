@@ -39,6 +39,10 @@ class Gui(Element):
         # Add the analysis list object.
         self.analyses = Analyses()
 
+        # Set the name and description.
+        self.name = 'relax_gui'
+        self.desc = 'The relax GUI information store.'
+
 
 
 class Analyses(RelaxListType):
