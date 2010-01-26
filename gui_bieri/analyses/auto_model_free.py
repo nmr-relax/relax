@@ -36,7 +36,7 @@ from gui_bieri.filedialog import opendir, openfile
 from gui_bieri.paths import IMAGE_PATH
 
 
-class Auto_model_free(wx.Frame):
+class Auto_model_free:
     def __init__(self, gui):
         """Build the automatic model-free protocol GUI element.
 
