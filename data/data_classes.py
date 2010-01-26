@@ -34,15 +34,21 @@ from relax_xml import fill_object_contents, xml_to_object
 class Element(object):
     """Empty data container."""
 
-    def __init__(self):
-        """Initialise some class variables."""
+    def __init__(self, name='element', desc='container object'):
+        """Initialise some class variables.
+
+        @keyword name:  The name of the object.
+        @type name:     str
+        @keyword desc:  The description of the object.
+        @type desc:     str
+        """
 
         # Execute the base class __init__() method.
         super(Element, self).__init__()
 
         # Some generic initial names.
-        self.name = 'element'
-        self.desc = 'container object'
+        self.name = name
+        self.desc = desc
 
         # Blacklisted objects.
         self.blacklist = []
