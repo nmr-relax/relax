@@ -579,20 +579,6 @@ class Main(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
-        # Menu actions
-        self.Bind(wx.EVT_MENU, self.newGUI, id=1)
-        self.Bind(wx.EVT_MENU, self.openGUI, id=2)
-        self.Bind(wx.EVT_MENU, self.saveGUI, id=3)
-        self.Bind(wx.EVT_MENU, self.exitGUI, id=4)
-        self.Bind(wx.EVT_MENU, self.aboutGUI, id=5)
-        self.Bind(wx.EVT_MENU, self.aboutrelax, id=6)
-        self.Bind(wx.EVT_MENU, self.settings, id=7)
-        self.Bind(wx.EVT_MENU, self.references, id=9)
-        #self.Bind(wx.EVT_MENU, self.structure_pdb, id=11)
-        self.Bind(wx.EVT_MENU, self.import_seq, id=12)
-        self.Bind(wx.EVT_MENU, self.param_file_setting, id=13)
-        self.Bind(wx.EVT_MENU, self.reset_setting, id=14)
-
         #button actions
         self.Bind(wx.EVT_BUTTON, self.sat_noe1, self.sat_noe_copy_1)
         self.Bind(wx.EVT_BUTTON, self.ref_noe, self.noe_ref_err_copy_1)
@@ -1825,7 +1811,7 @@ class Main(wx.Frame):
         menubar = wx.MenuBar()
         self.SetMenuBar(menubar)
 
-        # The 'File' menu.
+        # The 'File' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(id=1, text="&New", icon=NEW_ICON))
         menu.AppendItem(self.build_menu_sub_item(id=2, text="&Open", icon=OPEN_ICON))
@@ -1833,31 +1819,53 @@ class Main(wx.Frame):
         menu.AppendItem(self.build_menu_sub_item(id=4, text="E&xit", icon=EXIT_ICON))
         menubar.Append(menu, "&File")
 
-        # The 'Molecule' menu.
+        # The 'File' menu actions.
+        self.Bind(wx.EVT_MENU, self.newGUI,     id=1)
+        self.Bind(wx.EVT_MENU, self.openGUI,    id=2)
+        self.Bind(wx.EVT_MENU, self.saveGUI,    id=3)
+        self.Bind(wx.EVT_MENU, self.exitGUI,    id=4)
+
+        # The 'Molecule' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(id=11, text="Load &PDB File", icon=LOAD_ICON))
         menu.AppendItem(self.build_menu_sub_item(id=12, text="Load se&quence file", icon=LOAD_ICON))
         menubar.Append(menu, "&Molecule")
 
-        # The 'Settings' menu.
+        # The 'Molecule' menu actions.
+        #self.Bind(wx.EVT_MENU, self.structure_pdb,  id=11)
+        self.Bind(wx.EVT_MENU, self.import_seq,     id=12)
+
+        # The 'Settings' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(id=7, text="&Global relax settings", icon=SETTINGS_GLOBAL_ICON))
         menu.AppendItem(self.build_menu_sub_item(id=13, text="&Parameter file settings", icon=SETTINGS_ICON))
         menu.AppendItem(self.build_menu_sub_item(id=14, text="Reset a&ll settings", icon=SETTINGS_RESET_ICON))
         menubar.Append(menu, "&Settings")
 
-        # The 'Extras' menu.
+        # The 'Settings' menu actions.
+        self.Bind(wx.EVT_MENU, self.settings,           id=7)
+        self.Bind(wx.EVT_MENU, self.param_file_setting, id=13)
+        self.Bind(wx.EVT_MENU, self.reset_setting,      id=14)
+
+        # The 'Extras' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(id=8, text="&Contact relaxGUI", icon=CONTACT_ICON))
         menu.AppendItem(self.build_menu_sub_item(id=9, text="&References", icon=REF_ICON))
         menubar.Append(menu, "&Extras")
 
-        # The 'Help' menu.
+        # The 'Extras' menu actions.
+        self.Bind(wx.EVT_MENU, self.references, id=9)
+
+        # The 'Help' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(id=10, text="&Manual", icon=MANUAL_ICON))
         menu.AppendItem(self.build_menu_sub_item(id=5, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
         menu.AppendItem(self.build_menu_sub_item(id=6, text="About rela&x", icon=ABOUT_RELAX_ICON))
         menubar.Append(menu, "&Help")
+
+        # The 'Help' menu actions.
+        self.Bind(wx.EVT_MENU, self.aboutGUI,   id=5)
+        self.Bind(wx.EVT_MENU, self.aboutrelax, id=6)
 
 
     def build_menu_sub_item(self, id=None, text=None, icon=None, kind=wx.ITEM_NORMAL):
