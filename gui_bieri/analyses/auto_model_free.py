@@ -135,6 +135,15 @@ class Auto_model_free:
         self.gui.Bind(wx.EVT_BUTTON, self.structure_pdb, self.chan_struc_r21_copy_1_copy)
         self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
         self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_noe1, self.model_noe_1)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r11, self.model_r1_1)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r21, self.model_r2_1)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_noe2, self.model_noe_2)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r12, self.model_r1_2)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r22, self.model_r2_2)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_noe3, self.model_noe_3)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r13, self.model_r1_3)
+        self.gui.Bind(wx.EVT_BUTTON, self.model_r23, self.model_r2_3)
 
 
     def __do_layout(self):
@@ -142,6 +151,9 @@ class Auto_model_free:
         sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_15 = wx.BoxSizer(wx.VERTICAL)
         sizer_16 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_17 = wx.BoxSizer(wx.VERTICAL)
+        sizer_18 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_19 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_20 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_21 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_22 = wx.BoxSizer(wx.VERTICAL)
@@ -150,6 +162,18 @@ class Auto_model_free:
         sizer_23 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_23_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_23_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_17_copy_copy = wx.BoxSizer(wx.VERTICAL)
+        sizer_19_copy_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_19_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_19_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_18_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_17_copy = wx.BoxSizer(wx.VERTICAL)
+        sizer_19_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_19_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_19_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_18_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_19_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_19_copy = wx.BoxSizer(wx.HORIZONTAL)
         results_dir_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         results_dir_copy_copy_copy_1_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
         nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
@@ -189,6 +213,60 @@ class Auto_model_free:
         sizer_15.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
         sizer_14.Add(sizer_15, 0, 0, 0)
         self.gui.modelfree.SetSizer(sizer_14)
+        self.label_4_copy_copy_copy_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.label_7.SetMinSize((80, 17))
+        sizer_14.Add(self.bitmap_2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_15.Add(self.label_4_copy_copy_copy_copy_1_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+        sizer_18.Add(self.label_7, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_18.Add(self.modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17.Add(sizer_18, 0, 0, 0)
+        sizer_19.Add(self.label_8, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19.Add(self.m_noe_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19.Add(self.model_noe_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17.Add(sizer_19, 0, wx.EXPAND|wx.SHAPED, 0)
+        sizer_19_copy.Add(self.label_8_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy.Add(self.m_r1_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy.Add(self.model_r1_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17.Add(sizer_19_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+        sizer_19_copy_copy.Add(self.label_8_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy.Add(self.m_r2_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy.Add(self.model_r2_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17.Add(sizer_19_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+        self.panel_4.SetSizer(sizer_17)
+        sizer_16.Add(self.panel_4, 0, 0, 0)
+        sizer_18_copy.Add(self.label_7_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_18_copy.Add(self.modelfreefreq2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy.Add(sizer_18_copy, 0, 0, 0)
+        sizer_19_copy_1.Add(self.label_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_1.Add(self.m_noe_2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_1.Add(self.model_noe_2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy.Add(sizer_19_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
+        sizer_19_copy_copy_1.Add(self.label_8_copy_copy_1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_1.Add(self.m_r1_2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_1.Add(self.model_r1_2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy.Add(sizer_19_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
+        sizer_19_copy_copy_copy.Add(self.label_8_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_copy.Add(self.m_r2_2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_copy.Add(self.model_r2_2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy.Add(sizer_19_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+        self.panel_4_copy.SetSizer(sizer_17_copy)
+        sizer_16.Add(self.panel_4_copy, 0, 0, 0)
+        sizer_18_copy_copy.Add(self.label_7_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_18_copy_copy.Add(self.modelfreefreq3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy_copy.Add(sizer_18_copy_copy, 0, 0, 0)
+        sizer_19_copy_1_copy.Add(self.label_8_copy_1_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_1_copy.Add(self.m_noe_3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_1_copy.Add(self.model_noe_3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy_copy.Add(sizer_19_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+        sizer_19_copy_copy_1_copy.Add(self.label_8_copy_copy_1_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_1_copy.Add(self.m_r1_3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_1_copy.Add(self.model_r1_3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy_copy.Add(sizer_19_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+        sizer_19_copy_copy_copy_copy.Add(self.label_8_copy_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_copy_copy.Add(self.m_r2_3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_19_copy_copy_copy_copy.Add(self.model_r2_3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_17_copy_copy.Add(sizer_19_copy_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+        self.panel_4_copy_1.SetSizer(sizer_17_copy_copy)
 
 
     def __set_properties(self):
@@ -354,6 +432,87 @@ class Auto_model_free:
                                 model5 = start_modelfree(self, 'ellipsoid', True, global_setting, file_setting, sequencefile)      # execute ellipsoid
                                 if model5 == 'successful':
                                     model6 = start_modelfree(self, 'final', False, global_setting, file_setting, sequencefile)        # execute final analysis
+        event.Skip()
+
+
+    def model_noe1(self, event): # load noe1
+        backup = self.m_noe_1.GetValue()
+        paramfiles1[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles1[0] == None:
+            paramfiles1[0] = backup
+        self.m_noe_1.SetValue(paramfiles1[0])
+        event.Skip()
+
+
+    def model_noe2(self, event): # load noe1
+        backup = self.m_noe_2.GetValue()
+        paramfiles2[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles2[0] == None:
+            paramfiles2[0] = backup
+        self.m_noe_2.SetValue(paramfiles2[0])
+        event.Skip()
+
+
+    def model_noe3(self, event): # load noe1
+        backup = self.m_noe_3.GetValue()
+        paramfiles3[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles3[0] == None:
+            paramfiles3[0] = backup
+        self.m_noe_3.SetValue(paramfiles3[0])
+        event.Skip()
+
+
+    def model_r11(self, event): #
+        backup = self.m_r1_1.GetValue()
+        paramfiles1[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles1[1] == None:
+            paramfiles1[1] = backup
+        self.m_r1_1.SetValue(paramfiles1[1])
+        event.Skip()
+
+
+    def model_r12(self, event): #
+        backup = self.m_r1_2.GetValue()
+        paramfiles2[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles2[1] == None:
+            paramfiles2[1] = backup
+        self.m_r1_2.SetValue(paramfiles2[1])
+        event.Skip()
+
+
+    def model_r13(self, event):
+        backup = self.m_r1_3.GetValue()
+        paramfiles3[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles3[1] == None:
+            paramfiles3[1] = backup
+        self.m_r1_3.SetValue(paramfiles3[1])
+        event.Skip()
+
+
+    def model_r21(self, event): #
+        backup = self.m_r2_1.GetValue()
+        paramfiles1[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles1[2] == None:
+            paramfiles1[2] = backup
+        self.m_r2_1.SetValue(paramfiles1[2])
+        event.Skip()
+
+
+    def model_r22(self, event): #
+        backup = self.m_r2_2.GetValue()
+        paramfiles2[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles2[2] == None:
+            paramfiles2[2] = backup
+        self.m_r2_2.SetValue(paramfiles2[2])
+        event.Skip()
+
+
+    def model_r23(self, event):
+        backup = self.m_r2_3.GetValue()
+        paramfiles3[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if paramfiles3[2] == None:
+            paramfiles3[2] = backup
+        self.m_r2_3.SetValue(paramfiles3[2])
         event.Skip()
 
 
