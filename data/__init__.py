@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -328,8 +328,24 @@ class Relax_data_store(dict):
         top_element.setAttribute('version', version)
         top_element.setAttribute('time', asctime())
 
-        # Add all simple objects in the data store base object to the XML element.
-        fill_object_contents(xmldoc, top_element, object=self, blacklist=['relax_gui'] + list(self.__class__.__dict__.keys() + dict.__dict__.keys()))
+        # Add all objects in the data store base object to the XML element.
+        blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+        for name in dir(self):
+            # Skip blacklisted objects.
+            if name in blacklist:
+                continue
+
+            # Skip special objects.
+            if search('^_', name):
+                continue
+
+            # Execute any to_xml() methods, and add that object to the blacklist.
+            obj = getattr(self, name)
+            if hasattr(obj, 'to_xml'):
+                obj.to_xml(xmldoc, top_element)
+                blacklist = blacklist + [name]
+
+        fill_object_contents(xmldoc, top_element, object=self, blacklist=blacklist)
 
         # Loop over the pipes.
         for pipe in pipes:
