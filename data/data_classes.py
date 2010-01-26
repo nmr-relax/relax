@@ -102,13 +102,18 @@ class Element(object):
         @type element:  XML element object
         """
 
+        # Create a new element for this container and add it to the higher level element.
+        cont_element = doc.createElement(self.name)
+        element.appendChild(cont_element)
+
         # Set the list attributes.
-        element.setAttribute('desc', self.desc)
+        cont_element.setAttribute('desc', self.desc)
 
         # Blacklisted objects.
-        blacklist = list(self.__class__.__dict__.keys() + object.__dict__.keys())
+        blacklist = ['name', 'desc', 'blacklist'] + list(Element.__dict__.keys() + self.__class__.__dict__.keys() + object.__dict__.keys())
 
-        # Add objects which have to_xml() methods.
+        # Store and blacklist the objects which have to_xml() methods.
+        to_xml_list = []
         for name in dir(self):
             # Skip blacklisted objects.
             if name in blacklist:
@@ -121,11 +126,15 @@ class Element(object):
             # Execute any to_xml() methods, and add that object to the blacklist.
             obj = getattr(self, name)
             if hasattr(obj, 'to_xml'):
-                obj.to_xml(doc, element)
+                to_xml_list.append(obj)
                 blacklist = blacklist + [name]
 
         # Add all simple python objects within the container to the XML element.
-        fill_object_contents(doc, element, object=self, blacklist=blacklist)
+        fill_object_contents(doc, cont_element, object=self, blacklist=blacklist)
+
+        # Execute the object to_xml() methods.
+        for obj in to_xml_list:
+            obj.to_xml(doc, cont_element)
 
 
 
