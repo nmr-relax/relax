@@ -31,6 +31,7 @@ import wx
 # relax GUI module imports.
 from gui_bieri.analyses.relax_control import start_modelfree
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
+from gui_bieri.analyses.select_model_calc import Select_tensor
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
 from gui_bieri.message import missing_data
@@ -617,13 +618,11 @@ class Auto_model_free:
 
 
     def exec_model_free(self, event):     # start model-free calculation by relax
-        global LOCAL_TM
-
         checkpoint = self.check_entries()
         if checkpoint == False:
             which_model = None
         else:
-            which_model = self.whichmodel(LOCAL_TM)
+            which_model = self.whichmodel(False)
 
         # start individual calculations
         if not which_model == None:
@@ -636,7 +635,7 @@ class Auto_model_free:
                     enable_models = start_modelfree(self, which_model, False, global_setting, file_setting, sequencefile)
 
                     if enable_models:
-                        LOCAL_TM = True
+                        self.local_tm_flag = True
                 else:
 
                     # run final run
@@ -781,10 +780,7 @@ class Auto_model_free:
 
 
     def whichmodel(self, is_local_tm):
-        global selection
-        global LOCAL_TM
-        LOCAL_TM = is_local_tm
         selection = None
-        dlg = Select_tensor(None, -1, "")
+        dlg = Select_tensor(None, -1, "", local_tm_flag=is_local_tm)
         dlg.ShowModal()
         return selection

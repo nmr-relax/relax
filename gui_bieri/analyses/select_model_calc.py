@@ -33,6 +33,11 @@ selection = None
 
 class Select_tensor(wx.Dialog):
     def __init__(self, *args, **kwds):
+        """Initialise the dialog."""
+
+        # Strip out and save the local_tm_flag from the keywords.
+        self.local_tm_flag = kwds.pop('local_tm_flag')
+
         # begin select_tensor.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Dialog.__init__(self, *args, **kwds)
@@ -119,11 +124,11 @@ class Select_tensor(wx.Dialog):
         self.cancel_button.SetMinSize((111, 29))
 
         # enable or disable buttons if local_tm was calculate
-        self.sphere_button.Enable(LOCAL_TM) # sphere button
-        self.oblate_button.Enable(LOCAL_TM)  # prolate button
-        self.prolate_button.Enable(LOCAL_TM)  # oblate button
-        self.ellipsoid_button.Enable(LOCAL_TM)  # ellipsoid button
-        self.final_button.Enable(LOCAL_TM)  # final button
+        self.sphere_button.Enable(self.local_tm_flag) # sphere button
+        self.oblate_button.Enable(self.local_tm_flag)  # prolate button
+        self.prolate_button.Enable(self.local_tm_flag)  # oblate button
+        self.ellipsoid_button.Enable(self.local_tm_flag)  # ellipsoid button
+        self.final_button.Enable(self.local_tm_flag)  # final button
 
 
     def cancel(self, event): # cancel
