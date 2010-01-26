@@ -34,6 +34,20 @@ from relax_xml import fill_object_contents, xml_to_object
 class Element(object):
     """Empty data container."""
 
+    def __init__(self):
+        """Initialise some class variables."""
+
+        # Execute the base class __init__() method.
+        super(Element, self).__init__()
+
+        # Some generic initial names.
+        self.name = 'element'
+        self.desc = 'container object'
+
+        # Blacklisted objects.
+        self.blacklist = []
+
+
     def __repr__(self):
         # Header.
         text = "%-25s%-100s\n\n" % ("Data structure", "Value")
@@ -77,6 +91,41 @@ class Element(object):
 
         # The Element container is empty.
         return True
+
+
+    def to_xml(self, doc, element):
+        """Create an XML element for the container.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the data container XML element to.
+        @type element:  XML element object
+        """
+
+        # Set the list attributes.
+        element.setAttribute('desc', self.desc)
+
+        # Blacklisted objects.
+        blacklist = list(self.__class__.__dict__.keys() + object.__dict__.keys())
+
+        # Add objects which have to_xml() methods.
+        for name in dir(self):
+            # Skip blacklisted objects.
+            if name in blacklist:
+                continue
+
+            # Skip special objects.
+            if search('^_', name):
+                continue
+
+            # Execute any to_xml() methods, and add that object to the blacklist.
+            obj = getattr(self, name)
+            if hasattr(obj, 'to_xml'):
+                obj.to_xml(doc, element)
+                blacklist = blacklist + [name]
+
+        # Add all simple python objects within the container to the XML element.
+        fill_object_contents(doc, element, object=self, blacklist=blacklist)
 
 
 
@@ -150,6 +199,3 @@ class RelaxListType(ListType):
 
             # Add all simple python objects within the PipeContainer to the pipe element.
             fill_object_contents(doc, element, object=self[i], blacklist=list(self[i].__class__.__dict__.keys()))
-
-
-
