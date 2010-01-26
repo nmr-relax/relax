@@ -31,7 +31,6 @@ import wx
 # relax GUI module imports.
 from gui_bieri.analyses.relax_control import start_modelfree
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
-from gui_bieri.analyses.select_model_calc import check_entries, whichmodel
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
 from gui_bieri.paths import IMAGE_PATH
@@ -565,14 +564,65 @@ class Auto_model_free:
         return box
 
 
+    def check_entries(self):
+        check = False
+        counter = 0
+
+        # check frq 1
+        if not self.modelfreefreq1.GetValue() == '':
+            counter = counter + 1
+        if not self.m_noe_1.GetValue() == '':
+            counter = counter + 1
+        if not self.m_r1_1.GetValue() == '':
+            counter = counter + 1
+        if not self.m_r2_1.GetValue() == '':
+            counter = counter + 1
+
+        # check frq 1
+        if not self.modelfreefreq2.GetValue() == '':
+            counter = counter + 1
+        if not self.m_noe_2.GetValue() == '':
+            counter = counter + 1
+        if not self.m_r1_2.GetValue() == '':
+            counter = counter + 1
+        if not self.m_r2_2.GetValue() == '':
+            counter = counter + 1
+
+        # check frq 1
+        if not self.modelfreefreq3.GetValue() == '':
+            counter = counter + 1
+        if not self.m_noe_3.GetValue() == '':
+            counter = counter + 1
+        if not self.m_r1_3.GetValue() == '':
+            counter = counter + 1
+        if not self.m_r2_3.GetValue() == '':
+            counter = counter + 1
+
+        # two field strength ok
+        if counter == 8:
+            check = True
+            print '\n\n\nTwo different field strength detected !!\n\n\n'
+
+        # three field strength ok
+        elif counter == 12:
+            check = True
+            print '\n\n\nThree different field strength detected !!\n\n\n'
+
+        # missing data
+        else:
+            missing_data()
+
+        return check
+
+
     def exec_model_free(self, event):     # start model-free calculation by relax
         global LOCAL_TM
 
-        checkpoint = check_entries(self)
+        checkpoint = self.check_entries(self)
         if checkpoint == False:
             which_model = None
         else:
-            which_model = whichmodel(LOCAL_TM)
+            which_model = self.whichmodel(LOCAL_TM)
 
         # start individual calculations
         if not which_model == None:
@@ -727,3 +777,13 @@ class Auto_model_free:
     def sel_bic(self, event):
         selection = "BIC"
         event.Skip()
+
+
+    def whichmodel(self, is_local_tm):
+        global selection
+        global LOCAL_TM
+        LOCAL_TM = is_local_tm
+        selection = None
+        dlg = Select_tensor(None, -1, "")
+        dlg.ShowModal()
+        return selection
