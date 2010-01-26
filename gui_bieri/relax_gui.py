@@ -2053,20 +2053,20 @@ class Main(wx.Frame):
         ds.relax_gui = Gui()
 
         # Define Global Variables
-        #unresolved = ""
-        #results_noe = []
-        #results_rx = []
-        #results_model_free = []
-        #global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-        #file_setting = ['0', '1', '2', '3', '4', '5', '6']
-        #sequencefile = ''
+        ds.relax_gui.unresolved = ""
+        ds.relax_gui.results_noe = []
+        ds.relax_gui.results_rx = []
+        ds.relax_gui.results_model_free = []
+        ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
+        ds.relax_gui.file_setting = ['0', '1', '2', '3', '4', '5', '6']
+        ds.relax_gui.sequencefile = ''
 
         # Table of relax Results
-        #table_residue = []
-        #table_model = []
-        #table_s2 = []
-        #table_rex = []
-        #table_te = []
+        ds.relax_gui.table_residue = []
+        ds.relax_gui.table_model = []
+        ds.relax_gui.table_s2 = []
+        ds.relax_gui.table_rex = []
+        ds.relax_gui.table_te = []
 
         # Initialise the 3 NOE analyses.
         nmrfreq = [600, 800, 900]
