@@ -272,7 +272,7 @@ class Auto_model_free:
 
         # The 1st panel contents.
         label_7 = wx.StaticText(panel_4, -1, "NMR freq 1:")
-        modelfreefreq1 = wx.TextCtrl(panel_4, -1, "")
+        self.modelfreefreq1 = wx.TextCtrl(panel_4, -1, "")
         label_8 = wx.StaticText(panel_4, -1, "NOE")
         self.m_noe_1 = wx.TextCtrl(panel_4, -1, "")
         model_noe_1 = wx.Button(panel_4, -1, "+")
@@ -285,7 +285,7 @@ class Auto_model_free:
 
         # The 2nd panel contents.
         label_7_copy = wx.StaticText(panel_4_copy, -1, "NMR freq 2:")
-        modelfreefreq2 = wx.TextCtrl(panel_4_copy, -1, "")
+        self.modelfreefreq2 = wx.TextCtrl(panel_4_copy, -1, "")
         label_8_copy_1 = wx.StaticText(panel_4_copy, -1, "NOE")
         self.m_noe_2 = wx.TextCtrl(panel_4_copy, -1, "")
         model_noe_2 = wx.Button(panel_4_copy, -1, "+")
@@ -298,7 +298,7 @@ class Auto_model_free:
 
         # The 3rd panel contents.
         label_7_copy_copy = wx.StaticText(panel_4_copy_1, -1, "NMR freq 3:")
-        modelfreefreq3 = wx.TextCtrl(panel_4_copy_1, -1, "")
+        self.modelfreefreq3 = wx.TextCtrl(panel_4_copy_1, -1, "")
         label_8_copy_1_copy = wx.StaticText(panel_4_copy_1, -1, "NOE")
         self.m_noe_3 = wx.TextCtrl(panel_4_copy_1, -1, "")
         model_noe_3 = wx.Button(panel_4_copy_1, -1, "+")
@@ -311,7 +311,7 @@ class Auto_model_free:
 
         # Properties.
         label_7.SetMinSize((80, 17))
-        modelfreefreq1.SetMinSize((80, 20))
+        self.modelfreefreq1.SetMinSize((80, 20))
         label_8.SetMinSize((80, 17))
         self.m_noe_1.SetMinSize((120, 20))
         model_noe_1.SetMinSize((20, 20))
@@ -325,7 +325,7 @@ class Auto_model_free:
         model_r2_1.SetMinSize((20, 20))
         model_r2_1.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         label_7_copy.SetMinSize((80, 17))
-        modelfreefreq2.SetMinSize((80, 20))
+        self.modelfreefreq2.SetMinSize((80, 20))
         label_8_copy_1.SetMinSize((80, 17))
         self.m_noe_2.SetMinSize((120, 20))
         model_noe_2.SetMinSize((20, 20))
@@ -339,7 +339,7 @@ class Auto_model_free:
         model_r2_2.SetMinSize((20, 20))
         model_r2_2.SetFont(wx.Font(6, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
         label_7_copy_copy.SetMinSize((80, 17))
-        modelfreefreq3.SetMinSize((80, 20))
+        self.modelfreefreq3.SetMinSize((80, 20))
         label_8_copy_1_copy.SetMinSize((80, 17))
         self.m_noe_3.SetMinSize((120, 20))
         model_noe_3.SetMinSize((20, 20))
@@ -380,7 +380,7 @@ class Auto_model_free:
         panel_4_copy_1.SetMinSize((230, 85))
         panel_4_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
         sizer_18.Add(label_7, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18.Add(modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_18.Add(self.modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
         sizer_17.Add(sizer_18, 0, 0, 0)
         sizer_19.Add(label_8, 0, wx.ADJUST_MINSIZE, 0)
         sizer_19.Add(self.m_noe_1, 0, wx.ADJUST_MINSIZE, 0)
@@ -397,7 +397,7 @@ class Auto_model_free:
         panel_4.SetSizer(sizer_17)
         sizer_16.Add(panel_4, 0, 0, 0)
         sizer_18_copy.Add(label_7_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18_copy.Add(modelfreefreq2, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_18_copy.Add(self.modelfreefreq2, 0, wx.ADJUST_MINSIZE, 0)
         sizer_17_copy.Add(sizer_18_copy, 0, 0, 0)
         sizer_19_copy_1.Add(label_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
         sizer_19_copy_1.Add(self.m_noe_2, 0, wx.ADJUST_MINSIZE, 0)
@@ -414,7 +414,7 @@ class Auto_model_free:
         panel_4_copy.SetSizer(sizer_17_copy)
         sizer_16.Add(panel_4_copy, 0, 0, 0)
         sizer_18_copy_copy.Add(label_7_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_18_copy_copy.Add(modelfreefreq3, 0, wx.ADJUST_MINSIZE, 0)
+        sizer_18_copy_copy.Add(self.modelfreefreq3, 0, wx.ADJUST_MINSIZE, 0)
         sizer_17_copy_copy.Add(sizer_18_copy_copy, 0, 0, 0)
         sizer_19_copy_1_copy.Add(label_8_copy_1_copy, 0, wx.ADJUST_MINSIZE, 0)
         sizer_19_copy_1_copy.Add(self.m_noe_3, 0, wx.ADJUST_MINSIZE, 0)
