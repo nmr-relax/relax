@@ -65,7 +65,6 @@ class Auto_model_free:
         self.panel_4_copy = wx.Panel(self.gui.modelfree, -1)
         self.panel_4 = wx.Panel(self.gui.modelfree, -1)
 
-        self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
         self.label_7 = wx.StaticText(self.panel_4, -1, "NMR freq 1:")
         self.modelfreefreq1 = wx.TextCtrl(self.panel_4, -1, "")
         self.label_8 = wx.StaticText(self.panel_4, -1, "NOE")
@@ -129,24 +128,24 @@ class Auto_model_free:
         main_box = self.build_main_box()
         self.gui.modelfree.SetSizer(main_box)
 
-        self.__set_properties()
-        self.__do_layout()
+        #self.__set_properties()
+        #self.__do_layout()
 
         # Button actions.
-        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
-        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.structure_pdb, self.chan_struc_r21_copy_1_copy)
-        self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe1, self.model_noe_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r11, self.model_r1_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r21, self.model_r2_1)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe2, self.model_noe_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r12, self.model_r1_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r22, self.model_r2_2)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_noe3, self.model_noe_3)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r13, self.model_r1_3)
-        self.gui.Bind(wx.EVT_BUTTON, self.model_r23, self.model_r2_3)
+        #self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
+        #self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
+        #self.gui.Bind(wx.EVT_BUTTON, self.gui.structure_pdb, self.chan_struc_r21_copy_1_copy)
+        #self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
+        #self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_noe1, self.model_noe_1)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_r11, self.model_r1_1)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_r21, self.model_r2_1)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_noe2, self.model_noe_2)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_r12, self.model_r1_2)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_r22, self.model_r2_2)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_noe3, self.model_noe_3)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_r13, self.model_r1_3)
+        #self.gui.Bind(wx.EVT_BUTTON, self.model_r23, self.model_r2_3)
 
 
     def __do_layout(self):
@@ -180,7 +179,6 @@ class Auto_model_free:
         nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         exec_relax_copy_1_copy_3 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.label_4_copy_copy_copy_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         sizer_18.Add(self.label_7, 0, wx.ADJUST_MINSIZE, 0)
         sizer_18.Add(self.modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
         sizer_17.Add(sizer_18, 0, 0, 0)
@@ -367,6 +365,23 @@ class Auto_model_free:
         self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
 
+    def add_frame_title(self, box):
+        """Create and add the frame title to the given box.
+
+        @param box:     The box element to pack the frame title into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The title.
+        label = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
+
+        # The font properties.
+        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+
+        # Pack the title.
+        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+
+
     def build_main_box(self):
         """Construct the highest level box to pack into the automatic model-free analysis frame.
 
@@ -400,9 +415,11 @@ class Auto_model_free:
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        box.Add(self.label_4_copy_copy_copy_copy_1_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+        self.add_frame_title(box)
+        return box
 
         # Add the relaxation data input GUI element.
+        self.add_relax_data_input(box)
         box.Add(sizer_16, 0, 0, 0)
         box.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
 
