@@ -135,8 +135,6 @@ class Auto_model_free:
         self.gui.Bind(wx.EVT_BUTTON, self.structure_pdb, self.chan_struc_r21_copy_1_copy)
         self.gui.Bind(wx.EVT_BUTTON, self.resdir_modelfree, self.results_directory_r21_copy_2)
         self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
-        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.open_model_results_exe, self.list_modelfree)
-        self.gui.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
 
 
     def __do_layout(self):
