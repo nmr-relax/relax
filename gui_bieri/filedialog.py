@@ -23,6 +23,8 @@
 
 # file dialog script
 
+# Python module imports.
+from os import chdir, getcwd
 import wx
 
 
@@ -71,11 +73,21 @@ def openfile(msg=None, directory=None, filetype=None, default=None):
     @type default:      str
     """
 
+    # The current working directory.
+    dir_switch = False
+    if directory == None:
+        directory = getcwd()
+        dir_switch = True
+
     # Open the dialog.
     dialog = wx.FileDialog(None, message=msg, style=wx.OPEN, defaultDir=directory, defaultFile=filetype, wildcard=default)
 
     # A file was selected.
     if dialog.ShowModal() == wx.ID_OK:
+        # Reset the current working directory if changed.
+        if dir_switch:
+            chdir(dialog.GetDirectory())
+
         # Return the full file path.
         return dialog.GetPath()
 
