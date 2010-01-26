@@ -136,7 +136,7 @@ def load_state(state=None, dir=None, force=False):
         raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
 
 
-def save_state(state=None, dir=None, compress_type=1, force=False, pickle=True):
+def save_state(state=None, dir=None, compress_type=1, force=False, pickle=False):
     """Function for saving the program state.
 
     @keyword state:         The saved state file.
