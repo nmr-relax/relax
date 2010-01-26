@@ -64,10 +64,7 @@ class Auto_model_free:
         main_box = self.build_main_box()
         self.gui.modelfree.SetSizer(main_box)
 
-        #self.__set_properties()
-
-
-    def __set_properties(self):
+        # Set the frame font size.
         self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
 
