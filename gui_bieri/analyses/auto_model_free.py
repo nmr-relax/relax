@@ -32,6 +32,7 @@ import wx
 from gui_bieri.analyses.relax_control import start_modelfree
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import check_entries, whichmodel
+from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
 from gui_bieri.paths import IMAGE_PATH
 
@@ -234,7 +235,7 @@ class Auto_model_free:
 
         # The elements.
         self.structure_file_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
+        self.structure_r21_copy_1_copy = StructureTextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
         self.structure_r21_copy_1_copy.SetEditable(False)
         self.chan_struc_r21_copy_1_copy = wx.Button(self.gui.modelfree, -1, "Change")
 
@@ -252,7 +253,7 @@ class Auto_model_free:
         results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.chan_struc_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
 
         # Bind the events.
-        self.gui.Bind(wx.EVT_BUTTON, self.gui.structure_pdb, self.chan_struc_r21_copy_1_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.structure_r21_copy_1_copy.structure_pdb, self.chan_struc_r21_copy_1_copy)
 
         # Add the element to the box.
         box.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
