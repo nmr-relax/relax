@@ -39,6 +39,7 @@ from data.gui import Gui
 from float import floatAsByteArray
 from generic_fns import pipes, state
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
+from generic_fns.reset import reset
 from relax_errors import RelaxError
 from version import version
 
@@ -2553,30 +2554,25 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def state_load(self, event): # Open
-        filename = openfile('Select file to open', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-        if not filename == None:
-            global_return = open_file(self, filename)
+    def state_load(self, event):
+        """Load the program state.
 
-            # import global parameters
-            global global_setting
-            global file_setting
-            global sequencefile
-            global table_residue
-            global table_model
-            global table_s2
-            global table_rex
-            global table_te
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
-            # set global parameters
-            global_setting = global_return[0]
-            file_setting = global_return[1]
-            sequencefile = global_return[2]
-            table_residue = global_return[3]
-            table_model = global_return[4]
-            table_s2 = global_return[5]
-            table_rex = global_return[6]
-            table_te = global_return[7]
+        # Open the dialog.
+        filename = openfile(msg='Select file to open', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+
+        # A file has been selected.
+        if filename:
+            # Reset the relax data store.
+            reset()
+
+            # Load the relax state.
+            state.load_state(filename)
+
+        # Skip the event.
         event.Skip()
 
 
