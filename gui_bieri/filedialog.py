@@ -92,20 +92,37 @@ def openfile(msg=None, directory=None, filetype=None, default=None):
         return dialog.GetPath()
 
 
-def savefile(msg, directory, filetype, default): # save a file
+def savefile(msg=None, directory=None, filetype=None, default=None):
+    """Save a file.
 
-    #Input format:
-    #msg:              message to display
-    #directory:        directory, where dialog opens as default
-    #filetype:         proposed file to save
-    #default:          list of supported files, indicated as "(Label)|os command|...
+    For example to save /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
+        savefile('select file to save', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
 
-    #command:
-    #savefile('select file to save', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-    #suggests to save /usr/save.relaxGUI, supported files to save are: *.relaxGUI, *.*
 
-    newfile = None
-    dialog = wx.FileDialog ( None, message = msg, style = wx.SAVE, defaultDir= directory, defaultFile = filetype, wildcard = default)
+    @keyword msg:       The message to display.
+    @type msg:          str
+    @keyword directory: The directory to open in.
+    @type directory:    str
+    @keyword filetype:  The default file name to save to.
+    @type filetype:     str
+    @keyword default:   A list of supported files, indicated as "(Label)|os command|...
+    @type default:      str
+    """
+
+    # The current working directory.
+    dir_switch = False
+    if directory == None:
+        directory = getcwd()
+        dir_switch = True
+
+    # Open the dialog.
+    dialog = wx.FileDialog(None, message=msg, style=wx.SAVE, defaultDir=directory, defaultFile=filetype, wildcard=default)
+
+    # A file was selected.
     if dialog.ShowModal() == wx.ID_OK:
-        newfile = dialog.GetPath()
-        return newfile
+        # Reset the current working directory if changed.
+        if dir_switch:
+            chdir(dialog.GetDirectory())
+
+        # Return the full file path.
+        return dialog.GetPath()
