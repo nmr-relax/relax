@@ -47,6 +47,11 @@ class Auto_model_free:
         # Store the main class.
         self.gui = gui
 
+        # Create the panel.
+        self.panel_4_copy_1 = wx.Panel(self.gui.modelfree, -1)
+        self.panel_4_copy = wx.Panel(self.gui.modelfree, -1)
+        self.panel_4 = wx.Panel(self.gui.modelfree, -1)
+
         self.bitmap_2 = wx.StaticBitmap(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
         self.label_7 = wx.StaticText(self.panel_4, -1, "NMR freq 1:")
