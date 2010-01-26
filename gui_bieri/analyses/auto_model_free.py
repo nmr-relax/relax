@@ -151,7 +151,6 @@ class Auto_model_free:
 
     def __do_layout(self):
         # Box layout of elements.
-        sizer_15 = wx.BoxSizer(wx.VERTICAL)
         sizer_16 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_17 = wx.BoxSizer(wx.VERTICAL)
         sizer_18 = wx.BoxSizer(wx.HORIZONTAL)
@@ -181,9 +180,7 @@ class Auto_model_free:
         nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         exec_relax_copy_1_copy_3 = wx.BoxSizer(wx.HORIZONTAL)
 
-        sizer_15.Add(self.label_4_copy_copy_copy_copy_1_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
         self.label_4_copy_copy_copy_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        sizer_15.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
         sizer_18.Add(self.label_7, 0, wx.ADJUST_MINSIZE, 0)
         sizer_18.Add(self.modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
         sizer_17.Add(sizer_18, 0, 0, 0)
@@ -234,8 +231,6 @@ class Auto_model_free:
         sizer_19_copy_copy_copy_copy.Add(self.model_r2_3, 0, wx.ADJUST_MINSIZE, 0)
         sizer_17_copy_copy.Add(sizer_19_copy_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
         sizer_16.Add(self.panel_4_copy_1, 0, 0, 0)
-        sizer_15.Add(sizer_16, 0, 0, 0)
-        sizer_15.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
         sizer_20.Add(self.m0, 0, wx.ADJUST_MINSIZE, 0)
         sizer_20.Add(self.m1, 0, wx.ADJUST_MINSIZE, 0)
         sizer_20.Add(self.m2, 0, wx.ADJUST_MINSIZE, 0)
@@ -246,22 +241,17 @@ class Auto_model_free:
         sizer_20.Add(self.m7, 0, wx.ADJUST_MINSIZE, 0)
         sizer_20.Add(self.m8, 0, wx.ADJUST_MINSIZE, 0)
         sizer_20.Add(self.m9, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(sizer_20, 1, wx.EXPAND, 0)
         sizer_21.Add(self.label_10, 0, wx.TOP|wx.ADJUST_MINSIZE, 1)
         sizer_21.Add(self.aic, 0, wx.ADJUST_MINSIZE, 0)
         sizer_21.Add(self.bic, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(sizer_21, 1, wx.TOP|wx.EXPAND, 5)
         results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_file_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.chan_struc_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_15.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
         nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         nmr_freq_copy_copy_copy_copy_copy_1_copy.Add(self.unresolved_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_15.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
         results_dir_copy_copy_copy_1_copy_2.Add(self.label_2_copy_copy_3_copy_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         results_dir_copy_copy_copy_1_copy_2.Add(self.resultsdir_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         results_dir_copy_copy_copy_1_copy_2.Add(self.results_directory_r21_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_15.Add(results_dir_copy_copy_copy_1_copy_2, 1, wx.EXPAND, 0)
         exec_relax_copy_1_copy_3.Add(self.label_5_copy_1_copy_3, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         exec_relax_copy_1_copy_3.Add(self.relax_start_modelfree, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
         self.label_7.SetMinSize((80, 17))
@@ -394,6 +384,45 @@ class Auto_model_free:
         # Build the right hand box and pack it next to the bitmap.
         right_box = self.build_right_box()
         box.Add(right_box, 0, 0, 0)
+
+        # Return the box.
+        return box
+
+
+    def build_right_box(self):
+        """Construct the right hand box to pack into the main model-free box.
+
+        @return:    The right hand box element containing all model-free GUI elements (excluding the bitmap) to pack into the main model-free box.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
+
+        # Add the frame title.
+        box.Add(self.label_4_copy_copy_copy_copy_1_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+
+        # Add the relaxation data input GUI element.
+        box.Add(sizer_16, 0, 0, 0)
+        box.Add(self.label_9, 0, wx.TOP|wx.ADJUST_MINSIZE, 10)
+
+        # Add the model-free models GUI element.
+        box.Add(sizer_20, 1, wx.EXPAND, 0)
+
+        # Add the model selection GUI element.
+        box.Add(sizer_21, 1, wx.TOP|wx.EXPAND, 5)
+
+        # Add the PDB file selection GUI element.
+        box.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
+
+        # Add the unresolved residues GUI element.
+        box.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
+
+        # Add the results directory GUI element.
+        box.Add(results_dir_copy_copy_copy_1_copy_2, 1, wx.EXPAND, 0)
+
+        # Add the execution GUI element.
+        box.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
 
         # Return the box.
         return box
