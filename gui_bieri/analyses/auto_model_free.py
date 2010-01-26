@@ -65,7 +65,6 @@ class Auto_model_free:
         self.panel_4_copy = wx.Panel(self.gui.modelfree, -1)
         self.panel_4 = wx.Panel(self.gui.modelfree, -1)
 
-        self.bitmap_2 = wx.StaticBitmap(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
         self.label_7 = wx.StaticText(self.panel_4, -1, "NMR freq 1:")
         self.modelfreefreq1 = wx.TextCtrl(self.panel_4, -1, "")
@@ -126,6 +125,10 @@ class Auto_model_free:
         self.label_5_copy_1_copy_3 = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         self.relax_start_modelfree = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
+        # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
+        sizer_14 = self.build_main_box()
+        self.gui.modelfree.SetSizer(sizer_14)
+
         self.__set_properties()
         self.__do_layout()
 
@@ -148,7 +151,6 @@ class Auto_model_free:
 
     def __do_layout(self):
         # Box layout of elements.
-        sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_15 = wx.BoxSizer(wx.VERTICAL)
         sizer_16 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_17 = wx.BoxSizer(wx.VERTICAL)
@@ -179,11 +181,8 @@ class Auto_model_free:
         nmr_freq_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         exec_relax_copy_1_copy_3 = wx.BoxSizer(wx.HORIZONTAL)
 
-        sizer_14.Add(self.bitmap_2, 0, wx.ADJUST_MINSIZE, 0)
         sizer_15.Add(self.label_4_copy_copy_copy_copy_1_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
         self.label_4_copy_copy_copy_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        sizer_14.Add(sizer_15, 0, 0, 0)
-        self.gui.modelfree.SetSizer(sizer_14)
         sizer_15.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
         sizer_18.Add(self.label_7, 0, wx.ADJUST_MINSIZE, 0)
         sizer_18.Add(self.modelfreefreq1, 0, wx.ADJUST_MINSIZE, 0)
@@ -376,6 +375,24 @@ class Auto_model_free:
         self.relax_start_modelfree.SetName('hello')
         self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
         self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+
+
+    def build_main_box(self):
+        """Construct the highest level box to pack into the automatic model-free analysis frame."""
+
+        # Use a horizontal packing of elements.
+        sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Add the model-free bitmap picture.
+        self.bitmap_2 = wx.StaticBitmap(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
+        sizer_14.Add(self.bitmap_2, 0, wx.ADJUST_MINSIZE, 0)
+
+        # Build the right hand box and pack it next to the bitmap.
+        sizer_15 = self.build_right_box()
+        sizer_14.Add(sizer_15, 0, 0, 0)
+
+        # Return the box.
+        return sizer_14
 
 
     def exec_model_free(self, event):     # start model-free calculation by relax
