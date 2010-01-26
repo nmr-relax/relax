@@ -169,48 +169,8 @@ class Main(wx.Frame):
         self.panel_3 = wx.Panel(self.panel_1, -1)
         self.noe1 = wx.Panel(self.notebook_3, -1)
 
-
-        # Menu Bar
-        ##########
-
-        # Create the menu bar GUI item and add it to the main frame.
-        menubar = wx.MenuBar()
-        self.SetMenuBar(menubar)
-
-        # The 'File' menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(id=1, text="&New", icon=NEW_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=2, text="&Open", icon=OPEN_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=3, text="S&ave as...", icon=SAVE_AS_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=4, text="E&xit", icon=EXIT_ICON))
-        menubar.Append(menu, "&File")
-
-        # The 'Molecule' menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(id=11, text="Load &PDB File", icon=LOAD_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=12, text="Load se&quence file", icon=LOAD_ICON))
-        menubar.Append(menu, "&Molecule")
-
-        # The 'Settings' menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(id=7, text="&Global relax settings", icon=SETTINGS_GLOBAL_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=13, text="&Parameter file settings", icon=SETTINGS_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=14, text="Reset a&ll settings", icon=SETTINGS_RESET_ICON))
-        menubar.Append(menu, "&Settings")
-
-        # The 'Extras' menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(id=8, text="&Contact relaxGUI", icon=CONTACT_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=9, text="&References", icon=REF_ICON))
-        menubar.Append(menu, "&Extras")
-
-        # The 'Help' menu.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(id=10, text="&Manual", icon=MANUAL_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=5, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
-        menu.AppendItem(self.build_menu_sub_item(id=6, text="About rela&x", icon=ABOUT_RELAX_ICON))
-        menubar.Append(menu, "&Help")
-
+        # Build the menu bar.
+        self.build_menu_bar()
 
         # NOE 1 no. 1
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
@@ -1856,6 +1816,48 @@ class Main(wx.Frame):
         if len(r2_list3) >= 14:
             self.r2_list_14_copy_1.SetLabel(r2_list3[13])
         event.Skip()
+
+
+    def build_menu_bar(self):
+        """Build the menu bar."""
+
+        # Create the menu bar GUI item and add it to the main frame.
+        menubar = wx.MenuBar()
+        self.SetMenuBar(menubar)
+
+        # The 'File' menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.build_menu_sub_item(id=1, text="&New", icon=NEW_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=2, text="&Open", icon=OPEN_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=3, text="S&ave as...", icon=SAVE_AS_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=4, text="E&xit", icon=EXIT_ICON))
+        menubar.Append(menu, "&File")
+
+        # The 'Molecule' menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.build_menu_sub_item(id=11, text="Load &PDB File", icon=LOAD_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=12, text="Load se&quence file", icon=LOAD_ICON))
+        menubar.Append(menu, "&Molecule")
+
+        # The 'Settings' menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.build_menu_sub_item(id=7, text="&Global relax settings", icon=SETTINGS_GLOBAL_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=13, text="&Parameter file settings", icon=SETTINGS_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=14, text="Reset a&ll settings", icon=SETTINGS_RESET_ICON))
+        menubar.Append(menu, "&Settings")
+
+        # The 'Extras' menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.build_menu_sub_item(id=8, text="&Contact relaxGUI", icon=CONTACT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=9, text="&References", icon=REF_ICON))
+        menubar.Append(menu, "&Extras")
+
+        # The 'Help' menu.
+        menu = wx.Menu()
+        menu.AppendItem(self.build_menu_sub_item(id=10, text="&Manual", icon=MANUAL_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=5, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
+        menu.AppendItem(self.build_menu_sub_item(id=6, text="About rela&x", icon=ABOUT_RELAX_ICON))
+        menubar.Append(menu, "&Help")
 
 
     def build_menu_sub_item(self, id=None, text=None, icon=None, kind=wx.ITEM_NORMAL):
