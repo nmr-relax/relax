@@ -126,8 +126,8 @@ class Auto_model_free:
         self.relax_start_modelfree = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        sizer_14 = self.build_main_box()
-        self.gui.modelfree.SetSizer(sizer_14)
+        main_box = self.build_main_box()
+        self.gui.modelfree.SetSizer(main_box)
 
         self.__set_properties()
         self.__do_layout()
@@ -381,18 +381,18 @@ class Auto_model_free:
         """Construct the highest level box to pack into the automatic model-free analysis frame."""
 
         # Use a horizontal packing of elements.
-        sizer_14 = wx.BoxSizer(wx.HORIZONTAL)
+        box = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add the model-free bitmap picture.
-        self.bitmap_2 = wx.StaticBitmap(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
-        sizer_14.Add(self.bitmap_2, 0, wx.ADJUST_MINSIZE, 0)
+        bitmap = wx.StaticBitmap(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
+        box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 0)
 
         # Build the right hand box and pack it next to the bitmap.
-        sizer_15 = self.build_right_box()
-        sizer_14.Add(sizer_15, 0, 0, 0)
+        right_box = self.build_right_box()
+        box.Add(right_box, 0, 0, 0)
 
         # Return the box.
-        return sizer_14
+        return box
 
 
     def exec_model_free(self, event):     # start model-free calculation by relax
