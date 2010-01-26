@@ -47,7 +47,7 @@ class StructureTextCtrl(wx.TextCtrl):
         backup = self.GetValue()
 
         # Open the file dialog.
-        file_name = openfile('Select PDB File', getcwd(), '*.*', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
+        file_name = openfile(msg='Select PDB File', filetype='*.*', default='PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
 
         # Restore the original file name.
         if file_name == None:
