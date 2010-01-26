@@ -2544,16 +2544,6 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def sel_aic(self, event):
-        selection = "AIC"
-        event.Skip()
-
-
-    def sel_bic(self, event):
-        selection = "BIC"
-        event.Skip()
-
-
     def settings(self, event): # set up for relax variables
         global global_setting #import global variable
         tmp_global = relax_global_settings(global_setting)
