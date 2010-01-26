@@ -618,7 +618,7 @@ class Auto_model_free:
     def exec_model_free(self, event):     # start model-free calculation by relax
         global LOCAL_TM
 
-        checkpoint = self.check_entries(self)
+        checkpoint = self.check_entries()
         if checkpoint == False:
             which_model = None
         else:
