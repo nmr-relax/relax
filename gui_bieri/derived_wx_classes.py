@@ -25,6 +25,7 @@
 """Module containing classes derived from those of wx."""
 
 # Python module imports.
+from os import getcwd
 import wx
 
 # relax GUI module imports.
