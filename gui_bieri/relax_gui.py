@@ -34,6 +34,8 @@ import webbrowser
 import wx
 
 # relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+from data.gui import Gui
 from float import floatAsByteArray
 from generic_fns import pipes
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
@@ -53,73 +55,9 @@ from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, EXIT_ICON
 from settings import import_file_settings, load_sequence, relax_global_settings
 
 
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-
-# Variables
-
-######################
+# Variables.
 GUI_version = '1.00'
-######################
 
-# Define Global Variables
-unresolved = ""
-results_noe = []
-results_rx = []
-results_model_free = []
-global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-file_setting = ['0', '1', '2', '3', '4', '5', '6']
-sequencefile = ''
-
-# Table of relax Results
-table_residue = []
-table_model = []
-table_s2 = []
-table_rex = []
-table_te = []
-
-#NOE3 variables
-noeref = ["","",""]
-noesat = ["","",""]
-noerefrmsd = [1000, 1000, 1000]
-noesatrmsd = [1000, 1000, 1000]
-nmrfreq = [600, 800, 900]
-noe_sourcedir = [getcwd(),getcwd(),getcwd()]
-noe_savedir = [getcwd(),getcwd(),getcwd()]
-
-#R1 variables
-r1_num = 0
-r1_list = []
-r1_list2 = []
-r1_list3 = []
-r1_time = []
-r1_time2 = []
-r1_time3 = []
-r1_sourcedir = [getcwd(),getcwd(),getcwd()]
-r1_savedir = [getcwd(),getcwd(),getcwd()]
-
-#R2 variables
-r2_num = 0
-r2_list = []
-r2_list2 = []
-r2_list3 = []
-r2_time = []
-r2_time2 = []
-r2_time3 = []
-r2_sourcedir = [getcwd(),getcwd(),getcwd()]
-r2_savedir = [getcwd(),getcwd(),getcwd()]
-
-
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-#####################################################################################################################
-
-# generating the GUI
 
 
 class Main(wx.Frame):
@@ -136,6 +74,9 @@ class Main(wx.Frame):
 
         # Execute the base class __init__ method.
         super(Main, self).__init__(*args, **kwds)
+
+        # Initialise the GUI data.
+        self.init_data()
 
         # Build the frame.
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
@@ -2094,6 +2035,57 @@ class Main(wx.Frame):
             self.structure_r11_copy_1.SetValue(structure_file_pdb)
             self.structure_r21_copy_1.SetValue(structure_file_pdb)
         event.Skip()
+
+
+    def init_data(self):
+        """Initialise the data used by the GUI interface."""
+
+        # Add the GUI object to the data store.
+        ds.relax_gui = Gui()
+
+        # Define Global Variables
+        #unresolved = ""
+        #results_noe = []
+        #results_rx = []
+        #results_model_free = []
+        #global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
+        #file_setting = ['0', '1', '2', '3', '4', '5', '6']
+        #sequencefile = ''
+
+        # Table of relax Results
+        #table_residue = []
+        #table_model = []
+        #table_s2 = []
+        #table_rex = []
+        #table_te = []
+
+        # Initialise the 3 NOE analyses.
+        nmrfreq = [600, 800, 900]
+        for i in range(3):
+            # Add the element.
+            ds.relax_gui.analyses.add('NOE')
+
+            # Initialise the variables.
+            ds.relax_gui.analyses[-1].ref_file = ''
+            ds.relax_gui.analyses[-1].sat_file = ''
+            ds.relax_gui.analyses[-1].ref_rmds = 1000
+            ds.relax_gui.analyses[-1].sat_rmds = 1000
+
+        # Initialise the 3 R1 and 3 R2 analyses.
+        rx = ['R1']*3 + ['R2']*3
+        for name in rx:
+            # Add the element.
+            ds.relax_gui.analyses.add(name)
+
+            # Initialise the variables.
+            ds.relax_gui.analyses[-1].num = 0
+            ds.relax_gui.analyses[-1].file_list = []
+            ds.relax_gui.analyses[-1].relax_times = []
+
+        # Initialise all the source and save directories.
+        for i in range(len(ds.relax_gui.analyses)):
+            ds.relax_gui.analyses[i].source_dir = getcwd()
+            ds.relax_gui.analyses[i].save_dir = getcwd()
 
 
     def newGUI(self, event): # New
