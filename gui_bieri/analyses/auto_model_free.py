@@ -437,82 +437,82 @@ class Auto_model_free:
 
     def model_noe1(self, event): # load noe1
         backup = self.m_noe_1.GetValue()
-        paramfiles1[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[0] == None:
-            paramfiles1[0] = backup
-        self.m_noe_1.SetValue(paramfiles1[0])
+        self.paramfiles1[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles1[0] == None:
+            self.paramfiles1[0] = backup
+        self.m_noe_1.SetValue(self.paramfiles1[0])
         event.Skip()
 
 
     def model_noe2(self, event): # load noe1
         backup = self.m_noe_2.GetValue()
-        paramfiles2[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[0] == None:
-            paramfiles2[0] = backup
-        self.m_noe_2.SetValue(paramfiles2[0])
+        self.paramfiles2[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles2[0] == None:
+            self.paramfiles2[0] = backup
+        self.m_noe_2.SetValue(self.paramfiles2[0])
         event.Skip()
 
 
     def model_noe3(self, event): # load noe1
         backup = self.m_noe_3.GetValue()
-        paramfiles3[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[0] == None:
-            paramfiles3[0] = backup
-        self.m_noe_3.SetValue(paramfiles3[0])
+        self.paramfiles3[0] = openfile('Select NOE file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles3[0] == None:
+            self.paramfiles3[0] = backup
+        self.m_noe_3.SetValue(self.paramfiles3[0])
         event.Skip()
 
 
     def model_r11(self, event): #
         backup = self.m_r1_1.GetValue()
-        paramfiles1[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[1] == None:
-            paramfiles1[1] = backup
-        self.m_r1_1.SetValue(paramfiles1[1])
+        self.paramfiles1[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles1[1] == None:
+            self.paramfiles1[1] = backup
+        self.m_r1_1.SetValue(self.paramfiles1[1])
         event.Skip()
 
 
     def model_r12(self, event): #
         backup = self.m_r1_2.GetValue()
-        paramfiles2[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[1] == None:
-            paramfiles2[1] = backup
-        self.m_r1_2.SetValue(paramfiles2[1])
+        self.paramfiles2[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles2[1] == None:
+            self.paramfiles2[1] = backup
+        self.m_r1_2.SetValue(self.paramfiles2[1])
         event.Skip()
 
 
     def model_r13(self, event):
         backup = self.m_r1_3.GetValue()
-        paramfiles3[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[1] == None:
-            paramfiles3[1] = backup
-        self.m_r1_3.SetValue(paramfiles3[1])
+        self.paramfiles3[1] = openfile('Select R1 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles3[1] == None:
+            self.paramfiles3[1] = backup
+        self.m_r1_3.SetValue(self.paramfiles3[1])
         event.Skip()
 
 
     def model_r21(self, event): #
         backup = self.m_r2_1.GetValue()
-        paramfiles1[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles1[2] == None:
-            paramfiles1[2] = backup
-        self.m_r2_1.SetValue(paramfiles1[2])
+        self.paramfiles1[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles1[2] == None:
+            self.paramfiles1[2] = backup
+        self.m_r2_1.SetValue(self.paramfiles1[2])
         event.Skip()
 
 
     def model_r22(self, event): #
         backup = self.m_r2_2.GetValue()
-        paramfiles2[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles2[2] == None:
-            paramfiles2[2] = backup
-        self.m_r2_2.SetValue(paramfiles2[2])
+        self.paramfiles2[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles2[2] == None:
+            self.paramfiles2[2] = backup
+        self.m_r2_2.SetValue(self.paramfiles2[2])
         event.Skip()
 
 
     def model_r23(self, event):
         backup = self.m_r2_3.GetValue()
-        paramfiles3[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
-        if paramfiles3[2] == None:
-            paramfiles3[2] = backup
-        self.m_r2_3.SetValue(paramfiles3[2])
+        self.paramfiles3[2] = openfile('Select R2 file', self.resultsdir_r21_copy_2.GetValue(), '*.*', 'all files (*.*)|*.*')
+        if self.paramfiles3[2] == None:
+            self.paramfiles3[2] = backup
+        self.m_r2_3.SetValue(self.paramfiles3[2])
         event.Skip()
 
 
