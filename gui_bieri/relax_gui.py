@@ -129,9 +129,15 @@ class Main(wx.Frame):
     structure_file_pdb_msg = "please insert .pdb file"
 
     def __init__(self, *args, **kwds):
-        # begin
+        """Initialise the main relax GUI frame."""
+
+        # Add the style keyword value.
         kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
-        wx.Frame.__init__(self, *args, **kwds)
+
+        # Execute the base class __init__ method.
+        super(wx.Frame, self).__init__(self, *args, **kwds)
+
+        # Build the frame.
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
         self.results = wx.Panel(self.notebook_2, -1)
         self.modelfree = wx.Panel(self.notebook_2, -1)
