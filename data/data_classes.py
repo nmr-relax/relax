@@ -25,6 +25,7 @@
 
 # Python module imports.
 from re import search
+from types import ListType
 
 # relax module imports.
 from relax_xml import fill_object_contents, xml_to_object
