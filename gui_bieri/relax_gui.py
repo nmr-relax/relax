@@ -517,13 +517,13 @@ class Main(wx.Frame):
 
         ## results
         self.label_11 = wx.StaticText(self.results, -1, "NOE analysis")
-        self.list_noe = wx.ListBox(self.results, -1, choices=results_noe)
+        self.list_noe = wx.ListBox(self.results, -1, choices=ds.relax_gui.results_noe)
         self.open_noe_results = wx.Button(self.results, -1, "open")
         self.label_11_copy = wx.StaticText(self.results, -1, "R1 and R2 relaxation analysis")
-        self.list_rx = wx.ListBox(self.results, -1, choices=results_rx)
+        self.list_rx = wx.ListBox(self.results, -1, choices=ds.relax_gui.results_rx)
         self.open_rx_results = wx.Button(self.results, -1, "open")
         self.label_11_copy_copy = wx.StaticText(self.results, -1, "Model-free analysis")
-        self.list_modelfree = wx.ListBox(self.results, -1, choices=results_model_free)
+        self.list_modelfree = wx.ListBox(self.results, -1, choices=ds.relax_gui.results_model_free)
         self.open_model_results = wx.Button(self.results, -1, "open")
 
         self.__set_properties()
