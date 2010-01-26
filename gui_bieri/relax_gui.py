@@ -2430,12 +2430,30 @@ class Main(wx.Frame):
             file_setting = ['0', '1', '2', '3', '4', '5', '6']
 
 
-    def sat_noe1(self, event): # saturated noe 1
+    def sat_noe1(self, event):
+        """Select the saturated noe 1 file.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the original value.
         backup = self.noe_sat_1.GetValue()
-        noesat[0] = openfile('Select saturated NOE', self.res_noe1.GetValue() + sep, '*.*', 'all files (*.*)|*.*')
-        if noesat[0] == None:
-            noesat[0] = backup
-        self.noe_sat_1.SetValue(noesat[0])
+
+        # Alias the data container.
+        cont = ds.relax_gui.analyses[self.noe_index[0]]
+
+        # Select the file.
+        cont.sat_file = openfile('Select saturated NOE', self.res_noe1.GetValue() + sep, '*.*', 'all files (*.*)|*.*')
+
+        # Restore the backup file if no file was chosen.
+        if cont.sat_file == None:
+            cont.sat_file = backup
+
+        # Place the file path in the text box.
+        self.noe_sat_1.SetValue(cont.sat_file)
+
+        # Skip the event.
         event.Skip()
 
 
