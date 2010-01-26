@@ -37,7 +37,7 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
 from float import floatAsByteArray
-from generic_fns import pipes
+from generic_fns import pipes, state
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
 from relax_errors import RelaxError
 from version import version
@@ -1772,7 +1772,7 @@ class Main(wx.Frame):
         # The 'File' menu actions.
         self.Bind(wx.EVT_MENU, self.newGUI,     id=0)
         self.Bind(wx.EVT_MENU, self.openGUI,    id=1)
-        self.Bind(wx.EVT_MENU, self.saveGUI,    id=2)
+        self.Bind(wx.EVT_MENU, self.save_state, id=2)
         self.Bind(wx.EVT_MENU, self.exitGUI,    id=3)
 
         # The 'Molecule' menu entries.
@@ -2457,11 +2457,20 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def saveGUI(self, event): # Save
-        filename = savefile(msg='Select file to save', filetype='save.relaxGUI', default='relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-        if not filename == None:
-            model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
-            create_save_file(self, filename, model_result, global_setting, file_setting, sequencefile)
+    def save_state(self, event):
+        """Save the program state.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the dialog.
+        filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+
+        # Save the relax state.
+        state.save_state(filename, force=True)
+
+        # Skip the event.
         event.Skip()
 
 
