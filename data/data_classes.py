@@ -138,7 +138,7 @@ class Element(object):
 
 
 
-class RelaxListType(ListType): 
+class RelaxListType(ListType):
     """An empty list type container."""
 
     def __init__(self):
@@ -195,35 +195,44 @@ class RelaxListType(ListType):
         # Set the list attributes.
         list_element.setAttribute('desc', self.list_desc)
 
+        # Blacklisted objects.
+        blacklist = ['list_name', 'list_desc', 'element_name', 'element_desc', 'blacklist'] + list(self.__dict__.keys() + RelaxListType.__dict__.keys() + self.__class__.__dict__.keys() + list.__dict__.keys() + ListType.__dict__.keys())
+
         # Add all simple python objects within the list to the list element.
-        fill_object_contents(doc, list_element, object=self, blacklist=list(self.__class__.__dict__.keys() + list.__dict__.keys()))
+        fill_object_contents(doc, list_element, object=self, blacklist=blacklist)
 
         # Loop over the list.
         for i in xrange(len(self)):
-            # Create an XML element for each container.
-            element = doc.createElement(self.element_name)
-            list_element.appendChild(element)
-            element.setAttribute('index', repr(i))
-            element.setAttribute('desc', self.element_desc)
+            # The element has its own to_xml() method.
+            if hasattr(self[i], 'to_xml'):
+                self[i].to_xml(doc, list_element)
 
-            # Blacklisted objects.
-            blacklist = list(self[i].__class__.__dict__.keys())
+            # Normal element.
+            else:
+                # Create an XML element for each container.
+                list_item_element = doc.createElement(self.element_name)
+                list_element.appendChild(list_item_element)
+                list_item_element.setAttribute('index', repr(i))
+                list_item_element.setAttribute('desc', self.element_desc)
 
-            # Add objects which have to_xml() methods.
-            for name in dir(self[i]):
-                # Skip blacklisted objects.
-                if name in blacklist:
-                    continue
+                # Blacklisted objects.
+                blacklist = list(self[i].__class__.__dict__.keys())
 
-                # Skip special objects.
-                if search('^_', name):
-                    continue
+                # Add objects which have to_xml() methods.
+                for name in dir(self[i]):
+                    # Skip blacklisted objects.
+                    if name in blacklist:
+                        continue
 
-                # Execute any to_xml() methods, and add that object to the blacklist.
-                obj = getattr(self[i], name)
-                if hasattr(obj, 'to_xml'):
-                    obj.to_xml(doc, element)
-                    blacklist = blacklist + [name]
+                    # Skip special objects.
+                    if search('^_', name):
+                        continue
 
-            # Add all simple python objects within the container to the XML element.
-            fill_object_contents(doc, element, object=self, blacklist=blacklist)
+                    # Execute any to_xml() methods, and add that object to the blacklist.
+                    obj = getattr(self[i], name)
+                    if hasattr(obj, 'to_xml'):
+                        obj.to_xml(doc, list_item_element)
+                        blacklist = blacklist + [name]
+
+                # Add all simple python objects within the container to the XML element.
+                fill_object_contents(doc, list_item_element, object=self[i], blacklist=blacklist)
