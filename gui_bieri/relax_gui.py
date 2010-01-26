@@ -113,8 +113,14 @@ class Main(wx.Frame):
         # Build the menu bar.
         self.build_menu_bar()
 
+        # A fixed set of indices for 3 NOE, 3 R1, and 3 R2 frames used for accessing the relax data store.
+        # FIXME:  Eliminate these!  There should be a flexible number of these frames.
+        self.noe_index = [0, 1, 2]
+        self.r1_index =  [3, 4, 5]
+        self.r2_index =  [6, 7, 8]
+
         # NOE 1 no. 1
-        rx_data = ds.relax_gui.analyses[0]
+        rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
         self.bitmap_1_copy_1 = wx.StaticBitmap(self.noe1, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1 = wx.StaticText(self.noe1, -1, "Set-up for steady-state NOE analysis:\n")
@@ -145,7 +151,7 @@ class Main(wx.Frame):
 
 
         # R1 no. 1
-        rx_data = ds.relax_gui.analyses[3]
+        rx_data = ds.relax_gui.analyses[self.r1_index[0]]
         self.bitmap_1_copy_copy = wx.StaticBitmap(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy = wx.StaticText(self.r1_1, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.r1_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
@@ -197,7 +203,7 @@ class Main(wx.Frame):
 
 
         #R2 no. 1
-        rx_data = ds.relax_gui.analyses[6]
+        rx_data = ds.relax_gui.analyses[self.r2_index[0]]
         self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.r2_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1 = wx.StaticText(self.r2_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
@@ -249,7 +255,7 @@ class Main(wx.Frame):
 
 
         #Noe no.2
-        rx_data = ds.relax_gui.analyses[1]
+        rx_data = ds.relax_gui.analyses[self.noe_index[1]]
         self.bitmap_1_copy_1_copy = wx.StaticBitmap(self.noe1_copy, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy = wx.StaticText(self.noe1_copy, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy = wx.StaticText(self.noe1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
@@ -279,7 +285,7 @@ class Main(wx.Frame):
 
 
         #R1 no. 2
-        rx_data = ds.relax_gui.analyses[4]
+        rx_data = ds.relax_gui.analyses[self.r1_index[1]]
         self.bitmap_1_copy_copy_copy_1 = wx.StaticBitmap(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_2 = wx.StaticText(self.r1_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
@@ -329,7 +335,7 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_1 = wx.BitmapButton(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #R2 no. 2
-        rx_data = ds.relax_gui.analyses[7]
+        rx_data = ds.relax_gui.analyses[self.r2_index[1]]
         self.bitmap_1_copy_copy_copy_copy = wx.StaticBitmap(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy = wx.StaticText(self.r2_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
@@ -380,7 +386,7 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_copy = wx.BitmapButton(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #NOE no. 3
-        rx_data = ds.relax_gui.analyses[2]
+        rx_data = ds.relax_gui.analyses[self.noe_index[2]]
         self.bitmap_1_copy_1_copy_1 = wx.StaticBitmap(self.noe1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_1_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "Set-up for steady-state NOE analysis:\n")
         self.label_2_copy_copy_copy_3_copy_1 = wx.StaticText(self.noe1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
@@ -410,7 +416,7 @@ class Main(wx.Frame):
 
 
         #R1 no. 3
-        rx_data = ds.relax_gui.analyses[5]
+        rx_data = ds.relax_gui.analyses[self.r1_index[2]]
         self.bitmap_1_copy_copy_copy_2 = wx.StaticBitmap(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_3 = wx.StaticText(self.r1_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
@@ -461,7 +467,7 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_2 = wx.BitmapButton(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #R2 no. 3
-        rx_data = ds.relax_gui.analyses[8]
+        rx_data = ds.relax_gui.analyses[self.r2_index[2]]
         self.bitmap_1_copy_copy_copy_copy_1 = wx.StaticBitmap(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Set-up for R2 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy_copy_1_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
