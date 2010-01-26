@@ -1882,63 +1882,6 @@ class Main(wx.Frame):
         return element
 
 
-    def exec_model_free(self, event):     # start model-free calculation by relax
-        global LOCAL_TM
-
-        checkpoint = check_entries(self)
-        if checkpoint == False:
-            which_model = None
-        else:
-            which_model = whichmodel(LOCAL_TM)
-
-        # start individual calculations
-        if not which_model == None:
-
-            if not which_model == 'full':
-                if not which_model == 'final':
-
-                    # run sphere, prolate, oblate or ellipsoid
-                    enable_models = False
-                    enable_models = start_modelfree(self, which_model, False, global_setting, file_setting, sequencefile)
-
-                    if enable_models:
-                        LOCAL_TM = True
-                else:
-
-                    # run final run
-                    results_for_table = startmodelfree(self, which_model, False, global_setting, file_setting, sequencefile)
-
-                    # import global variables for results table
-                    global table_residue
-                    global table_model
-                    global table_s2
-                    global table_rex
-                    global table_te
-
-                    # set global results variables
-                    table_residue = results_for_table[0]
-                    table_model = results_for_table[1]
-                    table_s2 = results_for_table[2]
-                    table_rex = results_for_table[3]
-                    table_te = results_for_table[4]
-
-
-            # start full automatic model-free analysis
-            if which_model == 'full':
-                model1 = start_modelfree(self, 'local_tm', True, global_setting, file_setting, sequencefile)    # execute local_tm
-                if model1 == 'successful':
-                    model2 = start_modelfree(self, 'sphere', True, global_setting, file_setting, sequencefile)        # execute sphere
-                    if model2 == 'successful':
-                        model3 = start_modelfree(self, 'prolate', True, global_setting, file_setting, sequencefile)         # execute prolate
-                        if model3 == 'successful':
-                            model4 = start_modelfree(self, 'oblate', True, global_setting, file_setting, sequencefile)         # execute oblate
-                            if model4 == 'successful':
-                                model5 = start_modelfree(self, 'ellipsoid', True, global_setting, file_setting, sequencefile)      # execute ellipsoid
-                                if model5 == 'successful':
-                                    model6 = start_modelfree(self, 'final', False, global_setting, file_setting, sequencefile)        # execute final analysis
-        event.Skip()
-
-
     def exec_noe1(self, event): # Start NOE calculation no. 1
         start_relax = exec_relax()
 
