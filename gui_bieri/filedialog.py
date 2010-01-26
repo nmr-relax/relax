@@ -23,8 +23,6 @@
 
 # file dialog script
 
-# Python module imports.
-from os import chdir, getcwd
 import wx
 
 
@@ -56,15 +54,17 @@ def opendir(msg, default): # select directory, msg is message to display, defaul
         return newdir
 
 
-def openfile(msg, filetype, default):
+def openfile(msg, directory, filetype, default):
     """Open a file.
 
-    For example to open save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
-        openfile('select file to open', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
+        openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
 
 
     @param msg:         The message to display.
     @type msg:          str
+    @param directory:   The directory to open in.
+    @type directory:    str
     @param filetype:    The file to default selection to.
     @type filetype:     str
     @param default:     A list of supported files, indicated as "(Label)|os command|...
@@ -72,13 +72,10 @@ def openfile(msg, filetype, default):
     """
 
     # Open the dialog.
-    dialog = wx.FileDialog(None, message=msg, style=wx.OPEN, defaultDir=getcwd(), defaultFile=filetype, wildcard=default)
+    dialog = wx.FileDialog(None, message=msg, style=wx.OPEN, defaultDir=directory, defaultFile=filetype, wildcard=default)
 
     # A file was selected.
     if dialog.ShowModal() == wx.ID_OK:
-        # Change the current working directory.
-        chdir(dialog.GetDirectory())
-
         # Return the full file path.
         return dialog.GetPath()
 
