@@ -65,18 +65,6 @@ class Auto_model_free:
         self.gui.modelfree.SetSizer(main_box)
 
         #self.__set_properties()
-        #self.__do_layout()
-
-
-    def __do_layout(self):
-        # Box layout of elements.
-        sizer_22 = wx.BoxSizer(wx.VERTICAL)
-        sizer_22_copy = wx.BoxSizer(wx.VERTICAL)
-        sizer_22_copy_copy = wx.BoxSizer(wx.VERTICAL)
-        sizer_23 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_23_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_23_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-
 
 
     def __set_properties(self):
