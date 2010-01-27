@@ -35,6 +35,7 @@ import xml.dom.minidom
 # relax module imports.
 from pipe_container import PipeContainer
 import generic_fns
+from gui import Gui
 from relax_errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from relax_xml import fill_object_contents, xml_to_object
 from version import version
@@ -238,6 +239,15 @@ class Relax_data_store(dict):
 
         # Get the relax version of the XML file.
         relax_version = str(relax_node.getAttribute('version'))
+
+        # Get the GUI nodes.
+        gui_nodes = relax_node.getElementsByTagName('relax_gui')
+        if gui_nodes:
+            # Create the GUI object.
+            self.relax_gui = Gui()
+
+            # Fill its contents.
+            self.relax_gui.from_xml(gui_nodes[0])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
