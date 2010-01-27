@@ -300,14 +300,14 @@ class Mf(SystemTestCase):
         """Constrained BFGS opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            BFGS optimisation.
-            Backtracking line search.
-            Constrained.
+            - BFGS optimisation.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -467,14 +467,14 @@ class Mf(SystemTestCase):
         """Constrained BFGS opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            BFGS optimisation.
-            More and Thuente line search.
-            Constrained.
+            - BFGS optimisation.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -629,14 +629,14 @@ class Mf(SystemTestCase):
         """Constrained coordinate descent opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Coordinate descent optimisation.
-            Backtracking line search.
-            Constrained.
+            - Coordinate descent optimisation.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -698,14 +698,14 @@ class Mf(SystemTestCase):
         """Constrained coordinate descent opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Coordinate descent optimisation.
-            More and Thuente line search.
-            Constrained.
+            - Coordinate descent optimisation.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -816,15 +816,15 @@ class Mf(SystemTestCase):
         """Constrained Newton opt, GMW Hessian mod, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Newton optimisation.
-            GMW Hessian modification.
-            Backtracking line search.
-            Constrained.
+            - Newton optimisation.
+            - GMW Hessian modification.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -935,15 +935,15 @@ class Mf(SystemTestCase):
         """Constrained Newton opt, GMW Hessian mod, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Newton optimisation.
-            GMW Hessian modification.
-            More and Thuente line search.
-            Constrained.
+            - Newton optimisation.
+            - GMW Hessian modification.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -1087,14 +1087,14 @@ class Mf(SystemTestCase):
         """Constrained steepest descent opt, backtracking line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Steepest descent optimisation.
-            Backtracking line search.
-            Constrained.
+            - Steepest descent optimisation.
+            - Backtracking line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -1156,14 +1156,14 @@ class Mf(SystemTestCase):
         """Constrained steepest descent opt, More and Thuente line search {S2=0.970, te=2048, Rex=0.149}
 
         The optimisation options are:
-            Steepest descent optimisation.
-            More and Thuente line search.
-            Constrained.
+            - Steepest descent optimisation.
+            - More and Thuente line search.
+            - Constrained.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
@@ -1225,12 +1225,12 @@ class Mf(SystemTestCase):
         """Constrained grid search {S2=0.970, te=2048, Rex=0.149}.
 
         The optimisation options are:
-            Constrained grid search.
+            - Constrained grid search.
 
         The true data set is:
-            S2  = 0.970
-            te  = 2048 ps
-            Rex = 0.149 s^-1
+            - S2  = 0.970
+            - te  = 2048 ps
+            - Rex = 0.149 s^-1
         """
 
         # Setup the data pipe for optimisation.
