@@ -2564,13 +2564,30 @@ class Main(wx.Frame):
         # Open the dialog.
         filename = openfile(msg='Select file to open', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
 
-        # A file has been selected.
-        if filename:
-            # Reset the relax data store.
-            reset()
+        # No file has been selected.
+        if not filename:
+            # Skip the event.
+            event.Skip()
 
-            # Load the relax state.
-            state.load_state(filename)
+            # Don't do anything.
+            return
+
+        # Reset the relax data store.
+        reset()
+
+        # Load the relax state.
+        state.load_state(filename)
+
+        # Update the core of the GUI to match the new data store.
+        self.sync_ds(upload=False)
+
+        # Build and upload the data to the analysis frames.
+        for i in range(len(ds.relax_gui.analyses)):
+            # Build the frame.
+            analysis = self.create_frame(i)
+
+            # Execute the analysis frame specific update methods.
+            analysis.sync_ds(upload=False)
 
         # Skip the event.
         event.Skip()
@@ -2586,8 +2603,28 @@ class Main(wx.Frame):
         # Open the dialog.
         filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
 
+        # Update the data store to match the GUI.
+        self.sync_ds(upload=True)
+
+        # Analyses updates of the new data store.
+        for i in range(len(self.analysis_frames)):
+            # Execute the analysis frame specific update methods.
+            self.analysis_frames[i].sync_ds(upload=True)
+
         # Save the relax state.
         state.save_state(filename, force=True)
 
         # Skip the event.
         event.Skip()
+
+
+    def sync_ds(self, upload=False):
+        """Synchronise the GUI and the relax data store, both ways.
+
+        This method allows the GUI information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the GUI.
+
+        @keyword upload:    A flag which if True will cause the GUI to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the GUI.
+        @type upload:       bool
+        """
+
+        # Dummy function (for the time being).
