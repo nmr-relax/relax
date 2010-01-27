@@ -24,10 +24,12 @@
 # script to calculate model-free models
 
 # Python module imports.
+import math
 from os import listdir, sep
 from re import search
 from string import replace
 import time
+import wx
 
 # relax module imports.
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
