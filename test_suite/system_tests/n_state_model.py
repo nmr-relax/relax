@@ -43,11 +43,11 @@ class N_state_model(SystemTestCase):
         """A 5-state model in the xz-plane (no pivotting of alpha).
 
         The 5 states correspond to the Euler angles (z-y-z notation):
-            State 1:    {0, pi/4, 0}
-            State 2:    {0, pi/8, 0}
-            State 3:    {0, 0, 0}
-            State 4:    {0, -pi/8, 0}
-            State 5:    {0, -pi/4, 0}
+            - State 1:    {0, pi/4, 0}
+            - State 2:    {0, pi/8, 0}
+            - State 3:    {0, 0, 0}
+            - State 4:    {0, -pi/8, 0}
+            - State 5:    {0, -pi/4, 0}
         """
 
         # Execute the script.

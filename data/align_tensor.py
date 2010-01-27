@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -362,9 +362,7 @@ def calc_S_diag(tensor):
     The diagonalised alignment tensor is calculated by eigenvalue decomposition.
 
 
-    @param rotation:    The rotation matrix.
-    @type rotation:     numpy array ((3, 3), float64)
-    @param tensor:      The full alignment tensor.
+    @param tensor:      The full alignment tensor in its eigenframe.
     @type tensor:       numpy array ((3, 3), float64)
     @return:            The diagonalised alignment tensor.
     @rtype:             numpy array ((3, 3), float64)
@@ -596,9 +594,7 @@ def calc_P_diag(tensor):
     The diagonalised alignment tensor is calculated by eigenvalue decomposition.
 
 
-    @param rotation:    The rotation matrix.
-    @type rotation:     numpy array ((3, 3), float64)
-    @param tensor:      The full alignment tensor.
+    @param tensor:      The full alignment tensor in its eigenframe.
     @type tensor:       numpy array ((3, 3), float64)
     @return:            The diagonalised alignment tensor.
     @rtype:             numpy array ((3, 3), float64)
@@ -634,7 +630,7 @@ def calc_P_diag(tensor):
 def calc_Pxx(Axx):
     """Function for calculating the Pxx value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Pxx  =  Axx + 1/3.
 

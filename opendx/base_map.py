@@ -196,17 +196,17 @@ class Base_Map:
     def create_point(self):
         """Function for creating a sphere at a given position within the 3D map.
 
-        The formula used to calculate the coordinate position is:
+        The formula used to calculate the coordinate position is::
 
                             V - L
             coord =   Inc * -----
                             U - L
 
         where:
-            V is the coordinate or parameter value.
-            L is the lower bound value.
-            U is the upper bound value.
-            Inc is the number of increments.
+            - V is the coordinate or parameter value.
+            - L is the lower bound value.
+            - U is the upper bound value.
+            - Inc is the number of increments.
 
         Both a data file and .general file will be created.
         """

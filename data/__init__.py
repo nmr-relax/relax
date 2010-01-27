@@ -150,8 +150,10 @@ class Relax_data_store(dict):
         statement 'D[pipe] = PipeContainer()', where D is the relax data storage object and pipe is
         the name of the data pipe.
 
-        @param pipe:    The name of the new data pipe.
-        @type pipe:     str
+        @param pipe_name:   The name of the new data pipe.
+        @type pipe_name:    str
+        @param pipe_type:   The data pipe type.
+        @type pipe_type:    str
         """
 
         # Test if the pipe already exists.

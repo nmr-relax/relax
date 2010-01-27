@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2004, 2006-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2004, 2006-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -37,7 +37,7 @@ from relax_xml import fill_object_contents, xml_to_object
 def calc_Diso(tm):
     """Function for calculating the Diso value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Diso  =  1 / (6tm).
 
@@ -54,7 +54,7 @@ def calc_Diso(tm):
 def calc_Dpar(Diso, Da):
     """Function for calculating the Dpar value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Dpar  =  Diso + 2/3 Da.
 
@@ -73,7 +73,7 @@ def calc_Dpar(Diso, Da):
 def calc_Dpar_unit(theta, phi):
     """Function for calculating the Dpar unit vector.
 
-    The unit vector parallel to the unique axis of the diffusion tensor is
+    The unit vector parallel to the unique axis of the diffusion tensor is::
 
                       | sin(theta) * cos(phi) |
         Dpar_unit  =  | sin(theta) * sin(phi) |.
@@ -102,7 +102,7 @@ def calc_Dpar_unit(theta, phi):
 def calc_Dper(Diso, Da):
     """Function for calculating the Dper value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Dper  =  Diso - 1/3 Da.
 
@@ -121,7 +121,7 @@ def calc_Dper(Diso, Da):
 def calc_Dratio(Dpar, Dper):
     """Function for calculating the Dratio value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Dratio  =  Dpar / Dper.
 
@@ -140,7 +140,7 @@ def calc_Dratio(Dpar, Dper):
 def calc_Dx(Diso, Da, Dr):
     """Function for calculating the Dx value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Dx  =  Diso - 1/3 Da(1 + 3Dr).
 
@@ -161,7 +161,7 @@ def calc_Dx(Diso, Da, Dr):
 def calc_Dx_unit(alpha, beta, gamma):
     """Function for calculating the Dx unit vector.
 
-    The unit Dx vector is
+    The unit Dx vector is::
 
                     | -sin(alpha) * sin(gamma) + cos(alpha) * cos(beta) * cos(gamma) |
         Dx_unit  =  | -sin(alpha) * cos(gamma) - cos(alpha) * cos(beta) * sin(gamma) |.
@@ -192,7 +192,7 @@ def calc_Dx_unit(alpha, beta, gamma):
 def calc_Dy(Diso, Da, Dr):
     """Function for calculating the Dy value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Dy  =  Diso - 1/3 Da(1 - 3Dr),
 
@@ -213,7 +213,7 @@ def calc_Dy(Diso, Da, Dr):
 def calc_Dy_unit(alpha, beta, gamma):
     """Function for calculating the Dy unit vector.
 
-    The unit Dy vector is
+    The unit Dy vector is::
 
                     | cos(alpha) * sin(gamma) + sin(alpha) * cos(beta) * cos(gamma) |
         Dy_unit  =  | cos(alpha) * cos(gamma) - sin(alpha) * cos(beta) * sin(gamma) |.
@@ -244,7 +244,7 @@ def calc_Dy_unit(alpha, beta, gamma):
 def calc_Dz(Diso, Da):
     """Function for calculating the Dz value.
 
-    The equation for calculating the parameter is
+    The equation for calculating the parameter is::
 
         Dz  =  Diso + 2/3 Da.
 
@@ -263,7 +263,7 @@ def calc_Dz(Diso, Da):
 def calc_Dz_unit(beta, gamma):
     """Function for calculating the Dz unit vector.
 
-    The unit Dz vector is
+    The unit Dz vector is::
 
                     | -sin(beta) * cos(gamma) |
         Dz_unit  =  |  sin(beta) * sin(gamma) |.
@@ -296,7 +296,7 @@ def calc_rotation(diff_type, *args):
     ===================
 
     As the orientation of the diffusion tensor within the structural frame is undefined when the
-    molecule diffuses as a sphere, the rotation matrix is simply the identity matrix
+    molecule diffuses as a sphere, the rotation matrix is simply the identity matrix::
 
               | 1  0  0 |
         R  =  | 0  1  0 |.
@@ -307,7 +307,7 @@ def calc_rotation(diff_type, *args):
     ====================
 
     The rotation matrix required to shift from the diffusion tensor frame to the structural
-    frame is equal to
+    frame is equal to::
 
               |  cos(theta) * cos(phi)  -sin(phi)   sin(theta) * cos(phi) |
         R  =  |  cos(theta) * sin(phi)   cos(phi)   sin(theta) * sin(phi) |.
@@ -318,7 +318,7 @@ def calc_rotation(diff_type, *args):
     =====================
 
     The rotation matrix required to shift from the diffusion tensor frame to the structural
-    frame is equal to
+    frame is equal to::
 
         R  =  | Dx_unit  Dy_unit  Dz_unit |,
 
@@ -326,8 +326,8 @@ def calc_rotation(diff_type, *args):
            =  | Dx_unit[1]  Dy_unit[1]  Dz_unit[1] |.
               | Dx_unit[2]  Dy_unit[2]  Dz_unit[2] |
 
-    @param *args:       All the function arguments.
-    @type *args:        tuple
+    @param args:        All the function arguments.
+    @type args:         tuple
     @param theta:       The azimuthal angle in radians.
     @type theta:        float
     @param phi:         The polar angle in radians.
@@ -400,7 +400,7 @@ def calc_tensor(rotation, tensor_diag):
     """Function for calculating the diffusion tensor (in the structural frame).
 
     The diffusion tensor is calculated using the diagonalised tensor and the rotation matrix
-    through the equation
+    through the equation::
 
         R . tensor_diag . R^T.
 
@@ -419,26 +419,26 @@ def calc_tensor(rotation, tensor_diag):
 def calc_tensor_diag(diff_type, *args):
     """Function for calculating the diagonalised diffusion tensor.
 
-    The diagonalised spherical diffusion tensor is defined as
+    The diagonalised spherical diffusion tensor is defined as::
 
                    | Diso     0     0 |
         tensor  =  |    0  Diso     0 |.
                    |    0     0  Diso |
 
-    The diagonalised spheroidal tensor is defined as
+    The diagonalised spheroidal tensor is defined as::
 
                    | Dper     0     0 |
         tensor  =  |    0  Dper     0 |.
                    |    0     0  Dpar |
 
-    The diagonalised ellipsoidal diffusion tensor is defined as
+    The diagonalised ellipsoidal diffusion tensor is defined as::
 
                    | Dx   0   0 |
         tensor  =  |  0  Dy   0 |.
                    |  0   0  Dz |
 
-    @param *args:   All the arguments.
-    @type *args:    tuple
+    @param args:    All the arguments.
+    @type args:     tuple
     @param Diso:    The Diso parameter of the sphere.
     @type Diso:     float
     @param Dpar:    The Dpar parameter of the spheroid.
@@ -613,7 +613,7 @@ class DiffTensorData(Element):
     def __setattr__(self, name, value):
         """Function for calculating the parameters, unit vectors, and tensors on the fly.
 
-        The equations for the parameters Dper, Dpar, and Dratio are
+        The equations for the parameters Dper, Dpar, and Dratio are::
 
             Dratio  =  Dpar / Dper.
         """
