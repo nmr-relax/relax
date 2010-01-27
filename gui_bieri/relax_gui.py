@@ -493,8 +493,8 @@ class Main(wx.Frame):
         self.relax_start_r1_1_copy_copy_1 = wx.BitmapButton(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
-        # The automatic model-free protocol GUI element.
-        Auto_model_free(self)
+        # The automatic model-free protocol frame.
+        self.analysis_frames.append(Auto_model_free(self))
 
         ## results
         self.label_11 = wx.StaticText(self.results, -1, "NOE analysis")
