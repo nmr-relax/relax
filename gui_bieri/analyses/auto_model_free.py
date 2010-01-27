@@ -816,22 +816,22 @@ class Auto_model_free:
             self.data.paramfiles3[2] = str(self.m_r2_3.GetValue())
         else:
             # First frequency.
-            self.modelfreefreq1.SetValue(self.data.nmrfreq1)
-            self.m_noe_1.SetValue(self.data.paramfiles1[0])
-            self.m_r1_1.SetValue(self.data.paramfiles1[1])
-            self.m_r2_1.SetValue(self.data.paramfiles1[2])
+            self.modelfreefreq1.SetValue(str(self.data.nmrfreq1))
+            self.m_noe_1.SetValue(str(self.data.paramfiles1[0]))
+            self.m_r1_1.SetValue(str(self.data.paramfiles1[1]))
+            self.m_r2_1.SetValue(str(self.data.paramfiles1[2]))
 
             # Second frequency.
-            self.modelfreefreq2.SetValue(self.data.nmrfreq2)
-            self.m_noe_2.SetValue(self.data.paramfiles2[0])
-            self.m_r1_2.SetValue(self.data.paramfiles2[1])
-            self.m_r2_2.SetValue(self.data.paramfiles2[2])
+            self.modelfreefreq2.SetValue(str(self.data.nmrfreq2))
+            self.m_noe_2.SetValue(str(self.data.paramfiles2[0]))
+            self.m_r1_2.SetValue(str(self.data.paramfiles2[1]))
+            self.m_r2_2.SetValue(str(self.data.paramfiles2[2]))
 
             # Third frequency.
-            self.modelfreefreq3.SetValue(self.data.nmrfreq3)
-            self.m_noe_3.SetValue(self.data.paramfiles3[0])
-            self.m_r1_3.SetValue(self.data.paramfiles3[1])
-            self.m_r2_3.SetValue(self.data.paramfiles3[2])
+            self.modelfreefreq3.SetValue(str(self.data.nmrfreq3))
+            self.m_noe_3.SetValue(str(self.data.paramfiles3[0]))
+            self.m_r1_3.SetValue(str(self.data.paramfiles3[1]))
+            self.m_r2_3.SetValue(str(self.data.paramfiles3[2]))
 
         # The model-free models to use.
         if upload:
@@ -849,26 +849,25 @@ class Auto_model_free:
                 obj = getattr(self, 'm%i' % i)
 
                 # Download from the store.
-                obj.SetValue(self.data.model_toggle[i])
+                obj.SetValue(eval(str(self.data.model_toggle[i])))
  
         # The structure file.
         if upload:
             self.data.structure_file = str(self.textctrl_structure.GetValue())
         else:
-            self.textctrl_structure.SetValue(structure_file)
+            self.textctrl_structure.SetValue(str(structure_file))
 
         # Unresolved residues.
         if upload:
             self.data.unresolved = str(self.unresolved_r21_copy_1_copy.GetValue())
         else:
-            self.unresolved_r21_copy_1_copy.SetValue(self.data.unresolved)
+            self.unresolved_r21_copy_1_copy.SetValue(str(self.data.unresolved))
 
         # The results directory.
         if upload:
             self.data.results_dir_model = str(self.resultsdir_r21_copy_2.GetValue())
         else:
-            self.resultsdir_r21_copy_2.SetValue(self.data.results_dir_model)
-
+            self.resultsdir_r21_copy_2.SetValue(str(self.data.results_dir_model))
 
 
     def whichmodel(self, is_local_tm):
