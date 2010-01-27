@@ -260,21 +260,24 @@ def start_model_free(self, model, automatic, global_setting, file_setting, seque
     # Feedback about successful Calculation in manual mode and after final calculation in autamatic mode
     if not automatic:
         if model == 'local_tm':
-            relax_run_ok('Local Tm calculation was successful !')
+            print ('Local Tm calculation was successful !')
 
             # enable m1 - m5 to choose for calculation
             return True
 
         if model == 'sphere':
-            relax_run_ok('Sphere calculation was successful !')
+            print ('Sphere calculation was successful !')
         if model == 'prolate':
-            relax_run_ok('Prolate calculation was successful !')
+            print ('Prolate calculation was successful !')
         if model == 'oblate':
-            relax_run_ok('Oblate calculation was successful !')
+            print ('Oblate calculation was successful !')
         if model == 'ellipsoid':
-            relax_run_ok('Ellipsoid calculation was successful !')
+            print ('Ellipsoid calculation was successful !')
         if model == 'Final':
-            relax_run_ok('Final Model-free calculation was successful !')
+            print ('Final Model-free calculation was successful !')
+
+    # Close thread.
+    return
 
 
 
