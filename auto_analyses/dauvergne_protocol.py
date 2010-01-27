@@ -32,31 +32,31 @@ References
 
 The model-free optimisation methodology herein is that of:
 
-    d'Auvergne, E. J. and Gooley, P. R. (2008b). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
+    - d'Auvergne, E. J. and Gooley, P. R. (2008b). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
 
 Other references for features of this script include model-free model selection using Akaike's Information Criterion:
 
-    d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39.
+    - d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39.
 
 The elimination of failed model-free models and Monte Carlo simulations:
 
-    d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135.
+    - d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135.
 
 Significant model-free optimisation improvements:
 
-    d'Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109.
+    - d'Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109.
 
 Rather than searching for the lowest chi-squared value, this script searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional search is formulated using set theory as the universal solution:
 
-    d'Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494.
+    - d'Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494.
 
 The basic three references for the original and extended model-free theories are:
 
-    Lipari, G. and Szabo, A. (1982a). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity. J. Am. Chem. Soc., 104(17), 4546-4559.
+    - Lipari, G. and Szabo, A. (1982a). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity. J. Am. Chem. Soc., 104(17), 4546-4559.
 
-    Lipari, G. and Szabo, A. (1982b). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results. J. Am. Chem. Soc., 104(17), 4559-4570.
+    - Lipari, G. and Szabo, A. (1982b). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results. J. Am. Chem. Soc., 104(17), 4559-4570.
 
-    Clore, G. M., Szabo, A., Bax, A., Kay, L. E., Driscoll, P. C., and Gronenborn, A.M. (1990). Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins. J. Am. Chem. Soc., 112(12), 4989-4991.
+    - Clore, G. M., Szabo, A., Bax, A., Kay, L. E., Driscoll, P. C., and Gronenborn, A.M. (1990). Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins. J. Am. Chem. Soc., 112(12), 4989-4991.
 
 
 How to use this script
@@ -64,19 +64,19 @@ How to use this script
 
 The value of the variable diff_model will determine the behaviour of this script.  The five diffusion models used in this script are:
 
-    Model I   (MI)   - Local tm.
-    Model II  (MII)  - Sphere.
-    Model III (MIII) - Prolate spheroid.
-    Model IV  (MIV)  - Oblate spheroid.
-    Model V   (MV)   - Ellipsoid.
+    - Model I   (MI)   - Local tm.
+    - Model II  (MII)  - Sphere.
+    - Model III (MIII) - Prolate spheroid.
+    - Model IV  (MIV)  - Oblate spheroid.
+    - Model V   (MV)   - Ellipsoid.
 
 Model I must be optimised prior to any of the other diffusion models, while the Models II to V can be optimised in any order.  To select the various models, set the variable diff_model to the following strings:
 
-    MI   - 'local_tm'
-    MII  - 'sphere'
-    MIII - 'prolate'
-    MIV  - 'oblate'
-    MV   - 'ellipsoid'
+    - MI   - 'local_tm'
+    - MII  - 'sphere'
+    - MIII - 'prolate'
+    - MIV  - 'oblate'
+    - MV   - 'ellipsoid'
 
 This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate.
 
@@ -84,7 +84,7 @@ It is important that the number of parameters in a model does not exceed the num
 
 
 Model I - Local tm
-~~~~~~~~~~~~~~~~~~
+------------------
 
 This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
 
@@ -92,7 +92,7 @@ AIC model selection is used to select the models for each spin.
 
 
 Model II - Sphere
-~~~~~~~~~~~~~~~~~
+-----------------
 
 This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:
 
@@ -113,26 +113,26 @@ All model-free and diffusion parameters are allowed to vary and a global optimis
 
 
 Model III - Prolate spheroid
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is './prolate/'.
 
 
 Model IV - Oblate spheroid
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is './oblate/'.
 
 
 Model V - Ellipsoid
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'.
 
 
 
 Final run
-~~~~~~~~~
+---------
 
 Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable diff_model to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
 
