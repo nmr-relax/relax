@@ -42,7 +42,7 @@ from specific_fns.setup import model_free_obj
 from gui_bieri.message import relax_run_ok
 
 
-def start_model_free(self, model, automatic, global_setting, file_setting, sequencefile):
+def start_model_free(self, model, automatic, global_setting, file_setting, sequencefile, logpanel):
     # Set relax and file settings from dialog
     hetero = global_setting[2]
     prot = global_setting[3]
