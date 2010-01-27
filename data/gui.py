@@ -25,6 +25,7 @@
 
 # relax module imports.
 from data_classes import Element, RelaxListType
+from relax_xml import xml_to_object
 
 
 class Gui(Element):
@@ -42,6 +43,26 @@ class Gui(Element):
         # Set the name and description.
         self.name = 'relax_gui'
         self.desc = 'The relax GUI information store.'
+
+
+    def from_xml(self, gui_node):
+        """Recreate the element data structure from the XML element node.
+
+        @param gui_node:    The element XML node.
+        @type gui_node:     xml.dom.minicompat.Element instance
+        """
+
+        # Add the analysis list object.
+        self.analyses = Analyses()
+
+        # Get the analyses node.
+        analyses_nodes = gui_node.getElementsByTagName('analyses')
+
+        # Recreate the analyses structure.
+        self.analyses.from_xml(analyses_nodes)
+
+        # Recreate all the other data structures.
+        xml_to_object(gui_node, self, blacklist=['analyses'])
 
 
 
