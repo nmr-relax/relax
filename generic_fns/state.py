@@ -136,13 +136,15 @@ def load_state(state=None, dir=None, force=False):
         raise RelaxError("The saved state " + repr(state) + " is not compatible with this version of relax.")
 
 
-def save_state(state=None, dir=None, compress_type=1, force=False, pickle=False):
+def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False, pickle=False):
     """Function for saving the program state.
 
     @keyword state:         The saved state file.
     @type state:            str
     @keyword dir:           The path of the state file.
     @type dir:              str
+    @param verbosity:       The verbosity level.
+    @type verbosity:        int
     @keyword force:         Boolean argument which if True causes the file to be overwritten if it
                             already exists.
     @type force:            bool
@@ -152,7 +154,7 @@ def save_state(state=None, dir=None, compress_type=1, force=False, pickle=False)
     """
 
     # Open the file for writing.
-    file = open_write_file(file_name=state, dir=dir, force=force, compress_type=compress_type)
+    file = open_write_file(file_name=state, dir=dir, verbosity=verbosity, force=force, compress_type=compress_type)
 
     # Pickle the data class and write it to file
     if pickle:
