@@ -28,6 +28,9 @@
 from os import getcwd, sep
 import wx
 
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+
 # relax GUI module imports.
 from gui_bieri.analyses.relax_control import start_modelfree
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
@@ -49,18 +52,21 @@ class Auto_model_free:
         # Store the main class.
         self.gui = gui
 
+        # Generate a storage container in the relax data store, and alias it for easy access.
+        self.data = ds.relax_gui.analyses.add('model-free')
+
         # Model-free variables.
-        self.model_source = getcwd()
-        self.model_save = getcwd()
-        self.selection = "AIC"
-        self.models = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9"]
-        self.nmrfreq1 = 600
-        self.nmrfreq2 = 800
-        self.nmrfreq3 = 900
-        self.paramfiles1 = ["", "", ""]
-        self.paramfiles2 = ["", "", ""]
-        self.paramfiles3 = ["", "", ""]
-        self.results_dir_model = getcwd()
+        self.data.model_source = getcwd()
+        self.data.model_save = getcwd()
+        self.data.selection = "AIC"
+        self.data.models = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9"]
+        self.data.nmrfreq1 = 600
+        self.data.nmrfreq2 = 800
+        self.data.nmrfreq3 = 900
+        self.data.paramfiles1 = ["", "", ""]
+        self.data.paramfiles2 = ["", "", ""]
+        self.data.paramfiles3 = ["", "", ""]
+        self.data.results_dir_model = getcwd()
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         main_box = self.build_main_box()
@@ -456,7 +462,7 @@ class Auto_model_free:
 
         # The elements.
         self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.gui.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, self.results_dir_model)
+        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, self.data.results_dir_model)
         self.results_directory_r21_copy_2 = wx.Button(self.gui.modelfree, -1, "Change")
 
         # Properties.
@@ -674,82 +680,82 @@ class Auto_model_free:
 
     def model_noe1(self, event): # load noe1
         backup = self.m_noe_1.GetValue()
-        self.paramfiles1[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles1[0] == None:
-            self.paramfiles1[0] = backup
-        self.m_noe_1.SetValue(self.paramfiles1[0])
+        self.data.paramfiles1[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles1[0] == None:
+            self.data.paramfiles1[0] = backup
+        self.m_noe_1.SetValue(self.data.paramfiles1[0])
         event.Skip()
 
 
     def model_noe2(self, event): # load noe1
         backup = self.m_noe_2.GetValue()
-        self.paramfiles2[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles2[0] == None:
-            self.paramfiles2[0] = backup
-        self.m_noe_2.SetValue(self.paramfiles2[0])
+        self.data.paramfiles2[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles2[0] == None:
+            self.data.paramfiles2[0] = backup
+        self.m_noe_2.SetValue(self.data.paramfiles2[0])
         event.Skip()
 
 
     def model_noe3(self, event): # load noe1
         backup = self.m_noe_3.GetValue()
-        self.paramfiles3[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles3[0] == None:
-            self.paramfiles3[0] = backup
-        self.m_noe_3.SetValue(self.paramfiles3[0])
+        self.data.paramfiles3[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles3[0] == None:
+            self.data.paramfiles3[0] = backup
+        self.m_noe_3.SetValue(self.data.paramfiles3[0])
         event.Skip()
 
 
     def model_r11(self, event): #
         backup = self.m_r1_1.GetValue()
-        self.paramfiles1[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles1[1] == None:
-            self.paramfiles1[1] = backup
-        self.m_r1_1.SetValue(self.paramfiles1[1])
+        self.data.paramfiles1[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles1[1] == None:
+            self.data.paramfiles1[1] = backup
+        self.m_r1_1.SetValue(self.data.paramfiles1[1])
         event.Skip()
 
 
     def model_r12(self, event): #
         backup = self.m_r1_2.GetValue()
-        self.paramfiles2[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles2[1] == None:
-            self.paramfiles2[1] = backup
-        self.m_r1_2.SetValue(self.paramfiles2[1])
+        self.data.paramfiles2[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles2[1] == None:
+            self.data.paramfiles2[1] = backup
+        self.m_r1_2.SetValue(self.data.paramfiles2[1])
         event.Skip()
 
 
     def model_r13(self, event):
         backup = self.m_r1_3.GetValue()
-        self.paramfiles3[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles3[1] == None:
-            self.paramfiles3[1] = backup
-        self.m_r1_3.SetValue(self.paramfiles3[1])
+        self.data.paramfiles3[1] = openfile(msg='Select R1 file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles3[1] == None:
+            self.data.paramfiles3[1] = backup
+        self.m_r1_3.SetValue(self.data.paramfiles3[1])
         event.Skip()
 
 
     def model_r21(self, event): #
         backup = self.m_r2_1.GetValue()
-        self.paramfiles1[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles1[2] == None:
-            self.paramfiles1[2] = backup
-        self.m_r2_1.SetValue(self.paramfiles1[2])
+        self.data.paramfiles1[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles1[2] == None:
+            self.data.paramfiles1[2] = backup
+        self.m_r2_1.SetValue(self.data.paramfiles1[2])
         event.Skip()
 
 
     def model_r22(self, event): #
         backup = self.m_r2_2.GetValue()
-        self.paramfiles2[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles2[2] == None:
-            self.paramfiles2[2] = backup
-        self.m_r2_2.SetValue(self.paramfiles2[2])
+        self.data.paramfiles2[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles2[2] == None:
+            self.data.paramfiles2[2] = backup
+        self.m_r2_2.SetValue(self.data.paramfiles2[2])
         event.Skip()
 
 
     def model_r23(self, event):
         backup = self.m_r2_3.GetValue()
-        self.paramfiles3[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
-        if self.paramfiles3[2] == None:
-            self.paramfiles3[2] = backup
-        self.m_r2_3.SetValue(self.paramfiles3[2])
+        self.data.paramfiles3[2] = openfile(msg='Select R2 file', filetype='*.*', default='all files (*.*)|*.*')
+        if self.data.paramfiles3[2] == None:
+            self.data.paramfiles3[2] = backup
+        self.m_r2_3.SetValue(self.data.paramfiles3[2])
         event.Skip()
 
 
@@ -762,10 +768,10 @@ class Auto_model_free:
 
     def resdir_modelfree(self, event):
         backup = self.resultsdir_r21_copy_2.GetValue()
-        self.results_dir_model = opendir('Select results directory', backup)
-        if self.results_dir_model == None:
-            self.results_dir_model = backup
-        self.resultsdir_r21_copy_2.SetValue(self.results_dir_model)
+        self.data.results_dir_model = opendir('Select results directory', backup)
+        if self.data.results_dir_model == None:
+            self.data.results_dir_model = backup
+        self.resultsdir_r21_copy_2.SetValue(self.data.results_dir_model)
         event.Skip()
 
 
