@@ -52,7 +52,7 @@ def convert_to_float(string):
     @return:        The floating point number.
     @rtype:         float
     """
- 
+
     # Break the number up.
     entries = string.split('*')
 
@@ -74,7 +74,7 @@ def convert_to_float(string):
 def start_model_free(self, model, automatic, global_setting, file_setting, sequencefile, logpanel):
     # Number of Monte Carlo simulations
     global montecarlo
-    montecarlo = int(global_setting[6]) 
+    montecarlo = int(global_setting[6])
 
     # value for progress bar during monte carlo simulation
     global progress
@@ -90,7 +90,7 @@ def start_model_free(self, model, automatic, global_setting, file_setting, seque
 
     # Set relax and file settings from dialog
     bondlength = converttofloat(global_setting[0])
-    csa = converttofloat(global_setting[1])    
+    csa = converttofloat(global_setting[1])
     hetero = global_setting[2]
     prot = global_setting[3]
     gridinc = global_setting[4]
@@ -224,22 +224,22 @@ def start_model_free(self, model, automatic, global_setting, file_setting, seque
         # (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep)
 
     if num_field == 2:
-         RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['R2', str(nmr_freq1), nmr_freq1 * 1e6, r2_1, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['NOE', str(nmr_freq1), nmr_freq1 * 1e6, noe_1, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['R1', str(nmr_freq2), nmr_freq2 * 1e6, r1_2, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['NOE', str(nmr_freq2), nmr_freq2 * 1e6, noe_2, None, None, 1, 2, 3, 4, 5, 6, None]]
+         RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['R2', str(nmr_freq1), nmr_freq1 * 1e6, r2_1,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['NOE', str(nmr_freq1), nmr_freq1 * 1e6, noe_1,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['R1', str(nmr_freq2), nmr_freq2 * 1e6, r1_2,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['NOE', str(nmr_freq2), nmr_freq2 * 1e6, noe_2,  None, None, 2, 3, 4, 5, 6, 7, None] ]
 
     if num_field == 3:
-         RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['R2', str(nmr_freq1), nmr_freq1 * 1e6, r2_1, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['NOE', str(nmr_freq1), nmr_freq1 * 1e6, noe_1, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['R1', str(nmr_freq2), nmr_freq2 * 1e6, r1_2, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['R2', str(nmr_freq2), nmr_freq2 * 1e6, r2_2, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['NOE', str(nmr_freq2), nmr_freq2 * 1e6, noe_2, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['R1', str(nmr_freq3), nmr_freq3 * 1e6, r1_3, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['R2', str(nmr_freq3), nmr_freq3 * 1e6, r2_3, None, None, 1, 2, 3, 4, 5, 6, None],
-                       ['NOE', str(nmr_freq3), nmr_freq3 * 1e6, noe_3, None, None, 1, 2, 3, 4, 5, 6, None]]
+         RELAX_DATA = [['R1', str(nmr_freq1), nmr_freq1 * 1e6, r1_1,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['R2', str(nmr_freq1), nmr_freq1 * 1e6, r2_1,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['NOE', str(nmr_freq1), nmr_freq1 * 1e6, noe_1,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['R1', str(nmr_freq2), nmr_freq2 * 1e6, r1_2,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['R2', str(nmr_freq2), nmr_freq2 * 1e6, r2_2,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['NOE', str(nmr_freq2), nmr_freq2 * 1e6, noe_2,  None, None, 2, 3, 4, 5, 7, 6, None],
+                       ['R1', str(nmr_freq3), nmr_freq3 * 1e6, r1_3,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['R2', str(nmr_freq3), nmr_freq3 * 1e6, r2_3,  None, None, 2, 3, 4, 5, 6, 7, None],
+                       ['NOE', str(nmr_freq3), nmr_freq3 * 1e6, noe_3,  None, None, 2, 3, 4, 5, 6, 7, None]]
 
     HETNUC = hetero
 
@@ -320,7 +320,7 @@ class RedirectText(object):
 
     def __init__(self,aWxTextCtrl):
         self.out=aWxTextCtrl
- 
+
     def write(self,string):
         global progress
 
@@ -331,9 +331,9 @@ class RedirectText(object):
         a = str(string)
         check = []
         check = a.split()
-        
+
         # update progress bar
-        if 'Simulation' in string:          
+        if 'Simulation' in string:
             add = round(progress)
             add_int = int(add)
             wx.CallAfter(self.out.progress_bar.SetValue, add_int)
