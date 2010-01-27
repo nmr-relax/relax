@@ -855,7 +855,7 @@ class Auto_model_free:
         if upload:
             self.data.structure_file = str(self.textctrl_structure.GetValue())
         else:
-            self.textctrl_structure.SetValue(str(structure_file))
+            self.textctrl_structure.SetValue(str(self.data.structure_file))
 
         # Unresolved residues.
         if upload:
