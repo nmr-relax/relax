@@ -242,29 +242,29 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.structure_file_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1_copy = StructureTextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
-        self.structure_r21_copy_1_copy.SetEditable(False)
-        self.chan_struc_r21_copy_1_copy = wx.Button(self.gui.modelfree, -1, "Change")
+        self.text_structure = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        self.textctrl_structure = StructureTextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
+        self.textctrl_structure.SetEditable(False)
+        button = wx.Button(self.gui.modelfree, -1, "Change")
 
         # Properties.
-        self.structure_file_copy_copy_1_copy.SetMinSize((240, 17))
-        self.structure_file_copy_copy_1_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.structure_r21_copy_1_copy.SetMinSize((350, 27))
-        self.chan_struc_r21_copy_1_copy.SetMinSize((103, 27))
+        self.text_structure.SetMinSize((240, 17))
+        self.text_structure.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        self.textctrl_structure.SetMinSize((350, 27))
+        button.SetMinSize((103, 27))
 
         # Layout.
-        results_dir_copy_copy_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
+        box = wx.BoxSizer(wx.HORIZONTAL)
 
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_file_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.structure_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1_copy.Add(self.chan_struc_r21_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+        box.Add(self.text_structure, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        box.Add(self.textctrl_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        box.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
 
         # Bind the events.
-        self.gui.Bind(wx.EVT_BUTTON, self.structure_r21_copy_1_copy.open_file, self.chan_struc_r21_copy_1_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.textctrl_structure.open_file, button)
 
         # Add the element to the box.
-        box.Add(results_dir_copy_copy_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
+        box.Add(box, 1, wx.EXPAND, 0)
 
 
     def add_relax_data_input(self, box):
@@ -853,9 +853,9 @@ class Auto_model_free:
  
         # The structure file.
         if upload:
-            self.data.structure_file = str(self.structure_r21_copy_1_copy.GetValue())
+            self.data.structure_file = str(self.textctrl_structure.GetValue())
         else:
-            self.structure_r21_copy_1_copy.SetValue(structure_file)
+            self.textctrl_structure.SetValue(structure_file)
 
         # Unresolved residues.
         if upload:
