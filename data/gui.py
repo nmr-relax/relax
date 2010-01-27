@@ -46,9 +46,9 @@ class Gui(Element):
 
 
     def from_xml(self, gui_node):
-        """Recreate the element data structure from the XML element node.
+        """Recreate the gui data structure from the XML gui node.
 
-        @param gui_node:    The element XML node.
+        @param gui_node:    The gui XML node.
         @type gui_node:     xml.dom.minicompat.Element instance
         """
 
@@ -59,7 +59,7 @@ class Gui(Element):
         analyses_nodes = gui_node.getElementsByTagName('analyses')
 
         # Recreate the analyses structure.
-        self.analyses.from_xml(analyses_nodes)
+        self.analyses.from_xml(analyses_nodes[0])
 
         # Recreate all the other data structures.
         xml_to_object(gui_node, self, blacklist=['analyses'])
@@ -97,3 +97,22 @@ class Analyses(RelaxListType):
 
         # Return the container.
         return self[-1]
+
+
+    def from_xml(self, analyses_node):
+        """Recreate the analyses data structure from the XML analyses node.
+
+        @param analyses_node:   The analyses XML node.
+        @type analyses_node:    xml.dom.minicompat.Element instance
+        """
+
+        # Get all the analysis nodes.
+        analysis_nodes = analyses_node.getElementsByTagName('analysis')
+
+        # Loop over the nodes.
+        for node in analysis_nodes:
+            # Add a blank analysis container.
+            cont = self.add()
+
+            # Recreate the analysis container.
+            cont.from_xml(node)
