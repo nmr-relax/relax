@@ -64,6 +64,8 @@ class Analyses(RelaxListType):
 
         @keyword type:  The analysis type.  This can be currently one of 'noe', 'r1', 'r2', or 'model-free'.
         @type type:     str
+        @return:        The data container added to the list.
+        @rtype:         Element instance
         """
 
         # Append an empty element.
@@ -71,3 +73,6 @@ class Analyses(RelaxListType):
 
         # Set the analysis type.
         self[-1].analysis_type = type
+
+        # Return the container.
+        return self[-1]
