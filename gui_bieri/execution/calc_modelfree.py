@@ -106,6 +106,13 @@ def start_model_free(self, model, automatic, global_setting, file_setting, seque
         file.write(unres)
         file.close()
 
+    # Create an empty file.
+    else:
+        filename2 =  target_dir + sep + 'unresolved'
+        file = open(filename2, 'w')
+        file.write('')
+        file.close()
+
     #create models list
     models = []
 
