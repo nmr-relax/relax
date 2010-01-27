@@ -82,37 +82,8 @@ class Main(wx.Frame):
         # Initialise the GUI data.
         self.init_data()
 
-        # Build the frame.
-        self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
-        self.results = wx.Panel(self.notebook_2, -1)
-        self.modelfree = wx.Panel(self.notebook_2, -1)
-        self.frq3 = wx.Panel(self.notebook_2, -1)
-        self.notebook_3_copy_1 = wx.Notebook(self.frq3, -1, style=0)
-        self.r2_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
-        self.panel_1_copy_copy_1 = wx.Panel(self.r2_1_copy_1, -1)
-        self.panel_3_copy_copy_1 = wx.Panel(self.panel_1_copy_copy_1, -1)
-        self.r1_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
-        self.panel_1_copy_2 = wx.Panel(self.r1_1_copy_1, -1)
-        self.panel_3_copy_2 = wx.Panel(self.panel_1_copy_2, -1)
-        self.noe1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
-        self.frq2 = wx.Panel(self.notebook_2, -1)
-        self.notebook_3_copy = wx.Notebook(self.frq2, -1, style=0)
-        self.r2_1_copy = wx.Panel(self.notebook_3_copy, -1)
-        self.panel_1_copy_copy = wx.Panel(self.r2_1_copy, -1)
-        self.panel_3_copy_copy = wx.Panel(self.panel_1_copy_copy, -1)
-        self.r1_1_copy = wx.Panel(self.notebook_3_copy, -1)
-        self.panel_1_copy_1 = wx.Panel(self.r1_1_copy, -1)
-        self.panel_3_copy_1 = wx.Panel(self.panel_1_copy_1, -1)
-        self.noe1_copy = wx.Panel(self.notebook_3_copy, -1)
-        self.frq1 = wx.Panel(self.notebook_2, -1)
-        self.notebook_3 = wx.Notebook(self.frq1, -1, style=0)
-        self.r2_1 = wx.Panel(self.notebook_3, -1)
-        self.panel_1_copy = wx.Panel(self.r2_1, -1)
-        self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
-        self.r1_1 = wx.Panel(self.notebook_3, -1)
-        self.panel_1 = wx.Panel(self.r1_1, -1)
-        self.panel_3 = wx.Panel(self.panel_1, -1)
-        self.noe1 = wx.Panel(self.notebook_3, -1)
+        # Build the main window.
+        self.build_main_window()
 
         # Build the menu bar.
         self.build_menu_bar()
@@ -1762,6 +1733,41 @@ class Main(wx.Frame):
         if len(r2_list3) >= 14:
             self.r2_list_14_copy_1.SetLabel(r2_list3[13])
         event.Skip()
+
+
+    def build_main_window(self):
+        """Construct the main relax GUI window."""
+
+        self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
+        self.results = wx.Panel(self.notebook_2, -1)
+        self.modelfree = wx.Panel(self.notebook_2, -1)
+        self.frq3 = wx.Panel(self.notebook_2, -1)
+        self.notebook_3_copy_1 = wx.Notebook(self.frq3, -1, style=0)
+        self.r2_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
+        self.panel_1_copy_copy_1 = wx.Panel(self.r2_1_copy_1, -1)
+        self.panel_3_copy_copy_1 = wx.Panel(self.panel_1_copy_copy_1, -1)
+        self.r1_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
+        self.panel_1_copy_2 = wx.Panel(self.r1_1_copy_1, -1)
+        self.panel_3_copy_2 = wx.Panel(self.panel_1_copy_2, -1)
+        self.noe1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
+        self.frq2 = wx.Panel(self.notebook_2, -1)
+        self.notebook_3_copy = wx.Notebook(self.frq2, -1, style=0)
+        self.r2_1_copy = wx.Panel(self.notebook_3_copy, -1)
+        self.panel_1_copy_copy = wx.Panel(self.r2_1_copy, -1)
+        self.panel_3_copy_copy = wx.Panel(self.panel_1_copy_copy, -1)
+        self.r1_1_copy = wx.Panel(self.notebook_3_copy, -1)
+        self.panel_1_copy_1 = wx.Panel(self.r1_1_copy, -1)
+        self.panel_3_copy_1 = wx.Panel(self.panel_1_copy_1, -1)
+        self.noe1_copy = wx.Panel(self.notebook_3_copy, -1)
+        self.frq1 = wx.Panel(self.notebook_2, -1)
+        self.notebook_3 = wx.Notebook(self.frq1, -1, style=0)
+        self.r2_1 = wx.Panel(self.notebook_3, -1)
+        self.panel_1_copy = wx.Panel(self.r2_1, -1)
+        self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
+        self.r1_1 = wx.Panel(self.notebook_3, -1)
+        self.panel_1 = wx.Panel(self.r1_1, -1)
+        self.panel_3 = wx.Panel(self.panel_1, -1)
+        self.noe1 = wx.Panel(self.notebook_3, -1)
 
 
     def build_menu_bar(self):
