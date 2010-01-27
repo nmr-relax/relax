@@ -785,6 +785,16 @@ class Auto_model_free:
         event.Skip()
 
 
+    def sync_ds(self, upload=False):
+        """Synchronise the analysis frame and the relax data store, both ways.
+
+        This method allows the frame information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the frame.
+
+        @keyword upload:    A flag which if True will cause the frame to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the frame.
+        @type upload:       bool
+        """
+
+
     def whichmodel(self, is_local_tm):
         selection = None
         dlg = Select_tensor(None, -1, "", local_tm_flag=is_local_tm)
