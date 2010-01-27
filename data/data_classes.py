@@ -75,6 +75,17 @@ class Element(object):
         return text
 
 
+    def from_xml(self, super_node):
+        """Recreate the element data structure from the XML element node.
+
+        @param super_node:    The element XML node.
+        @type super_node:     xml.dom.minicompat.Element instance
+        """
+
+        # Recreate all the other data structures.
+        xml_to_object(super_node, self)
+
+
     def is_empty(self):
         """Method for testing if the Element container is empty.
 
