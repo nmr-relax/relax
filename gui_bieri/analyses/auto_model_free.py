@@ -66,7 +66,8 @@ class Auto_model_free:
         self.data.paramfiles1 = ["", "", ""]
         self.data.paramfiles2 = ["", "", ""]
         self.data.paramfiles3 = ["", "", ""]
-        self.data.structure_file = None
+        self.data.unresolved = ''
+        self.data.structure_file = ''
         self.data.results_dir_model = getcwd()
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
