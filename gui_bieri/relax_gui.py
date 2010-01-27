@@ -76,6 +76,9 @@ class Main(wx.Frame):
         # Execute the base class __init__ method.
         super(Main, self).__init__(*args, **kwds)
 
+        # The analysis frame object storage.
+        self.analysis_frames = []
+
         # Initialise the GUI data.
         self.init_data()
 
