@@ -59,13 +59,14 @@ class Auto_model_free:
         self.data.model_source = getcwd()
         self.data.model_save = getcwd()
         self.data.selection = "AIC"
-        self.data.models = ["m0", "m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9"]
+        self.data.model_toggle = [True]*10
         self.data.nmrfreq1 = 600
         self.data.nmrfreq2 = 800
         self.data.nmrfreq3 = 900
         self.data.paramfiles1 = ["", "", ""]
         self.data.paramfiles2 = ["", "", ""]
         self.data.paramfiles3 = ["", "", ""]
+        self.data.structure_file = None
         self.data.results_dir_model = getcwd()
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
@@ -793,6 +794,81 @@ class Auto_model_free:
         @keyword upload:    A flag which if True will cause the frame to send data to the relax data store.  If False, data will be downloaded from the relax data store to update the frame.
         @type upload:       bool
         """
+
+        # Relaxation data input.
+        if upload:
+            # First frequency.
+            self.data.nmrfreq1 = str(self.modelfreefreq1.GetValue())
+            self.data.paramfiles1[0] = str(self.m_noe_1.GetValue())
+            self.data.paramfiles1[1] = str(self.m_r1_1.GetValue())
+            self.data.paramfiles1[2] = str(self.m_r2_1.GetValue())
+
+            # Second frequency.
+            self.data.nmrfreq2 = str(self.modelfreefreq2.GetValue())
+            self.data.paramfiles2[0] = str(self.m_noe_2.GetValue())
+            self.data.paramfiles2[1] = str(self.m_r1_2.GetValue())
+            self.data.paramfiles2[2] = str(self.m_r2_2.GetValue())
+
+            # Third frequency.
+            self.data.nmrfreq3 = str(self.modelfreefreq3.GetValue())
+            self.data.paramfiles3[0] = str(self.m_noe_3.GetValue())
+            self.data.paramfiles3[1] = str(self.m_r1_3.GetValue())
+            self.data.paramfiles3[2] = str(self.m_r2_3.GetValue())
+        else:
+            # First frequency.
+            self.modelfreefreq1.SetValue(self.data.nmrfreq1)
+            self.m_noe_1.SetValue(self.data.paramfiles1[0])
+            self.m_r1_1.SetValue(self.data.paramfiles1[1])
+            self.m_r2_1.SetValue(self.data.paramfiles1[2])
+
+            # Second frequency.
+            self.modelfreefreq2.SetValue(self.data.nmrfreq2)
+            self.m_noe_2.SetValue(self.data.paramfiles2[0])
+            self.m_r1_2.SetValue(self.data.paramfiles2[1])
+            self.m_r2_2.SetValue(self.data.paramfiles2[2])
+
+            # Third frequency.
+            self.modelfreefreq3.SetValue(self.data.nmrfreq3)
+            self.m_noe_3.SetValue(self.data.paramfiles3[0])
+            self.m_r1_3.SetValue(self.data.paramfiles3[1])
+            self.m_r2_3.SetValue(self.data.paramfiles3[2])
+
+        # The model-free models to use.
+        if upload:
+            # Loop over models m0 to m9.
+            for i in range(10):
+                # The object.
+                obj = getattr(self, 'm%i' % i)
+
+                # Upload to the store.
+                self.data.model_toggle[i] = str(obj.GetValue())
+        else:
+            # Loop over models m0 to m9.
+            for i in range(10):
+                # The object.
+                obj = getattr(self, 'm%i' % i)
+
+                # Download from the store.
+                obj.SetValue(self.data.model_toggle[i])
+ 
+        # The structure file.
+        if upload:
+            self.data.structure_file = str(self.structure_r21_copy_1_copy.GetValue())
+        else:
+            self.structure_r21_copy_1_copy.SetValue(structure_file)
+
+        # Unresolved residues.
+        if upload:
+            self.data.unresolved = str(self.unresolved_r21_copy_1_copy.GetValue())
+        else:
+            self.unresolved_r21_copy_1_copy.SetValue(self.data.unresolved)
+
+        # The results directory.
+        if upload:
+            self.data.results_dir_model = str(self.resultsdir_r21_copy_2.GetValue())
+        else:
+            self.resultsdir_r21_copy_2.SetValue(self.data.results_dir_model)
+
 
 
     def whichmodel(self, is_local_tm):
