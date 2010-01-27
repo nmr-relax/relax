@@ -254,17 +254,17 @@ class Auto_model_free:
         button.SetMinSize((103, 27))
 
         # Layout.
-        box = wx.BoxSizer(wx.HORIZONTAL)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        box.Add(self.text_structure, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        box.Add(self.textctrl_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        box.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+        sizer.Add(self.text_structure, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        sizer.Add(self.textctrl_structure, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
 
         # Bind the events.
         self.gui.Bind(wx.EVT_BUTTON, self.textctrl_structure.open_file, button)
 
         # Add the element to the box.
-        box.Add(box, 1, wx.EXPAND, 0)
+        box.Add(sizer, 1, wx.EXPAND, 0)
 
 
     def add_relax_data_input(self, box):
