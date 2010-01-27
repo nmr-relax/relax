@@ -45,9 +45,29 @@ from gui_bieri.message import relax_run_ok
 
 
 def start_model_free(self, model, automatic, global_setting, file_setting, sequencefile, logpanel):
+    # Number of Monte Carlo simulations
+    global montecarlo
+    montecarlo = int(global_setting[6]) 
+
+    # value for progress bar during monte carlo simulation
+    global progress
+    progress = 5.0
+
+    # redirect relax output and errors to relaxGUI - log panel
+    redir=RedirectText(logpanel)
+    sys.stdout=redir
+    sys.stderr=redir
+
+    wx.CallAfter(logpanel.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
+    time.sleep(0.5)
+
     # Set relax and file settings from dialog
+    bondlength = converttofloat(global_setting[0])
+    csa = converttofloat(global_setting[1])    
     hetero = global_setting[2]
     prot = global_setting[3]
+    gridinc = global_setting[4]
+    minalgor = global_setting[5]
     intcol = int(file_setting[5])
     mol_name = int(file_setting[0])
     res_num = int(file_setting[1])
