@@ -2621,7 +2621,7 @@ class Main(wx.Frame):
             self.analysis_frames[i].sync_ds(upload=True)
 
         # Save the relax state.
-        state.save_state(filename, force=True)
+        state.save_state(filename, verbosity=0, force=True)
 
         # Skip the event.
         event.Skip()
