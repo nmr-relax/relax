@@ -44,6 +44,33 @@ from specific_fns.setup import model_free_obj
 from gui_bieri.message import relax_run_ok
 
 
+def convert_to_float(string):
+    """Method to convert a string like '1.02*1e-10' to a float variable.
+
+    @param string:  The number in string form.
+    @type string:   str
+    @return:        The floating point number.
+    @rtype:         float
+    """
+ 
+    # Break the number up.
+    entries = string.split('*')
+
+    # The first part of the number.
+    a = entries[0]
+    a = float(a)
+
+    # The second part of the number.
+    b = entries[1]
+    b = float(b[2:len(b)])
+
+    # Recombine.
+    result = a * math.pow(10, b)
+
+    # Return the float.
+    return result
+
+
 def start_model_free(self, model, automatic, global_setting, file_setting, sequencefile, logpanel):
     # Number of Monte Carlo simulations
     global montecarlo
