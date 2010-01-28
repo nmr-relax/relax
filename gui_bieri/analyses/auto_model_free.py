@@ -85,25 +85,25 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_5_copy_1_copy_3 = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_modelfree = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        label = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
+        button = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         # Properties.
-        self.label_5_copy_1_copy_3.SetMinSize((118, 17))
-        self.label_5_copy_1_copy_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.relax_start_modelfree.SetName('hello')
-        self.relax_start_modelfree.SetSize(self.relax_start_modelfree.GetBestSize())
+        label.SetMinSize((118, 17))
+        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        button.SetName('hello')
+        button.SetSize(button.GetBestSize())
 
         # Layout.
-        exec_relax_copy_1_copy_3 = wx.BoxSizer(wx.HORIZONTAL)
-        exec_relax_copy_1_copy_3.Add(self.label_5_copy_1_copy_3, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_3.Add(self.relax_start_modelfree, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
 
         # Bind the events.
-        self.gui.Bind(wx.EVT_BUTTON, self.automatic_protocol_controller, self.relax_start_modelfree)
+        self.gui.Bind(wx.EVT_BUTTON, self.automatic_protocol_controller, button)
 
         # Add the element to the box.
-        box.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
+        box.Add(sizer, 1, wx.ALIGN_RIGHT, 0)
 
 
     def add_frame_title(self, box):
