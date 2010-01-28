@@ -100,8 +100,15 @@ class Auto_rx:
 
 
     def build_right_box(self):
+        """Construct the right hand box to pack into the main Rx box.
+
+        @return:    The right hand box element containing all Rx GUI elements (excluding the bitmap) to pack into the main Rx box.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # Use a vertical packing of elements.
         sizer_11 = wx.BoxSizer(wx.VERTICAL)
-        # R1 no. 1
+
         self.label_4_copy_copy = wx.StaticText(self.parent, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r11 = wx.TextCtrl(self.parent, -1, str(self.data.frq))
