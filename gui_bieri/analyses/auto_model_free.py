@@ -831,7 +831,7 @@ class Auto_model_free:
         time.sleep(0.5)
 
         # Start the protocol.
-        dAuvergne_protocol(diff_model=data.diff_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.pdb_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.grid_inc, min_algor=data.min_algor, mc_num=data.mc_num, conv_loop=data.conv_loop)
+        dAuvergne_protocol(diff_model=global_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.pdb_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.grid_inc, min_algor=data.min_algor, mc_num=data.mc_num, conv_loop=data.conv_loop)
 
         # Create the results file.
         if model == 'final':
