@@ -177,5 +177,34 @@ class Controller(wx.Dialog):
         event.Skip()
 
 
+
+class RedirectText(object):
+    """Class to redirect relax output to relaxGUI - log panel and progress bar."""
+
+    def __init__(self,aWxTextCtrl):
+        self.out=aWxTextCtrl
+
+
+    def write(self,string):
+        global progress
+
+        wx.CallAfter(self.out.log_panel.WriteText, string)
+        time.sleep(0.001)  # allow relaxGUI log panel to get refreshed
+
+        # split print out into list
+        a = str(string)
+        check = []
+        check = a.split()
+
+        # update progress bar
+        if 'Simulation' in string:
+            add = round(progress)
+            add_int = int(add)
+            wx.CallAfter(self.out.progress_bar.SetValue, add_int)
+            progress = ( (int(check[1]) * 100) / float(montecarlo + 6)) + 5
+            time.sleep(0.001)  # allow relaxGUI progressbar to get refreshed
+
+
+
 class Thread_container:
     """Storage object for the calculation threads."""
