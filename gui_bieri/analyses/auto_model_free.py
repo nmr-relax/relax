@@ -803,7 +803,7 @@ class Auto_model_free:
         thread_cont.progress = 5.0
 
         # Redirect relax output and errors to the controller.
-        redir = RedirectText(self.gui.controller)
+        redir = Redirect_text(self.gui.controller)
         sys.stdout = redir
         sys.stderr = redir
 
