@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Main module for the relax graphical user interface."""
+"""Module for the automatic model-free protocol frame."""
 
 # Python module imports.
 from os import getcwd, sep
