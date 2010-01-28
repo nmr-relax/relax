@@ -1646,8 +1646,6 @@ class Main(wx.Frame):
         self.r2_1 = wx.Panel(self.notebook_3, -1)
         self.panel_1_copy = wx.Panel(self.r2_1, -1)
         self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
-        self.panel_1 = wx.Panel(self.analysis_frames[self.hardcoded_index_r1_1].parent, -1)
-        self.panel_3 = wx.Panel(self.panel_1, -1)
         self.noe1 = wx.Panel(self.notebook_3, -1)
 
 

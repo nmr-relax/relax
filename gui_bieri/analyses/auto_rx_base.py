@@ -67,6 +67,8 @@ class Auto_rx:
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
+        self.panel_1 = wx.Panel(self.parent, -1)
+        self.panel_3 = wx.Panel(self.panel_1, -1)
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         main_box = self.build_main_box()
