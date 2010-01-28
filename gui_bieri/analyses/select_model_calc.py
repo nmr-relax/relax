@@ -29,14 +29,15 @@ import wx
 from gui_bieri.paths import IMAGE_PATH
 
 
-selection = None
-
 class Select_tensor(wx.Dialog):
     def __init__(self, *args, **kwds):
         """Initialise the dialog."""
 
         # Strip out and save the local_tm_flag from the keywords.
         self.local_tm_flag = kwds.pop('local_tm_flag')
+
+        # The selection string.
+        self.selection = None
 
         # begin select_tensor.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -132,56 +133,48 @@ class Select_tensor(wx.Dialog):
 
 
     def cancel(self, event): # cancel
-        global selection
-        selection = None
+        self.selection = None
         self.Destroy()
         event.Skip()
 
 
     def ellipsoid(self, event): # ellipsoid
-        global selection
-        selection = 'ellipsoid'
+        self.selection = 'ellipsoid'
         self.Destroy()
         event.Skip()
 
 
     def final(self, event): # final
-        global selection
-        selection = 'final'
+        self.selection = 'final'
         self.Destroy()
         event.Skip()
 
 
     def full(self, event): # automatic
-        global selection
-        selection = 'full'
+        self.selection = 'full'
         self.Close()
         event.Skip()
 
 
     def local(self, event): # local tm
-        global selection
-        selection = 'local_tm'
+        self.selection = 'local_tm'
         self.Destroy()
         event.Skip()
 
 
     def oblate(self, event): # oblate
-        global selection
-        selection = 'oblate'
+        self.selection = 'oblate'
         self.Destroy()
         event.Skip()
 
 
     def prolate(self, event): # prolate
-        global selection
-        selection = 'prolate'
+        self.selection = 'prolate'
         self.Destroy()
         event.Skip()
 
 
     def sphere(self, event): # sphere
-        global selection
-        selection = 'sphere'
+        self.selection = 'sphere'
         self.Close()
         event.Skip()
