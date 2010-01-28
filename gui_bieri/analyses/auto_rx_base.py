@@ -165,6 +165,9 @@ class Auto_rx:
         self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, self.addr11)
         self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
 
+        # Return the box.
+        return sizer_11
+
 
     def __do_layout(self):
         # begin wxGlade: main.__do_layout
