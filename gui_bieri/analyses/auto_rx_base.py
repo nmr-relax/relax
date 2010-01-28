@@ -86,7 +86,7 @@ class Auto_rx:
         self.resultsdir_r11 = wx.TextCtrl(self.parent, -1, self.data.save_dir)
         self.results_directory_copy_copy = wx.Button(self.parent, -1, "Change")
         self.structure_file = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11 = StructureTextCtrl(self.parent, -1, self.structure_file_pdb_msg)
+        self.structure_r11 = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
         self.structure_r11.SetEditable(False)
         self.results_directory_copy_copy_copy = wx.Button(self.parent, -1, "Change")
         self.label_2_copy_copy_copy_2_copy_copy = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
