@@ -26,14 +26,17 @@
 
 # Python module imports.
 from os import getcwd, sep
+import thread
 import wx
 
 # relax module imports.
+from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relax GUI module imports.
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import Select_tensor
+from gui_bieri.controller import Tread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
 from gui_bieri.message import missing_data
@@ -544,7 +547,7 @@ class Auto_model_free:
 
             # Loop over the global models solving for each, one after the other.
             for global_model in global_models:
-                status = start_modelfree(global_model=global_model, automatic=True)
+                status = self.execute(global_model=global_model, automatic=True)
 
                 # A problem was encountered, so do not continue (a dialog should probably appear here).
                 if not status:
@@ -556,12 +559,12 @@ class Auto_model_free:
             # All models, excluding the final run.
             if which_model != 'final':
                 # Solve for the local_tm, sphere, prolate, oblate, or ellipsoid global models.
-                enable_models = start_modelfree(global_model=which_model, automatic=False)
+                enable_models = self.execute(global_model=which_model, automatic=False)
 
             # The final run.
             else:
                 # Execute the final run.
-                results_for_table = start_modelfree(global_model=which_model, automatic=False)
+                results_for_table = self.execute(global_model=which_model, automatic=False)
 
                 # set global results variables
                 ds.relax_gui.table_residue = results_for_table[0]
@@ -700,6 +703,28 @@ class Auto_model_free:
 
         # Return the choice.
         return dlg.selection
+
+
+    def execute(self, global_model=None, automatic=True):
+        """Execute the calculations in a thread.
+
+        @keyword global_model:  The global model to solve.  This must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
+        @type global_model:     str
+        """
+
+        # Assemble all the data needed for the dAuvergne_protocol class.
+        diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop = self.assemble_data()
+
+        # The thread object storage.
+        self.gui.calc_threads.append(Thread_container())
+
+        # Start the thread.
+        id = thread.start_new_thread(dAuvergne_protocol, (diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop), (diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop))
+
+        # Add the thread info to the container.
+        self.gui.calc_threads[-1].id = id
+        self.gui.calc_threads[-1].analysis_type = 'model-free'
+        self.gui.calc_threads[-1].global_model = global_model
 
 
     def model_noe1(self, event): # load noe1
