@@ -37,7 +37,7 @@ from gui_bieri.execution.calc_rx import make_rx
 from gui_bieri.paths import IMAGE_PATH
 
 
-def start_modelfree(self, model, automatic, global_setting, file_setting, sequencefile):
+def start_modelfree(self, model, automatic):
     """Model-free calculation."""
 
     # define calculation
