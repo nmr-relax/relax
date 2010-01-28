@@ -175,7 +175,6 @@ class Auto_rx:
         sizer_12 = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1 = wx.FlexGridSizer(10, 2, 0, 0)
         sizer_13 = wx.BoxSizer(wx.VERTICAL)
-        nmr_freq_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6_copy_1 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -186,9 +185,6 @@ class Auto_rx:
         sizer_8_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
 
         sizer_11.Add(results_dir_copy_copy, 1, wx.EXPAND, 0)
-        nmr_freq_copy_copy_copy.Add(self.label_2_copy_copy_copy_2_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy.Add(self.unresolved_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11.Add(nmr_freq_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
         sizer_11.Add(self.panel_2, 0, wx.EXPAND|wx.SHAPED, 0)
         sizer_13.Add(self.addr11, 0, wx.ADJUST_MINSIZE, 0)
         sizer_13.Add(self.refreshr11, 0, wx.ADJUST_MINSIZE, 0)
@@ -248,8 +244,6 @@ class Auto_rx:
         self.label_2_copy_copy_5.SetMinSize((230, 17))
         self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
         self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.label_2_copy_copy_copy_2_copy_copy.SetMinSize((230, 17))
-        self.unresolved_r11.SetMinSize((350, 27))
         self.panel_2.SetMinSize((688, 5))
         self.addr11.SetMinSize((60, 27))
         self.refreshr11.SetMinSize((60, 27))
@@ -430,6 +424,30 @@ class Auto_rx:
         box.Add(sizer, 1, wx.EXPAND, 0)
 
 
+    def add_unresolved_spins(self, box):
+        """Create and add the unresolved spins GUI element to the given box.
+
+        @param box:     The box element to pack the unresolved spins GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
+        self.field_unresolved.SetMinSize((350, 27))
+        sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def build_main_box(self):
         """Construct the highest level box to pack into the automatic Rx analysis frame.
 
@@ -474,8 +492,9 @@ class Auto_rx:
         # Add the structure file selection GUI element.
         self.add_structure_selection(box)
 
-        self.label_2_copy_copy_copy_2_copy_copy = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r11 = wx.TextCtrl(self.parent, -1, "")
+        # Add the unresolved spins GUI element.
+        self.add_unresolved_spins(box)
+
         self.panel_2 = wx.Panel(self.parent, -1)
         self.addr11 = wx.Button(self.panel_1, -1, "add")
         self.refreshr11 = wx.Button(self.panel_1, -1, "refresh")
@@ -539,7 +558,7 @@ class Auto_rx:
         relax_times_r2_1[13] = str(self.r2_time_14.GetValue())
         start_relax = exec_relax()
         if start_relax == True:
-            start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
+            start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.field_unresolved.GetValue(), self, 1, global_setting, file_setting, sequencefile)
         event.Skip()
 
 
