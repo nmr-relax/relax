@@ -21,27 +21,12 @@
 #                                                                             #
 ###############################################################################
 
-# script to calculate model-free models
+# Module docstring.
+"""Miscellaneous functions used throughout the GUI."""
 
 # Python module imports.
-import math
-from os import listdir, sep
-from re import search
-from string import replace
-import time
-import wx
-
-# relax module imports.
-from auto_analyses.dauvergne_protocol import dAuvergne_protocol
-from float import floatAsByteArray
-from generic_fns import diffusion_tensor, eliminate, fix, grace, minimise, model_selection, monte_carlo, pipes, relax_data, results, selection, sequence, spectrum, value
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-import generic_fns.structure.main
-from relax_errors import RelaxError
-from specific_fns.setup import model_free_obj
-
-# relaxGUI module imports.
-from gui_bieri.message import relax_run_ok
+from math import pow
+from string import split
 
 
 def convert_to_float(string):
@@ -54,7 +39,7 @@ def convert_to_float(string):
     """
 
     # Break the number up.
-    entries = string.split('*')
+    entries = split('*')
 
     # The first part of the number.
     a = entries[0]
@@ -65,7 +50,7 @@ def convert_to_float(string):
     b = float(b[2:len(b)])
 
     # Recombine.
-    result = a * math.pow(10, b)
+    result = a * pow(10, b)
 
     # Return the float.
     return result
