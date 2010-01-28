@@ -173,7 +173,16 @@ class Controller(wx.Dialog):
         self.close_button.SetToolTipString("Close log window")
 
 
-    def cancel_calculation(self, event): # abort calculation
+    def cancel_calculation(self, event):
+        """Abort the calculations.
+
+        This currently does nothing!
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Terminate the event.
         event.Skip()
 
 
