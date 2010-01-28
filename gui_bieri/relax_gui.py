@@ -88,6 +88,9 @@ class Main(wx.Frame):
         # Build the menu bar.
         self.build_menu_bar()
 
+        # Build the controller, but don't show it.
+        self.controller = Controller(None, -1, "")
+
         # A fixed set of indices for 3 NOE, 3 R1, and 3 R2 frames used for accessing the relax data store.
         # FIXME:  Eliminate these!  There should be a flexible number of these frames.
         self.noe_index = [0, 1, 2]
