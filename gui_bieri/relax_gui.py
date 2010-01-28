@@ -95,6 +95,12 @@ class Main(wx.Frame):
         for i in range(10):
             self.analysis_frames.append(Container())
 
+        # A fixed set of indices for 3 NOE, 3 R1, and 3 R2 frames used for accessing the relax data store.
+        # FIXME:  Eliminate these!  There should be a flexible number of these frames.
+        self.noe_index = [0, 1, 2]
+        self.r1_index =  [3, 4, 5]
+        self.r2_index =  [6, 7, 8]
+
         # The calculation threads list.
         self.calc_threads = []
 
@@ -109,12 +115,6 @@ class Main(wx.Frame):
 
         # Build the controller, but don't show it.
         self.controller = Controller(None, -1, "")
-
-        # A fixed set of indices for 3 NOE, 3 R1, and 3 R2 frames used for accessing the relax data store.
-        # FIXME:  Eliminate these!  There should be a flexible number of these frames.
-        self.noe_index = [0, 1, 2]
-        self.r1_index =  [3, 4, 5]
-        self.r2_index =  [6, 7, 8]
 
         # NOE 1 no. 1
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
