@@ -92,7 +92,7 @@ class Main(wx.Frame):
         self.hardcoded_index_r1_3  = 7
         self.hardcoded_index_r2_3  = 8
         self.hardcoded_index_mf    = 9
-        for i in range(7):
+        for i in range(10):
             self.analysis_frames.append(Container())
 
         # The calculation threads list.
