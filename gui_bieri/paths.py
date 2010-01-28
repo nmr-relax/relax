@@ -40,6 +40,7 @@ IMAGE_PATH = sys.path[0]+sep+'gui_bieri'+sep+'images'+sep
 ABOUT_RELAX_ICON = IMAGE_PATH + 'relax_16x16.png'
 ABOUT_RELAXGUI_ICON = IMAGE_PATH + 'relax_16x16.png'
 CONTACT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'mail-mark-unread-new.png'
+CONTROLLER_ICON = ICON_PATH + '16x16'+sep+'apps'+sep+'preferences-system-performance.png'
 EXIT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'system-shutdown.png'
 LOAD_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'arrow-right.png'
 MANUAL_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'help-contents.png'

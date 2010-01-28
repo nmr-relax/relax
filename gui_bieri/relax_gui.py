@@ -52,7 +52,7 @@ from controller import Controller
 from derived_wx_classes import StructureTextCtrl
 from filedialog import multi_openfile, opendir, openfile, savefile
 from message import dir_message, exec_relax, missing_data, question, relax_run_ok
-from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
+from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from settings import import_file_settings, load_sequence, relax_global_settings
 
 
@@ -1794,6 +1794,14 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.state_save, id=2)
         self.Bind(wx.EVT_MENU, self.exitGUI,    id=3)
 
+        # The 'View' menu entries.
+        menu = wx.Menu()
+        menu.AppendItem(self.build_menu_sub_item(id=50, text="&Controller", icon=CONTROLLER_ICON))
+        menubar.Append(menu, "&View")
+
+        # The 'View' actions.
+        self.Bind(wx.EVT_MENU, self.show_controller,    id=50)
+
         # The 'Molecule' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(id=10, text="Load &PDB File", icon=LOAD_ICON))
@@ -2563,6 +2571,20 @@ class Main(wx.Frame):
         if not tmp_global == None:
             if question('Do you realy want to change relax settings?'):
                 global_setting = tmp_global
+        event.Skip()
+
+
+    def show_controller(self, event):
+        """Display the relax controller window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the window.
+        self.controller.ShowModal()
+
+        # Terminate the event.
         event.Skip()
 
 
