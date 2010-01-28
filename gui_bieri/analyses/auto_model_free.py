@@ -32,7 +32,6 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relax GUI module imports.
-from gui_bieri.analyses.relax_control import start_modelfree
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import Select_tensor
 from gui_bieri.derived_wx_classes import StructureTextCtrl

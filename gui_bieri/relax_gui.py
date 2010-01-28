@@ -47,8 +47,8 @@ from version import version
 from about import about_relax
 from analyses.auto_model_free import Auto_model_free
 from analyses.project import create_save_file, open_file
-from analyses.relax_control import start_modelfree, start_noe, start_rx
 from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
+from controller import Controller
 from derived_wx_classes import StructureTextCtrl
 from filedialog import multi_openfile, opendir, openfile, savefile
 from message import dir_message, exec_relax, missing_data, question, relax_run_ok
