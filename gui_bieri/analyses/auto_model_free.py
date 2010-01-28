@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import getcwd, sep
+import sys
 import thread
 import wx
 
