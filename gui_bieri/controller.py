@@ -27,6 +27,7 @@
 # Python module imports.
 from os import sep
 import sys
+import time
 import thread
 import wx
 
