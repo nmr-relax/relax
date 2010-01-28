@@ -520,7 +520,7 @@ class Auto_model_free:
     def assemble_data(self):
         """Assemble the data required for the dAuvernge_protocol class.
 
-        See the docstring for auto_analyses.dauvernge_protocol for details.
+        See the docstring for auto_analyses.dauvernge_protocol for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
         @return:    A container with all the data required for dAuvernge_protocol, i.e. its keyword arguments mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop.
         @rtype:     class instance
@@ -528,6 +528,66 @@ class Auto_model_free:
 
         # The data container.
         data = Container()
+
+        # The model-free models (do not change these unless absolutely necessary).
+        data.mf_models = []
+        data.local_mf_models = []
+        for i in range(len(self.data.model_toggle)):
+            if self.data.model_toggle[i]:
+                data.mf_models.append('m%i' % i)
+                data.local_mf_models.append('tm%i' % i)
+
+        # The PDB file (set this to None if no structure is available).
+        if self.data.structure_file == '':
+            data.structure_file = None
+        else:
+            data.structure_file = self.data.structure_file
+
+        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
+        data.seq_args = [self.data.paramfiles1[0], None, None, 2, 3, 4, 5, None]
+
+        # The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
+        data.het_name = ds.relax_gui.global_settings[2]
+
+        # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
+        data.relax_data = []
+        for i in range(3):
+            # The objects.
+            frq = getattr(self.data, 'nmrfreq%i' % i)
+            files = getattr(self.data, 'paramfiles%i' % i)
+
+            # Data has not been given, so skip this entry.
+            if frq == '':
+                continue
+
+            # Append the relaxation data.
+            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, 2, 3, 4, 5, 6, 7, None]
+            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, 2, 3, 4, 5, 6, 7, None]
+            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, 2, 3, 4, 5, 6, 7, None]
+
+        # The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
+        data.unres = self.data.results_dir_model + sep + 'unresolved'
+
+        # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
+        data.exclude = None
+
+        # The bond length, CSA values, heteronucleus type, and proton type.
+        data.bond_length = 1.02 * 1e-10
+        data.csa = -172 * 1e-6
+        data.hetnuc = '15N'
+        data.proton = '1H'
+
+        # The grid search size (the number of increments per dimension).
+        data.grid_inc = 11
+
+        # The optimisation technique.
+        data.min_algor = 'newton'
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        data.mc_num = 500
+
+        # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
+        data.conv_loop = True
 
         # Return the container.
         return data
