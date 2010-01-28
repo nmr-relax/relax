@@ -98,7 +98,9 @@ def start_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, f
 
 
 
-class Log_window(wx.Dialog):
+class Controller(wx.Dialog):
+    """The relax controller window."""
+
     def __init__(self, *args, **kwds):
 
         # Create GUI elements
