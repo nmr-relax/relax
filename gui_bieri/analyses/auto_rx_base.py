@@ -47,11 +47,13 @@ class Auto_rx:
     bitmap = None
     label = None
 
-    def __init__(self, gui):
+    def __init__(self, gui, notebook):
         """Build the automatic R1 and R2 analysis GUI frame elements.
 
-        @param gui: The main GUI class.
-        @type gui:  gui_bieri.relax_gui.Main instance
+        @param gui:         The main GUI class.
+        @type gui:          gui_bieri.relax_gui.Main instance
+        @param notebook:    The notebook to pack this frame into.
+        @type notebook:     wx.Notebook instance
         """
 
         self.gui = gui
