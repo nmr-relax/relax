@@ -98,19 +98,21 @@ def load_pickle(file):
     return True
 
 
-def load_state(state=None, dir=None, force=False):
+def load_state(state=None, dir=None, verbosity=1, force=False):
     """Function for loading a saved program state.
 
     @keyword state:     The saved state file.
     @type state:        str
     @keyword dir:       The path of the state file.
     @type dir:          str
+    @keyword verbosity: The verbosity level.
+    @type verbosity:    int
     @keyword force:     If True, the relax data store will be reset prior to state loading.
     @type force:        bool
     """
 
     # Open the file for reading.
-    file = open_read_file(file_name=state, dir=dir)
+    file = open_read_file(file_name=state, dir=dir, verbosity=verbosity)
 
     # Determine the format of the file.
     format = determine_format(file)
@@ -143,7 +145,7 @@ def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False, 
     @type state:            str
     @keyword dir:           The path of the state file.
     @type dir:              str
-    @param verbosity:       The verbosity level.
+    @keyword verbosity:     The verbosity level.
     @type verbosity:        int
     @keyword force:         Boolean argument which if True causes the file to be overwritten if it
                             already exists.
