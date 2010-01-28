@@ -147,9 +147,6 @@ class Main(wx.Frame):
         self.relax_start_noe1 = wx.BitmapButton(self.noe1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
-        # The automatic R1 analysis frame.
-        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3)
-
         #R2 no. 1
         rx_data = ds.relax_gui.analyses[self.r2_index[0]]
         self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.r2_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
@@ -1714,6 +1711,8 @@ class Main(wx.Frame):
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
         self.results = wx.Panel(self.notebook_2, -1)
         self.frq3 = wx.Panel(self.notebook_2, -1)
+
+        # The 5th notebook (freq 3).
         self.notebook_3_copy_1 = wx.Notebook(self.frq3, -1, style=0)
         self.r2_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
         self.panel_1_copy_copy_1 = wx.Panel(self.r2_1_copy_1, -1)
@@ -1723,6 +1722,8 @@ class Main(wx.Frame):
         self.panel_3_copy_2 = wx.Panel(self.panel_1_copy_2, -1)
         self.noe1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
         self.frq2 = wx.Panel(self.notebook_2, -1)
+
+        # The 4th notebook (freq 2).
         self.notebook_3_copy = wx.Notebook(self.frq2, -1, style=0)
         self.r2_1_copy = wx.Panel(self.notebook_3_copy, -1)
         self.panel_1_copy_copy = wx.Panel(self.r2_1_copy, -1)
@@ -1732,7 +1733,13 @@ class Main(wx.Frame):
         self.panel_3_copy_1 = wx.Panel(self.panel_1_copy_1, -1)
         self.noe1_copy = wx.Panel(self.notebook_3_copy, -1)
         self.frq1 = wx.Panel(self.notebook_2, -1)
+
+        # The 3rd notebook (freq 1).
         self.notebook_3 = wx.Notebook(self.frq1, -1, style=0)
+
+        # The automatic R1 analysis frame.
+        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3)
+
         self.r2_1 = wx.Panel(self.notebook_3, -1)
         self.panel_1_copy = wx.Panel(self.r2_1, -1)
         self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
