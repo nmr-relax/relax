@@ -533,11 +533,11 @@ class Auto_model_free:
 
         # The model-free models (do not change these unless absolutely necessary).
         data.mf_models = []
-        data.local_mf_models = []
+        data.local_tm_models = []
         for i in range(len(self.data.model_toggle)):
             if self.data.model_toggle[i]:
                 data.mf_models.append('m%i' % i)
-                data.local_mf_models.append('tm%i' % i)
+                data.local_tm_models.append('tm%i' % i)
 
         # The PDB file (set this to None if no structure is available).
         if self.data.structure_file == '':
