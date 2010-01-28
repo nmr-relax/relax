@@ -540,6 +540,9 @@ class Auto_model_free:
         # The global model.
         which_model = self.choose_global_model(False)
 
+        # Display the relax controller.
+        self.gui.controller.Show()
+
         # Solve for all global models.
         if which_model == 'full':
             # The global model list.
