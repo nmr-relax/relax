@@ -2585,7 +2585,7 @@ class Main(wx.Frame):
         reset()
 
         # Load the relax state.
-        state.load_state(filename)
+        state.load_state(filename, verbosity=0)
 
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
