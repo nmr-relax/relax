@@ -145,7 +145,7 @@ def save_state(state=None, dir=None, compress_type=1, verbosity=1, force=False, 
     @type state:            str
     @keyword dir:           The path of the state file.
     @type dir:              str
-    @param verbosity:       The verbosity level.
+    @keyword verbosity:     The verbosity level.
     @type verbosity:        int
     @keyword force:         Boolean argument which if True causes the file to be overwritten if it
                             already exists.
