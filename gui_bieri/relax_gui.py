@@ -1641,7 +1641,7 @@ class Main(wx.Frame):
         self.notebook_3 = wx.Notebook(self.frq1, -1, style=0)
 
         # The automatic R1 analysis frame.
-        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3)
+        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3, hardcoded_index=self.r1_index[0])
 
         self.r2_1 = wx.Panel(self.notebook_3, -1)
         self.panel_1_copy = wx.Panel(self.r2_1, -1)
