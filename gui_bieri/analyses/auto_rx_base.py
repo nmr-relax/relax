@@ -48,20 +48,22 @@ class Auto_rx:
     bitmap = None
     label = None
 
-    def __init__(self, gui, notebook):
+    def __init__(self, gui, notebook, hardcoded_index=None):
         """Build the automatic R1 and R2 analysis GUI frame elements.
 
-        @param gui:         The main GUI class.
-        @type gui:          gui_bieri.relax_gui.Main instance
-        @param notebook:    The notebook to pack this frame into.
-        @type notebook:     wx.Notebook instance
+        @param gui:                 The main GUI class.
+        @type gui:                  gui_bieri.relax_gui.Main instance
+        @param notebook:            The notebook to pack this frame into.
+        @type notebook:             wx.Notebook instance
+        @keyword hardcoded_index:   Kludge for the current GUI layout.
+        @type hardcoded_index:      int
         """
 
         # Store the main class.
         self.gui = gui
 
-        # Generate a storage container in the relax data store, and alias it for easy access.
-        self.data = ds.relax_gui.analyses.add(self.analysis_type)
+        # Alias the storage container in the relax data store.
+        self.data = ds.relax_gui.analyses[hardcoded_index]
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
