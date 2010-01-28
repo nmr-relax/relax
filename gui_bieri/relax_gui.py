@@ -49,6 +49,7 @@ from analyses.auto_model_free import Auto_model_free
 from analyses.auto_r1 import Auto_r1
 from analyses.project import create_save_file, open_file
 from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
+from base_classes import Container
 from controller import Controller
 from derived_wx_classes import StructureTextCtrl
 from filedialog import multi_openfile, opendir, openfile, savefile
@@ -79,6 +80,20 @@ class Main(wx.Frame):
 
         # The analysis frame object storage.
         self.analysis_frames = []
+
+        # FIXME:  This is only for the current fixed interface.
+        self.hardcoded_index_noe_1 = 0
+        self.hardcoded_index_r1_1  = 1
+        self.hardcoded_index_r2_1  = 2
+        self.hardcoded_index_noe_2 = 3
+        self.hardcoded_index_r1_2  = 4
+        self.hardcoded_index_r2_2  = 5
+        self.hardcoded_index_noe_3 = 6
+        self.hardcoded_index_r1_3  = 7
+        self.hardcoded_index_r2_3  = 8
+        self.hardcoded_index_mf    = 9
+        for i in range(7):
+            self.analysis_frames.append(Container())
 
         # The calculation threads list.
         self.calc_threads = []
@@ -133,7 +148,7 @@ class Main(wx.Frame):
 
 
         # The automatic R1 analysis frame.
-        self.analysis_frames.append(Auto_r1(self, self.notebook_3))
+        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3)
 
         #R2 no. 1
         rx_data = ds.relax_gui.analyses[self.r2_index[0]]
@@ -452,7 +467,7 @@ class Main(wx.Frame):
 
 
         # The automatic model-free protocol frame.
-        self.analysis_frames.append(Auto_model_free(self, self.notebook_2))
+        self.analysis_frames[self.hardcoded_index_mf] = Auto_model_free(self, self.notebook_2)
 
         ## results
         self.label_11 = wx.StaticText(self.results, -1, "NOE analysis")
@@ -1142,7 +1157,7 @@ class Main(wx.Frame):
         self.notebook_2.AddPage(self.frq1, "Frq. 1")
         self.notebook_2.AddPage(self.frq2, "Frq. 2")
         self.notebook_2.AddPage(self.frq3, "Frq. 3")
-        self.notebook_2.AddPage(self.analysis_frames[1].parent, "Model-free")
+        self.notebook_2.AddPage(self.analysis_frames[self.hardcoded_index_mf].parent, "Model-free")
         self.notebook_2.AddPage(self.results, "Results")
         sizer_8.Add(self.notebook_2, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_8)
@@ -1721,7 +1736,7 @@ class Main(wx.Frame):
         self.r2_1 = wx.Panel(self.notebook_3, -1)
         self.panel_1_copy = wx.Panel(self.r2_1, -1)
         self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
-        self.panel_1 = wx.Panel(self.analysis_frames[0].parent, -1)
+        self.panel_1 = wx.Panel(self.analysis_frames[self.hardcoded_index_r1_1].parent, -1)
         self.panel_3 = wx.Panel(self.panel_1, -1)
         self.noe1 = wx.Panel(self.notebook_3, -1)
 
@@ -2576,11 +2591,12 @@ class Main(wx.Frame):
                 #self.analysis_frames.append(Auto_model_free(self))
 
                 # FIXME:  Temporary fix - set the model-free data structure explicitly.
-                self.analysis_frames[0].data = ds.relax_gui.analyses[i]
+                self.analysis_frames[self.hardcoded_index_mf].data = ds.relax_gui.analyses[i]
 
         # Execute the analysis frame specific update methods.
         for analysis in self.analysis_frames:
-            analysis.sync_ds(upload=False)
+            if hasattr(analysis, 'sync_ds'):
+                analysis.sync_ds(upload=False)
 
         # Skip the event.
         event.Skip()
@@ -2602,7 +2618,8 @@ class Main(wx.Frame):
         # Analyses updates of the new data store.
         for i in range(len(self.analysis_frames)):
             # Execute the analysis frame specific update methods.
-            self.analysis_frames[i].sync_ds(upload=True)
+            if hasattr(analysis, 'sync_ds'):
+                self.analysis_frames[i].sync_ds(upload=True)
 
         # Save the relax state.
         state.save_state(filename, verbosity=0, force=True)
