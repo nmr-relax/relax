@@ -788,7 +788,27 @@ class Auto_model_free:
 
 
     def execute(self, global_model=None, automatic=True):
-        """Execute the calculations in a thread.
+        """Execute the calculations by running execute_thread() within a thread.
+
+        @keyword global_model:  The global model to solve.  This must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
+        @type global_model:     str
+        """
+
+        # The thread object storage.
+        self.gui.calc_threads.append(Thread_container())
+        thread_cont = self.gui.calc_threads[-1]
+
+        # Start the thread.
+        id = thread.start_new_thread(self.execute_thread, (), {'global_model': global_model, 'automatic': automatic})
+
+        # Add the thread info to the container.
+        thread_cont.id = id
+        thread_cont.analysis_type = 'model-free'
+        thread_cont.global_model = global_model
+
+
+    def execute_thread(self, global_model=None, automatic=True):
+        """Execute the calculation in a thread.
 
         @keyword global_model:  The global model to solve.  This must be one of 'local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', or 'final'.
         @type global_model:     str
@@ -797,12 +817,8 @@ class Auto_model_free:
         # Assemble all the data needed for the dAuvergne_protocol class.
         data = self.assemble_data()
 
-        # The thread object storage.
-        self.gui.calc_threads.append(Thread_container())
-        thread_cont = self.gui.calc_threads[-1]
-
         # Value for progress bar during Monte Carlo simulation.
-        thread_cont.progress = 5.0
+        self.gui.calc_threads[-1].progress = 5.0
 
         # Redirect relax output and errors to the controller.
         redir = Redirect_text(self.gui.controller)
@@ -813,13 +829,8 @@ class Auto_model_free:
         wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
         time.sleep(0.5)
 
-        # Start the thread.
-        id = thread.start_new_thread(dAuvergne_protocol, (global_model, data.mf_models, data.local_tm_models, data.structure_file, data.seq_args, data.het_name, data.relax_data, data.unres, data.exclude, data.bond_length, data.csa, data.hetnuc, data.proton, data.grid_inc, data.min_algor, data.mc_num, data.conv_loop), ('diff_model', 'mf_models', 'local_tm_models', 'pdb_file', 'seq_args', 'het_name', 'relax_data', 'unres', 'exclude', 'bond_length', 'csa', 'hetnuc', 'proton', 'grid_inc', 'min_algor', 'mc_num', 'conv_loop'))
-
-        # Add the thread info to the container.
-        thread_cont.id = id
-        thread_cont.analysis_type = 'model-free'
-        thread_cont.global_model = global_model
+        # Start the protocol.
+        dAuvergne_protocol(diff_model=data.diff_model, mf_models=data.mf_models, local_tm_models=data.local_tm_models, pdb_file=data.pdb_file, seq_args=data.seq_args, het_name=data.het_name, relax_data=data.relax_data, unres=data.unres, exclude=data.exclude, bond_length=data.bond_length, csa=data.csa, hetnuc=data.hetnuc, proton=data.proton, grid_inc=data.grid_inc, min_algor=data.min_algor, mc_num=data.mc_num, conv_loop=data.conv_loop)
 
         # Create the results file.
         if model == 'final':
