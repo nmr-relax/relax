@@ -500,7 +500,7 @@ class Main(wx.Frame):
 
 
         # The automatic model-free protocol frame.
-        self.analysis_frames.append(Auto_model_free(self))
+        self.analysis_frames.append(Auto_model_free(self, self.notebook_2))
 
         ## results
         self.label_11 = wx.StaticText(self.results, -1, "NOE analysis")
@@ -1190,7 +1190,7 @@ class Main(wx.Frame):
         self.notebook_2.AddPage(self.frq1, "Frq. 1")
         self.notebook_2.AddPage(self.frq2, "Frq. 2")
         self.notebook_2.AddPage(self.frq3, "Frq. 3")
-        self.notebook_2.AddPage(self.modelfree, "Model-free")
+        self.notebook_2.AddPage(self.analysis_frames[0].parent, "Model-free")
         self.notebook_2.AddPage(self.results, "Results")
         sizer_8.Add(self.notebook_2, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_8)
@@ -1746,7 +1746,6 @@ class Main(wx.Frame):
 
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
         self.results = wx.Panel(self.notebook_2, -1)
-        self.modelfree = wx.Panel(self.notebook_2, -1)
         self.frq3 = wx.Panel(self.notebook_2, -1)
         self.notebook_3_copy_1 = wx.Notebook(self.frq3, -1, style=0)
         self.r2_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)

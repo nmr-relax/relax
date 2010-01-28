@@ -47,11 +47,13 @@ from gui_bieri.paths import IMAGE_PATH
 
 
 class Auto_model_free:
-    def __init__(self, gui):
+    def __init__(self, gui, notebook):
         """Build the automatic model-free protocol GUI element.
 
-        @param gui: The main GUI class.
-        @type gui:  gui_bieri.relax_gui.Main instance
+        @param gui:         The main GUI class.
+        @type gui:          gui_bieri.relax_gui.Main instance
+        @param notebook:    The notebook to pack this frame into.
+        @type notebook:     wx.Notebook instance
         """
 
         # Store the main class.
@@ -75,12 +77,15 @@ class Auto_model_free:
         self.data.structure_file = ''
         self.data.results_dir_model = getcwd()
 
+        # The parent GUI element for this class.
+        self.parent = wx.Panel(notebook, -1)
+
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         main_box = self.build_main_box()
-        self.gui.modelfree.SetSizer(main_box)
+        self.parent.SetSizer(main_box)
 
         # Set the frame font size.
-        self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
 
     def add_execute_relax(self, box):
@@ -91,8 +96,8 @@ class Auto_model_free:
         """
 
         # The elements.
-        label = wx.StaticText(self.gui.modelfree, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        button = wx.BitmapButton(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         # Properties.
         label.SetMinSize((118, 17))
@@ -120,7 +125,7 @@ class Auto_model_free:
         """
 
         # The title.
-        label = wx.StaticText(self.gui.modelfree, -1, "Set-up for Model-free analysis:")
+        label = wx.StaticText(self.parent, -1, "Set-up for Model-free analysis:")
 
         # The font properties.
         label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
@@ -137,17 +142,17 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_9 = wx.StaticText(self.gui.modelfree, -1, "Select Model-free models (default = all):")
-        self.m0 = wx.ToggleButton(self.gui.modelfree, -1, "m0")
-        self.m1 = wx.ToggleButton(self.gui.modelfree, -1, "m1")
-        self.m2 = wx.ToggleButton(self.gui.modelfree, -1, "m2")
-        self.m3 = wx.ToggleButton(self.gui.modelfree, -1, "m3")
-        self.m4 = wx.ToggleButton(self.gui.modelfree, -1, "m4")
-        self.m5 = wx.ToggleButton(self.gui.modelfree, -1, "m5")
-        self.m6 = wx.ToggleButton(self.gui.modelfree, -1, "m6")
-        self.m7 = wx.ToggleButton(self.gui.modelfree, -1, "m7")
-        self.m8 = wx.ToggleButton(self.gui.modelfree, -1, "m8")
-        self.m9 = wx.ToggleButton(self.gui.modelfree, -1, "m9")
+        self.label_9 = wx.StaticText(self.parent, -1, "Select Model-free models (default = all):")
+        self.m0 = wx.ToggleButton(self.parent, -1, "m0")
+        self.m1 = wx.ToggleButton(self.parent, -1, "m1")
+        self.m2 = wx.ToggleButton(self.parent, -1, "m2")
+        self.m3 = wx.ToggleButton(self.parent, -1, "m3")
+        self.m4 = wx.ToggleButton(self.parent, -1, "m4")
+        self.m5 = wx.ToggleButton(self.parent, -1, "m5")
+        self.m6 = wx.ToggleButton(self.parent, -1, "m6")
+        self.m7 = wx.ToggleButton(self.parent, -1, "m7")
+        self.m8 = wx.ToggleButton(self.parent, -1, "m8")
+        self.m9 = wx.ToggleButton(self.parent, -1, "m9")
 
         # Properties.
         self.m0.SetMinSize((70, 25))
@@ -217,9 +222,9 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_10 = wx.StaticText(self.gui.modelfree, -1, "Select Model-free selection mode:      ")
-        self.aic = wx.RadioButton(self.gui.modelfree, -1, "AIC")
-        self.bic = wx.RadioButton(self.gui.modelfree, -1, "BIC")
+        self.label_10 = wx.StaticText(self.parent, -1, "Select Model-free selection mode:      ")
+        self.aic = wx.RadioButton(self.parent, -1, "AIC")
+        self.bic = wx.RadioButton(self.parent, -1, "BIC")
 
         # Properties.
         self.label_10.SetMinSize((240, 17))
@@ -248,10 +253,10 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.text_structure = wx.StaticText(self.gui.modelfree, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.textctrl_structure = StructureTextCtrl(self.gui.modelfree, -1, self.gui.structure_file_pdb_msg)
+        self.text_structure = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        self.textctrl_structure = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
         self.textctrl_structure.SetEditable(False)
-        button = wx.Button(self.gui.modelfree, -1, "Change")
+        button = wx.Button(self.parent, -1, "Change")
 
         # Properties.
         self.text_structure.SetMinSize((240, 17))
@@ -281,9 +286,9 @@ class Auto_model_free:
         """
 
         # Create the panel.
-        panel_4_copy_1 = wx.Panel(self.gui.modelfree, -1)
-        panel_4_copy = wx.Panel(self.gui.modelfree, -1)
-        panel_4 = wx.Panel(self.gui.modelfree, -1)
+        panel_4_copy_1 = wx.Panel(self.parent, -1)
+        panel_4_copy = wx.Panel(self.parent, -1)
+        panel_4 = wx.Panel(self.parent, -1)
 
         # The 1st panel contents.
         label_7 = wx.StaticText(panel_4, -1, "NMR freq 1:")
@@ -468,9 +473,9 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.gui.modelfree, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.gui.modelfree, -1, self.data.results_dir_model)
-        self.results_directory_r21_copy_2 = wx.Button(self.gui.modelfree, -1, "Change")
+        self.label_2_copy_copy_3_copy_copy_copy_copy_2 = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        self.resultsdir_r21_copy_2 = wx.TextCtrl(self.parent, -1, self.data.results_dir_model)
+        self.results_directory_r21_copy_2 = wx.Button(self.parent, -1, "Change")
 
         # Properties.
         results_dir_copy_copy_copy_1_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -500,8 +505,8 @@ class Auto_model_free:
         """
 
         # The elements.
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.gui.modelfree, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.gui.modelfree, -1, "")
+        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        self.unresolved_r21_copy_1_copy = wx.TextCtrl(self.parent, -1, "")
 
         # Properties.
         self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1_copy.SetMinSize((240, 17))
@@ -672,7 +677,7 @@ class Auto_model_free:
         box = wx.BoxSizer(wx.HORIZONTAL)
 
         # Add the model-free bitmap picture.
-        bitmap = wx.StaticBitmap(self.gui.modelfree, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
+        bitmap = wx.StaticBitmap(self.parent, -1, wx.Bitmap(IMAGE_PATH+'modelfree.png', wx.BITMAP_TYPE_ANY))
         box.Add(bitmap, 0, wx.ADJUST_MINSIZE, 0)
 
         # Build the right hand box and pack it next to the bitmap.
