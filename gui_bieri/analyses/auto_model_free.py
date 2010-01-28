@@ -635,7 +635,7 @@ class Auto_model_free:
         # Dialog for selecting which global model the protocol should solve.
         checkpoint = self.check_entries()
 
-        # Nothing was selected, so clean up and exit.
+        # The required data has not been set up correctly or has not all been given, so clean up and exit.
         if checkpoint == False:
             # Skip the event.
             event.Skip()
