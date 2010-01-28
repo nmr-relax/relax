@@ -739,7 +739,7 @@ class Auto_model_free:
         self.gui.calc_threads.append(Thread_container())
 
         # Start the thread.
-        id = thread.start_new_thread(dAuvergne_protocol, (data.diff_model, data.mf_models, data.local_tm_models, data.pdb_file, data.seq_args, data.het_name, data.relax_data, data.unres, data.exclude, data.bond_length, data.csa, data.hetnuc, data.proton, data.grid_inc, data.min_algor, data.mc_num, data.conv_loop), ('diff_model', 'mf_models', 'local_tm_models', 'pdb_file', 'seq_args', 'het_name', 'relax_data', 'unres', 'exclude', 'bond_length', 'csa', 'hetnuc', 'proton', 'grid_inc', 'min_algor', 'mc_num', 'conv_loop'))
+        id = thread.start_new_thread(dAuvergne_protocol, (global_model, data.mf_models, data.local_tm_models, data.pdb_file, data.seq_args, data.het_name, data.relax_data, data.unres, data.exclude, data.bond_length, data.csa, data.hetnuc, data.proton, data.grid_inc, data.min_algor, data.mc_num, data.conv_loop), ('diff_model', 'mf_models', 'local_tm_models', 'pdb_file', 'seq_args', 'het_name', 'relax_data', 'unres', 'exclude', 'bond_length', 'csa', 'hetnuc', 'proton', 'grid_inc', 'min_algor', 'mc_num', 'conv_loop'))
 
         # Add the thread info to the container.
         self.gui.calc_threads[-1].id = id
