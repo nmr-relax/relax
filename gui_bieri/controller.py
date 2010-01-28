@@ -198,3 +198,7 @@ class Controller(wx.Dialog):
 
         # Terminate the event.
         event.Skip()
+
+
+class Thread_container:
+    """Storage object for the calculation threads."""
