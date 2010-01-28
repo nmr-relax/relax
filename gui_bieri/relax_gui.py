@@ -2585,7 +2585,7 @@ class Main(wx.Frame):
         """
 
         # Open the window.
-        self.controller.ShowModal()
+        self.controller.Show()
 
         # Terminate the event.
         event.Skip()
