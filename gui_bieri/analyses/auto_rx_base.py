@@ -32,10 +32,10 @@ import wx
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
-from analyses.project import open_file
-from derived_wx_classes import StructureTextCtrl
-from filedialog import multi_openfile, opendir
-from message import exec_relax
+from gui_bieri.analyses.project import open_file
+from gui_bieri.derived_wx_classes import StructureTextCtrl
+from gui_bieri.filedialog import multi_openfile, opendir
+from gui_bieri.message import exec_relax
 
 
 
