@@ -60,11 +60,11 @@ class Auto_rx:
         self.data = ds.relax_gui.analyses.add(self.analysis_type)
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        main_box = self.build_main_box()
-        self.gui.modelfree.SetSizer(main_box)
+        #main_box = self.build_main_box()
+        #self.gui.modelfree.SetSizer(main_box)
 
-        # Set the frame font size.
-        self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        ## Set the frame font size.
+        #self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
         # R1 no. 1
         rx_data = ds.relax_gui.analyses[self.r1_index[0]]
