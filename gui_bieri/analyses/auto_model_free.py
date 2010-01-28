@@ -652,6 +652,9 @@ class Auto_model_free:
         # Dialog for selecting which global model the protocol should solve.
         checkpoint = self.check_entries()
 
+        # Synchronise the frame data to the relax data store.
+        self.sync_ds(upload=True)
+
         # The required data has not been set up correctly or has not all been given, so clean up and exit.
         if checkpoint == False:
             # Skip the event.
