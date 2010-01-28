@@ -57,7 +57,7 @@ from settings import import_file_settings, load_sequence, relax_global_settings
 
 
 
-class Rx:
+class Auto_rx:
     """The base class for the R1 and R2 frames."""
 
     # Hardcoded variables.
