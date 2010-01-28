@@ -101,7 +101,7 @@ class Auto_model_free:
         exec_relax_copy_1_copy_3.Add(self.relax_start_modelfree, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
 
         # Bind the events.
-        self.gui.Bind(wx.EVT_BUTTON, self.exec_model_free, self.relax_start_modelfree)
+        self.gui.Bind(wx.EVT_BUTTON, self.automatic_protocol_controller, self.relax_start_modelfree)
 
         # Add the element to the box.
         box.Add(exec_relax_copy_1_copy_3, 1, wx.ALIGN_RIGHT, 0)
@@ -514,6 +514,67 @@ class Auto_model_free:
         box.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def automatic_protocol_controller(self, event):
+        """Set up, execute, and process the automatic model-free protocol.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Dialog for selecting which global model the protocol should solve.
+        checkpoint = self.check_entries()
+
+        # Synchronise the frame data to the relax data store.
+        self.sync_ds(upload=True)
+
+        # The required data has not been set up correctly or has not all been given, so clean up and exit.
+        if checkpoint == False:
+            # Skip the event.
+            event.Skip()
+
+            # Exit.
+            return
+
+        # The global model.
+        which_model = self.choose_global_model(False)
+
+        # Solve for all global models.
+        if which_model == 'full':
+            # The global model list.
+            global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
+
+            # Loop over the global models solving for each, one after the other.
+            for global_model in global_models:
+                status = start_modelfree(global_model=global_model, automatic=True)
+
+                # A problem was encountered, so do not continue (a dialog should probably appear here).
+                if not status:
+                    print("Optimisation failed.")
+                    return
+
+        # Single global model selected.
+        else:
+            # All models, excluding the final run.
+            if which_model != 'final':
+                # Solve for the local_tm, sphere, prolate, oblate, or ellipsoid global models.
+                enable_models = start_modelfree(global_model=which_model, automatic=False)
+
+            # The final run.
+            else:
+                # Execute the final run.
+                results_for_table = start_modelfree(global_model=which_model, automatic=False)
+
+                # set global results variables
+                ds.relax_gui.table_residue = results_for_table[0]
+                ds.relax_gui.table_model = results_for_table[1]
+                ds.relax_gui.table_s2 = results_for_table[2]
+                ds.relax_gui.table_rex = results_for_table[3]
+                ds.relax_gui.table_te = results_for_table[4]
+
+        # Skip the event.
+        event.Skip()
+
+
     def build_main_box(self):
         """Construct the highest level box to pack into the automatic model-free analysis frame.
 
@@ -640,67 +701,6 @@ class Auto_model_free:
 
         # Return the choice.
         return dlg.selection
-
-
-    def exec_model_free(self, event):
-        """Execute the automatic model-free protocol.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Dialog for selecting which global model the protocol should solve.
-        checkpoint = self.check_entries()
-
-        # Synchronise the frame data to the relax data store.
-        self.sync_ds(upload=True)
-
-        # The required data has not been set up correctly or has not all been given, so clean up and exit.
-        if checkpoint == False:
-            # Skip the event.
-            event.Skip()
-
-            # Exit.
-            return
-
-        # The global model.
-        which_model = self.choose_global_model(False)
-
-        # Solve for all global models.
-        if which_model == 'full':
-            # The global model list.
-            global_models = ['local_tm', 'sphere', 'prolate', 'oblate', 'ellipsoid', 'final']
-
-            # Loop over the global models solving for each, one after the other.
-            for global_model in global_models:
-                status = start_modelfree(global_model=global_model, automatic=True)
-
-                # A problem was encountered, so do not continue (a dialog should probably appear here).
-                if not status:
-                    print("Optimisation failed.")
-                    return
-
-        # Single global model selected.
-        else:
-            # All models, excluding the final run.
-            if which_model != 'final':
-                # Solve for the local_tm, sphere, prolate, oblate, or ellipsoid global models.
-                enable_models = start_modelfree(global_model=which_model, automatic=False)
-
-            # The final run.
-            else:
-                # Execute the final run.
-                results_for_table = start_modelfree(global_model=which_model, automatic=False)
-
-                # set global results variables
-                ds.relax_gui.table_residue = results_for_table[0]
-                ds.relax_gui.table_model = results_for_table[1]
-                ds.relax_gui.table_s2 = results_for_table[2]
-                ds.relax_gui.table_rex = results_for_table[3]
-                ds.relax_gui.table_te = results_for_table[4]
-
-        # Skip the event.
-        event.Skip()
 
 
     def model_noe1(self, event): # load noe1
