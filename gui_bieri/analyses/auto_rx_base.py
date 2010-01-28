@@ -75,7 +75,7 @@ class Auto_rx:
 
     def build_main_box(self):
         # R1 no. 1
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
+        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy = wx.StaticText(self.parent, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r11 = wx.TextCtrl(self.parent, -1, str(self.data.frq))
