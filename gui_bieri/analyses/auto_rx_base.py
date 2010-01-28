@@ -77,8 +77,31 @@ class Auto_rx:
 
 
     def build_main_box(self):
-        # R1 no. 1
+        """Construct the highest level box to pack into the automatic Rx analysis frame.
+
+        @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # Use a horizontal packing of elements.
+        box = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Add the model-free bitmap picture.
         self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
+        box.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
+
+        # Build the right hand box and pack it next to the bitmap.
+        right_box = self.build_right_box()
+        box.Add(right_box, 0, 0, 0)
+
+        # Return the box.
+        return box
+
+
+
+    def build_right_box(self):
+        sizer_11 = wx.BoxSizer(wx.VERTICAL)
+        # R1 no. 1
         self.label_4_copy_copy = wx.StaticText(self.parent, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r11 = wx.TextCtrl(self.parent, -1, str(self.data.frq))
@@ -227,8 +250,6 @@ class Auto_rx:
         results_dir_copy_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         results_dir_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         nmr_freq_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_10 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_11 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_12 = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1 = wx.FlexGridSizer(10, 2, 0, 0)
@@ -246,7 +267,6 @@ class Auto_rx:
         pdbfile_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
 
-        sizer_10.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
         sizer_11.Add(self.label_4_copy_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
         nmr_freq_copy_copy.Add(self.label_2_copy_copy_copy_2_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         nmr_freq_copy_copy.Add(self.nmrfreq_value_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -303,8 +323,6 @@ class Auto_rx:
         exec_relax_copy_1_copy.Add(self.label_5_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         exec_relax_copy_1_copy.Add(self.relax_start_r1_1, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
         sizer_11.Add(exec_relax_copy_1_copy, 0, wx.ALIGN_RIGHT, 0)
-        sizer_10.Add(sizer_11, 0, 0, 0)
-        self.parent.SetSizer(sizer_10)
         sizer_10_copy.Add(self.bitmap_1_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
         sizer_11_copy.Add(self.label_4_copy_copy_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
         nmr_freq_copy_copy_copy_1.Add(self.label_2_copy_copy_copy_2_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
