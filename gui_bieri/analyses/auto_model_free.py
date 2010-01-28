@@ -662,7 +662,6 @@ class Auto_model_free:
 
         # The global model.
         which_model = self.choose_global_model(False)
-        print `which_model`
 
         # Solve for all global models.
         if which_model == 'full':
