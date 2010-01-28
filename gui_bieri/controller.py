@@ -171,11 +171,9 @@ class Controller(wx.Dialog):
         self.progress_bar.SetMinSize((590, 20))
         self.cancel_button.SetToolTipString("Abort relax calculation")
         self.close_button.SetToolTipString("Close log window")
-        self.close_button.Enable(False)
 
 
     def cancel_calculation(self, event): # abort calculation
-        self.close_button.Enable(True)
         event.Skip()
 
 
