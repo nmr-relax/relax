@@ -79,6 +79,9 @@ class Main(wx.Frame):
         # The analysis frame object storage.
         self.analysis_frames = []
 
+        # The calculation threads list.
+        self.calc_threads = []
+
         # Initialise the GUI data.
         self.init_data()
 
