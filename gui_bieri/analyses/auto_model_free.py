@@ -28,6 +28,7 @@
 from os import getcwd, sep
 import sys
 import thread
+import time
 import wx
 
 # relax module imports.
