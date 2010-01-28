@@ -797,14 +797,55 @@ class Auto_model_free:
 
         # The thread object storage.
         self.gui.calc_threads.append(Thread_container())
+        thread_cont = self.gui.calc_threads[-1]
+
+        # Value for progress bar during Monte Carlo simulation.
+        thread_cont.progress = 5.0
+
+        # Redirect relax output and errors to the controller.
+        redir = RedirectText(self.gui.controller)
+        sys.stdout = redir
+        sys.stderr = redir
+
+        # Print a header in the controller.
+        wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
+        time.sleep(0.5)
 
         # Start the thread.
         id = thread.start_new_thread(dAuvergne_protocol, (global_model, data.mf_models, data.local_tm_models, data.pdb_file, data.seq_args, data.het_name, data.relax_data, data.unres, data.exclude, data.bond_length, data.csa, data.hetnuc, data.proton, data.grid_inc, data.min_algor, data.mc_num, data.conv_loop), ('diff_model', 'mf_models', 'local_tm_models', 'pdb_file', 'seq_args', 'het_name', 'relax_data', 'unres', 'exclude', 'bond_length', 'csa', 'hetnuc', 'proton', 'grid_inc', 'min_algor', 'mc_num', 'conv_loop'))
 
         # Add the thread info to the container.
-        self.gui.calc_threads[-1].id = id
-        self.gui.calc_threads[-1].analysis_type = 'model-free'
-        self.gui.calc_threads[-1].global_model = global_model
+        thread_cont.id = id
+        thread_cont.analysis_type = 'model-free'
+        thread_cont.global_model = global_model
+
+        # Create the results file.
+        if model == 'final':
+            results_analysis = model_free_results(self)
+            return results_analysis     # return data for results table dialog
+
+        # Return successful value to automatic mode to proceed to next step.
+        if automatic == True:
+            return 'successful'
+
+        # Feedback about successful calculation in manual mode and after final calculation in automatic mode.
+        if not automatic:
+            if model == 'local_tm':
+                print ('Local Tm calculation was successful !')
+
+                # enable m1 - m5 to choose for calculation
+                return True
+
+            if model == 'sphere':
+                print ('Sphere calculation was successful !')
+            if model == 'prolate':
+                print ('Prolate calculation was successful !')
+            if model == 'oblate':
+                print ('Oblate calculation was successful !')
+            if model == 'ellipsoid':
+                print ('Ellipsoid calculation was successful !')
+            if model == 'Final':
+                print ('Final Model-free calculation was successful !')
 
 
     def model_noe1(self, event): # load noe1
