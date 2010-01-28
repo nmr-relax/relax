@@ -670,7 +670,7 @@ class Auto_model_free:
 
             # Loop over the global models solving for each, one after the other.
             for global_model in global_models:
-                status = start_modelfree(self, global_model, True, global_setting, file_setting, sequencefile)
+                status = start_modelfree(global_model=global_model, automatic=True)
 
                 # A problem was encountered, so do not continue (a dialog should probably appear here).
                 if not status:
@@ -682,12 +682,12 @@ class Auto_model_free:
             # All models, excluding the final run.
             if which_model != 'final':
                 # Solve for the local_tm, sphere, prolate, oblate, or ellipsoid global models.
-                enable_models = start_modelfree(self, which_model, False, global_setting, file_setting, sequencefile)
+                enable_models = start_modelfree(global_model=which_model, automatic=False)
 
             # The final run.
             else:
                 # Execute the final run.
-                results_for_table = startmodelfree(self, which_model, False, global_setting, file_setting, sequencefile)
+                results_for_table = start_modelfree(global_model=which_model, automatic=False)
 
                 # set global results variables
                 ds.relax_gui.table_residue = results_for_table[0]
