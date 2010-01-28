@@ -36,7 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 # relax GUI module imports.
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import Select_tensor
-from gui_bieri.base_classes import Container
+from gui_bieri.base_classes import Container, RedirectText
 from gui_bieri.controller import Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
