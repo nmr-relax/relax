@@ -32,7 +32,9 @@ from paths import IMAGE_PATH
 
 def about_relax():
     about = MyFrame(None, -1, "")
-    about.ShowModal()
+
+    # Temporary disabling of the splash screen - for easier debugging!
+    #about.ShowModal()
 
 
 
