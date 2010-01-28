@@ -56,6 +56,7 @@ class Auto_rx:
         @type notebook:     wx.Notebook instance
         """
 
+        # Store the main class.
         self.gui = gui
 
         # Generate a storage container in the relax data store, and alias it for easy access.
