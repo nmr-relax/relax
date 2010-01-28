@@ -177,7 +177,7 @@ class Controller(wx.Dialog):
 
 
 
-class RedirectText(object):
+class Redirect_text(object):
     """Class to redirect relax output to relaxGUI - log panel and progress bar."""
 
     def __init__(self,aWxTextCtrl):
