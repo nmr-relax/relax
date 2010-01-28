@@ -67,13 +67,12 @@ class Auto_rx:
         #self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
         # R1 no. 1
-        rx_data = ds.relax_gui.analyses[self.r1_index[0]]
         self.bitmap_1_copy_copy = wx.StaticBitmap(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy = wx.StaticText(self.r1_1, -1, "Set-up for R1 relaxation analysis:")
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.r1_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11 = wx.TextCtrl(self.r1_1, -1, str(rx_data.frq))
+        self.nmrfreq_value_r11 = wx.TextCtrl(self.r1_1, -1, str(self.data.frq))
         self.label_2_copy_copy_3_copy_copy = wx.StaticText(self.r1_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11 = wx.TextCtrl(self.r1_1, -1, rx_data.save_dir)
+        self.resultsdir_r11 = wx.TextCtrl(self.r1_1, -1, self.data.save_dir)
         self.results_directory_copy_copy = wx.Button(self.r1_1, -1, "Change")
         self.structure_file = wx.StaticText(self.r1_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r11 = StructureTextCtrl(self.r1_1, -1, self.structure_file_pdb_msg)
