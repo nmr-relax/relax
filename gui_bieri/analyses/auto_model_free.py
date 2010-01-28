@@ -38,7 +38,6 @@ from data import Relax_data_store; ds = Relax_data_store()
 # relax GUI module imports.
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import Select_tensor
-from gui_bieri.base_classes import Container
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
@@ -524,35 +523,35 @@ class Auto_model_free:
 
         See the docstring for auto_analyses.dauvernge_protocol for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
-        @return:    A container with all the data required for dAuvernge_protocol, i.e. its keyword arguments mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop.
+        @return:    A dictionary with all the data required for dAuvernge_protocol, i.e. its keyword arguments mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop.
         @rtype:     class instance
         """
 
         # The data container.
-        data = Container()
+        data = {}
 
         # The model-free models (do not change these unless absolutely necessary).
-        data.mf_models = []
-        data.local_tm_models = []
+        data['mf_models'] = []
+        data['local_tm_models'] = []
         for i in range(len(self.data.model_toggle)):
             if self.data.model_toggle[i]:
-                data.mf_models.append('m%i' % i)
-                data.local_tm_models.append('tm%i' % i)
+                data['mf_models'].append('m%i' % i)
+                data['local_tm_models'].append('tm%i' % i)
 
         # The PDB file (set this to None if no structure is available).
         if self.data.structure_file == '':
-            data.structure_file = None
+            data['pdb_file'] = None
         else:
-            data.structure_file = self.data.structure_file
+            data['pdb_file'] = self.data.structure_file
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = [self.data.paramfiles1[0], None, None, 2, 3, 4, 5, None]
+        data['seq_args'] = [self.data.paramfiles1[0], None, None, 2, 3, 4, 5, None]
 
         # The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
-        data.het_name = ds.relax_gui.global_setting[2]
+        data['het_name'] = ds.relax_gui.global_setting[2]
 
         # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
-        data.relax_data = []
+        data['relax_data'] = []
         for i in range(3):
             # The objects.
             frq = getattr(self.data, 'nmrfreq%i' % (i+1))
@@ -563,33 +562,33 @@ class Auto_model_free:
                 continue
 
             # Append the relaxation data.
-            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, 2, 3, 4, 5, 6, 7, None])
-            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, 2, 3, 4, 5, 6, 7, None])
-            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, 2, 3, 4, 5, 6, 7, None])
+            data['relax_data'].append(['R1', str(frq), float(frq)*1e6, files[1], None, None, 2, 3, 4, 5, 6, 7, None])
+            data['relax_data'].append(['R2', str(frq), float(frq)*1e6, files[2], None, None, 2, 3, 4, 5, 6, 7, None])
+            data['relax_data'].append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, 2, 3, 4, 5, 6, 7, None])
 
         # The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
-        data.unres = self.data.results_dir_model + sep + 'unresolved'
+        data['unres'] = self.data.results_dir_model + sep + 'unresolved'
 
         # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
-        data.exclude = None
+        data['exclude'] = None
 
         # The bond length, CSA values, heteronucleus type, and proton type.
-        data.bond_length = 1.02 * 1e-10
-        data.csa = -172 * 1e-6
-        data.hetnuc = '15N'
-        data.proton = '1H'
+        data['bond_length'] = 1.02 * 1e-10
+        data['csa'] = -172 * 1e-6
+        data['hetnuc'] = '15N'
+        data['proton'] = '1H'
 
         # The grid search size (the number of increments per dimension).
-        data.grid_inc = 11
+        data['grid_inc'] = 11
 
         # The optimisation technique.
-        data.min_algor = 'newton'
+        data['min_algor'] = 'newton'
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = 500
+        data['mc_num'] = 500
 
         # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
-        data.conv_loop = True
+        data['conv_loop'] = True
 
         # Return the container.
         return data
@@ -797,6 +796,9 @@ class Auto_model_free:
         # Assemble all the data needed for the dAuvergne_protocol class.
         data = self.assemble_data()
 
+        # Add the global model.
+        data['diff_model'] = global_model
+
         # The thread object storage.
         self.gui.calc_threads.append(Thread_container())
         thread_cont = self.gui.calc_threads[-1]
@@ -814,7 +816,7 @@ class Auto_model_free:
         time.sleep(0.5)
 
         # Start the thread.
-        id = thread.start_new_thread(dAuvergne_protocol, (global_model, data.mf_models, data.local_tm_models, data.structure_file, data.seq_args, data.het_name, data.relax_data, data.unres, data.exclude, data.bond_length, data.csa, data.hetnuc, data.proton, data.grid_inc, data.min_algor, data.mc_num, data.conv_loop), ('diff_model', 'mf_models', 'local_tm_models', 'pdb_file', 'seq_args', 'het_name', 'relax_data', 'unres', 'exclude', 'bond_length', 'csa', 'hetnuc', 'proton', 'grid_inc', 'min_algor', 'mc_num', 'conv_loop'))
+        id = thread.start_new_thread(dAuvergne_protocol, (), data)
 
         # Add the thread info to the container.
         thread_cont.id = id
