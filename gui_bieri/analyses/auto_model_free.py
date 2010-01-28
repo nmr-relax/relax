@@ -553,8 +553,8 @@ class Auto_model_free:
         data.relax_data = []
         for i in range(3):
             # The objects.
-            frq = getattr(self.data, 'nmrfreq%i' % i)
-            files = getattr(self.data, 'paramfiles%i' % i)
+            frq = getattr(self.data, 'nmrfreq%i' % (i+1))
+            files = getattr(self.data, 'paramfiles%i' % (i+1))
 
             # Data has not been given, so skip this entry.
             if frq == '':
