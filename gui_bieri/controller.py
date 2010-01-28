@@ -37,26 +37,6 @@ from gui_bieri.execution.calc_rx import make_rx
 from gui_bieri.paths import IMAGE_PATH
 
 
-def start_modelfree(self, model, automatic):
-    """Model-free calculation."""
-
-    # define calculation
-    global WHICH_CALC
-    WHICH_CALC = 'Model-free'
-
-    # Parameters for calculation
-    global PARAMETERS
-    main = self
-    PARAMETERS = [main, model, automatic, global_setting, file_setting, sequencefile]
-
-    # launch log dialog
-    logwindow = Log_window(None, -1, "")
-    logwindow.ShowModal()
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-    return ''
-
-
 def start_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_pdb, unres, execute, self, freqno, global_setting, file_setting, sequencefile):
     """NOE calculation."""
 
@@ -135,9 +115,6 @@ class Controller(wx.Dialog):
 
         #if WHICH_CALC == 'Noe':
         #    thread.start_new_thread(make_noe, (PARAMETERS[0], PARAMETERS[1], PARAMETERS[2], PARAMETERS[3], PARAMETERS[4], PARAMETERS[5], PARAMETERS[6], PARAMETERS[7], PARAMETERS[8], PARAMETERS[9], PARAMETERS[10], PARAMETERS[11], PARAMETERS[12], PARAMETERS[13]))
-
-        #if WHICH_CALC == 'Model-free':
-        #    thread.start_new_thread(start_model_free, (PARAMETERS[0], PARAMETERS[1], PARAMETERS[2], PARAMETERS[3], PARAMETERS[4], PARAMETERS[5]))
 
 
     def __do_layout(self):
