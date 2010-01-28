@@ -25,6 +25,7 @@
 
 # relax GUI module imports.
 from auto_rx_base import Auto_rx
+from gui_bieri.paths import IMAGE_PATH
 
 
 class Auto_r1(Auto_rx):
