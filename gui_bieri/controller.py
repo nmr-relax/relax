@@ -84,7 +84,7 @@ class Controller(wx.Dialog):
     def __init__(self, *args, **kwds):
 
         # Create GUI elements
-        kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION
+        kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX
         wx.Dialog.__init__(self, *args, **kwds)
 
         # header
