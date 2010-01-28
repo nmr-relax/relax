@@ -127,7 +127,7 @@ class Controller(wx.Dialog):
 
         # Button actions
         self.Bind(wx.EVT_BUTTON, self.cancel_calculation, self.cancel_button)
-        self.Bind(wx.EVT_BUTTON, self.close_log, self.close_button)
+        self.Bind(wx.EVT_BUTTON, self.handler_close, self.close_button)
 
         # Start Calculation in Thread
         #if WHICH_CALC == 'Rx':
@@ -179,10 +179,15 @@ class Controller(wx.Dialog):
         event.Skip()
 
 
-    def close_log(self, event): # Close window
-        self.Destroy()
-        sys.stdout = sys.stdout
-        sys.stderr = sys.stderr
-        #sys.exit(2)
-        return ''
+    def handler_close(self, event):
+        """Event handler for the close window action.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Close the window.
+        self.Close()
+
+        # Terminate the event.
         event.Skip()
