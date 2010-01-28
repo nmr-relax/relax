@@ -547,7 +547,7 @@ class Auto_model_free:
         data.seq_args = [self.data.paramfiles1[0], None, None, 2, 3, 4, 5, None]
 
         # The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
-        data.het_name = ds.relax_gui.global_settings[2]
+        data.het_name = ds.relax_gui.global_setting[2]
 
         # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
         data.relax_data = []
