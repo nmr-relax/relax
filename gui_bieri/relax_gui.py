@@ -2590,11 +2590,15 @@ class Main(wx.Frame):
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
 
-        # Build the analysis frames (commented out until analyses are dynamically loaded and unloaded).
-        #for i in range(len(ds.relax_gui.analyses)):
-        #    # The automatic model-free protocol frame
-        #    if ds.relax_gui.analyses[i].type = 'model-free':
-        #        self.analysis_frames.append(Auto_model_free(self))
+        # Build the analysis frames
+        for i in range(len(ds.relax_gui.analyses)):
+            # The automatic model-free protocol frame
+            if ds.relax_gui.analyses[i].analysis_type == 'model-free':
+                # FIXME: (commented out until analyses are dynamically loaded and unloaded).
+                #self.analysis_frames.append(Auto_model_free(self))
+
+                # FIXME:  Temporary fix - set the model-free data structure explicitly.
+                self.analysis_frames[0].data = ds.relax_gui.analyses[i]
 
         # Execute the analysis frame specific update methods.
         for analysis in self.analysis_frames:
