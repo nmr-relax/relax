@@ -561,9 +561,9 @@ class Auto_model_free:
                 continue
 
             # Append the relaxation data.
-            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, 2, 3, 4, 5, 6, 7, None]
-            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, 2, 3, 4, 5, 6, 7, None]
-            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, 2, 3, 4, 5, 6, 7, None]
+            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, 2, 3, 4, 5, 6, 7, None])
+            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, 2, 3, 4, 5, 6, 7, None])
+            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, 2, 3, 4, 5, 6, 7, None])
 
         # The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
         data.unres = self.data.results_dir_model + sep + 'unresolved'
