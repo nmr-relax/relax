@@ -160,10 +160,10 @@ class Auto_rx:
         self.relax_start_r1_1 = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #button actions
-        self.Bind(wx.EVT_BUTTON, self.resdir_r1_1, self.results_directory_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.structure_r11.open_file, self.results_directory_copy_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.add_r1_1, self.addr11)
-        self.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
+        self.gui.Bind(wx.EVT_BUTTON, self.resdir_r1_1, self.results_directory_copy_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.structure_r11.open_file, self.results_directory_copy_copy_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, self.addr11)
+        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
 
 
     def __do_layout(self):
