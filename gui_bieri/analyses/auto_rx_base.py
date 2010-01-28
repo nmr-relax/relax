@@ -100,6 +100,22 @@ class Auto_rx:
         return box
 
 
+    def add_frame_title(self, box):
+        """Create and add the frame title to the given box.
+
+        @param box:     The box element to pack the frame title into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The title.
+        label = wx.StaticText(self.parent, -1, "Set-up for R1 relaxation analysis:")
+
+        # The font properties.
+        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+
+        # Pack the title.
+        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+
 
     def build_right_box(self):
         """Construct the right hand box to pack into the main Rx box.
@@ -109,9 +125,11 @@ class Auto_rx:
         """
 
         # Use a vertical packing of elements.
-        sizer_11 = wx.BoxSizer(wx.VERTICAL)
+        box = wx.BoxSizer(wx.VERTICAL)
 
-        self.label_4_copy_copy = wx.StaticText(self.parent, -1, "Set-up for R1 relaxation analysis:")
+        # Add the frame title.
+        self.add_frame_title(box)
+
         self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
         self.nmrfreq_value_r11 = wx.TextCtrl(self.parent, -1, str(self.data.frq))
         self.label_2_copy_copy_3_copy_copy = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
@@ -166,7 +184,7 @@ class Auto_rx:
         self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
 
         # Return the box.
-        return sizer_11
+        return box
 
 
     def __do_layout(self):
@@ -279,7 +297,6 @@ class Auto_rx:
         pdbfile_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
 
-        sizer_11.Add(self.label_4_copy_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
         nmr_freq_copy_copy.Add(self.label_2_copy_copy_copy_2_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         nmr_freq_copy_copy.Add(self.nmrfreq_value_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         sizer_11.Add(nmr_freq_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
@@ -353,7 +370,6 @@ class Auto_rx:
         self.label_2_copy_copy_5.SetMinSize((230, 17))
         self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
         self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.label_4_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.label_2_copy_copy_copy_2_copy.SetMinSize((230, 17))
         self.nmrfreq_value_r11.SetMinSize((350, 27))
         self.label_2_copy_copy_3_copy_copy.SetMinSize((230, 17))
