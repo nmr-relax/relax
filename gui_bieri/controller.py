@@ -31,7 +31,6 @@ import thread
 import wx
 
 # relaxGUI module imports.
-from gui_bieri.execution.calc_modelfree import start_model_free
 from gui_bieri.execution.calc_noe import make_noe
 from gui_bieri.execution.calc_rx import make_rx
 from gui_bieri.paths import IMAGE_PATH
