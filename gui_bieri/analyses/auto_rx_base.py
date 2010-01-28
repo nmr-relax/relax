@@ -141,6 +141,36 @@ class Auto_rx:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def add_results_dir(self, box):
+        """Create and add the results directory GUI element to the given box.
+
+        @param box:     The box element to pack the results directory GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.resultsdir_r11 = wx.TextCtrl(self.parent, -1, self.data.save_dir)
+        self.resultsdir_r11.SetMinSize((350, 27))
+        sizer.Add(self.resultsdir_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.Button(self.parent, -1, "Change")
+        button.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.resdir_r1_1, button)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def build_right_box(self):
         """Construct the right hand box to pack into the main Rx box.
 
@@ -157,9 +187,9 @@ class Auto_rx:
         # Add the frequency selection GUI element.
         self.add_frq(box)
 
-        self.label_2_copy_copy_3_copy_copy = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11 = wx.TextCtrl(self.parent, -1, self.data.save_dir)
-        self.results_directory_copy_copy = wx.Button(self.parent, -1, "Change")
+        # Add the results directory GUI element.
+        self.add_results_dir(box)
+
         self.structure_file = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
         self.structure_r11 = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
         self.structure_r11.SetEditable(False)
@@ -203,7 +233,6 @@ class Auto_rx:
         self.relax_start_r1_1 = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #button actions
-        self.gui.Bind(wx.EVT_BUTTON, self.resdir_r1_1, self.results_directory_copy_copy)
         self.gui.Bind(wx.EVT_BUTTON, self.structure_r11.open_file, self.results_directory_copy_copy_copy)
         self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, self.addr11)
         self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
@@ -311,7 +340,6 @@ class Auto_rx:
         sizer_13 = wx.BoxSizer(wx.VERTICAL)
         nmr_freq_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         results_dir_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        results_dir_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6_copy_1 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -321,9 +349,6 @@ class Auto_rx:
         pdbfile_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
 
-        results_dir_copy_copy.Add(self.label_2_copy_copy_3_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy.Add(self.resultsdir_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy.Add(self.results_directory_copy_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
         sizer_11.Add(results_dir_copy_copy, 1, wx.EXPAND, 0)
         results_dir_copy_copy_copy.Add(self.structure_file, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         results_dir_copy_copy_copy.Add(self.structure_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -391,9 +416,6 @@ class Auto_rx:
         self.label_2_copy_copy_5.SetMinSize((230, 17))
         self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
         self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.label_2_copy_copy_3_copy_copy.SetMinSize((230, 17))
-        self.resultsdir_r11.SetMinSize((350, 27))
-        self.results_directory_copy_copy.SetMinSize((103, 27))
         self.structure_file.SetMinSize((230, 17))
         self.structure_r11.SetMinSize((350, 27))
         self.results_directory_copy_copy_copy.SetMinSize((103, 27))
