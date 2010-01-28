@@ -117,6 +117,30 @@ class Auto_rx:
         box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
 
 
+    def add_frq(self, box):
+        """Create and add the frequency selection GUI element to the given box.
+
+        @param box:     The box element to pack the PDB file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
+        self.field_nmr_frq.SetMinSize((350, 27))
+        sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def build_right_box(self):
         """Construct the right hand box to pack into the main Rx box.
 
@@ -130,8 +154,9 @@ class Auto_rx:
         # Add the frame title.
         self.add_frame_title(box)
 
-        self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11 = wx.TextCtrl(self.parent, -1, str(self.data.frq))
+        # Add the frequency selection GUI element.
+        self.add_frq(box)
+
         self.label_2_copy_copy_3_copy_copy = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
         self.resultsdir_r11 = wx.TextCtrl(self.parent, -1, self.data.save_dir)
         self.results_directory_copy_copy = wx.Button(self.parent, -1, "Change")
@@ -287,7 +312,6 @@ class Auto_rx:
         nmr_freq_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         results_dir_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         results_dir_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        nmr_freq_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6_copy_1 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -297,9 +321,6 @@ class Auto_rx:
         pdbfile_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
 
-        nmr_freq_copy_copy.Add(self.label_2_copy_copy_copy_2_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy.Add(self.nmrfreq_value_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11.Add(nmr_freq_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
         results_dir_copy_copy.Add(self.label_2_copy_copy_3_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         results_dir_copy_copy.Add(self.resultsdir_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         results_dir_copy_copy.Add(self.results_directory_copy_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
@@ -370,8 +391,6 @@ class Auto_rx:
         self.label_2_copy_copy_5.SetMinSize((230, 17))
         self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
         self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.label_2_copy_copy_copy_2_copy.SetMinSize((230, 17))
-        self.nmrfreq_value_r11.SetMinSize((350, 27))
         self.label_2_copy_copy_3_copy_copy.SetMinSize((230, 17))
         self.resultsdir_r11.SetMinSize((350, 27))
         self.results_directory_copy_copy.SetMinSize((103, 27))
