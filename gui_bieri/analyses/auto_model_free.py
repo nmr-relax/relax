@@ -36,6 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 # relax GUI module imports.
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import Select_tensor
+from gui_bieri.base_classes import Container
 from gui_bieri.controller import Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
@@ -516,6 +517,22 @@ class Auto_model_free:
         box.Add(nmr_freq_copy_copy_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def assemble_data(self):
+        """Assemble the data required for the dAuvernge_protocol class.
+
+        See the docstring for auto_analyses.dauvernge_protocol for details.
+
+        @return:    A container with all the data required for dAuvernge_protocol, i.e. its keyword arguments diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop.
+        @rtype:     class instance
+        """
+
+        # The data container.
+        data = Container()
+
+        # Return the container.
+        return data
+
+
     def automatic_protocol_controller(self, event):
         """Set up, execute, and process the automatic model-free protocol.
 
@@ -716,13 +733,13 @@ class Auto_model_free:
         """
 
         # Assemble all the data needed for the dAuvergne_protocol class.
-        diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop = self.assemble_data()
+        data = self.assemble_data()
 
         # The thread object storage.
         self.gui.calc_threads.append(Thread_container())
 
         # Start the thread.
-        id = thread.start_new_thread(dAuvergne_protocol, (diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop), (diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop))
+        id = thread.start_new_thread(dAuvergne_protocol, (data.diff_model, data.mf_models, data.local_tm_models, data.pdb_file, data.seq_args, data.het_name, data.relax_data, data.unres, data.exclude, data.bond_length, data.csa, data.hetnuc, data.proton, data.grid_inc, data.min_algor, data.mc_num, data.conv_loop), ('diff_model', 'mf_models', 'local_tm_models', 'pdb_file', 'seq_args', 'het_name', 'relax_data', 'unres', 'exclude', 'bond_length', 'csa', 'hetnuc', 'proton', 'grid_inc', 'min_algor', 'mc_num', 'conv_loop'))
 
         # Add the thread info to the container.
         self.gui.calc_threads[-1].id = id
