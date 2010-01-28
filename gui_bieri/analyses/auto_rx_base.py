@@ -62,13 +62,19 @@ class Auto_rx:
         # Generate a storage container in the relax data store, and alias it for easy access.
         self.data = ds.relax_gui.analyses.add(self.analysis_type)
 
+        # The parent GUI element for this class.
+        self.parent = wx.Panel(notebook, -1)
+
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
-        #main_box = self.build_main_box()
-        #self.gui.modelfree.SetSizer(main_box)
+        main_box = self.build_main_box()
+        self.parent.SetSizer(main_box)
 
-        ## Set the frame font size.
-        #self.gui.modelfree.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
+        # Set the frame font size.
+        self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
+
+    def build_main_box(self):
+        return
         # R1 no. 1
         self.bitmap_1_copy_copy = wx.StaticBitmap(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
         self.label_4_copy_copy = wx.StaticText(self.r1_1, -1, "Set-up for R1 relaxation analysis:")
