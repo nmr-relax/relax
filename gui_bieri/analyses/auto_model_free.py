@@ -625,6 +625,23 @@ class Auto_model_free:
         return check
 
 
+    def choose_global_model(self, local_tm_complete=False):
+        """Select the individual global models to solve, or all automatically.
+
+        @keyword local_tm_complete: A flag specifying if the local tm global model has been solved already.
+        @type local_tm_complete:    bool
+        @return:                    The global model selected, or 'full' for all.
+        @rtype:                     str
+        """
+
+        # The dialog.
+        dlg = Select_tensor(None, -1, "", local_tm_flag=local_tm_complete)
+        dlg.ShowModal()
+
+        # Return the choice.
+        return dlg.selection
+
+
     def exec_model_free(self, event):
         """Execute the automatic model-free protocol.
 
@@ -644,7 +661,8 @@ class Auto_model_free:
             return
 
         # The global model.
-        which_model = self.whichmodel(False)
+        which_model = self.choose_global_model(False)
+        print `which_model`
 
         # Solve for all global models.
         if which_model == 'full':
@@ -872,10 +890,3 @@ class Auto_model_free:
             self.data.results_dir_model = str(self.resultsdir_r21_copy_2.GetValue())
         else:
             self.resultsdir_r21_copy_2.SetValue(str(self.data.results_dir_model))
-
-
-    def whichmodel(self, is_local_tm):
-        selection = None
-        dlg = Select_tensor(None, -1, "", local_tm_flag=is_local_tm)
-        dlg.ShowModal()
-        return selection
