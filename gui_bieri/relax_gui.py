@@ -46,6 +46,7 @@ from version import version
 # relaxGUI module imports.
 from about import about_relax
 from analyses.auto_model_free import Auto_model_free
+from analyses.auto_r1 import Auto_r1
 from analyses.project import create_save_file, open_file
 from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
 from controller import Controller
@@ -131,57 +132,8 @@ class Main(wx.Frame):
         self.relax_start_noe1 = wx.BitmapButton(self.noe1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
-        # R1 no. 1
-        rx_data = ds.relax_gui.analyses[self.r1_index[0]]
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy = wx.StaticText(self.r1_1, -1, "Set-up for R1 relaxation analysis:")
-        self.label_2_copy_copy_copy_2_copy = wx.StaticText(self.r1_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11 = wx.TextCtrl(self.r1_1, -1, str(rx_data.frq))
-        self.label_2_copy_copy_3_copy_copy = wx.StaticText(self.r1_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11 = wx.TextCtrl(self.r1_1, -1, rx_data.save_dir)
-        self.results_directory_copy_copy = wx.Button(self.r1_1, -1, "Change")
-        self.structure_file = wx.StaticText(self.r1_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11 = StructureTextCtrl(self.r1_1, -1, self.structure_file_pdb_msg)
-        self.structure_r11.SetEditable(False)
-        self.results_directory_copy_copy_copy = wx.Button(self.r1_1, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy = wx.StaticText(self.r1_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r11 = wx.TextCtrl(self.r1_1, -1, "")
-        self.panel_2 = wx.Panel(self.r1_1, -1)
-        self.addr11 = wx.Button(self.panel_1, -1, "add")
-        self.refreshr11 = wx.Button(self.panel_1, -1, "refresh")
-        self.label_3 = wx.StaticText(self.panel_3, -1, "R1 relaxation peak list                                                              ")
-        self.label_6 = wx.StaticText(self.panel_3, -1, "Relaxation time [s]")
-        self.r1_list_1 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_1 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_2 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_2 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_3 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_3 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_4 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_4 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_5 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_5 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_6 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_6 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_7 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_7 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_8 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_8 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_9 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_9 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_10 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_10 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_11 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_11 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_12 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_12 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_1_copy_11 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_13 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_14 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_1_4 = wx.TextCtrl(self.panel_3, -1, "")
-        self.label_5_copy_1_copy = wx.StaticText(self.r1_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1 = wx.BitmapButton(self.r1_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-
+        # The automatic R1 analysis frame.
+        self.analysis_frames.append(Auto_r1(self, self.notebook_3))
 
         #R2 no. 1
         rx_data = ds.relax_gui.analyses[self.r2_index[0]]
@@ -1190,7 +1142,7 @@ class Main(wx.Frame):
         self.notebook_2.AddPage(self.frq1, "Frq. 1")
         self.notebook_2.AddPage(self.frq2, "Frq. 2")
         self.notebook_2.AddPage(self.frq3, "Frq. 3")
-        self.notebook_2.AddPage(self.analysis_frames[0].parent, "Model-free")
+        self.notebook_2.AddPage(self.analysis_frames[1].parent, "Model-free")
         self.notebook_2.AddPage(self.results, "Results")
         sizer_8.Add(self.notebook_2, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_8)
@@ -1769,8 +1721,7 @@ class Main(wx.Frame):
         self.r2_1 = wx.Panel(self.notebook_3, -1)
         self.panel_1_copy = wx.Panel(self.r2_1, -1)
         self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
-        self.r1_1 = wx.Panel(self.notebook_3, -1)
-        self.panel_1 = wx.Panel(self.r1_1, -1)
+        self.panel_1 = wx.Panel(self.analysis_frames[0].parent, -1)
         self.panel_3 = wx.Panel(self.panel_1, -1)
         self.noe1 = wx.Panel(self.notebook_3, -1)
 
