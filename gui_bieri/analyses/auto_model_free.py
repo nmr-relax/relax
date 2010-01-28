@@ -522,7 +522,7 @@ class Auto_model_free:
 
         See the docstring for auto_analyses.dauvernge_protocol for details.
 
-        @return:    A container with all the data required for dAuvernge_protocol, i.e. its keyword arguments diff_model, mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop.
+        @return:    A container with all the data required for dAuvernge_protocol, i.e. its keyword arguments mf_models, local_tm_models, pdb_file, seq_args, het_name, relax_data, unres, exclude, bond_length, csa, hetnuc, proton, grid_inc, min_algor, mc_num, conv_loop.
         @rtype:     class instance
         """
 
