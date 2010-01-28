@@ -25,35 +25,17 @@
 """Module containing the base class for the automatic R1 and R2 analysis frames."""
 
 # Python module imports.
-from os import getcwd, mkdir, sep
-from re import search
-from string import lower, lowercase, replace
-import sys
-import time
-import webbrowser
+from os import sep
 import wx
 
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
-from data.gui import Gui
-from float import floatAsByteArray
-from generic_fns import pipes, state
-from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
-from generic_fns.reset import reset
-from relax_errors import RelaxError
-from version import version
 
 # relaxGUI module imports.
-from about import about_relax
-from analyses.auto_model_free import Auto_model_free
-from analyses.project import create_save_file, open_file
-from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
-from controller import Controller
+from analyses.project import open_file
 from derived_wx_classes import StructureTextCtrl
-from filedialog import multi_openfile, opendir, openfile, savefile
-from message import dir_message, exec_relax, missing_data, question, relax_run_ok
-from paths import IMAGE_PATH
-from settings import import_file_settings, load_sequence, relax_global_settings
+from filedialog import multi_openfile, opendir
+from message import exec_relax
 
 
 
