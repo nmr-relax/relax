@@ -78,169 +78,6 @@ class Auto_rx:
         self.parent.SetFont(wx.Font(8, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, ""))
 
 
-    def build_main_box(self):
-        """Construct the highest level box to pack into the automatic Rx analysis frame.
-
-        @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
-        @rtype:     wx.BoxSizer instance
-        """
-
-        # Use a horizontal packing of elements.
-        box = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Add the model-free bitmap picture.
-        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
-        box.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
-
-        # Build the right hand box and pack it next to the bitmap.
-        right_box = self.build_right_box()
-        box.Add(right_box, 0, 0, 0)
-
-        # Return the box.
-        return box
-
-
-    def add_frame_title(self, box):
-        """Create and add the frame title to the given box.
-
-        @param box:     The box element to pack the frame title into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The title.
-        label = wx.StaticText(self.parent, -1, "Set-up for %s relaxation analysis:" % self.label)
-
-        # The font properties.
-        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-
-        # Pack the title.
-        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-
-
-    def add_frq(self, box):
-        """Create and add the frequency selection GUI element to the given box.
-
-        @param box:     The box element to pack the PDB file selection GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
-        self.field_nmr_frq.SetMinSize((350, 27))
-        sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_results_dir(self, box):
-        """Create and add the results directory GUI element to the given box.
-
-        @param box:     The box element to pack the results directory GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # Horizontal packing for this element.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The label.
-        label = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        label.SetMinSize((230, 17))
-        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The text input field.
-        self.resultsdir_r11 = wx.TextCtrl(self.parent, -1, self.data.save_dir)
-        self.resultsdir_r11.SetMinSize((350, 27))
-        sizer.Add(self.resultsdir_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-
-        # The button.
-        button = wx.Button(self.parent, -1, "Change")
-        button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.resdir_r1_1, button)
-        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-
-        # Add the element to the box.
-        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def build_right_box(self):
-        """Construct the right hand box to pack into the main Rx box.
-
-        @return:    The right hand box element containing all Rx GUI elements (excluding the bitmap) to pack into the main Rx box.
-        @rtype:     wx.BoxSizer instance
-        """
-
-        # Use a vertical packing of elements.
-        box = wx.BoxSizer(wx.VERTICAL)
-
-        # Add the frame title.
-        self.add_frame_title(box)
-
-        # Add the frequency selection GUI element.
-        self.add_frq(box)
-
-        # Add the results directory GUI element.
-        self.add_results_dir(box)
-
-        self.structure_file = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11 = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
-        self.structure_r11.SetEditable(False)
-        self.results_directory_copy_copy_copy = wx.Button(self.parent, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r11 = wx.TextCtrl(self.parent, -1, "")
-        self.panel_2 = wx.Panel(self.parent, -1)
-        self.addr11 = wx.Button(self.panel_1, -1, "add")
-        self.refreshr11 = wx.Button(self.panel_1, -1, "refresh")
-        self.label_3 = wx.StaticText(self.panel_3, -1, "R1 relaxation peak list                                                              ")
-        self.label_6 = wx.StaticText(self.panel_3, -1, "Relaxation time [s]")
-        self.r1_list_1 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_1 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_2 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_2 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_3 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_3 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_4 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_4 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_5 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_5 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_6 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_6 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_7 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_7 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_8 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_8 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_9 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_9 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_10 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_10 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_11 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_11 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_12 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_12 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_1_copy_11 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_13 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_14 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_1_4 = wx.TextCtrl(self.panel_3, -1, "")
-        self.label_5_copy_1_copy = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1 = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-
-        #button actions
-        self.gui.Bind(wx.EVT_BUTTON, self.structure_r11.open_file, self.results_directory_copy_copy_copy)
-        self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, self.addr11)
-        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
-
-        # Return the box.
-        return box
-
-
     def __do_layout(self):
         # begin wxGlade: main.__do_layout
         sizer_8 = wx.BoxSizer(wx.VERTICAL)
@@ -461,6 +298,47 @@ class Auto_rx:
         self.relax_start_r1_1_copy_copy_1.SetSize(self.relax_start_r1_1_copy_copy_1.GetBestSize())
 
 
+    def add_frame_title(self, box):
+        """Create and add the frame title to the given box.
+
+        @param box:     The box element to pack the frame title into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # The title.
+        label = wx.StaticText(self.parent, -1, "Set-up for %s relaxation analysis:" % self.label)
+
+        # The font properties.
+        label.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+
+        # Pack the title.
+        box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
+
+
+    def add_frq(self, box):
+        """Create and add the frequency selection GUI element to the given box.
+
+        @param box:     The box element to pack the PDB file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_nmr_frq = wx.TextCtrl(self.parent, -1, str(self.data.frq))
+        self.field_nmr_frq.SetMinSize((350, 27))
+        sizer.Add(self.field_nmr_frq, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def add_r1_1(self, event): # add a r1 peak list
 
         if len(r1_list) < 14:
@@ -497,6 +375,128 @@ class Auto_rx:
         if len(r1_list) >= 14:
             self.r1_list_14.SetLabel(r1_list[13])
         event.Skip()
+
+
+    def add_results_dir(self, box):
+        """Create and add the results directory GUI element to the given box.
+
+        @param box:     The box element to pack the results directory GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Results directory", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.resultsdir_r11 = wx.TextCtrl(self.parent, -1, self.data.save_dir)
+        self.resultsdir_r11.SetMinSize((350, 27))
+        sizer.Add(self.resultsdir_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.Button(self.parent, -1, "Change")
+        button.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.resdir_r1_1, button)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
+    def build_main_box(self):
+        """Construct the highest level box to pack into the automatic Rx analysis frame.
+
+        @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # Use a horizontal packing of elements.
+        box = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Add the model-free bitmap picture.
+        self.bitmap_1_copy_copy = wx.StaticBitmap(self.parent, -1, wx.Bitmap(self.bitmap, wx.BITMAP_TYPE_ANY))
+        box.Add(self.bitmap_1_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
+
+        # Build the right hand box and pack it next to the bitmap.
+        right_box = self.build_right_box()
+        box.Add(right_box, 0, 0, 0)
+
+        # Return the box.
+        return box
+
+
+    def build_right_box(self):
+        """Construct the right hand box to pack into the main Rx box.
+
+        @return:    The right hand box element containing all Rx GUI elements (excluding the bitmap) to pack into the main Rx box.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # Use a vertical packing of elements.
+        box = wx.BoxSizer(wx.VERTICAL)
+
+        # Add the frame title.
+        self.add_frame_title(box)
+
+        # Add the frequency selection GUI element.
+        self.add_frq(box)
+
+        # Add the results directory GUI element.
+        self.add_results_dir(box)
+
+        self.structure_file = wx.StaticText(self.parent, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
+        self.structure_r11 = StructureTextCtrl(self.parent, -1, self.gui.structure_file_pdb_msg)
+        self.structure_r11.SetEditable(False)
+        self.results_directory_copy_copy_copy = wx.Button(self.parent, -1, "Change")
+        self.label_2_copy_copy_copy_2_copy_copy = wx.StaticText(self.parent, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
+        self.unresolved_r11 = wx.TextCtrl(self.parent, -1, "")
+        self.panel_2 = wx.Panel(self.parent, -1)
+        self.addr11 = wx.Button(self.panel_1, -1, "add")
+        self.refreshr11 = wx.Button(self.panel_1, -1, "refresh")
+        self.label_3 = wx.StaticText(self.panel_3, -1, "R1 relaxation peak list                                                              ")
+        self.label_6 = wx.StaticText(self.panel_3, -1, "Relaxation time [s]")
+        self.r1_list_1 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_1 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_2 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_2 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_3 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_3 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_4 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_4 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_5 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_5 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_6 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_6 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_7 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_7 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_8 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_8 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_9 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_9 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_10 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_10 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_11 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_11 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_12 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_12 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_1_copy_11 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_13 = wx.TextCtrl(self.panel_3, -1, "")
+        self.r1_list_14 = wx.StaticText(self.panel_3, -1, "")
+        self.r1_time_1_4 = wx.TextCtrl(self.panel_3, -1, "")
+        self.label_5_copy_1_copy = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
+        self.relax_start_r1_1 = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+
+        #button actions
+        self.gui.Bind(wx.EVT_BUTTON, self.structure_r11.open_file, self.results_directory_copy_copy_copy)
+        self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, self.addr11)
+        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
+
+        # Return the box.
+        return box
 
 
     def exec_r1_1(self, event): # start r2 calculation
