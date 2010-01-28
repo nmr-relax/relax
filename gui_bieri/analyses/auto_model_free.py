@@ -799,8 +799,7 @@ class Auto_model_free:
         thread_cont = self.gui.calc_threads[-1]
 
         # Start the thread.
-        #id = thread.start_new_thread(self.execute_thread, (), {'global_model': global_model, 'automatic': automatic})
-        self.execute_thread(global_model, automatic)
+        id = thread.start_new_thread(self.execute_thread, (), {'global_model': global_model, 'automatic': automatic})
 
         # Add the thread info to the container.
         thread_cont.id = id
@@ -823,8 +822,8 @@ class Auto_model_free:
 
         # Redirect relax output and errors to the controller.
         redir = Redirect_text(self.gui.controller)
-        #sys.stdout = redir
-        #sys.stderr = redir
+        sys.stdout = redir
+        sys.stderr = redir
 
         # Print a header in the controller.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
