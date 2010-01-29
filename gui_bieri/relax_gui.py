@@ -725,9 +725,9 @@ class Main(wx.Frame):
         @keyword id:    The element identification number.
         @type id:       int
         @keyword text:  The text for the menu entry.
-        @type text:     str
+        @type text:     None or str
         @keyword icon:  The bitmap icon path.
-        @type icon:     str
+        @type icon:     None or str
         @keyword kind:  The item type, which defaults to wx.ITEM_NORMAL.
         @type kind:     int
         @return:        The initialised wx.MenuItem() instance.
@@ -739,9 +739,13 @@ class Main(wx.Frame):
 
         # Set up the element.
         element.SetId(id)
-        element.SetBitmap(wx.Bitmap(icon))
-        element.SetText(text)
         element.SetKind(kind)
+
+        # Optional details.
+        if icon:
+            element.SetBitmap(wx.Bitmap(icon))
+        if text:
+            element.SetText(text)
 
         # Return the element.
         return element
