@@ -148,58 +148,6 @@ class Main(wx.Frame):
         self.relax_start_noe1 = wx.BitmapButton(self.noe1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
-        #R2 no. 1
-        rx_data = ds.relax_gui.analyses[self.r2_index[0]]
-        self.bitmap_1_copy_copy_copy = wx.StaticBitmap(self.r2_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Set-up for R2 relaxation analysis:")
-        self.label_2_copy_copy_copy_2_copy_copy_1 = wx.StaticText(self.r2_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r21 = wx.TextCtrl(self.r2_1, -1, str(rx_data.frq))
-        self.label_2_copy_copy_3_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21 = wx.TextCtrl(self.r2_1, -1, rx_data.save_dir)
-        self.results_directory_r21 = wx.Button(self.r2_1, -1, "Change")
-        self.structure_file_copy = wx.StaticText(self.r2_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21 = StructureTextCtrl(self.r2_1, -1, self.structure_file_pdb_msg)
-        self.structure_r21.SetEditable(False)
-        self.chan_struc_r21 = wx.Button(self.r2_1, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy = wx.StaticText(self.r2_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21 = wx.TextCtrl(self.r2_1, -1, "")
-        self.panel_2_copy = wx.Panel(self.r2_1, -1)
-        self.addr21 = wx.Button(self.panel_1_copy, -1, "add")
-        self.refreshr21 = wx.Button(self.panel_1_copy, -1, "refresh")
-        self.label_3_copy = wx.StaticText(self.panel_3_copy, -1, "R2 relaxation peak list                                                              ")
-        self.label_6_copy = wx.StaticText(self.panel_3_copy, -1, "Relaxation time [s]")
-        self.r2_list_1 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_1 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_2 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_2 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_3 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_3 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_4 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_4 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_5 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_5 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_6 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_6 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_7 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_7 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_8 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_8 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_9 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_9 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_10 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_10 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_11 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_11 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_12 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_12 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_13 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_13 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.r2_list_14 = wx.StaticText(self.panel_3_copy, -1, "")
-        self.r2_time_14 = wx.TextCtrl(self.panel_3_copy, -1, "")
-        self.label_5_copy_1_copy_copy = wx.StaticText(self.r2_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy = wx.BitmapButton(self.r2_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-
-
         #Noe no.2
         rx_data = ds.relax_gui.analyses[self.noe_index[1]]
         self.bitmap_1_copy_1_copy = wx.StaticBitmap(self.noe1_copy, -1, wx.Bitmap(IMAGE_PATH+'noe.gif', wx.BITMAP_TYPE_ANY))
@@ -229,107 +177,6 @@ class Main(wx.Frame):
         self.label_5_copy_1_copy_1 = wx.StaticText(self.noe1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         self.relax_start_noe1_copy = wx.BitmapButton(self.noe1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
-
-        #R1 no. 2
-        rx_data = ds.relax_gui.analyses[self.r1_index[1]]
-        self.bitmap_1_copy_copy_copy_1 = wx.StaticBitmap(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Set-up for R1 relaxation analysis:")
-        self.label_2_copy_copy_copy_2_copy_copy_2 = wx.StaticText(self.r1_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, str(rx_data.frq))
-        self.label_2_copy_copy_3_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, rx_data.save_dir)
-        self.results_directory_copy_copy_copy_1 = wx.Button(self.r1_1_copy, -1, "Change")
-        self.structure_file_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11_copy = StructureTextCtrl(self.r1_1_copy, -1, self.structure_file_pdb_msg)
-        self.results_directory_copy_copy_copy_copy = wx.Button(self.r1_1_copy, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r11_copy = wx.TextCtrl(self.r1_1_copy, -1, "")
-        self.panel_2_copy_1 = wx.Panel(self.r1_1_copy, -1)
-        self.addr11_copy = wx.Button(self.panel_1_copy_1, -1, "add")
-        self.refreshr11_copy = wx.Button(self.panel_1_copy_1, -1, "refresh")
-        self.label_3_copy_1 = wx.StaticText(self.panel_3_copy_1, -1, "R1 relaxation peak list                                                              ")
-        self.label_6_copy_1 = wx.StaticText(self.panel_3_copy_1, -1, "Relaxation time [s]")
-        self.r1_list_1_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_1_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_2_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_2_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_3_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_3_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_4_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_4_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_5_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_5_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_6_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_6_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_7_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_7_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_8_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_8_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_9_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_9_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_10_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_10_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_11_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_11_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_12_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_12_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_1_copy_11_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_13_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.r1_list_14_copy = wx.StaticText(self.panel_3_copy_1, -1, "")
-        self.r1_time_1_4_copy = wx.TextCtrl(self.panel_3_copy_1, -1, "")
-        self.label_5_copy_1_copy_copy_1 = wx.StaticText(self.r1_1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_1 = wx.BitmapButton(self.r1_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-
-        #R2 no. 2
-        rx_data = ds.relax_gui.analyses[self.r2_index[1]]
-        self.bitmap_1_copy_copy_copy_copy = wx.StaticBitmap(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Set-up for R2 relaxation analysis:")
-        self.label_2_copy_copy_copy_2_copy_copy_1_copy = wx.StaticText(self.r2_1_copy, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, str(rx_data.frq))
-        self.label_2_copy_copy_3_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, rx_data.save_dir)
-        self.results_directory_r21_copy = wx.Button(self.r2_1_copy, -1, "Change")
-        self.structure_file_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy = StructureTextCtrl(self.r2_1_copy, -1, self.structure_file_pdb_msg)
-        self.structure_r21_copy.SetEditable(False)
-        self.chan_struc_r21_copy = wx.Button(self.r2_1_copy, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21_copy = wx.TextCtrl(self.r2_1_copy, -1, "")
-        self.panel_2_copy_copy = wx.Panel(self.r2_1_copy, -1)
-        self.addr21_copy = wx.Button(self.panel_1_copy_copy, -1, "add")
-        self.refreshr21_copy = wx.Button(self.panel_1_copy_copy, -1, "refresh")
-        self.label_3_copy_copy = wx.StaticText(self.panel_3_copy_copy, -1, "R2 relaxation peak list                                                              ")
-        self.label_6_copy_copy = wx.StaticText(self.panel_3_copy_copy, -1, "Relaxation time [s]")
-        self.r2_list_1_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_1_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_2_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_2_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_3_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_3_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_4_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_4_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_5_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_5_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_6_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_6_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_7_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_7_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_8_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_8_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_9_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_9_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_10_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_10_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_11_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_11_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_12_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_12_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_13_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_13_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.r2_list_14_copy = wx.StaticText(self.panel_3_copy_copy, -1, "")
-        self.r2_time_14_copy = wx.TextCtrl(self.panel_3_copy_copy, -1, "")
-        self.label_5_copy_1_copy_copy_copy = wx.StaticText(self.r2_1_copy, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_copy = wx.BitmapButton(self.r2_1_copy, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
         #NOE no. 3
         rx_data = ds.relax_gui.analyses[self.noe_index[2]]
@@ -361,109 +208,6 @@ class Main(wx.Frame):
         self.relax_start_noe1_copy_1 = wx.BitmapButton(self.noe1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
 
 
-        #R1 no. 3
-        rx_data = ds.relax_gui.analyses[self.r1_index[2]]
-        self.bitmap_1_copy_copy_copy_2 = wx.StaticBitmap(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r1.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Set-up for R1 relaxation analysis:")
-        self.label_2_copy_copy_copy_2_copy_copy_3 = wx.StaticText(self.r1_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, str(rx_data.frq))
-        self.label_2_copy_copy_3_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, rx_data.save_dir)
-        self.results_directory_copy_copy_copy_2 = wx.Button(self.r1_1_copy_1, -1, "Change")
-        self.structure_file_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r11_copy_1 = StructureTextCtrl(self.r1_1_copy_1, -1, self.structure_file_pdb_msg)
-        self.structure_r11_copy_1.SetEditable(False)
-        self.results_directory_copy_copy_copy_copy_1 = wx.Button(self.r1_1_copy_1, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r11_copy_1 = wx.TextCtrl(self.r1_1_copy_1, -1, "")
-        self.panel_2_copy_2 = wx.Panel(self.r1_1_copy_1, -1)
-        self.addr11_copy_1 = wx.Button(self.panel_1_copy_2, -1, "add")
-        self.refreshr11_copy_1 = wx.Button(self.panel_1_copy_2, -1, "refresh")
-        self.label_3_copy_2 = wx.StaticText(self.panel_3_copy_2, -1, "R1 relaxation peak list                                                              ")
-        self.label_6_copy_2 = wx.StaticText(self.panel_3_copy_2, -1, "Relaxation time [s]")
-        self.r1_list_1_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_1_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_2_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_2_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_3_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_3_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_4_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_4_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_5_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_5_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_6_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_6_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_7_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_7_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_8_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_8_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_9_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_9_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_10_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_10_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_11_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_11_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_12_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_12_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_1_copy_11_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_13_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.r1_list_14_copy_1 = wx.StaticText(self.panel_3_copy_2, -1, "")
-        self.r1_time_1_4_copy_1 = wx.TextCtrl(self.panel_3_copy_2, -1, "")
-        self.label_5_copy_1_copy_copy_2 = wx.StaticText(self.r1_1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_2 = wx.BitmapButton(self.r1_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-
-        #R2 no. 3
-        rx_data = ds.relax_gui.analyses[self.r2_index[2]]
-        self.bitmap_1_copy_copy_copy_copy_1 = wx.StaticBitmap(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'r2.png', wx.BITMAP_TYPE_ANY))
-        self.label_4_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Set-up for R2 relaxation analysis:")
-        self.label_2_copy_copy_copy_2_copy_copy_1_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "NMR Frequency [MHz]:", style=wx.ALIGN_RIGHT)
-        self.nmrfreq_value_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, str(rx_data.frq))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Results directory", style=wx.ALIGN_RIGHT)
-        self.resultsdir_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, rx_data.save_dir)
-        self.results_directory_r21_copy_1 = wx.Button(self.r2_1_copy_1, -1, "Change")
-        self.structure_file_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Structure file (.pdb)", style=wx.ALIGN_RIGHT)
-        self.structure_r21_copy_1 = StructureTextCtrl(self.r2_1_copy_1, -1, self.structure_file_pdb_msg)
-        self.structure_r21_copy_1.SetEditable(False)
-        self.chan_struc_r21_copy_1 = wx.Button(self.r2_1_copy_1, -1, "Change")
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Unresolved residues:", style=wx.ALIGN_RIGHT)
-        self.unresolved_r21_copy_1 = wx.TextCtrl(self.r2_1_copy_1, -1, "")
-        self.panel_2_copy_copy_1 = wx.Panel(self.r2_1_copy_1, -1)
-        self.addr21_copy_1 = wx.Button(self.panel_1_copy_copy_1, -1, "add")
-        self.refreshr21_copy_1 = wx.Button(self.panel_1_copy_copy_1, -1, "refresh")
-        self.label_3_copy_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "R2 relaxation peak list                                                              ")
-        self.label_6_copy_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "Relaxation time [s]")
-        self.r2_list_1_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_1_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_2_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_2_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_3_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_3_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_4_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_4_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_5_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_5_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_6_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_6_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_7_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_7_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_8_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_8_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_9_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_9_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_10_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_10_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_11_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_11_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_12_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_12_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_13_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_13_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.r2_list_14_copy_1 = wx.StaticText(self.panel_3_copy_copy_1, -1, "")
-        self.r2_time_14_copy_1 = wx.TextCtrl(self.panel_3_copy_copy_1, -1, "")
-        self.label_5_copy_1_copy_copy_copy_1 = wx.StaticText(self.r2_1_copy_1, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1_copy_copy_1 = wx.BitmapButton(self.r2_1_copy_1, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-
-
         # The automatic model-free protocol frame.
         self.analysis_frames[self.hardcoded_index_mf] = Auto_model_free(self, self.notebook_2)
 
@@ -487,40 +231,16 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.structure_noe1.open_file, self.ref_noe_copy_1)
         self.Bind(wx.EVT_BUTTON, self.resdir_noe1, self.chandir_noe1)
         self.Bind(wx.EVT_BUTTON, self.exec_noe1, self.relax_start_noe1)
-        self.Bind(wx.EVT_BUTTON, self.resdir_r2_1, self.results_directory_r21)
-        self.Bind(wx.EVT_BUTTON, self.structure_r21.open_file, self.chan_struc_r21)
-        self.Bind(wx.EVT_BUTTON, self.add_r2_1, self.addr21)
-        self.Bind(wx.EVT_BUTTON, self.refresh_r2_1, self.refreshr21)
         self.Bind(wx.EVT_BUTTON, self.sat_noe2, self.sat_noe_copy_1_copy)
         self.Bind(wx.EVT_BUTTON, self.ref_noe2, self.noe_ref_err_copy_1_copy)
         self.Bind(wx.EVT_BUTTON, self.structure_noe1_copy.open_file, self.ref_noe_copy_1_copy)
         self.Bind(wx.EVT_BUTTON, self.resdir_noe2, self.chandir_noe1_copy)
         self.Bind(wx.EVT_BUTTON, self.exec_noe2, self.relax_start_noe1_copy)
-        self.Bind(wx.EVT_BUTTON, self.resdir_r1_2, self.results_directory_copy_copy_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.structure_r11_copy.open_file, self.results_directory_copy_copy_copy_copy)
-        self.Bind(wx.EVT_BUTTON, self.add_r1_2, self.addr11_copy)
-        self.Bind(wx.EVT_BUTTON, self.refresh_r1_2, self.refreshr11_copy)
-        self.Bind(wx.EVT_BUTTON, self.exec_r1_2, self.relax_start_r1_1_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.resdir_r2_2, self.results_directory_r21_copy)
-        self.Bind(wx.EVT_BUTTON, self.structure_r21_copy.open_file, self.chan_struc_r21_copy)
-        self.Bind(wx.EVT_BUTTON, self.add_r2_2, self.addr21_copy)
-        self.Bind(wx.EVT_BUTTON, self.refresh_r2_2, self.refreshr21_copy)
-        self.Bind(wx.EVT_BUTTON, self.exec_r2_2, self.relax_start_r1_1_copy_copy)
         self.Bind(wx.EVT_BUTTON, self.sat_noe3, self.sat_noe_copy_1_copy_1)
         self.Bind(wx.EVT_BUTTON, self.ref_noe3, self.noe_ref_err_copy_1_copy_1)
         self.Bind(wx.EVT_BUTTON, self.structure_noe1_copy_1.open_file, self.ref_noe_copy_1_copy_1)
         self.Bind(wx.EVT_BUTTON, self.resdir_noe3, self.chandir_noe1_copy_1)
         self.Bind(wx.EVT_BUTTON, self.exec_noe3, self.relax_start_noe1_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.resdir_r1_3, self.results_directory_copy_copy_copy_2)
-        self.Bind(wx.EVT_BUTTON, self.structure_r11_copy_1.open_file, self.results_directory_copy_copy_copy_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.add_r1_3, self.addr11_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.refresh_r1_3, self.refreshr11_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.exec_r1_3, self.relax_start_r1_1_copy_2)
-        self.Bind(wx.EVT_BUTTON, self.resdir_r2_3, self.results_directory_r21_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.structure_r21_copy_1.open_file, self.chan_struc_r21_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.add_r2_3, self.addr21_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.refresh_r2_3, self.refreshr21_copy_1)
-        self.Bind(wx.EVT_BUTTON, self.exec_r2_3, self.relax_start_r1_1_copy_copy_1)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_noe_results_exe, self.list_noe)
         self.Bind(wx.EVT_BUTTON, self.open_noe_results_exe, self.open_noe_results)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_rx_results_exe, self.list_rx)
@@ -553,9 +273,7 @@ class Main(wx.Frame):
         sizer_19_copy = wx.BoxSizer(wx.HORIZONTAL)
         frq1sub_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_10_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_11_copy_copy_1 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_12_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1_copy_copy_1 = wx.FlexGridSizer(10, 2, 0, 0)
         sizer_13_copy_copy_1 = wx.BoxSizer(wx.VERTICAL)
         nmr_freq_copy_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -563,9 +281,7 @@ class Main(wx.Frame):
         results_dir_copy_copy_copy_1_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         nmr_freq_copy_copy_copy_1_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_10_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_11_copy_2 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1_copy_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_12_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1_copy_2 = wx.FlexGridSizer(10, 2, 0, 0)
         sizer_13_copy_2 = wx.BoxSizer(wx.VERTICAL)
         nmr_freq_copy_copy_copy_copy_2 = wx.BoxSizer(wx.HORIZONTAL)
@@ -586,9 +302,7 @@ class Main(wx.Frame):
         nmr_freq_copy_1_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         frq1sub_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_10_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_11_copy_copy = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_12_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1_copy_copy = wx.FlexGridSizer(10, 2, 0, 0)
         sizer_13_copy_copy = wx.BoxSizer(wx.VERTICAL)
         nmr_freq_copy_copy_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
@@ -596,9 +310,7 @@ class Main(wx.Frame):
         results_dir_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         nmr_freq_copy_copy_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_10_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_11_copy_1 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_12_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1_copy_1 = wx.FlexGridSizer(10, 2, 0, 0)
         sizer_13_copy_1 = wx.BoxSizer(wx.VERTICAL)
         nmr_freq_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -619,9 +331,7 @@ class Main(wx.Frame):
         nmr_freq_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         frq1sub = wx.BoxSizer(wx.HORIZONTAL)
         sizer_10_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_11_copy = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_12_copy = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1_copy = wx.FlexGridSizer(10, 2, 0, 0)
         sizer_13_copy = wx.BoxSizer(wx.VERTICAL)
         nmr_freq_copy_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
@@ -629,7 +339,6 @@ class Main(wx.Frame):
         results_dir_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         nmr_freq_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         exec_relax_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_12 = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_1 = wx.FlexGridSizer(10, 2, 0, 0)
         sizer_13 = wx.BoxSizer(wx.VERTICAL)
         nmr_freq_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
@@ -685,64 +394,7 @@ class Main(wx.Frame):
         sizer_6_copy_1.Add(exec_relax_copy_1, 1, wx.ALIGN_RIGHT, 0)
         sizer_5_copy_1.Add(sizer_6_copy_1, 1, wx.EXPAND|wx.SHAPED, 0)
         self.noe1.SetSizer(sizer_5_copy_1)
-        sizer_11_copy.Add(self.label_4_copy_copy_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-        nmr_freq_copy_copy_copy_1.Add(self.label_2_copy_copy_copy_2_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_1.Add(self.nmrfreq_value_r21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy.Add(nmr_freq_copy_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        results_dir_copy_copy_copy_1.Add(self.label_2_copy_copy_3_copy_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1.Add(self.resultsdir_r21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1.Add(self.results_directory_r21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy.Add(results_dir_copy_copy_copy_1, 1, wx.EXPAND, 0)
-        results_dir_copy_copy_copy_copy.Add(self.structure_file_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy.Add(self.structure_r21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy.Add(self.chan_struc_r21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy.Add(results_dir_copy_copy_copy_copy, 1, wx.EXPAND, 0)
-        nmr_freq_copy_copy_copy_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy.Add(self.unresolved_r21, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy.Add(nmr_freq_copy_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_11_copy.Add(self.panel_2_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_13_copy.Add(self.addr21, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_13_copy.Add(self.refreshr21, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_12_copy.Add(sizer_13_copy, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy.Add(self.label_3_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.label_6_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_2, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_2, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_3, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_3, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_4, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_4, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_5, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_5, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_6, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_6, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_7, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_7, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_8, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_8, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_9, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_9, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_10, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_10, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_11, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_11, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_12, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_12, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_13, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_13, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_list_14, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy.Add(self.r2_time_14, 0, wx.ADJUST_MINSIZE, 0)
-        self.panel_3_copy.SetSizer(grid_sizer_1_copy)
-        sizer_12_copy.Add(self.panel_3_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_1_copy.SetSizer(sizer_12_copy)
-        sizer_11_copy.Add(self.panel_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        exec_relax_copy_1_copy_copy.Add(self.label_5_copy_1_copy_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_copy.Add(self.relax_start_r1_1_copy, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy.Add(exec_relax_copy_1_copy_copy, 0, wx.ALIGN_RIGHT, 0)
-        sizer_10_copy.Add(sizer_11_copy, 0, 0, 0)
-        self.r2_1.SetSizer(sizer_10_copy)
+
         self.notebook_3.AddPage(self.noe1, "steady-state NOE")
         self.notebook_3.AddPage(self.analysis_frames[self.hardcoded_index_r1_1].parent, "R1 relaxation")
         self.notebook_3.AddPage(self.analysis_frames[self.hardcoded_index_r2_1].parent, "R2 relaxation")
@@ -785,124 +437,7 @@ class Main(wx.Frame):
         sizer_6_copy_1_copy.Add(exec_relax_copy_1_copy_1, 1, wx.ALIGN_RIGHT, 0)
         sizer_5_copy_1_copy.Add(sizer_6_copy_1_copy, 1, wx.EXPAND|wx.SHAPED, 0)
         self.noe1_copy.SetSizer(sizer_5_copy_1_copy)
-        sizer_10_copy_1.Add(self.bitmap_1_copy_copy_copy_1, 0, wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_1.Add(self.label_4_copy_copy_copy_1, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-        nmr_freq_copy_copy_copy_2.Add(self.label_2_copy_copy_copy_2_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_2.Add(self.nmrfreq_value_r11_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_1.Add(nmr_freq_copy_copy_copy_2, 0, wx.EXPAND|wx.SHAPED, 0)
-        results_dir_copy_copy_copy_2.Add(self.label_2_copy_copy_3_copy_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_2.Add(self.resultsdir_r11_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_2.Add(self.results_directory_copy_copy_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_1.Add(results_dir_copy_copy_copy_2, 1, wx.EXPAND, 0)
-        results_dir_copy_copy_copy_copy_1.Add(self.structure_file_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_1.Add(self.structure_r11_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_1.Add(self.results_directory_copy_copy_copy_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_1.Add(results_dir_copy_copy_copy_copy_1, 1, wx.EXPAND, 0)
-        nmr_freq_copy_copy_copy_copy_1.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy_1.Add(self.unresolved_r11_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_1.Add(nmr_freq_copy_copy_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_11_copy_1.Add(self.panel_2_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_13_copy_1.Add(self.addr11_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_13_copy_1.Add(self.refreshr11_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_12_copy_1.Add(sizer_13_copy_1, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_1.Add(self.label_3_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.label_6_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_2_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_2_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_3_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_3_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_4_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_4_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_5_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_5_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_6_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_6_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_7_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_7_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_8_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_8_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_9_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_9_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_10_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_10_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_11_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_11_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_12_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_12_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_1_copy_11_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_13_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_list_14_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_1.Add(self.r1_time_1_4_copy, 0, wx.ADJUST_MINSIZE, 0)
-        self.panel_3_copy_1.SetSizer(grid_sizer_1_copy_1)
-        sizer_12_copy_1.Add(self.panel_3_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_1_copy_1.SetSizer(sizer_12_copy_1)
-        sizer_11_copy_1.Add(self.panel_1_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        exec_relax_copy_1_copy_copy_1.Add(self.label_5_copy_1_copy_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_copy_1.Add(self.relax_start_r1_1_copy_1, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_1.Add(exec_relax_copy_1_copy_copy_1, 0, wx.ALIGN_RIGHT, 0)
-        sizer_10_copy_1.Add(sizer_11_copy_1, 0, 0, 0)
-        self.r1_1_copy.SetSizer(sizer_10_copy_1)
-        sizer_10_copy_copy.Add(self.bitmap_1_copy_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_copy.Add(self.label_4_copy_copy_copy_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-        nmr_freq_copy_copy_copy_1_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_1_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_1_copy.Add(self.nmrfreq_value_r21_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_copy.Add(nmr_freq_copy_copy_copy_1_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        results_dir_copy_copy_copy_1_copy.Add(self.label_2_copy_copy_3_copy_copy_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy.Add(self.resultsdir_r21_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy.Add(self.results_directory_r21_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_copy.Add(results_dir_copy_copy_copy_1_copy, 1, wx.EXPAND, 0)
-        results_dir_copy_copy_copy_copy_copy.Add(self.structure_file_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy.Add(self.structure_r21_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy.Add(self.chan_struc_r21_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_copy.Add(results_dir_copy_copy_copy_copy_copy, 1, wx.EXPAND, 0)
-        nmr_freq_copy_copy_copy_copy_copy.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_copy, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy_copy.Add(self.unresolved_r21_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_copy.Add(nmr_freq_copy_copy_copy_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_11_copy_copy.Add(self.panel_2_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_13_copy_copy.Add(self.addr21_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_13_copy_copy.Add(self.refreshr21_copy, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_12_copy_copy.Add(sizer_13_copy_copy, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy.Add(self.label_3_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.label_6_copy_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_1_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_2_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_2_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_3_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_3_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_4_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_4_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_5_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_5_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_6_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_6_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_7_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_7_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_8_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_8_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_9_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_9_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_10_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_10_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_11_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_11_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_12_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_12_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_13_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_13_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_list_14_copy, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy.Add(self.r2_time_14_copy, 0, wx.ADJUST_MINSIZE, 0)
-        self.panel_3_copy_copy.SetSizer(grid_sizer_1_copy_copy)
-        sizer_12_copy_copy.Add(self.panel_3_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_1_copy_copy.SetSizer(sizer_12_copy_copy)
-        sizer_11_copy_copy.Add(self.panel_1_copy_copy, 0, wx.EXPAND|wx.SHAPED, 0)
-        exec_relax_copy_1_copy_copy_copy.Add(self.label_5_copy_1_copy_copy_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_copy_copy.Add(self.relax_start_r1_1_copy_copy, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_copy.Add(exec_relax_copy_1_copy_copy_copy, 0, wx.ALIGN_RIGHT, 0)
-        sizer_10_copy_copy.Add(sizer_11_copy_copy, 0, 0, 0)
-        self.r2_1_copy.SetSizer(sizer_10_copy_copy)
+
         self.notebook_3_copy.AddPage(self.noe1_copy, "steady-state NOE")
         self.notebook_3_copy.AddPage(self.analysis_frames[self.hardcoded_index_r1_2].parent, "R1 relaxation")
         self.notebook_3_copy.AddPage(self.analysis_frames[self.hardcoded_index_r2_2].parent, "R2 relaxation")
@@ -945,124 +480,7 @@ class Main(wx.Frame):
         sizer_6_copy_1_copy_1.Add(exec_relax_copy_1_copy_2, 1, wx.ALIGN_RIGHT, 0)
         sizer_5_copy_1_copy_1.Add(sizer_6_copy_1_copy_1, 1, wx.EXPAND|wx.SHAPED, 0)
         self.noe1_copy_1.SetSizer(sizer_5_copy_1_copy_1)
-        sizer_10_copy_2.Add(self.bitmap_1_copy_copy_copy_2, 0, wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_2.Add(self.label_4_copy_copy_copy_2, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-        nmr_freq_copy_copy_copy_3.Add(self.label_2_copy_copy_copy_2_copy_copy_3, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_3.Add(self.nmrfreq_value_r11_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_2.Add(nmr_freq_copy_copy_copy_3, 0, wx.EXPAND|wx.SHAPED, 0)
-        results_dir_copy_copy_copy_3.Add(self.label_2_copy_copy_3_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_3.Add(self.resultsdir_r11_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_3.Add(self.results_directory_copy_copy_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_2.Add(results_dir_copy_copy_copy_3, 1, wx.EXPAND, 0)
-        results_dir_copy_copy_copy_copy_2.Add(self.structure_file_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_2.Add(self.structure_r11_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_2.Add(self.results_directory_copy_copy_copy_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_2.Add(results_dir_copy_copy_copy_copy_2, 1, wx.EXPAND, 0)
-        nmr_freq_copy_copy_copy_copy_2.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_2, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy_2.Add(self.unresolved_r11_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_2.Add(nmr_freq_copy_copy_copy_copy_2, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_11_copy_2.Add(self.panel_2_copy_2, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_13_copy_2.Add(self.addr11_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_13_copy_2.Add(self.refreshr11_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_12_copy_2.Add(sizer_13_copy_2, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_2.Add(self.label_3_copy_2, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.label_6_copy_2, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_1_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_1_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_2_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_2_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_3_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_3_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_4_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_4_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_5_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_5_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_6_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_6_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_7_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_7_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_9_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_9_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_10_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_10_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_11_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_11_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_12_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_12_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_1_copy_11_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_13_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_list_14_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_2.Add(self.r1_time_1_4_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        self.panel_3_copy_2.SetSizer(grid_sizer_1_copy_2)
-        sizer_12_copy_2.Add(self.panel_3_copy_2, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_1_copy_2.SetSizer(sizer_12_copy_2)
-        sizer_11_copy_2.Add(self.panel_1_copy_2, 0, wx.EXPAND|wx.SHAPED, 0)
-        exec_relax_copy_1_copy_copy_2.Add(self.label_5_copy_1_copy_copy_2, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_copy_2.Add(self.relax_start_r1_1_copy_2, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_2.Add(exec_relax_copy_1_copy_copy_2, 0, wx.ALIGN_RIGHT, 0)
-        sizer_10_copy_2.Add(sizer_11_copy_2, 0, 0, 0)
-        self.r1_1_copy_1.SetSizer(sizer_10_copy_2)
-        sizer_10_copy_copy_1.Add(self.bitmap_1_copy_copy_copy_copy_1, 0, wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_copy_1.Add(self.label_4_copy_copy_copy_copy_1, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
-        nmr_freq_copy_copy_copy_1_copy_1.Add(self.label_2_copy_copy_copy_2_copy_copy_1_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_1_copy_1.Add(self.nmrfreq_value_r21_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_copy_1.Add(nmr_freq_copy_copy_copy_1_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        results_dir_copy_copy_copy_1_copy_1.Add(self.label_2_copy_copy_3_copy_copy_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_1.Add(self.resultsdir_r21_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_1_copy_1.Add(self.results_directory_r21_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_copy_1.Add(results_dir_copy_copy_copy_1_copy_1, 1, wx.EXPAND, 0)
-        results_dir_copy_copy_copy_copy_copy_1.Add(self.structure_file_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1.Add(self.structure_r21_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        results_dir_copy_copy_copy_copy_copy_1.Add(self.chan_struc_r21_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
-        sizer_11_copy_copy_1.Add(results_dir_copy_copy_copy_copy_copy_1, 1, wx.EXPAND, 0)
-        nmr_freq_copy_copy_copy_copy_copy_1.Add(self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        nmr_freq_copy_copy_copy_copy_copy_1.Add(self.unresolved_r21_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_copy_1.Add(nmr_freq_copy_copy_copy_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_11_copy_copy_1.Add(self.panel_2_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_13_copy_copy_1.Add(self.addr21_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_13_copy_copy_1.Add(self.refreshr21_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_12_copy_copy_1.Add(sizer_13_copy_copy_1, 1, wx.EXPAND, 0)
-        grid_sizer_1_copy_copy_1.Add(self.label_3_copy_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.label_6_copy_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_1_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_1_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_2_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_2_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_3_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_3_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_4_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_4_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_5_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_5_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_6_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_6_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_7_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_7_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_8_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_9_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_9_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_10_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_10_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_11_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_11_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_12_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_12_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_13_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_13_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_list_14_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1_copy_copy_1.Add(self.r2_time_14_copy_1, 0, wx.ADJUST_MINSIZE, 0)
-        self.panel_3_copy_copy_1.SetSizer(grid_sizer_1_copy_copy_1)
-        sizer_12_copy_copy_1.Add(self.panel_3_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_1_copy_copy_1.SetSizer(sizer_12_copy_copy_1)
-        sizer_11_copy_copy_1.Add(self.panel_1_copy_copy_1, 0, wx.EXPAND|wx.SHAPED, 0)
-        exec_relax_copy_1_copy_copy_copy_1.Add(self.label_5_copy_1_copy_copy_copy_1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy_copy_copy_1.Add(self.relax_start_r1_1_copy_copy_1, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        sizer_11_copy_copy_1.Add(exec_relax_copy_1_copy_copy_copy_1, 0, wx.ALIGN_RIGHT, 0)
-        sizer_10_copy_copy_1.Add(sizer_11_copy_copy_1, 0, 0, 0)
-        self.r2_1_copy_1.SetSizer(sizer_10_copy_copy_1)
+
         self.notebook_3_copy_1.AddPage(self.noe1_copy_1, "steady-state NOE")
         self.notebook_3_copy_1.AddPage(self.analysis_frames[self.hardcoded_index_r1_3].parent, "R1 relaxation")
         self.notebook_3_copy_1.AddPage(self.analysis_frames[self.hardcoded_index_r2_3].parent, "R2 relaxation")
@@ -1108,6 +526,7 @@ class Main(wx.Frame):
         frame_1_statusbar_fields = ["relaxGUI (C) by Michael Bieri 2009", "relax:", version]
         for i in range(len(frame_1_statusbar_fields)):
             self.frame_1_statusbar.SetStatusText(frame_1_statusbar_fields[i], i)
+
         self.label_4_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.label_2_copy_copy_copy_3.SetMinSize((230, 17))
         self.nmrfreq_value_noe1.SetMinSize((350, 27))
@@ -1132,43 +551,7 @@ class Main(wx.Frame):
         self.label_5_copy_1.SetMinSize((118, 17))
         self.relax_start_noe1.SetName('hello')
         self.relax_start_noe1.SetSize(self.relax_start_noe1.GetBestSize())
-        self.label_4_copy_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_1.SetMinSize((230, 17))
-        self.nmrfreq_value_r21.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy.SetMinSize((230, 17))
-        self.resultsdir_r21.SetMinSize((350, 27))
-        self.results_directory_r21.SetMinSize((103, 27))
-        self.structure_file_copy.SetMinSize((230, 17))
-        self.structure_r21.SetMinSize((350, 27))
-        self.chan_struc_r21.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy.SetMinSize((230, 17))
-        self.unresolved_r21.SetMinSize((350, 27))
-        self.panel_2_copy.SetMinSize((688, 5))
-        self.addr21.SetMinSize((60, 27))
-        self.refreshr21.SetMinSize((60, 27))
-        self.label_3_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r2_time_1.SetMinSize((80, 20))
-        self.r2_time_2.SetMinSize((80, 20))
-        self.r2_time_3.SetMinSize((80, 20))
-        self.r2_time_4.SetMinSize((80, 20))
-        self.r2_time_5.SetMinSize((80, 20))
-        self.r2_time_6.SetMinSize((80, 20))
-        self.r2_time_7.SetMinSize((80, 20))
-        self.r2_time_8.SetMinSize((80, 20))
-        self.r2_time_9.SetMinSize((80, 20))
-        self.r2_time_10.SetMinSize((80, 20))
-        self.r2_time_11.SetMinSize((80, 20))
-        self.r2_time_12.SetMinSize((80, 20))
-        self.r2_time_13.SetMinSize((80, 20))
-        self.r2_time_14.SetMinSize((80, 20))
-        self.panel_3_copy.SetMinSize((620, 300))
-        self.panel_3_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy.SetMinSize((688, 300))
-        self.panel_1_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy.SetName('hello')
-        self.relax_start_r1_1_copy.SetSize(self.relax_start_r1_1_copy.GetBestSize())
+
         self.label_4_copy_1_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.label_2_copy_copy_copy_3_copy.SetMinSize((230, 17))
         self.nmrfreq_value_noe1_copy.SetMinSize((350, 27))
@@ -1193,80 +576,7 @@ class Main(wx.Frame):
         self.label_5_copy_1_copy_1.SetMinSize((118, 17))
         self.relax_start_noe1_copy.SetName('hello')
         self.relax_start_noe1_copy.SetSize(self.relax_start_noe1_copy.GetBestSize())
-        self.label_4_copy_copy_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_2.SetMinSize((230, 17))
-        self.nmrfreq_value_r11_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_1.SetMinSize((230, 17))
-        self.resultsdir_r11_copy.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_1.SetMinSize((103, 27))
-        self.structure_file_copy_1.SetMinSize((230, 17))
-        self.structure_r11_copy.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_1.SetMinSize((230, 17))
-        self.unresolved_r11_copy.SetMinSize((350, 27))
-        self.panel_2_copy_1.SetMinSize((688, 5))
-        self.addr11_copy.SetMinSize((60, 27))
-        self.refreshr11_copy.SetMinSize((60, 27))
-        self.label_3_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r1_time_1_copy.SetMinSize((80, 20))
-        self.r1_time_2_copy.SetMinSize((80, 20))
-        self.r1_time_3_copy.SetMinSize((80, 20))
-        self.r1_time_4_copy.SetMinSize((80, 20))
-        self.r1_time_5_copy.SetMinSize((80, 20))
-        self.r1_time_6_copy.SetMinSize((80, 20))
-        self.r1_time_7_copy.SetMinSize((80, 20))
-        self.r1_time_8_copy.SetMinSize((80, 20))
-        self.r1_time_9_copy.SetMinSize((80, 20))
-        self.r1_time_10_copy.SetMinSize((80, 20))
-        self.r1_time_11_copy.SetMinSize((80, 20))
-        self.r1_time_12_copy.SetMinSize((80, 20))
-        self.r1_time_13_copy.SetMinSize((80, 20))
-        self.r1_time_1_4_copy.SetMinSize((80, 20))
-        self.panel_3_copy_1.SetMinSize((620, 300))
-        self.panel_3_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_1.SetMinSize((688, 300))
-        self.panel_1_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_1.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_1.SetName('hello')
-        self.relax_start_r1_1_copy_1.SetSize(self.relax_start_r1_1_copy_1.GetBestSize())
-        self.label_4_copy_copy_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_1_copy.SetMinSize((230, 17))
-        self.nmrfreq_value_r21_copy.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy.SetMinSize((230, 17))
-        self.resultsdir_r21_copy.SetMinSize((350, 27))
-        self.results_directory_r21_copy.SetMinSize((103, 27))
-        self.structure_file_copy_copy.SetMinSize((230, 17))
-        self.structure_r21_copy.SetMinSize((350, 27))
-        self.chan_struc_r21_copy.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy.SetMinSize((230, 17))
-        self.unresolved_r21_copy.SetMinSize((350, 27))
-        self.panel_2_copy_copy.SetMinSize((688, 5))
-        self.addr21_copy.SetMinSize((60, 27))
-        self.refreshr21_copy.SetMinSize((60, 27))
-        self.label_3_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_copy.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r2_time_1_copy.SetMinSize((80, 20))
-        self.r2_time_2_copy.SetMinSize((80, 20))
-        self.r2_time_3_copy.SetMinSize((80, 20))
-        self.r2_time_4_copy.SetMinSize((80, 20))
-        self.r2_time_5_copy.SetMinSize((80, 20))
-        self.r2_time_6_copy.SetMinSize((80, 20))
-        self.r2_time_7_copy.SetMinSize((80, 20))
-        self.r2_time_8_copy.SetMinSize((80, 20))
-        self.r2_time_9_copy.SetMinSize((80, 20))
-        self.r2_time_10_copy.SetMinSize((80, 20))
-        self.r2_time_11_copy.SetMinSize((80, 20))
-        self.r2_time_12_copy.SetMinSize((80, 20))
-        self.r2_time_13_copy.SetMinSize((80, 20))
-        self.r2_time_14_copy.SetMinSize((80, 20))
-        self.panel_3_copy_copy.SetMinSize((620, 300))
-        self.panel_3_copy_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_copy.SetMinSize((688, 300))
-        self.panel_1_copy_copy.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_copy.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_copy.SetName('hello')
-        self.relax_start_r1_1_copy_copy.SetSize(self.relax_start_r1_1_copy_copy.GetBestSize())
+
         self.label_4_copy_1_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.label_2_copy_copy_copy_3_copy_1.SetMinSize((230, 17))
         self.nmrfreq_value_noe1_copy_1.SetMinSize((350, 27))
@@ -1291,80 +601,6 @@ class Main(wx.Frame):
         self.label_5_copy_1_copy_2.SetMinSize((118, 17))
         self.relax_start_noe1_copy_1.SetName('hello')
         self.relax_start_noe1_copy_1.SetSize(self.relax_start_noe1_copy_1.GetBestSize())
-        self.label_4_copy_copy_copy_2.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_3.SetMinSize((230, 17))
-        self.nmrfreq_value_r11_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_2.SetMinSize((230, 17))
-        self.resultsdir_r11_copy_1.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_2.SetMinSize((103, 27))
-        self.structure_file_copy_2.SetMinSize((230, 17))
-        self.structure_r11_copy_1.SetMinSize((350, 27))
-        self.results_directory_copy_copy_copy_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_2.SetMinSize((230, 17))
-        self.unresolved_r11_copy_1.SetMinSize((350, 27))
-        self.panel_2_copy_2.SetMinSize((688, 5))
-        self.addr11_copy_1.SetMinSize((60, 27))
-        self.refreshr11_copy_1.SetMinSize((60, 27))
-        self.label_3_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_2.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r1_time_1_copy_1.SetMinSize((80, 20))
-        self.r1_time_2_copy_1.SetMinSize((80, 20))
-        self.r1_time_3_copy_1.SetMinSize((80, 20))
-        self.r1_time_4_copy_1.SetMinSize((80, 20))
-        self.r1_time_5_copy_1.SetMinSize((80, 20))
-        self.r1_time_6_copy_1.SetMinSize((80, 20))
-        self.r1_time_7_copy_1.SetMinSize((80, 20))
-        self.r1_time_8_copy_1.SetMinSize((80, 20))
-        self.r1_time_9_copy_1.SetMinSize((80, 20))
-        self.r1_time_10_copy_1.SetMinSize((80, 20))
-        self.r1_time_11_copy_1.SetMinSize((80, 20))
-        self.r1_time_12_copy_1.SetMinSize((80, 20))
-        self.r1_time_13_copy_1.SetMinSize((80, 20))
-        self.r1_time_1_4_copy_1.SetMinSize((80, 20))
-        self.panel_3_copy_2.SetMinSize((620, 300))
-        self.panel_3_copy_2.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_2.SetMinSize((688, 300))
-        self.panel_1_copy_2.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_2.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_2.SetName('hello')
-        self.relax_start_r1_1_copy_2.SetSize(self.relax_start_r1_1_copy_2.GetBestSize())
-        self.label_4_copy_copy_copy_copy_1.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.label_2_copy_copy_copy_2_copy_copy_1_copy_1.SetMinSize((230, 17))
-        self.nmrfreq_value_r21_copy_1.SetMinSize((350, 27))
-        self.label_2_copy_copy_3_copy_copy_copy_copy_1.SetMinSize((230, 17))
-        self.resultsdir_r21_copy_1.SetMinSize((350, 27))
-        self.results_directory_r21_copy_1.SetMinSize((103, 27))
-        self.structure_file_copy_copy_1.SetMinSize((230, 17))
-        self.structure_r21_copy_1.SetMinSize((350, 27))
-        self.chan_struc_r21_copy_1.SetMinSize((103, 27))
-        self.label_2_copy_copy_copy_2_copy_copy_copy_copy_1.SetMinSize((230, 17))
-        self.unresolved_r21_copy_1.SetMinSize((350, 27))
-        self.panel_2_copy_copy_1.SetMinSize((688, 5))
-        self.addr21_copy_1.SetMinSize((60, 27))
-        self.refreshr21_copy_1.SetMinSize((60, 27))
-        self.label_3_copy_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6_copy_copy_1.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r2_time_1_copy_1.SetMinSize((80, 20))
-        self.r2_time_2_copy_1.SetMinSize((80, 20))
-        self.r2_time_3_copy_1.SetMinSize((80, 20))
-        self.r2_time_4_copy_1.SetMinSize((80, 20))
-        self.r2_time_5_copy_1.SetMinSize((80, 20))
-        self.r2_time_6_copy_1.SetMinSize((80, 20))
-        self.r2_time_7_copy_1.SetMinSize((80, 20))
-        self.r2_time_8_copy_1.SetMinSize((80, 20))
-        self.r2_time_9_copy_1.SetMinSize((80, 20))
-        self.r2_time_10_copy_1.SetMinSize((80, 20))
-        self.r2_time_11_copy_1.SetMinSize((80, 20))
-        self.r2_time_12_copy_1.SetMinSize((80, 20))
-        self.r2_time_13_copy_1.SetMinSize((80, 20))
-        self.r2_time_14_copy_1.SetMinSize((80, 20))
-        self.panel_3_copy_copy_1.SetMinSize((620, 300))
-        self.panel_3_copy_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1_copy_copy_1.SetMinSize((688, 300))
-        self.panel_1_copy_copy_1.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.label_5_copy_1_copy_copy_copy_1.SetMinSize((118, 17))
-        self.relax_start_r1_1_copy_copy_1.SetName('hello')
-        self.relax_start_r1_1_copy_copy_1.SetSize(self.relax_start_r1_1_copy_copy_1.GetBestSize())
 
 
     def aboutGUI(self, event): # About
@@ -1377,246 +613,15 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def add_r1_1(self, event): # add a r1 peak list
-
-        if len(r1_list) < 14:
-            r1_entry = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-            if not r1_entry == None:
-                r1_list.append(r1_entry)
-
-        if len(r1_list) >= 1:
-            self.r1_list_1.SetLabel(r1_list[0])
-        if len(r1_list) >= 2:
-            self.r1_list_2.SetLabel(r1_list[1])
-        if len(r1_list) >= 3:
-            self.r1_list_3.SetLabel(r1_list[2])
-        if len(r1_list) >= 4:
-            self.r1_list_4.SetLabel(r1_list[3])
-        if len(r1_list) >= 5:
-            self.r1_list_5.SetLabel(r1_list[4])
-        if len(r1_list) >= 6:
-            self.r1_list_6.SetLabel(r1_list[5])
-        if len(r1_list) >= 7:
-            self.r1_list_7.SetLabel(r1_list[6])
-        if len(r1_list) >= 8:
-            self.r1_list_8.SetLabel(r1_list[7])
-        if len(r1_list) >= 9:
-            self.r1_list_9.SetLabel(r1_list[8])
-        if len(r1_list) >= 10:
-            self.r1_list_10.SetLabel(r1_list[9])
-        if len(r1_list) >= 11:
-            self.r1_list_11.SetLabel(r1_list[10])
-        if len(r1_list) >= 12:
-            self.r1_list_12.SetLabel(r1_list[11])
-        if len(r1_list) >= 13:
-            self.r1_list_1_copy_11.SetLabel(r1_list[12])
-        if len(r1_list) >= 14:
-            self.r1_list_14.SetLabel(r1_list[13])
-        event.Skip()
-
-
-    def add_r1_2(self, event): # wxGlade: main.<event_handler>
-        if len(r1_list2) < 14:
-            r1_entry2 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-            if not r1_entry2 == None:
-                for i in range(0, (len(r1_entry2))):
-                    r1_list2.append(str(r1_entry2[i]))
-        if len(r1_list2) >= 1:
-            self.r1_list_1_copy.SetLabel(r1_list2[0])
-        if len(r1_list2) >= 2:
-            self.r1_list_2_copy.SetLabel(r1_list2[1])
-        if len(r1_list2) >= 3:
-            self.r1_list_3_copy.SetLabel(r1_list2[2])
-        if len(r1_list2) >= 4:
-            self.r1_list_4_copy.SetLabel(r1_list2[3])
-        if len(r1_list2) >= 5:
-            self.r1_list_5_copy.SetLabel(r1_list2[4])
-        if len(r1_list2) >= 6:
-            self.r1_list_6_copy.SetLabel(r1_list2[5])
-        if len(r1_list2) >= 7:
-            self.r1_list_7_copy.SetLabel(r1_list2[6])
-        if len(r1_list2) >= 8:
-            self.r1_list_8_copy.SetLabel(r1_list2[7])
-        if len(r1_list2) >= 9:
-            self.r1_list_9_copy.SetLabel(r1_list2[8])
-        if len(r1_list2) >= 10:
-            self.r1_list_10_copy.SetLabel(r1_list2[9])
-        if len(r1_list2) >= 11:
-            self.r1_list_11_copy.SetLabel(r1_list2[10])
-        if len(r1_list2) >= 12:
-            self.r1_list_12_copy.SetLabel(r1_list2[11])
-        if len(r1_list2) >= 13:
-            self.r1_list_1_copy_11_copy.SetLabel(r1_list2[12])
-        if len(r1_list2) >= 14:
-            self.r1_list_14_copy.SetLabel(r1_list2[13])
-        event.Skip()
-
-
-    def add_r1_3(self, event): # add file
-        if len(r1_list3) < 14:
-            r1_entry3 = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
-            if not r1_entry3 == None:
-                for i in range(0, (len(r1_entry3))):
-                    r1_list3.append(str(r1_entry3[i]))
-
-        if len(r1_list3) >= 1:
-            self.r1_list_1_copy_1.SetLabel(r1_list3[0])
-        if len(r1_list3) >= 2:
-            self.r1_list_2_copy_1.SetLabel(r1_list3[1])
-        if len(r1_list3) >= 3:
-            self.r1_list_3_copy_1.SetLabel(r1_list3[2])
-        if len(r1_list3) >= 4:
-            self.r1_list_4_copy_1.SetLabel(r1_list3[3])
-        if len(r1_list3) >= 5:
-            self.r1_list_5_copy_1.SetLabel(r1_list3[4])
-        if len(r1_list3) >= 6:
-            self.r1_list_6_copy_1.SetLabel(r1_list3[5])
-        if len(r1_list3) >= 7:
-            self.r1_list_7_copy_1.SetLabel(r1_list3[6])
-        if len(r1_list3) >= 8:
-            self.r1_list_8_copy_1.SetLabel(r1_list3[7])
-        if len(r1_list3) >= 9:
-            self.r1_list_9_copy_1.SetLabel(r1_list3[8])
-        if len(r1_list3) >= 10:
-            self.r1_list_10_copy_1.SetLabel(r1_list3[9])
-        if len(r1_list3) >= 11:
-            self.r1_list_11_copy_1.SetLabel(r1_list3[10])
-        if len(r1_list3) >= 12:
-            self.r1_list_12_copy_1.SetLabel(r1_list3[11])
-        if len(r1_list3) >= 13:
-            self.r1_list_1_copy_11_copy_1.SetLabel(r1_list3[12])
-        if len(r1_list3) >= 14:
-            self.r1_list_14_copy_1.SetLabel(r1_list3[13])
-        event.Skip()
-
-
-    def add_r2_1(self, event): # add a r2 peak list
-        if len(r2_list) < 14:
-            r2_entry = multi_openfile('Select R2 peak list file', self.resultsdir_r21.GetValue(), '*.*', 'all files (*.*)|*.*')
-            if not r2_entry == None:
-                for i in range(0, (len(r2_entry))):
-                    r2_list.append(str(r2_entry[i]))
-        if len(r2_list) >= 1:
-            self.r2_list_1.SetLabel(r2_list[0])
-        if len(r2_list) >= 2:
-            self.r2_list_2.SetLabel(r2_list[1])
-        if len(r2_list) >= 3:
-            self.r2_list_3.SetLabel(r2_list[2])
-        if len(r2_list) >= 4:
-            self.r2_list_4.SetLabel(r2_list[3])
-        if len(r2_list) >= 5:
-            self.r2_list_5.SetLabel(r2_list[4])
-        if len(r2_list) >= 6:
-            self.r2_list_6.SetLabel(r2_list[5])
-        if len(r2_list) >= 7:
-            self.r2_list_7.SetLabel(r2_list[6])
-        if len(r2_list) >= 8:
-            self.r2_list_8.SetLabel(r2_list[7])
-        if len(r2_list) >= 9:
-            self.r2_list_9.SetLabel(r2_list[8])
-        if len(r2_list) >= 10:
-            self.r2_list_10.SetLabel(r2_list[9])
-        if len(r2_list) >= 11:
-            self.r2_list_11.SetLabel(r2_list[10])
-        if len(r2_list) >= 12:
-            self.r2_list_12.SetLabel(r2_list[11])
-        if len(r2_list) >= 13:
-            self.r2_list_13.SetLabel(r2_list[12])
-        if len(r2_list) >= 14:
-            self.r2_list_14.SetLabel(r2_list[13])
-        event.Skip()
-
-
-    def add_r2_2(self, event): # add a r2 peak list
-        if len(r2_list2) < 14:
-            r2_entry2 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-            if not r2_entry2 == None:
-                for i in range(0, (len(r2_entry2))):
-                    r2_list2.append(str(r2_entry2[i]))
-        if len(r2_list2) >= 1:
-            self.r2_list_1_copy.SetLabel(r2_list2[0])
-        if len(r2_list2) >= 2:
-            self.r2_list_2_copy.SetLabel(r2_list2[1])
-        if len(r2_list2) >= 3:
-            self.r2_list_3_copy.SetLabel(r2_list2[2])
-        if len(r2_list2) >= 4:
-            self.r2_list_4_copy.SetLabel(r2_list2[3])
-        if len(r2_list2) >= 5:
-            self.r2_list_5_copy.SetLabel(r2_list2[4])
-        if len(r2_list2) >= 6:
-            self.r2_list_6_copy.SetLabel(r2_list2[5])
-        if len(r2_list2) >= 7:
-            self.r2_list_7_copy.SetLabel(r2_list2[6])
-        if len(r2_list2) >= 8:
-            self.r2_list_8_copy.SetLabel(r2_list2[7])
-        if len(r2_list2) >= 9:
-            self.r2_list_9_copy.SetLabel(r2_list2[8])
-        if len(r2_list2) >= 10:
-            self.r2_list_10_copy.SetLabel(r2_list2[9])
-        if len(r2_list2) >= 11:
-            self.r2_list_11_copy.SetLabel(r2_list2[10])
-        if len(r2_list2) >= 12:
-            self.r2_list_12_copy.SetLabel(r2_list2[11])
-        if len(r2_list2) >= 13:
-            self.r2_list_13_copy.SetLabel(r2_list2[12])
-        if len(r2_list2) >= 14:
-            self.r2_list_14_copy.SetLabel(r2_list2[13])
-        event.Skip()
-
-
-    def add_r2_3(self, event): # add R2 peakfile no. 3
-        if len(r2_list3) < 14:
-            r2_entry3 = multi_openfile('Select R2 peak list file', self.resultsdir_r21_copy_1.GetValue(), '*.*', 'all files (*.*)|*.*')
-            if not r2_entry3 == None:
-                for i in range(0, (len(r2_entry3))):
-                    r2_list3.append(str(r2_entry3[i]))
-        if len(r2_list3) >= 1:
-            self.r2_list_1_copy_1.SetLabel(r2_list3[0])
-        if len(r2_list3) >= 2:
-            self.r2_list_2_copy_1.SetLabel(r2_list3[1])
-        if len(r2_list3) >= 3:
-            self.r2_list_3_copy_1.SetLabel(r2_list3[2])
-        if len(r2_list3) >= 4:
-            self.r2_list_4_copy_1.SetLabel(r2_list3[3])
-        if len(r2_list3) >= 5:
-            self.r2_list_5_copy_1.SetLabel(r2_list3[4])
-        if len(r2_list3) >= 6:
-            self.r2_list_6_copy_1.SetLabel(r2_list3[5])
-        if len(r2_list3) >= 7:
-            self.r2_list_7_copy_1.SetLabel(r2_list3[6])
-        if len(r2_list3) >= 8:
-            self.r2_list_8_copy_1.SetLabel(r2_list3[7])
-        if len(r2_list3) >= 9:
-            self.r2_list_9_copy_1.SetLabel(r2_list3[8])
-        if len(r2_list3) >= 10:
-            self.r2_list_10_copy_1.SetLabel(r2_list3[9])
-        if len(r2_list3) >= 11:
-            self.r2_list_11_copy_1.SetLabel(r2_list3[10])
-        if len(r2_list3) >= 12:
-            self.r2_list_12_copy_1.SetLabel(r2_list3[11])
-        if len(r2_list3) >= 13:
-            self.r2_list_13_copy_1.SetLabel(r2_list3[12])
-        if len(r2_list3) >= 14:
-            self.r2_list_14_copy_1.SetLabel(r2_list3[13])
-        event.Skip()
-
-
     def build_main_window(self):
         """Construct the main relax GUI window."""
 
         self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
         self.results = wx.Panel(self.notebook_2, -1)
-        self.frq3 = wx.Panel(self.notebook_2, -1)
 
         # The 5th notebook (freq 3).
+        self.frq3 = wx.Panel(self.notebook_2, -1)
         self.notebook_3_copy_1 = wx.Notebook(self.frq3, -1, style=0)
-        self.r2_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
-        self.panel_1_copy_copy_1 = wx.Panel(self.r2_1_copy_1, -1)
-        self.panel_3_copy_copy_1 = wx.Panel(self.panel_1_copy_copy_1, -1)
-        self.r1_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
-        self.panel_1_copy_2 = wx.Panel(self.r1_1_copy_1, -1)
-        self.panel_3_copy_2 = wx.Panel(self.panel_1_copy_2, -1)
-        self.frq2 = wx.Panel(self.notebook_2, -1)
 
         # The automatic relaxation data analysis frames.
         self.analysis_frames[self.hardcoded_index_r1_3] = Auto_r1(self, self.notebook_3_copy_1, hardcoded_index=self.r1_index[2])
@@ -1624,14 +629,8 @@ class Main(wx.Frame):
         self.noe1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
 
         # The 4th notebook (freq 2).
+        self.frq2 = wx.Panel(self.notebook_2, -1)
         self.notebook_3_copy = wx.Notebook(self.frq2, -1, style=0)
-        self.r2_1_copy = wx.Panel(self.notebook_3_copy, -1)
-        self.panel_1_copy_copy = wx.Panel(self.r2_1_copy, -1)
-        self.panel_3_copy_copy = wx.Panel(self.panel_1_copy_copy, -1)
-        self.r1_1_copy = wx.Panel(self.notebook_3_copy, -1)
-        self.panel_1_copy_1 = wx.Panel(self.r1_1_copy, -1)
-        self.panel_3_copy_1 = wx.Panel(self.panel_1_copy_1, -1)
-        self.frq1 = wx.Panel(self.notebook_2, -1)
 
         # The automatic relaxation data analysis frames.
         self.analysis_frames[self.hardcoded_index_r1_2] = Auto_r1(self, self.notebook_3_copy, hardcoded_index=self.r1_index[1])
@@ -1639,11 +638,8 @@ class Main(wx.Frame):
         self.noe1_copy = wx.Panel(self.notebook_3_copy, -1)
 
         # The 3rd notebook (freq 1).
+        self.frq1 = wx.Panel(self.notebook_2, -1)
         self.notebook_3 = wx.Notebook(self.frq1, -1, style=0)
-
-        self.r2_1 = wx.Panel(self.notebook_3, -1)
-        self.panel_1_copy = wx.Panel(self.r2_1, -1)
-        self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
 
         # The automatic relaxation data analysis frames.
         self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3, hardcoded_index=self.r1_index[0])
@@ -1773,125 +769,6 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def exec_r1_2(self, event): # execute r1 calculation no. 2
-        relax_times_r1_2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-
-        relax_times_r1_2[0] = str(self.r1_time_1_copy.GetValue())
-        relax_times_r1_2[1] = str(self.r1_time_2_copy.GetValue())
-        relax_times_r1_2[2] = str(self.r1_time_3_copy.GetValue())
-        relax_times_r1_2[3] = str(self.r1_time_4_copy.GetValue())
-        relax_times_r1_2[4] = str(self.r1_time_5_copy.GetValue())
-        relax_times_r1_2[5] = str(self.r1_time_6_copy.GetValue())
-        relax_times_r1_2[6] = str(self.r1_time_7_copy.GetValue())
-        relax_times_r1_2[7] = str(self.r1_time_8_copy.GetValue())
-        relax_times_r1_2[8] = str(self.r1_time_9_copy.GetValue())
-        relax_times_r1_2[9] = str(self.r1_time_10_copy.GetValue())
-        relax_times_r1_2[10] = str(self.r1_time_11_copy.GetValue())
-        relax_times_r1_2[11] = str(self.r1_time_12_copy.GetValue())
-        relax_times_r1_2[12] = str(self.r1_time_13_copy.GetValue())
-        relax_times_r1_2[13] = str(self.r1_time_1_4_copy.GetValue())
-
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_rx(self.resultsdir_r11_copy.GetValue(), r1_list2, relax_times_r1_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 1, 2, self.unresolved_r11_copy.GetValue(), self, 2, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
-    def exec_r1_3(self, event): # wxGlade: main.<event_handler>
-        relax_times_r1_3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r1_3[0] = str(self.r1_time_1_copy_1.GetValue())
-        relax_times_r1_3[1] = str(self.r1_time_2_copy_1.GetValue())
-        relax_times_r1_3[2] = str(self.r1_time_3_copy_1.GetValue())
-        relax_times_r1_3[3] = str(self.r1_time_4_copy_1.GetValue())
-        relax_times_r1_3[4] = str(self.r1_time_5_copy_1.GetValue())
-        relax_times_r1_3[5] = str(self.r1_time_6_copy_1.GetValue())
-        relax_times_r1_3[6] = str(self.r1_time_7_copy_1.GetValue())
-        relax_times_r1_3[7] = str(self.r1_time_8_copy_1.GetValue())
-        relax_times_r1_3[8] = str(self.r1_time_9_copy_1.GetValue())
-        relax_times_r1_3[9] = str(self.r1_time_10_copy_1.GetValue())
-        relax_times_r1_3[10] = str(self.r1_time_11_copy_1.GetValue())
-        relax_times_r1_3[11] = str(self.r1_time_12_copy_1.GetValue())
-        relax_times_r1_3[12] = str(self.r1_time_13_copy_1.GetValue())
-        relax_times_r1_3[13] = str(self.r1_time_1_4_copy_1.GetValue())
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_rx(self.resultsdir_r11_copy_1.GetValue(), r1_list3, relax_times_r1_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 1, 3, self.unresolved_r11_copy_1.GetValue(), self, 3, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
-    def exec_r2_1(self, event): # start r1 calculation no. 1
-        relax_times_r1_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r1_1[0] = str(self.r1_time_1.GetValue())
-        relax_times_r1_1[1] = str(self.r1_time_2.GetValue())
-        relax_times_r1_1[2] = str(self.r1_time_3.GetValue())
-        relax_times_r1_1[3] = str(self.r1_time_4.GetValue())
-        relax_times_r1_1[4] = str(self.r1_time_5.GetValue())
-        relax_times_r1_1[5] = str(self.r1_time_6.GetValue())
-        relax_times_r1_1[6] = str(self.r1_time_7.GetValue())
-        relax_times_r1_1[7] = str(self.r1_time_8.GetValue())
-        relax_times_r1_1[8] = str(self.r1_time_9.GetValue())
-        relax_times_r1_1[9] = str(self.r1_time_10.GetValue())
-        relax_times_r1_1[10] = str(self.r1_time_11.GetValue())
-        relax_times_r1_1[11] = str(self.r1_time_12.GetValue())
-        relax_times_r1_1[12] = str(self.r1_time_13.GetValue())
-        relax_times_r1_1[13] = str(self.r1_time_1_4.GetValue())
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_rx(self.resultsdir_r11.GetValue(), r1_list, relax_times_r1_1, self.structure_r11.GetValue(), self.nmrfreq_value_r11.GetValue(), 1, 1, self.unresolved_r11.GetValue(), self, 1, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
-    def exec_r2_2(self, event): # wxGlade: main.<event_handler>
-        relax_times_r2_2 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r2_2[0] = str(self.r2_time_1_copy.GetValue())
-        relax_times_r2_2[1] = str(self.r2_time_2_copy.GetValue())
-        relax_times_r2_2[2] = str(self.r2_time_3_copy.GetValue())
-        relax_times_r2_2[3] = str(self.r2_time_4_copy.GetValue())
-        relax_times_r2_2[4] = str(self.r2_time_5_copy.GetValue())
-        relax_times_r2_2[5] = str(self.r2_time_6_copy.GetValue())
-        relax_times_r2_2[6] = str(self.r2_time_7_copy.GetValue())
-        relax_times_r2_2[7] = str(self.r2_time_8_copy.GetValue())
-        relax_times_r2_2[8] = str(self.r2_time_9_copy.GetValue())
-        relax_times_r2_2[9] = str(self.r2_time_10_copy.GetValue())
-        relax_times_r2_2[10] = str(self.r2_time_11_copy.GetValue())
-        relax_times_r2_2[11] = str(self.r2_time_12_copy.GetValue())
-        relax_times_r2_2[12] = str(self.r2_time_13_copy.GetValue())
-        relax_times_r2_2[13] = str(self.r2_time_14_copy.GetValue())
-
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_rx(self.resultsdir_r21_copy.GetValue(), r2_list2, relax_times_r2_2, self.structure_r11_copy.GetValue(), self.nmrfreq_value_r11_copy.GetValue(), 2, 2, self.unresolved_r11_copy.GetValue(), self, 2, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
-    def exec_r2_3(self, event): # wxGlade: main.<event_handler>
-        relax_times_r2_3 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r2_3[0] = str(self.r2_time_1_copy_1.GetValue())
-        relax_times_r2_3[1] = str(self.r2_time_2_copy_1.GetValue())
-        relax_times_r2_3[2] = str(self.r2_time_3_copy_1.GetValue())
-        relax_times_r2_3[3] = str(self.r2_time_4_copy_1.GetValue())
-        relax_times_r2_3[4] = str(self.r2_time_5_copy_1.GetValue())
-        relax_times_r2_3[5] = str(self.r2_time_6_copy_1.GetValue())
-        relax_times_r2_3[6] = str(self.r2_time_7_copy_1.GetValue())
-        relax_times_r2_3[7] = str(self.r2_time_8_copy_1.GetValue())
-        relax_times_r2_3[8] = str(self.r2_time_9_copy_1.GetValue())
-        relax_times_r2_3[9] = str(self.r2_time_10_copy_1.GetValue())
-        relax_times_r2_3[10] = str(self.r2_time_11_copy_1.GetValue())
-        relax_times_r2_3[11] = str(self.r2_time_12_copy_1.GetValue())
-        relax_times_r2_3[12] = str(self.r2_time_13_copy_1.GetValue())
-        relax_times_r2_3[13] = str(self.r2_time_14_copy_1.GetValue())
-
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_rx(self.resultsdir_r21_copy_1.GetValue(), r2_list3, relax_times_r2_3, self.structure_r11_copy_1.GetValue(), self.nmrfreq_value_r11_copy_1.GetValue(), 2, 3, self.unresolved_r11_copy_1.GetValue(), self, 3, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
     def exitGUI(self, event): # Exit
         doexit = question('Do you wand to quit relaxGUI?')
         if doexit == True:
@@ -1917,14 +794,8 @@ class Main(wx.Frame):
             # set entries in pdb text box
             structure_file_pdb = '!!! Sequence file selected !!!'
             self.structure_noe1.SetValue(structure_file_pdb)
-            self.structure_r11.SetValue(structure_file_pdb)
-            self.structure_r21.SetValue(structure_file_pdb)
             self.structure_noe1_copy.SetValue(structure_file_pdb)
-            self.structure_r11_copy.SetValue(structure_file_pdb)
-            self.structure_r21_copy.SetValue(structure_file_pdb)
             self.structure_noe1_copy_1.SetValue(structure_file_pdb)
-            self.structure_r11_copy_1.SetValue(structure_file_pdb)
-            self.structure_r21_copy_1.SetValue(structure_file_pdb)
         event.Skip()
 
 
@@ -2127,120 +998,6 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def refresh_r1_1(self, event): # refresh r1 list no. 1
-        self.r1_list_1.SetLabel('')
-        self.r1_list_2.SetLabel('')
-        self.r1_list_3.SetLabel('')
-        self.r1_list_4.SetLabel('')
-        self.r1_list_5.SetLabel('')
-        self.r1_list_6.SetLabel('')
-        self.r1_list_7.SetLabel('')
-        self.r1_list_8.SetLabel('')
-        self.r1_list_9.SetLabel('')
-        self.r1_list_10.SetLabel('')
-        self.r1_list_11.SetLabel('')
-        self.r1_list_12.SetLabel('')
-        self.r1_list_1_copy_11.SetLabel('')
-        self.r1_list_14.SetLabel('')
-        del r1_list[0:len(r1_list)]
-        event.Skip()
-
-
-    def refresh_r1_2(self, event): # refresh R1 no. 2
-        self.r1_list_1_copy.SetLabel('')
-        self.r1_list_2_copy.SetLabel('')
-        self.r1_list_3_copy.SetLabel('')
-        self.r1_list_4_copy.SetLabel('')
-        self.r1_list_5_copy.SetLabel('')
-        self.r1_list_6_copy.SetLabel('')
-        self.r1_list_7_copy.SetLabel('')
-        self.r1_list_8_copy.SetLabel('')
-        self.r1_list_9_copy.SetLabel('')
-        self.r1_list_10_copy.SetLabel('')
-        self.r1_list_11_copy.SetLabel('')
-        self.r1_list_12_copy.SetLabel('')
-        self.r1_list_1_copy_11_copy.SetLabel('')
-        self.r1_list_14_copy.SetLabel('')
-        del r1_list2[0:len(r1_list2)]
-        event.Skip()
-
-
-    def refresh_r1_3(self, event): # wxGlade: main.<event_handler>
-        self.r1_list_1_copy_1.SetLabel('')
-        self.r1_list_2_copy_1.SetLabel('')
-        self.r1_list_3_copy_1.SetLabel('')
-        self.r1_list_4_copy_1.SetLabel('')
-        self.r1_list_5_copy_1.SetLabel('')
-        self.r1_list_6_copy_1.SetLabel('')
-        self.r1_list_7_copy_1.SetLabel('')
-        self.r1_list_8_copy_1.SetLabel('')
-        self.r1_list_9_copy_1.SetLabel('')
-        self.r1_list_10_copy_1.SetLabel('')
-        self.r1_list_11_copy_1.SetLabel('')
-        self.r1_list_12_copy_1.SetLabel('')
-        self.r1_list_1_copy_11_copy_1.SetLabel('')
-        self.r1_list_14_copy_1.SetLabel('')
-        del r1_list3[0:len(r1_list3)]
-        event.Skip()
-
-
-    def refresh_r2_1(self, event): # refresh r2 list no. 1
-        self.r2_list_1.SetLabel('')
-        self.r2_list_2.SetLabel('')
-        self.r2_list_3.SetLabel('')
-        self.r2_list_4.SetLabel('')
-        self.r2_list_5.SetLabel('')
-        self.r2_list_6.SetLabel('')
-        self.r2_list_7.SetLabel('')
-        self.r2_list_8.SetLabel('')
-        self.r2_list_9.SetLabel('')
-        self.r2_list_10.SetLabel('')
-        self.r2_list_11.SetLabel('')
-        self.r2_list_12.SetLabel('')
-        self.r2_list_13.SetLabel('')
-        self.r2_list_14.SetLabel('')
-        del r2_list[0:len(r2_list)]
-        event.Skip()
-
-
-    def refresh_r2_2(self, event): # refresh r2 list no. 1
-        self.r2_list_1_copy.SetLabel('')
-        self.r2_list_2_copy.SetLabel('')
-        self.r2_list_3_copy.SetLabel('')
-        self.r2_list_4_copy.SetLabel('')
-        self.r2_list_5_copy.SetLabel('')
-        self.r2_list_6_copy.SetLabel('')
-        self.r2_list_7_copy.SetLabel('')
-        self.r2_list_8_copy.SetLabel('')
-        self.r2_list_9_copy.SetLabel('')
-        self.r2_list_10_copy.SetLabel('')
-        self.r2_list_11_copy.SetLabel('')
-        self.r2_list_12_copy.SetLabel('')
-        self.r2_list_13_copy.SetLabel('')
-        self.r2_list_14_copy.SetLabel('')
-        del r2_list2[0:len(r2_list2)]
-        event.Skip()
-
-
-    def refresh_r2_3(self, event): # refresh r2 list no. 3
-        self.r2_list_1_copy_1.SetLabel('')
-        self.r2_list_2_copy_1.SetLabel('')
-        self.r2_list_3_copy_1.SetLabel('')
-        self.r2_list_4_copy_1.SetLabel('')
-        self.r2_list_5_copy_1.SetLabel('')
-        self.r2_list_6_copy_1.SetLabel('')
-        self.r2_list_7_copy_1.SetLabel('')
-        self.r2_list_8_copy_1.SetLabel('')
-        self.r2_list_9_copy_1.SetLabel('')
-        self.r2_list_10_copy_1.SetLabel('')
-        self.r2_list_11_copy_1.SetLabel('')
-        self.r2_list_12_copy_1.SetLabel('')
-        self.r2_list_13_copy_1.SetLabel('')
-        self.r2_list_14_copy_1.SetLabel('')
-        del r2_list3[0:len(r2_list3)]
-        event.Skip()
-
-
     def resdir_modelfree(self, event):
         backup = self.resultsdir_r21_copy_2.GetValue()
         results_dir_model = opendir('Select results directory', backup)
@@ -2274,50 +1031,6 @@ class Main(wx.Frame):
         if noe_savedir[2] == None:
             noe_savedir[2] = backup
         self.res_noe1_copy_1.SetValue(noe_savedir[2])
-        event.Skip()
-
-
-    def resdir_r1_2(self, event): # wxGlade: main.<event_handler>
-        backup = self.resultsdir_r11_copy.GetValue()
-        r1_savedir[1] = opendir('Select results directory', self.resultsdir_r11_copy.GetValue())
-        if r1_savedir[1] == None:
-            r1_savedir[1] = backup
-        self.resultsdir_r11_copy.SetValue(r1_savedir[1])
-        event.Skip()
-
-
-    def resdir_r1_3(self, event): # results R1 no 3
-        backup = self.resultsdir_r11_copy_1.GetValue()
-        r1_savedir[2] = opendir('Select results directory', self.resultsdir_r11_copy_1.GetValue())
-        if r1_savedir[2] == None:
-            r1_savedir[2] = backup
-        self.resultsdir_r11_copy_1.SetValue(r1_savedir[2])
-        event.Skip()
-
-
-    def resdir_r2_1(self, event): # wxGlade: main.<event_handler>
-        backup = self.resultsdir_r21.GetValue()
-        r2_savedir[0] = opendir('Select results directory)', self.resultsdir_r21.GetValue())
-        if r2_savedir[0] == None:
-            r2_savedir[0] = backup
-        self.resultsdir_r21.SetValue(r2_savedir[0])
-
-
-    def resdir_r2_2(self, event): # wxGlade: main.<event_handler>
-        backup = self.resultsdir_r21_copy.GetValue()
-        r2_savedir[1] = opendir('Select results directory)', self.resultsdir_r21_copy.GetValue() + '/')
-        if r2_savedir[1] == None:
-            r2_savedir[1] = backup
-        self.resultsdir_r21_copy.SetValue(r2_savedir[1])
-        event.Skip()
-
-
-    def resdir_r2_3(self, event): # results dir R2 3
-        backup = self.resultsdir_r21_copy_1.GetValue()
-        r2_savedir[2] = opendir('Select results directory', self.resultsdir_r21_copy_1.GetValue())
-        if r2_savedir[2] == None:
-            r2_savedir[2] = backup
-        self.resultsdir_r21_copy_1.SetValue(r2_savedir[2])
         event.Skip()
 
 
