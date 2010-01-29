@@ -656,10 +656,10 @@ class Main(wx.Frame):
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=0, text="&New", icon=NEW_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=1, text="&Open", icon=OPEN_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave as...", icon=SAVE_AS_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="E&xit", icon=EXIT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=0, text="&New\tCtrl+N", icon=NEW_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=1, text="&Open\tCtrl+O", icon=OPEN_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave as...\tCtrl+Shift+S", icon=SAVE_AS_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="E&xit\tCtrl+Q", icon=EXIT_ICON))
         menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
@@ -670,7 +670,7 @@ class Main(wx.Frame):
 
         # The 'View' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller", icon=CONTROLLER_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=50, text="&Controller\tCtrl+Z", icon=CONTROLLER_ICON))
         menubar.Append(menu, "&View")
 
         # The 'View' actions.
@@ -709,7 +709,7 @@ class Main(wx.Frame):
 
         # The 'Help' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="&Manual", icon=MANUAL_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="&Manual\tF1", icon=MANUAL_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="About rela&x", icon=ABOUT_RELAX_ICON))
         menubar.Append(menu, "&Help")
