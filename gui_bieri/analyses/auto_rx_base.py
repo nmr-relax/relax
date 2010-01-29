@@ -169,7 +169,6 @@ class Auto_rx:
         results_dir_copy_copy_copy_copy = wx.BoxSizer(wx.HORIZONTAL)
         results_dir_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         nmr_freq_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
-        exec_relax_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
         sizer_5_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6_copy_1 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -181,9 +180,6 @@ class Auto_rx:
 
         # A grid sizer for the peak list info.
         sizer_11.Add(results_dir_copy_copy, 1, wx.EXPAND, 0)
-        exec_relax_copy_1_copy.Add(self.label_5_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        exec_relax_copy_1_copy.Add(self.relax_start_r1_1, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-        sizer_11.Add(exec_relax_copy_1_copy, 0, wx.ALIGN_RIGHT, 0)
         sizer_10_copy.Add(self.bitmap_1_copy_copy_copy, 0, wx.ADJUST_MINSIZE, 10)
         sizer_11_copy.Add(self.label_4_copy_copy_copy, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
         nmr_freq_copy_copy_copy_1.Add(self.label_2_copy_copy_copy_2_copy_copy_1, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -202,9 +198,6 @@ class Auto_rx:
         self.label_2_copy_copy_5.SetMinSize((230, 17))
         self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
         self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.label_5_copy_1_copy.SetMinSize((118, 17))
-        self.relax_start_r1_1.SetName('hello')
-        self.relax_start_r1_1.SetSize(self.relax_start_r1_1.GetBestSize())
         self.label_4_copy_copy_copy.SetFont(wx.Font(16, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
         self.label_2_copy_copy_copy_2_copy_copy_1.SetMinSize((230, 17))
         self.nmrfreq_value_r21.SetMinSize((350, 27))
@@ -217,6 +210,32 @@ class Auto_rx:
         self.label_5_copy_1_copy_copy_copy_1.SetMinSize((118, 17))
         self.relax_start_r1_1_copy_copy_1.SetName('hello')
         self.relax_start_r1_1_copy_copy_1.SetSize(self.relax_start_r1_1_copy_copy_1.GetBestSize())
+
+
+    def add_execute_relax(self, box):
+        """Create and add the relax execution GUI element to the given box.
+
+        @param box:     The box element to pack the relax execution GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # A horizontal sizer for the contents.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((118, 17))
+        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button.SetName('hello')
+        button.SetSize(button.GetBestSize())
+        self.gui.Bind(wx.EVT_BUTTON, self.exec_r1_1, button)
+        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.ALIGN_RIGHT, 0)
 
 
     def add_frame_title(self, box):
@@ -511,8 +530,8 @@ class Auto_rx:
         # Add the peak list selection GUI element.
         self.add_peak_list_selection(box)
 
-        self.label_5_copy_1_copy = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        self.relax_start_r1_1 = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        # Add the execution GUI element.
+        self.add_execute_relax(box)
 
         # Return the box.
         return box
