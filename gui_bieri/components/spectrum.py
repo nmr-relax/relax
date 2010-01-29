@@ -228,7 +228,7 @@ class Peak_intensity:
 
         # Store the files.
         for i in range(len(files)):
-            self.data.file_list[count+i] = files[i]
+            self.data.file_list[count+i] = str(files[i])
 
         # Refresh the GUI element.
         self.refresh_peak_list_display()
