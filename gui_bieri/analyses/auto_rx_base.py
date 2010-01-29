@@ -182,18 +182,20 @@ class Auto_rx:
         # The add button.
         button = wx.BitmapButton(panel_main, -1, wx.Bitmap(ADD_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
+        button.SetToolTipString("Add new peak lists")
         self.gui.Bind(wx.EVT_BUTTON, self.peak_list_add_action, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The remove single item button.
         button = wx.BitmapButton(panel_main, -1, wx.Bitmap(REMOVE_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
-        self.gui.Bind(wx.EVT_BUTTON, self.empty_list, button)
+        button.SetToolTipString("Removed selected items (disabled)")
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The cancel button.
         button = wx.BitmapButton(panel_main, -1, wx.Bitmap(CANCEL_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
+        button.SetToolTipString("Clear the list")
         self.gui.Bind(wx.EVT_BUTTON, self.empty_list, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
