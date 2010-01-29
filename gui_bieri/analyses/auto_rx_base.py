@@ -309,16 +309,22 @@ class Auto_rx:
         sizer_main.Add(sizer_buttons, 1, wx.EXPAND, 0)
 
         # Button sizes.
-        size_button = [60, 27]
+        size_button = [60, 60]
 
         # The add button.
-        button = wx.Button(panel_main, -1, "add")
+        button = wx.BitmapButton(panel_main, -1, wx.Bitmap(ADD_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
         self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
-        # The refresh button.
-        button = wx.Button(panel_main, -1, "refresh")
+        # The remove single item button.
+        button = wx.BitmapButton(panel_main, -1, wx.Bitmap(REMOVE_ICON, wx.BITMAP_TYPE_ANY))
+        button.SetMinSize((size_button[0], size_button[1]))
+        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, button)
+        sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+
+        # The cancel button.
+        button = wx.BitmapButton(panel_main, -1, wx.Bitmap(CANCEL_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
         self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
