@@ -336,6 +336,19 @@ class Auto_rx:
         start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.field_unresolved.GetValue(), self, 1, global_setting, file_setting, sequencefile)
 
 
+    def link_data(self, data):
+        """Re-alias the storage container in the relax data store.
+        @keyword data:      The data storage container.
+        @type data:         class instance
+        """
+
+        # Re-alias.
+        self.data = data
+
+        # Re-alias in the peak intensity object as well.
+        self.peak_intensity.data = data
+
+
     def results_directory(self, event):
         """The results directory selection.
 

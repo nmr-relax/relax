@@ -1170,18 +1170,24 @@ class Main(wx.Frame):
         # Load the relax state.
         state.load_state(filename, verbosity=0)
 
+        # FIXME: (commented out until analyses are dynamically loaded and unloaded).
+        ## Build the analysis frames
+        #for i in range(len(ds.relax_gui.analyses)):
+        #    # The automatic model-free protocol frame
+        #    if ds.relax_gui.analyses[i].analysis_type == 'model-free':
+        #        self.analysis_frames.append(Auto_model_free(self))
+
+        # FIXME:  Temporary fix - set the data structures explicitly.
+        self.analysis_frames[self.hardcoded_index_r1_1].link_data(ds.relax_gui.analyses[self.r1_index[0]])
+        self.analysis_frames[self.hardcoded_index_r1_2].link_data(ds.relax_gui.analyses[self.r1_index[1]])
+        self.analysis_frames[self.hardcoded_index_r1_3].link_data(ds.relax_gui.analyses[self.r1_index[2]])
+        self.analysis_frames[self.hardcoded_index_r2_1].link_data(ds.relax_gui.analyses[self.r2_index[0]])
+        self.analysis_frames[self.hardcoded_index_r2_2].link_data(ds.relax_gui.analyses[self.r2_index[1]])
+        self.analysis_frames[self.hardcoded_index_r2_3].link_data(ds.relax_gui.analyses[self.r2_index[2]])
+        self.analysis_frames[self.hardcoded_index_mf].link_data(ds.relax_gui.analyses[9])
+
         # Update the core of the GUI to match the new data store.
         self.sync_ds(upload=False)
-
-        # Build the analysis frames
-        for i in range(len(ds.relax_gui.analyses)):
-            # The automatic model-free protocol frame
-            if ds.relax_gui.analyses[i].analysis_type == 'model-free':
-                # FIXME: (commented out until analyses are dynamically loaded and unloaded).
-                #self.analysis_frames.append(Auto_model_free(self))
-
-                # FIXME:  Temporary fix - set the model-free data structure explicitly.
-                self.analysis_frames[self.hardcoded_index_mf].data = ds.relax_gui.analyses[i]
 
         # Execute the analysis frame specific update methods.
         for analysis in self.analysis_frames:

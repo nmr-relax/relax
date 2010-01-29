@@ -860,6 +860,16 @@ class Auto_model_free:
                 print ('Final Model-free calculation was successful !')
 
 
+    def link_data(self, data):
+        """Re-alias the storage container in the relax data store.
+        @keyword data:      The data storage container.
+        @type data:         class instance
+        """
+
+        # Alias.
+        self.data = data
+
+
     def model_noe1(self, event): # load noe1
         backup = self.m_noe_1.GetValue()
         self.data.paramfiles1[0] = openfile(msg='Select NOE file', filetype='*.*', default='all files (*.*)|*.*')
