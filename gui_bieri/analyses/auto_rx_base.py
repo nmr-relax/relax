@@ -66,9 +66,7 @@ class Auto_rx:
         self.data = ds.relax_gui.analyses[hardcoded_index]
 
         # Hardcoded class variables.
-        self.data.list_count = 14    # The number of peak list elements.
-        self.data.file_list = [''] * self.data.list_count
-        self.data.relax_times = [None] * self.data.list_count
+        self.peak_list_count = 14    # The number of peak list elements.
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -342,7 +340,7 @@ class Auto_rx:
         # Build the grid of file names and relaxation times.
         self.r1_list = []
         self.r1_time = []
-        for i in range(1, self.data.list_count+1):
+        for i in range(1, self.peak_list_count+1):
             # The peak list file name GUI elements.
             self.r1_list.append(wx.StaticText(panel_grid, -1, ""))
             sizer_grid.Add(self.r1_list[-1], 0, wx.ADJUST_MINSIZE, 0)
@@ -641,14 +639,14 @@ class Auto_rx:
 
         # The peak lists and relaxation times.
         if upload:
-            for i in range(self.data.list_count):
+            for i in range(self.peak_list_count):
                 # The file name.
                 self.data.file_list[i] = str(self.r1_list[i])
 
                 # The relaxation time.
                 self.data.relax_times[i] = str(self.r1_time[i].GetValue())
         else:
-            for i in range(self.data.list_count):
+            for i in range(self.peak_list_count):
                 # The file name.
                 self.r1_list[i] = str(self.data.file_list[i])
 
