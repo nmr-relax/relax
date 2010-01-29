@@ -53,6 +53,6 @@ SETTINGS_RESET_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'edit-delete.png'
 REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
 
 # 48x48 icons.
-ADD_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-add.png'
+ADD_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-add-relax-blue.png'
 CANCEL_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'dialog-cancel.png'
 REMOVE_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-remove.png'
