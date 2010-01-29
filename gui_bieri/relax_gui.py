@@ -2485,7 +2485,7 @@ class Main(wx.Frame):
         # Analyses updates of the new data store.
         for i in range(len(self.analysis_frames)):
             # Execute the analysis frame specific update methods.
-            if hasattr(analysis, 'sync_ds'):
+            if hasattr(self.analysis_frames[i], 'sync_ds'):
                 self.analysis_frames[i].sync_ds(upload=True)
 
         # Save the relax state.
