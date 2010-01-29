@@ -29,23 +29,39 @@ import wx
 
 
 
-def multi_openfile(msg, directory, filetype, default): # open multiple file
+def multi_openfile(msg=None, directory=None, filetype='', default=None):
+    """Open multiple files.
 
-    #Input format:
-    #msg:              message to display
-    #directory:        directory, where dialog opens as default
-    #filetype:         proposed file to open
-    #default:          list of supported files, indicated as "(Label)|os command|...
+    For example to open /usr/save.relaxGUI, where the supported files to open are: *.relaxGUI, *.*:
+        multi_openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
 
-    #command:
-    #openfile('select file to open', '/usr', 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
-    #suggests to open /usr/save.relaxGUI, supported files to open are: *.relaxGUI, *.*
+    @keyword msg:       The message to display.
+    @type msg:          str
+    @keyword directory: The directory to open in.
+    @type directory:    str
+    @keyword filetype:  The file to default selection to.
+    @type filetype:     str
+    @keyword default:   A list of supported files, indicated as "(Label)|os command|...
+    @type default:      str
+    """
 
-    newfile = []
-    dialog = wx.FileDialog ( None, message = msg, style = wx.OPEN | wx.FD_MULTIPLE, defaultDir= directory, defaultFile = filetype, wildcard = default)
+    # The current working directory.
+    dir_switch = False
+    if directory == None:
+        directory = getcwd()
+        dir_switch = True
 
+    # Open the dialog.
+    dialog = wx.FileDialog(None, message=msg, style=wx.OPEN | wx.FD_MULTIPLE, defaultDir=directory, defaultFile=filetype, wildcard=default)
+
+    # A file was selected.
     if dialog.ShowModal() == wx.ID_OK:
-        return newfile
+        # Reset the current working directory if changed.
+        if dir_switch:
+            chdir(dialog.GetDirectory())
+
+        # Return the full file path.
+        return dialog.GetPaths()
 
 
 def opendir(msg, default): # select directory, msg is message to display, default is starting directory
