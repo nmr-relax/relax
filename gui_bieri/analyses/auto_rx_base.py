@@ -65,8 +65,10 @@ class Auto_rx:
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
 
-        # Hardcoded class variables.
-        self.peak_list_count = 14    # The number of peak list elements.
+        # The number of peak list elements (update the data store to match).
+        self.peak_list_count = 14
+        self.data.file_list = [''] * self.peak_list_count
+        self.data.relax_times = [''] * self.peak_list_count
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
