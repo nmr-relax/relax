@@ -33,6 +33,17 @@ def dir_message(msg):
     wx.MessageBox(msg, style = wx.OK | wx.ICON_INFORMATION)
 
 
+def error_message(msg):
+    """Message box for general errors.
+
+    @param msg:     The message to display.
+    @type msg:      str
+    """
+
+    # Show the message box.
+    wx.MessageBox(msg, style = wx.OK | wx.ICON_ERROR)
+
+
 def exec_relax():
     check = False
     startrelax = wx.MessageDialog(None, message = 'Start relax?', style = wx.YES_NO | wx.NO_DEFAULT)
