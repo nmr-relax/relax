@@ -95,23 +95,21 @@ class Auto_model_free:
         @type box:      wx.BoxSizer instance
         """
 
-        # The elements.
-        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
-        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        # A horizontal sizer for the contents.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # Properties.
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         label.SetMinSize((118, 17))
         label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
+        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetName('hello')
         button.SetSize(button.GetBestSize())
-
-        # Layout.
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(label, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
-
-        # Bind the events.
         self.gui.Bind(wx.EVT_BUTTON, self.automatic_protocol_controller, button)
+        sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
         box.Add(sizer, 1, wx.ALIGN_RIGHT, 0)
