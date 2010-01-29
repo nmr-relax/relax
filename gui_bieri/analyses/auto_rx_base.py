@@ -360,7 +360,7 @@ class Auto_rx:
     def add_r1_1(self, event): # add a r1 peak list
 
         if len(r1_list) < 14:
-            r1_entry = multi_openfile('Select R1 peak list file', self.resultsdir_r11_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
+            r1_entry = multi_openfile('Select R1 peak list file', self.field_results_dir_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
             if not r1_entry == None:
                 r1_list.append(r1_entry)
 
@@ -411,14 +411,14 @@ class Auto_rx:
         sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The text input field.
-        self.resultsdir_r11 = wx.TextCtrl(self.parent, -1, self.data.save_dir)
-        self.resultsdir_r11.SetMinSize((350, 27))
-        sizer.Add(self.resultsdir_r11, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+        self.field_results_dir = wx.TextCtrl(self.parent, -1, self.data.save_dir)
+        self.field_results_dir.SetMinSize((350, 27))
+        sizer.Add(self.field_results_dir, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
 
         # The button.
         button = wx.Button(self.parent, -1, "Change")
         button.SetMinSize((103, 27))
-        self.gui.Bind(wx.EVT_BUTTON, self.resdir_r1_1, button)
+        self.gui.Bind(wx.EVT_BUTTON, self.results_directory, button)
         sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
 
         # Add the element to the box.
@@ -579,13 +579,27 @@ class Auto_rx:
         event.Skip()
 
 
-    def resdir_r1_1(self, event): # R1 results dir 1
-        backup = self.resultsdir_r11.GetValue()
-        r1_savedir[0] = opendir('Select results directory', default=self.resultsdir_r11.GetValue())
-        if r1_savedir[0] == None:
-            r1_savedir[0] = backup
-        self.resultsdir_r11.SetValue(r1_savedir[0])
+    def results_directory(self, event):
+        """The results directory selection.
 
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the original directory.
+        backup = self.field_results_dir.GetValue()
+
+        # Select the file.
+        self.data.save_dir = opendir('Select results directory', default=self.field_results_dir.GetValue())
+
+        # Restore the backup file if no file was chosen.
+        if not self.data.save_dir:
+            self.data.save_dir = backup
+
+        # Place the path in the text box.
+        self.field_results_dir.SetValue(self.data.save_dir)
+
+        # Terminate the event.
         event.Skip()
 
 
