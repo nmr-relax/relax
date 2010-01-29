@@ -338,17 +338,17 @@ class Auto_rx:
         sizer_grid.Add(label, 0, wx.ADJUST_MINSIZE, 0)
 
         # Build the grid of file names and relaxation times.
-        self.r1_list = []
-        self.r1_time = []
+        self.field_rx_list = []
+        self.field_rx_time = []
         for i in range(1, self.peak_list_count+1):
             # The peak list file name GUI elements.
-            self.r1_list.append(wx.StaticText(panel_grid, -1, ""))
-            sizer_grid.Add(self.r1_list[-1], 0, wx.ADJUST_MINSIZE, 0)
+            self.field_rx_list.append(wx.StaticText(panel_grid, -1, ""))
+            sizer_grid.Add(self.field_rx_list[-1], 0, wx.ADJUST_MINSIZE, 0)
 
             # The time GUI elements.
-            self.r1_time.append(wx.TextCtrl(panel_grid, -1, ""))
-            self.r1_time[-1].SetMinSize((80, 20))
-            sizer_grid.Add(self.r1_time[-1], 0, wx.ADJUST_MINSIZE, 0)
+            self.field_rx_time.append(wx.TextCtrl(panel_grid, -1, ""))
+            self.field_rx_time[-1].SetMinSize((80, 20))
+            sizer_grid.Add(self.field_rx_time[-1], 0, wx.ADJUST_MINSIZE, 0)
 
         # Place the grid inside the panel.
         panel_grid.SetSizer(sizer_grid)
@@ -640,15 +640,12 @@ class Auto_rx:
         # The peak lists and relaxation times.
         if upload:
             for i in range(self.peak_list_count):
-                # The file name.
-                self.data.file_list[i] = str(self.r1_list[i])
-
-                # The relaxation time.
-                self.data.relax_times[i] = str(self.r1_time[i].GetValue())
+                # Set the relaxation time.
+                self.data.relax_times[i] = self.field_rx_time[i].GetValue()
         else:
             for i in range(self.peak_list_count):
                 # The file name.
-                self.r1_list[i] = str(self.data.file_list[i])
+                self.field_rx_list[i].SetLabel(self.data.file_list[i])
 
                 # The relaxation time.
-                self.r1_time[i].SetValue(str(self.data.file_list[i]))
+                self.field_rx_time[i].SetValue(str(self.data.relax_times[i]))
