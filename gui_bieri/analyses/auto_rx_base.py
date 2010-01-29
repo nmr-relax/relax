@@ -65,6 +65,11 @@ class Auto_rx:
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
 
+        # Hardcoded class variables.
+        self.data.list_count = 14    # The number of peak list elements.
+        self.data.file_list = [''] * self.data.list_count
+        self.data.relax_times = [None] * self.data.list_count
+
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
 
@@ -279,13 +284,11 @@ class Auto_rx:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
-    def add_peak_list_selection(self, box, list_count=14):
+    def add_peak_list_selection(self, box):
         """Create and add the peak list selection GUI element to the given box.
 
         @param box:             The box element to pack the peak list selection GUI element into.
         @type box:              wx.BoxSizer instance
-        @keyword list_count:    The number of peak lists elements to add to the grid.
-        @type list_count:       int
         """
 
         # The background panel (only used for layout purposes).
@@ -339,7 +342,7 @@ class Auto_rx:
         # Build the grid of file names and relaxation times.
         self.r1_list = []
         self.r1_time = []
-        for i in range(1, list_count+1):
+        for i in range(1, self.data.list_count+1):
             # The peak list file name GUI elements.
             self.r1_list.append(wx.StaticText(panel_grid, -1, ""))
             sizer_grid.Add(self.r1_list[-1], 0, wx.ADJUST_MINSIZE, 0)
