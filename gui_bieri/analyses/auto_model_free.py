@@ -607,19 +607,13 @@ class Auto_model_free:
         @type event:    wx event
         """
 
-        # Dialog for selecting which global model the protocol should solve.
-        checkpoint = self.check_entries()
+        # The required data has not been set up correctly or has not all been given, so clean up and exit.
+        if not self.check_entries():
+            event.Skip()
+            return
 
         # Synchronise the frame data to the relax data store.
         self.sync_ds(upload=True)
-
-        # The required data has not been set up correctly or has not all been given, so clean up and exit.
-        if checkpoint == False:
-            # Skip the event.
-            event.Skip()
-
-            # Exit.
-            return
 
         # The global model.
         which_model = self.choose_global_model(False)
