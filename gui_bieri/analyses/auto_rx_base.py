@@ -67,8 +67,6 @@ class Auto_rx:
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
-        self.panel_1 = wx.Panel(self.parent, -1)
-        self.panel_3 = wx.Panel(self.panel_1, -1)
 
         # Build and pack the main sizer box, then add it to the automatic model-free analysis frame.
         main_box = self.build_main_box()
@@ -172,9 +170,6 @@ class Auto_rx:
         results_dir_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         nmr_freq_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         exec_relax_copy_1_copy = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_12 = wx.BoxSizer(wx.HORIZONTAL)
-        grid_sizer_1 = wx.FlexGridSizer(10, 2, 0, 0)
-        sizer_13 = wx.BoxSizer(wx.VERTICAL)
         sizer_5_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6_copy_1 = wx.BoxSizer(wx.VERTICAL)
         exec_relax_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
@@ -184,45 +179,8 @@ class Auto_rx:
         pdbfile_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8_copy_copy_copy_copy_1 = wx.BoxSizer(wx.HORIZONTAL)
 
+        # A grid sizer for the peak list info.
         sizer_11.Add(results_dir_copy_copy, 1, wx.EXPAND, 0)
-        sizer_11.Add(self.panel_2, 0, wx.EXPAND|wx.SHAPED, 0)
-        sizer_13.Add(self.addr11, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_13.Add(self.refreshr11, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_12.Add(sizer_13, 1, wx.EXPAND, 0)
-        grid_sizer_1.Add(self.label_3, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.label_6, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_1, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_2, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_2, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_3, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_3, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_4, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_4, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_5, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_5, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_6, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_6, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_7, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_7, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_8, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_8, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_9, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_9, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_10, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_10, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_11, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_11, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_12, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_12, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_1_copy_11, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_13, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_list_14, 0, wx.ADJUST_MINSIZE, 0)
-        grid_sizer_1.Add(self.r1_time_1_4, 0, wx.ADJUST_MINSIZE, 0)
-        self.panel_3.SetSizer(grid_sizer_1)
-        sizer_12.Add(self.panel_3, 0, wx.EXPAND|wx.SHAPED, 0)
-        self.panel_1.SetSizer(sizer_12)
-        sizer_11.Add(self.panel_1, 0, wx.EXPAND|wx.SHAPED, 0)
         exec_relax_copy_1_copy.Add(self.label_5_copy_1_copy, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
         exec_relax_copy_1_copy.Add(self.relax_start_r1_1, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
         sizer_11.Add(exec_relax_copy_1_copy, 0, wx.ALIGN_RIGHT, 0)
@@ -244,29 +202,6 @@ class Auto_rx:
         self.label_2_copy_copy_5.SetMinSize((230, 17))
         self.label_2_copy_copy_2_copy_1.SetMinSize((230, 17))
         self.label_2_copy_copy_3_copy_1.SetMinSize((230, 17))
-        self.panel_2.SetMinSize((688, 5))
-        self.addr11.SetMinSize((60, 27))
-        self.refreshr11.SetMinSize((60, 27))
-        self.label_3.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.label_6.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.r1_time_1.SetMinSize((80, 20))
-        self.r1_time_2.SetMinSize((80, 20))
-        self.r1_time_3.SetMinSize((80, 20))
-        self.r1_time_4.SetMinSize((80, 20))
-        self.r1_time_5.SetMinSize((80, 20))
-        self.r1_time_6.SetMinSize((80, 20))
-        self.r1_time_7.SetMinSize((80, 20))
-        self.r1_time_8.SetMinSize((80, 20))
-        self.r1_time_9.SetMinSize((80, 20))
-        self.r1_time_10.SetMinSize((80, 20))
-        self.r1_time_11.SetMinSize((80, 20))
-        self.r1_time_12.SetMinSize((80, 20))
-        self.r1_time_13.SetMinSize((80, 20))
-        self.r1_time_1_4.SetMinSize((80, 20))
-        self.panel_3.SetMinSize((620, 300))
-        self.panel_3.SetBackgroundColour(wx.Colour(192, 192, 192))
-        self.panel_1.SetMinSize((688, 300))
-        self.panel_1.SetBackgroundColour(wx.Colour(192, 192, 192))
         self.label_5_copy_1_copy.SetMinSize((118, 17))
         self.relax_start_r1_1.SetName('hello')
         self.relax_start_r1_1.SetSize(self.relax_start_r1_1.GetBestSize())
@@ -323,6 +258,84 @@ class Auto_rx:
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
+    def add_peak_list_selection(self, box, list_count=14):
+        """Create and add the peak list selection GUI element to the given box.
+
+        @param box:             The box element to pack the peak list selection GUI element into.
+        @type box:              wx.BoxSizer instance
+        @keyword list_count:    The number of peak lists elements to add to the grid.
+        @type list_count:       int
+        """
+
+        # The background panel (only used for layout purposes).
+        panel_back = wx.Panel(self.parent, -1)
+        panel_back.SetMinSize((688, 5))
+
+        # A Horizontal layout sizer (to separate the buttons from the grid).
+        sizer_main = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The panel for both the buttons and the grid.
+        panel_main = wx.Panel(self.parent, -1)
+        panel_main.SetMinSize((688, 300))
+        panel_main.SetBackgroundColour(wx.Colour(192, 192, 192))
+        panel_main.SetSizer(sizer_main)
+
+        # A Vertical layout sizer (for the buttons).
+        sizer_buttons = wx.BoxSizer(wx.VERTICAL)
+        sizer_main.Add(sizer_buttons, 1, wx.EXPAND, 0)
+
+        # The add button.
+        button = wx.Button(panel_main, -1, "add")
+        button.SetMinSize((60, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, button)
+        sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+
+        # The refresh button.
+        button = wx.Button(panel_main, -1, "refresh")
+        button.SetMinSize((60, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, button)
+        sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+
+        # The panel for the grid.
+        panel_grid = wx.Panel(panel_main, -1)
+        panel_grid.SetMinSize((620, 300))
+        panel_grid.SetBackgroundColour(wx.Colour(192, 192, 192))
+        sizer_main.Add(panel_grid, 0, wx.EXPAND|wx.SHAPED, 0)
+
+        # A grid sizer for the peak list info.
+        sizer_grid = wx.FlexGridSizer(10, 2, 0, 0)
+
+        # The file title.
+        label = wx.StaticText(panel_grid, -1, "R1 relaxation peak list                                                              ")
+        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        sizer_grid.Add(label, 0, wx.ADJUST_MINSIZE, 0)
+
+        # The time title.
+        label = wx.StaticText(panel_grid, -1, "Relaxation time [s]")
+        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        sizer_grid.Add(label, 0, wx.ADJUST_MINSIZE, 0)
+
+        # Build the grid of file names and relaxation times.
+        self.r1_list = []
+        self.r1_time = []
+        for i in range(1, list_count+1):
+            # The peak list file name GUI elements.
+            self.r1_list.append(wx.StaticText(panel_grid, -1, ""))
+            sizer_grid.Add(self.r1_list[-1], 0, wx.ADJUST_MINSIZE, 0)
+
+            # The time GUI elements.
+            self.r1_time.append(wx.TextCtrl(panel_grid, -1, ""))
+            self.r1_time[-1].SetMinSize((80, 20))
+            sizer_grid.Add(self.r1_time[-1], 0, wx.ADJUST_MINSIZE, 0)
+
+        # Place the grid inside the panel.
+        panel_grid.SetSizer(sizer_grid)
+
+        # Add the panels to the box (this order adds a spacer at the top).
+        box.Add(panel_back, 0, wx.EXPAND|wx.SHAPED, 0)
+        box.Add(panel_main, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def add_r1_1(self, event): # add a r1 peak list
@@ -495,45 +508,11 @@ class Auto_rx:
         # Add the unresolved spins GUI element.
         self.add_unresolved_spins(box)
 
-        self.panel_2 = wx.Panel(self.parent, -1)
-        self.addr11 = wx.Button(self.panel_1, -1, "add")
-        self.refreshr11 = wx.Button(self.panel_1, -1, "refresh")
-        self.label_3 = wx.StaticText(self.panel_3, -1, "R1 relaxation peak list                                                              ")
-        self.label_6 = wx.StaticText(self.panel_3, -1, "Relaxation time [s]")
-        self.r1_list_1 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_1 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_2 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_2 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_3 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_3 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_4 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_4 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_5 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_5 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_6 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_6 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_7 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_7 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_8 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_8 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_9 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_9 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_10 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_10 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_11 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_11 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_12 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_12 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_1_copy_11 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_13 = wx.TextCtrl(self.panel_3, -1, "")
-        self.r1_list_14 = wx.StaticText(self.panel_3, -1, "")
-        self.r1_time_1_4 = wx.TextCtrl(self.panel_3, -1, "")
+        # Add the peak list selection GUI element.
+        self.add_peak_list_selection(box)
+
         self.label_5_copy_1_copy = wx.StaticText(self.parent, -1, "Execute relax        ", style=wx.ALIGN_RIGHT)
         self.relax_start_r1_1 = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
-
-        #button actions
-        self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, self.addr11)
-        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, self.refreshr11)
 
         # Return the box.
         return box
