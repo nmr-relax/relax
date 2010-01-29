@@ -308,15 +308,18 @@ class Auto_rx:
         sizer_buttons = wx.BoxSizer(wx.VERTICAL)
         sizer_main.Add(sizer_buttons, 1, wx.EXPAND, 0)
 
+        # Button sizes.
+        size_button = [60, 27]
+
         # The add button.
         button = wx.Button(panel_main, -1, "add")
-        button.SetMinSize((60, 27))
+        button.SetMinSize((size_button[0], size_button[1]))
         self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The refresh button.
         button = wx.Button(panel_main, -1, "refresh")
-        button.SetMinSize((60, 27))
+        button.SetMinSize((size_button[0], size_button[1]))
         self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
