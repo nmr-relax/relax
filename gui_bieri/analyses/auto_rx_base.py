@@ -320,13 +320,13 @@ class Auto_rx:
         # The remove single item button.
         button = wx.BitmapButton(panel_main, -1, wx.Bitmap(REMOVE_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
-        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, button)
+        self.gui.Bind(wx.EVT_BUTTON, self.empty_list, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The cancel button.
         button = wx.BitmapButton(panel_main, -1, wx.Bitmap(CANCEL_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
-        self.gui.Bind(wx.EVT_BUTTON, self.refresh_r1_1, button)
+        self.gui.Bind(wx.EVT_BUTTON, self.empty_list, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The panel for the grid.
@@ -532,6 +532,24 @@ class Auto_rx:
         return count
 
 
+    def empty_list(self, event):
+        """Remove all peak lists and times.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Reset the data storage.
+        self.data.file_list = [''] * self.peak_list_count
+        self.data.relax_times = [''] * self.peak_list_count
+
+        # Refresh the grid.
+        self.refresh_peak_list_display()
+
+        # Terminate the event.
+        event.Skip()
+
+
     def exec_r1_1(self, event): # start r2 calculation
         relax_times_r2_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         #create relaxation time list
@@ -608,25 +626,6 @@ class Auto_rx:
         # Loop over all elements.
         for i in range(self.peak_list_count):
             self.field_rx_list[i].SetLabel(self.data.file_list[i])
-
-
-    def refresh_r1_1(self, event): # refresh r1 list no. 1
-        self.r1_list_1.SetLabel('')
-        self.r1_list_2.SetLabel('')
-        self.r1_list_3.SetLabel('')
-        self.r1_list_4.SetLabel('')
-        self.r1_list_5.SetLabel('')
-        self.r1_list_6.SetLabel('')
-        self.r1_list_7.SetLabel('')
-        self.r1_list_8.SetLabel('')
-        self.r1_list_9.SetLabel('')
-        self.r1_list_10.SetLabel('')
-        self.r1_list_11.SetLabel('')
-        self.r1_list_12.SetLabel('')
-        self.r1_list_1_copy_11.SetLabel('')
-        self.r1_list_14.SetLabel('')
-        del r1_list[0:len(r1_list)]
-        event.Skip()
 
 
     def results_directory(self, event):
