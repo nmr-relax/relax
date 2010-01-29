@@ -36,7 +36,7 @@ import sys
 ICON_PATH = sys.path[0]+sep+'gui_bieri'+sep+'oxygen_icons'+sep
 IMAGE_PATH = sys.path[0]+sep+'gui_bieri'+sep+'images'+sep
 
-# GUI icons.
+# 16x16 icons.
 ABOUT_RELAX_ICON = IMAGE_PATH + 'relax_16x16.png'
 ABOUT_RELAXGUI_ICON = IMAGE_PATH + 'relax_16x16.png'
 CONTACT_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'mail-mark-unread-new.png'
@@ -51,3 +51,8 @@ SETTINGS_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'document-properties.png'
 SETTINGS_GLOBAL_ICON = ICON_PATH + '16x16'+sep+'categories'+sep+'preferences-system.png'
 SETTINGS_RESET_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'edit-delete.png'
 REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
+
+# 48x48 icons.
+ADD_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-add.png'
+CANCEL_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'dialog-cancel.png'
+REMOVE_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-remove.png'
