@@ -36,7 +36,7 @@ from gui_bieri.analyses.project import open_file
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir
 from gui_bieri.message import exec_relax
-from gui_bieri.paths import IMAGE_PATH
+from gui_bieri.paths import ADD_ICON, CANCEL_ICON, IMAGE_PATH, REMOVE_ICON
 
 
 
