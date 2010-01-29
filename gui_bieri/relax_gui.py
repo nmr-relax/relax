@@ -47,6 +47,7 @@ from version import version
 from about import about_relax
 from analyses.auto_model_free import Auto_model_free
 from analyses.auto_r1 import Auto_r1
+from analyses.auto_r2 import Auto_r2
 from analyses.project import create_save_file, open_file
 from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
 from base_classes import Container
@@ -744,7 +745,7 @@ class Main(wx.Frame):
         self.r2_1.SetSizer(sizer_10_copy)
         self.notebook_3.AddPage(self.noe1, "steady-state NOE")
         self.notebook_3.AddPage(self.analysis_frames[self.hardcoded_index_r1_1].parent, "R1 relaxation")
-        self.notebook_3.AddPage(self.r2_1, "R2 relaxation")
+        self.notebook_3.AddPage(self.analysis_frames[self.hardcoded_index_r2_1].parent, "R2 relaxation")
         frq1sub.Add(self.notebook_3, 1, wx.EXPAND, 0)
         self.frq1.SetSizer(frq1sub)
         sizer_5_copy_1_copy.Add(self.bitmap_1_copy_1_copy, 0, wx.ADJUST_MINSIZE, 10)
@@ -903,8 +904,8 @@ class Main(wx.Frame):
         sizer_10_copy_copy.Add(sizer_11_copy_copy, 0, 0, 0)
         self.r2_1_copy.SetSizer(sizer_10_copy_copy)
         self.notebook_3_copy.AddPage(self.noe1_copy, "steady-state NOE")
-        self.notebook_3_copy.AddPage(self.r1_1_copy, "R1 relaxation")
-        self.notebook_3_copy.AddPage(self.r2_1_copy, "R2 relaxation")
+        self.notebook_3_copy.AddPage(self.analysis_frames[self.hardcoded_index_r1_2].parent, "R1 relaxation")
+        self.notebook_3_copy.AddPage(self.analysis_frames[self.hardcoded_index_r2_2].parent, "R2 relaxation")
         frq1sub_copy.Add(self.notebook_3_copy, 1, wx.EXPAND, 0)
         self.frq2.SetSizer(frq1sub_copy)
         sizer_5_copy_1_copy_1.Add(self.bitmap_1_copy_1_copy_1, 0, wx.ADJUST_MINSIZE, 10)
@@ -1063,8 +1064,8 @@ class Main(wx.Frame):
         sizer_10_copy_copy_1.Add(sizer_11_copy_copy_1, 0, 0, 0)
         self.r2_1_copy_1.SetSizer(sizer_10_copy_copy_1)
         self.notebook_3_copy_1.AddPage(self.noe1_copy_1, "steady-state NOE")
-        self.notebook_3_copy_1.AddPage(self.r1_1_copy_1, "R1 relaxation")
-        self.notebook_3_copy_1.AddPage(self.r2_1_copy_1, "R2 relaxation")
+        self.notebook_3_copy_1.AddPage(self.analysis_frames[self.hardcoded_index_r1_3].parent, "R1 relaxation")
+        self.notebook_3_copy_1.AddPage(self.analysis_frames[self.hardcoded_index_r2_3].parent, "R2 relaxation")
         frq1sub_copy_1.Add(self.notebook_3_copy_1, 1, wx.EXPAND, 0)
         self.frq3.SetSizer(frq1sub_copy_1)
         sizer_22.Add(self.label_11, 0, wx.LEFT|wx.ADJUST_MINSIZE, 10)
@@ -1615,8 +1616,12 @@ class Main(wx.Frame):
         self.r1_1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
         self.panel_1_copy_2 = wx.Panel(self.r1_1_copy_1, -1)
         self.panel_3_copy_2 = wx.Panel(self.panel_1_copy_2, -1)
-        self.noe1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
         self.frq2 = wx.Panel(self.notebook_2, -1)
+
+        # The automatic relaxation data analysis frames.
+        self.analysis_frames[self.hardcoded_index_r1_3] = Auto_r1(self, self.notebook_3_copy_1, hardcoded_index=self.r1_index[2])
+        self.analysis_frames[self.hardcoded_index_r2_3] = Auto_r2(self, self.notebook_3_copy_1, hardcoded_index=self.r2_index[2])
+        self.noe1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
 
         # The 4th notebook (freq 2).
         self.notebook_3_copy = wx.Notebook(self.frq2, -1, style=0)
@@ -1626,18 +1631,23 @@ class Main(wx.Frame):
         self.r1_1_copy = wx.Panel(self.notebook_3_copy, -1)
         self.panel_1_copy_1 = wx.Panel(self.r1_1_copy, -1)
         self.panel_3_copy_1 = wx.Panel(self.panel_1_copy_1, -1)
-        self.noe1_copy = wx.Panel(self.notebook_3_copy, -1)
         self.frq1 = wx.Panel(self.notebook_2, -1)
+
+        # The automatic relaxation data analysis frames.
+        self.analysis_frames[self.hardcoded_index_r1_2] = Auto_r1(self, self.notebook_3_copy, hardcoded_index=self.r1_index[1])
+        self.analysis_frames[self.hardcoded_index_r2_2] = Auto_r2(self, self.notebook_3_copy, hardcoded_index=self.r2_index[1])
+        self.noe1_copy = wx.Panel(self.notebook_3_copy, -1)
 
         # The 3rd notebook (freq 1).
         self.notebook_3 = wx.Notebook(self.frq1, -1, style=0)
 
-        # The automatic R1 analysis frame.
-        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3, hardcoded_index=self.r1_index[0])
-
         self.r2_1 = wx.Panel(self.notebook_3, -1)
         self.panel_1_copy = wx.Panel(self.r2_1, -1)
         self.panel_3_copy = wx.Panel(self.panel_1_copy, -1)
+
+        # The automatic relaxation data analysis frames.
+        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3, hardcoded_index=self.r1_index[0])
+        self.analysis_frames[self.hardcoded_index_r2_1] = Auto_r2(self, self.notebook_3, hardcoded_index=self.r2_index[0])
         self.noe1 = wx.Panel(self.notebook_3, -1)
 
 
