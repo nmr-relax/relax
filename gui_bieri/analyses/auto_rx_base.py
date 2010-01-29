@@ -36,6 +36,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
+from gui_bieri.components.spectrum import Peak_intensity
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir
@@ -68,11 +69,6 @@ class Auto_rx:
 
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
-
-        # The number of peak list elements (update the data store to match).
-        self.peak_list_count = 14
-        self.data.file_list = [''] * self.peak_list_count
-        self.data.relax_times = [''] * self.peak_list_count
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -150,93 +146,6 @@ class Auto_rx:
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_peak_list_selection(self, box):
-        """Create and add the peak list selection GUI element to the given box.
-
-        @param box:             The box element to pack the peak list selection GUI element into.
-        @type box:              wx.BoxSizer instance
-        """
-
-        # The background panel (only used for layout purposes).
-        panel_back = wx.Panel(self.parent, -1)
-        panel_back.SetMinSize((688, 5))
-
-        # A Horizontal layout sizer (to separate the buttons from the grid).
-        sizer_main = wx.BoxSizer(wx.HORIZONTAL)
-
-        # The panel for both the buttons and the grid.
-        panel_main = wx.Panel(self.parent, -1)
-        panel_main.SetMinSize((688, 300))
-        panel_main.SetBackgroundColour(wx.Colour(192, 192, 192))
-        panel_main.SetSizer(sizer_main)
-
-        # A Vertical layout sizer (for the buttons).
-        sizer_buttons = wx.BoxSizer(wx.VERTICAL)
-        sizer_main.Add(sizer_buttons, 1, wx.EXPAND, 0)
-
-        # Button sizes.
-        size_button = [60, 60]
-
-        # The add button.
-        button = wx.BitmapButton(panel_main, -1, wx.Bitmap(ADD_ICON, wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((size_button[0], size_button[1]))
-        button.SetToolTipString("Add new peak lists")
-        self.gui.Bind(wx.EVT_BUTTON, self.peak_list_add_action, button)
-        sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-
-        # The remove single item button.
-        button = wx.BitmapButton(panel_main, -1, wx.Bitmap(REMOVE_ICON, wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((size_button[0], size_button[1]))
-        button.SetToolTipString("Removed selected items (disabled)")
-        sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-
-        # The cancel button.
-        button = wx.BitmapButton(panel_main, -1, wx.Bitmap(CANCEL_ICON, wx.BITMAP_TYPE_ANY))
-        button.SetMinSize((size_button[0], size_button[1]))
-        button.SetToolTipString("Clear the list")
-        self.gui.Bind(wx.EVT_BUTTON, self.empty_list, button)
-        sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-
-        # The panel for the grid.
-        panel_grid = wx.Panel(panel_main, -1)
-        panel_grid.SetMinSize((620, 300))
-        panel_grid.SetBackgroundColour(wx.Colour(192, 192, 192))
-        sizer_main.Add(panel_grid, 0, wx.EXPAND|wx.SHAPED, 0)
-
-        # A grid sizer for the peak list info.
-        sizer_grid = wx.FlexGridSizer(10, 2, 0, 0)
-
-        # The file title.
-        label = wx.StaticText(panel_grid, -1, "R1 relaxation peak list                                                              ")
-        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        sizer_grid.Add(label, 0, wx.ADJUST_MINSIZE, 0)
-
-        # The time title.
-        label = wx.StaticText(panel_grid, -1, "Relaxation time [s]")
-        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        sizer_grid.Add(label, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Build the grid of file names and relaxation times.
-        self.field_rx_list = []
-        self.field_rx_time = []
-        for i in range(1, self.peak_list_count+1):
-            # The peak list file name GUI elements.
-            self.field_rx_list.append(wx.StaticText(panel_grid, -1, ""))
-            sizer_grid.Add(self.field_rx_list[-1], 0, wx.ADJUST_MINSIZE, 0)
-
-            # The time GUI elements.
-            self.field_rx_time.append(wx.TextCtrl(panel_grid, -1, ""))
-            self.field_rx_time[-1].SetMinSize((80, 20))
-            sizer_grid.Add(self.field_rx_time[-1], 0, wx.ADJUST_MINSIZE, 0)
-
-        # Place the grid inside the panel.
-        panel_grid.SetSizer(sizer_grid)
-
-        # Add the panels to the box (this order adds a spacer at the top).
-        box.Add(panel_back, 0, wx.EXPAND|wx.SHAPED, 0)
-        box.Add(panel_main, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
     def add_results_dir(self, box):
@@ -372,52 +281,13 @@ class Auto_rx:
         self.add_unresolved_spins(box)
 
         # Add the peak list selection GUI element.
-        self.add_peak_list_selection(box)
+        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)
 
         # Return the box.
         return box
-
-
-    def count_peak_lists(self):
-        """Count the number of peak lists already loaded.
-
-        @return:    The number of loaded peak lists.
-        @rtype:     int
-        """
-
-        # Loop over the GUI elements.
-        count = 0
-        for i in range(self.peak_list_count):
-            # Stop when blank.
-            if self.data.file_list[i] == '':
-                break
-
-            # Increment.
-            count = count + 1
-
-        # Return the count.
-        return count
-
-
-    def empty_list(self, event):
-        """Remove all peak lists and times.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Reset the data storage.
-        self.data.file_list = [''] * self.peak_list_count
-        self.data.relax_times = [''] * self.peak_list_count
-
-        # Refresh the grid.
-        self.refresh_peak_list_display()
-
-        # Terminate the event.
-        event.Skip()
 
 
     def execute(self, event):
@@ -464,65 +334,6 @@ class Auto_rx:
 
         # Execute.
         start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.field_unresolved.GetValue(), self, 1, global_setting, file_setting, sequencefile)
-
-
-    def peak_list_add_action(self, event):
-        """Add additional peak lists.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The current number of peak lists.
-        count = self.count_peak_lists()
-
-        # Full!
-        if count >= self.peak_list_count:
-            # Show an error dialog.
-            error_message("No more peak lists can be added, the maximum number has been reached.")
-
-            # Terminate the event and finish.
-            event.Skip()
-            return
-
-        # Open the file selection dialog.
-        files = multi_openfile(msg='Select %s peak list file' % self.label, filetype='*.*', default='all files (*.*)|*.*')
-
-        # No files selected, so terminate the event and exit.
-        if not files:
-            event.Skip()
-            return
-
-        # Too many files selected.
-        if len(files) + count > self.peak_list_count:
-            # Show an error dialog.
-            error_message("Too many peak lists selected, the maximum number has been exceeded.")
-
-            # Terminate the event and finish.
-            event.Skip()
-            return
-
-        # Store the files.
-        for i in range(len(files)):
-            self.data.file_list[count+i] = files[i]
-
-        # Refresh the GUI element.
-        self.refresh_peak_list_display()
-
-        # Terminate the event.
-        event.Skip()
-
-
-    def refresh_peak_list_display(self):
-        """Refresh the display of peak lists."""
-
-        # Loop over all elements.
-        for i in range(self.peak_list_count):
-            # The file names.
-            self.field_rx_list[i].SetLabel(self.data.file_list[i])
-
-            # The times.
-            self.field_rx_time[i].SetValue(self.data.relax_times[i])
 
 
     def results_directory(self, event):
@@ -583,14 +394,4 @@ class Auto_rx:
             self.field_unresolved.SetValue(str(self.data.unresolved))
 
         # The peak lists and relaxation times.
-        if upload:
-            for i in range(self.peak_list_count):
-                # Set the relaxation time.
-                self.data.relax_times[i] = str(self.field_rx_time[i].GetValue())
-        else:
-            for i in range(self.peak_list_count):
-                # The file name.
-                self.field_rx_list[i].SetLabel(self.data.file_list[i])
-
-                # The relaxation time.
-                self.field_rx_time[i].SetValue(str(self.data.relax_times[i]))
+        self.peak_intensity.sync_ds(upload)
