@@ -643,7 +643,7 @@ class Auto_rx:
         if upload:
             for i in range(self.peak_list_count):
                 # Set the relaxation time.
-                self.data.relax_times[i] = self.field_rx_time[i].GetValue()
+                self.data.relax_times[i] = str(self.field_rx_time[i].GetValue())
         else:
             for i in range(self.peak_list_count):
                 # The file name.
