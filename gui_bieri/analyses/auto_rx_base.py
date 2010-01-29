@@ -26,6 +26,9 @@
 
 # Python module imports.
 from os import sep
+import sys
+import thread
+import time
 import wx
 
 # relax module imports.
@@ -33,9 +36,10 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
+from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir
-from gui_bieri.message import error_message, exec_relax
+from gui_bieri.message import error_message
 from gui_bieri.paths import ADD_ICON, CANCEL_ICON, IMAGE_PATH, REMOVE_ICON
 
 
@@ -100,7 +104,7 @@ class Auto_rx:
         button = wx.BitmapButton(self.parent, -1, wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetName('hello')
         button.SetSize(button.GetBestSize())
-        self.gui.Bind(wx.EVT_BUTTON, self.exec_r1_1, button)
+        self.gui.Bind(wx.EVT_BUTTON, self.execute, button)
         sizer.Add(button, 0, wx.RIGHT|wx.ADJUST_MINSIZE, 0)
 
         # Add the element to the box.
@@ -414,27 +418,50 @@ class Auto_rx:
         event.Skip()
 
 
-    def exec_r1_1(self, event): # start r2 calculation
-        relax_times_r2_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        #create relaxation time list
-        relax_times_r2_1[0] = str(self.r2_time_1.GetValue())
-        relax_times_r2_1[1] = str(self.r2_time_2.GetValue())
-        relax_times_r2_1[2] = str(self.r2_time_3.GetValue())
-        relax_times_r2_1[3] = str(self.r2_time_4.GetValue())
-        relax_times_r2_1[4] = str(self.r2_time_5.GetValue())
-        relax_times_r2_1[5] = str(self.r2_time_6.GetValue())
-        relax_times_r2_1[6] = str(self.r2_time_7.GetValue())
-        relax_times_r2_1[7] = str(self.r2_time_8.GetValue())
-        relax_times_r2_1[8] = str(self.r2_time_9.GetValue())
-        relax_times_r2_1[9] = str(self.r2_time_10.GetValue())
-        relax_times_r2_1[10] = str(self.r2_time_11.GetValue())
-        relax_times_r2_1[11] = str(self.r2_time_12.GetValue())
-        relax_times_r2_1[12] = str(self.r2_time_13.GetValue())
-        relax_times_r2_1[13] = str(self.r2_time_14.GetValue())
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.field_unresolved.GetValue(), self, 1, global_setting, file_setting, sequencefile)
+    def execute(self, event):
+        """Set up, execute, and process the automatic Rx analysis.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Synchronise the frame data to the relax data store.
+        self.sync_ds(upload=True)
+
+        # Display the relax controller.
+        self.gui.controller.Show()
+
+        # The thread object storage.
+        self.gui.calc_threads.append(Thread_container())
+        thread_cont = self.gui.calc_threads[-1]
+
+        # Start the thread.
+        id = thread.start_new_thread(self.execute_thread, ())
+
+        # Add the thread info to the container.
+        thread_cont.id = id
+        thread_cont.analysis_type = self.analysis_type
+
+        # Terminate the event.
         event.Skip()
+
+
+    def execute_thread(self):
+        """Execute the calculation in a thread."""
+
+        # Redirect relax output and errors to the controller.
+        redir = Redirect_text(self.gui.controller)
+        sys.stdout = redir
+        sys.stderr = redir
+
+        # Print a header in the controller.
+        header = 'Starting %s calculation' % self.label
+        underline = '-' * len(header)
+        wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
+        time.sleep(0.5)
+
+        # Execute.
+        start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.field_unresolved.GetValue(), self, 1, global_setting, file_setting, sequencefile)
 
 
     def peak_list_add_action(self, event):
