@@ -615,4 +615,42 @@ class Auto_rx:
         @type upload:       bool
         """
 
-        # Dummy function (for the time being).
+        # The frequency.
+        if upload:
+            self.data.frq = str(self.field_nmr_frq.GetValue())
+        else:
+            self.field_nmr_frq.SetValue(str(self.data.frq))
+
+        # The results directory.
+        if upload:
+            self.data.save_dir = str(self.field_results_dir.GetValue())
+        else:
+            self.field_results_dir.SetValue(str(self.data.save_dir))
+
+        # The structure file.
+        if upload:
+            self.data.structure_file = str(self.field_structure.GetValue())
+        else:
+            self.field_structure.SetValue(str(self.data.structure_file))
+
+        # Unresolved residues.
+        if upload:
+            self.data.unresolved = str(self.field_unresolved.GetValue())
+        else:
+            self.field_unresolved.SetValue(str(self.data.unresolved))
+
+        # The peak lists and relaxation times.
+        if upload:
+            for i in range(self.data.list_count):
+                # The file name.
+                self.data.file_list[i] = str(self.r1_list[i])
+
+                # The relaxation time.
+                self.data.relax_times[i] = str(self.r1_time[i].GetValue())
+        else:
+            for i in range(self.data.list_count):
+                # The file name.
+                self.r1_list[i] = str(self.data.file_list[i])
+
+                # The relaxation time.
+                self.r1_time[i].SetValue(str(self.data.file_list[i]))
