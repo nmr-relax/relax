@@ -566,7 +566,7 @@ class Auto_rx:
         count = self.count_peak_lists()
 
         # Full!
-        if count > self.peak_list_count:
+        if count >= self.peak_list_count:
             # Show an error dialog.
             error_message("No more peak lists can be added, the maximum number has been reached.")
 
