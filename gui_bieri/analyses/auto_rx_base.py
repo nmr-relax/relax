@@ -621,11 +621,15 @@ class Auto_rx:
 
 
     def refresh_peak_list_display(self):
-        """Refresh the display of peak list file names in the GUI element."""
+        """Refresh the display of peak lists."""
 
         # Loop over all elements.
         for i in range(self.peak_list_count):
+            # The file names.
             self.field_rx_list[i].SetLabel(self.data.file_list[i])
+
+            # The times.
+            self.field_rx_time[i].SetValue(self.data.relax_times[i])
 
 
     def results_directory(self, event):
