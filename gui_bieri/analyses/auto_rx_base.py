@@ -35,7 +35,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 from gui_bieri.analyses.project import open_file
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import multi_openfile, opendir
-from gui_bieri.message import exec_relax
+from gui_bieri.message import error_message, exec_relax
 from gui_bieri.paths import ADD_ICON, CANCEL_ICON, IMAGE_PATH, REMOVE_ICON
 
 
@@ -314,7 +314,7 @@ class Auto_rx:
         # The add button.
         button = wx.BitmapButton(panel_main, -1, wx.Bitmap(ADD_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((size_button[0], size_button[1]))
-        self.gui.Bind(wx.EVT_BUTTON, self.add_r1_1, button)
+        self.gui.Bind(wx.EVT_BUTTON, self.peak_list_add_action, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The remove single item button.
@@ -367,44 +367,6 @@ class Auto_rx:
         # Add the panels to the box (this order adds a spacer at the top).
         box.Add(panel_back, 0, wx.EXPAND|wx.SHAPED, 0)
         box.Add(panel_main, 0, wx.EXPAND|wx.SHAPED, 0)
-
-
-    def add_r1_1(self, event): # add a r1 peak list
-
-        if len(r1_list) < 14:
-            r1_entry = multi_openfile('Select R1 peak list file', self.field_results_dir_copy.GetValue(), '*.*', 'all files (*.*)|*.*')
-            if not r1_entry == None:
-                r1_list.append(r1_entry)
-
-        if len(r1_list) >= 1:
-            self.r1_list_1.SetLabel(r1_list[0])
-        if len(r1_list) >= 2:
-            self.r1_list_2.SetLabel(r1_list[1])
-        if len(r1_list) >= 3:
-            self.r1_list_3.SetLabel(r1_list[2])
-        if len(r1_list) >= 4:
-            self.r1_list_4.SetLabel(r1_list[3])
-        if len(r1_list) >= 5:
-            self.r1_list_5.SetLabel(r1_list[4])
-        if len(r1_list) >= 6:
-            self.r1_list_6.SetLabel(r1_list[5])
-        if len(r1_list) >= 7:
-            self.r1_list_7.SetLabel(r1_list[6])
-        if len(r1_list) >= 8:
-            self.r1_list_8.SetLabel(r1_list[7])
-        if len(r1_list) >= 9:
-            self.r1_list_9.SetLabel(r1_list[8])
-        if len(r1_list) >= 10:
-            self.r1_list_10.SetLabel(r1_list[9])
-        if len(r1_list) >= 11:
-            self.r1_list_11.SetLabel(r1_list[10])
-        if len(r1_list) >= 12:
-            self.r1_list_12.SetLabel(r1_list[11])
-        if len(r1_list) >= 13:
-            self.r1_list_1_copy_11.SetLabel(r1_list[12])
-        if len(r1_list) >= 14:
-            self.r1_list_14.SetLabel(r1_list[13])
-        event.Skip()
 
 
     def add_results_dir(self, box):
@@ -549,6 +511,27 @@ class Auto_rx:
         return box
 
 
+    def count_peak_lists(self):
+        """Count the number of peak lists already loaded.
+
+        @return:    The number of loaded peak lists.
+        @rtype:     int
+        """
+
+        # Loop over the GUI elements.
+        count = 0
+        for i in range(self.peak_list_count):
+            # Stop when blank.
+            if self.data.file_list[i] == '':
+                break
+
+            # Increment.
+            count = count + 1
+
+        # Return the count.
+        return count
+
+
     def exec_r1_1(self, event): # start r2 calculation
         relax_times_r2_1 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         #create relaxation time list
@@ -570,6 +553,61 @@ class Auto_rx:
         if start_relax == True:
             start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.field_unresolved.GetValue(), self, 1, global_setting, file_setting, sequencefile)
         event.Skip()
+
+
+    def peak_list_add_action(self, event):
+        """Add additional peak lists.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current number of peak lists.
+        count = self.count_peak_lists()
+
+        # Full!
+        if count > self.peak_list_count:
+            # Show an error dialog.
+            error_message("No more peak lists can be added, the maximum number has been reached.")
+
+            # Terminate the event and finish.
+            event.Skip()
+            return
+
+        # Open the file selection dialog.
+        files = multi_openfile(msg='Select %s peak list file' % self.label, filetype='*.*', default='all files (*.*)|*.*')
+
+        # No files selected, so terminate the event and exit.
+        if not files:
+            event.Skip()
+            return
+
+        # Too many files selected.
+        if len(files) + count > self.peak_list_count:
+            # Show an error dialog.
+            error_message("Too many peak lists selected, the maximum number has been exceeded.")
+
+            # Terminate the event and finish.
+            event.Skip()
+            return
+
+        # Store the files.
+        for i in range(len(files)):
+            self.data.file_list[count+i] = files[i]
+
+        # Refresh the GUI element.
+        self.refresh_peak_list_display()
+
+        # Terminate the event.
+        event.Skip()
+
+
+    def refresh_peak_list_display(self):
+        """Refresh the display of peak list file names in the GUI element."""
+
+        # Loop over all elements.
+        for i in range(self.peak_list_count):
+            self.field_rx_list[i].SetLabel(self.data.file_list[i])
 
 
     def refresh_r1_1(self, event): # refresh r1 list no. 1
