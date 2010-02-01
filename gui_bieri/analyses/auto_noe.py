@@ -64,8 +64,8 @@ GUI_version = '1.00'
 
 
 
-class Main(wx.Frame):
-    """The main GUI class."""
+class Auto_noe:
+    """Class for building the automatic NOE calculation frame."""
 
     # Hard coded variables.
     structure_file_pdb_msg = "please insert .pdb file"
