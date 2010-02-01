@@ -45,7 +45,7 @@ from gui_bieri.paths import ADD_ICON, CANCEL_ICON, IMAGE_PATH, REMOVE_ICON
 class Peak_intensity:
     """The peak list selection class."""
 
-    def __init__(self, gui=None, parent=None, data=None, label=None, box=None):
+    def __init__(self, gui=None, parent=None, data=None, label=None, width=688, height=300, box=None):
         """Build the peak list reading GUI element.
 
         @keyword gui:       The main GUI object.
@@ -56,6 +56,10 @@ class Peak_intensity:
         @type data:         class instance
         @keyword label:     The type of analysis.
         @type label:        str
+        @keyword width:     The initial width of the GUI element.
+        @type width:        int
+        @keyword height:    The initial height of the GUI element.
+        @type height:       int
         @keyword box:       The box sizer to pack this GUI component into.
         @type box:          wx.BoxSizer instance
         """
@@ -67,6 +71,17 @@ class Peak_intensity:
         self.label = label
         self.box = box
 
+        # Some fixed sizes.
+        button_width  = 80
+        button_height = 40
+        panel_width = width - button_width - 5
+        time_width = 150
+        time_height = 20
+        time_field_width  = 80
+        time_field_height = 20
+        file_width = panel_width - time_width
+        file_height = 20
+
         # The number of peak list elements (update the data store to match).
         self.peak_list_count = 14
         self.data.file_list = [''] * self.peak_list_count
@@ -74,14 +89,14 @@ class Peak_intensity:
 
         # The background panel (only used for layout purposes).
         panel_back = wx.Panel(self.parent, -1)
-        panel_back.SetMinSize((688, 5))
+        panel_back.SetMinSize((width, 5))
 
         # A Horizontal layout sizer (to separate the buttons from the grid).
         sizer_main = wx.BoxSizer(wx.HORIZONTAL)
 
         # The panel for both the buttons and the grid.
         panel_main = wx.Panel(self.parent, -1)
-        panel_main.SetMinSize((688, 300))
+        panel_main.SetMinSize((width, height))
         panel_main.SetBackgroundColour(wx.Colour(192, 192, 192))
         panel_main.SetSizer(sizer_main)
 
@@ -89,32 +104,29 @@ class Peak_intensity:
         sizer_buttons = wx.BoxSizer(wx.VERTICAL)
         sizer_main.Add(sizer_buttons, 1, wx.EXPAND, 0)
 
-        # Button sizes.
-        size_button = [80, 40]
-
         # The add button.
         button = wx.lib.buttons.GenBitmapTextButton(panel_main, -1, bitmap=wx.Bitmap(ADD_ICON, wx.BITMAP_TYPE_ANY), label="Add")
-        button.SetMinSize((size_button[0], size_button[1]))
+        button.SetMinSize((button_width, button_height))
         button.SetToolTipString("Add new peak lists")
         self.gui.Bind(wx.EVT_BUTTON, self.peak_list_add_action, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The remove single item button.
         button = wx.lib.buttons.GenBitmapTextButton(panel_main, -1, bitmap=wx.Bitmap(REMOVE_ICON, wx.BITMAP_TYPE_ANY), label="Remove")
-        button.SetMinSize((size_button[0], size_button[1]))
+        button.SetMinSize((button_width, button_height))
         button.SetToolTipString("Removed selected items (disabled)")
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The cancel button.
         button = wx.lib.buttons.GenBitmapTextButton(panel_main, -1, bitmap=wx.Bitmap(CANCEL_ICON, wx.BITMAP_TYPE_ANY), label="Clear")
-        button.SetMinSize((size_button[0], size_button[1]))
+        button.SetMinSize((button_width, button_height))
         button.SetToolTipString("Clear the list")
         self.gui.Bind(wx.EVT_BUTTON, self.empty_list, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The panel for the grid.
         panel_grid = wx.Panel(panel_main, -1)
-        panel_grid.SetMinSize((620, 300))
+        panel_grid.SetMinSize((width-button_width-5, height))
         panel_grid.SetBackgroundColour(wx.Colour(192, 192, 192))
         sizer_main.Add(panel_grid, 0, wx.EXPAND|wx.SHAPED, 0)
 
@@ -122,8 +134,9 @@ class Peak_intensity:
         sizer_grid = wx.FlexGridSizer(10, 2, 0, 0)
 
         # The file title.
-        label = wx.StaticText(panel_grid, -1, "R1 relaxation peak list                                                              ")
+        label = wx.StaticText(panel_grid, -1, "R1 relaxation peak list")
         label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        label.SetMinSize((file_width, file_height))
         sizer_grid.Add(label, 0, wx.ADJUST_MINSIZE, 0)
 
         # The time title.
@@ -141,7 +154,7 @@ class Peak_intensity:
 
             # The time GUI elements.
             self.field_rx_time.append(wx.TextCtrl(panel_grid, -1, ""))
-            self.field_rx_time[-1].SetMinSize((80, 20))
+            self.field_rx_time[-1].SetMinSize((time_field_width, time_field_height))
             sizer_grid.Add(self.field_rx_time[-1], 0, wx.ADJUST_MINSIZE, 0)
 
         # Place the grid inside the panel.
