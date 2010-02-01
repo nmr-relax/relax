@@ -131,7 +131,7 @@ class Relax:
         elif mode == 'test suite':
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
-            self.interpreter._on()
+            self.interpreter.on()
 
             # Run the tests.
             runner = Test_suite_runner()
@@ -141,7 +141,7 @@ class Relax:
         elif mode == 'system tests':
             # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
-            self.interpreter._on()
+            self.interpreter.on()
 
             # Run the tests.
             runner = Test_suite_runner()
