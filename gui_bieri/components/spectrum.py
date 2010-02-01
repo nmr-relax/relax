@@ -244,7 +244,8 @@ class Peak_intensity:
         for i in range(len(files)):
             self.data.file_list[count+i] = str(files[i])
 
-        # Refresh the GUI element.
+        # Sync any set times and refresh the GUI element.
+        self.sync_ds(upload=True)
         self.refresh_peak_list_display()
 
         # Terminate the event.
