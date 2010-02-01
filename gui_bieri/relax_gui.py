@@ -55,7 +55,7 @@ from controller import Controller
 from derived_wx_classes import StructureTextCtrl
 from filedialog import multi_openfile, opendir, openfile, savefile
 from message import dir_message, exec_relax, missing_data, question, relax_run_ok
-from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
+from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
 from settings import import_file_settings, load_sequence, relax_global_settings
 
 
@@ -613,6 +613,45 @@ class Main(wx.Frame):
         event.Skip()
 
 
+    def action_state_save(self, event):
+        """Save the program state.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Not saved yet, therefore pass execution to state_save_as().
+        if not ds.relax_gui.save_file:
+            self.action_state_save_as(event)
+            return
+
+        # Save.
+        self.state_save()
+
+        # Skip the event.
+        event.Skip()
+
+
+    def action_state_save_as(self, event):
+        """Save the program state with file name selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the dialog.
+        filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+
+        # Set the file name.
+        ds.relax_gui.save_file = filename
+
+        # Save.
+        self.state_save()
+
+        # Skip the event.
+        event.Skip()
+
+
     def build_main_window(self):
         """Construct the main relax GUI window."""
 
@@ -658,15 +697,17 @@ class Main(wx.Frame):
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=0, text="&New\tCtrl+N", icon=NEW_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=1, text="&Open\tCtrl+O", icon=OPEN_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave as...\tCtrl+Shift+S", icon=SAVE_AS_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="E&xit\tCtrl+Q", icon=EXIT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave\tCtrl+S", icon=SAVE_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=SAVE_AS_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=4, text="E&xit\tCtrl+Q", icon=EXIT_ICON))
         menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
         self.Bind(wx.EVT_MENU, self.newGUI,     id=0)
         self.Bind(wx.EVT_MENU, self.state_load, id=1)
-        self.Bind(wx.EVT_MENU, self.state_save, id=2)
-        self.Bind(wx.EVT_MENU, self.exitGUI,    id=3)
+        self.Bind(wx.EVT_MENU, self.action_state_save, id=2)
+        self.Bind(wx.EVT_MENU, self.action_state_save_as, id=3)
+        self.Bind(wx.EVT_MENU, self.exitGUI,    id=4)
 
         # The 'View' menu entries.
         menu = wx.Menu()
@@ -804,6 +845,9 @@ class Main(wx.Frame):
 
         # Add the GUI object to the data store.
         ds.relax_gui = Gui()
+
+        # The save file.
+        ds.relax_gui.save_file = None
 
         # Define Global Variables
         ds.relax_gui.unresolved = ""
@@ -1198,15 +1242,8 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def state_save(self, event):
-        """Save the program state.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Open the dialog.
-        filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
+    def state_save(self):
+        """Save the program state."""
 
         # Update the data store to match the GUI.
         self.sync_ds(upload=True)
@@ -1218,10 +1255,7 @@ class Main(wx.Frame):
                 self.analysis_frames[i].sync_ds(upload=True)
 
         # Save the relax state.
-        state.save_state(filename, verbosity=0, force=True)
-
-        # Skip the event.
-        event.Skip()
+        state.save_state(ds.relax_gui.save_file, verbosity=0, force=True)
 
 
     def sync_ds(self, upload=False):
