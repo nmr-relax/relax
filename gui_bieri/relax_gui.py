@@ -638,7 +638,7 @@ class Main(wx.Frame):
         """
 
         # Not saved yet, therefore pass execution to state_save_as().
-        if not ds.relax_gui.save_file:
+        if not self.save_file:
             self.action_state_save_as(event)
             return
 
@@ -660,7 +660,7 @@ class Main(wx.Frame):
         filename = savefile(msg='Select file to save', filetype='state.bz2', default='relax save files (*.bz2)|*.bz2|all files (*.*)|*.*')
 
         # Set the file name.
-        ds.relax_gui.save_file = filename
+        self.save_file = filename
 
         # Save.
         self.state_save()
@@ -860,11 +860,11 @@ class Main(wx.Frame):
     def init_data(self):
         """Initialise the data used by the GUI interface."""
 
+        # Temporary data:  the save file.
+        self.save_file = None
+
         # Add the GUI object to the data store.
         ds.relax_gui = Gui()
-
-        # The save file.
-        ds.relax_gui.save_file = None
 
         # Define Global Variables
         ds.relax_gui.unresolved = ""
@@ -1228,6 +1228,9 @@ class Main(wx.Frame):
         # Reset the relax data store.
         reset()
 
+        # The new save file name.
+        self.save_file = filename
+
         # Load the relax state.
         state.load_state(filename, verbosity=0)
 
@@ -1272,7 +1275,7 @@ class Main(wx.Frame):
                 self.analysis_frames[i].sync_ds(upload=True)
 
         # Save the relax state.
-        state.save_state(ds.relax_gui.save_file, verbosity=0, force=True)
+        state.save_state(self.save_file, verbosity=0, force=True)
 
 
     def sync_ds(self, upload=False):
