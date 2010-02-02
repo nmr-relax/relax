@@ -613,8 +613,17 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def aboutrelax(self, event): # abour relax
+    def about_relax(self, event):
+        """The about message for relax.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Open the relax webpage.
         webbrowser.open_new('http://www.nmr-relax.com')
+
+        # Terminate the event.
         event.Skip()
 
 
@@ -762,7 +771,7 @@ class Main(wx.Frame):
 
         # The 'Help' menu actions.
         self.Bind(wx.EVT_MENU, self.about_gui,  id=41)
-        self.Bind(wx.EVT_MENU, self.aboutrelax, id=42)
+        self.Bind(wx.EVT_MENU, self.about_relax, id=42)
 
 
     def build_menu_sub_item(self, menu, id=None, text='', tooltip='', icon=None):
