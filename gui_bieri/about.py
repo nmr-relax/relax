@@ -25,6 +25,9 @@
 from os import sep
 import wx
 
+# relax module imports.
+from version import version
+
 # relax GUI module imports.
 from paths import IMAGE_PATH
 
@@ -41,6 +44,16 @@ def show_about_gui():
 class About_base(wx.Dialog):
     """The about dialog base class."""
 
+    # The background colour.
+    colour = None
+
+    # Dimensions.
+    dim_x = 400
+    dim_y = 100
+
+    # Spacer size (px).
+    spacer_size = 0
+
     def __init__(self, *args, **kwds):
         """Build the dialog."""
 
@@ -50,8 +63,67 @@ class About_base(wx.Dialog):
         # Execute the base class __init__() method.
         super(About_base, self).__init__(*args, **kwds)
 
+        # The total size.
+        self.total_x = self.dim_x + 2*self.spacer_size
+        self.total_y = self.dim_y + 2*self.spacer_size
+        self.SetMinSize((self.total_x, self.total_y))
+
+        # Set a background.
+        self.set_background()
+
+        # Build the boarder and get the central sizer.
+        self.sizer = self.build_boarders()
+
+        # An array of objects to bind events to.
+        self.obj_list = [self]
+
+        # Build the core.
+        self.build_core()
+
         # Let the dialog be closable with a left button click.
-        self.Bind(wx.EVT_LEFT_DOWN, self.close, self)
+        self.bind()
+
+
+    def bind(self):
+        """Bind the left button click to all objects."""
+
+        # Loop over the objects.
+        for obj in self.obj_list:
+            self.Bind(wx.EVT_LEFT_DOWN, self.close, obj)
+
+
+    def build_boarders(self):
+        """Build the boarder layout and return the central sizer.
+
+        @return:    The central sizer object.
+        @rtype:     wx.BoxSizer instance
+        """
+
+        # The horizontal, vertical, and central sizers.
+        sizer_hori = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_vert = wx.BoxSizer(wx.VERTICAL)
+        sizer_cent = wx.BoxSizer(wx.VERTICAL)
+
+        # Fix the size of the central sizer.
+        sizer_cent.SetMinSize((self.dim_x, self.dim_y))
+
+        # Fill the dialog with the horizontal sizer.
+        self.SetSizer(sizer_hori)
+
+        # The left and top spacers.
+        sizer_hori.AddSpacer(self.spacer_size)
+        sizer_vert.AddSpacer(self.spacer_size)
+
+        # Pack the sizers together.
+        sizer_hori.Add(sizer_vert)
+        sizer_vert.Add(sizer_cent)
+
+        # The right and bottom spacers.
+        sizer_hori.AddSpacer(self.spacer_size)
+        sizer_vert.AddSpacer(self.spacer_size)
+
+        # Return the central sizer.
+        return sizer_cent
 
 
     def close(self, event):
@@ -68,15 +140,78 @@ class About_base(wx.Dialog):
         event.Skip()
 
 
+    def set_background(self):
+        """Build a background for the dialog."""
+
+        # Set a single colour.
+        if self.colour:
+            self.SetBackgroundColour(self.colour)
+
+
 
 class About_relax(About_base):
     """The about relax dialog."""
+
+    # The relax background colour.
+    colour = '#e5feff'
+
+    # Dimensions.
+    dim_x = 400
+    dim_y = 600
+
+    # Spacer size (px).
+    spacer_size = 10
 
     def __init__(self, *args, **kwds):
         """Build the dialog."""
 
         # Execute the base class __init__() method.
         super(About_relax, self).__init__(*args, **kwds)
+
+
+    def add_relax_logo(self, sizer):
+        """Add the relax logo to the sizer.
+
+        @param sizer:   The sizer element to pack the logo into.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The logo.
+        logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
+
+        # Pack the logo into the sizer.
+        sizer.Add(logo)
+
+        # Return the logo.
+        return logo
+
+
+    def add_title(self, sizer):
+        """Add the relax title (name and version) to the sizer.
+
+        @param sizer:   The sizer element to pack the title into.
+        @type sizer:    wx.Sizer instance
+        """
+
+        # The text.
+        title = wx.StaticText(self, -1, 'relax ' + version, style=wx.Centre)
+
+        # Pack in the title.
+        sizer.Add(title)
+
+
+    def build_core(self):
+        """Construct the core of the about dialog."""
+
+        # Add some vertical spacing.
+        self.sizer.AddSpacer(30)
+
+        # Add the relax name and version.
+        self.add_title(self.sizer)
+
+        # Add the relax logo.
+        logo = self.add_relax_logo(self.sizer)
+        self.obj_list.append(logo)
 
 
 
