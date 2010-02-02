@@ -34,7 +34,7 @@ def show_about_gui():
     about = MyFrame(None, -1, "")
 
     # Temporary disabling of the splash screen - for easier debugging!
-    about.ShowModal()
+    #about.ShowModal()
 
 
 
