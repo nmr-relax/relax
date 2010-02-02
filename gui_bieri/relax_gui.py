@@ -44,7 +44,7 @@ from relax_errors import RelaxError
 from version import version
 
 # relaxGUI module imports.
-from about import about_relax
+from about import show_about_gui
 from analyses.auto_model_free import Auto_model_free
 from analyses.auto_r1 import Auto_r1
 from analyses.auto_r2 import Auto_r2
@@ -603,8 +603,13 @@ class Main(wx.Frame):
         self.relax_start_noe1_copy_1.SetSize(self.relax_start_noe1_copy_1.GetBestSize())
 
 
-    def aboutGUI(self, event): # About
-        about_relax()
+    def about_gui(self, event):
+        """Create and display the about message for the GUI."""
+
+        # The dialog.
+        show_about_gui()
+
+        # Terminate the event.
         event.Skip()
 
 
@@ -756,7 +761,7 @@ class Main(wx.Frame):
         menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
-        self.Bind(wx.EVT_MENU, self.aboutGUI,   id=41)
+        self.Bind(wx.EVT_MENU, self.about_gui,  id=41)
         self.Bind(wx.EVT_MENU, self.aboutrelax, id=42)
 
 

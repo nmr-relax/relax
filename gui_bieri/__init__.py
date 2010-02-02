@@ -36,7 +36,7 @@ if dep_check.wx_module:
 
 # relax module imports.
 from relax_errors import RelaxError
-from relax_gui import about_relax, Main
+from relax_gui import show_about_gui, Main
 
 
 __all__ = ['relax_gui']
@@ -67,7 +67,7 @@ def run(intro_string):
     wx.InitAllImageHandlers()
 
     # show about panel
-    about_relax()
+    show_about_gui()
 
     # Dependency check.
     if not dep_check.wx_module:
