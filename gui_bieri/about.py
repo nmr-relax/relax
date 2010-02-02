@@ -38,6 +38,37 @@ def show_about_gui():
 
 
 
+class About_relax(wx.Dialog):
+    """The about relax dialog."""
+
+    def __init__(self, *args, **kwds):
+        """Build the dialog."""
+
+        # Change the dialog style.
+        kwds["style"] = wx.BORDER_NONE
+
+        # Execute the base class __init__() method.
+        super(self.__class__, self).__init__(*args, **kwds)
+
+        # Let the dialog be 
+        self.Bind(wx.EVT_LEFT_DOWN, self.close, self)
+
+
+    def close(self, event):
+        """Close the dialog.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Close.
+        self.Close()
+
+        # Terminate the event.
+        event.Skip()
+
+
+
 class MyFrame(wx.Dialog):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__

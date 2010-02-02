@@ -44,7 +44,7 @@ from relax_errors import RelaxError
 from version import version
 
 # relaxGUI module imports.
-from about import show_about_gui
+from about import About_relax, show_about_gui
 from analyses.auto_model_free import Auto_model_free
 from analyses.auto_r1 import Auto_r1
 from analyses.auto_r2 import Auto_r2
@@ -247,6 +247,9 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_rx_results_exe, self.open_rx_results)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_model_results_exe, self.list_modelfree)
         self.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
+
+        # Pre-build the about dialogs, but do not show them.
+        self.dialog_about_relax = About_relax(None, -1, "")
 
 
     def __do_layout(self):
@@ -620,8 +623,8 @@ class Main(wx.Frame):
         @type event:    wx event
         """
 
-        # Open the relax webpage.
-        webbrowser.open_new('http://www.nmr-relax.com')
+        # The dialog.
+        self.dialog_about_relax.Show()
 
         # Terminate the event.
         event.Skip()
