@@ -105,20 +105,20 @@ class Peak_intensity:
         sizer_main.Add(sizer_buttons, 1, wx.EXPAND, 0)
 
         # The add button.
-        button = wx.lib.buttons.GenBitmapTextButton(panel_main, -1, bitmap=wx.Bitmap(ADD_ICON, wx.BITMAP_TYPE_ANY), label="Add")
+        button = wx.BitmapButton(panel_main, -1, bitmap=wx.Bitmap(ADD_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((button_width, button_height))
         button.SetToolTipString("Add new peak lists")
         self.gui.Bind(wx.EVT_BUTTON, self.peak_list_add_action, button)
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The remove single item button.
-        button = wx.lib.buttons.GenBitmapTextButton(panel_main, -1, bitmap=wx.Bitmap(REMOVE_ICON, wx.BITMAP_TYPE_ANY), label="Remove")
+        button = wx.BitmapButton(panel_main, -1, bitmap=wx.Bitmap(REMOVE_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((button_width, button_height))
         button.SetToolTipString("Removed selected items (disabled)")
         sizer_buttons.Add(button, 0, wx.ADJUST_MINSIZE, 0)
 
         # The cancel button.
-        button = wx.lib.buttons.GenBitmapTextButton(panel_main, -1, bitmap=wx.Bitmap(CANCEL_ICON, wx.BITMAP_TYPE_ANY), label="Clear")
+        button = wx.BitmapButton(panel_main, -1, bitmap=wx.Bitmap(CANCEL_ICON, wx.BITMAP_TYPE_ANY))
         button.SetMinSize((button_width, button_height))
         button.SetToolTipString("Clear the list")
         self.gui.Bind(wx.EVT_BUTTON, self.empty_list, button)
