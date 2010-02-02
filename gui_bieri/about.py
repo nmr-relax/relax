@@ -50,7 +50,7 @@ class About_base(wx.Dialog):
         # Execute the base class __init__() method.
         super(About_base, self).__init__(*args, **kwds)
 
-        # Let the dialog be 
+        # Let the dialog be closable with a left button click.
         self.Bind(wx.EVT_LEFT_DOWN, self.close, self)
 
 
