@@ -1032,7 +1032,7 @@ class Auto_model_free:
                 obj = getattr(self, 'm%i' % i)
 
                 # Upload to the store.
-                self.data.model_toggle[i] = str(obj.GetValue())
+                self.data.model_toggle[i] = obj.GetValue()
         else:
             # Loop over models m0 to m9.
             for i in range(10):
@@ -1040,7 +1040,7 @@ class Auto_model_free:
                 obj = getattr(self, 'm%i' % i)
 
                 # Download from the store.
-                obj.SetValue(eval(str(self.data.model_toggle[i])))
+                obj.SetValue(self.data.model_toggle[i])
  
         # The structure file.
         if upload:
