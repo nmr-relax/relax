@@ -33,14 +33,6 @@ from paths import IMAGE_PATH
 
 
 
-def show_about_gui():
-    about = MyFrame(None, -1, "")
-
-    # Temporary disabling of the splash screen - for easier debugging!
-    #about.ShowModal()
-
-
-
 class About_base(wx.Dialog):
     """The about dialog base class."""
 

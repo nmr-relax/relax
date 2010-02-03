@@ -44,7 +44,7 @@ from relax_errors import RelaxError
 from version import version
 
 # relaxGUI module imports.
-from about import About_relax, show_about_gui
+from about import About_relax
 from analyses.auto_model_free import Auto_model_free
 from analyses.auto_r1 import Auto_r1
 from analyses.auto_r2 import Auto_r2
