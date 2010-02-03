@@ -303,19 +303,6 @@ class Relax:
         help(gpl)
 
 
-    def spacing(self, string, width=100):
-        """Function for formatting the string to be centred to 100 spaces."""
-
-        # Calculate the number of spaces needed.
-        spaces = (width - len(string)) / 2
-
-        # The new string.
-        string = spaces * ' ' + string
-
-        # Return the new string.
-        return string
-
-
     def test_mode(self):
         """Relax test mode code."""
 

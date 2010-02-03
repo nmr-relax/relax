@@ -63,3 +63,24 @@ class Intro_text:
         self.errors = []
         if not dep_check.C_module_exp_fn:
             self.errors.append(dep_check.C_module_exp_fn_mesg)
+
+
+    def centre(self, string, width=100):
+        """Format the string to be centred to a certain number of spaces.
+
+        @param string:  The string to centre.
+        @type string:   str
+        @keyword width: The number of characters to centre to.
+        @type width:    int
+        @return:        The centred string with leading whitespace added.
+        @rtype:         str
+        """
+
+        # Calculate the number of spaces needed.
+        spaces = (width - len(string)) / 2
+
+        # The new string.
+        string = spaces * ' ' + string
+
+        # Return the new string.
+        return string
