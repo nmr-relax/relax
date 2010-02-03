@@ -49,7 +49,7 @@ class Intro_text:
         self.version = version
 
         # Program description.
-        self.desc = "Protein dynamics by NMR data analysis"
+        self.desc = "Molecular dynamics by NMR data analysis"
 
         # Copyright printout.
         self.copyright = []
