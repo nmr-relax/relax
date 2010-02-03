@@ -227,17 +227,17 @@ class Frame_order:
 
         This function optimises against alignment tensors.
 
-        @param params:  The vector of parameter values {beta, gamma, theta, phi, theta_cone} where the first 2 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis theta_cone is the isotropic cone angle.
+        @param params:  The vector of parameter values {beta, gamma, theta, phi, s1} where the first 2 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis, and s1 is the isotropic cone order parameter.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
         """
 
         # Unpack the parameters.
-        beta, gamma, theta, phi, theta_cone = params
+        beta, gamma, theta, phi, s1 = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, s1)
 
         # Reduced alignment tensor rotation.
         euler_to_R(0.0, beta, gamma, self.rot)

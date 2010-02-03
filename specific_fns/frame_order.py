@@ -40,7 +40,7 @@ from generic_fns import pipes
 from generic_fns.angles import wrap_angles
 from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
 from generic_fns.structure.internal import Internal
-from maths_fns import frame_order
+from maths_fns import frame_order, order_parameters
 from maths_fns.frame_order_matrix_ops import generate_vector
 from maths_fns.rotation_matrix import two_vect_to_R
 from relax_errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
@@ -73,7 +73,7 @@ class Frame_order(API_base, API_common):
 
         # The isotropic cone model initial parameter vector (the cone axis angles and the cone angle).
         elif cdp.model == 'iso cone':
-            return array([cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.theta_cone], float64)
+            return array([cdp.beta, cdp.gamma, cdp.theta_axis, cdp.phi_axis, cdp.s1], float64)
 
 
     def _back_calc(self):
@@ -455,15 +455,15 @@ class Frame_order(API_base, API_common):
             if init:
                 cdp.params.append('theta_axis')
                 cdp.params.append('phi_axis')
-                cdp.params.append('theta_cone')
+                cdp.params.append('s1')
 
-            # Initialise the cone axis angles and cone angle values.
+            # Initialise the cone axis angles and order parameter values.
             if not hasattr(cdp, 'theta_axis'):
                 cdp.theta_axis = 0.0
             if not hasattr(cdp, 'phi_axis'):
                 cdp.phi_axis = 0.0
-            if not hasattr(cdp, 'theta_cone'):
-                cdp.theta_cone = 0.0
+            if not hasattr(cdp, 's1'):
+                cdp.s1 = 0.0
 
 
     def _unpack_opt_results(self, results, sim_index=None):
@@ -501,30 +501,27 @@ class Frame_order(API_base, API_common):
         # Isotropic cone model.
         elif cdp.model == 'iso cone':
             # Disassemble the parameter vector.
-            beta, gamma, theta_axis, phi_axis, theta_cone = param_vector
+            beta, gamma, theta_axis, phi_axis, s1 = param_vector
 
             # Alpha is zero in this model!
             alpha = 0.0
 
-            # Wrap the cone angle to be between 0 and pi.
-            if theta_cone < 0.0:
-                theta_cone = -theta_cone
-            if theta_cone > pi:
-                theta_cone = 2.0*pi - theta_cone
+            # Calculate the cone angle.
+            cdp.theta_cone = order_parameters.theta_cone(s1)
 
             # Monte Carlo simulation data structures.
             if sim_index != None:
                 # Model parameters.
                 cdp.theta_axis_sim[sim_index] = theta_axis
                 cdp.phi_axis_sim[sim_index] = phi_axis
-                cdp.theta_cone_sim[sim_index] = theta_cone
+                cdp.s1_sim[sim_index] = s1
 
             # Normal data structures.
             else:
                 # Model parameters.
                 cdp.theta_axis = theta_axis
                 cdp.phi_axis = phi_axis
-                cdp.theta_cone = theta_cone
+                cdp.s1 = s1
 
         # Wrap the Euler angles.
         alpha = wrap_angles(alpha, 0.0, 2.0*pi)
@@ -637,7 +634,7 @@ class Frame_order(API_base, API_common):
 
             - 'theta_axis', the cone axis polar angle (for the isotropic cone model).
             - 'phi_axis', the cone axis azimuthal angle (for the isotropic cone model).
-            - 'theta_cone', the isotropic cone angle.
+            - 's1', the isotropic cone order parameter.
 
 
         @keyword set:           The set of object names to return.  This can be set to 'all' for all
@@ -672,7 +669,7 @@ class Frame_order(API_base, API_common):
                 # Angular cone parameters.
                 names.append('theta_axis')
                 names.append('phi_axis')
-                names.append('theta_cone')
+                names.append('s1')
 
             # All other models.
             else:
@@ -700,7 +697,7 @@ class Frame_order(API_base, API_common):
                 # Angular cone parameters.
                 names.append('theta_axis_err')
                 names.append('phi_axis_err')
-                names.append('theta_cone_err')
+                names.append('s1_err')
 
             # All other models.
             else:
@@ -719,7 +716,7 @@ class Frame_order(API_base, API_common):
                 # Angular cone parameters.
                 names.append('theta_axis_sim')
                 names.append('phi_axis_sim')
-                names.append('theta_cone_sim')
+                names.append('s1_sim')
 
             # All other models.
             else:
@@ -841,12 +838,12 @@ class Frame_order(API_base, API_common):
                         lower.append(0.0)
                         upper.append(2*pi * (1.0 - 1.0/incs[i]))
 
-                # The cone angle.
-                if cdp.params[i] == 'theta_cone':
+                # The cone order parameter.
+                if cdp.params[i] == 's1':
                     # Set the default bounds.
                     if default_bounds:
-                        lower.append(0.0)
-                        upper.append(pi)
+                        lower.append(-0.5)
+                        upper.append(1.0)
 
             # Get the grid row.
             if not row:
@@ -1048,9 +1045,9 @@ class Frame_order(API_base, API_common):
         if search('phi[ -_]axis', param):
             return 'phi_axis'
 
-        # Cone angle.
-        if search('theta[ -_]cone', param):
-            return 'theta_cone'
+        # Cone order parameter.
+        if search('[Ss]1', param):
+            return 's1'
 
 
     def return_error(self, spin_id):
