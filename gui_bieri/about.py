@@ -44,15 +44,16 @@ def show_about_gui():
 class About_base(wx.Dialog):
     """The about dialog base class."""
 
-    # The background colour.
-    colour = None
+    # The background colour (gradient if second colour is given).
+    colour1 = None
+    colour2 = None
 
     # Dimensions.
     dim_x = 400
     dim_y = 100
 
     # Spacer size (px).
-    spacer_size = 0
+    boarder = 0
 
     def __init__(self, *args, **kwds):
         """Build the dialog."""
@@ -64,66 +65,15 @@ class About_base(wx.Dialog):
         super(About_base, self).__init__(*args, **kwds)
 
         # The total size.
-        self.total_x = self.dim_x + 2*self.spacer_size
-        self.total_y = self.dim_y + 2*self.spacer_size
+        self.total_x = self.dim_x + 2*self.boarder
+        self.total_y = self.dim_y + 2*self.boarder
         self.SetMinSize((self.total_x, self.total_y))
 
-        # Set a background.
-        self.set_background()
-
-        # Build the boarder and get the central sizer.
-        self.sizer = self.build_boarders()
-
-        # An array of objects to bind events to.
-        self.obj_list = [self]
-
-        # Build the core.
-        self.build_core()
+        # Draw everything.
+        self.Bind(wx.EVT_PAINT, self.generate)
 
         # Let the dialog be closable with a left button click.
-        self.bind()
-
-
-    def bind(self):
-        """Bind the left button click to all objects."""
-
-        # Loop over the objects.
-        for obj in self.obj_list:
-            self.Bind(wx.EVT_LEFT_DOWN, self.close, obj)
-
-
-    def build_boarders(self):
-        """Build the boarder layout and return the central sizer.
-
-        @return:    The central sizer object.
-        @rtype:     wx.BoxSizer instance
-        """
-
-        # The horizontal, vertical, and central sizers.
-        sizer_hori = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_vert = wx.BoxSizer(wx.VERTICAL)
-        sizer_cent = wx.BoxSizer(wx.VERTICAL)
-
-        # Fix the size of the central sizer.
-        sizer_cent.SetMinSize((self.dim_x, self.dim_y))
-
-        # Fill the dialog with the horizontal sizer.
-        self.SetSizer(sizer_hori)
-
-        # The left and top spacers.
-        sizer_hori.AddSpacer(self.spacer_size)
-        sizer_vert.AddSpacer(self.spacer_size)
-
-        # Pack the sizers together.
-        sizer_hori.Add(sizer_vert)
-        sizer_vert.Add(sizer_cent)
-
-        # The right and bottom spacers.
-        sizer_hori.AddSpacer(self.spacer_size)
-        sizer_vert.AddSpacer(self.spacer_size)
-
-        # Return the central sizer.
-        return sizer_cent
+        self.Bind(wx.EVT_LEFT_DOWN, self.close)
 
 
     def close(self, event):
@@ -140,12 +90,33 @@ class About_base(wx.Dialog):
         event.Skip()
 
 
+    def generate(self, event):
+        """Build the device context, add the background, and build the dialog.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Create the device context.
+        self.dc = wx.PaintDC(self)
+
+        # Set a background.
+        self.set_background()
+
+        # Build the rest of the about widget.
+        self.build_widget()
+
+
     def set_background(self):
         """Build a background for the dialog."""
 
         # Set a single colour.
-        if self.colour:
-            self.SetBackgroundColour(self.colour)
+        if self.colour1 and not self.colour2:
+            self.SetBackgroundColour(self.colour1)
+
+        # A gradient.
+        elif self.colour1 and self.colour2:
+            self.dc.GradientFillLinear((0, 0, self.total_x, self.total_y), self.colour1, self.colour2, wx.SOUTH)
 
 
 
@@ -153,14 +124,15 @@ class About_relax(About_base):
     """The about relax dialog."""
 
     # The relax background colour.
-    colour = '#e5feff'
+    colour1 = '#e5feff'
+    colour2 = '#88cbff'
 
     # Dimensions.
     dim_x = 400
     dim_y = 600
 
     # Spacer size (px).
-    spacer_size = 10
+    boarder = 10
 
     def __init__(self, *args, **kwds):
         """Build the dialog."""
@@ -169,49 +141,58 @@ class About_relax(About_base):
         super(About_relax, self).__init__(*args, **kwds)
 
 
-    def add_relax_logo(self, sizer):
-        """Add the relax logo to the sizer.
+    def build_widget(self):
+        """Build the about dialog."""
 
-        @param sizer:   The sizer element to pack the logo into.
-        @type sizer:    wx.Sizer instance
-        """
+        # The relax icon.
+        self.draw_icon()
 
-        # The logo.
-        logo = wx.StaticBitmap(self, -1, wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png', wx.BITMAP_TYPE_ANY))
+        # The title.
+        self.draw_title()
 
-        # Pack the logo into the sizer.
-        sizer.Add(logo)
-
-        # Return the logo.
-        return logo
+        # The description.
+        self.draw_description()
 
 
-    def add_title(self, sizer):
-        """Add the relax title (name and version) to the sizer.
-
-        @param sizer:   The sizer element to pack the title into.
-        @type sizer:    wx.Sizer instance
-        """
+    def draw_description(self):
+        """Draw the relax description text."""
 
         # The text.
-        title = wx.StaticText(self, -1, 'relax ' + version, style=wx.Centre)
+        text = 'Protein dynamics by NMR data analysis'
 
-        # Pack in the title.
-        sizer.Add(title)
+        # Set the font.
+        font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        self.dc.SetFont(font)
+
+        # The text extent.
+        x, y = self.dc.GetTextExtent(text)
+
+        # Draw the text.
+        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, 250)
 
 
-    def build_core(self):
-        """Construct the core of the about dialog."""
-
-        # Add some vertical spacing.
-        self.sizer.AddSpacer(30)
-
-        # Add the relax name and version.
-        self.add_title(self.sizer)
+    def draw_icon(self):
+        """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        logo = self.add_relax_logo(self.sizer)
-        self.obj_list.append(logo)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder, self.boarder+50, True)
+
+
+    def draw_title(self):
+        """Draw the relax title with name and version."""
+
+        # The text.
+        text = 'relax ' + version
+
+        # Set the font.
+        font = wx.Font(14, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        self.dc.SetFont(font)
+
+        # The text extent.
+        x, y = self.dc.GetTextExtent(text)
+
+        # Draw the text.
+        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, 30)
 
 
 
