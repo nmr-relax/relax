@@ -213,7 +213,7 @@ def populate_2nd_eigenframe_iso_cone(matrix, s1):
     matrix[7, 7] = matrix[2, 2]
 
     # Calculate the cone angle.
-    cos_theta = order_parameters.cos_theta(s1)
+    cos_theta = order_parameters.iso_cone_S_to_cos_theta(s1)
 
     # The c11.c22 and c12.c21 elements.
     matrix[0, 4] = matrix[4, 0] = (cos_theta + 1.0) / 4.0
