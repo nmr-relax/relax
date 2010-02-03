@@ -42,15 +42,8 @@ from relax_gui import show_about_gui, Main
 __all__ = ['relax_gui']
 
 # Execute the GUI.
-def run(intro_string):
-    """Build the Bieri GUI for relax.
-
-    @param intro_string:    The relax introduction string.
-    @type intro_string:     str
-    """
-
-    # Print the program intro.
-    sys.stdout.write("%s\n" % intro_string)
+def run():
+    """Build the Bieri GUI for relax."""
 
     # Print the GUI intro.
     sys.stdout.write('\n\n\n\n\n')
