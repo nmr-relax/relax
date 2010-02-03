@@ -168,14 +168,14 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.desc)
 
         # Draw the text.
-        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, 250)
+        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, 230)
 
 
     def draw_icon(self):
         """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder, self.boarder+50, True)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder, self.boarder, True)
 
 
     def draw_title(self):
@@ -192,7 +192,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(text)
 
         # Draw the text.
-        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, 30)
+        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, 20+168)
 
 
 
