@@ -714,8 +714,10 @@ class Main(wx.Frame):
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=0, text="&New\tCtrl+N", icon=NEW_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=1, text="&Open\tCtrl+O", icon=OPEN_ICON))
+        menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=2, text="S&ave\tCtrl+S", icon=SAVE_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=3, text="Save as...\tCtrl+Shift+S", icon=SAVE_AS_ICON))
+        menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=4, text="E&xit\tCtrl+Q", icon=EXIT_ICON))
         menubar.Append(menu, "&File")
 
@@ -768,6 +770,7 @@ class Main(wx.Frame):
         # The 'Help' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="&Manual\tF1", icon=MANUAL_ICON))
+        menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="About rela&x", icon=ABOUT_RELAX_ICON))
         menubar.Append(menu, "&Help")
