@@ -26,7 +26,7 @@ from os import sep
 import wx
 
 # relax module imports.
-from version import version
+from intro import Intro_text
 
 # relax GUI module imports.
 from paths import IMAGE_PATH
@@ -137,6 +137,9 @@ class About_relax(About_base):
     def __init__(self, *args, **kwds):
         """Build the dialog."""
 
+        # Initialise the program information container.
+        self.info = Intro_text()
+
         # Execute the base class __init__() method.
         super(About_relax, self).__init__(*args, **kwds)
 
@@ -157,18 +160,15 @@ class About_relax(About_base):
     def draw_description(self):
         """Draw the relax description text."""
 
-        # The text.
-        text = 'Protein dynamics by NMR data analysis'
-
         # Set the font.
         font = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
         self.dc.SetFont(font)
 
         # The text extent.
-        x, y = self.dc.GetTextExtent(text)
+        x, y = self.dc.GetTextExtent(self.info.desc)
 
         # Draw the text.
-        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, 250)
+        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, 250)
 
 
     def draw_icon(self):
@@ -182,7 +182,7 @@ class About_relax(About_base):
         """Draw the relax title with name and version."""
 
         # The text.
-        text = 'relax ' + version
+        text = self.info.title + ' ' + self.info.version
 
         # Set the font.
         font = wx.Font(14, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
