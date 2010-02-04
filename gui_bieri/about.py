@@ -332,7 +332,6 @@ class About_relax(About_base):
         self._offset_val = self._offset_val + val
 
         # Return.
-        print self._offset_val
         return self._offset_val
 
 
