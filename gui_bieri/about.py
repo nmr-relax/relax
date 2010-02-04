@@ -142,7 +142,7 @@ class About_relax(About_base):
     colour2 = '#88cbff'
 
     # Dimensions.
-    dim_x = 400
+    dim_x = 450
     dim_y = 600
 
     # Spacer size (px).
