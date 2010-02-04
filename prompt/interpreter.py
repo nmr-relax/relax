@@ -168,7 +168,13 @@ class Interpreter:
         # Program licence and help (wrapped).
         for line in wrap(text.licence, width):
             intro_string = intro_string + line + '\n'
+        intro_string = intro_string + '\n'
  
+        # Help message.
+        help = "Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within the prompt."
+        for line in wrap(help, width):
+            intro_string = intro_string + line + '\n'
+
         # ImportErrors, if any.
         for i in range(len(text.errors)):
             intro_string = intro_string + '\n' + text.errors[i] + '\n'

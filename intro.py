@@ -63,7 +63,7 @@ class Intro_text:
         self.copyright.append("Copyright (C) 2006-2010 the relax development team")
 
         # Program licence and help.
-        self.licence = "This is free software which you are welcome to modify and redistribute under the conditions of the GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program can be accessed by typing 'help'."
+        self.licence = "This is free software which you are welcome to modify and redistribute under the conditions of the GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt."
 
         # ImportErrors, if any.
         self.errors = []
