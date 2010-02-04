@@ -104,4 +104,4 @@ class App(wx.App):
         timeout = 2500
 
         # The splash screen.
-        screen = wx.SplashScreen(bmp, wx.SPLASH_NO_CENTER|wx.SPLASH_TIMEOUT, timeout, None, -1)
+        screen = wx.SplashScreen(bmp, wx.SPLASH_TIMEOUT, timeout, None, -1)
