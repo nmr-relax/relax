@@ -23,6 +23,7 @@
 
 # Python module imports.
 from os import sep
+from textwrap import wrap
 import wx
 
 # relax module imports.
@@ -169,6 +170,31 @@ class About_relax(About_base):
         # The description.
         self.draw_description()
 
+        # The copyright.
+        self.draw_copyright()
+
+        # The licence.
+        self.draw_licence()
+
+
+    def draw_copyright(self):
+        """Draw the copyright statements."""
+
+        # Set the font.
+        font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        self.dc.SetFont(font)
+
+        # Offset.
+        offset = 270
+
+        # The text extent.
+        x1, y1 = self.dc.GetTextExtent(self.info.copyright[0])
+        x2, y2 = self.dc.GetTextExtent(self.info.copyright[1])
+
+        # Draw the text.
+        self.dc.DrawText(self.info.copyright[0], self.boarder + (self.dim_x - x1)/2, offset)
+        self.dc.DrawText(self.info.copyright[1], self.boarder + (self.dim_x - x2)/2, offset+y1+3)
+
 
     def draw_description(self):
         """Draw the relax description text."""
@@ -189,6 +215,35 @@ class About_relax(About_base):
 
         # Add the relax logo.
         self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder, self.boarder, True)
+
+
+    def draw_licence(self):
+        """Draw the relax licence text."""
+
+        # Set the font.
+        font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        self.dc.SetFont(font)
+
+        # Offset.
+        offset = 325
+
+        # Wrap the text.
+        lines = wrap(self.info.licence, 60)
+
+        # Find the max y extent.
+        max_y = 0
+        for line in lines:
+            x, y = self.dc.GetTextExtent(self.info.desc)
+            if y > max_y:
+                max_y = y
+
+        # Draw.
+        for line in lines:
+            # Draw the text.
+            self.dc.DrawText(line, self.boarder, offset)
+
+            # Update the offset.
+            offset = offset + max_y + 1
 
 
     def draw_title(self):
