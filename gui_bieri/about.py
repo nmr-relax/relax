@@ -169,8 +169,8 @@ class About_relax(About_base):
         self.cursor_type = 'normal'
 
         # The link position initialisation.
-        self.link_pox_x = [0, 0]
-        self.link_pox_y = [0, 0]
+        self.link_pos_x = [0, 0]
+        self.link_pos_y = [0, 0]
 
         # Execute the base class __init__() method.
         super(About_relax, self).__init__(*args, **kwds)
