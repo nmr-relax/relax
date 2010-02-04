@@ -24,6 +24,7 @@
 # Python module imports.
 from os import sep
 from textwrap import wrap
+import webbrowser
 import wx
 
 # relax module imports.
@@ -66,21 +67,7 @@ class About_base(wx.Dialog):
         self.Bind(wx.EVT_PAINT, self.generate)
 
         # Let the dialog be closable with a left button click.
-        self.Bind(wx.EVT_LEFT_DOWN, self.close)
-
-
-    def close(self, event):
-        """Close the dialog.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Close.
-        self.Close()
-
-        # Terminate the event.
-        event.Skip()
+        self.Bind(wx.EVT_LEFT_DOWN, self.process_click)
 
 
     def generate(self, event):
@@ -240,14 +227,18 @@ class About_relax(About_base):
         self.dc.SetFont(font)
         self.dc.SetTextForeground('#0017aa')
 
+        # Add a spacer.
+        self.offset(10)
+
         # The text extent.
         x, y = self.dc.GetTextExtent(self.info.website)
 
         # Draw the text, with a spacer.
-        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset(10))
+        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset())
 
-        # Add the text extent.
-        self.offset(y)
+        # Store the position of the text (and shift the offset down).
+        self.link_pos_x = [self.boarder + (self.dim_x - x)/2, self.boarder + (self.dim_x + x)/2]
+        self.link_pos_y = [self.offset(), self.offset(y)]
 
         # Restore the old font colour (black).
         self.dc.SetTextForeground('black')
@@ -326,3 +317,26 @@ class About_relax(About_base):
 
         # Return.
         return self._offset_val
+
+
+    def process_click(self, event):
+        """Determine what to do with the mouse click.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Determine the mouse position.
+        x = event.GetX()
+        y = event.GetY()
+
+        # A click on the relax link.
+        if x > self.link_pos_x[0] and x < self.link_pos_x[1] and y > self.link_pos_y[0] and y < self.link_pos_y[1]:
+            webbrowser.open_new(self.info.website)
+
+        # Close the dialog on all clicks.
+        self.Close()
+
+        # Terminate the event.
+        event.Skip()
+
