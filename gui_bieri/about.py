@@ -168,7 +168,9 @@ class About_relax(About_base):
         self.draw_icon()
         self.draw_title()
         self.draw_description()
+        self.draw_link()
         self.draw_copyright()
+        self.draw_desc_long()
         self.draw_licence()
 
 
@@ -189,6 +191,12 @@ class About_relax(About_base):
 
         # Add the text extent.
         self.offset(y2)
+
+
+    def draw_desc_long(self):
+        """Draw the long relax description."""
+
+        self.draw_wrapped_text(self.info.desc_long, spacer=10)
 
 
     def draw_description(self):
@@ -221,30 +229,28 @@ class About_relax(About_base):
     def draw_licence(self):
         """Draw the relax licence text."""
 
+        self.draw_wrapped_text(self.info.licence, spacer=10)
+
+
+    def draw_link(self):
+        """Draw the relax description text."""
+
         # Set the font.
-        font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        font = wx.Font(pointSize=11, family=wx.FONTFAMILY_ROMAN, style=wx.FONTSTYLE_ITALIC, weight=wx.NORMAL, underline=True)
         self.dc.SetFont(font)
+        self.dc.SetTextForeground('#0017aa')
 
-        # Wrap the text.
-        lines = wrap(self.info.licence, 60)
+        # The text extent.
+        x, y = self.dc.GetTextExtent(self.info.website)
 
-        # Find the max y extent.
-        max_y = 0
-        for line in lines:
-            x, y = self.dc.GetTextExtent(self.info.desc)
-            if y > max_y:
-                max_y = y
+        # Draw the text, with a spacer.
+        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset(17))
 
-        # Add a top spacer.
-        self.offset(10)
+        # Add the text extent.
+        self.offset(y)
 
-        # Draw.
-        for line in lines:
-            # Draw the text.
-            self.dc.DrawText(line, self.boarder, self.offset())
-
-            # Update the offset.
-            self.offset(max_y + 1)
+        # Restore the old font colour (black).
+        self.dc.SetTextForeground('black')
 
 
     def draw_title(self):
@@ -265,6 +271,41 @@ class About_relax(About_base):
 
         # Add the text extent.
         self.offset(y)
+
+
+    def draw_wrapped_text(self, text, spacer=10):
+        """Generic method for drawing wrapped text in the relax about widget.
+
+        @param text:        The text to wrap and draw.
+        @type text:         str
+        @keyword spacer:    The pixel width of the spacer to place above the text block.
+        @type spacer:       int
+        """
+
+        # Set the font.
+        font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
+        self.dc.SetFont(font)
+
+        # Wrap the text.
+        lines = wrap(text, 60)
+
+        # Find the max y extent.
+        max_y = 0
+        for line in lines:
+            x, y = self.dc.GetTextExtent(text)
+            if y > max_y:
+                max_y = y
+
+        # Add a top spacer.
+        self.offset(10)
+
+        # Draw.
+        for line in lines:
+            # Draw the text.
+            self.dc.DrawText(line, self.boarder, self.offset())
+
+            # Update the offset.
+            self.offset(max_y + 1)
 
 
     def offset(self, val=0):
