@@ -67,7 +67,17 @@ class About_base(wx.Dialog):
         self.Bind(wx.EVT_PAINT, self.generate)
 
         # Let the dialog be closable with a left button click.
+        self.Bind(wx.EVT_MOUSE_EVENTS, self.cursor_style)
+
+        # Let the dialog be closable with a left button click.
         self.Bind(wx.EVT_LEFT_DOWN, self.process_click)
+
+
+    def cursor_style(self, event):
+        """Dummy method for not changing the mouse cursor!"""
+
+        # Terminate the event.
+        event.Skip()
 
 
     def generate(self, event):
@@ -165,6 +175,9 @@ class About_relax(About_base):
         # A global Y offset for packing the elements together (initialise to the boarder position).
         self.offset(self.boarder, init=True)
 
+        # The starting cursor type.
+        self.cursor_type = 'normal'
+
         # Draw all the elements.
         self.draw_title()
         self.draw_description()
@@ -173,6 +186,42 @@ class About_relax(About_base):
         self.draw_icon()
         self.draw_desc_long()
         self.draw_licence()
+
+
+    def cursor_style(self, event):
+        """Change the mouse cursor when over the link."""
+
+        # Determine the mouse position.
+        x = event.GetX()
+        y = event.GetY()
+
+        # Selection cursor.
+        if x > self.link_pos_x[0] and x < self.link_pos_x[1] and y > self.link_pos_y[0] and y < self.link_pos_y[1]:
+            # Only change if needed.
+            if self.cursor_type == 'normal':
+                # Build the cursor.
+                select_cursor = wx.StockCursor(wx.CURSOR_HAND)
+
+                # Set the cursor.
+                self.SetCursor(select_cursor)
+
+                # Reset the cursor type.
+                self.cursor_type = 'select'
+
+        # Normal cursor.
+        elif self.cursor_type == 'select':
+            # Build the cursor.
+            select_cursor = wx.StockCursor(wx.CURSOR_ARROW)
+
+            # Set the cursor.
+            self.SetCursor(select_cursor)
+
+            # Reset the cursor type.
+            self.cursor_type = 'normal'
+
+
+        # Terminate the event.
+        event.Skip()
 
 
     def draw_copyright(self):
