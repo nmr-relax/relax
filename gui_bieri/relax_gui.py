@@ -44,7 +44,7 @@ from relax_errors import RelaxError
 from version import version
 
 # relaxGUI module imports.
-from about import About_relax
+from about import About_gui, About_relax
 from analyses.auto_model_free import Auto_model_free
 from analyses.auto_r1 import Auto_r1
 from analyses.auto_r2 import Auto_r2
@@ -249,6 +249,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
 
         # Pre-build the about dialogs, but do not show them.
+        self.dialog_about_gui = About_gui(None, -1, "")
         self.dialog_about_relax = About_relax(None, -1, "")
 
 
@@ -607,10 +608,14 @@ class Main(wx.Frame):
 
 
     def about_gui(self, event):
-        """Create and display the about message for the GUI."""
+        """The about message for the relax GUI.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
 
         # The dialog.
-        show_about_gui()
+        self.dialog_about_gui.Show()
 
         # Terminate the event.
         event.Skip()
