@@ -87,6 +87,20 @@ class About_base(wx.Dialog):
         self.build_widget()
 
 
+    def process_click(self, event):
+        """Base method which just closes the widget on a click event.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Close the widget.
+        self.Close()
+
+        # Terminate the event.
+        event.Skip()
+
+
     def set_background(self):
         """Build a background for the dialog."""
 
