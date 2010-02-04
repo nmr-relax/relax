@@ -36,7 +36,6 @@ if dep_check.wx_module:
     import wx
 
 # relax module imports.
-from about import About_relax, MyFrame
 from relax_errors import RelaxError
 from relax_gui import Main
 
