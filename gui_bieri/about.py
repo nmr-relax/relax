@@ -165,6 +165,13 @@ class About_relax(About_base):
         # Initialise the program information container.
         self.info = Intro_text()
 
+        # The starting cursor type.
+        self.cursor_type = 'normal'
+
+        # The link position initialisation.
+        self.link_pox_x = [0, 0]
+        self.link_pox_y = [0, 0]
+
         # Execute the base class __init__() method.
         super(About_relax, self).__init__(*args, **kwds)
 
@@ -174,9 +181,6 @@ class About_relax(About_base):
 
         # A global Y offset for packing the elements together (initialise to the boarder position).
         self.offset(self.boarder, init=True)
-
-        # The starting cursor type.
-        self.cursor_type = 'normal'
 
         # Draw all the elements.
         self.draw_title()
