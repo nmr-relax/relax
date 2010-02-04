@@ -287,7 +287,7 @@ class About_relax(About_base):
         self.dc.SetFont(font)
 
         # Wrap the text.
-        lines = wrap(text, 60)
+        lines = wrap(text, 69)
 
         # Find the max y extent.
         max_y = 0
