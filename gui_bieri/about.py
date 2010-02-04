@@ -164,19 +164,11 @@ class About_relax(About_base):
         # A global Y offset for packing the elements together (initialise to the boarder position).
         self.offset(self.boarder)
 
-        # The relax icon.
+        # Draw all the elements.
         self.draw_icon()
-
-        # The title.
         self.draw_title()
-
-        # The description.
         self.draw_description()
-
-        # The copyright.
         self.draw_copyright()
-
-        # The licence.
         self.draw_licence()
 
 
