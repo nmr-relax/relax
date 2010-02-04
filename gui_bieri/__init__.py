@@ -31,6 +31,7 @@ import dep_check
 
 # Python module imports.
 import sys
+from time import sleep
 if dep_check.wx_module:
     import wx
 
@@ -38,6 +39,9 @@ if dep_check.wx_module:
 from about import About_relax, MyFrame
 from relax_errors import RelaxError
 from relax_gui import Main
+
+# relax GUI module imports.
+from paths import IMAGE_PATH
 
 
 __all__ = ['relax_gui']
@@ -56,22 +60,49 @@ def run():
     sys.stdout.write('##############################################\n')
     sys.stdout.write('\n\n\n\n')
 
-    # start wx Application
-    relaxGUI = wx.PySimpleApp(0)
-    wx.InitAllImageHandlers()
-
-    # show about panel
-    #about = About_relax(None, -1, "")
-    about = MyFrame(None, -1, "")
-    about.ShowModal()
-
     # Dependency check.
     if not dep_check.wx_module:
         sys.stderr.write("Please install the wx Python module to access the Bieri GUI.\n\n")
         sys.exit()
 
-    # Build the GUI.
-    relaxGUI_main = Main(parent=None, id=-1, title="")
-    relaxGUI.SetTopWindow(relaxGUI_main)
-    relaxGUI_main.Show()
-    relaxGUI.MainLoop()
+    # Start the relax GUI wx application.
+    App()
+
+
+
+class App(wx.App):
+    """The relax GUI wx application."""
+
+    def OnInit(self):
+        """Build the application, showing a splash screen first."""
+
+        # Show the splash screen.
+        self.show_splash()
+
+        # Build the GUI.
+        main = Main(parent=None, id=-1, title="")
+
+        # Make it the main application component.
+        self.SetTopWindow(main)
+
+        # Wait a little while :)
+        sleep(1)
+
+        # Show it.
+        main.Show()
+
+        # Start the GUI main loop execution.
+        self.MainLoop()
+
+
+    def show_splash(self):
+        """Build and show the splash screen."""
+
+        # The image.
+        bmp = wx.Bitmap(IMAGE_PATH+'start_no_alpha.png', wx.BITMAP_TYPE_ANY)
+
+        # The timeout (ms).
+        timeout = 2500
+
+        # The splash screen.
+        screen = wx.SplashScreen(bmp, wx.SPLASH_NO_CENTER|wx.SPLASH_TIMEOUT, timeout, None, -1)
