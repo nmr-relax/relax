@@ -220,7 +220,7 @@ class About_relax(About_base):
         """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder, self.offset(), True)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder + (self.dim_x - 400)/2, self.offset(), True)
 
         # Add the bitmap width to the offset.
         self.offset(168)
