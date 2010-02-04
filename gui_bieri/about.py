@@ -53,7 +53,7 @@ class About_base(wx.Dialog):
         """Build the dialog."""
 
         # Change the dialog style.
-        kwds["style"] = wx.BORDER_NONE
+        kwds["style"] = wx.BORDER_NONE | wx.STAY_ON_TOP
 
         # Execute the base class __init__() method.
         super(About_base, self).__init__(*args, **kwds)
