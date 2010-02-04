@@ -163,7 +163,7 @@ class About_relax(About_base):
         """Build the about dialog."""
 
         # A global Y offset for packing the elements together (initialise to the boarder position).
-        self.offset(self.boarder)
+        self.offset(self.boarder, init=True)
 
         # Draw all the elements.
         self.draw_title()
@@ -313,23 +313,26 @@ class About_relax(About_base):
             self.offset(max_y + 1)
 
 
-    def offset(self, val=0):
+    def offset(self, val=0, init=False):
         """Shift the offset by the given value and return the offset.
 
         @keyword val:   The value to add to the offset (can be negative).
         @type val:      int
+        @keyword init:  Flag for initialising the offset.
+        @type init:     bool
         @return:        The current offset.
         @rtype:         int
         """
 
         # Initialisation.
-        if not hasattr(self, '_offset_val'):
+        if init or not hasattr(self, '_offset_val'):
             self._offset_val = 0
 
         # Shift.
         self._offset_val = self._offset_val + val
 
         # Return.
+        print self._offset_val
         return self._offset_val
 
 
