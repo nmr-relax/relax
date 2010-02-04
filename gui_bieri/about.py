@@ -143,7 +143,7 @@ class About_relax(About_base):
 
     # Dimensions.
     dim_x = 450
-    dim_y = 600
+    dim_y = 580
 
     # Spacer size (px).
     boarder = 10
@@ -244,7 +244,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.website)
 
         # Draw the text, with a spacer.
-        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset(12))
+        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset(10))
 
         # Add the text extent.
         self.offset(y)
