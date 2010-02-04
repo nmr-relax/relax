@@ -161,6 +161,9 @@ class About_relax(About_base):
     def build_widget(self):
         """Build the about dialog."""
 
+        # A global Y offset for packing the elements together (initialise to the boarder position).
+        self.offset(self.boarder)
+
         # The relax icon.
         self.draw_icon()
 
@@ -184,16 +187,16 @@ class About_relax(About_base):
         font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
         self.dc.SetFont(font)
 
-        # Offset.
-        offset = 270
-
         # The text extent.
         x1, y1 = self.dc.GetTextExtent(self.info.copyright[0])
         x2, y2 = self.dc.GetTextExtent(self.info.copyright[1])
 
-        # Draw the text.
-        self.dc.DrawText(self.info.copyright[0], self.boarder + (self.dim_x - x1)/2, offset)
-        self.dc.DrawText(self.info.copyright[1], self.boarder + (self.dim_x - x2)/2, offset+y1+3)
+        # Draw the text, with a starting spacer.
+        self.dc.DrawText(self.info.copyright[0], self.boarder + (self.dim_x - x1)/2, self.offset(25))
+        self.dc.DrawText(self.info.copyright[1], self.boarder + (self.dim_x - x2)/2, self.offset(y1+3))
+
+        # Add the text extent.
+        self.offset(y2)
 
 
     def draw_description(self):
@@ -206,15 +209,21 @@ class About_relax(About_base):
         # The text extent.
         x, y = self.dc.GetTextExtent(self.info.desc)
 
-        # Draw the text.
-        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, 230)
+        # Draw the text, with a spacer.
+        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, self.offset(20))
+
+        # Add the text extent.
+        self.offset(y)
 
 
     def draw_icon(self):
         """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder, self.boarder, True)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder, self.offset(), True)
+
+        # Add the bitmap width to the offset.
+        self.offset(168)
 
 
     def draw_licence(self):
@@ -223,9 +232,6 @@ class About_relax(About_base):
         # Set the font.
         font = wx.Font(10, wx.FONTFAMILY_ROMAN, wx.NORMAL, wx.NORMAL)
         self.dc.SetFont(font)
-
-        # Offset.
-        offset = 325
 
         # Wrap the text.
         lines = wrap(self.info.licence, 60)
@@ -237,13 +243,16 @@ class About_relax(About_base):
             if y > max_y:
                 max_y = y
 
+        # Add a top spacer.
+        self.offset(10)
+
         # Draw.
         for line in lines:
             # Draw the text.
-            self.dc.DrawText(line, self.boarder, offset)
+            self.dc.DrawText(line, self.boarder, self.offset())
 
             # Update the offset.
-            offset = offset + max_y + 1
+            self.offset(max_y + 1)
 
 
     def draw_title(self):
@@ -259,5 +268,28 @@ class About_relax(About_base):
         # The text extent.
         x, y = self.dc.GetTextExtent(text)
 
-        # Draw the text.
-        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, 20+168)
+        # Draw the text, with a spacer.
+        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, self.offset(20))
+
+        # Add the text extent.
+        self.offset(y)
+
+
+    def offset(self, val=0):
+        """Shift the offset by the given value and return the offset.
+
+        @keyword val:   The value to add to the offset (can be negative).
+        @type val:      int
+        @return:        The current offset.
+        @rtype:         int
+        """
+
+        # Initialisation.
+        if not hasattr(self, '_offset_val'):
+            self._offset_val = 0
+
+        # Shift.
+        self._offset_val = self._offset_val + val
+
+        # Return.
+        return self._offset_val
