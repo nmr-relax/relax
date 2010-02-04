@@ -165,11 +165,11 @@ class About_relax(About_base):
         self.offset(self.boarder)
 
         # Draw all the elements.
-        self.draw_icon()
         self.draw_title()
         self.draw_description()
-        self.draw_link()
         self.draw_copyright()
+        self.draw_link()
+        self.draw_icon()
         self.draw_desc_long()
         self.draw_licence()
 
@@ -186,7 +186,7 @@ class About_relax(About_base):
         x2, y2 = self.dc.GetTextExtent(self.info.copyright[1])
 
         # Draw the text, with a starting spacer.
-        self.dc.DrawText(self.info.copyright[0], self.boarder + (self.dim_x - x1)/2, self.offset(25))
+        self.dc.DrawText(self.info.copyright[0], self.boarder + (self.dim_x - x1)/2, self.offset(15))
         self.dc.DrawText(self.info.copyright[1], self.boarder + (self.dim_x - x2)/2, self.offset(y1+3))
 
         # Add the text extent.
@@ -210,7 +210,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.desc)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, self.offset(20))
+        self.dc.DrawText(self.info.desc, self.boarder + (self.dim_x - x)/2, self.offset(15))
 
         # Add the text extent.
         self.offset(y)
@@ -220,7 +220,7 @@ class About_relax(About_base):
         """Draw the relax icon on the canvas."""
 
         # Add the relax logo.
-        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder + (self.dim_x - 400)/2, self.offset(), True)
+        self.dc.DrawBitmap(wx.Bitmap(IMAGE_PATH+'ulysses_shadowless_400x168.png'), self.boarder + (self.dim_x - 400)/2, self.offset(20), True)
 
         # Add the bitmap width to the offset.
         self.offset(168)
@@ -244,7 +244,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(self.info.website)
 
         # Draw the text, with a spacer.
-        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset(17))
+        text = self.dc.DrawText(self.info.website, self.boarder + (self.dim_x - x)/2, self.offset(12))
 
         # Add the text extent.
         self.offset(y)
@@ -267,7 +267,7 @@ class About_relax(About_base):
         x, y = self.dc.GetTextExtent(text)
 
         # Draw the text, with a spacer.
-        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, self.offset(20))
+        self.dc.DrawText(text, self.boarder + (self.dim_x - x)/2, self.offset(15))
 
         # Add the text extent.
         self.offset(y)
