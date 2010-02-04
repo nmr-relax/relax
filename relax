@@ -123,8 +123,13 @@ class Relax:
 
         # Execute the Bieri GUI.
         elif mode == 'gui_bieri':
-            self.gui = gui_bieri
-            self.gui.run()
+            # Dependency check.
+            if not dep_check.wx_module:
+                sys.stderr.write("Please install the wx Python module to access the Bieri GUI.\n\n")
+                sys.exit()
+
+            # Start the relax GUI wx application.
+            gui_bieri.App()
 
         # Execute the relax test suite
         elif mode == 'test suite':

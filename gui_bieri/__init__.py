@@ -45,28 +45,6 @@ from paths import IMAGE_PATH
 
 __all__ = ['relax_gui']
 
-# Execute the GUI.
-def run():
-    """Build the Bieri GUI for relax."""
-
-    # Print the GUI intro.
-    sys.stdout.write('\n\n\n\n\n')
-    sys.stdout.write('##############################################\n')
-    sys.stdout.write('#                                            #\n')
-    sys.stdout.write('#  relaxGUI - graphical interface for relax  #\n')
-    sys.stdout.write('#        (C) 2009 Michael Bieri              #\n')
-    sys.stdout.write('#                                            #\n')
-    sys.stdout.write('##############################################\n')
-    sys.stdout.write('\n\n\n\n')
-
-    # Dependency check.
-    if not dep_check.wx_module:
-        sys.stderr.write("Please install the wx Python module to access the Bieri GUI.\n\n")
-        sys.exit()
-
-    # Start the relax GUI wx application.
-    App()
-
 
 
 class App(wx.App):
