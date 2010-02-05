@@ -68,8 +68,8 @@ class App(wx.App):
         # Show it.
         main.Show()
 
-        # Start the GUI main loop execution.
-        self.MainLoop()
+        # All is good!
+        return True
 
 
     def show_splash(self):

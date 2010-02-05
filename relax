@@ -129,7 +129,8 @@ class Relax:
                 sys.exit()
 
             # Start the relax GUI wx application.
-            gui_bieri.App()
+            app = gui_bieri.App()
+            app.MainLoop()
 
         # Execute the relax test suite
         elif mode == 'test suite':
