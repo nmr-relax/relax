@@ -28,7 +28,7 @@ import webbrowser
 import wx
 
 # relax module imports.
-from intro import Intro_text
+from info import Info_box
 
 # relax GUI module imports.
 from paths import IMAGE_PATH
@@ -163,7 +163,7 @@ class About_relax(About_base):
         """Build the dialog."""
 
         # Initialise the program information container.
-        self.info = Intro_text()
+        self.info = Info_box()
 
         # The starting cursor type.
         self.cursor_type = 'normal'
