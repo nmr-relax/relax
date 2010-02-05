@@ -28,7 +28,6 @@
 from os import getcwd, mkdir, sep
 from re import search
 from string import lower, lowercase, replace
-import sys
 import time
 import webbrowser
 import wx
@@ -249,7 +248,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
 
         # Close Box event
-        self.Bind(wx.EVT_CLOSE, self.exitGUI)
+        self.Bind(wx.EVT_CLOSE, self.exit_gui)
 
 
         # Pre-build the about dialogs, but do not show them.
@@ -735,7 +734,7 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.state_load, id=1)
         self.Bind(wx.EVT_MENU, self.action_state_save, id=2)
         self.Bind(wx.EVT_MENU, self.action_state_save_as, id=3)
-        self.Bind(wx.EVT_MENU, self.exitGUI,    id=4)
+        self.Bind(wx.EVT_MENU, self.exit_gui,   id=4)
 
         # The 'View' menu entries.
         menu = wx.Menu()
@@ -839,9 +838,19 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def exitGUI(self, event): # Exit
-        doexit = question('Do you wand to quit relaxGUI?')
+    def exit_gui(self, event):
+        """Catch the main window closure and perform the exit procedure.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Ask if the user is sure they would like to exit.
+        doexit = question('Are you sure you would like to quit relax?  All unsaved data will be lost.', default=True)
+
+        # Exit.
         if doexit == True:
+            # A print out.
             print"\n==================================================\n\n"
             print "\nThank you for citing:"
             print ""
@@ -851,7 +860,11 @@ class Main(wx.Frame):
             print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119."
             print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133."
             print "\nExiting relaxGUI......\n"
-            sys.exit(0)
+
+            # Destroy the main window.
+            self.Destroy()
+
+        # Terminate the event.
         event.Skip()
 
 
