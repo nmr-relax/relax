@@ -58,14 +58,30 @@ def missing_data():
     wx.MessageBox('Missing Data!', style = wx.OK | wx.ICON_ERROR)
 
 
-def question(msg):
-    check = False
-    startrelax = wx.MessageDialog(None, message = msg, style = wx.YES_NO | wx.NO_DEFAULT)
-    if startrelax.ShowModal() == wx.ID_YES:
-        check = True
+def question(msg, default=False):
+    """A generic question box.
+
+    @keyword default:   If True, the default button will be 'yes', otherwise it will be 'no'.
+    @type default:      bool
+    @return:            The answer.
+    @rtype:             bool
+    """
+
+    # If default.
+    if default:
+        style = wx.YES_DEFAULT
     else:
-        check = False
-    return check
+        style = wx.NO_DEFAULT
+
+    # The dialog window.
+    dialog = wx.MessageDialog(None, message = msg, style = wx.YES_NO | style)
+
+    answer = False
+    if dialog.ShowModal() == wx.ID_YES:
+        answer = True
+
+    # Return the answer.
+    return answer
 
 
 def relax_run_ok(msg1):
