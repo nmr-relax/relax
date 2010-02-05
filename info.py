@@ -29,8 +29,8 @@ from version import version
 
 
 
-class Intro_text:
-    """The introductory text container."""
+class Info_box:
+    """A container storing information about relax."""
 
     def __init__(self):
         """Create the program introduction text stings.

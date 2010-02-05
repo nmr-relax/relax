@@ -45,7 +45,7 @@ from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneErr
 from base_class import Exec_info
 from command import Ls, Lh, Ll, system
 from help import _Helper, _Helper_python
-from intro import Intro_text
+from info import Info_box
 if dep_check.readline_module:
     from tab_completion import Tab_completion
 
@@ -147,26 +147,26 @@ class Interpreter:
         else:
             width = 100
 
-        # Initialise the string and the intro class
+        # Initialise the string and the relax information box.
         string = ''
-        text = Intro_text()
+        info = Info_box()
 
         # Some new lines.
         intro_string = '\n\n\n'
 
         # Program name and version.
-        intro_string = intro_string + text.centre(text.title + ' ' + text.version, width) + '\n\n'
+        intro_string = intro_string + info.centre(info.title + ' ' + info.version, width) + '\n\n'
 
         # Program description.
-        intro_string = intro_string + text.centre(text.desc, width) + '\n\n'
+        intro_string = intro_string + info.centre(info.desc, width) + '\n\n'
 
         # Copyright printout.
-        for i in range(len(text.copyright)):
-            intro_string = intro_string + text.centre(text.copyright[i], width) + '\n'
+        for i in range(len(info.copyright)):
+            intro_string = intro_string + info.centre(info.copyright[i], width) + '\n'
         intro_string = intro_string + '\n'
 
         # Program licence and help (wrapped).
-        for line in wrap(text.licence, width):
+        for line in wrap(info.licence, width):
             intro_string = intro_string + line + '\n'
         intro_string = intro_string + '\n'
  
@@ -176,8 +176,8 @@ class Interpreter:
             intro_string = intro_string + line + '\n'
 
         # ImportErrors, if any.
-        for i in range(len(text.errors)):
-            intro_string = intro_string + '\n' + text.errors[i] + '\n'
+        for i in range(len(info.errors)):
+            intro_string = intro_string + '\n' + info.errors[i] + '\n'
 
         # Return the formatted text.
         return intro_string
