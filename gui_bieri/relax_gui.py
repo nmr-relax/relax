@@ -861,6 +861,11 @@ class Main(wx.Frame):
             print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133."
             print "\nExiting relaxGUI......\n"
 
+            # Destroy all dialogs.
+            self.controller.Destroy()
+            self.dialog_about_gui.Destroy()
+            self.dialog_about_relax.Destroy()
+
             # Destroy the main window.
             self.Destroy()
 
