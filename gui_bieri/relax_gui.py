@@ -74,7 +74,7 @@ class Main(wx.Frame):
         """Initialise the main relax GUI frame."""
 
         # Add the style keyword value.
-        kwds["style"] = wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
+        kwds["style"] = wx.CLOSE_BOX | wx.MINIMIZE_BOX | wx.SYSTEM_MENU | wx.CAPTION | wx.CLIP_CHILDREN
 
         # Execute the base class __init__ method.
         super(Main, self).__init__(*args, **kwds)
@@ -247,6 +247,10 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.open_rx_results_exe, self.open_rx_results)
         self.Bind(wx.EVT_LISTBOX_DCLICK, self.open_model_results_exe, self.list_modelfree)
         self.Bind(wx.EVT_BUTTON, self.open_model_results_exe, self.open_model_results)
+
+        # Close Box event
+        self.Bind(wx.EVT_CLOSE, self.exitGUI)
+
 
         # Pre-build the about dialogs, but do not show them.
         self.dialog_about_gui = About_gui(None, -1, "")
