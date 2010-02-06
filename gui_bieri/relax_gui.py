@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import getcwd, mkdir, sep
+import platform
 from re import search
 from string import lower, lowercase, replace
 from textwrap import wrap
@@ -855,14 +856,20 @@ class Main(wx.Frame):
             # The relax information box.
             info = Info_box()
 
+            # The width of the printout.
+            if platform.uname()[0] in ['Windows', 'Microsoft']:
+                width = 80
+            else:
+                width = 100
+
             # A print out.
             text = "\n\nThank you for citing:\n"
             text = text + "\nrelaxGUI\n========\n\nBieri et al., in progress."
             text = text + "\n\n\nrelax\n=====\n\n"
-            for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), 80):
+            for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), width):
                 text = text + line + '\n'
             text = text + '\n\n'
-            for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), 80):
+            for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
                 text = text + line + '\n'
             text = text + '\n'
             print(text)
