@@ -23,6 +23,9 @@
 # Module docstring.
 """The automatic relaxation curve fitting protocol."""
 
+# relax module imports.
+from prompt.interpreter import Interpreter
+
 
 
 class Relax_fit:
@@ -67,7 +70,7 @@ class Relax_fit:
         """Set up and run the curve-fitting."""
 
         # Create the data pipe.
-        self.interpreter.pipe.create(pipe_name, 'relax_fit')
+        self.interpreter.pipe.create(self.pipe_name, 'relax_fit')
 
         # Load the sequence.
         self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
