@@ -28,6 +28,7 @@
 from os import getcwd, mkdir, sep
 from re import search
 from string import lower, lowercase, replace
+from textwrap import wrap
 import time
 import webbrowser
 import wx
@@ -35,6 +36,7 @@ import wx
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.gui import Gui
+from info import Info_box
 from float import floatAsByteArray
 from generic_fns import pipes, state
 from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loop
@@ -849,17 +851,21 @@ class Main(wx.Frame):
         doexit = question('Are you sure you would like to quit relax?  All unsaved data will be lost.', default=True)
 
         # Exit.
-        if doexit == True:
+        if doexit:
+            # The relax information box.
+            info = Info_box()
+
             # A print out.
-            print"\n==================================================\n\n"
-            print "\nThank you for citing:"
-            print ""
-            print "relaxGUI:\nin progress...."
-            print ""
-            print "relax:"
-            print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119."
-            print "d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133."
-            print "\nExiting relaxGUI......\n"
+            text = "\n\nThank you for citing:\n"
+            text = text + "\nrelaxGUI\n========\n\nBieri et al., in progress."
+            text = text + "\n\n\nrelax\n=====\n\n"
+            for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), 80):
+                text = text + line + '\n'
+            text = text + '\n\n'
+            for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), 80):
+                text = text + line + '\n'
+            text = text + '\n'
+            print(text)
 
             # Destroy all dialogs.
             self.controller.Destroy()
