@@ -338,6 +338,11 @@ class Auto_rx:
         # Display the relax controller.
         self.gui.controller.Show()
 
+        # FIXME:  Debugging code, non-threaded exec.
+        self.execute_thread()
+        event.Skip()
+        return
+
         # The thread object storage.
         self.gui.calc_threads.append(Thread_container())
         thread_cont = self.gui.calc_threads[-1]
