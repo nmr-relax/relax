@@ -32,10 +32,12 @@ import time
 import wx
 
 # relax module imports.
+from auto_analyses.relax_fit import relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
+from gui_bieri.base_classes import Container
 from gui_bieri.components.spectrum import Peak_intensity
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
@@ -233,6 +235,39 @@ class Auto_rx:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def assemble_data(self):
+        """Assemble the data required for the Relax_fit class.
+
+        See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
+
+        @return:    A container with all the data required for Relax_fit, i.e. its keyword arguments seq_args, file_names, relax_times, int_method, mc_num.
+        @rtype:     class instance
+        """
+
+        # The data container.
+        data = Container()
+
+        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
+        data.seq_args = [self.data.paramfiles1[0], None, None, 2, 3, 4, 5, None]
+
+        # The file names and relaxation times.
+        for i in range(len(self.data.file_list)):
+            # Hit the end of the list.
+            if self.data.file_list[i] == '':
+                break
+        data.file_names = self.data.file_list[:i]
+        data.relax_times = self.data.file_list[:i]
+
+        # The integration method.
+        data.int_method = 'height'
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        data.mc_num = 500
+
+        # Return the container.
+        return data
+
+
     def build_main_box(self):
         """Construct the highest level box to pack into the automatic Rx analysis frame.
 
@@ -332,8 +367,11 @@ class Auto_rx:
         wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
         time.sleep(0.5)
 
+        # Assemble all the data needed for the Relax_fit class.
+        data = self.assemble_data()
+
         # Execute.
-        start_rx(self.resultsdir_r21.GetValue(), r2_list, relax_times_r2_1, self.field_structure.GetValue(), self.nmrfreq_value_r11.GetValue(), 2, 1, self.field_unresolved.GetValue(), self, 1, global_setting, file_setting, sequencefile)
+        Relax_fit(seq_args=data.seq_args, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num)
 
 
     def link_data(self, data):
