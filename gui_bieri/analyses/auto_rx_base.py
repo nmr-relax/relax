@@ -32,7 +32,7 @@ import time
 import wx
 
 # relax module imports.
-from auto_analyses.relax_fit import relax_fit
+from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
