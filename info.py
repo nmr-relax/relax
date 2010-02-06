@@ -114,7 +114,65 @@ class Info_box:
 
 
 
-class Clore90:
+class Ref:
+    """Reference base class."""
+
+    def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
+        """Compile a short citation in the form of:
+
+            d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119.
+
+        @keyword author:    The author flag.
+        @type author:       bool
+        @keyword title:     The title flag.
+        @type title:        bool
+        @keyword journal:   The journal flag.
+        @type journal:      bool
+        @keyword volume:    The volume flag.
+        @type volume:       bool
+        @keyword number:    The number flag.
+        @type number:       bool
+        @keyword pages:     The pages flag.
+        @type pages:        bool
+        @keyword year:      The year flag.
+        @type year:         bool
+        @keyword doi:       The doi flag.
+        @type doi:          bool
+        @return:            The full citation.
+        @rtype:             str
+        """
+
+        # Build the citation.
+        cite = ''
+        if author and hasattr(self, 'author'):
+            cite = cite + self.author
+        if year and hasattr(self, 'year'):
+            cite = cite + ' (' + repr(self.year) + ').'
+        if title and hasattr(self, 'title'):
+            cite = cite + ' ' + self.title
+        if journal and hasattr(self, 'journal'):
+            cite = cite + ' ' + self.journal + ','
+        if volume and hasattr(self, 'volume'):
+            cite = cite + ' ' + self.volume
+        if number and hasattr(self, 'number'):
+            cite = cite + '(' + self.number + '),'
+        if pages and hasattr(self, 'pages'):
+            cite = cite + ' ' + self.pages
+        if doi and hasattr(self, 'doi'):
+            cite = cite + ' (http://dx.doi.org/'+self.doi + ')'
+        if url and hasattr(self, 'url'):
+            cite = cite + ' ('+self.url + ')'
+
+        # End.
+        if cite[-1] != '.':
+            cite = cite + '.'
+
+        # Return the citation.
+        return cite
+
+
+
+class Clore90(Ref):
     """Bibliography container."""
 
     author         = "Clore, G. M. and Szabo, A. and Bax, A. and Kay, L. E. and Driscoll, P. C. and Gronenborn, A. M."
@@ -129,7 +187,7 @@ class Clore90:
 
 
 
-class dAuvergne06:
+class dAuvergne06(Ref):
     """Bibliography container."""
 
     author         = "d'Auvergne, E. J."
@@ -140,7 +198,7 @@ class dAuvergne06:
 
 
 
-class dAuvergneGooley03:
+class dAuvergneGooley03(Ref):
     """Bibliography container."""
 
     author         = "d'Auvergne, E. J. and Gooley, P. R."
@@ -157,7 +215,7 @@ class dAuvergneGooley03:
 
 
 
-class dAuvergneGooley06:
+class dAuvergneGooley06(Ref):
     """Bibliography container."""
 
     author         = "d'Auvergne, E. J. and Gooley, P. R."
@@ -174,7 +232,7 @@ class dAuvergneGooley06:
 
 
 
-class dAuvergneGooley07:
+class dAuvergneGooley07(Ref):
     """Bibliography container."""
 
     author         = "d'Auvergne, E. J. and Gooley, P. R."
@@ -192,7 +250,7 @@ class dAuvergneGooley07:
 
 
 
-class dAuvergneGooley08a:
+class dAuvergneGooley08a(Ref):
     """Bibliography container."""
 
     author         = "d'Auvergne, E. J. and Gooley, P. R."
@@ -210,7 +268,7 @@ class dAuvergneGooley08a:
 
 
 
-class dAuvergneGooley08b:
+class dAuvergneGooley08b(Ref):
     """Bibliography container."""
 
     author         = "d'Auvergne, E. J. and Gooley, P. R."
@@ -229,7 +287,7 @@ class dAuvergneGooley08b:
 
 
 
-class LipariSzabo82a:
+class LipariSzabo82a(Ref):
     """Bibliography container."""
 
     author         = "Lipari, G. and Szabo, A."
@@ -244,7 +302,7 @@ class LipariSzabo82a:
 
 
 
-class LipariSzabo82b:
+class LipariSzabo82b(Ref):
     """Bibliography container."""
 
     author         = "Lipari, G. and Szabo, A."
