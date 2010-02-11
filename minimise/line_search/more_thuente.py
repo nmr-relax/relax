@@ -289,7 +289,7 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
         and au, and at the trial point at.
     ac is the minimiser of the cubic that interpolates fl, ft, gl, and gt.
     aq is the minimiser of the quadratic that interpolates fl, ft, and gl.
-    as is the minimiser of the quadratic that interpolates fl, gl, and gt.
+    asec is the minimiser of the quadratic that interpolates fl, gl, and gt.
 
     The trial value selection is divided into four cases.
 
@@ -300,25 +300,25 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
                \ 1/2(aq + ac),  otherwise.
 
 
-    Case 2: ft <= fl and gt.gl < 0.  In this case compute ac and as, and set
+    Case 2: ft <= fl and gt.gl < 0.  In this case compute ac and asec, and set
 
-               / ac,            if |ac - at| >= |as - at|,
+               / ac,            if |ac - at| >= |asec - at|,
         at+ = <
-               \ as,            otherwise.
+               \ asec,            otherwise.
 
 
     Case 3: ft <= fl and gt.gl >= 0, and |gt| <= |gl|.  In this case at+ is chosen by extrapolating
     the function values at al and at, so the trial value at+ lies outside th interval with at and al
-    as endpoints.  Compute ac and as.
+    as endpoints.  Compute ac and asec.
 
         If the cubic tends to infinity in the direction of the step and the minimum of the cubic is
         beyound at, set
 
-                   / ac,            if |ac - at| < |as - at|,
+                   / ac,            if |ac - at| < |asec - at|,
             at+ = <
-                   \ as,            otherwise.
+                   \ asec,            otherwise.
 
-        Otherwise set at+ = as.
+        Otherwise set at+ = asec.
 
 
         Redefine at+ by setting
@@ -382,22 +382,22 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
 
         # Interpolation.
         ac = cubic(al, at, fl, ft, gl, gt)
-        as = secant(al, at, gl, gt)
+        asec = secant(al, at, gl, gt)
         if print_flag:
             print "\t\tac: " + `ac`
-            print "\t\tas: " + `as`
+            print "\t\tasec: " + `asec`
 
         # Return at+.
-        if abs(ac - at) >= abs(as - at):
+        if abs(ac - at) >= abs(asec - at):
             if print_flag:
-                print "\t\tabs(ac - at) >= abs(as - at), " + `abs(ac - at)` + " >= " + `abs(as - at)`
+                print "\t\tabs(ac - at) >= abs(asec - at), " + `abs(ac - at)` + " >= " + `abs(asec - at)`
                 print "\t\tat_new = ac = " + `ac`
             at_new = ac
         else:
             if print_flag:
-                print "\t\tabs(ac - at) < abs(as - at), " + `abs(ac - at)` + " < " + `abs(as - at)`
-                print "\t\tat_new = as = " + `as`
-            at_new = as
+                print "\t\tabs(ac - at) < abs(asec - at), " + `abs(ac - at)` + " < " + `abs(asec - at)`
+                print "\t\tat_new = asec = " + `asec`
+            at_new = asec
 
 
     # Case 3.
@@ -421,26 +421,26 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
             # Set ac to the lower limit.
             ac = Ik_lim[0]
 
-        as = secant(al, at, gl, gt)
+        asec = secant(al, at, gl, gt)
 
         if print_flag:
             print "\t\tac: " + `ac`
-            print "\t\tas: " + `as`
+            print "\t\tasec: " + `asec`
 
         # Test if bracketed.
         if bracketed:
             if print_flag:
                 print "\t\tBracketed"
-            if abs(ac - at) < abs(as - at):
+            if abs(ac - at) < abs(asec - at):
                 if print_flag:
-                    print "\t\t\tabs(ac - at) < abs(as - at), " + `abs(ac - at)` + " < " + `abs(as - at)`
+                    print "\t\t\tabs(ac - at) < abs(asec - at), " + `abs(ac - at)` + " < " + `abs(asec - at)`
                     print "\t\t\tat_new = ac = " + `ac`
                 at_new = ac
             else:
                 if print_flag:
-                    print "\t\t\tabs(ac - at) >= abs(as - at), " + `abs(ac - at)` + " >= " + `abs(as - at)`
-                    print "\t\t\tat_new = as = " + `as`
-                at_new = as
+                    print "\t\t\tabs(ac - at) >= abs(asec - at), " + `abs(ac - at)` + " >= " + `abs(asec - at)`
+                    print "\t\t\tat_new = asec = " + `asec`
+                at_new = asec
 
             # Redefine at+.
             if print_flag:
@@ -458,16 +458,16 @@ def update(a, Ik, at, al, au, ft, fl, fu, gt, gl, gu, bracketed, Ik_lim, d=0.66,
         else:
             if print_flag:
                 print "\t\tNot bracketed"
-            if abs(ac - at) > abs(as - at):
+            if abs(ac - at) > abs(asec - at):
                 if print_flag:
-                    print "\t\t\tabs(ac - at) > abs(as - at), " + `abs(ac - at)` + " > " + `abs(as - at)`
+                    print "\t\t\tabs(ac - at) > abs(asec - at), " + `abs(ac - at)` + " > " + `abs(asec - at)`
                     print "\t\t\tat_new = ac = " + `ac`
                 at_new = ac
             else:
                 if print_flag:
-                    print "\t\t\tabs(ac - at) <= abs(as - at), " + `abs(ac - at)` + " <= " + `abs(as - at)`
-                    print "\t\t\tat_new = as = " + `as`
-                at_new = as
+                    print "\t\t\tabs(ac - at) <= abs(asec - at), " + `abs(ac - at)` + " <= " + `abs(asec - at)`
+                    print "\t\t\tat_new = asec = " + `asec`
+                at_new = asec
 
             # Check limits.
             if print_flag:
