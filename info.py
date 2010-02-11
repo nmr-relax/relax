@@ -211,9 +211,9 @@ class Ref:
         if pages and hasattr(self, 'pages'):
             cite = cite + ' ' + self.pages
         if doi and hasattr(self, 'doi'):
-            cite = cite + ' (<a href="http://dx.doi.org/%s>abstract</a>)' % self.doi
+            cite = cite + ' (<a href="http://dx.doi.org/%s">abstract</a>)' % self.doi
         if url and hasattr(self, 'url'):
-            cite = cite + ' ('+self.url + ')'
+            cite = cite + ' (<a href="http://dx.doi.org/%s">url</a>)' % self.url
 
         # End.
         if cite[-1] != '.':
