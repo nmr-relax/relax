@@ -171,6 +171,58 @@ class Ref:
         return cite
 
 
+    def cite_html(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
+        """Compile a citation for HTML display.
+
+        @keyword author:    The author flag.
+        @type author:       bool
+        @keyword title:     The title flag.
+        @type title:        bool
+        @keyword journal:   The journal flag.
+        @type journal:      bool
+        @keyword volume:    The volume flag.
+        @type volume:       bool
+        @keyword number:    The number flag.
+        @type number:       bool
+        @keyword pages:     The pages flag.
+        @type pages:        bool
+        @keyword year:      The year flag.
+        @type year:         bool
+        @keyword doi:       The doi flag.
+        @type doi:          bool
+        @return:            The full citation.
+        @rtype:             str
+        """
+
+        # Build the citation.
+        cite = ''
+        if author and hasattr(self, 'author'):
+            cite = cite + self.author
+        if year and hasattr(self, 'year'):
+            cite = cite + ' (' + repr(self.year) + ').'
+        if title and hasattr(self, 'title'):
+            cite = cite + ' ' + self.title
+        if journal and hasattr(self, 'journal'):
+            cite = cite + ' <em>' + self.journal + '<em>,'
+        if volume and hasattr(self, 'volume'):
+            cite = cite + ' <strong>' + self.volume + '</strong>'
+        if number and hasattr(self, 'number'):
+            cite = cite + '(' + self.number + '),'
+        if pages and hasattr(self, 'pages'):
+            cite = cite + ' ' + self.pages
+        if doi and hasattr(self, 'doi'):
+            cite = cite + ' (<a href="http://dx.doi.org/%s>abstract</a>)' % self.doi
+        if url and hasattr(self, 'url'):
+            cite = cite + ' ('+self.url + ')'
+
+        # End.
+        if cite[-1] != '.':
+            cite = cite + '.'
+
+        # Return the citation.
+        return cite
+
+
 
 class Clore90(Ref):
     """Bibliography container."""

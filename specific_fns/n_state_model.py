@@ -803,7 +803,7 @@ class N_state_model(API_base, API_common):
             if not spin.select:
                 continue
 
-            # Skip spins without RDC data or unit XH bond vectors.
+            # Skip spins without RDC data.
             if not hasattr(spin, 'rdc'):
                 # Add rows of None if other data exists.
                 if hasattr(spin, 'pcs'):
@@ -816,9 +816,9 @@ class N_state_model(API_base, API_common):
                 continue
 
             # RDC data exists but the XH bond vectors are missing?
-            if not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect'):
+            if not hasattr(spin, 'members') and not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect'):
                 # Throw a warning.
-                warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin " + spin_id))
+                warn(RelaxWarning("RDC data exists but the XH bond vectors are missing, skipping spin %s." % spin_id))
 
                 # Add rows of None if other data exists.
                 if hasattr(spin, 'pcs'):
@@ -830,16 +830,53 @@ class N_state_model(API_base, API_common):
                 # Jump to the next spin.
                 continue
 
-            # Append the RDC and XH vectors to the lists.
-            if hasattr(spin, 'xh_vect'):
-                obj = getattr(spin, 'xh_vect')
+            # Pseudo-atom set up.
+            if hasattr(spin, 'members'):
+                # Skip non-Me groups.
+                if len(spin.members) != 3:
+                    warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping spin %s." % spin_id))
+                    continue
+
+                # The summed vector.
+                vect = zeros(3, float64)
+                for i in range(3):
+                    # Get the spin.
+                    spin_i = return_spin(spin.members[i])
+
+                    # Add the bond vector.
+                    if hasattr(spin_i, 'xh_vect'):
+                        obj = getattr(spin_i, 'xh_vect')
+                    else:
+                        obj = getattr(spin_i, 'bond_vect')
+                    vect = vect + obj
+
+                # Normalise.
+                vect = vect / norm(vect)
+
+                # The RDC for the Me-pseudo spin where:
+                #     <D> = -1/3 Dpar.
+                # See Verdier, et al., JMR, 2003, 163, 353-359.
+                rdc = -3.0 * array(spin.rdc)
+
+            # Normal spin set up.
             else:
-                obj = getattr(spin, 'bond_vect')
-            rdcs.append(spin.rdc)
-            if isinstance(obj[0], float):
-                vectors.append([obj])
+                # Append the RDC and XH vectors to the lists.
+                if hasattr(spin, 'xh_vect'):
+                    vect = getattr(spin, 'xh_vect')
+                else:
+                    vect = getattr(spin, 'bond_vect')
+
+                # The RDC.
+                rdc = array(spin.rdc)
+
+            # Add the RDC.
+            rdcs.append(rdc)
+
+            # Add the bond vectors.
+            if isinstance(vect[0], float):
+                vectors.append([vect])
             else:
-                vectors.append(obj)
+                vectors.append(vect)
 
             # Append the PCS errors (or a list of None).
             if hasattr(spin, 'rdc_err'):
