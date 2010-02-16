@@ -27,6 +27,7 @@ import sys
 import wx
 
 # relax GUI module imports.
+from filedialog import openfile
 from paths import IMAGE_PATH
 
 
@@ -51,7 +52,7 @@ def import_file_settings(oldsettings):
 
 
 def load_sequence(self):
-    seqfile = openfile('Choose Sequence File', sys.path[-1], 'save.relaxGUI', 'relaxGUI files (*.relaxGUI)|*.relaxGUI|all files (*.*)|*.*')
+    seqfile = openfile('Choose Sequence File', sys.path[-1], '', 'all files (*.*)|*.*')
     return seqfile
 
 
