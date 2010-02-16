@@ -88,8 +88,8 @@ class Info_box:
         self.bib['dAuvergneGooley07'] = dAuvergneGooley07()
         self.bib['dAuvergneGooley08a'] = dAuvergneGooley08a()
         self.bib['dAuvergneGooley08b'] = dAuvergneGooley08b()
-        self.bib['LipariSzabo82a'] = (LipariSzabo82a)
-        self.bib['LipariSzabo82b'] = (LipariSzabo82b)
+        self.bib['LipariSzabo82a'] = LipariSzabo82a()
+        self.bib['LipariSzabo82b'] = LipariSzabo82b()
 
 
     def centre(self, string, width=100):

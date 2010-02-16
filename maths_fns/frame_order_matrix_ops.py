@@ -198,7 +198,7 @@ def populate_2nd_eigenframe_iso_cone(matrix, s1):
             matrix[i, j] = 0.0
 
     # The c11^2, c22^2, c12^2, and c21^2 elements.
-    matrix[0, 0] = (s1 + 1.0) / 3.0
+    matrix[0, 0] = (s1 + 2.0) / 6.0
     matrix[4, 4] = matrix[0, 0]
     matrix[1, 1] = matrix[0, 0]
     matrix[3, 3] = matrix[0, 0]
