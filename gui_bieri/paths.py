@@ -58,5 +58,7 @@ REF_ICON = ICON_PATH + '16x16'+sep+'actions'+sep+'flag-blue.png'
 
 # 48x48 icons.
 #ADD_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-add-relax-blue.png'
+BACKWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-previous-view.png'
 #CANCEL_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'dialog-cancel.png'
+FORWARDS_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'go-next-view.png'
 #REMOVE_ICON = ICON_PATH + '48x48'+sep+'actions'+sep+'list-remove.png'

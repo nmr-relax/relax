@@ -58,6 +58,7 @@ from derived_wx_classes import StructureTextCtrl
 from filedialog import multi_openfile, opendir, openfile, savefile
 from message import dir_message, exec_relax, missing_data, question, relax_run_ok
 from paths import ABOUT_RELAX_ICON, ABOUT_RELAXGUI_ICON, CONTACT_ICON, CONTROLLER_ICON, EXIT_ICON, IMAGE_PATH, LOAD_ICON, MANUAL_ICON, NEW_ICON, OPEN_ICON, REF_ICON, SAVE_ICON, SAVE_AS_ICON, SETTINGS_ICON, SETTINGS_GLOBAL_ICON, SETTINGS_RESET_ICON
+from references import References
 from settings import import_file_settings, load_sequence, relax_global_settings
 
 
@@ -1097,7 +1098,17 @@ class Main(wx.Frame):
 
 
     def references(self, event):
-        webbrowser.open_new('http://www.nmr-relax.com/refs.html')
+        """Display the references relevant for relax.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Build and show the references window.
+        self.references = References(self)
+        self.references.Show()
+
+        # Terminate the event.
         event.Skip()
 
 
