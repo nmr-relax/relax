@@ -203,7 +203,7 @@ class Ref:
         if title and hasattr(self, 'title'):
             cite = cite + ' ' + self.title
         if journal and hasattr(self, 'journal'):
-            cite = cite + ' <em>' + self.journal + '<em>,'
+            cite = cite + ' <em>' + self.journal + '</em>,'
         if volume and hasattr(self, 'volume'):
             cite = cite + ' <strong>' + self.volume + '</strong>'
         if number and hasattr(self, 'number'):
