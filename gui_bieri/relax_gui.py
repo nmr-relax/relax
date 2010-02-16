@@ -1008,11 +1008,10 @@ class Main(wx.Frame):
 
 
     def param_file_setting(self, event): # set up parameter files
-        global file_setting # import global variable
-        tmp_setting = import_file_settings(file_setting)
+        tmp_setting = import_file_settings(ds.relax_gui.file_setting)
         if not tmp_setting == None:
             if question('Do you realy want to change import file settings?'):
-                file_setting = tmp_setting
+                ds.relax_gui.file_setting = tmp_setting
         event.Skip()
 
 
@@ -1140,10 +1139,9 @@ class Main(wx.Frame):
 
     def reset_setting(self, event): #reset all settings
         global global_setting #import global variable
-        global file_setting # import global variable
         if question('Do you realy want to change relax settings?'):
-            global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
-            file_setting = ['0', '1', '2', '3', '4', '5', '6']
+            ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
+            ds.relax_gui.file_setting = ['0', '1', '2', '3', '4', '5', '6']
 
 
     def sat_noe1(self, event):
@@ -1228,11 +1226,10 @@ class Main(wx.Frame):
 
 
     def settings(self, event): # set up for relax variables
-        global global_setting #import global variable
-        tmp_global = relax_global_settings(global_setting)
+        tmp_global = relax_global_settings(ds.relax_gui.global_setting)
         if not tmp_global == None:
             if question('Do you realy want to change relax settings?'):
-                global_setting = tmp_global
+                ds.relax_gui.global_setting = tmp_global
         event.Skip()
 
 
