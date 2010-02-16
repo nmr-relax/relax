@@ -264,6 +264,12 @@ class Auto_rx:
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_num = 500
 
+        # Unresolved resiudes
+        data.unresolved = self.data.unresolved
+
+        # Structure File
+        data.structure_file = self.data.structure_file
+
         # Return the container.
         return data
 
@@ -376,7 +382,7 @@ class Auto_rx:
         data = self.assemble_data()
 
         # Execute.
-        Relax_fit(seq_args=data.seq_args, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num)
+        Relax_fit(seq_args=data.seq_args, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved)
 
 
     def link_data(self, data):
