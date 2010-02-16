@@ -507,7 +507,7 @@ class Frame_order(API_base, API_common):
             alpha = 0.0
 
             # Calculate the cone angle.
-            cdp.theta_cone = order_parameters.theta_cone(s1)
+            cdp.theta_cone = order_parameters.iso_cone_S_to_cos_theta(s1)
 
             # Monte Carlo simulation data structures.
             if sim_index != None:
