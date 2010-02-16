@@ -256,7 +256,7 @@ class Auto_rx:
             if self.data.file_list[i] == '':
                 break
         data.file_names = self.data.file_list[:i]
-        data.relax_times = self.data.file_list[:i]
+        data.relax_times = self.data.relax_times[:i]
 
         # The integration method.
         data.int_method = 'height'
