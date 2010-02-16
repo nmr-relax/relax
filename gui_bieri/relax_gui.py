@@ -770,24 +770,19 @@ class Main(wx.Frame):
         self.Bind(wx.EVT_MENU, self.param_file_setting, id=21)
         self.Bind(wx.EVT_MENU, self.reset_setting,      id=22)
 
-        # The 'Extras' menu entries.
-        menu = wx.Menu()
-        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&Contact relaxGUI", icon=CONTACT_ICON))
-        menu.AppendItem(self.build_menu_sub_item(menu, id=31, text="&References", icon=REF_ICON))
-        menubar.Append(menu, "&Extras")
-
-        # The 'Extras' menu actions.
-        self.Bind(wx.EVT_MENU, self.references, id=31)
-
         # The 'Help' menu entries.
         menu = wx.Menu()
         menu.AppendItem(self.build_menu_sub_item(menu, id=40, text="&Manual\tF1", icon=MANUAL_ICON))
+        menu.AppendSeparator()
+        menu.AppendItem(self.build_menu_sub_item(menu, id=30, text="&Contact relaxGUI", icon=CONTACT_ICON))
+        menu.AppendItem(self.build_menu_sub_item(menu, id=31, text="&References", icon=REF_ICON))
         menu.AppendSeparator()
         menu.AppendItem(self.build_menu_sub_item(menu, id=41, text="About relaxG&UI", icon=ABOUT_RELAXGUI_ICON))
         menu.AppendItem(self.build_menu_sub_item(menu, id=42, text="About rela&x", icon=ABOUT_RELAX_ICON))
         menubar.Append(menu, "&Help")
 
         # The 'Help' menu actions.
+        self.Bind(wx.EVT_MENU, self.references, id=31)
         self.Bind(wx.EVT_MENU, self.about_gui,  id=41)
         self.Bind(wx.EVT_MENU, self.about_relax, id=42)
 
