@@ -175,6 +175,9 @@ class References(wx.Dialog):
         text = text + "<h3><i>The new model-free analysis protocol</i></h3>"
         text = text + "<p>%s</p>" % info.bib['dAuvergneGooley07'].cite_html()
         text = text + "<p>%s</p>" % info.bib['dAuvergneGooley08b'].cite_html()
+        text = text + "<h3><i>Comprehensive reference</i></h3>"
+        text = text + "<p>This PhD thesis expands on all of the d'Auvergne and Gooley references and describes model-free analysis and the program relax in more detail:</p>"
+        text = text + "<p>%s</p>" % info.bib['dAuvergne06'].cite_html()
 
         # The footer.
         text = text + HTML_FOOTER
