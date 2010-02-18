@@ -1,6 +1,8 @@
-"""Configuration for the stereochem_analysis.py script.
+"""Script for the determination of relative stereochemistry.
 
-All user settings should be placed here.
+The analysis is preformed by using multiple ensembles of structures, randomly sampled from a given
+set of structures.  The discrimination is performed by comparing the sets of ensembles using NOE
+violations and RDC Q-factors.
 
 This script is split into multiple stages:
 
@@ -20,8 +22,12 @@ This script is split into multiple stages:
     5.  Generation of Grace graphs.
 """
 
+# relax module imports.
+from auto_analyses.stereochem_analysis import Stereochem_analysis
+
+
 # Stage of analysis (see the docstring above for the options).
-STAGE = 5
+STAGE = 1
 
 # Number of ensembles.
 NUM_ENS = 100000
@@ -75,3 +81,34 @@ LOWER_LIM_NOE = 0.0
 UPPER_LIM_NOE = 600.0
 LOWER_LIM_RDC = 0.0
 UPPER_LIM_RDC = 1.0
+
+
+# Code execution.
+Stereochem_analysis(
+        stage=STAGE,
+        num_ens=NUM_ENS,
+        num_models=NUM_MODELS,
+        configs=CONFIGS,
+        snapshot_dir=SNAPSHOT_DIR,
+        snapshot_min=SNAPSHOT_MIN,
+        snapshot_max=SNAPSHOT_MAX,
+        pseudo=PSEUDO,
+        noe_file=NOE_FILE,
+        rdc_name=RDC_NAME,
+        rdc_file=RDC_FILE,
+        rdc_spin_id_col=RDC_SPIN_ID_COL,
+        rdc_mol_name_col=RDC_MOL_NAME_COL,
+        rdc_res_num_col=RDC_RES_NUM_COL,
+        rdc_res_name_col=RDC_RES_NAME_COL,
+        rdc_spin_num_col=RDC_SPIN_NUM_COL,
+        rdc_spin_name_col=RDC_SPIN_NAME_COL,
+        rdc_data_col=RDC_DATA_COL,
+        rdc_error_col=RDC_ERROR_COL,
+        bond_length=BOND_LENGTH,
+        log=LOG,
+        bucket_num=BUCKET_NUM,
+        lower_lim_noe=LOWER_LIM_NOE,
+        upper_lim_noe=UPPER_LIM_NOE,
+        lower_lim_rdc=LOWER_LIM_RDC,
+        upper_lim_rdc=UPPER_LIM_RDC
+)
