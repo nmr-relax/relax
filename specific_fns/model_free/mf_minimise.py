@@ -37,7 +37,7 @@ from generic_fns.subdivide_grid import Grid_info
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi.processor import Processor_box
-from multi_processor_commands import MF_grid_command, MF_grid_memo, MF_memo, MF_minimise_command, MF_super_grid_memo
+from multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command, MF_split_grid_command, MF_split_grid_memo
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxWarning
@@ -1602,7 +1602,7 @@ class Mf_minimise:
                 # Loop over each grid sub-division.
                 for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
                     # Grid search initialisation.
-                    command = MF_grid_command()
+                    command = MF_split_grid_command()
 
                     # Constrained optimisation.
                     if constraints:
@@ -1613,7 +1613,7 @@ class Mf_minimise:
                         command.set_minimise(mf=self.mf, model_type=data_store.model_type, args=(), x0=opt_params.param_vector, min_algor=min_algor, min_options=opt_params.min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, verbosity=verbosity)
 
                     # Set up the model-free memo and add it to the processor queue.
-                    memo = MF_grid_memo(super_grid_memo)
+                    memo = MF_memo(super_grid_memo)
                     processor.add_to_queue(command, memo)
 
                 # Exit this method.
