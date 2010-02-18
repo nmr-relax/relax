@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -26,15 +26,15 @@ import sys
 
 # relax module imports.
 from test_suite.unit_tests.package_checking import PackageTestCase
-import specific_fns
+import auto_analyses
 
 
 class Test___init__(PackageTestCase):
-    """Unit tests for the specific_fns package."""
+    """Unit tests for the auto_analyses package."""
 
     def setUp(self):
         """Set up for the package checking."""
 
-        self.package = specific_fns
-        self.package_name = 'specific_fns'
-        self.package_path = sys.path[0] + sep + 'specific_fns'
+        self.package = auto_analyses
+        self.package_name = 'auto_analyses'
+        self.package_path = sys.path[0] + sep + 'auto_analyses'
