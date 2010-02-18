@@ -63,8 +63,36 @@ from relax_io import mkdir_nofail
 class Stereochem_analysis:
     """Class for performing the relative stereochemistry analysis."""
 
-    def __init__(self):
+    def __init__(self, stage=1, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, rdc_name=None, rdc_file=None, rdc_spin_id_col=None, rdc_mol_name_col=None, rdc_res_num_col=None, rdc_res_name_col=None, rdc_spin_num_col=None, rdc_spin_name_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
         """Set up the analysis."""
+
+        # Store all the args.
+        self.stage=stage
+        self.num_ens=num_ens
+        self.num_models=num_models
+        self.configs=configs
+        self.snapshot_dir=snapshot_dir
+        self.snapshot_min=snapshot_min
+        self.snapshot_max=snapshot_max
+        self.pseudo=pseudo
+        self.noe_file=noe_file
+        self.rdc_name=rdc_name
+        self.rdc_file=rdc_file
+        self.rdc_spin_id_col=rdc_spin_id_col
+        self.rdc_mol_name_col=rdc_mol_name_col
+        self.rdc_res_num_col=rdc_res_num_col
+        self.rdc_res_name_col=rdc_res_name_col
+        self.rdc_spin_num_col=rdc_spin_num_col
+        self.rdc_spin_name_col=rdc_spin_name_col
+        self.rdc_data_col=rdc_data_col
+        self.rdc_error_col=rdc_error_col
+        self.bond_length=bond_length
+        self.log=log
+        self.bucket_num=bucket_num
+        self.lower_lim_noe=lower_lim_noe
+        self.upper_lim_noe=upper_lim_noe
+        self.lower_lim_rdc=lower_lim_rdc
+        self.upper_lim_rdc=upper_lim_rdc
 
         # Create a directory for log files.
         if LOG:
