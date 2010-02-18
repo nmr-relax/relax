@@ -29,9 +29,11 @@ import dep_check
 # Python module imports.
 from code import InteractiveConsole, softspace
 from os import F_OK, access
+import platform
 if dep_check.readline_module:
     import readline
 import sys
+from textwrap import wrap
 
 # Python modules accessible on the command prompt.
 from math import pi
@@ -43,6 +45,7 @@ from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneErr
 from base_class import Exec_info
 from command import Ls, Lh, Ll, system
 from help import _Helper, _Helper_python
+from info import Info_box
 if dep_check.readline_module:
     from tab_completion import Tab_completion
 
@@ -93,11 +96,9 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, intro_string=None, show_script=True, quit=True, raise_relax_error=False):
+    def __init__(self, show_script=True, quit=True, raise_relax_error=False):
         """The interpreter class.
 
-        @param intro_string:        The string to print at the start of execution.
-        @type intro_string:         str
         @param show_script:         If true, the relax will print the script contents prior to
                                     executing the script.
         @type show_script:          bool
@@ -111,10 +112,12 @@ class Interpreter:
         """
 
         # Place the arguments in the class namespace.
-        self.__intro_string = intro_string
         self.__show_script = show_script
         self.__quit_flag = quit
         self.__raise_relax_error = raise_relax_error
+
+        # Build the intro string.
+        self.__intro_string = self._build_intro_text()
 
         # Initialise the execution information container (info that can change during execution).
         self.exec_info = Exec_info
@@ -129,6 +132,55 @@ class Interpreter:
 
         # Set up the interpreter objects.
         self._locals = self._setup()
+
+
+    def _build_intro_text(self):
+        """Create the introductory string to print out.
+
+        @return:    The introductory string.
+        @rtype:     str
+        """
+
+        # The width of the printout.
+        if platform.uname()[0] in ['Windows', 'Microsoft']:
+            width = 80
+        else:
+            width = 100
+
+        # Initialise the string and the relax information box.
+        string = ''
+        info = Info_box()
+
+        # Some new lines.
+        intro_string = '\n\n\n'
+
+        # Program name and version.
+        intro_string = intro_string + info.centre(info.title + ' ' + info.version, width) + '\n\n'
+
+        # Program description.
+        intro_string = intro_string + info.centre(info.desc, width) + '\n\n'
+
+        # Copyright printout.
+        for i in range(len(info.copyright)):
+            intro_string = intro_string + info.centre(info.copyright[i], width) + '\n'
+        intro_string = intro_string + '\n'
+
+        # Program licence and help (wrapped).
+        for line in wrap(info.licence, width):
+            intro_string = intro_string + line + '\n'
+        intro_string = intro_string + '\n'
+ 
+        # Help message.
+        help = "Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within the prompt."
+        for line in wrap(help, width):
+            intro_string = intro_string + line + '\n'
+
+        # ImportErrors, if any.
+        for i in range(len(info.errors)):
+            intro_string = intro_string + '\n' + info.errors[i] + '\n'
+
+        # Return the formatted text.
+        return intro_string
 
 
     def _setup(self):
