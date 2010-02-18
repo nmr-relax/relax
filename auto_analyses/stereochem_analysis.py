@@ -650,7 +650,3 @@ class Stereochem_analysis:
 
                 # Replace the superimposed file.
                 structure.write_pdb(config + repr(ens) + ".pdb", dir="ensembles_superimposed", force=True)
-
-
-# Execute the script.
-StereoAnalysis()
