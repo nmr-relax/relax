@@ -330,20 +330,27 @@ class MF_result_command(Result_command):
 
 
 class MF_split_grid_memo(MF_memo):
-    def __init__(self, model_free, spin, sim_index, model_type, scaling, scaling_matrix, print_prefix, verbosity, full_output, A, b, grid_size):
+    """The model-free parallel grid search memo."""
 
+    def __init__(self, model_free=None, model_type=None, spin=None, sim_index=None, scaling=None, scaling_matrix=None):
+        """Initialise the model-free memo class for the parallelised grid search.
+
+        This memo stores the model-free class instance so that the _disassemble_result() method can be called to store the optimisation results.  The other args are those required by this method but not generated through optimisation.
+
+        @keyword model_free:        The model-free class instance.
+        @type model_free:           specific_fns.model_free.Model_free instance
+        @keyword spin:              The spin data container.  If this argument is supplied, then the spin_id argument will be ignored.
+        @type spin:                 SpinContainer instance
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            int
+        @keyword scaling:           If True, diagonal scaling is enabled.
+        @type scaling:              bool
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        """
         # Execute the base class __init__() method.
         super(MF_split_grid_memo, self).__init__(model_free, spin, sim_index, model_type, scaling, scaling_matrix)
 
-        self.full_output = full_output
-        self.print_prefix = print_prefix
-        self.verbosity = verbosity
-        self.sub_memos = []
-        self.completed = False
-
-        self.A = A
-        self.b = b
-        self.grid_size = grid_size
         # aggregated results
         #             min_params, f_min, k
         self.xk = None
