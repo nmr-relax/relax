@@ -182,7 +182,7 @@ class Stereochem_analysis:
         """Generate grace plots of the results."""
 
         # NOE violations.
-        if access("NOE_viol_" + self.configs[0] + "_sorted", F_OK):
+        if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
             print("Generating NOE violation Grace plots.")
 
@@ -264,7 +264,7 @@ class Stereochem_analysis:
             grace_dist.close()
 
         # RDC Q-factors.
-        if access("Q_factors_" + self.configs[0] + "_sorted", F_OK):
+        if access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
             print("Generating RDC Q-factor Grace plots.")
 
@@ -347,7 +347,7 @@ class Stereochem_analysis:
 
 
         # NOE-RDC correlation plot.
-        if access("NOE_viol_" + self.configs[0] + "_sorted", F_OK) and access("Q_factors_" + self.configs[0] + "_sorted", F_OK):
+        if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK) and access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
             print("Generating NOE-RDC correlation Grace plots.")
 
