@@ -62,7 +62,7 @@ class PCS(User_fn_class):
         Keyword Arguments
         ~~~~~~~~~~~~~~~~~
 
-        spin_id:  The spin ID string to restrict the PCS Q-factor calculation to subset of all selected spins.
+        spin_id:  The spin ID string for restricting to subset of all selected spins.
 
 
         Description
