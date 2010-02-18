@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi
+from math import pi, sqrt
 from numpy import float64, ones, zeros
 from numpy.linalg import norm
 import sys
@@ -408,6 +408,76 @@ def find_index(data, ri_label, frq_label):
 
     # Return the index.
     return index
+
+
+def q_factors():
+    """Calculate the Q-factors for the RDC data."""
+
+    # Q-factor list.
+    cdp.q_factors_rdc = []
+    cdp.q_factors_rdc_norm2 = []
+
+    # Loop over the alignments.
+    for i in xrange(len(cdp.align_tensors)):
+        # Init.
+        D2_sum = 0.0
+        sse = 0.0
+
+        # Spin loop.
+        dj = None
+        N = 0
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins without RDC data.
+            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or spin.rdc[i] == None:
+                continue
+
+            # Sum of squares.
+            sse = sse + (spin.rdc[i] - spin.rdc_bc[i])**2
+
+            # Sum the RDCs squared (for one type of normalisation).
+            D2_sum = D2_sum + spin.rdc[i]**2
+
+            # Gyromagnetic ratios.
+            gx = return_gyromagnetic_ratio(spin.heteronuc_type)
+            gh = return_gyromagnetic_ratio(spin.proton_type)
+
+            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+            dj_new = 3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r)
+            if dj and dj_new != dj:
+                raise RelaxError("All the RDCs must come from the same nucleus type.")
+            else:
+                dj = dj_new
+
+            # Increment the number of data sets.
+            N = N + 1
+
+        # Normalisation factor of 2Da^2(4 + 3R)/5.
+        D = dj * cdp.align_tensors[i].A_diag
+        Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
+        Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
+        R = Dr / Da
+        norm = 2.0 * (Da)**2 * (4.0 + 3.0*R**2)/5.0
+        if Da == 0.0:
+            norm = 1e-15
+
+        # The Q-factor for the alignment.
+        Q = sqrt(sse / N / norm)
+        cdp.q_factors_rdc.append(Q)
+        cdp.q_factors_rdc_norm2.append(sqrt(sse / D2_sum))
+
+    # The total Q-factor.
+    cdp.q_rdc = 0.0
+    cdp.q_rdc_norm2 = 0.0
+    for Q in cdp.q_factors_rdc:
+        cdp.q_rdc = cdp.q_rdc + Q**2
+    for Q in cdp.q_factors_rdc_norm2:
+        cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + Q**2
+    cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
+    cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):

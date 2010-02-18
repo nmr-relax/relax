@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,6 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from math import sqrt
 from numpy import array, float64, zeros
 
 # relax module imports.
@@ -450,6 +451,46 @@ def find_index(data, ri_label, frq_label):
 
     # Return the index.
     return index
+
+
+def q_factors():
+    """Calculate the Q-factors for the PCS data."""
+
+    # Q-factor list.
+    cdp.q_factors_pcs = []
+
+    # Loop over the alignments.
+    for i in xrange(len(cdp.align_tensors)):
+        # Init.
+        pcs2_sum = 0.0
+        sse = 0.0
+
+        # Spin loop.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins without PCS data.
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or spin.pcs[i] == None:
+                continue
+
+            # Sum of squares.
+            sse = sse + (spin.pcs[i] - spin.pcs_bc[i])**2
+
+            # Sum the PCSs squared (for normalisation).
+            pcs2_sum = pcs2_sum + spin.pcs[i]**2
+
+        # The Q-factor for the alignment.
+        Q = sqrt(sse / pcs2_sum)
+        cdp.q_factors_pcs.append(Q)
+
+    # The total Q-factor.
+    cdp.q_pcs = 0.0
+    for Q in cdp.q_factors_pcs:
+        cdp.q_pcs = cdp.q_pcs + Q**2
+    cdp.q_pcs = cdp.q_pcs / len(cdp.q_factors_pcs)
+    cdp.q_pcs = sqrt(cdp.q_pcs)
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
