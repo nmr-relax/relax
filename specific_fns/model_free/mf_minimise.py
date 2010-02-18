@@ -1599,13 +1599,8 @@ class Mf_minimise:
                     # Grid search initialisation.
                     command = MF_split_grid_command()
 
-                    # Constrained optimisation.
-                    if constraints:
-                        command.set_minimise(mf=self.mf, model_type=data_store.model_type, args=(), x0=opt_params.param_vector, min_algor=min_algor, min_options=opt_params.min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, verbosity=verbosity)
-
-                    # Unconstrained optimisation.
-                    else:
-                        command.set_minimise(mf=self.mf, model_type=data_store.model_type, args=(), x0=opt_params.param_vector, min_algor=min_algor, min_options=opt_params.min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, verbosity=verbosity)
+                    # Pass in the data and optimisation parameters.
+                    command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
                     # Set up the model-free memo and add it to the processor queue.
                     memo = MF_memo(super_grid_memo)
