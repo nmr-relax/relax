@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2008-2010 Edward d'Auvergne                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,29 +20,21 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package containing all of relax's number crunching code."""
+# Python module imports.
+from os import sep
+import sys
+
+# relax module imports.
+from test_suite.unit_tests.package_checking import PackageTestCase
+import auto_analyses
 
 
-__all__ = [ 'alignment_tensor',
-            'chi2',
-            'consistency_tests',
-            'correlation_time',
-            'direction_cosine',
-            'frame_order',
-            'frame_order_matrix_ops',
-            'jw_mapping',
-            'jw_mf_comps',
-            'jw_mf',
-            'kronecker_product',
-            'mf',
-            'n_state_model',
-            'order_parameters',
-            'pcs',
-            'potential',
-            'rdc',
-            'ri_comps',
-            'ri_prime',
-            'ri',
-            'rotation_matrix',
-            'weights' ]
+class Test___init__(PackageTestCase):
+    """Unit tests for the auto_analyses package."""
+
+    def setUp(self):
+        """Set up for the package checking."""
+
+        self.package = auto_analyses
+        self.package_name = 'auto_analyses'
+        self.package_path = sys.path[0] + sep + 'auto_analyses'
