@@ -138,6 +138,9 @@ class Stereochem_analysis:
         elif self.stage == 5:
             self.grace_plots()
 
+        # Restore STDOUT.
+        sys.stdout = sys.__stdout__
+
 
     def generate_distribution(self, values, lower=0.0, upper=200.0, inc=None):
         """Create the distribution data structure."""
