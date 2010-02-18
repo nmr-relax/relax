@@ -60,7 +60,7 @@ if not hasattr(ds, 'tmpdir'):
 
 # Path of the data files.
 path = sys.path[-1] + sep + 'test_suite' + sep + 'shared_data'
-path_str = path + sep + 'structures' + sep + 'phthalic_acid' + sep + 'snapshots' + sep
+path_str = path + sep + 'structures' + sep + 'phthalic_acid' + sep + 'snapshots'
 path_noe = path + sep + 'noe_restraints' + sep
 path_rdc = path + sep + 'rdc_data' + sep
 
@@ -74,7 +74,7 @@ NUM_MODELS = 2
 CONFIGS = ["R", "S"]
 
 # Snapshot directories (corresponding to CONFIGS).
-SNAPSHOT_DIR = [path_str + "snapshots", path_str + "snapshots"]
+SNAPSHOT_DIR = [path_str, path_str]
 
 # Min and max number of the snapshots (corresponding to CONFIGS).
 SNAPSHOT_MIN = [0, 0]
