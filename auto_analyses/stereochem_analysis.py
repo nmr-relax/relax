@@ -60,21 +60,6 @@ from relax_io import mkdir_nofail
 
 
 
-# Configuration.
-################
-
-# Check for the file.
-if not access('stereochem_analysis_config.py', F_OK):
-    raise RelaxError("The configuration file 'stereochem_analysis_config.py' cannot be found.")
-
-# Read the configuration.
-execfile('stereochem_analysis_config.py')
-
-
-
-# Do not change anything below this line.
-#########################################
-
 class StereoAnalysis:
     """Class for performing the stereochemistry analysis."""
 
