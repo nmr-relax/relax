@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,5 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package for all of the automatic analyses, hard coded protocols to be used as a black box."""
 
-
-__all__ = [ 'dauvergne_protocol',
-            'relax_fit',
-            'stereochem_analysis' ]
+__all__ = ['test___init__']

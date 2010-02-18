@@ -27,7 +27,7 @@ PSEUDO = [
 ]
 
 # Read the structure.
-structure.read_pdb('gromacs_phthalic_acid.pdb', dir=DATA_PATH+sep+'structures')
+structure.read_pdb('gromacs.pdb', dir=DATA_PATH+sep+'structures'+sep+'phthalic_acid')
 
 # Load all protons as the sequence.
 structure.load_spins('@*H*', ave_pos=False)

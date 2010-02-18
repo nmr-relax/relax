@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,10 +20,21 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package for all of the automatic analyses, hard coded protocols to be used as a black box."""
+# Python module imports.
+from os import sep
+import sys
+
+# relax module imports.
+from test_suite.unit_tests.package_checking import PackageTestCase
+import auto_analyses
 
 
-__all__ = [ 'dauvergne_protocol',
-            'relax_fit',
-            'stereochem_analysis' ]
+class Test___init__(PackageTestCase):
+    """Unit tests for the auto_analyses package."""
+
+    def setUp(self):
+        """Set up for the package checking."""
+
+        self.package = auto_analyses
+        self.package_name = 'auto_analyses'
+        self.package_path = sys.path[0] + sep + 'auto_analyses'
