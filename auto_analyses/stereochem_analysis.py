@@ -56,6 +56,7 @@ import sys
 from generic_fns import pipes
 from generic_fns.selection import spin_loop
 from physical_constants import dipolar_constant, g1H, g13C
+from prompt.interpreter import Interpreter
 from relax_io import mkdir_nofail
 
 
@@ -93,6 +94,11 @@ class Stereochem_analysis:
         self.upper_lim_noe=upper_lim_noe
         self.lower_lim_rdc=lower_lim_rdc
         self.upper_lim_rdc=upper_lim_rdc
+
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
 
         # Create a directory for log files.
         if self.log:
@@ -406,24 +412,24 @@ class Stereochem_analysis:
             out_sorted.write("%-20s%20s\n" % ("# Ensemble", "NOE_volation"))
 
             # Create the data pipe.
-            pipe.create("noe_viol_%s" % config, "N-state")
+            self.interpreter.pipe.create("noe_viol_%s" % config, "N-state")
 
             # Read the first structure.
-            structure.read_pdb("ensembles" + sep + config + "0.pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles" + sep + config + "0.pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
             # Load all protons as the sequence.
-            structure.load_spins("@H*", ave_pos=False)
+            self.interpreter.structure.load_spins("@H*", ave_pos=False)
 
             # Create the pseudo-atoms.
             for i in range(len(self.pseudo)):
-                spin.create_pseudo(spin_name=self.pseudo[i][0], members=self.pseudo[i][1], averaging="linear")
-            sequence.display()
+                self.interpreter.spin.create_pseudo(spin_name=self.pseudo[i][0], members=self.pseudo[i][1], averaging="linear")
+            self.interpreter.sequence.display()
 
             # Read the NOE list.
-            noe.read_restraints(file=self.noe_file)
+            self.interpreter.noe.read_restraints(file=self.noe_file)
 
             # Set up the N-state model.
-            n_state_model.select_model(model="fixed")
+            self.interpreter.n_state_model.select_model(model="fixed")
 
             # Print out.
             print("\n"*2 + "# Set up complete #" + "\n"*10)
@@ -437,16 +443,16 @@ class Stereochem_analysis:
                 sys.stderr.write(config + repr(ens) + "\n")
 
                 # Delete the old structures and rename the molecule.
-                structure.delete()
+                self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
                 # Get the atomic positions.
-                structure.get_pos(ave_pos=False)
+                self.interpreter.structure.get_pos(ave_pos=False)
 
                 # Calculate the average NOE potential.
-                calc()
+                self.interpreter.calc()
 
                 # Sum the violations.
                 cdp.sum_viol = 0.0
@@ -459,7 +465,7 @@ class Stereochem_analysis:
                 out.write("%-20i%30.15f\n" % (ens, cdp.sum_viol))
 
                 # Save the state.
-                results.write(file="%s_results_%s" % (config, ens), dir=dir, force=True)
+                self.interpreter.results.write(file="%s_results_%s" % (config, ens), dir=dir, force=True)
 
             # Sort the NOE violations.
             noe_viol.sort()
@@ -473,7 +479,7 @@ class Stereochem_analysis:
         """Perform the RDC part of the analysis."""
 
         # Redirect STDOUT to a log file.
-        if log:
+        if self.log:
             sys.stdout = open("logs" + sep + "RDC_%s_analysis.log" % self.rdc_name, 'w')
 
         # The dipolar constant.
@@ -495,32 +501,32 @@ class Stereochem_analysis:
             out_sorted.write("%-20s%20s\n" % ("# Ensemble", "RDC_Q_factor(pales)"))
 
             # Create the data pipe.
-            pipe.create("rdc_analysis_%s" % config, "N-state")
+            self.interpreter.pipe.create("rdc_analysis_%s" % config, "N-state")
 
             # Read the first structure.
-            structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
             # Load all protons as the sequence.
-            structure.load_spins("@H*", ave_pos=False)
+            self.interpreter.structure.load_spins("@H*", ave_pos=False)
 
             # Create the pseudo-atoms.
             for i in range(len(self.pseudo)):
-                spin.create_pseudo(spin_name=self.pseudo[i][0], members=self.pseudo[i][1], averaging="linear")
-            sequence.display()
+                self.interpreter.spin.create_pseudo(spin_name=self.pseudo[i][0], members=self.pseudo[i][1], averaging="linear")
+            self.interpreter.sequence.display()
 
             # Read the RDC data.
-            rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id_col=self.rdc_spin_id_col, mol_name_col=self.rdc_mol_name_col, res_num_col=self.rdc_res_num_col, res_name_col=self.rdc_res_name_col, spin_num_col=self.rdc_spin_num_col, spin_name_col=self.rdc_spin_name_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
+            self.interpreter.rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id_col=self.rdc_spin_id_col, mol_name_col=self.rdc_mol_name_col, res_num_col=self.rdc_res_num_col, res_name_col=self.rdc_res_name_col, spin_num_col=self.rdc_spin_num_col, spin_name_col=self.rdc_spin_name_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
 
             # Set the values needed to calculate the dipolar constant.
-            value.set(self.bond_length, "bond_length", spin_id="@H*")
-            value.set(self.bond_length, "bond_length", spin_id="@Q*")
-            value.set("13C", "heteronucleus", spin_id="@H*")
-            value.set("13C", "heteronucleus", spin_id="@Q*")
-            value.set("1H", "proton", spin_id="@H*")
-            value.set("1H", "proton", spin_id="@Q*")
+            self.interpreter.value.set(self.bond_length, "bond_length", spin_id="@H*")
+            self.interpreter.value.set(self.bond_length, "bond_length", spin_id="@Q*")
+            self.interpreter.value.set("13C", "heteronucleus", spin_id="@H*")
+            self.interpreter.value.set("13C", "heteronucleus", spin_id="@Q*")
+            self.interpreter.value.set("1H", "proton", spin_id="@H*")
+            self.interpreter.value.set("1H", "proton", spin_id="@Q*")
 
             # Set up the model.
-            n_state_model.select_model(model="fixed")
+            self.interpreter.n_state_model.select_model(model="fixed")
 
             # Print out.
             print("\n"*2 + "# Set up complete #" + "\n"*10)
@@ -534,17 +540,17 @@ class Stereochem_analysis:
                 sys.stderr.write(config + repr(ens) + "\n")
 
                 # Delete the old structures.
-                structure.delete()
+                self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
                 # Load the CH vectors for the H atoms.
-                structure.vectors(spin_id="@H*", attached="*C*", ave=False)
+                self.interpreter.structure.vectors(spin_id="@H*", attached="*C*", ave=False)
 
                 # Minimisation.
                 #grid_search(inc=4)
-                minimise("simplex", constraints=False)
+                self.interpreter.minimise("simplex", constraints=False)
 
                 # Store and write out the Q-factors.
                 q_factors.append([cdp.q_rdc, ens])
@@ -555,7 +561,7 @@ class Stereochem_analysis:
                 cdp.align_tensor_Hz_5D = d * cdp.align_tensors[0].A_5D
 
                 # Save the state.
-                results.write(file="%s_results_%s" % (config, ens), dir=dir, force=True)
+                self.interpreter.results.write(file="%s_results_%s" % (config, ens), dir=dir, force=True)
 
             # Sort the NOE violations.
             q_factors.sort()
@@ -661,9 +667,9 @@ class Stereochem_analysis:
                 stderr.close()
 
                 # Open the superimposed file in relax.
-                reset()
-                pipe.create('out', 'N-state')
-                structure.read_pdb(file_out, parser="internal")
+                self.interpreter.reset()
+                self.interpreter.pipe.create('out', 'N-state')
+                self.interpreter.structure.read_pdb(file_out, parser="internal")
 
                 # Fix the retarded MOLMOL proton naming.
                 for model in cdp.structure.structural_data:
@@ -677,4 +683,4 @@ class Stereochem_analysis:
                             mol.atom_name[i] = mol.atom_name[i][1:] + mol.atom_name[i][0]
 
                 # Replace the superimposed file.
-                structure.write_pdb(config + repr(ens) + ".pdb", dir="ensembles_superimposed", force=True)
+                self.interpreter.structure.write_pdb(config + repr(ens) + ".pdb", dir="ensembles_superimposed", force=True)
