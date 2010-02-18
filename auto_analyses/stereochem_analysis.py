@@ -46,6 +46,7 @@ This script is split into multiple stages:
 """
 
 # Python module imports.
+from math import pi
 from os import F_OK, access, popen3, sep
 from random import randint
 from re import search
