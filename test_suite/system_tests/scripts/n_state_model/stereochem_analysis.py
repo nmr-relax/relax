@@ -158,5 +158,5 @@ for i in range(1, 6):
     if i != 3:
         analysis.run()
     else:
-        print("Renaming '%s' to '%s'." % (RESULTS_DIR+sep+'ensembles', RESULTS_DIR+sep+'ensembles_superimposed'))
-        rename(RESULTS_DIR+sep+'ensembles', RESULTS_DIR+sep+'ensembles_superimposed')
+        print("Renaming '%s' to '%s'." % (ds.tmpdir+sep+'ensembles', ds.tmpdir+sep+'ensembles_superimposed'))
+        rename(ds.tmpdir+sep+'ensembles', ds.tmpdir+sep+'ensembles_superimposed')
