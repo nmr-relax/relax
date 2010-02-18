@@ -118,6 +118,9 @@ class Stereochem_analysis:
     def run(self):
         """Execute the given stage of the analysis."""
 
+        # Store the original STDOUT.
+        self.stdout_orig = sys.stdout
+
         # Sampling of snapshots.
         if self.stage == 1:
             self.sample()
@@ -139,7 +142,7 @@ class Stereochem_analysis:
             self.grace_plots()
 
         # Restore STDOUT.
-        sys.stdout = sys.__stdout__
+        sys.stdout = self.stdout_orig
 
 
     def generate_distribution(self, values, lower=0.0, upper=200.0, inc=None):
