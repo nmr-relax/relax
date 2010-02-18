@@ -47,7 +47,7 @@ This script is split into multiple stages:
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, popen3, sep
+from os import F_OK, access, getcwd, popen3, sep
 from random import randint
 from re import search
 from string import split
@@ -103,7 +103,12 @@ class Stereochem_analysis:
         self.interpreter.on(verbose=False)
 
         # Create the results directory.
-        mkdir_nofail(self.results_dir)
+        if self.results_dir:
+            mkdir_nofail(self.results_dir)
+
+        # Or use the current working directory.
+        else:
+            self.results_dir = getcwd()
 
         # Create a directory for log files.
         if self.log:
