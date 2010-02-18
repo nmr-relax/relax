@@ -1829,6 +1829,32 @@ def R_to_euler_zyz(R):
     return R_to_euler(R, 'zyz')
 
 
+def R_to_tilt_torsion(R):
+    """Convert the rotation matrix to the tilt and torsion rotation angles.
+
+    This notation is taken from:
+
+        Bonev, I. A. and Gosselin, C. M. (2006)  Analytical determination of the workspace of symmetrical spherical parallel mechanisms.  IEEE Transactions on Robotics, 22(5), 1011-1017.
+
+
+    @param R:       The 3x3 rotation matrix to extract the tilt and torsion angles from.
+    @type R:        3D, rank-2 numpy array
+    @return:        The phi, theta, and sigma tilt and torsion angles.
+    @rtype:         tuple of float
+    """
+
+    # First obtain the zyz Euler angles.
+    alpha, beta, gamma = R_to_euler(R, 'zyz')
+
+    # The convert to tilt and torsion.
+    phi = gamma
+    theta = beta
+    sigma = alpha + gamma
+
+    # Return the angles.
+    return phi, theta, sigma
+
+
 def R_to_quaternion(R, quat):
     """Convert a rotation matrix into quaternion form.
 
@@ -2316,6 +2342,33 @@ def quaternion_to_R(quat, R):
     R[1, 0] = xy + zw
     R[2, 0] = xz - yw
     R[2, 1] = yz + xw
+
+
+def tilt_torsion_to_R(phi, theta, sigma, R):
+    """Generate a rotation matrix from the tilt and torsion rotation angles.
+
+    This notation is taken from:
+
+        Bonev, I. A. and Gosselin, C. M. (2006)  Analytical determination of the workspace of symmetrical spherical parallel mechanisms.  IEEE Transactions on Robotics, 22(5), 1011-1017.
+
+
+    @param phi:     The angle defining the x-y plane rotation axis.
+    @type phi:      float
+    @param theta:   The tilt angle - the angle of rotation about the x-y plane rotation axis.
+    @type theta:    float
+    @param sigma:   The torsion angle - the angle of rotation about the z' axis.
+    @type sigma:    float
+    @param R:       The 3x3 rotation matrix to update.
+    @type R:        3D, rank-2 numpy array
+    """
+
+    # Convert to zyz Euler angles.
+    alpha = sigma - phi
+    beta = theta
+    gamma = phi
+
+    # Update the rotation matrix using the zyz Euler angles.
+    euler_to_R_zyz(alpha, beta, gamma, R)
 
 
 def two_vect_to_R(vector_orig, vector_fin, R):
