@@ -262,6 +262,10 @@ class MF_minimise_command(Slave_command):
 
 
 
+class MF_split_grid_command(MF_minimise_command):
+    pass
+
+
 class MF_grid_command(MF_minimise_command):
     """Command class for the model-free grid search."""
 
@@ -325,11 +329,11 @@ class MF_result_command(Result_command):
         memo.model_free._disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
 
 
-class MF_super_grid_memo(MF_memo):
+class MF_split_grid_memo(MF_memo):
     def __init__(self, model_free, spin, sim_index, model_type, scaling, scaling_matrix, print_prefix, verbosity, full_output, A, b, grid_size):
 
         # Execute the base class __init__() method.
-        super(MF_super_grid_memo, self).__init__(model_free, spin, sim_index, model_type, scaling, scaling_matrix)
+        super(MF_split_grid_memo, self).__init__(model_free, spin, sim_index, model_type, scaling, scaling_matrix)
 
         self.full_output = full_output
         self.print_prefix = print_prefix

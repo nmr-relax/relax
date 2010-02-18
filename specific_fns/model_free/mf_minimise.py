@@ -1593,11 +1593,11 @@ class Mf_minimise:
 
                 # Set up the constrained super grid memo.
                 if constraints:
-                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=data_store.model_type, scaling=scaling, scaling_matrix=data_store.scaling_matrix, full_output=True, verbosity=verbosity, print_prefix="", grid_size=self.grid_size, A=A, b=b)
+                    super_grid_memo = MF_split_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=data_store.model_type, scaling=scaling, scaling_matrix=data_store.scaling_matrix, full_output=True, verbosity=verbosity, print_prefix="", grid_size=self.grid_size, A=A, b=b)
 
                 # Set up the unconstrained super grid memo.
                 else:
-                    super_grid_memo = MF_super_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=data_store.model_type, scaling=scaling, scaling_matrix=data_store.scaling_matrix, full_output=True, verbosity=verbosity, print_prefix="", grid_size=self.grid_size)
+                    super_grid_memo = MF_split_grid_memo(model_free=self, index=index, sim_index=sim_index, model_type=data_store.model_type, scaling=scaling, scaling_matrix=data_store.scaling_matrix, full_output=True, verbosity=verbosity, print_prefix="", grid_size=self.grid_size)
 
                 # Loop over each grid sub-division.
                 for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
