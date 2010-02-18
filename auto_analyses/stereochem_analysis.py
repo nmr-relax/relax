@@ -20,7 +20,8 @@
 #                                                                             #
 ###############################################################################
 
-"""Script for the determination of relative stereochemistry.
+# Module docstring.
+"""Determination of relative stereochemistry in organic molecules.
 
 The analysis is preformed by using multiple ensembles of structures, randomly sampled from a given
 set of structures.  The discrimination is performed by comparing the sets of ensembles using NOE
