@@ -106,7 +106,7 @@ UPPER_LIM_RDC = 1.0
 
 
 # Set up and code execution.
-Stereochem_analysis(
+analysis = Stereochem_analysis(
     stage=STAGE,
     num_ens=NUM_ENS,
     num_models=NUM_MODELS,
@@ -134,4 +134,4 @@ Stereochem_analysis(
     lower_lim_rdc=LOWER_LIM_RDC,
     upper_lim_rdc=UPPER_LIM_RDC
 )
-Stereochem_analysis.run()
+analysis.run()
