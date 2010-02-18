@@ -27,12 +27,14 @@
 from copy import deepcopy
 from math import sqrt
 from numpy import array, float64, zeros
+from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
 from relax_io import read_spin_data
+from relax_warnings import RelaxWarning
 
 
 def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
@@ -453,8 +455,12 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def q_factors():
-    """Calculate the Q-factors for the PCS data."""
+def q_factors(spin_id=None):
+    """Calculate the Q-factors for the PCS data.
+
+    @keyword spin_id:   The spin ID string used to restrict the Q-factor calculation to a subset of all spins.
+    @type spin_id:      None or str
+    """
 
     # Q-factor list.
     cdp.q_factors_pcs = []
@@ -466,10 +472,22 @@ def q_factors():
         sse = 0.0
 
         # Spin loop.
-        for spin in spin_loop():
+        spin_count = 0
+        pcs_data = False
+        pcs_bc_data = False
+        for spin in spin_loop(spin_id):
             # Skip deselected spins.
             if not spin.select:
                 continue
+
+            # Increment the spin counter.
+            spin_count += 1
+
+            # Data checks.
+            if hasattr(spin, 'pcs'):
+                pcs_data = True
+            if hasattr(spin, 'pcs_bc'):
+                pcs_bc_data = True
 
             # Skip spins without PCS data.
             if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or spin.pcs[i] == None:
@@ -484,6 +502,17 @@ def q_factors():
         # The Q-factor for the alignment.
         Q = sqrt(sse / pcs2_sum)
         cdp.q_factors_pcs.append(Q)
+
+        # Warnings (and then exit).
+        if not spin_count:
+            warn(RelaxWarning("No spins have been used in the calculation."))
+            return
+        if not pcs_data:
+            warn(RelaxWarning("No PCS data can be found."))
+            return
+        if not pcs_bc_data:
+            warn(RelaxWarning("No back-calculated PCS data can be found."))
+            return
 
     # The total Q-factor.
     cdp.q_pcs = 0.0

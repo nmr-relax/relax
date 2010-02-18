@@ -29,6 +29,7 @@ from math import pi, sqrt
 from numpy import float64, ones, zeros
 from numpy.linalg import norm
 import sys
+from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
@@ -37,6 +38,7 @@ from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
 from relax_io import read_spin_data, write_spin_data
+from relax_warnings import RelaxWarning
 
 
 def add_data_to_spin(spin=None, ri_labels=None, remap_table=None, frq_labels=None, frq=None, values=None, errors=None, sim=False):
@@ -410,8 +412,12 @@ def find_index(data, ri_label, frq_label):
     return index
 
 
-def q_factors():
-    """Calculate the Q-factors for the RDC data."""
+def q_factors(spin_id=None):
+    """Calculate the Q-factors for the RDC data.
+
+    @keyword spin_id:   The spin ID string used to restrict the Q-factor calculation to a subset of all spins.
+    @type spin_id:      None or str
+    """
 
     # Q-factor list.
     cdp.q_factors_rdc = []
@@ -426,10 +432,22 @@ def q_factors():
         # Spin loop.
         dj = None
         N = 0
-        for spin in spin_loop():
+        spin_count = 0
+        rdc_data = False
+        rdc_bc_data = False
+        for spin in spin_loop(spin_id):
             # Skip deselected spins.
             if not spin.select:
                 continue
+
+            # Increment the spin counter.
+            spin_count += 1
+
+            # Data checks.
+            if hasattr(spin, 'rdc'):
+                rdc_data = True
+            if hasattr(spin, 'rdc_bc'):
+                rdc_bc_data = True
 
             # Skip spins without RDC data.
             if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or spin.rdc[i] == None:
@@ -454,6 +472,17 @@ def q_factors():
 
             # Increment the number of data sets.
             N = N + 1
+
+        # Warnings (and then exit).
+        if not spin_count:
+            warn(RelaxWarning("No spins have been used in the calculation."))
+            return
+        if not rdc_data:
+            warn(RelaxWarning("No RDC data can be found."))
+            return
+        if not rdc_bc_data:
+            warn(RelaxWarning("No back-calculated RDC data can be found."))
+            return
 
         # Normalisation factor of 2Da^2(4 + 3R)/5.
         D = dj * cdp.align_tensors[i].A_diag
