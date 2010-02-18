@@ -64,11 +64,15 @@ class Stereochem_analysis:
     """Class for performing the relative stereochemistry analysis."""
 
     def __init__(self):
-        """Execute the given stage of the analysis."""
+        """Set up the analysis."""
 
         # Create a directory for log files.
         if LOG:
             mkdir_nofail("logs")
+
+
+    def run(self):
+        """Execute the given stage of the analysis."""
 
         # Sampling of snapshots.
         if STAGE == 1:
