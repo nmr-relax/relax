@@ -60,8 +60,8 @@ from relax_io import mkdir_nofail
 
 
 
-class StereoAnalysis:
-    """Class for performing the stereochemistry analysis."""
+class Stereochem_analysis:
+    """Class for performing the relative stereochemistry analysis."""
 
     def __init__(self):
         """Execute the given stage of the analysis."""
