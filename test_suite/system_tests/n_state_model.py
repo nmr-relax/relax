@@ -24,6 +24,8 @@
 from math import pi, sqrt
 from os import sep
 import sys
+from shutil import rmtree
+from tempfile import mkdtemp
 
 # relax module imports.
 from base_classes import SystemTestCase
@@ -36,6 +38,11 @@ class N_state_model(SystemTestCase):
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Remove the temporary directory.
+        if hasattr(ds, 'tmpdir'):
+            rmtree(ds.tmpdir)
+
+        # Reset the relax data storage object.
         ds.__reset__()
 
 
@@ -217,3 +224,13 @@ class N_state_model(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+
+    def test_stereochem_analysis(self):
+        """The full relative stereochemistry analysis."""
+
+        # Create a temporary directory for all result files.
+        ds.tmpdir = mkdtemp()
+
+        # Execute the script.
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'stereochem_analysis.py')

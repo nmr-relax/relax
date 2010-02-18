@@ -46,11 +46,17 @@ This script is split into multiple stages:
 
 # Python module imports.
 from os import rename, sep
-from tempfile import mkdtemp
+import sys
 
 # relax module imports.
 from auto_analyses.stereochem_analysis import Stereochem_analysis
+from data import Relax_data_store; ds = Relax_data_store()
 
+
+
+# Missing temp directory (allow this script to run outside of the system test framework).
+if not hasattr(ds, 'tmpdir'):
+    ds.tmpdir = 'temp_script'
 
 # Path of the data files.
 path = sys.path[-1] + sep + 'test_suite' + sep + 'shared_data'
@@ -111,13 +117,10 @@ UPPER_LIM_NOE = 600.0
 LOWER_LIM_RDC = 0.0
 UPPER_LIM_RDC = 1.0
 
-# Results directory.
-RESULTS_DIR = mkdtemp()
-
 # Set up and code execution.
 analysis = Stereochem_analysis(
     stage=1,
-    results_dir=RESULTS_DIR,
+    results_dir=ds.tmpdir,
     num_ens=NUM_ENS,
     num_models=NUM_MODELS,
     configs=CONFIGS,
@@ -146,15 +149,14 @@ analysis = Stereochem_analysis(
 )
 
 # Execute all stages.
-try:
-    for i in range(1, 6):
-        # Set the stage.
-        print "\n\n\nStage %i\n\n" % i
-        analysis.stage = i
+for i in range(1, 6):
+    # Set the stage.
+    print "\n\n\nStage %i\n\n" % i
+    analysis.stage = i
 
-        # Execute the stage.
-        if i != 3:
-            analysis.run()
-        else:
-            print("Renaming '%s' to '%s'." % (RESULTS_DIR+sep+'ensembles', RESULTS_DIR+sep+'ensembles_superimposed'))
-            rename(RESULTS_DIR+sep+'ensembles', RESULTS_DIR+sep+'ensembles_superimposed')
+    # Execute the stage.
+    if i != 3:
+        analysis.run()
+    else:
+        print("Renaming '%s' to '%s'." % (RESULTS_DIR+sep+'ensembles', RESULTS_DIR+sep+'ensembles_superimposed'))
+        rename(RESULTS_DIR+sep+'ensembles', RESULTS_DIR+sep+'ensembles_superimposed')
