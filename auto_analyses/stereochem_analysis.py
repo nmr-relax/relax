@@ -112,7 +112,7 @@ class Stereochem_analysis:
 
         # Create a directory for log files.
         if self.log:
-            mkdir_nofail("logs")
+            mkdir_nofail(self.results_dir + sep + "logs")
 
 
     def run(self):
@@ -184,8 +184,8 @@ class Stereochem_analysis:
             print("Generating NOE violation Grace plots.")
 
             # Open the output files.
-            grace_curve = open("NOE_viol_curve.agr", 'w')
-            grace_dist = open("NOE_viol_dist.agr", 'w')
+            grace_curve = open(self.results_dir+sep+"NOE_viol_curve.agr", 'w')
+            grace_dist = open(self.results_dir+sep+"NOE_viol_dist.agr", 'w')
 
             # S-curve header.
             colours = [4, 2]    # Blue and red.
@@ -230,7 +230,7 @@ class Stereochem_analysis:
                 grace_dist.write("@target G0.S"+repr(i)+"\n@type xy\n")
 
                 # Open the results file and read the data.
-                file = open("NOE_viol_" + self.configs[i] + "_sorted")
+                file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i] + "_sorted")
                 lines = file.readlines()
                 file.close()
 
@@ -266,8 +266,8 @@ class Stereochem_analysis:
             print("Generating RDC Q-factor Grace plots.")
 
             # Open the Grace output files.
-            grace_curve = open("RDC_%s_curve.agr" % self.rdc_name, 'w')
-            grace_dist = open("RDC_%s_dist.agr" % self.rdc_name, 'w')
+            grace_curve = open(self.results_dir+sep+"RDC_%s_curve.agr" % self.rdc_name, 'w')
+            grace_dist = open(self.results_dir+sep+"RDC_%s_dist.agr" % self.rdc_name, 'w')
 
             # S-curve header.
             colours = [4, 2]    # Blue and red.
@@ -312,7 +312,7 @@ class Stereochem_analysis:
                 grace_dist.write("@target G0.S%s\n@type xy\n" % i)
 
                 # Open the results file and read the data.
-                file = open("Q_factors_" + self.configs[i] + "_sorted")
+                file = open(self.results_dir+sep+"Q_factors_" + self.configs[i] + "_sorted")
                 lines = file.readlines()
                 file.close()
 
@@ -349,7 +349,7 @@ class Stereochem_analysis:
             print("Generating NOE-RDC correlation Grace plots.")
 
             # Open the Grace output files.
-            grace_file = open("correlation_plot.agr", 'w')
+            grace_file = open(self.results_dir+sep+"correlation_plot.agr", 'w')
 
             # Grace header.
             colours = [4, 2]    # Blue and red.
@@ -377,12 +377,12 @@ class Stereochem_analysis:
                 grace_file.write("@target G0.S%s\n@type xy\n" % i)
 
                 # Open the NOE results file and read the data.
-                file = open("NOE_viol_" + self.configs[i])
+                file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i])
                 noe_lines = file.readlines()
                 file.close()
 
                 # Open the RDC results file and read the data.
-                file = open("Q_factors_" + self.configs[i])
+                file = open(self.results_dir+sep+"Q_factors_" + self.configs[i])
                 rdc_lines = file.readlines()
                 file.close()
 
@@ -404,10 +404,10 @@ class Stereochem_analysis:
 
         # Redirect STDOUT to a log file.
         if self.log:
-            sys.stdout = open("logs" + sep + "NOE_viol.log", 'w')
+            sys.stdout = open(self.results_dir+sep+"logs" + sep + "NOE_viol.log", 'w')
 
         # Create a directory for the save files.
-        dir = "NOE_results"
+        dir = self.results_dir + sep + "NOE_results"
         mkdir_nofail(dir=dir)
 
         # Loop over the configurations.
@@ -416,8 +416,8 @@ class Stereochem_analysis:
             print("\n"*10 + "# Set up for config " + config + " #" + "\n")
 
             # Open the results file.
-            out = open("NOE_viol_" + config, 'w')
-            out_sorted = open("NOE_viol_" + config + "_sorted", 'w')
+            out = open(self.results_dir+sep+"NOE_viol_" + config, 'w')
+            out_sorted = open(self.results_dir+sep+"NOE_viol_" + config + "_sorted", 'w')
             out.write("%-20s%20s\n" % ("# Ensemble", "NOE_volation"))
             out_sorted.write("%-20s%20s\n" % ("# Ensemble", "NOE_volation"))
 
@@ -425,7 +425,7 @@ class Stereochem_analysis:
             self.interpreter.pipe.create("noe_viol_%s" % config, "N-state")
 
             # Read the first structure.
-            self.interpreter.structure.read_pdb("ensembles" + sep + config + "0.pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
             # Load all protons as the sequence.
             self.interpreter.structure.load_spins("@H*", ave_pos=False)
@@ -456,7 +456,7 @@ class Stereochem_analysis:
                 self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                self.interpreter.structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
                 # Get the atomic positions.
                 self.interpreter.structure.get_pos(ave_pos=False)
@@ -490,13 +490,13 @@ class Stereochem_analysis:
 
         # Redirect STDOUT to a log file.
         if self.log:
-            sys.stdout = open("logs" + sep + "RDC_%s_analysis.log" % self.rdc_name, 'w')
+            sys.stdout = open(self.results_dir+sep+"logs" + sep + "RDC_%s_analysis.log" % self.rdc_name, 'w')
 
         # The dipolar constant.
         d = 3.0 / (2.0*pi) * dipolar_constant(g13C, g1H, self.bond_length)
 
         # Create a directory for the save files.
-        dir = "RDC_%s_results" % self.rdc_name
+        dir = self.results_dir + sep + "RDC_%s_results" % self.rdc_name
         mkdir_nofail(dir=dir)
 
         # Loop over the configurations.
@@ -505,8 +505,8 @@ class Stereochem_analysis:
             print("\n"*10 + "# Set up for config " + config + " #" + "\n")
 
             # Open the results files.
-            out = open("Q_factors_" + config, 'w')
-            out_sorted = open("Q_factors_" + config + "_sorted", 'w')
+            out = open(self.results_dir+sep+"Q_factors_" + config, 'w')
+            out_sorted = open(self.results_dir+sep+"Q_factors_" + config + "_sorted", 'w')
             out.write("%-20s%20s%20s\n" % ("# Ensemble", "RDC_Q_factor(pales)", "RDC_Q_factor(standard)"))
             out_sorted.write("%-20s%20s\n" % ("# Ensemble", "RDC_Q_factor(pales)"))
 
@@ -514,7 +514,7 @@ class Stereochem_analysis:
             self.interpreter.pipe.create("rdc_analysis_%s" % config, "N-state")
 
             # Read the first structure.
-            self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+            self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + "0.pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
             # Load all protons as the sequence.
             self.interpreter.structure.load_spins("@H*", ave_pos=False)
@@ -553,7 +553,7 @@ class Stereochem_analysis:
                 self.interpreter.structure.delete()
 
                 # Read the ensemble.
-                self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
+                self.interpreter.structure.read_pdb("ensembles_superimposed" + sep + config + repr(ens) + ".pdb", dir=self.results_dir, set_mol_name=config, set_model_num=range(1, self.num_models+1), parser="internal")
 
                 # Load the CH vectors for the H atoms.
                 self.interpreter.structure.vectors(spin_id="@H*", attached="*C*", ave=False)
@@ -585,7 +585,7 @@ class Stereochem_analysis:
         """Generate the ensembles by random sampling of the snapshots."""
 
         # Create the directory for the ensembles, if needed.
-        mkdir_nofail(dir="ensembles")
+        mkdir_nofail(dir=self.results_dir + sep + "ensembles")
 
         # Loop over the configurations.
         for conf_index in range(len(self.configs)):
@@ -603,7 +603,7 @@ class Stereochem_analysis:
                 file_name = "ensembles" + sep + self.configs[conf_index] + repr(ens) + ".pdb"
 
                 # Open the output file.
-                out = open(file_name, 'w')
+                out = open(self.results_dir+sep+file_name, 'w')
 
                 # Header.
                 out.write("REM Structures: " + repr(rand) + "\n")
@@ -628,8 +628,8 @@ class Stereochem_analysis:
 
         # Logging turned on.
         if self.log:
-            log = open("logs" + sep + "superimpose_molmol.stderr", 'w')
-            sys.stdout = open("logs" + sep + "superimpose.log", 'w')
+            log = open(self.results_dir+sep+"logs" + sep + "superimpose_molmol.stderr", 'w')
+            sys.stdout = open(self.results_dir+sep+"logs" + sep + "superimpose.log", 'w')
 
         # Loop over S and R.
         for config in ["R", "S"]:
@@ -645,7 +645,7 @@ class Stereochem_analysis:
                     log.write("\n\n\nSuperimposing %s with Molmol, output to %s.\n" % (file_in, file_out))
 
                 # Failure handling (if a failure occurred and this is rerun, skip all existing files).
-                if access(file_out, F_OK):
+                if access(self.results_dir+sep+file_out, F_OK):
                     continue
 
                 # Open the Molmol pipe.
@@ -655,14 +655,14 @@ class Stereochem_analysis:
                 stdin.write("InitAll yes\n")
 
                 # Read the PDB.
-                stdin.write("ReadPdb " + file_in + "\n")
+                stdin.write("ReadPdb " + self.results_dir+sep+file_in + "\n")
 
                 # Fitting to mean.
                 stdin.write("Fit to_first 'selected'\n")
                 stdin.write("Fit to_mean 'selected'\n")
 
                 # Write the result.
-                stdin.write("WritePdb " + file_out + "\n")
+                stdin.write("WritePdb " + self.results_dir+sep+file_out + "\n")
 
                 # End Molmol.
                 stdin.close()
@@ -693,4 +693,4 @@ class Stereochem_analysis:
                             mol.atom_name[i] = mol.atom_name[i][1:] + mol.atom_name[i][0]
 
                 # Replace the superimposed file.
-                self.interpreter.structure.write_pdb(config + repr(ens) + ".pdb", dir="ensembles_superimposed", force=True)
+                self.interpreter.structure.write_pdb(config + repr(ens) + ".pdb", dir=self.results_dir+sep+"ensembles_superimposed", force=True)
