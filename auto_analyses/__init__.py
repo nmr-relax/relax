@@ -24,4 +24,6 @@
 """Package for all of the automatic analyses, hard coded protocols to be used as a black box."""
 
 
-__all__ = [ 'dauvergne_protocol' ]
+__all__ = [ 'dauvergne_protocol',
+            'relax_fit',
+            'stereochem_analysis' ]
