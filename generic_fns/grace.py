@@ -106,13 +106,11 @@ def determine_graph_type(data, x_data_type=None, plot_data=None):
     return graph_type
 
 
-def determine_seq_type(data, spin_id=None):
+def determine_seq_type(spin_id=None):
     """Determine the spin sequence data type.
 
     The purpose is to identify systems whereby only spins or only residues exist.
 
-    @param data:        The graph numerical data.
-    @type data:         list of lists of float
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
     @return:            The spin sequence data type.  This can be one of 'spin', 'res,' or 'mixed'.
@@ -331,10 +329,10 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Multiple data sets.
     if multi:
         # Write the header.
-        write_multi_header(data, file=file, spin_ids=spin_ids, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string, norm=norm)
+        write_xy_header(data, file=file, spin_ids=spin_ids, data_type=[x_data_type, y_data_type], return_units=[x_return_units, y_return_units], return_grace_string=[x_return_grace_string, y_return_grace_string], norm=norm)
 
         # Write the data.
-        write_multi_data(data, file=file, graph_type=graph_type, norm=norm)
+        write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
 
     # Single data set.
     else:
@@ -432,7 +430,7 @@ def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=No
     # X-axis set up.
     if x_data_type == 'spin':
         # Determine the sequence data type.
-        seq_type = determine_seq_type(data, spin_id=spin_id)
+        seq_type = determine_seq_type(spin_id=spin_id)
 
         # Residue only data.
         if seq_type == 'res':
@@ -571,33 +569,23 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         file.write("&\n")
 
 
-def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None, norm=False):
-    """Write the grace header.
+def write_xy_header(file=None, data_type=None, return_units=None, return_grace_string=None, spin_ids=None, norm=False):
+    """Write the grace header for xy-scatter plots.
 
-    @param data:                    The graph numerical data.
-    @type data:                     list of lists of float
+    Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.
+
+
     @keyword file:                  The file object to write the data to.
     @type file:                     file object
+    @keyword data_type:             The axis data category (in the [X, Y] list format).
+    @type data_type:                str
+    @keyword return_units:          The analysis specific function for returning the Grace formatted units string for the axes (in the [X, Y] list format).
+    @type return_units:             function
+    @keyword return_grace_string:   The analysis specific function for returning the Grace axes string (in the [X, Y] list format).
+    @type return_grace_string:      function
     @keyword spin_ids:              A list of spin identification strings.
     @type spin_ids:                 list of str
-    @keyword x_data_type:           The category of the X-axis data.
-    @type x_data_type:              str
-    @keyword y_data_type:           The category of the Y-axis data.
-    @type y_data_type:              str
-    @keyword x_return_units:        The analysis specific function for returning the Grace formatted
-                                    units string for the X-axis.
-    @type x_return_units:           function
-    @keyword y_return_units:        The analysis specific function for returning the Grace formatted
-                                    units string for the Y-axis.
-    @type y_return_units:           function
-    @keyword x_return_grace_string: The analysis specific function for returning the Grace X-axis
-                                    string.
-    @type x_return_grace_string:    function
-    @keyword y_return_grace_string: The analysis specific function for returning the Grace Y-axis
-                                    string.
-    @type y_return_grace_string:    function
-    @keyword norm:                  The normalisation flag which if set to True will cause all
-                                    graphs to be normalised to 1.
+    @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
     @type norm:                     bool
     """
 
@@ -610,9 +598,9 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
     file.write("@with g0\n")
 
     # X-axis set up.
-    if x_data_type == 'spin':
+    if data_type[0] == 'spin':
         # Determine the sequence data type.
-        seq_type = determine_seq_type(data, spin_id=spin_id)
+        seq_type = determine_seq_type(spin_id=spin_id)
 
         # Residue only data.
         if seq_type == 'res':
@@ -639,13 +627,13 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
 
     else:
         # Get the units.
-        units = x_return_units(x_data_type, spin_id=spin_id)
+        units = return_units[0](data_type[0], spin_id=spin_id)
 
         # Label.
         if units:
-            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\\N (" + units + ")\"\n")
+            file.write("@    xaxis  label \"" + return_grace_string[0](data_type[0]) + "\\N (" + units + ")\"\n")
         else:
-            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\"\n")
+            file.write("@    xaxis  label \"" + return_grace_string[0](data_type[0]) + "\"\n")
 
     # X-axis specific settings.
     file.write("@    xaxis  label char size 1.48\n")
@@ -656,8 +644,8 @@ def write_multi_header(data, file=None, spin_ids=None, x_data_type=None, y_data_
     file.write("@    xaxis  ticklabel char size 1.00\n")
 
     # Y-axis label.
-    units = y_return_units(y_data_type, spin_id=spin_id)
-    string = "@    yaxis  label \"" + y_return_grace_string(y_data_type)
+    units = return_units[1](data_type[1], spin_id=spin_id)
+    string = "@    yaxis  label \"" + return_grace_string[1](data_type[1])
     if units:
         string = string + "\\N (" + units + ")"
     if norm:
