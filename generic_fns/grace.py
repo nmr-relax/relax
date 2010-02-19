@@ -267,22 +267,21 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Get the data.
     data, set_names, graph_type = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
 
-    # Generate the spin_ids for all the data.
-    spin_ids = []
-    for line in data:
-        spin_ids.append(generate_spin_id(line[0], line[1], line[2], line[3], line[4]))
-
     # No data, so close the empty file and exit.
-    if data == None or data == []:
+    if not len(data) or not len(data[0]) or not len(data[0][0]):
         warn(RelaxWarning("No data could be found, creating an empty file."))
         file.close()
         return
 
     # Determine the sequence data type.
-    seq_type = determine_seq_type(spin_id=spin_ids[0])
+    seq_type = [None, None]
+    if x_data_type == 'spin':
+        seq_type[0] = 'res'
+    if y_data_type == 'spin':
+        seq_type[1] = 'res'
 
     # Write the header.
-    write_xy_header(sets=len(data[0]), file=file, data_type=[x_data_type, y_data_type], seq_type=[seq_type, None], set_names=set_names, norm=norm)
+    write_xy_header(sets=len(data[0]), file=file, data_type=[x_data_type, y_data_type], seq_type=seq_type, set_names=set_names, norm=norm)
 
     # Write the data.
     write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
