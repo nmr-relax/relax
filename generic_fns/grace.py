@@ -310,12 +310,17 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Test for multiple data sets.
     multi = False
     sets = 1
+    set_names = None
     if isinstance(data[0][-4], list) or isinstance(data[0][-4], ndarray):
         multi = True
         sets = len(data[0][-4])
+        set_names = spin_ids
+
+    # Determine the sequence data type.
+    seq_type = determine_seq_type(spin_id=spin_ids[0])
 
     # Write the header.
-    write_xy_header(sets=sets, file=file, data_type=[x_data_type, y_data_type], spin_ids=spin_ids, norm=norm)
+    write_xy_header(sets=sets, file=file, data_type=[x_data_type, y_data_type], seq_type=[seq_type, None], set_names=set_names, norm=norm)
 
     # Multiple data sets.
     if multi:
@@ -443,7 +448,7 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         file.write("&\n")
 
 
-def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None, None], axis_min=[None, None], axis_max=[None, None], spin_ids=None, norm=False):
+def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], seq_type=[None, None], axis_labels=[None, None], axis_min=[None, None], axis_max=[None, None], norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -453,24 +458,21 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
     @type file:                     file object
     @keyword sets:                  The number of data sets in the graph G0.
     @type sets:                     int
+    @keyword set_names:             The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
+    @type set_names:                list of str
     @keyword data_type:             The axis data category (in the [X, Y] list format).
     @type data_type:                list of str
+    @keyword seq_type:              The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
+    @type seq_type:                 list of str
     @keyword axis_labels:           The labels for the axes (in the [X, Y] list format).
     @type axis_labels:              list of str
     @keyword axis_min:              The minimum values for specifying the graph ranges (in the [X, Y] list format).
     @type axis_min:                 list of str
     @keyword axis_max:              The maximum values for specifying the graph ranges (in the [X, Y] list format).
     @type axis_max:                 list of str
-    @keyword spin_ids:              A list of spin identification strings.
-    @type spin_ids:                 list of str
     @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
     @type norm:                     bool
     """
-
-    # Spin id.
-    spin_id = None
-    if spin_ids:
-        spin_id = spin_ids[0]
 
     # Graph G0.
     file.write("@with g0\n")
@@ -495,11 +497,8 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
 
         # Some axis default values for spin data.
         if data_type[i] == 'spin':
-            # Determine the sequence data type.
-            seq_type = determine_seq_type(spin_id=spin_id)
-
             # Residue only data.
-            if seq_type == 'res':
+            if seq_type[i] == 'res':
                 # Axis limits.
                 if not axis_min[i]:
                     axis_min[i] = repr(cdp.mol[0].res[0].num - 1)
@@ -511,7 +510,7 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
                     axis_labels[i] = "Residue number"
 
             # Spin only data.
-            if seq_type == 'spin':
+            if seq_type[i] == 'spin':
                 # Axis limits.
                 if not axis_min[i]:
                     axis_min[i] = repr(cdp.mol[0].res[0].spin[0].num - 1)
@@ -523,7 +522,7 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
                     axis_labels[i] = "Spin number"
 
             # Mixed data.
-            if seq_type == 'mixed':
+            if seq_type[i] == 'mixed':
                 # X-axis label.
                 if not axis_labels[i]:
                     axis_labels[i] = "Spin identification string"
@@ -533,7 +532,7 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
             # Label.
             if analysis_spec and not axis_labels[i]:
                 # Get the units.
-                units = return_units(data_type[i], spin_id=spin_id)
+                units = return_units(data_type[i])
 
                 # Set the label.
                 axis_labels[i] = return_grace_string(data_type[i])
@@ -581,4 +580,5 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
         file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
 
         # Legend.
-        file.write("@    s%i legend \"Spin %s\"\n" % (i, spin_ids[i]))
+        if set_names:
+            file.write("@    s%i legend \"Spin %s\"\n" % (i, set_names[i]))
