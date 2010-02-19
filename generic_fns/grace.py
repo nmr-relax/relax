@@ -313,7 +313,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     set_names = None
     if isinstance(data[0][-4], list) or isinstance(data[0][-4], ndarray):
         multi = True
-        sets = len(data[0][-4])
+        sets = len(data)
         set_names = spin_ids
 
     # Determine the sequence data type.
