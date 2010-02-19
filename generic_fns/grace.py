@@ -639,7 +639,7 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
         # Some axis default values for other data types.
         else:
             # Label.
-            if analysis_spec not axis_label[i]:
+            if analysis_spec and not axis_label[i]:
                 # Get the units.
                 units = return_units(data_type[i], spin_id=spin_id)
 
