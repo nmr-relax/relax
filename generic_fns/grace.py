@@ -329,13 +329,14 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     file.close()
 
 
-def write_xy_data(data, file=None, sets=1, graph_type=None, norm=False):
+def write_xy_data(data, file=None, graph_type=None, norm=False):
     """Write the data into the Grace xy-scatter plot.
 
-    @param data:            The graph numerical data.
-    @type data:             list of lists of float
-    @keyword sets:          The number of data sets in the graph G0.
-    @type sets:             int
+    The numerical data should be supplied as a 4 dimensional list or array object.  The first dimension corresponds to the graphs, Gx.  The second corresponds the sets of each graph, Sx.  The third corresponds to the data series (i.e. each data point).  The forth is a list of the information about each point, it is a list where the first element is the x value, the second is the y value, the third is the optional dx or dy error (either dx or dy dependent upon the graph_type arg), and the forth is the optional dy error when graph_type is xydxdy (the third position is then dx).
+
+
+    @param data:            The 4D structure of numerical data to graph (see docstring).
+    @type data:             list of lists of lists of float
     @keyword file:          The file object to write the data to.
     @type file:             file object
     @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
@@ -344,55 +345,49 @@ def write_xy_data(data, file=None, sets=1, graph_type=None, norm=False):
     @type norm:             bool
     """
 
-    # Single data set.
-    if sets == 1:
-        data = [data]
+    # Loop over the graphs.
+    for gi in range(len(data)):
+        # Loop over the data sets of the graph.
+        for si in range(len(data[gi])):
+            # The target and type.
+            file.write("@target G%s.S%s\n" % (gi, si))
+            file.write("@type %s\n" % graph_type)
+    
+            # Normalisation (to the first data point y value!).
+            norm_fact = 1.0
+            if norm:
+                norm_fact = data[gi][si][0][1]
+    
+            # Loop over the data points.
+            for point in data[gi][si]:
+                # X and Y data.
+                file.write("%-30s %-30s" % (point[0], point[1]/norm_fact))
 
-    # Loop over the data sets.
-    for i in range(sets):
-        # Multi data set (graph 0, set i).
-        file.write("@target G0.S" + repr(i) + "\n")
-        file.write("@type " + graph_type + "\n")
+                # The dx and dy errors.
+                if graph_type in ['xydx', 'xydy']:
+                    # Catch x or y-axis errors of None.
+                    error = point[2]
+                    if error == None:
+                        error = 0.0
+    
+                    # Write the error.
+                    file.write(" %-30s" % (error/norm_fact))
+    
+                # The dy errors of xydxdy.
+                if graph_type == 'xydxdy':
+                    # Catch y-axis errors of None.
+                    error = point[3]
+                    if error == None:
+                        error = 0.0
+    
+                    # Write the error.
+                    file.write(" %-30s" % (error/norm_fact))
+    
+                # End the point.
+                file.write("\n")
 
-        # Normalisation.
-        norm_fact = 1.0
-        if norm:
-            norm_fact = data[i][-2][0]
-
-        # Loop over the data of the set.
-        for j in xrange(len(data[i][-4])):
-            # Graph type xy.
-            if graph_type == 'xy':
-                # Write the data.
-                file.write("%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact))
-
-            # Graph type xydy.
-            elif graph_type == 'xydy':
-                # Catch y-axis errors of None.
-                y_error = data[i][-1][j]
-                if y_error == None:
-                    y_error = 0.0
-
-                # Write the data.
-                file.write("%-30s%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact, y_error/norm_fact))
-
-            # Graph type xydxdy.
-            elif graph_type == 'xydxdy':
-                # Catch x-axis errors of None.
-                x_error = data[i][-3][j]
-                if x_error == None:
-                    x_error = 0.0
-
-                # Catch y-axis errors of None.
-                y_error = data[i][-1][j]
-                if y_error == None:
-                    y_error = 0.0
-
-                # Write the data.
-                file.write("%-30s%-30s%-30s%-30s\n" % (data[i][-4][j], data[i][-2][j]/norm_fact, x_error, y_error/norm_fact))
-
-        # End of the data set i.
-        file.write("&\n")
+            # End of the data set i.
+            file.write("&\n")
 
 
 def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], seq_type=[None, None], axis_labels=[None, None], axis_min=[None, None], axis_max=[None, None], norm=False):
