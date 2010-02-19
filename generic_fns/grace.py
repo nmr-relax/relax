@@ -290,20 +290,6 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Open the file for writing.
     file = open_write_file(file, dir, force)
 
-    # Specific value and error, conversion factor, and units returning functions.
-    x_return_units =             y_return_units =             get_specific_fn('return_units', pipes.get_type())
-    x_return_grace_string =      y_return_grace_string =      get_specific_fn('return_grace_string', pipes.get_type())
-
-    # Test if the X-axis data type is a minimisation statistic.
-    if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
-        x_return_units = generic_fns.minimise.return_units
-        x_return_grace_string = generic_fns.minimise.return_grace_string
-
-    # Test if the Y-axis data type is a minimisation statistic.
-    if generic_fns.minimise.return_data_name(y_data_type):
-        y_return_units = generic_fns.minimise.return_units
-        y_return_grace_string = generic_fns.minimise.return_grace_string
-
     # Get the data.
     data = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
 
@@ -329,7 +315,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Multiple data sets.
     if multi:
         # Write the header.
-        write_xy_header(data, file=file, spin_ids=spin_ids, data_type=[x_data_type, y_data_type], return_units=[x_return_units, y_return_units], return_grace_string=[x_return_grace_string, y_return_grace_string], norm=norm)
+        write_xy_header(data, file=file, data_type=[x_data_type, y_data_type], spin_ids=spin_ids, norm=norm)
 
         # Write the data.
         write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
@@ -569,7 +555,7 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         file.write("&\n")
 
 
-def write_xy_header(file=None, sets=1, data_type=[None, None], return_units=[None, None], return_grace_string=[None, None], spin_ids=None, norm=False):
+def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None, None], spin_ids=None, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.
@@ -581,10 +567,8 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], return_units=[Non
     @type sets:                     int
     @keyword data_type:             The axis data category (in the [X, Y] list format).
     @type data_type:                list of str
-    @keyword return_units:          The analysis specific function for returning the Grace formatted units string for the axes (in the [X, Y] list format).
-    @type return_units:             list of functions
-    @keyword return_grace_string:   The analysis specific function for returning the Grace axes string (in the [X, Y] list format).
-    @type return_grace_string:      list of functions
+    @keyword axis_labels:           The labels for the axes (in the [X, Y] list format).
+    @type axis_labels:              list of str
     @keyword spin_ids:              A list of spin identification strings.
     @type spin_ids:                 list of str
     @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
@@ -599,64 +583,78 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], return_units=[Non
     # Graph G0.
     file.write("@with g0\n")
 
-    # Some X-axis default values for spin data.
-    if data_type[0] == 'spin':
-        # Determine the sequence data type.
-        seq_type = determine_seq_type(spin_id=spin_id)
-
-        # Residue only data.
-        if seq_type == 'res':
-            # Axis limits.
-            if not axis_min[0]:
-                axis_min[0] = repr(cdp.mol[0].res[0].num - 1)
-            if not axis_max[0]:
-                axis_max[0] = repr(cdp.mol[0].res[-1].num + 1)
-
-            # X-axis label.
-            if not axis_label[0]:
-                axis_label[0] = "Residue number"
-
-        # Spin only data.
-        if seq_type == 'spin':
-            # Axis limits.
-            if not axis_min[0]:
-                axis_min[0] = repr(cdp.mol[0].res[0].spin[0].num - 1)
-            if not axis_max[0]:
-                axis_max[0] = repr(cdp.mol[0].res[0].spin[-1].num + 1)
-
-            # X-axis label.
-            if not axis_label[0]:
-                axis_label[0] = "Spin number"
-
-        # Mixed data.
-        if seq_type == 'mixed':
-            # X-axis label.
-            if not axis_label[0]:
-                axis_label[0] = "Spin identification string"
-
-    # Some X-axis default values for other data types.
-    else:
-        # Get the units.
-        units = return_units[0](data_type[0], spin_id=spin_id)
-
-        # Label.
-        if not axis_label[0]:
-            axis_label[0] = return_grace_string[0](data_type[0])
-            if units:
-                axis_label[0] = axis_label[0] + "\\N (" + units + ")"
-
-    # Some Y-axis default values data.
-    if not axis_label[1]:
-        units = return_units[1](data_type[1], spin_id=spin_id)
-        axis_label[1] = "@    yaxis  label \"" + return_grace_string[1](data_type[1])
-        if units:
-            axis_label[1] = axis_label[1] + "\\N (" + units + ")"
-        if norm:
-            axis_label[1] = axis_label[1] + " \\q(normalised)\\Q"
-
     # Axis specific settings.
     axes = ['x', 'y']
     for i in range(2):
+        # Analysis specific methods for making labels.
+        analysis_spec = False
+        if pipes.cdp_name():
+            # Flag for making labels.
+            analysis_spec = True
+
+            # Specific value and error, conversion factor, and units returning functions.
+            return_units = get_specific_fn('return_units', pipes.get_type())
+            return_grace_string = get_specific_fn('return_grace_string', pipes.get_type())
+
+            # Test if the axis data type is a minimisation statistic.
+            if data_type[i] != 'spin' and generic_fns.minimise.return_data_name(data_type[i]):
+                return_units = generic_fns.minimise.return_units
+                return_grace_string = generic_fns.minimise.return_grace_string
+
+        # Some axis default values for spin data.
+        if data_type[i] == 'spin':
+            # Determine the sequence data type.
+            seq_type = determine_seq_type(spin_id=spin_id)
+
+            # Residue only data.
+            if seq_type == 'res':
+                # Axis limits.
+                if not axis_min[i]:
+                    axis_min[i] = repr(cdp.mol[0].res[0].num - 1)
+                if not axis_max[i]:
+                    axis_max[i] = repr(cdp.mol[0].res[-1].num + 1)
+
+                # X-axis label.
+                if not axis_label[i]:
+                    axis_label[i] = "Residue number"
+
+            # Spin only data.
+            if seq_type == 'spin':
+                # Axis limits.
+                if not axis_min[i]:
+                    axis_min[i] = repr(cdp.mol[0].res[0].spin[0].num - 1)
+                if not axis_max[i]:
+                    axis_max[i] = repr(cdp.mol[0].res[0].spin[-1].num + 1)
+
+                # X-axis label.
+                if not axis_label[i]:
+                    axis_label[i] = "Spin number"
+
+            # Mixed data.
+            if seq_type == 'mixed':
+                # X-axis label.
+                if not axis_label[i]:
+                    axis_label[i] = "Spin identification string"
+
+        # Some axis default values for other data types.
+        else:
+            # Label.
+            if analysis_spec not axis_label[i]:
+                # Get the units.
+                units = return_units(data_type[i], spin_id=spin_id)
+
+                # Set the label.
+                axis_label[i] = return_grace_string(data_type[i])
+
+                # Add units.
+                if units:
+                    axis_label[i] = axis_label[i] + "\\N (" + units + ")"
+
+                # Normalised data.
+                if norm:
+                    axis_label[i] = axis_label[i] + " \\N\\q(normalised)\\Q"
+
+        # Write out the data.
         if axis_min[i]:
             file.write("@    world %smin %s\n" % (axes[i], axis_min[i]))
         if axis_max[i]:
