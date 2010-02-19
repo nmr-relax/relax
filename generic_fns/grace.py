@@ -323,7 +323,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Single data set.
     else:
         # Write the header.
-        write_header(data, file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string)
+        write_xy_header(data, file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string)
 
         # Write the data.
         write_data(data, file=file, graph_type=graph_type)
@@ -381,117 +381,6 @@ def write_data(data, file=None, graph_type=None):
 
     # End of graph and data set.
     file.write("&\n")
-
-
-def write_header(data, file=None, spin_id=None, x_data_type=None, y_data_type=None, x_return_units=None, y_return_units=None, x_return_grace_string=None, y_return_grace_string=None):
-    """Write the grace header.
-
-    @param data:                    The graph numerical data.
-    @type data:                     list of lists of float
-    @keyword file:                  The file object to write the data to.
-    @type file:                     file object
-    @keyword spin_id:               The spin identification string.
-    @type spin_id:                  str
-    @keyword x_data_type:           The category of the X-axis data.
-    @type x_data_type:              str
-    @keyword y_data_type:           The category of the Y-axis data.
-    @type y_data_type:              str
-    @keyword x_return_units:        The analysis specific function for returning the Grace formatted
-                                    units string for the X-axis.
-    @type x_return_units:           function
-    @keyword y_return_units:        The analysis specific function for returning the Grace formatted
-                                    units string for the Y-axis.
-    @type y_return_units:           function
-    @keyword x_return_grace_string: The analysis specific function for returning the Grace X-axis
-                                    string.
-    @type x_return_grace_string:    function
-    @keyword y_return_grace_string: The analysis specific function for returning the Grace Y-axis
-                                    string.
-    @type y_return_grace_string:    function
-    """
-
-    # Graph G0.
-    file.write("@with g0\n")
-
-    # X-axis set up.
-    if x_data_type == 'spin':
-        # Determine the sequence data type.
-        seq_type = determine_seq_type(spin_id=spin_id)
-
-        # Residue only data.
-        if seq_type == 'res':
-            # Axis limits.
-            file.write("@    world xmin " + repr(cdp.mol[0].res[0].num - 1) + "\n")
-            file.write("@    world xmax " + repr(cdp.mol[0].res[-1].num + 1) + "\n")
-
-            # X-axis label.
-            file.write("@    xaxis  label \"Residue number\"\n")
-
-        # Spin only data.
-        if seq_type == 'spin':
-            # Axis limits.
-            file.write("@    world xmin " + repr(cdp.mol[0].res[0].spin[0].num - 1) + "\n")
-            file.write("@    world xmax " + repr(cdp.mol[0].res[0].spin[-1].num + 1) + "\n")
-
-            # X-axis label.
-            # FIXME.
-            #file.write("@    xaxis  label \"Spin number\"\n")
-            file.write("@    xaxis  label \"Residue number\"\n")
-
-        # Mixed data.
-        if seq_type == 'mixed':
-            # X-axis label.
-            # FIXME.
-            #file.write("@    xaxis  label \"Spin identification string\"\n")
-            file.write("@    xaxis  label \"Residue number\"\n")
-
-    else:
-        # Get the units.
-        units = x_return_units(x_data_type, spin_id=spin_id)
-
-        # Label.
-        if units:
-            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\\N (" + units + ")\"\n")
-        else:
-            file.write("@    xaxis  label \"" + x_return_grace_string(x_data_type) + "\"\n")
-
-    # X-axis specific settings.
-    file.write("@    xaxis  label char size 1.48\n")
-    file.write("@    xaxis  tick major size 0.75\n")
-    file.write("@    xaxis  tick major linewidth 0.5\n")
-    file.write("@    xaxis  tick minor linewidth 0.5\n")
-    file.write("@    xaxis  tick minor size 0.45\n")
-    file.write("@    xaxis  ticklabel char size 1.00\n")
-
-    # Y-axis label.
-    units = y_return_units(y_data_type, spin_id=spin_id)
-    if units:
-        file.write("@    yaxis  label \"" + y_return_grace_string(y_data_type) + "\\N (" + units + ")\"\n")
-    else:
-        file.write("@    yaxis  label \"" + y_return_grace_string(y_data_type) + "\"\n")
-
-    # Y-axis specific settings.
-    file.write("@    yaxis  label char size 1.48\n")
-    file.write("@    yaxis  tick major size 0.75\n")
-    file.write("@    yaxis  tick major linewidth 0.5\n")
-    file.write("@    yaxis  tick minor linewidth 0.5\n")
-    file.write("@    yaxis  tick minor size 0.45\n")
-    file.write("@    yaxis  ticklabel char size 1.00\n")
-
-    # Frame.
-    file.write("@    frame linewidth 0.5\n")
-
-    # Symbols.
-    file.write("@    s0 symbol 1\n")
-    file.write("@    s0 symbol size 0.45\n")
-    file.write("@    s0 symbol fill pattern 1\n")
-    file.write("@    s0 symbol linewidth 0.5\n")
-    file.write("@    s0 line linestyle 0\n")
-
-    # Error bars.
-    file.write("@    s0 errorbar size 0.5\n")
-    file.write("@    s0 errorbar linewidth 0.5\n")
-    file.write("@    s0 errorbar riser linewidth 0.5\n")
 
 
 def write_multi_data(data, file=None, graph_type=None, norm=False):
