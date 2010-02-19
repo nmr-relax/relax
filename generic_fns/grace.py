@@ -322,87 +322,34 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     # Write the header.
     write_xy_header(sets=sets, file=file, data_type=[x_data_type, y_data_type], seq_type=[seq_type, None], set_names=set_names, norm=norm)
 
-    # Multiple data sets.
-    if multi:
-        # Write the data.
-        write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
-
-    # Single data set.
-    else:
-        # Write the data.
-        write_data(data, file=file, graph_type=graph_type)
+    # Write the data.
+    write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
 
     # Close the file.
     file.close()
 
 
-def write_data(data, file=None, graph_type=None):
-    """Write the data into the Grace file.
+def write_xy_data(data, file=None, sets=1, graph_type=None, norm=False):
+    """Write the data into the Grace xy-scatter plot.
 
     @param data:            The graph numerical data.
     @type data:             list of lists of float
+    @keyword sets:          The number of data sets in the graph G0.
+    @type sets:             int
     @keyword file:          The file object to write the data to.
     @type file:             file object
     @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
     @type graph_type:       str
-    """
-
-    # First graph and data set (graph 0, set 0).
-    file.write("@target G0.S0\n")
-    file.write("@type " + graph_type + "\n")
-
-    # Loop over the data.
-    for i in xrange(len(data)):
-        # Graph type xy.
-        if graph_type == 'xy':
-            # Write the data.
-            file.write("%-30s%-30s\n" % (data[i][-4], data[i][-2]))
-
-        # Graph type xydy.
-        elif graph_type == 'xydy':
-            # Catch y-axis errors of None.
-            y_error = data[i][-1]
-            if y_error == None:
-                y_error = 0.0
-
-            # Write the data.
-            file.write("%-30s%-30s%-30s\n" % (data[i][-4], data[i][-2], y_error))
-
-        # Graph type xydxdy.
-        elif graph_type == 'xydxdy':
-            # Catch x-axis errors of None.
-            x_error = data[i][-3]
-            if x_error == None:
-                x_error = 0.0
-
-            # Catch y-axis errors of None.
-            y_error = data[i][-1]
-            if y_error == None:
-                y_error = 0.0
-
-            # Write the data.
-            file.write("%-30s%-30s%-30s%-30s\n" % (data[i][-4], data[i][-2], x_error, y_error))
-
-    # End of graph and data set.
-    file.write("&\n")
-
-
-def write_multi_data(data, file=None, graph_type=None, norm=False):
-    """Write the data into the Grace file.
-
-    @param data:            The graph numerical data.
-    @type data:             list of lists of float
-    @keyword file:          The file object to write the data to.
-    @type file:             file object
-    @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
-    @type graph_type:       str
-    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be
-                            normalised to 1.
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be normalised to 1.
     @type norm:             bool
     """
 
-    # Loop over the data.
-    for i in xrange(len(data)):
+    # Single data set.
+    if sets == 1:
+        data = [data]
+
+    # Loop over the data sets.
+    for i in range(sets):
         # Multi data set (graph 0, set i).
         file.write("@target G0.S" + repr(i) + "\n")
         file.write("@type " + graph_type + "\n")
