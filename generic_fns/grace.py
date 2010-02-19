@@ -480,7 +480,7 @@ def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], s
         if axis_min[i]:
             file.write("@    world %smin %s\n" % (axes[i], axis_min[i]))
         if axis_max[i]:
-            file.write("@    world %smin %s\n" % (axes[i], axis_max[i]))
+            file.write("@    world %smax %s\n" % (axes[i], axis_max[i]))
         if axis_labels[i]:
             file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_labels[i]))
         file.write("@    %saxis  label char size 1.48\n" % axes[i])
