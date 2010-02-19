@@ -503,7 +503,6 @@ def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], s
         file.write("@    s%i symbol size 0.45\n" % i)
         file.write("@    s%i symbol fill pattern 1\n" % i)
         file.write("@    s%i symbol linewidth 0.5\n" % i)
-        file.write("@    s%i line linestyle 0\n" % i)
 
         # Error bars.
         file.write("@    s%i errorbar size 0.5\n" % i)
