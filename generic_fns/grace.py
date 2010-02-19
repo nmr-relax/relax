@@ -38,74 +38,6 @@ from relax_warnings import RelaxWarning
 from specific_fns.setup import get_specific_fn
 
 
-def determine_graph_type(data, x_data_type=None, plot_data=None):
-    """Determine if the graph is of type xy, xydy, xydx, or xydxdy.
-
-    @param data:            The graph numerical data.
-    @type data:             list of lists of float
-    @keyword x_data_type:   The category of the X-axis data.
-    @type x_data_type:      str
-    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
-    @type plot_data:        str
-    @return:                The graph type, which can be one of xy, xydy, xydx, or xydxdy.
-    @rtype:                 str
-    """
-
-    # Initial flags.
-    x_errors = 0
-    y_errors = 0
-
-    # Loop over the data.
-    for i in xrange(len(data)):
-        # X-axis errors.
-        if x_data_type != 'spin' and data[i][-3] != None:
-            x_errors = 1
-
-        # Y-axis errors.
-        if data[i][-1] != None:
-            y_errors = 1
-
-    # Plot of values.
-    if plot_data == 'value':
-        # xy plot with errors along both axes.
-        if x_errors and y_errors:
-            graph_type = 'xydxdy'
-
-        # xy plot with errors along the Y-axis.
-        elif y_errors:
-            graph_type = 'xydy'
-
-        # xy plot with errors along the X-axis.
-        elif x_errors:
-            graph_type = 'xydx'
-
-        # xy plot with no errors.
-        else:
-            graph_type = 'xy'
-
-    # Plot of errors.
-    elif plot_data == 'error':
-        # xy plot of spin vs error.
-        if x_data_type == 'spin' and y_errors:
-            graph_type = 'xy'
-
-        # xy plot of error vs error.
-        elif x_errors and y_errors:
-            graph_type = 'xy'
-
-        # Invalid argument combination.
-        else:
-            raise RelaxError("When plotting errors, the errors must exist.")
-
-    # Plot of simulation values.
-    else:
-        # xy plot with no errors.
-        graph_type = 'xy'
-
-    # Return the graph type.
-    return graph_type
-
-
 def determine_seq_type(spin_id=None):
     """Determine the spin sequence data type.
 
@@ -135,7 +67,7 @@ def determine_seq_type(spin_id=None):
 
 
 def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
-    """Get all the xy data.
+    """Return all the xy data, along with the graph type and names for the graph sets.
 
     @keyword spin_id:       The spin identification string.
     @type spin_id:          str
@@ -145,12 +77,15 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     @type y_data_type:      str
     @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
     @type plot_data:        str
-    @return:                The graph numerical data.
-    @rtype:                 list of lists of float
+    @return:                The 4D graph numerical data structure, the graph type (i.e. on of 'xy', 'xydy', or 'xydxdy'), and the labels for the graph sets.
+    @rtype:                 list of lists of lists of float, str, and list of str
     """
 
-    # Initialise the data structure.
-    data = []
+    # Initialise the 4D data structure (Gx, Sx, data point, data point info), and graph set labels.
+    data = [[]]
+    set_labels = []
+    x_err_flag = False
+    y_err_flag = False
 
     # Specific x and y value returning functions.
     x_return_value = y_return_value = get_specific_fn('return_value', pipes.get_type())
@@ -166,65 +101,104 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
         y_return_value = generic_fns.minimise.return_value
         y_return_conversion_factor = generic_fns.minimise.return_conversion_factor
 
-    # Loop over the spins.
-    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
-        # Skip deselected spins.
-        if not spin.select:
-            continue
+    # Number of graph sets.
+    if plot_data == 'sim':
+        sets = cdp.sim_number
+    else:
+        sets = 1
 
-        # Number of data points per spin.
+    # Loop over the data points.
+    for i in range(sets):
+        # The graph label.
+        set_label = ''
         if plot_data == 'sim':
-            points = cdp.sim_number
-        else:
-            points = 1
+            set_label = "Sim: %i" % i
 
-        # Loop over the data points.
-        for j in xrange(points):
-            # Initialise an empty array for the individual spin data.
-            spin_data = [mol_name, res_num, res_name, spin.num, spin.name, None, None, None, None]
+        # The sim number.
+        sim = None
+        if plot_data == 'sim':
+            sim = i
 
-            # FIXME:  Need to work out how the spin_id string can be handled in Grace.
-            # Spin ID string on the x-axis.
-            #if x_data_type == 'spin':
-            #    spin_data[-4] = spin_id
-            # Residue number.
-            if x_data_type == 'spin':
-                spin_data[-4] = res_num
+        # Spin names list (for creating new graph sets).
+        spin_names = []
 
-            # Parameter value for the x-axis.
-            else:
-                # Get the x-axis values and errors.
-                if plot_data == 'sim':
-                    spin_data[-4], spin_data[-3] = x_return_value(spin, x_data_type, sim=j)
-                else:
-                    spin_data[-4], spin_data[-3] = x_return_value(spin, x_data_type)
-
-            # Get the y-axis values and errors.
-            if plot_data == 'sim':
-                spin_data[-2], spin_data[-1] = y_return_value(spin, y_data_type, sim=j)
-            else:
-                spin_data[-2], spin_data[-1] = y_return_value(spin, y_data_type)
-
-            # Go to the next spin if there is missing data.
-            if spin_data[-4] == None or spin_data[-2] == None:
+        # Loop over the spins.
+        for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
                 continue
 
-            # X-axis conversion factors.
-            if x_data_type != 'spin':
-                spin_data[-4] = array(spin_data[-4]) / x_return_conversion_factor(x_data_type, spin)
-                if spin_data[-3]:
-                    spin_data[-3] = array(spin_data[-3]) / x_return_conversion_factor(x_data_type, spin)
+            # A new spin type (on data set per spin type).
+            if spin.name not in spin_names:
+                # Append a new set structure.
+                data[0].append([])
 
-            # Y-axis conversion factors.
-            spin_data[-2] = array(spin_data[-2]) / y_return_conversion_factor(y_data_type, spin)
-            if spin_data[-1]:
-                spin_data[-1] = array(spin_data[-1]) / y_return_conversion_factor(y_data_type, spin)
+                # Append the label.
+                set_labels.append(set_label + "%s spins." % spin.name)
 
-            # Append the array to the full data structure.
-            data.append(spin_data)
+                # Add the spin name to the list.
+                spin_names.append(spin.name)
+
+            # The set index.
+            index = i * len(spin_names) + spin_names.index(spin.name)
+
+            # Initialise and alias point structure.
+            data[0][index].append([])
+            point = data[0][index][-1]
+
+            # The X data (plotted as residue numbers).
+            if x_data_type == 'spin':
+                x_val = res_num
+                x_err = None
+
+            # The X data (plotted as values).
+            else:
+                # Append the x-axis values and errors.
+                x_val, x_err = x_return_value(spin, x_data_type, sim=sim)
+
+            # The Y data (plotted as residue numbers).
+            if y_data_type == 'spin':
+                y_val = res_num
+                y_err = None
+
+            # The Y data (plotted as values).
+            else:
+                # Append the y-axis values and errors.
+                y_val, y_err = y_return_value(spin, y_data_type, sim=sim)
+
+            # Go to the next spin if there is missing xy data.
+            if x_val == None or y_val == None:
+                continue
+
+            # Conversion factors.
+            x_val = x_val / x_return_conversion_factor(x_data_type, spin)
+            if x_err:
+                x_err = x_err / x_return_conversion_factor(x_data_type, spin)
+            y_val = y_val / y_return_conversion_factor(y_data_type, spin)
+            if y_err:
+                y_err = y_err / y_return_conversion_factor(y_data_type, spin)
+
+            # Append the data.
+            point.append(x_val)
+            point.append(y_val)
+            point.append(x_err)
+            point.append(y_err)
+
+            # Error flags.
+            if x_err and not x_err_flag:
+                x_err_flag = True
+            if y_err and not y_err_flag:
+                y_err_flag = True
+
+    # The graph type.
+    graph_type = 'xy'
+    if x_err_flag:
+        graph_type = graph_type + 'dx'
+    if y_err_flag:
+        graph_type = graph_type + 'dy'
 
     # Return the data.
-    return data
+    return data, set_labels, graph_type
 
 
 def view(file=None, dir=None, grace_exe='xmgrace'):
@@ -291,7 +265,7 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
     file = open_write_file(file, dir, force)
 
     # Get the data.
-    data = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
+    data, set_names, graph_type = get_data(spin_id, x_data_type=x_data_type, y_data_type=y_data_type, plot_data=plot_data)
 
     # Generate the spin_ids for all the data.
     spin_ids = []
@@ -304,23 +278,11 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
         file.close()
         return
 
-    # Determine the graph type (ie xy, xydy, xydx, or xydxdy).
-    graph_type = determine_graph_type(data, x_data_type=x_data_type, plot_data=plot_data)
-
-    # Test for multiple data sets.
-    multi = False
-    sets = 1
-    set_names = None
-    if isinstance(data[0][-4], list) or isinstance(data[0][-4], ndarray):
-        multi = True
-        sets = len(data)
-        set_names = spin_ids
-
     # Determine the sequence data type.
     seq_type = determine_seq_type(spin_id=spin_ids[0])
 
     # Write the header.
-    write_xy_header(sets=sets, file=file, data_type=[x_data_type, y_data_type], seq_type=[seq_type, None], set_names=set_names, norm=norm)
+    write_xy_header(sets=len(data[0]), file=file, data_type=[x_data_type, y_data_type], seq_type=[seq_type, None], set_names=set_names, norm=norm)
 
     # Write the data.
     write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
