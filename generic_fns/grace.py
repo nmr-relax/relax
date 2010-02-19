@@ -86,6 +86,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     set_labels = []
     x_err_flag = False
     y_err_flag = False
+    data_list = False
 
     # Specific x and y value returning functions.
     x_return_value = y_return_value = get_specific_fn('return_value', pipes.get_type())
@@ -128,24 +129,6 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             if not spin.select:
                 continue
 
-            # A new spin type (on data set per spin type).
-            if spin.name not in spin_names:
-                # Append a new set structure.
-                data[0].append([])
-
-                # Append the label.
-                set_labels.append(set_label + "%s spins." % spin.name)
-
-                # Add the spin name to the list.
-                spin_names.append(spin.name)
-
-            # The set index.
-            index = i * len(spin_names) + spin_names.index(spin.name)
-
-            # Initialise and alias point structure.
-            data[0][index].append([])
-            point = data[0][index][-1]
-
             # The X data (plotted as residue numbers).
             if x_data_type == 'spin':
                 x_val = res_num
@@ -170,25 +153,70 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             if x_val == None or y_val == None:
                 continue
 
-            # Conversion factors.
-            x_val = x_val / x_return_conversion_factor(x_data_type, spin)
-            if x_err:
-                x_err = x_err / x_return_conversion_factor(x_data_type, spin)
-            y_val = y_val / y_return_conversion_factor(y_data_type, spin)
-            if y_err:
-                y_err = y_err / y_return_conversion_factor(y_data_type, spin)
+            # One set per spin (list data has been returned).
+            if data_list or type(x_val) == list:
+                # Append a new set structure and set the name to the spin ID.
+                data[0].append([])
+                set_labels.append(spin_id)
 
-            # Append the data.
-            point.append(x_val)
-            point.append(y_val)
-            point.append(x_err)
-            point.append(y_err)
+                # The set index.
+                index = len(data[0]) - 1
 
-            # Error flags.
-            if x_err and not x_err_flag:
-                x_err_flag = True
-            if y_err and not y_err_flag:
-                y_err_flag = True
+                # No errors.
+                if x_err == None:
+                    x_err = [None]*len(x_val)
+                if y_err == None:
+                    y_err = [None]*len(y_val)
+
+                # Data list flag.
+                data_list = True
+
+            # Convert the data to lists for packing into 1 point.
+            else:
+                x_val = [x_val]
+                y_val = [y_val]
+                x_err = [x_err]
+                y_err = [y_err]
+
+            # A new spin type (on data set per spin type).
+            if not data_list and spin.name not in spin_names:
+                # Append a new set structure.
+                data[0].append([])
+
+                # Append the label.
+                set_labels.append("%s spins. " % spin.name + set_label)
+
+                # Add the spin name to the list.
+                spin_names.append(spin.name)
+
+                # The set index.
+                index = i * len(spin_names) + spin_names.index(spin.name)
+
+            # Loop over the points.
+            for j in range(len(x_val)):
+                # Initialise and alias point structure.
+                data[0][index].append([])
+                point = data[0][index][-1]
+
+                # Conversion factors.
+                x_val[j] = x_val[j] / x_return_conversion_factor(x_data_type, spin)
+                if x_err[j]:
+                    x_err[j] = x_err[j] / x_return_conversion_factor(x_data_type, spin)
+                y_val[j] = y_val[j] / y_return_conversion_factor(y_data_type, spin)
+                if y_err[j]:
+                    y_err[j] = y_err[j] / y_return_conversion_factor(y_data_type, spin)
+
+                # Append the data.
+                point.append(x_val[j])
+                point.append(y_val[j])
+                point.append(x_err[j])
+                point.append(y_err[j])
+
+                # Error flags.
+                if x_err and not x_err_flag:
+                    x_err_flag = True
+                if y_err and not y_err_flag:
+                    y_err_flag = True
 
     # The graph type.
     graph_type = 'xy'
@@ -313,12 +341,12 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             # The target and type.
             file.write("@target G%s.S%s\n" % (gi, si))
             file.write("@type %s\n" % graph_type)
-    
+
             # Normalisation (to the first data point y value!).
             norm_fact = 1.0
             if norm:
                 norm_fact = data[gi][si][0][1]
-    
+
             # Loop over the data points.
             for point in data[gi][si]:
                 # X and Y data.
@@ -330,20 +358,20 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
                     error = point[2]
                     if error == None:
                         error = 0.0
-    
+
                     # Write the error.
                     file.write(" %-30s" % (error/norm_fact))
-    
+
                 # The dy errors of xydxdy.
                 if graph_type == 'xydxdy':
                     # Catch y-axis errors of None.
                     error = point[3]
                     if error == None:
                         error = 0.0
-    
+
                     # Write the error.
                     file.write(" %-30s" % (error/norm_fact))
-    
+
                 # End the point.
                 file.write("\n")
 
