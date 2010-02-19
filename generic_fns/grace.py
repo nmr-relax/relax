@@ -213,9 +213,9 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 point.append(y_err[j])
 
                 # Error flags.
-                if x_err and not x_err_flag:
+                if x_err[j] and not x_err_flag:
                     x_err_flag = True
-                if y_err and not y_err_flag:
+                if y_err[j] and not y_err_flag:
                     y_err_flag = True
 
     # The graph type.
