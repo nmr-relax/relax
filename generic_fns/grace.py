@@ -676,6 +676,13 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
 
     # Loop over each graph set.
     for i in range(sets):
+        # Symbols.
+        file.write("@    s%i symbol %i\n" % (i, i+1))
+        file.write("@    s%i symbol size 0.45\n" % i)
+        file.write("@    s%i symbol fill pattern 1\n" % i)
+        file.write("@    s%i symbol linewidth 0.5\n" % i)
+        file.write("@    s%i line linestyle 0\n" % i)
+
         # Error bars.
         file.write("@    s%i errorbar size 0.5\n" % i)
         file.write("@    s%i errorbar linewidth 0.5\n" % i)
