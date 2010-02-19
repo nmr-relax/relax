@@ -309,22 +309,21 @@ def write(x_data_type='spin', y_data_type=None, spin_id=None, plot_data='value',
 
     # Test for multiple data sets.
     multi = False
+    sets = 1
     if isinstance(data[0][-4], list) or isinstance(data[0][-4], ndarray):
         multi = True
+        sets = len(data[0][-4])
+
+    # Write the header.
+    write_xy_header(sets=sets, file=file, data_type=[x_data_type, y_data_type], spin_ids=spin_ids, norm=norm)
 
     # Multiple data sets.
     if multi:
-        # Write the header.
-        write_xy_header(data, file=file, data_type=[x_data_type, y_data_type], spin_ids=spin_ids, norm=norm)
-
         # Write the data.
         write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
 
     # Single data set.
     else:
-        # Write the header.
-        write_xy_header(data, file=file, spin_id=spin_id, x_data_type=x_data_type, y_data_type=y_data_type, x_return_units=x_return_units, y_return_units=y_return_units, x_return_grace_string=x_return_grace_string, y_return_grace_string=y_return_grace_string)
-
         # Write the data.
         write_data(data, file=file, graph_type=graph_type)
 
