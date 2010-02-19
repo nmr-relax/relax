@@ -443,10 +443,10 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         file.write("&\n")
 
 
-def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None, None], spin_ids=None, norm=False):
+def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None, None], axis_min=[None, None], axis_max=[None, None], spin_ids=None, norm=False):
     """Write the grace header for xy-scatter plots.
 
-    Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.
+    Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
 
 
     @keyword file:                  The file object to write the data to.
@@ -457,6 +457,10 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
     @type data_type:                list of str
     @keyword axis_labels:           The labels for the axes (in the [X, Y] list format).
     @type axis_labels:              list of str
+    @keyword axis_min:              The minimum values for specifying the graph ranges (in the [X, Y] list format).
+    @type axis_min:                 list of str
+    @keyword axis_max:              The maximum values for specifying the graph ranges (in the [X, Y] list format).
+    @type axis_max:                 list of str
     @keyword spin_ids:              A list of spin identification strings.
     @type spin_ids:                 list of str
     @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
