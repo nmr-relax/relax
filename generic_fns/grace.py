@@ -473,7 +473,7 @@ def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], s
                     axis_labels[i] = axis_labels[i] + "\\N (" + units + ")"
 
                 # Normalised data.
-                if norm:
+                if norm and axes[i] == 'y':
                     axis_labels[i] = axis_labels[i] + " \\N\\q(normalised)\\Q"
 
         # Write out the data.
