@@ -569,7 +569,7 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         file.write("&\n")
 
 
-def write_xy_header(file=None, data_type=None, return_units=None, return_grace_string=None, spin_ids=None, norm=False):
+def write_xy_header(file=None, data_type=[None, None], return_units=[None, None], return_grace_string=[None, None], spin_ids=None, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.
@@ -578,11 +578,11 @@ def write_xy_header(file=None, data_type=None, return_units=None, return_grace_s
     @keyword file:                  The file object to write the data to.
     @type file:                     file object
     @keyword data_type:             The axis data category (in the [X, Y] list format).
-    @type data_type:                str
+    @type data_type:                list of str
     @keyword return_units:          The analysis specific function for returning the Grace formatted units string for the axes (in the [X, Y] list format).
-    @type return_units:             function
+    @type return_units:             list of functions
     @keyword return_grace_string:   The analysis specific function for returning the Grace axes string (in the [X, Y] list format).
-    @type return_grace_string:      function
+    @type return_grace_string:      list of functions
     @keyword spin_ids:              A list of spin identification strings.
     @type spin_ids:                 list of str
     @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
@@ -597,7 +597,7 @@ def write_xy_header(file=None, data_type=None, return_units=None, return_grace_s
     # Graph G0.
     file.write("@with g0\n")
 
-    # X-axis set up.
+    # Some X-axis default values for spin data.
     if data_type[0] == 'spin':
         # Determine the sequence data type.
         seq_type = determine_seq_type(spin_id=spin_id)
@@ -605,60 +605,68 @@ def write_xy_header(file=None, data_type=None, return_units=None, return_grace_s
         # Residue only data.
         if seq_type == 'res':
             # Axis limits.
-            file.write("@    world xmin " + repr(cdp.mol[0].res[0].num - 1) + "\n")
-            file.write("@    world xmax " + repr(cdp.mol[0].res[-1].num + 1) + "\n")
+            if not axis_min[0]:
+                axis_min[0] = repr(cdp.mol[0].res[0].num - 1)
+            if not axis_max[0]:
+                axis_max[0] = repr(cdp.mol[0].res[-1].num + 1)
 
             # X-axis label.
-            file.write("@    xaxis  label \"Residue number\"\n")
+            if not axis_label[0]:
+                axis_label[0] = "Residue number"
 
         # Spin only data.
         if seq_type == 'spin':
             # Axis limits.
-            file.write("@    world xmin " + repr(cdp.mol[0].res[0].spin[0].num - 1) + "\n")
-            file.write("@    world xmax " + repr(cdp.mol[0].res[0].spin[-1].num + 1) + "\n")
+            if not axis_min[0]:
+                axis_min[0] = repr(cdp.mol[0].res[0].spin[0].num - 1)
+            if not axis_max[0]:
+                axis_max[0] = repr(cdp.mol[0].res[0].spin[-1].num + 1)
 
             # X-axis label.
-            file.write("@    xaxis  label \"Spin number\"\n")
+            if not axis_label[0]:
+                axis_label[0] = "Spin number"
 
         # Mixed data.
         if seq_type == 'mixed':
             # X-axis label.
-            file.write("@    xaxis  label \"Spin identification string\"\n")
+            if not axis_label[0]:
+                axis_label[0] = "Spin identification string"
 
+    # Some X-axis default values for other data types.
     else:
         # Get the units.
         units = return_units[0](data_type[0], spin_id=spin_id)
 
         # Label.
+        if not axis_label[0]:
+            axis_label[0] = return_grace_string[0](data_type[0])
+            if units:
+                axis_label[0] = axis_label[0] + "\\N (" + units + ")"
+
+    # Some Y-axis default values data.
+    if not axis_label[1]:
+        units = return_units[1](data_type[1], spin_id=spin_id)
+        axis_label[1] = "@    yaxis  label \"" + return_grace_string[1](data_type[1])
         if units:
-            file.write("@    xaxis  label \"" + return_grace_string[0](data_type[0]) + "\\N (" + units + ")\"\n")
-        else:
-            file.write("@    xaxis  label \"" + return_grace_string[0](data_type[0]) + "\"\n")
+            axis_label[1] = axis_label[1] + "\\N (" + units + ")"
+        if norm:
+            axis_label[1] = axis_label[1] + " \\q(normalised)\\Q"
 
-    # X-axis specific settings.
-    file.write("@    xaxis  label char size 1.48\n")
-    file.write("@    xaxis  tick major size 0.75\n")
-    file.write("@    xaxis  tick major linewidth 0.5\n")
-    file.write("@    xaxis  tick minor linewidth 0.5\n")
-    file.write("@    xaxis  tick minor size 0.45\n")
-    file.write("@    xaxis  ticklabel char size 1.00\n")
-
-    # Y-axis label.
-    units = return_units[1](data_type[1], spin_id=spin_id)
-    string = "@    yaxis  label \"" + return_grace_string[1](data_type[1])
-    if units:
-        string = string + "\\N (" + units + ")"
-    if norm:
-        string = string + " \\q(normalised)\\Q"
-    file.write(string + "\"\n")
-
-    # Y-axis specific settings.
-    file.write("@    yaxis  label char size 1.48\n")
-    file.write("@    yaxis  tick major size 0.75\n")
-    file.write("@    yaxis  tick major linewidth 0.5\n")
-    file.write("@    yaxis  tick minor linewidth 0.5\n")
-    file.write("@    yaxis  tick minor size 0.45\n")
-    file.write("@    yaxis  ticklabel char size 1.00\n")
+    # Axis specific settings.
+    axes = ['x', 'y']
+    for i in range(2):
+        if axis_min[i]:
+            file.write("@    world %smin %s\n" % (axes[i], axis_min[i]))
+        if axis_max[i]:
+            file.write("@    world %smin %s\n" % (axes[i], axis_max[i]))
+        if axis_label[i]:
+            file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_label[i]))
+        file.write("@    %saxis  label char size 1.48\n" % axes[i])
+        file.write("@    %saxis  tick major size 0.75\n" % axes[i])
+        file.write("@    %saxis  tick major linewidth 0.5\n" % axes[i])
+        file.write("@    %saxis  tick minor linewidth 0.5\n" % axes[i])
+        file.write("@    %saxis  tick minor size 0.45\n" % axes[i])
+        file.write("@    %saxis  ticklabel char size 1.00\n" % axes[i])
 
     # Legend box.
     file.write("@    legend off\n")
