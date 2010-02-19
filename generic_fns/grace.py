@@ -569,7 +569,7 @@ def write_multi_data(data, file=None, graph_type=None, norm=False):
         file.write("&\n")
 
 
-def write_xy_header(file=None, data_type=[None, None], return_units=[None, None], return_grace_string=[None, None], spin_ids=None, norm=False):
+def write_xy_header(file=None, sets=1, data_type=[None, None], return_units=[None, None], return_grace_string=[None, None], spin_ids=None, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.
@@ -577,6 +577,8 @@ def write_xy_header(file=None, data_type=[None, None], return_units=[None, None]
 
     @keyword file:                  The file object to write the data to.
     @type file:                     file object
+    @keyword sets:                  The number of data sets in the graph G0.
+    @type sets:                     int
     @keyword data_type:             The axis data category (in the [X, Y] list format).
     @type data_type:                list of str
     @keyword return_units:          The analysis specific function for returning the Grace formatted units string for the axes (in the [X, Y] list format).
@@ -674,8 +676,8 @@ def write_xy_header(file=None, data_type=[None, None], return_units=[None, None]
     # Frame.
     file.write("@    frame linewidth 0.5\n")
 
-    # Loop over the data sets.
-    for i in xrange(len(data)):
+    # Loop over each graph set.
+    for i in range(sets):
         # Error bars.
         file.write("@    s%i errorbar size 0.5\n" % i)
         file.write("@    s%i errorbar linewidth 0.5\n" % i)
