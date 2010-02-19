@@ -507,8 +507,8 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
                     axis_max[i] = repr(cdp.mol[0].res[-1].num + 1)
 
                 # X-axis label.
-                if not axis_label[i]:
-                    axis_label[i] = "Residue number"
+                if not axis_labels[i]:
+                    axis_labels[i] = "Residue number"
 
             # Spin only data.
             if seq_type == 'spin':
@@ -519,40 +519,40 @@ def write_xy_header(file=None, sets=1, data_type=[None, None], axis_labels=[None
                     axis_max[i] = repr(cdp.mol[0].res[0].spin[-1].num + 1)
 
                 # X-axis label.
-                if not axis_label[i]:
-                    axis_label[i] = "Spin number"
+                if not axis_labels[i]:
+                    axis_labels[i] = "Spin number"
 
             # Mixed data.
             if seq_type == 'mixed':
                 # X-axis label.
-                if not axis_label[i]:
-                    axis_label[i] = "Spin identification string"
+                if not axis_labels[i]:
+                    axis_labels[i] = "Spin identification string"
 
         # Some axis default values for other data types.
         else:
             # Label.
-            if analysis_spec and not axis_label[i]:
+            if analysis_spec and not axis_labels[i]:
                 # Get the units.
                 units = return_units(data_type[i], spin_id=spin_id)
 
                 # Set the label.
-                axis_label[i] = return_grace_string(data_type[i])
+                axis_labels[i] = return_grace_string(data_type[i])
 
                 # Add units.
                 if units:
-                    axis_label[i] = axis_label[i] + "\\N (" + units + ")"
+                    axis_labels[i] = axis_labels[i] + "\\N (" + units + ")"
 
                 # Normalised data.
                 if norm:
-                    axis_label[i] = axis_label[i] + " \\N\\q(normalised)\\Q"
+                    axis_labels[i] = axis_labels[i] + " \\N\\q(normalised)\\Q"
 
         # Write out the data.
         if axis_min[i]:
             file.write("@    world %smin %s\n" % (axes[i], axis_min[i]))
         if axis_max[i]:
             file.write("@    world %smin %s\n" % (axes[i], axis_max[i]))
-        if axis_label[i]:
-            file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_label[i]))
+        if axis_labels[i]:
+            file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_labels[i]))
         file.write("@    %saxis  label char size 1.48\n" % axes[i])
         file.write("@    %saxis  tick major size 0.75\n" % axes[i])
         file.write("@    %saxis  tick major linewidth 0.5\n" % axes[i])
