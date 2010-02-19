@@ -512,3 +512,15 @@ def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], s
         # Legend.
         if set_names:
             file.write("@    s%i legend \"Spin %s\"\n" % (i, set_names[i]))
+
+    # Reset all args.
+    data_type[0] = None
+    data_type[1] = None
+    seq_type[0] = None
+    seq_type[1] = None
+    axis_labels[0] = None
+    axis_labels[1] = None
+    axis_min[0] = None
+    axis_min[1] = None
+    axis_max[0] = None
+    axis_max[1] = None
