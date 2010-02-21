@@ -1586,7 +1586,10 @@ class Mf_minimise:
             processor = processor_box.processor
 
             # Parallelised grid search for the diffusion parameter space.
-            if match('^[Gg]rid', min_algor) and data_store.model_type == 'diff' :
+            if match('^[Gg]rid', min_algor) and data_store.model_type == 'diff':
+                # Print out.
+                print("Parallelised diffusion tensor grid search.")
+
                 # Split up the grid into chunks for each processor.
                 full_grid_info = Grid_info(lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc, n=num_params)
                 sub_grid_list = full_grid_info.sub_divide(processor.processor_size())
@@ -1597,13 +1600,13 @@ class Mf_minimise:
                 # Loop over each grid sub-division.
                 for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
                     # Grid search initialisation.
-                    command = MF_split_grid_command()
+                    command = MF_grid_command()
 
                     # Pass in the data and optimisation parameters.
                     command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
                     # Set up the model-free memo and add it to the processor queue.
-                    memo = MF_grid_memo(super_grid_memo)
+                    memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
                     processor.add_to_queue(command, memo)
 
                 # Exit this method.
