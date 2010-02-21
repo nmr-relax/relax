@@ -197,6 +197,7 @@ class MF_grid_command(MF_minimise_command):
         return param_vector, func, iter, fc, gc, hc, warning
 
 
+
 class MF_result_command(Result_command):
     """Class for processing the model-free results."""
 
@@ -228,86 +229,3 @@ class MF_result_command(Result_command):
 
         # Disassemble the results.
         memo.model_free._disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
-
-
-class MF_split_grid_memo(MF_memo):
-    """The model-free parallel grid search memo."""
-
-    def __init__(self, model_free=None, model_type=None, spin=None, sim_index=None, scaling=None, scaling_matrix=None):
-        """Initialise the model-free memo class for the parallelised grid search.
-
-        This memo stores the model-free class instance so that the _disassemble_result() method can be called to store the optimisation results.  The other args are those required by this method but not generated through optimisation.
-
-        @keyword model_free:        The model-free class instance.
-        @type model_free:           specific_fns.model_free.Model_free instance
-        @keyword spin:              The spin data container.  If this argument is supplied, then the spin_id argument will be ignored.
-        @type spin:                 SpinContainer instance
-        @keyword sim_index:         The optional MC simulation index.
-        @type sim_index:            int
-        @keyword scaling:           If True, diagonal scaling is enabled.
-        @type scaling:              bool
-        @keyword scaling_matrix:    The diagonal, square scaling matrix.
-        @type scaling_matrix:       numpy diagonal matrix
-        """
-        # Execute the base class __init__() method.
-        super(MF_split_grid_memo, self).__init__(model_free, spin, sim_index, model_type, scaling, scaling_matrix)
-
-        # aggregated results
-        #             min_params, f_min, k
-        self.xk = None
-        self.fk = 1e300
-        self.k = 0
-        self.f_count = 0
-        self.g_count = 0
-        self.h_count = 0
-        self.warning = []
-        self.first_time = None
-
-
-    def add_result(self, sub_memo, results):
-
-        # Normal minimisation.
-        if self.full_output:
-            # Unpack the results.
-            param_vector, func, iter, fc, gc, hc, warning = results
-
-            if func < self.fk:
-                self.xk = param_vector
-                self.fk = func
-            self.k += iter
-            self.f_count += fc
-
-            self.g_count += gc
-            self.h_count += hc
-            if warning != None:
-                self.warning.append(warning)
-
-        # Grid search.
-        #FIXME: TESTME: do we use short results?
-        else:
-            # Unpack the results.
-            param_vector, func, iter, warning = results
-
-            if results[OFFSET_SHORT_FK] < self.short_result[OFFSET_SHORT_FK]:
-                self.short_result[OFFSET_SHORT_MIN_PARAMS] = results[OFFSET_SHORT_MIN_PARAMS]
-                self.short_result[OFFSET_SHORT_FK] = results[OFFSET_SHORT_FK]
-            self.short_result[OFFSET_SHORT_K] += results[OFFSET_SHORT_K]
-        self.sub_memos.remove(sub_memo)
-
-        if len(self.sub_memos) < 1:
-            self.completed = True
-            if len(self.warning) == 0:
-                self.warning = None
-            else:
-                self.warning = ', '.join(self.warning)
-
-        # the order here is important !
-        if self.first_time == True:
-            self.first_time = False
-
-        if self.first_time == None:
-            self.first_time = True
-
-
-    def add_sub_memo(self, memo):
-        self.sub_memos.append(memo)
