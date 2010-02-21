@@ -55,101 +55,6 @@ def spin_print(spin_id, verbosity):
     print(len(string) * '~')
 
 
-class MF_grid_memo(Memo):
-    def __init__(self, super_grid_memo):
-
-        # Execute the base class __init__() method.
-        super(MF_grid_memo, self).__init__()
-
-        self.super_grid_memo = super_grid_memo
-        self.super_grid_memo.add_sub_memo(self)
-
-
-    def add_result(self, results):
-        self.super_grid_memo.add_result(self, results)
-
-
-class MF_grid_result_command(Result_command):
-    def __init__(self, processor, result_string, memo_id, param_vector, func, iter, fc, gc, hc, warning, completed):
-
-        # Execute the base class __init__() method.
-        super(MF_grid_result_command, self).__init__(processor=processor, completed=completed)
-
-        self.result_string = result_string
-        self.memo_id = memo_id
-        self.param_vector = param_vector
-        self.func = func
-        self.iter = iter
-        self.fc = fc
-        self.gc = gc
-        self.hc = hc
-        self.warning = warning
-
-
-    def run(self, processor, memo):
-        # FIXME: Check against full result
-        # FIXME: names not consistent in memo
-        # FIXME: too much repacking
-        results = (self.param_vector, self.func, self.iter, self.fc, self.gc, self.hc, self.warning)
-        memo.add_result(results)
-
-        sgm = memo.super_grid_memo
-
-        print_prefix = sgm.print_prefix
-        verbosity = sgm.verbosity
-        full_output = sgm.full_output
-        A = sgm.A
-        b = sgm.b
-        grid_size = sgm.grid_size
-
-        if sgm.first_time:
-            print()
-            print("Unconstrained grid search size: " + repr(grid_size) + " (constraints may decrease this size).\n")
-            if verbosity:
-                if verbosity >= 2:
-                    print(print_prefix)
-                print(print_prefix)
-                print(print_prefix + "Grid search")
-                print(print_prefix + "~~~~~~~~~~~")
-
-            # Linear constraints.
-            if A != None and b != None:
-                if verbosity >= 3:
-                    print(print_prefix + "Linear constraint matrices.")
-                    print(print_prefix + "A: " + repr(A))
-                    print(print_prefix + "b: " + repr(b))
-
-        # we don't want to prepend the masters stdout tag
-        sys.stdout.write('\n'+self.result_string),
-
-        if sgm.completed:
-            if verbosity and results != None:
-                if full_output:
-                    print('')
-                    print('')
-                    print(print_prefix + "Parameter values: " + repr(sgm.xk))
-                    print(print_prefix + "Function value:   " + repr(sgm.fk))
-                    print(print_prefix + "Iterations:       " + repr(sgm.k))
-                    print(print_prefix + "Function calls:   " + repr(sgm.f_count))
-                    print(print_prefix + "Gradient calls:   " + repr(sgm.g_count))
-                    print(print_prefix + "Hessian calls:    " + repr(sgm.h_count))
-                    if sgm.warning:
-                        print(print_prefix + "Warning:          " + sgm.warning)
-                    else:
-                        print(print_prefix + "Warning:          None")
-                else:
-                    print(print_prefix + "Parameter values: " + repr(sgm.short_results))
-                print("")
-
-            # Initialise the iteration counter and function, gradient, and Hessian call counters.
-            sgm.model_free.iter_count = 0
-            sgm.model_free.f_count = 0
-            sgm.model_free.g_count = 0
-            sgm.model_free.h_count = 0
-
-            # Disassemble the results.
-            sgm.model_free._disassemble_result(param_vector=sgm.xk, func=sgm.fk, iter=sgm.k, fc=sgm.f_count, gc=sgm.g_count, hc=sgm.h_count, warning=sgm.warning, spin=sgm.spin, sim_index=sgm.sim_index, model_type=sgm.model_type, scaling=sgm.scaling, scaling_matrix=sgm.scaling_matrix)
-
 
 class MF_memo(Memo):
     """The model-free memo class.
@@ -260,10 +165,6 @@ class MF_minimise_command(Slave_command):
         self.data = data
         self.opt_params = opt_params
 
-
-
-class MF_split_grid_command(MF_minimise_command):
-    pass
 
 
 class MF_grid_command(MF_minimise_command):
