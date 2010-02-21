@@ -37,7 +37,7 @@ from generic_fns.subdivide_grid import Grid_info
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi.processor import Processor_box
-from multi_processor_commands import MF_grid_command, MF_grid_memo, MF_memo, MF_minimise_command, MF_split_grid_command, MF_split_grid_memo
+from multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 from physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxInfError, RelaxLenError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_warnings import RelaxWarning
@@ -1593,9 +1593,6 @@ class Mf_minimise:
                 # Split up the grid into chunks for each processor.
                 full_grid_info = Grid_info(lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc, n=num_params)
                 sub_grid_list = full_grid_info.sub_divide(processor.processor_size())
-
-                # Set up split grid memo.
-                super_grid_memo = MF_split_grid_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
 
                 # Loop over each grid sub-division.
                 for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
