@@ -46,7 +46,7 @@ class Test_suite_runner:
     def __init__(self, tests):
         """Store the list of tests to preform.
 
-        The test list should be something like ['
+        The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
         @param tests:   The list of tests to preform.
@@ -77,7 +77,7 @@ class Test_suite_runner:
         heading('System / functional tests')
 
         # Run the tests.
-        system_runner = System_test_runner()
+        system_runner = System_test_runner(self.tests)
         self.system_result = system_runner.run()
 
 
