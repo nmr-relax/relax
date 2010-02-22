@@ -419,7 +419,7 @@ class Stereochem_analysis:
 
             # Write the data.
             write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\S2\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
-            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['Normalised NOE violation (Q\S2\N = U/\QS\NNOE\si\N\S2\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['Normalised NOE violation (Q = sqrt(U / \\xS\\f{}NOE\\si\\N\\S2\\N))', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
             write_xy_data([data], file=grace_file, graph_type='xy')
             write_xy_data([data_scaled], file=grace_file_scaled, graph_type='xy')
 
