@@ -157,7 +157,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
             if data_list or type(x_val) == list:
                 # Append a new set structure and set the name to the spin ID.
                 data[0].append([])
-                set_labels.append(spin_id)
+                set_labels.append("Spin %s" % spin_id)
 
                 # The set index.
                 index = len(data[0]) - 1
@@ -578,4 +578,4 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, sets=
 
         # Legend.
         if set_names:
-            file.write("@    s%i legend \"Spin %s\"\n" % (i, set_names[i]))
+            file.write("@    s%i legend \"%s\"\n" % (i, set_names[i]))
