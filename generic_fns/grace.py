@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colours=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
+def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, linestyle=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -392,9 +392,15 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colo
     @keyword sets:                  The number of data sets in the graph G0.
     @type sets:                     int
     @keyword set_names:             The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
-    @type set_names:                list of str
+    @type set_names:                None or list of str
     @keyword set_colours:           The colours for each graph data set G0.Sx.
-    @type set_colours:              list of int
+    @type set_colours:              None or list of int
+    @keyword symbols:               The symbol style for each graph data set G0.Sx.
+    @type symbols:                  None or list of int
+    @keyword symbol_sizes:          The symbol size for each graph data set G0.Sx.
+    @type symbol_sizes:             None or list of int
+    @keyword linestyle:             The line style for each graph data set G0.Sx.
+    @type linestyle:                None or list of int
     @keyword data_type:             The axis data category (in the [X, Y] list format).
     @type data_type:                None or list of str
     @keyword seq_type:              The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
@@ -525,20 +531,39 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colo
 
     # Loop over each graph set.
     for i in range(sets):
-        # Symbols.
-        file.write("@    s%i symbol %i\n" % (i, i+1))
-        file.write("@    s%i symbol size 0.45\n" % i)
+        # Symbol style (default to all different symbols).
+        if symbols:
+            file.write("@    s%i symbol %i\n" % (i, symbols[i]))
+        else:
+            file.write("@    s%i symbol %i\n" % (i, i+1))
+
+        # Symbol sizes (default to a small size).
+        if symbol_sizes:
+            file.write("@    s%i symbol size %s\n" % (i, symbol_sizes[i]))
+        else:
+            file.write("@    s%i symbol size 0.45\n" % i)
+
+        # The symbol fill.
         file.write("@    s%i symbol fill pattern 1\n" % i)
+
+        # The symbol line width.
         file.write("@    s%i symbol linewidth 0.5\n" % i)
+
+        # Symbol colour (default to nothing).
+        if colours:
+            file.write("@    s%i symbol color %s\n" % (i, colours[i]))
 
         # Error bars.
         file.write("@    s%i errorbar size 0.5\n" % i)
         file.write("@    s%i errorbar linewidth 0.5\n" % i)
         file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
 
-        # Colours.
+        # Line linestyle (default to nothing).
+        if linestyle:
+            file.write("@    s%i line linestyle %s\n" % (i, linestyle[i]))
+
+        # Line colours (default to nothing).
         if colours:
-            file.write("@    s%i symbol color %s\n" % (i, colours[i]))
             file.write("@    s%i line color %s\n" % (i, colours[i]))
 
         # Legend.
