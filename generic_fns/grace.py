@@ -550,8 +550,8 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colo
         file.write("@    s%i symbol linewidth 0.5\n" % i)
 
         # Symbol colour (default to nothing).
-        if colours:
-            file.write("@    s%i symbol color %s\n" % (i, colours[i]))
+        if set_colours:
+            file.write("@    s%i symbol color %s\n" % (i, set_colours[i]))
 
         # Error bars.
         file.write("@    s%i errorbar size 0.5\n" % i)
@@ -563,8 +563,8 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colo
             file.write("@    s%i line linestyle %s\n" % (i, linestyle[i]))
 
         # Line colours (default to nothing).
-        if colours:
-            file.write("@    s%i line color %s\n" % (i, colours[i]))
+        if set_colours:
+            file.write("@    s%i line color %s\n" % (i, set_colours[i]))
 
         # Legend.
         if set_names:
