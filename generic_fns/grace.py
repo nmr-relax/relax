@@ -478,7 +478,7 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             return_grace_string = get_specific_fn('return_grace_string', pipes.get_type())
 
             # Test if the axis data type is a minimisation statistic.
-            if data_type[i] != 'spin' and generic_fns.minimise.return_data_name(data_type[i]):
+            if data_type[i] and data_type[i] != 'spin' and generic_fns.minimise.return_data_name(data_type[i]):
                 return_units = generic_fns.minimise.return_units
                 return_grace_string = generic_fns.minimise.return_grace_string
 
