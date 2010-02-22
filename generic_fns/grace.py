@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
+def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colours=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -393,6 +393,8 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_typ
     @type sets:                     int
     @keyword set_names:             The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
     @type set_names:                list of str
+    @keyword set_colours:           The colours for each graph data set G0.Sx.
+    @type set_colours:              list of int
     @keyword data_type:             The axis data category (in the [X, Y] list format).
     @type data_type:                None or list of str
     @keyword seq_type:              The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
@@ -533,6 +535,10 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_typ
         file.write("@    s%i errorbar size 0.5\n" % i)
         file.write("@    s%i errorbar linewidth 0.5\n" % i)
         file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
+
+        # Colours.
+        if colours:
+            file.write("@    s%i line color %s\n" % (i, colours[i]))
 
         # Legend.
         if set_names:
