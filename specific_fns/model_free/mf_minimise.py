@@ -340,9 +340,10 @@ class Mf_minimise:
         # Check if the chi-squared value is lower.  This allows for a parallelised grid search!
         if sim_index == None:
             # Get the correct value.
-            if model_type == 'mf' or model_type == 'local_tm':
+            chi2 = None
+            if (model_type == 'mf' or model_type == 'local_tm') and hasattr(cdp, 'chi2'):
                 chi2 = spin.chi2
-            elif model_type == 'diff' or model_type == 'all':
+            if (model_type == 'diff' or model_type == 'all') and hasattr(cdp, 'chi2'):
                 chi2 = cdp.chi2
 
             # No improvement.
