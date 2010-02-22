@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, norm=False):
+def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -403,6 +403,10 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_typ
     @type axis_min:                 None or list of str
     @keyword axis_max:              The maximum values for specifying the graph ranges (in the [X, Y] list format).
     @type axis_max:                 None or list of str
+    @keyword legend_pos:            The position of the legend, e.g. [0.3, 0.8].
+    @type legend_pos:               None or list of float
+    @keyword legend:                If True, the legend will be visible.
+    @type legend:                   bool
     @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
     @type norm:                     bool
     """
@@ -509,7 +513,10 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_typ
         file.write("@    %saxis  ticklabel char size 1.00\n" % axes[i])
 
     # Legend box.
-    file.write("@    legend off\n")
+    if legend_pos:
+        file.write("@    legend %s, %s\n" % (legend_pos[0], legend_pos[1]))
+    if legend:
+        file.write("@    legend off\n")
 
     # Frame.
     file.write("@    frame linewidth 0.5\n")
