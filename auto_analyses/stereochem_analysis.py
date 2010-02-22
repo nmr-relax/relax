@@ -55,6 +55,7 @@ import sys
 
 # relax module imports.
 from generic_fns import pipes
+from generic_fns.grace import write_xy_data, write_xy_header
 from generic_fns.selection import spin_loop
 from physical_constants import dipolar_constant, g1H, g13C
 from prompt.interpreter import Interpreter
@@ -184,6 +185,24 @@ class Stereochem_analysis:
     def grace_plots(self):
         """Generate grace plots of the results."""
 
+        # The number of configs.
+        n = len(self.configs)
+
+        # The colours for the different configs.
+        defaults = [4, 2]    # Blue and red.
+        colours = []
+        for i in range(n):
+            # Default colours.
+            if i < len(defaults):
+                colours.append(defaults[i])
+
+            # Otherwise black!
+            else:
+                colours.append(0)
+
+        # Subtitle for all graphs.
+        subtitle = '%s ensembles of %s' % (self.num_ens, self.num_models)
+
         # NOE violations.
         if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
@@ -193,74 +212,38 @@ class Stereochem_analysis:
             grace_curve = open(self.results_dir+sep+"NOE_viol_curve.agr", 'w')
             grace_dist = open(self.results_dir+sep+"NOE_viol_dist.agr", 'w')
 
-            # S-curve header.
-            colours = [4, 2]    # Blue and red.
-            grace_curve.write("@version 50121\n")
-            grace_curve.write("@page size 842, 595\n")    # A4.
-            grace_curve.write("@with g0\n")
-            grace_curve.write("@    world 0, 0, %s, 200\n" % self.num_ens)
-            grace_curve.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_curve.write("@    title \"NOE violation comparison\"\n")
-            grace_curve.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_curve.write("@    xaxis  label \"Ensemble (sorted)\"\n")
-            grace_curve.write("@    yaxis  label \"NOE violation (Angstrom\S2\N)\"\n")
-            grace_curve.write("@    legend 0.3, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_curve.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_curve.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
-            # Distribution header.
-            colours = [4, 2]    # Blue and red.
-            grace_dist.write("@version 50121\n")
-            grace_dist.write("@page size 842, 595\n")    # A4.
-            grace_dist.write("@with g0\n")
-            grace_dist.write("@    world 0, 0, 200, 0.2\n")
-            grace_dist.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_dist.write("@    title \"NOE violation comparison\"\n")
-            grace_dist.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_dist.write("@    xaxis  label \"NOE violation (Angstrom\S2\N)\"\n")
-            grace_dist.write("@    yaxis  label \"Frequency\"\n")
-            grace_dist.write("@    legend 1.1, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_dist.write("@    s%s symbol 1\n" % i)
-                grace_dist.write("@    s%s symbol size 0.5\n" % i)
-                grace_dist.write("@    s%s symbol color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s line linestyle 3\n" % i)
-                grace_dist.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
             # Loop over the configurations.
-            for i in range(len(self.configs)):
-                # Header.
-                grace_curve.write("@target G0.S"+repr(i)+"\n@type xy\n")
-                grace_dist.write("@target G0.S"+repr(i)+"\n@type xy\n")
-
+            data = []
+            dist = []
+            for i in range(n):
                 # Open the results file and read the data.
                 file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i] + "_sorted")
                 lines = file.readlines()
                 file.close()
 
+                # Add a new graph set.
+                data.append([])
+
                 # Loop over the ensembles and extract the NOE violation.
                 noe_viols = []
-                for i in range(1, len(lines)):
+                for j in range(1, len(lines)):
                     # Extract the violation.
-                    viol = float(split(lines[i])[1])
+                    viol = float(split(lines[j])[1])
                     noe_viols.append(viol)
 
-                    # Write the data.
-                    grace_curve.write("%-8s%-30s\n" % (i, viol))
+                    # Add to the data structure.
+                    data[i].append([j, viol])
 
                 # Calculate the R distribution.
-                dist = self.generate_distribution(noe_viols, inc=self.bucket_num, upper=self.upper_lim_noe, lower=self.lower_lim_noe)
+                dist.append(self.generate_distribution(noe_viols, inc=self.bucket_num, upper=self.upper_lim_noe, lower=self.lower_lim_noe))
 
-                # Loop over the distribution bins.
-                for i in range(len(dist)):
-                    # Write the data.
-                    grace_dist.write("%s %s\n" % (dist[i][0], dist[i][1]))
+            # Headers.
+            write_xy_header(file=grace_curve, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', 'NOE violation (Angstrom\S2\N)'], axis_min=[0, 0], axis_max=[self.num_ens, 200], legend_pos=[0.3, 0.8])
+            write_xy_header(file=grace_dist, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['NOE violation (Angstrom\S2\N)', 'Frequency'], axis_min=[0, 0], axis_max=[200, 0.2], legend_pos=[1.1, 0.8])
 
-                # End of data.
-                grace_curve.write("&\n")
-                grace_dist.write("&\n")
+            # Write the data.
+            write_xy_data([data], file=grace_curve, graph_type='xy')
+            write_xy_data([dist], file=grace_dist, graph_type='xy')
 
             # Close the files.
             grace_curve.close()
@@ -275,79 +258,42 @@ class Stereochem_analysis:
             grace_curve = open(self.results_dir+sep+"RDC_%s_curve.agr" % self.rdc_name, 'w')
             grace_dist = open(self.results_dir+sep+"RDC_%s_dist.agr" % self.rdc_name, 'w')
 
-            # S-curve header.
-            colours = [4, 2]    # Blue and red.
-            grace_curve.write("@version 50121\n")
-            grace_curve.write("@page size 842, 595\n")    # A4.
-            grace_curve.write("@with g0\n")
-            grace_curve.write("@    world 0, 0, %s, 2\n" % self.num_ens)
-            grace_curve.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_curve.write("@    title \"%s RDC Q-factor comparison\"\n" % self.rdc_name)
-            grace_curve.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_curve.write("@    xaxis  label \"Ensemble (sorted)\"\n")
-            grace_curve.write("@    yaxis  label \"%s RDC Q-factor (pales format)\"\n" % self.rdc_name)
-            grace_curve.write("@    legend 0.3, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_curve.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_curve.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
-            # Distribution header.
-            colours = [4, 2]    # Blue and red.
-            grace_dist.write("@version 50121\n")
-            grace_dist.write("@page size 842, 595\n")    # A4.
-            grace_dist.write("@with g0\n")
-            grace_dist.write("@    world 0, 0, 2, 0.2\n")
-            grace_dist.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_dist.write("@    title \"%s RDC Q-factor comparison\"\n" % self.rdc_name)
-            grace_dist.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_dist.write("@    xaxis  label \"%s RDC Q-factor (pales format)\"\n" % self.rdc_name)
-            grace_dist.write("@    yaxis  label \"Frequency\"\n")
-            grace_dist.write("@    legend 1.1, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_dist.write("@    s%s symbol 1\n" % i)
-                grace_dist.write("@    s%s symbol size 0.5\n" % i)
-                grace_dist.write("@    s%s symbol color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s line linestyle 3\n" % i)
-                grace_dist.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
             # Loop over the configurations.
-            for i in range(len(self.configs)):
-                # Grace headers.
-                grace_curve.write("@target G0.S%s\n@type xy\n" % i)
-                grace_dist.write("@target G0.S%s\n@type xy\n" % i)
-
+            data = []
+            dist = []
+            for i in range(n):
                 # Open the results file and read the data.
                 file = open(self.results_dir+sep+"Q_factors_" + self.configs[i] + "_sorted")
                 lines = file.readlines()
                 file.close()
 
+                # Add a new graph set.
+                data.append([])
+
                 # Loop over the Q-factors.
                 values = []
-                for i in range(1, len(lines)):
+                for j in range(1, len(lines)):
                     # Extract the violation.
-                    value = float(split(lines[i])[1])
+                    value = float(split(lines[j])[1])
                     values.append(value)
 
-                    # Write the data.
-                    grace_curve.write("%-8s%-30s\n" % (i, value))
+                    # Add to the data structure.
+                    data[i].append([j, value])
 
                 # Calculate the R distribution.
-                dist = self.generate_distribution(values, inc=self.bucket_num, upper=self.upper_lim_rdc, lower=self.lower_lim_rdc)
+                dist.append(self.generate_distribution(values, inc=self.bucket_num, upper=self.upper_lim_rdc, lower=self.lower_lim_rdc))
 
-                # Loop over the distribution bins.
-                for i in range(len(dist)):
-                    # Write the data.
-                    grace_dist.write("%s %s\n" % (dist[i][0], dist[i][1]))
+            # Headers.
+            write_xy_header(file=grace_curve, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[self.num_ens, 2], legend_pos=[0.3, 0.8])
+            write_xy_header(file=grace_dist, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['%s RDC Q-factor (pales format)' % self.rdc_name, 'Frequency'], axis_min=[0, 0], axis_max=[2, 0.2], legend_pos=[1.1, 0.8])
 
-                # End of data.
-                grace_curve.write("&\n")
-                grace_dist.write("&\n")
+            # Write the data.
+            write_xy_data([data], file=grace_curve, graph_type='xy')
+            write_xy_data([dist], file=grace_dist, graph_type='xy')
 
             # Close the files.
             grace_curve.close()
             grace_dist.close()
-
 
         # NOE-RDC correlation plot.
         if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK) and access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
@@ -357,35 +303,16 @@ class Stereochem_analysis:
             # Open the Grace output files.
             grace_file = open(self.results_dir+sep+"correlation_plot.agr", 'w')
 
-            # Grace header.
-            colours = [4, 2]    # Blue and red.
-            grace_file.write("@version 50121\n")
-            grace_file.write("@page size 842, 595\n")    # A4.
-            grace_file.write("@with g0\n")
-            grace_file.write("@    world 0, 0, %s, %s\n" % (noe_viols[-1]+10, values[-1]+0.1))
-            grace_file.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_file.write("@    title \"Correlation plot - RDC vs. NOE\"\n")
-            grace_file.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_file.write("@    xaxis  label \"NOE violation (Angstrom\S2\N)\"\n")
-            grace_file.write("@    yaxis  label \"%s RDC Q-factors (pales format)\"\n" % self.rdc_name)
-            grace_file.write("@    legend 1.1, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_file.write("@    s%s symbol 9\n" % i)
-                grace_file.write("@    s%s symbol size 0.24\n" % i)
-                grace_file.write("@    s%s symbol color %s\n" % (i, colours[i]))
-                grace_file.write("@    s%s symbol linewidth 0.5\n" % i)
-                grace_file.write("@    s%s line type 0\n" % i)
-                grace_file.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
             # Grace data.
+            data = []
             for i in range(len(self.configs)):
-                # Grace header.
-                grace_file.write("@target G0.S%s\n@type xy\n" % i)
-
                 # Open the NOE results file and read the data.
                 file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i])
                 noe_lines = file.readlines()
                 file.close()
+
+                # Add a new graph set.
+                data.append([])
 
                 # Open the RDC results file and read the data.
                 file = open(self.results_dir+sep+"Q_factors_" + self.configs[i])
@@ -398,11 +325,12 @@ class Stereochem_analysis:
                     noe_viol = float(split(noe_lines[j])[1])
                     q_factor = float(split(rdc_lines[j])[1])
 
-                    # Write the xy pair.
-                    grace_file.write("%s %s\n" % (noe_viol, q_factor))
+                    # Add the xy pair.
+                    data[i].append([noe_viol, q_factor])
 
-                # End of data.
-                grace_file.write('&\n')
+            # Write the data.
+            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\S2\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
+            write_xy_data([data], file=grace_file, graph_type='xy')
 
 
     def noe_viol(self):
