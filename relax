@@ -105,7 +105,7 @@ class Relax:
         # Show the relax info and exit.
         if mode == 'info':
             info = Info_box()
-            info.print_sys_info()
+            print(info.sys_info())
             sys.exit()
 
         # Logging.
