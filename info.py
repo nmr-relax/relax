@@ -26,6 +26,7 @@
 # relax module imports.
 import dep_check
 import numpy
+from pkg_resources import Requirement, working_set
 import platform
 from textwrap import wrap
 from version import version
@@ -164,6 +165,50 @@ class Info_box:
         return intro_string
 
 
+    def package_info(self, format="    %-25s%s\n"):
+        """Return a string for printing to STDOUT with info from the Python packages used by relax.
+
+        @return:    The info string.
+        @rtype:     str
+        """
+
+        # Init.
+        text = ''
+
+        # Header.
+        text = text + ("\nPython packages (most of these are optional for relax):\n")
+
+        # Loop over all packages.
+        packages = ['minfx', 'bmrblib', 'numpy', 'Numeric', 'ScientificPython', 'wxPython', 'mpi4py', 'scons', 'epydoc']
+        for package in packages:
+            # Get the package info.
+            pkg_info = working_set.find(Requirement.parse(package))
+
+            # The package name.
+            text = text + (format % ("Name: ", pkg_info.project_name))
+
+            # Not installed.
+            if pkg_info == None:
+                text = text + (format % ("Installed: ", False))
+                text = text + "\n"
+                continue
+
+            # Installed
+            else:
+                text = text + (format % ("Installed: ", True))
+
+            # The text.
+            text = text + (format % ("Version: ", pkg_info.version))
+            text = text + (format % ("Location: ", pkg_info.location))
+            text = text + (format % ("Egg name: ", pkg_info.egg_name()))
+
+            # End.
+            text = text + "\n"
+
+        # Return the info string.
+        return text
+
+
     def sys_info(self):
         """Return a string for printing to STDOUT with info about the current relax instance.
 
@@ -208,6 +253,9 @@ class Info_box:
         text = text + (format % ("Numpy version: ", numpy.__version__))
         text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
         text = text + (format % ("Network name: ", platform.node()))
+
+        # Python packages.
+        text = text + self.package_info(format=format)
 
         # End with an empty newline.
         text = text + ("\n")
