@@ -538,6 +538,7 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, set_colo
 
         # Colours.
         if colours:
+            file.write("@    s%i symbol color %s\n" % (i, colours[i]))
             file.write("@    s%i line color %s\n" % (i, colours[i]))
 
         # Legend.
