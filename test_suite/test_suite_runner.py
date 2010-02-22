@@ -43,13 +43,13 @@ class Test_suite_runner:
         - Unit tests.
     """
 
-    def __init__(self, tests):
+    def __init__(self, tests=None):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @param tests:   The list of tests to preform.
+        @keyword tests: The list of tests to preform.
         @type tests:    list of str
         """
 

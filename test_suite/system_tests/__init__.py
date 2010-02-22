@@ -87,13 +87,13 @@ __all__ = ['align_tensor',
 class System_test_runner:
     """Class for executing all of the system/functional tests."""
 
-    def run(self, tests):
+    def run(self, tests=None):
         """Run the system/functional tests.
 
         The system test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
 
 
-        @param tests:   The list of system tests to preform.
+        @keyword tests: The list of system tests to preform.
         @type tests:    list of str
         """
 
