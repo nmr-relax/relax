@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, linestyle=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, linestyle=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -393,6 +393,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, sets=
     @type title:                    None or str
     @keyword subtitle:              The sub-title of the graph.
     @type subtitle:                 None or str
+    @keyword view:                  List of 4 coordinates defining the graph view port.
+    @type view:                     None or list of float
     @keyword sets:                  The number of data sets in the graph G0.
     @type sets:                     int
     @keyword set_names:             The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
@@ -444,6 +446,11 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, sets=
 
     # Graph G0.
     file.write("@with g0\n")
+
+    # The view port.
+    if not view:
+        view = [0.15, 0.15, 1.28, 0.85]
+    file.write("@    view %s, %s, %s, %s\n" % (view[0], view[1], view[2], view[3]))
 
     # The title and subtitle.
     if title:
