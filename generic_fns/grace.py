@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -409,6 +409,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
     @type symbol_fill:              None or list of int
     @keyword linestyle:             The line style for each graph data set G0.Sx.
     @type linestyle:                None or list of int
+    @keyword linetype:              The line type for each graph data set G0.Sx.
+    @type linetype:                 None or list of int
     @keyword linewidth:             The line width for all elements of each graph data set G0.Sx.
     @type linewidth:                None or float
     @keyword data_type:             The axis data category (in the [X, Y] list format).
@@ -586,6 +588,10 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         # Line linestyle (default to nothing).
         if linestyle:
             file.write("@    s%i line linestyle %s\n" % (i, linestyle[i]))
+
+        # Line linetype (default to nothing).
+        if linetype:
+            file.write("@    s%i line type %s\n" % (i, linetype[i]))
 
         # Line colours (default to nothing).
         if set_colours:
