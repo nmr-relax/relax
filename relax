@@ -40,7 +40,6 @@ import dep_check
 # Python modules.
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
-import platform
 if dep_check.profile_module:
     import profile
 import pstats
@@ -49,6 +48,7 @@ from string import split, strip
 import sys
 
 # relax modules.
+from info import Info_box
 import generic_fns
 from prompt.gpl import gpl
 from prompt import interpreter
@@ -77,9 +77,6 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Store the operating system name.
-        self.platform = platform.uname()[0]
-
         # Debugging flag (default is off).
         self.Debug = 0
 
@@ -103,6 +100,12 @@ class Relax:
         # Show the version number and exit.
         if mode == 'version':
             print(('relax ' + version))
+            sys.exit()
+
+        # Show the relax info and exit.
+        if mode == 'info':
+            info = Info_box()
+            info.print_sys_info()
             sys.exit()
 
         # Logging.
@@ -170,6 +173,7 @@ class Relax:
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
         parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
+        parser.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
 
         # Parse the options.
@@ -239,6 +243,10 @@ class Relax:
         # Show the version number.
         if options.version:
             mode = 'version'
+
+        # Show the info about this relax version.
+        elif options.info:
+            mode = 'info'
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:

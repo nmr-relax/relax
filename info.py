@@ -25,6 +25,8 @@
 
 # relax module imports.
 import dep_check
+import numpy
+import platform
 from version import version
 
 
@@ -111,6 +113,52 @@ class Info_box:
 
         # Return the new string.
         return string
+
+
+    def print_sys_info(self):
+        """Print some info about the current relax instance."""
+
+        # Formatting string.
+        format = "    %-25s%s"
+
+        # The relax version.
+        print("\nrelax information:")
+        print(format % ("relax version: ", version))
+
+        # Hardware info.
+        print("\nHardware information:")
+        print(format % ("Machine: ", platform.machine()))
+        print(format % ("Processor: ", platform.processor()))
+
+        # System info.
+        print("\nSystem information:")
+        print(format % ("System: ", platform.system()))
+        print(format % ("Release: ", platform.release()))
+        print(format % ("Version: ", platform.version()))
+        if platform.win32_ver()[0]:
+            print(format % ("Win32 version: ", (platform.win32_ver()[0] + " " + platform.win32_ver()[1] + " " + platform.win32_ver()[2] + " " + platform.win32_ver()[3])))
+        if platform.linux_distribution()[0]:
+            print(format % ("GNU/Linux version: ", (platform.linux_distribution()[0] + " " + platform.linux_distribution()[1] + " " + platform.linux_distribution()[2])))
+        if platform.mac_ver()[0]:
+            print(format % ("Mac version: ", (platform.mac_ver()[0] + " (" + platform.mac_ver()[1][0] + ", " + platform.mac_ver()[1][1] + ", " + platform.mac_ver()[1][2] + ") " + platform.mac_ver()[2])))
+        print(format % ("Distribution: ", (platform.dist()[0] + " " + platform.dist()[1] + " " + platform.dist()[2])))
+        print(format % ("Full platform string: ", (platform.platform())))
+
+        # Software info.
+        print("\nSoftware information:")
+        print(format % ("Architecture: ", (platform.architecture()[0] + " " + platform.architecture()[1])))
+        print(format % ("Python version: ", platform.python_version()))
+        print(format % ("Python branch: ", platform.python_branch()))
+        print((format+', %s') % ("Python build: ", platform.python_build()[0], platform.python_build()[1]))
+        print(format % ("Python compiler: ", platform.python_compiler()))
+        print(format % ("Python implementation: ", platform.python_implementation()))
+        print(format % ("Python revision: ", platform.python_revision()))
+        print(format % ("Numpy version: ", numpy.__version__))
+        print(format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
+        print(format % ("Network name: ", platform.node()))
+
+        # End with an empty newline.
+        print("")
 
 
 
