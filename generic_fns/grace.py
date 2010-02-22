@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], seq_type=[None, None], axis_labels=[None, None], axis_min=[None, None], axis_max=[None, None], norm=False):
+def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_type=[None, None], seq_type=[None, None], axis_labels=[None, None], axis_min=[None, None], axis_max=[None, None], norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -387,6 +387,8 @@ def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], s
 
     @keyword file:                  The file object to write the data to.
     @type file:                     file object
+    @keyword paper_size:            The paper size, i.e. 'A4'.  If set to None, this will default to letter size.
+    @type paper_size:               str
     @keyword sets:                  The number of data sets in the graph G0.
     @type sets:                     int
     @keyword set_names:             The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
@@ -404,6 +406,10 @@ def write_xy_header(file=None, sets=1, set_names=None, data_type=[None, None], s
     @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
     @type norm:                     bool
     """
+
+    # The paper size.
+    if paper_size == 'A4':
+        file.write("@page size 842, 595\n")
 
     # Graph G0.
     file.write("@with g0\n")
