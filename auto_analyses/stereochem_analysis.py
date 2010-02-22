@@ -67,7 +67,65 @@ class Stereochem_analysis:
     """Class for performing the relative stereochemistry analysis."""
 
     def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, noe_norm=None, rdc_name=None, rdc_file=None, rdc_spin_id_col=None, rdc_mol_name_col=None, rdc_res_num_col=None, rdc_res_name_col=None, rdc_spin_num_col=None, rdc_spin_name_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
-        """Set up the analysis."""
+        """Set up for the stereochemistry analysis.
+
+        @keyword stage:             Stage of analysis (see the module docstring above for the options).  
+        @type stage:                int
+        @keyword results_dir:       The optional directory to place all results files into.
+        @type results_dir:          None or str
+        @keyword num_ens:           Number of ensembles.
+        @type num_ens:              int
+        @keyword num_models:        Ensemble size.
+        @type num_models:           int
+        @keyword configs:           All the configurations.
+        @type configs:              list of str
+        @keyword snapshot_dir:      Snapshot directories (corresponding to the configurations).
+        @type snapshot_dir:         list of str
+        @keyword snapshot_min:      The number of the first snapshots (corresponding to the configurations).
+        @type snapshot_min:         list of int
+        @keyword snapshot_max:      The number of the last snapshots (corresponding to the configurations).
+        @type snapshot_max:         list of int
+        @keyword pseudo:            The list of pseudo-atoms.  Each element is a list of the pseudo-atom name and a list of all those atoms forming the pseudo-atom.  For example, pseudo = [["Q7", ["@H16", "@H17", "@H18"]], ["Q9", ["@H20", "@H21", "@H22"]]].
+        @type pseudo:               list of list of str and list of str
+        @keyword noe_file:          The name of the NOE restraint file.
+        @type noe_file:             str
+        @keyword noe_norm:          The NOE normalisation factor (equal to the sum of all NOEs squared).
+        @type noe_norm:             float
+        @keyword rdc_name:          The label for this RDC data set.
+        @type rdc_name:             str
+        @keyword rdc_file:          The name of the RDC file.
+        @type rdc_file:             str
+        @keyword rdc_spin_id_col:   The spin ID column of the RDC file.
+        @type rdc_spin_id_col:      None or int
+        @keyword rdc_mol_name_col:  The molecule name column of the RDC file.
+        @type rdc_mol_name_col:     None or int
+        @keyword rdc_res_num_col:   The residue number column of the RDC file.
+        @type rdc_res_num_col:      None or int
+        @keyword rdc_res_name_col:  The residue name column of the RDC file.
+        @type rdc_res_name_col:     None or int
+        @keyword rdc_spin_num_col:  The spin number column of the RDC file.
+        @type rdc_spin_num_col:     None or int
+        @keyword rdc_spin_name_col: The spin name column of the RDC file.
+        @type rdc_spin_name_col:    None or int
+        @keyword rdc_data_col:      The data column of the RDC file.
+        @type rdc_data_col:         int
+        @keyword rdc_error_col:     The error column of the RDC file.
+        @type rdc_error_col:        int
+        @keyword bond_length:       The bond length value in meters.
+        @type bond_length:          float
+        @keyword log:               Log file output flag (only for certain stages).
+        @type log:                  bool
+        @keyword bucket_num:        Number of buckets for the distribution plots.
+        @type bucket_num:           int
+        @keyword lower_lim_noe:     Distribution plot limits.
+        @type lower_lim_noe:        int
+        @keyword upper_lim_noe:     Distribution plot limits.
+        @type upper_lim_noe:        int
+        @keyword lower_lim_rdc:     Distribution plot limits.
+        @type lower_lim_rdc:        int
+        @keyword upper_lim_rdc:     Distribution plot limits.
+        @type upper_lim_rdc:        int
+        """
 
         # Store all the args.
         self.stage = stage
