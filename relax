@@ -126,7 +126,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner()
+            runner = Test_suite_runner(self.tests)
             runner.run_all_tests()
 
         # Execute the relax system tests.
@@ -136,13 +136,13 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner()
+            runner = Test_suite_runner(self.tests)
             runner.run_system_tests()
 
         # Execute the relax unit tests.
         elif mode == 'unit tests':
             # Run the tests.
-            runner = Test_suite_runner()
+            runner = Test_suite_runner(self.tests)
             runner.run_unit_tests()
 
         # Test mode.
@@ -213,18 +213,24 @@ class Relax:
         else:
             tee_file = None
 
-        # Number of positional arguements should only be 0 or 1.  1 should be the script file.
-        if len(args) > 1:
-            parser.error("incorrect number of arguments")
+        # Test suite mode, therefore the args are the tests to run and not a script file.
+        if options.test_suite or options.system_tests or options.unit_tests:
+            self.tests = args
 
-        # Script file.
-        self.script_file = None
-        if len(args) == 1:
-            self.script_file = args[0]
+        # The argument is a script.
+        else:
+            # Number of positional arguments should only be 0 or 1.  1 should be the script file.
+            if len(args) > 1:
+                parser.error("incorrect number of arguments")
 
-            # Test if the script file exists.
-            if not access(self.script_file, F_OK):
-                parser.error("the script file " + repr(self.script_file) + " does not exist")
+            # Script file.
+            self.script_file = None
+            if len(args) == 1:
+                self.script_file = args[0]
+
+                # Test if the script file exists.
+                if not access(self.script_file, F_OK):
+                    parser.error("the script file " + repr(self.script_file) + " does not exist")
 
 
         # Determine the relax mode and test for mutually exclusive modes.
@@ -236,10 +242,6 @@ class Relax:
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
-            # Make sure no script is supplied.
-            if self.script_file:
-                parser.error("a script should not be supplied when executing the test suite")
-
             # Exclusive modes.
             if options.test:
                 parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
@@ -253,7 +255,6 @@ class Relax:
                 mode = 'system tests'
             elif options.unit_tests:
                 mode = 'unit tests'
-
 
         # Test mode.
         elif options.test:
