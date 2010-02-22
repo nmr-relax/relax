@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -409,6 +409,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
     @type symbol_fill:              None or list of int
     @keyword linestyle:             The line style for each graph data set G0.Sx.
     @type linestyle:                None or list of int
+    @keyword linewidth:             The line width for all elements of each graph data set G0.Sx.
+    @type linewidth:                None or float
     @keyword data_type:             The axis data category (in the [X, Y] list format).
     @type data_type:                None or list of str
     @keyword seq_type:              The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
@@ -537,8 +539,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_labels[i]))
         file.write("@    %saxis  label char size 1.48\n" % axes[i])
         file.write("@    %saxis  tick major size 0.75\n" % axes[i])
-        file.write("@    %saxis  tick major linewidth 0.5\n" % axes[i])
-        file.write("@    %saxis  tick minor linewidth 0.5\n" % axes[i])
+        file.write("@    %saxis  tick major linewidth %s\n" % (axes[i], linewidth))
+        file.write("@    %saxis  tick minor linewidth %s\n" % (axes[i], linewidth))
         file.write("@    %saxis  tick minor size 0.45\n" % axes[i])
         file.write("@    %saxis  ticklabel char size 1.00\n" % axes[i])
 
@@ -549,7 +551,7 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         file.write("@    legend off\n")
 
     # Frame.
-    file.write("@    frame linewidth 0.5\n")
+    file.write("@    frame linewidth %s\n" % linewidth)
 
     # Loop over each graph set.
     for i in range(sets):
@@ -570,7 +572,7 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             file.write("@    s%i symbol fill pattern %i\n" % (i, symbol_fill[i]))
 
         # The symbol line width.
-        file.write("@    s%i symbol linewidth 0.5\n" % i)
+        file.write("@    s%i symbol linewidth %s\n" % (i, linewidth))
 
         # Symbol colour (default to nothing).
         if set_colours:
@@ -578,8 +580,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
 
         # Error bars.
         file.write("@    s%i errorbar size 0.5\n" % i)
-        file.write("@    s%i errorbar linewidth 0.5\n" % i)
-        file.write("@    s%i errorbar riser linewidth 0.5\n" % i)
+        file.write("@    s%i errorbar linewidth %s\n" % (i, linewidth))
+        file.write("@    s%i errorbar riser linewidth %s\n" % (i, linewidth))
 
         # Line linestyle (default to nothing).
         if linestyle:
