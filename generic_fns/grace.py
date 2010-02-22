@@ -517,9 +517,9 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, sets=
                     axis_labels[i] = axis_labels[i] + " \\N\\q(normalised)\\Q"
 
         # Write out the data.
-        if axis_min[i]:
+        if axis_min[i] != None:
             file.write("@    world %smin %s\n" % (axes[i], axis_min[i]))
-        if axis_max[i]:
+        if axis_max[i] != None:
             file.write("@    world %smax %s\n" % (axes[i], axis_max[i]))
         if axis_labels[i]:
             file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_labels[i]))
