@@ -200,8 +200,34 @@ class Stereochem_analysis:
             else:
                 colours.append(0)
 
+        # The ensemble number text.
+        ens_text = ''
+        dividers = [1e15, 1e12, 1e9, 1e6, 1e3, 1]
+        num_ens = self.num_ens
+        for i in range(len(dividers)):
+            # The number.
+            num = int(num_ens / dividers[i])
+
+            # The text.
+            if num:
+                text = repr(num)
+            elif not num and ens_text:
+                text = '000'
+            else:
+                continue
+
+            # Update the text.
+            ens_text = ens_text + text
+
+            # A comma.
+            if i < len(dividers)-1:
+                ens_text = ens_text + ','
+
+            # Remove the front part of the number.
+            num_ens = num_ens - dividers[i]*num
+
         # Subtitle for all graphs.
-        subtitle = '%s ensembles of %s' % (self.num_ens, self.num_models)
+        subtitle = '%s ensembles of %s' % (ens_text, self.num_models)
 
         # NOE violations.
         if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK):
