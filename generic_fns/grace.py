@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_type=[None, None], seq_type=[None, None], axis_labels=[None, None], axis_min=[None, None], axis_max=[None, None], norm=False):
+def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -394,18 +394,30 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_typ
     @keyword set_names:             The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
     @type set_names:                list of str
     @keyword data_type:             The axis data category (in the [X, Y] list format).
-    @type data_type:                list of str
+    @type data_type:                None or list of str
     @keyword seq_type:              The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
-    @type seq_type:                 list of str
+    @type seq_type:                 None or list of str
     @keyword axis_labels:           The labels for the axes (in the [X, Y] list format).
-    @type axis_labels:              list of str
+    @type axis_labels:              None or list of str
     @keyword axis_min:              The minimum values for specifying the graph ranges (in the [X, Y] list format).
-    @type axis_min:                 list of str
+    @type axis_min:                 None or list of str
     @keyword axis_max:              The maximum values for specifying the graph ranges (in the [X, Y] list format).
-    @type axis_max:                 list of str
+    @type axis_max:                 None or list of str
     @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
     @type norm:                     bool
     """
+
+    # Set the None args to lists as needed.
+    if not data_type:
+        data_type = [None, None]
+    if not seq_type:
+        seq_type = [None, None]
+    if not axis_labels:
+        axis_labels = [None, None]
+    if not axis_min:
+        axis_min = [None, None]
+    if not axis_max:
+        axis_max = [None, None]
 
     # The paper size.
     if paper_size == 'A4':
@@ -518,15 +530,3 @@ def write_xy_header(file=None, paper_size='A4', sets=1, set_names=None, data_typ
         # Legend.
         if set_names:
             file.write("@    s%i legend \"Spin %s\"\n" % (i, set_names[i]))
-
-    # Reset all args.
-    data_type[0] = None
-    data_type[1] = None
-    seq_type[0] = None
-    seq_type[1] = None
-    axis_labels[0] = None
-    axis_labels[1] = None
-    axis_min[0] = None
-    axis_min[1] = None
-    axis_max[0] = None
-    axis_max[1] = None
