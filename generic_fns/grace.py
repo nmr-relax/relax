@@ -435,6 +435,9 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, sets=
     if not axis_max:
         axis_max = [None, None]
 
+    # Set the Grace version number of the header's formatting for compatibility.
+    file.write("@version 50121\n")
+
     # The paper size.
     if paper_size == 'A4':
         file.write("@page size 842, 595\n")
