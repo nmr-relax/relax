@@ -46,7 +46,7 @@ This script is split into multiple stages:
 """
 
 # Python module imports.
-from math import pi
+from math import pi, sqrt
 from os import F_OK, access, getcwd, popen3, sep
 from random import randint
 from re import search
@@ -321,16 +321,18 @@ class Stereochem_analysis:
             grace_curve.close()
             grace_dist.close()
 
-        # NOE-RDC correlation plot.
+        # NOE-RDC correlation plots.
         if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK) and access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
             print("Generating NOE-RDC correlation Grace plots.")
 
             # Open the Grace output files.
             grace_file = open(self.results_dir+sep+"correlation_plot.agr", 'w')
+            grace_file_scaled = open(self.results_dir+sep+"correlation_plot_scaled.agr", 'w')
 
             # Grace data.
             data = []
+            data_scaled = []
             for i in range(len(self.configs)):
                 # Open the NOE results file and read the data.
                 file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i])
@@ -339,6 +341,7 @@ class Stereochem_analysis:
 
                 # Add a new graph set.
                 data.append([])
+                data_scaled.append([])
 
                 # Open the RDC results file and read the data.
                 file = open(self.results_dir+sep+"Q_factors_" + self.configs[i])
@@ -353,10 +356,13 @@ class Stereochem_analysis:
 
                     # Add the xy pair.
                     data[i].append([noe_viol, q_factor])
+                    data_scaled[i].append([sqrt(noe_viol/self.noe_norm), q_factor])
 
             # Write the data.
             write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\S2\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['Normalised NOE violation (Q\S2\N = U/\QS\NNOE\si\N\S2\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
             write_xy_data([data], file=grace_file, graph_type='xy')
+            write_xy_data([data_scaled], file=grace_file_scaled, graph_type='xy')
 
 
     def noe_viol(self):
