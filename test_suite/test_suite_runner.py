@@ -77,8 +77,8 @@ class Test_suite_runner:
         heading('System / functional tests')
 
         # Run the tests.
-        system_runner = System_test_runner(self.tests)
-        self.system_result = system_runner.run()
+        system_runner = System_test_runner()
+        self.system_result = system_runner.run(self.tests)
 
 
     def run_unit_tests(self):
