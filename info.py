@@ -27,6 +27,7 @@
 import dep_check
 import numpy
 import platform
+from textwrap import wrap
 from version import version
 
 
@@ -113,6 +114,54 @@ class Info_box:
 
         # Return the new string.
         return string
+
+
+    def intro_text(self):
+        """Create the introductory string for STDOUT printing.
+
+        This text is word-wrapped to a fixed width of 100 characters (or 80 on MS Windows).
+
+
+        @return:    The introductory string.
+        @rtype:     str
+        """
+
+        # The width of the printout.
+        if platform.uname()[0] in ['Windows', 'Microsoft']:
+            width = 80
+        else:
+            width = 100
+
+        # Some new lines.
+        intro_string = '\n\n\n'
+
+        # Program name and version.
+        intro_string = intro_string + self.centre(self.title + ' ' + self.version, width) + '\n\n'
+
+        # Program description.
+        intro_string = intro_string + self.centre(self.desc, width) + '\n\n'
+
+        # Copyright printout.
+        for i in range(len(self.copyright)):
+            intro_string = intro_string + self.centre(self.copyright[i], width) + '\n'
+        intro_string = intro_string + '\n'
+
+        # Program licence and help (wrapped).
+        for line in wrap(self.licence, width):
+            intro_string = intro_string + line + '\n'
+        intro_string = intro_string + '\n'
+ 
+        # Help message.
+        help = "Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within the prompt."
+        for line in wrap(help, width):
+            intro_string = intro_string + line + '\n'
+
+        # ImportErrors, if any.
+        for i in range(len(self.errors)):
+            intro_string = intro_string + '\n' + self.errors[i] + '\n'
+
+        # Return the formatted text.
+        return intro_string
 
 
     def print_sys_info(self):
