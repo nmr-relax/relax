@@ -379,7 +379,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, linestyle=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -405,6 +405,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
     @type symbols:                  None or list of int
     @keyword symbol_sizes:          The symbol size for each graph data set G0.Sx.
     @type symbol_sizes:             None or list of int
+    @keyword symbol_fill:           The symbol file style for each graph data set G0.Sx.
+    @type symbol_fill:              None or list of int
     @keyword linestyle:             The line style for each graph data set G0.Sx.
     @type linestyle:                None or list of int
     @keyword data_type:             The axis data category (in the [X, Y] list format).
@@ -564,7 +566,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             file.write("@    s%i symbol size 0.45\n" % i)
 
         # The symbol fill.
-        file.write("@    s%i symbol fill pattern 1\n" % i)
+        if symbol_fill:
+            file.write("@    s%i symbol fill pattern %i\n" % (i, symbol_fill[i]))
 
         # The symbol line width.
         file.write("@    s%i symbol linewidth 0.5\n" % i)
