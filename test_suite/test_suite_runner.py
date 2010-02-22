@@ -43,6 +43,20 @@ class Test_suite_runner:
         - Unit tests.
     """
 
+    def __init__(self, tests):
+        """Store the list of tests to preform.
+
+        The test list should be something like ['
+
+
+        @param tests:   The list of tests to preform.
+        @type tests:    list of str
+        """
+
+        # Store the args.
+        self.tests = tests
+
+
     def run_all_tests(self):
         """Execute all of the test suite test types."""
 
