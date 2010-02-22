@@ -31,7 +31,7 @@ from re import match
 # relax module imports.
 from maths_fns.mf import Mf
 from minfx.generic import generic_minimise
-from minfx.grid import grid
+from minfx.grid import grid, grid_point_array
 from multi.processor import Capturing_exception, Memo, Result_command, Result_string, Slave_command
 
 
@@ -184,8 +184,13 @@ class MF_grid_command(MF_minimise_command):
         @rtype:     tuple of numpy array, float, int, int, int, int, str
         """
 
-        # Grid search.
-        results = grid(func=self.mf.func, args=(), num_incs=self.opt_params.inc, lower=self.opt_params.lower, upper=self.opt_params.upper, A=self.opt_params.A, b=self.opt_params.b, verbosity=self.opt_params.verbosity)
+        # Normal grid search.
+        if not hasattr(self.opt_params, 'subdivision'):
+            results = grid(func=self.mf.func, args=(), num_incs=self.opt_params.inc, lower=self.opt_params.lower, upper=self.opt_params.upper, A=self.opt_params.A, b=self.opt_params.b, verbosity=self.opt_params.verbosity)
+
+        # Subdivided grid.
+        else:
+            results = grid_point_array(func=self.mf.func, args=(), points=self.opt_params.subdivision, verbosity=self.opt_params.verbosity)
 
         # Unpack the results.
         param_vector, func, iter, warning = results
