@@ -66,7 +66,7 @@ from relax_io import mkdir_nofail
 class Stereochem_analysis:
     """Class for performing the relative stereochemistry analysis."""
 
-    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, rdc_name=None, rdc_file=None, rdc_spin_id_col=None, rdc_mol_name_col=None, rdc_res_num_col=None, rdc_res_name_col=None, rdc_spin_num_col=None, rdc_spin_name_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
+    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, noe_norm=None, rdc_name=None, rdc_file=None, rdc_spin_id_col=None, rdc_mol_name_col=None, rdc_res_num_col=None, rdc_res_name_col=None, rdc_spin_num_col=None, rdc_spin_name_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
         """Set up the analysis."""
 
         # Store all the args.
@@ -80,6 +80,7 @@ class Stereochem_analysis:
         self.snapshot_max=snapshot_max
         self.pseudo=pseudo
         self.noe_file=noe_file
+        self.noe_norm=noe_norm
         self.rdc_name=rdc_name
         self.rdc_file=rdc_file
         self.rdc_spin_id_col=rdc_spin_id_col
