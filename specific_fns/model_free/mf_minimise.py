@@ -337,6 +337,25 @@ class Mf_minimise:
         if scaling:
             param_vector = dot(scaling_matrix, param_vector)
 
+        # Check if the chi-squared value is lower.  This allows for a parallelised grid search!
+        if sim_index == None:
+            # Get the correct value.
+            if model_type == 'mf' or model_type == 'local_tm':
+                chi2 = spin.chi2
+            elif model_type == 'diff' or model_type == 'all':
+                chi2 = cdp.chi2
+
+            # No improvement.
+            if chi2 != None and func >= chi2:
+                print("Discarding the optimisation results, the optimised chi-squared value is higher than the current value (%s >= %s)." % (func, chi2))
+
+                # Exit!
+                return
+
+            # New minimum.
+            else:
+                print("Storing the optimisation results, the optimised chi-squared value is lower than the current value (%s < %s)." % (func, chi2))
+
         # Disassemble the parameter vector.
         self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
 
