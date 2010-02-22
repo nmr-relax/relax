@@ -172,14 +172,10 @@ class Info_box:
         """
 
         # Init.
-        text = ''
+        text = self.intro_text()
 
         # Formatting string.
         format = "    %-25s%s\n"
-
-        # The relax version.
-        text = text + ("\nrelax information:\n")
-        text = text + (format % ("relax version: ", version))
 
         # Hardware info.
         text = text + ("\nHardware information:\n")
