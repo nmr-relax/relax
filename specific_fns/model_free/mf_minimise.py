@@ -23,6 +23,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
+from minfx.grid import grid_split
 from numpy import float64, array, dot, zeros
 from numpy.linalg import inv
 from re import match, search
@@ -33,7 +34,6 @@ from warnings import warn
 from float import isNaN, isInf
 from generic_fns import diffusion_tensor, pipes
 from generic_fns.diffusion_tensor import diff_data_exists
-from generic_fns.subdivide_grid import Grid_info
 from generic_fns.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin_from_index, spin_loop
 from maths_fns.mf import Mf
 from multi.processor import Processor_box
@@ -1590,12 +1590,11 @@ class Mf_minimise:
                 # Print out.
                 print("Parallelised diffusion tensor grid search.")
 
-                # Split up the grid into chunks for each processor.
-                full_grid_info = Grid_info(lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc, n=num_params)
-                sub_grid_list = full_grid_info.sub_divide(processor.processor_size())
+                # Loop over each grid subdivision.
+                for subdivision in grid_split(divisions=processor.processor_size(), lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc):
+                    # Set the points.
+                    opt_params.subdivision = subdivision
 
-                # Loop over each grid sub-division.
-                for sub_grid_index, sub_grid_info in enumerate(sub_grid_list):
                     # Grid search initialisation.
                     command = MF_grid_command()
 
