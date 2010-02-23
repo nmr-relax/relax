@@ -35,6 +35,9 @@ from version import version
 class Info_box:
     """A container storing information about relax."""
 
+    # Class variable for storing the class instance.
+    instance = None
+
     def __init__(self):
         """Create the program introduction text stings.
 
@@ -75,6 +78,17 @@ class Info_box:
 
         # References.
         self._setup_references()
+
+
+    def __new__(self, *args, **kargs):
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            self.instance = dict.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
 
 
     def _setup_references(self):
