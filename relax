@@ -374,6 +374,10 @@ if __name__ == "__main__":
     callbacks = Application_callback(master=relax)
     processor = Processor.load_multiprocessor(relax.multiprocessor_type, callbacks, processor_size=relax.n_processors)
 
+    # Place the processor fabric intro string into the info box.
+    info = Info_box()
+    info.multi_processor_string = processor.get_intro_string()
+
     # Normal relax operation.
     if not profile_flag:
         # Execute relax in multi-processor mode (this includes the uni-processor for normal operation).
