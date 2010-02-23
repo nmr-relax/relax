@@ -107,6 +107,13 @@ except ImportError, message:
 
 # Scientific Python import.
 try:
+    import Scientific
+    scientific_module = True
+except ImportError:
+    scientific_module = False
+
+# Scientific Python PDB module import.
+try:
     from Scientific.IO import PDB
     del PDB
     scientific_pdb_module = True
