@@ -42,6 +42,17 @@ This script is split into multiple stages:
     4.  The RDC Q-factor analysis.
 
     5.  Generation of Grace graphs.
+
+    6.  Final ordering of ensembles using the combined RDC and NOE Q-factors, whereby the NOE
+    Q-factor is defined as::
+
+        Q^2 = U / sum(NOE_i^2),
+
+    where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2. The
+    denominator is the sum of all squared NOEs - this must be given as the value of NOE_NORM.  The
+    combined Q is given by::
+
+        Q_total^2 = Q_NOE^2 + Q_RDC^2.
 """
 
 # relax module imports.
