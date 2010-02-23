@@ -185,7 +185,7 @@ class Info_box:
             pkg_info = working_set.find(Requirement.parse(package))
 
             # The package name.
-            text = text + (format % ("Name: ", pkg_info.project_name))
+            text = text + (format % ("Name: ", package))
 
             # Not installed.
             if pkg_info == None:
