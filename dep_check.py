@@ -38,7 +38,6 @@ import sys
 # numpy.
 try:
     import numpy
-    del numpy
 except ImportError:
     sys.stderr.write("The dependency 'numpy' has not been installed.\n")
     sys.exit()
@@ -46,7 +45,6 @@ except ImportError:
 # Command line option parser.
 try:
     import optparse
-    del optparse
 except ImportError:
     sys.stderr.write("The dependency 'Optik' has not been installed.\n")
     sys.exit()
@@ -54,7 +52,6 @@ except ImportError:
 # Minfx python package check.
 try:
     import minfx
-    del minfx
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
@@ -62,18 +59,30 @@ except ImportError:
 # Optional packages.
 ####################
 
-# wx package for the Bieri gui.
+# Bmrblib python package check.
+try:
+    import bmrblib
+    bmrblib_module = True
+except ImportError:
+    bmrblib_module = False
+
+# wx module.
 try:
     import wx
-    del wx
     wx_module = True
 except ImportError:
     wx_module = False
 
+# epydoc module.
+try:
+    import epydoc
+    epydoc_module = True
+except ImportError:
+    epydoc_module = False
+
 # Readline module.
 try:
     import readline
-    del readline
     readline_module = True
 except ImportError:
     readline_module = False
@@ -81,7 +90,6 @@ except ImportError:
 # profile module (python development packages required).
 try:
     import profile
-    del profile
     profile_module = True
 except ImportError:
     profile_module = False
@@ -89,7 +97,6 @@ except ImportError:
 # BZ2 compression module.
 try:
     import bz2
-    del bz2
     bz2_module = True
 except ImportError, message:
     bz2_module = False
@@ -98,7 +105,6 @@ except ImportError, message:
 # Gzip compression module.
 try:
     import gzip
-    del gzip
     gzip_module = True
 except ImportError, message:
     gzip_module = False
@@ -106,6 +112,7 @@ except ImportError, message:
 
 # Devnull.
 try:
+    import os
     from os import devnull
     del devnull
     devnull_import = True
@@ -115,11 +122,25 @@ except ImportError, message:
 
 # Scientific Python import.
 try:
+    import Scientific
+    scientific_module = True
+except ImportError:
+    scientific_module = False
+
+# Scientific Python PDB module import.
+try:
     from Scientific.IO import PDB
     del PDB
     scientific_pdb_module = True
 except ImportError:
     scientific_pdb_module = False
+
+# Numeric python package check.
+try:
+    import Numeric
+    numeric_module = True
+except ImportError:
+    numeric_module = False
 
 # VMD module imports.
 try:
@@ -128,6 +149,13 @@ try:
     vmd_module = True
 except ImportError:
     vmd_module = False
+
+# mpi4py.
+try:
+    import mpi4py
+    mpi4py_module = True
+except ImportError, message:
+    mpi4py_module = False
 
 
 # Compiled C modules.

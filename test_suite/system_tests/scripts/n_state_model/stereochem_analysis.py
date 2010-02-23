@@ -87,8 +87,9 @@ PSEUDO = [
 ["Q10", ["@H23", "@H24", "@H25"]]
 ]
 
-# NOE file.
+# NOE info.
 NOE_FILE = path_noe + "phthalic_acid"
+NOE_NORM = 50 * 4**2
 
 # RDC file info.
 RDC_NAME = "PAN"
@@ -129,6 +130,7 @@ analysis = Stereochem_analysis(
     snapshot_max=SNAPSHOT_MAX,
     pseudo=PSEUDO,
     noe_file=NOE_FILE,
+    noe_norm=NOE_NORM,
     rdc_name=RDC_NAME,
     rdc_file=RDC_FILE,
     rdc_spin_id_col=RDC_SPIN_ID_COL,

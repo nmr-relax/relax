@@ -43,6 +43,20 @@ class Test_suite_runner:
         - Unit tests.
     """
 
+    def __init__(self, tests=None):
+        """Store the list of tests to preform.
+
+        The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
+
+
+        @keyword tests: The list of tests to preform.
+        @type tests:    list of str
+        """
+
+        # Store the args.
+        self.tests = tests
+
+
     def run_all_tests(self):
         """Execute all of the test suite test types."""
 
@@ -64,7 +78,7 @@ class Test_suite_runner:
 
         # Run the tests.
         system_runner = System_test_runner()
-        self.system_result = system_runner.run()
+        self.system_result = system_runner.run(self.tests)
 
 
     def run_unit_tests(self):

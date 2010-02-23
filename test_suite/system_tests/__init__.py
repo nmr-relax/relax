@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006, 2008-2009 Edward d'Auvergne                             #
+# Copyright (C) 2006, 2008-2010 Edward d'Auvergne                             #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,8 +23,9 @@
 # Package docstring.
 """The relax system/functional tests."""
 
-
 # Python module imports.
+from relax_errors import RelaxError
+from string import split
 from unittest import TestLoader, TestSuite
 
 # relax module imports.
@@ -86,35 +87,63 @@ __all__ = ['align_tensor',
 class System_test_runner:
     """Class for executing all of the system/functional tests."""
 
-    def run(self):
-        """Run all of the system/functional tests."""
+    def run(self, tests=None):
+        """Run the system/functional tests.
+
+        The system test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
+
+
+        @keyword tests: The list of system tests to preform.
+        @type tests:    list of str
+        """
 
         # Create an array of test suites (add your new TestCase classes here).
         suite_array = []
-        suite_array.append(TestLoader().loadTestsFromTestCase(Align_tensor))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
-        suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Results))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
-        suite_array.append(TestLoader().loadTestsFromTestCase(State))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
-        suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
+
+        # Specific tests.
+        for test in tests:
+            # Split.
+            row = split(test, '.')
+
+            # Check.
+            if len(row) != 2:
+                raise RelaxError("The test '%s' is not in the correct format.  It should consist of the test case class, a dot, and the specific test." % test)
+
+            # Unpack.
+            class_name, test_name = row
+
+            # Get the class object.
+            obj = globals()[class_name]
+
+            # Add the test.
+            suite_array.append(TestLoader().loadTestsFromNames([test_name], obj))
+
+        # All tests.
+        if not tests:
+            suite_array.append(TestLoader().loadTestsFromTestCase(Align_tensor))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Generic))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Jw))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Load_spins))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Modelim))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
+            suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Peak_lists))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Relax_fit))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Results))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
+            suite_array.append(TestLoader().loadTestsFromTestCase(State))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)

@@ -40,7 +40,6 @@ import dep_check
 # Python modules.
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
-import platform
 if dep_check.profile_module:
     import profile
 import pstats
@@ -49,6 +48,7 @@ from string import split, strip
 import sys
 
 # relax modules.
+from info import Info_box
 import generic_fns
 if dep_check.wx_module:
     import gui_bieri
@@ -79,9 +79,6 @@ class Relax:
         # Get and store the PID of this process.
         self.pid = getpid()
 
-        # Store the operating system name.
-        self.platform = platform.uname()[0]
-
         # Debugging flag (default is off).
         self.Debug = 0
 
@@ -105,6 +102,12 @@ class Relax:
         # Show the version number and exit.
         if mode == 'version':
             print(('relax ' + version))
+            sys.exit()
+
+        # Show the relax info and exit.
+        if mode == 'info':
+            info = Info_box()
+            print(info.sys_info())
             sys.exit()
 
         # Logging.
@@ -139,7 +142,7 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner()
+            runner = Test_suite_runner(self.tests)
             runner.run_all_tests()
 
         # Execute the relax system tests.
@@ -149,13 +152,13 @@ class Relax:
             self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner()
+            runner = Test_suite_runner(self.tests)
             runner.run_system_tests()
 
         # Execute the relax unit tests.
         elif mode == 'unit tests':
             # Run the tests.
-            runner = Test_suite_runner()
+            runner = Test_suite_runner(self.tests)
             runner.run_unit_tests()
 
         # Test mode.
@@ -189,6 +192,7 @@ class Relax:
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
         parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
+        parser.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
 
         # Parse the options.
@@ -232,18 +236,24 @@ class Relax:
         else:
             tee_file = None
 
-        # Number of positional arguements should only be 0 or 1.  1 should be the script file.
-        if len(args) > 1:
-            parser.error("incorrect number of arguments")
+        # Test suite mode, therefore the args are the tests to run and not a script file.
+        if options.test_suite or options.system_tests or options.unit_tests:
+            self.tests = args
 
-        # Script file.
-        self.script_file = None
-        if len(args) == 1:
-            self.script_file = args[0]
+        # The argument is a script.
+        else:
+            # Number of positional arguments should only be 0 or 1.  1 should be the script file.
+            if len(args) > 1:
+                parser.error("incorrect number of arguments")
 
-            # Test if the script file exists.
-            if not access(self.script_file, F_OK):
-                parser.error("the script file " + repr(self.script_file) + " does not exist")
+            # Script file.
+            self.script_file = None
+            if len(args) == 1:
+                self.script_file = args[0]
+
+                # Test if the script file exists.
+                if not access(self.script_file, F_OK):
+                    parser.error("the script file " + repr(self.script_file) + " does not exist")
 
 
         # Determine the relax mode and test for mutually exclusive modes.
@@ -253,12 +263,12 @@ class Relax:
         if options.version:
             mode = 'version'
 
+        # Show the info about this relax version.
+        elif options.info:
+            mode = 'info'
+
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
-            # Make sure no script is supplied.
-            if self.script_file:
-                parser.error("a script should not be supplied when executing the test suite")
-
             # Exclusive modes.
             if options.test:
                 parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
@@ -272,7 +282,6 @@ class Relax:
                 mode = 'system tests'
             elif options.unit_tests:
                 mode = 'unit tests'
-
 
         # Test mode.
         elif options.test:

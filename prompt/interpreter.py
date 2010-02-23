@@ -33,7 +33,6 @@ import platform
 if dep_check.readline_module:
     import readline
 import sys
-from textwrap import wrap
 
 # Python modules accessible on the command prompt.
 from math import pi
@@ -117,7 +116,8 @@ class Interpreter:
         self.__raise_relax_error = raise_relax_error
 
         # Build the intro string.
-        self.__intro_string = self._build_intro_text()
+        info = Info_box()
+        self.__intro_string = info.intro_text()
 
         # Initialise the execution information container (info that can change during execution).
         self.exec_info = Exec_info
@@ -132,55 +132,6 @@ class Interpreter:
 
         # Set up the interpreter objects.
         self._locals = self._setup()
-
-
-    def _build_intro_text(self):
-        """Create the introductory string to print out.
-
-        @return:    The introductory string.
-        @rtype:     str
-        """
-
-        # The width of the printout.
-        if platform.uname()[0] in ['Windows', 'Microsoft']:
-            width = 80
-        else:
-            width = 100
-
-        # Initialise the string and the relax information box.
-        string = ''
-        info = Info_box()
-
-        # Some new lines.
-        intro_string = '\n\n\n'
-
-        # Program name and version.
-        intro_string = intro_string + info.centre(info.title + ' ' + info.version, width) + '\n\n'
-
-        # Program description.
-        intro_string = intro_string + info.centre(info.desc, width) + '\n\n'
-
-        # Copyright printout.
-        for i in range(len(info.copyright)):
-            intro_string = intro_string + info.centre(info.copyright[i], width) + '\n'
-        intro_string = intro_string + '\n'
-
-        # Program licence and help (wrapped).
-        for line in wrap(info.licence, width):
-            intro_string = intro_string + line + '\n'
-        intro_string = intro_string + '\n'
- 
-        # Help message.
-        help = "Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within the prompt."
-        for line in wrap(help, width):
-            intro_string = intro_string + line + '\n'
-
-        # ImportErrors, if any.
-        for i in range(len(info.errors)):
-            intro_string = intro_string + '\n' + info.errors[i] + '\n'
-
-        # Return the formatted text.
-        return intro_string
 
 
     def _setup(self):

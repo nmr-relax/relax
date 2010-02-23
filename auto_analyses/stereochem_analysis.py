@@ -43,10 +43,21 @@ This script is split into multiple stages:
     4.  The RDC Q-factor analysis.
 
     5.  Generation of Grace graphs.
+
+    6.  Final ordering of ensembles using the combined RDC and NOE Q-factors, whereby the NOE
+    Q-factor is defined as::
+
+        Q^2 = U / sum(NOE_i^2),
+
+    where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2.  The
+    denominator is the sum of all squared NOEs - this must be given as the value of NOE_NORM.  The
+    combined Q is given by::
+
+        Q_total^2 = Q_NOE^2 + Q_RDC^2.
 """
 
 # Python module imports.
-from math import pi
+from math import pi, sqrt
 from os import F_OK, access, getcwd, popen3, sep
 from random import randint
 from re import search
@@ -55,9 +66,11 @@ import sys
 
 # relax module imports.
 from generic_fns import pipes
+from generic_fns.grace import write_xy_data, write_xy_header
 from generic_fns.selection import spin_loop
 from physical_constants import dipolar_constant, g1H, g13C
 from prompt.interpreter import Interpreter
+from relax_errors import RelaxError
 from relax_io import mkdir_nofail
 
 
@@ -65,37 +78,96 @@ from relax_io import mkdir_nofail
 class Stereochem_analysis:
     """Class for performing the relative stereochemistry analysis."""
 
-    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, rdc_name=None, rdc_file=None, rdc_spin_id_col=None, rdc_mol_name_col=None, rdc_res_num_col=None, rdc_res_name_col=None, rdc_spin_num_col=None, rdc_spin_name_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
-        """Set up the analysis."""
+    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, noe_norm=None, rdc_name=None, rdc_file=None, rdc_spin_id_col=None, rdc_mol_name_col=None, rdc_res_num_col=None, rdc_res_name_col=None, rdc_spin_num_col=None, rdc_spin_name_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
+        """Set up for the stereochemistry analysis.
+
+        @keyword stage:             Stage of analysis (see the module docstring above for the options).  
+        @type stage:                int
+        @keyword results_dir:       The optional directory to place all results files into.
+        @type results_dir:          None or str
+        @keyword num_ens:           Number of ensembles.
+        @type num_ens:              int
+        @keyword num_models:        Ensemble size.
+        @type num_models:           int
+        @keyword configs:           All the configurations.
+        @type configs:              list of str
+        @keyword snapshot_dir:      Snapshot directories (corresponding to the configurations).
+        @type snapshot_dir:         list of str
+        @keyword snapshot_min:      The number of the first snapshots (corresponding to the configurations).
+        @type snapshot_min:         list of int
+        @keyword snapshot_max:      The number of the last snapshots (corresponding to the configurations).
+        @type snapshot_max:         list of int
+        @keyword pseudo:            The list of pseudo-atoms.  Each element is a list of the pseudo-atom name and a list of all those atoms forming the pseudo-atom.  For example, pseudo = [["Q7", ["@H16", "@H17", "@H18"]], ["Q9", ["@H20", "@H21", "@H22"]]].
+        @type pseudo:               list of list of str and list of str
+        @keyword noe_file:          The name of the NOE restraint file.
+        @type noe_file:             str
+        @keyword noe_norm:          The NOE normalisation factor (equal to the sum of all NOEs squared).
+        @type noe_norm:             float
+        @keyword rdc_name:          The label for this RDC data set.
+        @type rdc_name:             str
+        @keyword rdc_file:          The name of the RDC file.
+        @type rdc_file:             str
+        @keyword rdc_spin_id_col:   The spin ID column of the RDC file.
+        @type rdc_spin_id_col:      None or int
+        @keyword rdc_mol_name_col:  The molecule name column of the RDC file.
+        @type rdc_mol_name_col:     None or int
+        @keyword rdc_res_num_col:   The residue number column of the RDC file.
+        @type rdc_res_num_col:      None or int
+        @keyword rdc_res_name_col:  The residue name column of the RDC file.
+        @type rdc_res_name_col:     None or int
+        @keyword rdc_spin_num_col:  The spin number column of the RDC file.
+        @type rdc_spin_num_col:     None or int
+        @keyword rdc_spin_name_col: The spin name column of the RDC file.
+        @type rdc_spin_name_col:    None or int
+        @keyword rdc_data_col:      The data column of the RDC file.
+        @type rdc_data_col:         int
+        @keyword rdc_error_col:     The error column of the RDC file.
+        @type rdc_error_col:        int
+        @keyword bond_length:       The bond length value in meters.
+        @type bond_length:          float
+        @keyword log:               Log file output flag (only for certain stages).
+        @type log:                  bool
+        @keyword bucket_num:        Number of buckets for the distribution plots.
+        @type bucket_num:           int
+        @keyword lower_lim_noe:     Distribution plot limits.
+        @type lower_lim_noe:        int
+        @keyword upper_lim_noe:     Distribution plot limits.
+        @type upper_lim_noe:        int
+        @keyword lower_lim_rdc:     Distribution plot limits.
+        @type lower_lim_rdc:        int
+        @keyword upper_lim_rdc:     Distribution plot limits.
+        @type upper_lim_rdc:        int
+        """
 
         # Store all the args.
-        self.stage=stage
+        self.stage = stage
         self.results_dir = results_dir
-        self.num_ens=num_ens
-        self.num_models=num_models
-        self.configs=configs
-        self.snapshot_dir=snapshot_dir
-        self.snapshot_min=snapshot_min
-        self.snapshot_max=snapshot_max
-        self.pseudo=pseudo
-        self.noe_file=noe_file
-        self.rdc_name=rdc_name
-        self.rdc_file=rdc_file
-        self.rdc_spin_id_col=rdc_spin_id_col
-        self.rdc_mol_name_col=rdc_mol_name_col
-        self.rdc_res_num_col=rdc_res_num_col
-        self.rdc_res_name_col=rdc_res_name_col
-        self.rdc_spin_num_col=rdc_spin_num_col
-        self.rdc_spin_name_col=rdc_spin_name_col
-        self.rdc_data_col=rdc_data_col
-        self.rdc_error_col=rdc_error_col
-        self.bond_length=bond_length
-        self.log=log
-        self.bucket_num=bucket_num
-        self.lower_lim_noe=lower_lim_noe
-        self.upper_lim_noe=upper_lim_noe
-        self.lower_lim_rdc=lower_lim_rdc
-        self.upper_lim_rdc=upper_lim_rdc
+        self.num_ens = num_ens
+        self.num_models = num_models
+        self.configs = configs
+        self.snapshot_dir = snapshot_dir
+        self.snapshot_min = snapshot_min
+        self.snapshot_max = snapshot_max
+        self.pseudo = pseudo
+        self.noe_file = noe_file
+        self.noe_norm = noe_norm
+        self.rdc_name = rdc_name
+        self.rdc_file = rdc_file
+        self.rdc_spin_id_col = rdc_spin_id_col
+        self.rdc_mol_name_col = rdc_mol_name_col
+        self.rdc_res_num_col = rdc_res_num_col
+        self.rdc_res_name_col = rdc_res_name_col
+        self.rdc_spin_num_col = rdc_spin_num_col
+        self.rdc_spin_name_col = rdc_spin_name_col
+        self.rdc_data_col = rdc_data_col
+        self.rdc_error_col = rdc_error_col
+        self.bond_length = bond_length
+        self.log = log
+        self.bucket_num = bucket_num
+        self.lower_lim_noe = lower_lim_noe
+        self.upper_lim_noe = upper_lim_noe
+        self.lower_lim_rdc = lower_lim_rdc
+        self.upper_lim_rdc = upper_lim_rdc
 
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
@@ -141,8 +213,87 @@ class Stereochem_analysis:
         elif self.stage == 5:
             self.grace_plots()
 
+        # Final combined Q ordering.
+        elif self.stage == 6:
+            self.combined_q()
+
+        # Unknown stage.
+        else:
+            raise RelaxError("The stage number %s is unknown." % self.stage)
+
         # Restore STDOUT.
         sys.stdout = self.stdout_orig
+
+
+    def combined_q(self):
+        """Calculate the combined Q-factor.
+
+        The combined Q is defined as::
+
+            Q_total^2 = Q_NOE^2 + Q_RDC^2,
+
+        and the NOE Q-factor as::
+
+            Q^2 = U / sum(NOE_i^2),
+
+        where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2.
+        """
+
+        # Checks.
+        if not access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK):
+            raise RelaxError("The NOE analysis has not been performed, cannot find the file '%s'." % self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted")
+        if not access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
+            raise RelaxError("The RDC analysis has not been performed, cannot find the file '%s'." % self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted")
+
+        # Loop over the configurations.
+        for i in range(len(self.configs)):
+            # Print out.
+            print("Creating the combined Q-factor file for configuration '%s'." % self.configs[i])
+
+            # Open the NOE results file and read the data.
+            file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i])
+            noe_lines = file.readlines()
+            file.close()
+
+            # Open the RDC results file and read the data.
+            file = open(self.results_dir+sep+"Q_factors_" + self.configs[i])
+            rdc_lines = file.readlines()
+            file.close()
+
+            # The combined Q-factor file.
+            out = open(self.results_dir+sep+"Q_total_%s" % self.configs[i], 'w')
+            out_sorted = open(self.results_dir+sep+"Q_total_%s_sorted" % self.configs[i], 'w')
+
+            # Loop over the data (skipping the header line).
+            data = []
+            for j in range(1, len(noe_lines)):
+                # Split the lines.
+                ens = int(split(noe_lines[j])[0])
+                noe_viol = float(split(noe_lines[j])[1])
+                q_rdc = float(split(rdc_lines[j])[1])
+
+                # The NOE Q-factor.
+                q_noe = sqrt(noe_viol/self.noe_norm)
+
+                # Combined Q.
+                q = sqrt(q_noe**2 + q_rdc**2)
+
+                # Write out the unsorted list.
+                out.write("%-20i%20.15f\n" % (ens, q))
+
+                # Store the values.
+                data.append([q, ens])
+
+            # Sort the combined Q.
+            data.sort()
+
+            # Write the data.
+            for i in range(len(data)):
+                out_sorted.write("%-20i%20.15f\n" % (data[i][1], data[i][0]))
+
+            # Close the files.
+            out.close()
+            out_sorted.close()
 
 
     def generate_distribution(self, values, lower=0.0, upper=200.0, inc=None):
@@ -184,6 +335,50 @@ class Stereochem_analysis:
     def grace_plots(self):
         """Generate grace plots of the results."""
 
+        # The number of configs.
+        n = len(self.configs)
+
+        # The colours for the different configs.
+        defaults = [4, 2]    # Blue and red.
+        colours = []
+        for i in range(n):
+            # Default colours.
+            if i < len(defaults):
+                colours.append(defaults[i])
+
+            # Otherwise black!
+            else:
+                colours.append(0)
+
+        # The ensemble number text.
+        ens_text = ''
+        dividers = [1e15, 1e12, 1e9, 1e6, 1e3, 1]
+        num_ens = self.num_ens
+        for i in range(len(dividers)):
+            # The number.
+            num = int(num_ens / dividers[i])
+
+            # The text.
+            if num:
+                text = repr(num)
+            elif not num and ens_text:
+                text = '000'
+            else:
+                continue
+
+            # Update the text.
+            ens_text = ens_text + text
+
+            # A comma.
+            if i < len(dividers)-1:
+                ens_text = ens_text + ','
+
+            # Remove the front part of the number.
+            num_ens = num_ens - dividers[i]*num
+
+        # Subtitle for all graphs.
+        subtitle = '%s ensembles of %s' % (ens_text, self.num_models)
+
         # NOE violations.
         if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
@@ -193,74 +388,38 @@ class Stereochem_analysis:
             grace_curve = open(self.results_dir+sep+"NOE_viol_curve.agr", 'w')
             grace_dist = open(self.results_dir+sep+"NOE_viol_dist.agr", 'w')
 
-            # S-curve header.
-            colours = [4, 2]    # Blue and red.
-            grace_curve.write("@version 50121\n")
-            grace_curve.write("@page size 842, 595\n")    # A4.
-            grace_curve.write("@with g0\n")
-            grace_curve.write("@    world 0, 0, %s, 200\n" % self.num_ens)
-            grace_curve.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_curve.write("@    title \"NOE violation comparison\"\n")
-            grace_curve.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_curve.write("@    xaxis  label \"Ensemble (sorted)\"\n")
-            grace_curve.write("@    yaxis  label \"NOE violation (Angstrom\S2\N)\"\n")
-            grace_curve.write("@    legend 0.3, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_curve.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_curve.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
-            # Distribution header.
-            colours = [4, 2]    # Blue and red.
-            grace_dist.write("@version 50121\n")
-            grace_dist.write("@page size 842, 595\n")    # A4.
-            grace_dist.write("@with g0\n")
-            grace_dist.write("@    world 0, 0, 200, 0.2\n")
-            grace_dist.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_dist.write("@    title \"NOE violation comparison\"\n")
-            grace_dist.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_dist.write("@    xaxis  label \"NOE violation (Angstrom\S2\N)\"\n")
-            grace_dist.write("@    yaxis  label \"Frequency\"\n")
-            grace_dist.write("@    legend 1.1, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_dist.write("@    s%s symbol 1\n" % i)
-                grace_dist.write("@    s%s symbol size 0.5\n" % i)
-                grace_dist.write("@    s%s symbol color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s line linestyle 3\n" % i)
-                grace_dist.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
             # Loop over the configurations.
-            for i in range(len(self.configs)):
-                # Header.
-                grace_curve.write("@target G0.S"+repr(i)+"\n@type xy\n")
-                grace_dist.write("@target G0.S"+repr(i)+"\n@type xy\n")
-
+            data = []
+            dist = []
+            for i in range(n):
                 # Open the results file and read the data.
                 file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i] + "_sorted")
                 lines = file.readlines()
                 file.close()
 
+                # Add a new graph set.
+                data.append([])
+
                 # Loop over the ensembles and extract the NOE violation.
                 noe_viols = []
-                for i in range(1, len(lines)):
+                for j in range(1, len(lines)):
                     # Extract the violation.
-                    viol = float(split(lines[i])[1])
+                    viol = float(split(lines[j])[1])
                     noe_viols.append(viol)
 
-                    # Write the data.
-                    grace_curve.write("%-8s%-30s\n" % (i, viol))
+                    # Add to the data structure.
+                    data[i].append([j, viol])
 
                 # Calculate the R distribution.
-                dist = self.generate_distribution(noe_viols, inc=self.bucket_num, upper=self.upper_lim_noe, lower=self.lower_lim_noe)
+                dist.append(self.generate_distribution(noe_viols, inc=self.bucket_num, upper=self.upper_lim_noe, lower=self.lower_lim_noe))
 
-                # Loop over the distribution bins.
-                for i in range(len(dist)):
-                    # Write the data.
-                    grace_dist.write("%s %s\n" % (dist[i][0], dist[i][1]))
+            # Headers.
+            write_xy_header(file=grace_curve, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', 'NOE violation (Angstrom\S2\N)'], axis_min=[0, 0], axis_max=[self.num_ens, 200], legend_pos=[0.3, 0.8])
+            write_xy_header(file=grace_dist, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['NOE violation (Angstrom\S2\N)', 'Frequency'], axis_min=[0, 0], axis_max=[200, 0.2], legend_pos=[1.1, 0.8])
 
-                # End of data.
-                grace_curve.write("&\n")
-                grace_dist.write("&\n")
+            # Write the data.
+            write_xy_data([data], file=grace_curve, graph_type='xy')
+            write_xy_data([dist], file=grace_dist, graph_type='xy')
 
             # Close the files.
             grace_curve.close()
@@ -275,117 +434,64 @@ class Stereochem_analysis:
             grace_curve = open(self.results_dir+sep+"RDC_%s_curve.agr" % self.rdc_name, 'w')
             grace_dist = open(self.results_dir+sep+"RDC_%s_dist.agr" % self.rdc_name, 'w')
 
-            # S-curve header.
-            colours = [4, 2]    # Blue and red.
-            grace_curve.write("@version 50121\n")
-            grace_curve.write("@page size 842, 595\n")    # A4.
-            grace_curve.write("@with g0\n")
-            grace_curve.write("@    world 0, 0, %s, 2\n" % self.num_ens)
-            grace_curve.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_curve.write("@    title \"%s RDC Q-factor comparison\"\n" % self.rdc_name)
-            grace_curve.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_curve.write("@    xaxis  label \"Ensemble (sorted)\"\n")
-            grace_curve.write("@    yaxis  label \"%s RDC Q-factor (pales format)\"\n" % self.rdc_name)
-            grace_curve.write("@    legend 0.3, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_curve.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_curve.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
-            # Distribution header.
-            colours = [4, 2]    # Blue and red.
-            grace_dist.write("@version 50121\n")
-            grace_dist.write("@page size 842, 595\n")    # A4.
-            grace_dist.write("@with g0\n")
-            grace_dist.write("@    world 0, 0, 2, 0.2\n")
-            grace_dist.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_dist.write("@    title \"%s RDC Q-factor comparison\"\n" % self.rdc_name)
-            grace_dist.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_dist.write("@    xaxis  label \"%s RDC Q-factor (pales format)\"\n" % self.rdc_name)
-            grace_dist.write("@    yaxis  label \"Frequency\"\n")
-            grace_dist.write("@    legend 1.1, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_dist.write("@    s%s symbol 1\n" % i)
-                grace_dist.write("@    s%s symbol size 0.5\n" % i)
-                grace_dist.write("@    s%s symbol color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s line linestyle 3\n" % i)
-                grace_dist.write("@    s%s line color %s\n" % (i, colours[i]))
-                grace_dist.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
-
             # Loop over the configurations.
-            for i in range(len(self.configs)):
-                # Grace headers.
-                grace_curve.write("@target G0.S%s\n@type xy\n" % i)
-                grace_dist.write("@target G0.S%s\n@type xy\n" % i)
-
+            data = []
+            dist = []
+            for i in range(n):
                 # Open the results file and read the data.
                 file = open(self.results_dir+sep+"Q_factors_" + self.configs[i] + "_sorted")
                 lines = file.readlines()
                 file.close()
 
+                # Add a new graph set.
+                data.append([])
+
                 # Loop over the Q-factors.
                 values = []
-                for i in range(1, len(lines)):
+                for j in range(1, len(lines)):
                     # Extract the violation.
-                    value = float(split(lines[i])[1])
+                    value = float(split(lines[j])[1])
                     values.append(value)
 
-                    # Write the data.
-                    grace_curve.write("%-8s%-30s\n" % (i, value))
+                    # Add to the data structure.
+                    data[i].append([j, value])
 
                 # Calculate the R distribution.
-                dist = self.generate_distribution(values, inc=self.bucket_num, upper=self.upper_lim_rdc, lower=self.lower_lim_rdc)
+                dist.append(self.generate_distribution(values, inc=self.bucket_num, upper=self.upper_lim_rdc, lower=self.lower_lim_rdc))
 
-                # Loop over the distribution bins.
-                for i in range(len(dist)):
-                    # Write the data.
-                    grace_dist.write("%s %s\n" % (dist[i][0], dist[i][1]))
+            # Headers.
+            write_xy_header(file=grace_curve, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[self.num_ens, 2], legend_pos=[0.3, 0.8])
+            write_xy_header(file=grace_dist, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['%s RDC Q-factor (pales format)' % self.rdc_name, 'Frequency'], axis_min=[0, 0], axis_max=[2, 0.2], legend_pos=[1.1, 0.8])
 
-                # End of data.
-                grace_curve.write("&\n")
-                grace_dist.write("&\n")
+            # Write the data.
+            write_xy_data([data], file=grace_curve, graph_type='xy')
+            write_xy_data([dist], file=grace_dist, graph_type='xy')
 
             # Close the files.
             grace_curve.close()
             grace_dist.close()
 
-
-        # NOE-RDC correlation plot.
+        # NOE-RDC correlation plots.
         if access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK) and access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
             print("Generating NOE-RDC correlation Grace plots.")
 
             # Open the Grace output files.
             grace_file = open(self.results_dir+sep+"correlation_plot.agr", 'w')
-
-            # Grace header.
-            colours = [4, 2]    # Blue and red.
-            grace_file.write("@version 50121\n")
-            grace_file.write("@page size 842, 595\n")    # A4.
-            grace_file.write("@with g0\n")
-            grace_file.write("@    world 0, 0, %s, %s\n" % (noe_viols[-1]+10, values[-1]+0.1))
-            grace_file.write("@    view 0.150000, 0.150000, 1.28, 0.85\n")
-            grace_file.write("@    title \"Correlation plot - RDC vs. NOE\"\n")
-            grace_file.write("@    subtitle \"%s ensembles of %s\"\n" % (self.num_ens, self.num_models))
-            grace_file.write("@    xaxis  label \"NOE violation (Angstrom\S2\N)\"\n")
-            grace_file.write("@    yaxis  label \"%s RDC Q-factors (pales format)\"\n" % self.rdc_name)
-            grace_file.write("@    legend 1.1, 0.8\n")
-            for i in range(len(self.configs)):
-                grace_file.write("@    s%s symbol 9\n" % i)
-                grace_file.write("@    s%s symbol size 0.24\n" % i)
-                grace_file.write("@    s%s symbol color %s\n" % (i, colours[i]))
-                grace_file.write("@    s%s symbol linewidth 0.5\n" % i)
-                grace_file.write("@    s%s line type 0\n" % i)
-                grace_file.write("@    s%s legend \"%s\"\n" % (i, self.configs[i]))
+            grace_file_scaled = open(self.results_dir+sep+"correlation_plot_scaled.agr", 'w')
 
             # Grace data.
+            data = []
+            data_scaled = []
             for i in range(len(self.configs)):
-                # Grace header.
-                grace_file.write("@target G0.S%s\n@type xy\n" % i)
-
                 # Open the NOE results file and read the data.
                 file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i])
                 noe_lines = file.readlines()
                 file.close()
+
+                # Add a new graph set.
+                data.append([])
+                data_scaled.append([])
 
                 # Open the RDC results file and read the data.
                 file = open(self.results_dir+sep+"Q_factors_" + self.configs[i])
@@ -398,11 +504,15 @@ class Stereochem_analysis:
                     noe_viol = float(split(noe_lines[j])[1])
                     q_factor = float(split(rdc_lines[j])[1])
 
-                    # Write the xy pair.
-                    grace_file.write("%s %s\n" % (noe_viol, q_factor))
+                    # Add the xy pair.
+                    data[i].append([noe_viol, q_factor])
+                    data_scaled[i].append([sqrt(noe_viol/self.noe_norm), q_factor])
 
-                # End of data.
-                grace_file.write('&\n')
+            # Write the data.
+            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\S2\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['Normalised NOE violation (Q = sqrt(U / \\xS\\f{}NOE\\si\\N\\S2\\N))', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[1, 1], legend_pos=[1.1, 0.8])
+            write_xy_data([data], file=grace_file, graph_type='xy')
+            write_xy_data([data_scaled], file=grace_file_scaled, graph_type='xy')
 
 
     def noe_viol(self):
