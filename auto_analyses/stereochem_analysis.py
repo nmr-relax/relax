@@ -43,6 +43,17 @@ This script is split into multiple stages:
     4.  The RDC Q-factor analysis.
 
     5.  Generation of Grace graphs.
+
+    6.  Final ordering of ensembles using the combined RDC and NOE Q-factors, whereby the NOE
+    Q-factor is defined as::
+
+        Q^2 = U / sum(NOE_i^2),
+
+    where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2.  The
+    denominator is the sum of all squared NOEs - this must be given as the value of NOE_NORM.  The
+    combined Q is given by::
+
+        Q_total^2 = Q_NOE^2 + Q_RDC^2.
 """
 
 # Python module imports.
@@ -202,12 +213,87 @@ class Stereochem_analysis:
         elif self.stage == 5:
             self.grace_plots()
 
+        # Final combined Q ordering.
+        elif self.stage == 6:
+            self.combined_q()
+
         # Unknown stage.
         else:
             raise RelaxError("The stage number %s is unknown." % self.stage)
 
         # Restore STDOUT.
         sys.stdout = self.stdout_orig
+
+
+    def combined_q(self):
+        """Calculate the combined Q-factor.
+
+        The combined Q is defined as::
+
+            Q_total^2 = Q_NOE^2 + Q_RDC^2,
+
+        and the NOE Q-factor as::
+
+            Q^2 = U / sum(NOE_i^2),
+
+        where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2.
+        """
+
+        # Checks.
+        if not access(self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted", F_OK):
+            raise RelaxError("The NOE analysis has not been performed, cannot find the file '%s'." % self.results_dir+sep+"NOE_viol_" + self.configs[0] + "_sorted")
+        if not access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
+            raise RelaxError("The RDC analysis has not been performed, cannot find the file '%s'." % self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted")
+
+        # Loop over the configurations.
+        for i in range(len(self.configs)):
+            # Print out.
+            print("Creating the combined Q-factor file for configuration '%s'." % self.configs[i])
+
+            # Open the NOE results file and read the data.
+            file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i])
+            noe_lines = file.readlines()
+            file.close()
+
+            # Open the RDC results file and read the data.
+            file = open(self.results_dir+sep+"Q_factors_" + self.configs[i])
+            rdc_lines = file.readlines()
+            file.close()
+
+            # The combined Q-factor file.
+            out = open(self.results_dir+sep+"Q_total_%s" % self.configs[i], 'w')
+            out_sorted = open(self.results_dir+sep+"Q_total_%s_sorted" % self.configs[i], 'w')
+
+            # Loop over the data (skipping the header line).
+            data = []
+            for j in range(1, len(noe_lines)):
+                # Split the lines.
+                ens = int(split(noe_lines[j])[0])
+                noe_viol = float(split(noe_lines[j])[1])
+                q_rdc = float(split(rdc_lines[j])[1])
+
+                # The NOE Q-factor.
+                q_noe = sqrt(noe_viol/self.noe_norm)
+
+                # Combined Q.
+                q = sqrt(q_noe**2 + q_rdc**2)
+
+                # Write out the unsorted list.
+                out.write("%-20i%20.15f\n" % (ens, q))
+
+                # Store the values.
+                data.append([q, ens])
+
+            # Sort the combined Q.
+            data.sort()
+
+            # Write the data.
+            for i in range(len(data)):
+                out_sorted.write("%-20i%20.15f\n" % (data[i][1], data[i][0]))
+
+            # Close the files.
+            out.close()
+            out_sorted.close()
 
 
     def generate_distribution(self, values, lower=0.0, upper=200.0, inc=None):
