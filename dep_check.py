@@ -74,6 +74,13 @@ try:
 except ImportError:
     wx_module = False
 
+# epydoc module.
+try:
+    import epydoc
+    epydoc_module = True
+except ImportError:
+    epydoc_module = False
+
 # Readline module.
 try:
     import readline
