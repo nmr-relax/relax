@@ -67,6 +67,13 @@ try:
 except ImportError:
     bmrblib_module = False
 
+# wx module.
+try:
+    import wx
+    wx_module = True
+except ImportError:
+    wx_module = False
+
 # Readline module.
 try:
     import readline
