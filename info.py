@@ -486,14 +486,17 @@ class Ref:
 class Clore90(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "Clore, G. M. and Szabo, A. and Bax, A. and Kay, L. E. and Driscoll, P. C. and Gronenborn, A. M."
     title          = "Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins"
     journal        = "J. Am. Chem. Soc."
+    journal_full   = "Journal of the American Chemical Society"
     volume         = "112"
     number         = "12"
     pages          = "4989-4991"
     address        = "1155 16th St, NW, Washington, DC 20036"
     sourceid       = "ISI:A1990DH27700070"
+    status         = "published"
     year           = 1990
 
 
@@ -501,10 +504,13 @@ class Clore90(Ref):
 class dAuvergne06(Ref):
     """Bibliography container."""
 
+    type           = "thesis"
     author         = "d'Auvergne, E. J."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."]]
     title          = "Protein dynamics: a study of the model-free analysis of NMR relaxation data."
     school         = "Biochemistry and Molecular Biology, University of Melbourne."
     url            = "http://eprints.infodiv.unimelb.edu.au/archive/00002799/"
+    status         = "published"
     year           = 2006
 
 
@@ -512,9 +518,12 @@ class dAuvergne06(Ref):
 class dAuvergneGooley03(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "The use of model selection in the model-free analysis of protein dynamics."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "25"
     number         = "1"
     pages          = "25-39"
@@ -523,6 +532,7 @@ class dAuvergneGooley03(Ref):
     keywords       = "Amines ; Diffusion ; *Models, Molecular ; Motion ; Nuclear Magnetic Resonance, Biomolecular/*methods ; Proteins/*chemistry ; Research Support, Non-U.S. Gov't ; Rotation"
     doi            = "10.1023/A:1021902006114"
     pubmed_id      = 12566997
+    status         = "published"
     year           = 2003
 
 
@@ -530,9 +540,12 @@ class dAuvergneGooley03(Ref):
 class dAuvergneGooley06(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "35"
     number         = "2"
     pages          = "117-135"
@@ -540,6 +553,7 @@ class dAuvergneGooley06(Ref):
     authoraddress  = "Department of Biochemistry and Molecular Biology, Bio21 Institute of Biotechnology and Molecular Science, University of Melbourne, Parkville, Victoria, 3010, Australia"
     doi            = "10.1007/s10858-006-9007-z"
     pubmed_id      = 16791734
+    status         = "published"
     year           = 2006
 
 
@@ -547,9 +561,12 @@ class dAuvergneGooley06(Ref):
 class dAuvergneGooley07(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm."
     journal        = "Mol. Biosys."
+    journal_full   = "Molecular BioSystems"
     volume         = "3"
     number         = "7"
     pages          = "483-494"
@@ -558,6 +575,7 @@ class dAuvergneGooley07(Ref):
     keywords       = "Magnetic Resonance Spectroscopy/*methods ; *Models, Theoretical ; Proteins/chemistry ; Thermodynamics"
     doi            = "10.1039/b702202f"
     pubmed_id      = 17579774
+    status         = "published"
     year           = 2007
 
 
@@ -565,9 +583,12 @@ class dAuvergneGooley07(Ref):
 class dAuvergneGooley08a(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "40"
     number         = "2"
     pages          = "107-119"
@@ -576,6 +597,7 @@ class dAuvergneGooley08a(Ref):
     keywords       = "*Algorithms ; Cytochromes c2/chemistry ; Diffusion ; *Models, Molecular ; Nuclear Magnetic Resonance, Biomolecular/*methods ; Rhodobacter capsulatus/chemistry ; *Rotation"
     doi            = "10.1007/s10858-007-9214-2"
     pubmed_id      = 18085410
+    status         = "published"
     year           = 2008
 
 
@@ -583,9 +605,12 @@ class dAuvergneGooley08a(Ref):
 class dAuvergneGooley08b(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "40"
     number         = "2"
     pages          = "121-133"
@@ -595,6 +620,7 @@ class dAuvergneGooley08b(Ref):
     language       = "eng"
     doi            = "10.1007/s10858-007-9213-3"
     pubmed_id      = 18085411
+    status         = "published"
     year           = 2008
 
 
@@ -602,14 +628,17 @@ class dAuvergneGooley08b(Ref):
 class LipariSzabo82a(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "Lipari, G. and Szabo, A."
     title          = "Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity"
     journal        = "J. Am. Chem. Soc."
+    journal_full   = "Journal of the American Chemical Society"
     volume         = "104"
     number         = "17"
     pages          = "4546-4559"
     authoraddress  = "NIADDKD,Chem Phys Lab,Bethesda,MD 20205."
     sourceid       = "ISI:A1982PC82900009"
+    status         = "published"
     year           = 1982
 
 
@@ -617,13 +646,16 @@ class LipariSzabo82a(Ref):
 class LipariSzabo82b(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "Lipari, G. and Szabo, A."
     title          = "Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results"
     journal        = "J. Am. Chem. Soc."
+    journal_full   = "Journal of the American Chemical Society"
     volume         = "104"
     number         = "17"
     pages          = "4559-4570"
     abstract       = "For pt.I see ibid., vol.104, p.4546 (1982). In the preceding paper it has been shown that the unique dynamic information on fast internal motions in an NMR relaxation experiment on macromolecules in solution is specified by a generalized order parameter, S , and an effective correlation time, tau /sub e/. The authors now deal with the extraction and interpretation of this information. The procedure used to obtain S /sup 2/ and tau /sub e/ from experimental data by using a least-squares method and, in certain favorable circumstances, by using an analytical formula is described. A variety of experiments are then analyzed to yield information on the time scale and spatial restriction of internal motions of isoleucines in myoglobin, methionines in dihydrofolate reductase and myoglobin, a number of aliphatic residues in basic pancreatic trypsin inhibitor, and ethyl isocyanide bound to myoglobin, hemoglobin, and aliphatic side chains in three random-coil polymers. The numerical values of S /sup 2/ and tau /sub e / can be readily interpreted within the framework of a variety of models."
     authoraddress  = "NIADDKD,Chem Phys Lab,Bethesda,MD 20205."
     sourceid       = "ISI:A1982PC82900010"
+    status         = "published"
     year           = 1982
