@@ -60,6 +60,13 @@ except ImportError:
 # Optional packages.
 ####################
 
+# Bmrblib python package check.
+try:
+    import bmrblib
+    bmrblib_module = True
+except ImportError:
+    bmrblib_module = False
+
 # Readline module.
 try:
     import readline
@@ -105,6 +112,13 @@ try:
     scientific_pdb_module = True
 except ImportError:
     scientific_pdb_module = False
+
+# Numeric python package check.
+try:
+    import Numeric
+    numeric_module = True
+except ImportError:
+    numeric_module = False
 
 # VMD module imports.
 try:
