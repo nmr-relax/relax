@@ -331,6 +331,10 @@ class Info_box:
         # Python packages.
         text = text + self.package_info(format=format)
 
+        # C modules.
+        text = text + "\nCompiled relax C modules:\n"
+        text = text + format % ("Relaxation curve fitting: ", dep_check.C_module_exp_fn)
+
         # End with an empty newline.
         text = text + ("\n")
 
