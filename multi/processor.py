@@ -348,6 +348,11 @@ class Capturing_exception(Exception):
             (exception_type, exception_instance, exception_traceback) = sys.exc_info()
         else:
             (exception_type, exception_instance, exception_traceback) = exc_info
+
+        # This is not an exception!
+        if not exception_type:
+            return
+
         #PY3K: this check can be removed once string based exceptions are no longer used
         if isinstance(exception_type, str):
                 self.exception_name = exception_type + ' (legacy string exception)'
