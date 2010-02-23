@@ -113,7 +113,9 @@ except ImportError, message:
 
 # Devnull.
 try:
+    import os
     from os import devnull
+    del devnull
     devnull_import = True
 except ImportError, message:
     devnull_import = False
