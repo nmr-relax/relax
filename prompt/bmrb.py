@@ -24,9 +24,6 @@
 """Module containing the BMRB user function class."""
 __docformat__ = 'plaintext'
 
-# Python module imports.
-import sys
-
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -125,8 +122,8 @@ class BMRB(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.citation("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.citation("
             text = text + "cite_id=" + repr(cite_id)
             text = text + ", authors=" + repr(authors)
             text = text + ", doi=" + repr(doi)
@@ -169,8 +166,8 @@ class BMRB(User_fn_class):
         """Display the BMRB data in NMR-STAR format."""
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.display("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.display("
             text = text + "version=" + repr(version) + ")"
             print(text)
 
@@ -196,8 +193,8 @@ class BMRB(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.read("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", version=" + repr(version) + ")"
@@ -299,8 +296,8 @@ class BMRB(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.script("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.script("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", analysis_type=" + repr(analysis_type)
@@ -374,8 +371,8 @@ class BMRB(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.software("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.software("
             text = text + "name=" + repr(name)
             text = text + ", version=" + repr(version)
             text = text + ", url=" + repr(url)
@@ -432,8 +429,8 @@ class BMRB(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.software_select("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.software_select("
             text = text + "name=" + repr(name)
             text = text + ", version=" + repr(version) + ")"
             print(text)
@@ -485,8 +482,8 @@ class BMRB(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.thiol_state("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.thiol_state("
             text = text + "state=" + repr(state) + ")"
             print(text)
 
@@ -522,8 +519,8 @@ class BMRB(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "bmrb.write("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "bmrb.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", version=" + repr(version)

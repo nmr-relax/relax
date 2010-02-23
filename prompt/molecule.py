@@ -267,8 +267,8 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "molecule.type("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "molecule.type("
             text = text + "mol_id=" + repr(mol_id)
             text = text + ", type=" + repr(type)
             text = text + ", force=" + repr(force) + ")"
