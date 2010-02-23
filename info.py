@@ -174,6 +174,10 @@ class Info_box(object):
         for i in range(len(self.errors)):
             intro_string = intro_string + '\n' + self.errors[i] + '\n'
 
+        # The multi-processor message, if it exists.
+        if hasattr(self, 'multi_processor_string'):
+            intro_string = intro_string + '\nProcessor fabric: %s\n' % self.multi_processor_string
+
         # Return the formatted text.
         return intro_string
 

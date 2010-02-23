@@ -73,7 +73,7 @@ class Uni_processor(Processor):
         """
 
         # Return the string.
-        return "Uni-processor"
+        return "Uni-processor."
 
 
     def get_name(self):
