@@ -117,7 +117,6 @@ class Mpi4py_processor(Multi_processor):
         MPI.COMM_WORLD.Abort()
 
 
-    #TODO: MAY NEED support for widths?
     def get_intro_string(self):
         """Return the string to append to the end of the relax introduction string.
 
@@ -128,8 +127,15 @@ class Mpi4py_processor(Multi_processor):
         # Get the specific MPI version.
         version_info = MPI.Get_version()
 
+        # The vendor info.
+        vendor = MPI.get_vendor()
+        vendor_name = vendor[0]
+        vendor_version = str(vendor[1][0])
+        for i in range(1, len(vendor[1])):
+            vendor_version = vendor_version + '.%i' % vendor[1][i]
+
         # Return the string.
-        return "MPI running via mpi4py with %d slave processors & 1 master.  Using MPI version %s.%s." % (self.processor_size(), version_info[0], version_info[1])
+        return "MPI %s.%s running via mpi4py with %i slave processors & 1 master.  Using %s %s." % (version_info[0], version_info[1], self.processor_size(), vendor_name, vendor_version)
 
 
     def get_name(self):
