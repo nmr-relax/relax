@@ -67,40 +67,40 @@ class Multiplex_stdout(StringIO):
         return stream.write(string)
 
 
-#FIXME could these two classes be merged via use of a target stream and multiple inheritance?
-class PrependOut(StringIO):
-    def __init__(self, token, stream):
-        StringIO.__init__(self)
-        self.token = token
-        self.token_length = len(token)
-        self.first_time = True
 
+class PrependOut(StringIO):
+    """Class for adding a token to the end of all newlines."""
+
+    def __init__(self, token, stream):
+        """Set up the class for stream manipulation.
+
+        @param token:   The string to add to the end of all newlines.
+        @type token:    str
+        @param stream:  The IO stream
+        @type stream:   IO stream
+        """
+
+        # Execute the base class __init__() method.
+        StringIO.__init__(self)
+
+        # Store the args.
+        self.token = token
         self.stream = stream
 
 
-#    def flush(self):
-#        self.stream.write(self.getvalue().rstrip(self.token))
-#        self.truncate(0)
-#        self.first_time = True
-
-
-    # lost more functions needed use dict???
-    def isatty(self, *args, **kwargs):
-        return stream.isatty(*args, **kwargs)
-
-
     def write(self, string):
-        #sys.__stdout__.write('<<' + string + '>>\n')
+        """Replacement write() method for prepending the token to each line of STDOUT and STDERR.
 
+        @param string:  The line of text to write to STDOUT or STDERR.
+        @type string:   str
+        """
+
+        # Append the token to all newline chars.
         string = string.replace('\n', '\n' + self.token)
-        if self.first_time == True:
-            string = '\n'+self.token + string
-            self.first_time = False
 
-        #StringIO.write(self, string)
-        #sys.__stdout__.write('<<' + string + '>>\n')
+        # Write the string to the stream and flush.
         self.stream.write(string)
-        #self.truncate(0)
+        self.stream.flush()
 
 
 #TODO: maybe this hsould be a delegate to a stringio rather than being a stringio as this will speed things up and simplify things
