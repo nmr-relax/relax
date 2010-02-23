@@ -26,7 +26,6 @@
 # relax module imports.
 import dep_check
 import numpy
-from pkg_resources import Requirement, working_set
 import platform
 from textwrap import wrap
 from version import version
@@ -168,42 +167,118 @@ class Info_box:
     def package_info(self, format="    %-25s%s\n"):
         """Return a string for printing to STDOUT with info from the Python packages used by relax.
 
-        @return:    The info string.
-        @rtype:     str
+        @keyword format:    The formatting string.
+        @type format:       str
+        @return:            The info string.
+        @rtype:             str
         """
 
         # Init.
         text = ''
 
+        # Intro.
+        text = text + ("\nPython packages (most are optional):\n\n")
+
         # Header.
-        text = text + ("\nPython packages (most of these are optional for relax):\n")
+        format1 = "%-20s %-15s "
+        format2 = "%-15s %-15s\n"
+        text = text + format1 % ("Package", "Installed")
+        text = text + format2 % ("Version", "Path")
 
-        # Loop over all packages.
-        packages = ['minfx', 'bmrblib', 'numpy', 'Numeric', 'ScientificPython', 'wxPython', 'mpi4py', 'scons', 'epydoc']
-        for package in packages:
-            # Get the package info.
-            pkg_info = working_set.find(Requirement.parse(package))
+        # minfx.
+        text = text + format1 % ('minfx', True)
+        text = text + format2 % ('Unknown', dep_check.minfx.__path__[0])
 
-            # The package name.
-            text = text + (format % ("Name: ", package))
+        # bmrblib.
+        text = text + format1 % ('bmrblib', dep_check.bmrblib_module)
+        try:
+            text = text + format2 % ('Unknown', dep_check.bmrblib.__path__[0])
+        except:
+            text = text + '\n'
 
-            # Not installed.
-            if pkg_info == None:
-                text = text + (format % ("Installed: ", False))
-                text = text + "\n"
-                continue
+        # numpy.
+        text = text + format1 % ('numpy', True)
+        try:
+            text = text + format2 % (dep_check.numpy.version.version, dep_check.numpy.__path__[0])
+        except:
+            text = text + '\n'
 
-            # Installed
-            else:
-                text = text + (format % ("Installed: ", True))
+        # ScientificPython.
+        text = text + format1 % ('ScientificPython', dep_check.scientific_module)
+        try:
+            text = text + format2 % (dep_check.Scientific.__version__, dep_check.Scientific.__path__[0])
+        except:
+            text = text + '\n'
 
-            # The text.
-            text = text + (format % ("Version: ", pkg_info.version))
-            text = text + (format % ("Location: ", pkg_info.location))
-            text = text + (format % ("Egg name: ", pkg_info.egg_name()))
+        # wxPython.
+        text = text + format1 % ('wxPython', dep_check.wx_module)
+        try:
+            text = text + format2 % (dep_check.wx.__version__, dep_check.wx.__path__[0])
+        except:
+            text = text + '\n'
 
-            # End.
-            text = text + "\n"
+        # mpi4py.
+        text = text + format1 % ('mpi4py', dep_check.mpi4py_module)
+        try:
+            text = text + format2 % (dep_check.mpi4py.__version__, dep_check.mpi4py.__path__[0])
+        except:
+            text = text + '\n'
+
+        # epydoc.
+        text = text + format1 % ('epydoc', dep_check.epydoc_module)
+        try:
+            text = text + format2 % (dep_check.epydoc.__version__, dep_check.epydoc.__path__[0])
+        except:
+            text = text + '\n'
+
+        # optparse.
+        text = text + format1 % ('optparse', True)
+        try:
+            text = text + format2 % (dep_check.optparse.__version__, dep_check.optparse.__file__)
+        except:
+            text = text + '\n'
+
+        # Numeric.
+        text = text + format1 % ('Numeric', dep_check.numeric_module)
+        try:
+            text = text + format2 % (dep_check.Numeric.__version__, dep_check.Numeric.__file__)
+        except:
+            text = text + '\n'
+
+        # readline.
+        text = text + format1 % ('readline', dep_check.readline_module)
+        try:
+            text = text + format2 % (None, dep_check.readline.__file__)
+        except:
+            text = text + '\n'
+
+        # profile.
+        text = text + format1 % ('profile', dep_check.profile_module)
+        try:
+            text = text + format2 % (None, dep_check.profile.__file__)
+        except:
+            text = text + '\n'
+
+        # BZ2.
+        text = text + format1 % ('bz2', dep_check.bz2_module)
+        try:
+            text = text + format2 % (None, dep_check.bz2.__file__)
+        except:
+            text = text + '\n'
+
+        # gzip.
+        text = text + format1 % ('gzip', dep_check.gzip_module)
+        try:
+            text = text + format2 % (None, dep_check.gzip.__file__)
+        except:
+            text = text + '\n'
+
+        # devnull.
+        text = text + format1 % ('os.devnull', dep_check.devnull_import)
+        try:
+            text = text + format2 % (None, dep_check.os.__file__)
+        except:
+            text = text + '\n'
 
         # Return the info string.
         return text
