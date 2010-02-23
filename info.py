@@ -25,6 +25,10 @@
 
 # relax module imports.
 import dep_check
+import numpy
+from pkg_resources import Requirement, working_set
+import platform
+from textwrap import wrap
 from version import version
 
 
@@ -111,6 +115,153 @@ class Info_box:
 
         # Return the new string.
         return string
+
+
+    def intro_text(self):
+        """Create the introductory string for STDOUT printing.
+
+        This text is word-wrapped to a fixed width of 100 characters (or 80 on MS Windows).
+
+
+        @return:    The introductory string.
+        @rtype:     str
+        """
+
+        # The width of the printout.
+        if platform.uname()[0] in ['Windows', 'Microsoft']:
+            width = 80
+        else:
+            width = 100
+
+        # Some new lines.
+        intro_string = '\n\n\n'
+
+        # Program name and version.
+        intro_string = intro_string + self.centre(self.title + ' ' + self.version, width) + '\n\n'
+
+        # Program description.
+        intro_string = intro_string + self.centre(self.desc, width) + '\n\n'
+
+        # Copyright printout.
+        for i in range(len(self.copyright)):
+            intro_string = intro_string + self.centre(self.copyright[i], width) + '\n'
+        intro_string = intro_string + '\n'
+
+        # Program licence and help (wrapped).
+        for line in wrap(self.licence, width):
+            intro_string = intro_string + line + '\n'
+        intro_string = intro_string + '\n'
+ 
+        # Help message.
+        help = "Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within the prompt."
+        for line in wrap(help, width):
+            intro_string = intro_string + line + '\n'
+
+        # ImportErrors, if any.
+        for i in range(len(self.errors)):
+            intro_string = intro_string + '\n' + self.errors[i] + '\n'
+
+        # Return the formatted text.
+        return intro_string
+
+
+    def package_info(self, format="    %-25s%s\n"):
+        """Return a string for printing to STDOUT with info from the Python packages used by relax.
+
+        @return:    The info string.
+        @rtype:     str
+        """
+
+        # Init.
+        text = ''
+
+        # Header.
+        text = text + ("\nPython packages (most of these are optional for relax):\n")
+
+        # Loop over all packages.
+        packages = ['minfx', 'bmrblib', 'numpy', 'Numeric', 'ScientificPython', 'wxPython', 'mpi4py', 'scons', 'epydoc']
+        for package in packages:
+            # Get the package info.
+            pkg_info = working_set.find(Requirement.parse(package))
+
+            # The package name.
+            text = text + (format % ("Name: ", pkg_info.project_name))
+
+            # Not installed.
+            if pkg_info == None:
+                text = text + (format % ("Installed: ", False))
+                text = text + "\n"
+                continue
+
+            # Installed
+            else:
+                text = text + (format % ("Installed: ", True))
+
+            # The text.
+            text = text + (format % ("Version: ", pkg_info.version))
+            text = text + (format % ("Location: ", pkg_info.location))
+            text = text + (format % ("Egg name: ", pkg_info.egg_name()))
+
+            # End.
+            text = text + "\n"
+
+        # Return the info string.
+        return text
+
+
+    def sys_info(self):
+        """Return a string for printing to STDOUT with info about the current relax instance.
+
+        @return:    The info string.
+        @rtype:     str
+        """
+
+        # Init.
+        text = self.intro_text()
+
+        # Formatting string.
+        format = "    %-25s%s\n"
+
+        # Hardware info.
+        text = text + ("\nHardware information:\n")
+        text = text + (format % ("Machine: ", platform.machine()))
+        text = text + (format % ("Processor: ", platform.processor()))
+
+        # System info.
+        text = text + ("\nSystem information:\n")
+        text = text + (format % ("System: ", platform.system()))
+        text = text + (format % ("Release: ", platform.release()))
+        text = text + (format % ("Version: ", platform.version()))
+        if platform.win32_ver()[0]:
+            text = text + (format % ("Win32 version: ", (platform.win32_ver()[0] + " " + platform.win32_ver()[1] + " " + platform.win32_ver()[2] + " " + platform.win32_ver()[3])))
+        if platform.linux_distribution()[0]:
+            text = text + (format % ("GNU/Linux version: ", (platform.linux_distribution()[0] + " " + platform.linux_distribution()[1] + " " + platform.linux_distribution()[2])))
+        if platform.mac_ver()[0]:
+            text = text + (format % ("Mac version: ", (platform.mac_ver()[0] + " (" + platform.mac_ver()[1][0] + ", " + platform.mac_ver()[1][1] + ", " + platform.mac_ver()[1][2] + ") " + platform.mac_ver()[2])))
+        text = text + (format % ("Distribution: ", (platform.dist()[0] + " " + platform.dist()[1] + " " + platform.dist()[2])))
+        text = text + (format % ("Full platform string: ", (platform.platform())))
+
+        # Software info.
+        text = text + ("\nSoftware information:\n")
+        text = text + (format % ("Architecture: ", (platform.architecture()[0] + " " + platform.architecture()[1])))
+        text = text + (format % ("Python version: ", platform.python_version()))
+        text = text + (format % ("Python branch: ", platform.python_branch()))
+        text = text + ((format[:-1]+', %s\n') % ("Python build: ", platform.python_build()[0], platform.python_build()[1]))
+        text = text + (format % ("Python compiler: ", platform.python_compiler()))
+        text = text + (format % ("Python implementation: ", platform.python_implementation()))
+        text = text + (format % ("Python revision: ", platform.python_revision()))
+        text = text + (format % ("Numpy version: ", numpy.__version__))
+        text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
+        text = text + (format % ("Network name: ", platform.node()))
+
+        # Python packages.
+        text = text + self.package_info(format=format)
+
+        # End with an empty newline.
+        text = text + ("\n")
+
+        # Return the text.
+        return text
 
 
 

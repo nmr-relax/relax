@@ -615,7 +615,7 @@ class Test_rotation_matrix(TestCase):
         axis, angle = R_to_axis_angle(R)
 
         # Test the angle.
-        self.assertEqual(angle, 2 * pi / 3)
+        self.assertAlmostEqual(angle, 2 * pi / 3)
 
         # Test the vector.
         for i in range(3):

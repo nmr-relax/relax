@@ -22,6 +22,7 @@
 
 # Python module imports.
 from os import sep
+from re import search
 from shutil import rmtree
 from string import split
 import sys
@@ -69,14 +70,19 @@ class Relax_fit(SystemTestCase):
         lines = file.readlines()
         file.close()
 
-        # Split up the lines.
+        # Loop over all lines.
         for i in xrange(len(lines)):
+            # Find the "@target G0.S0" line.
+            if search('@target', lines[i]):
+                index = i + 2
+
+            # Split up the lines.
             lines[i] = split(lines[i])
 
         # Check some of the Grace data.
-        self.assertEqual(len(lines[23]), 2)
-        self.assertEqual(lines[23][0], '0.004')
-        self.assertEqual(lines[23][1], '487178.0')
+        self.assertEqual(len(lines[index]), 2)
+        self.assertEqual(lines[index][0], '0.004')
+        self.assertEqual(lines[index][1], '487178.0')
 
 
     def test_curve_fitting(self):
