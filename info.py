@@ -105,6 +105,7 @@ class Info_box(object):
         self.bib['dAuvergneGooley07'] = dAuvergneGooley07()
         self.bib['dAuvergneGooley08a'] = dAuvergneGooley08a()
         self.bib['dAuvergneGooley08b'] = dAuvergneGooley08b()
+        self.bib['GoddardKneller'] = GoddardKneller()
         self.bib['LipariSzabo82a'] = LipariSzabo82a()
         self.bib['LipariSzabo82b'] = LipariSzabo82b()
 
@@ -641,6 +642,18 @@ class dAuvergneGooley08b(Ref):
     pubmed_id      = 18085411
     status         = "published"
     year           = 2008
+
+
+
+class GoddardKneller(Ref):
+    """Bibliography container."""
+
+    author          = "Goddard, T.D. and Kneller, D.G."
+    author2         = [["Tom", "Goddard", "T.", "D."], ["Donald", "Kneller", "D.", "G."]]
+    journal         = "University of California, San Francisco."
+    title           = "Sparky 3."
+    status          = "unpublished"
+    type            = "internet"
 
 
 
