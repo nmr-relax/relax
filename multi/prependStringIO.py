@@ -98,9 +98,12 @@ class PrependOut(StringIO):
         # Append the token to all newline chars.
         string = string.replace('\n', '\n' + self.token)
 
-        # Write the string to the stream and flush.
+        # Write the string to the stream.
         self.stream.write(string)
-        self.stream.flush()
+
+        # Flush both STDOUT and STDERR.
+        sys.__stdout__.flush()
+        sys.__stderr__.flush()
 
 
 #TODO: maybe this hsould be a delegate to a stringio rather than being a stringio as this will speed things up and simplify things
