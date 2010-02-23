@@ -25,12 +25,18 @@
 
 # relax module imports.
 import dep_check
+import numpy
+import platform
+from textwrap import wrap
 from version import version
 
 
 
-class Info_box:
+class Info_box(object):
     """A container storing information about relax."""
+
+    # Class variable for storing the class instance.
+    instance = None
 
     def __init__(self):
         """Create the program introduction text stings.
@@ -74,6 +80,17 @@ class Info_box:
         self._setup_references()
 
 
+    def __new__(self, *args, **kargs):
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            self.instance = object.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
+
+
     def _setup_references(self):
         """Build a dictionary of all references useful for relax."""
 
@@ -111,6 +128,248 @@ class Info_box:
 
         # Return the new string.
         return string
+
+
+    def intro_text(self):
+        """Create the introductory string for STDOUT printing.
+
+        This text is word-wrapped to a fixed width of 100 characters (or 80 on MS Windows).
+
+
+        @return:    The introductory string.
+        @rtype:     str
+        """
+
+        # The width of the printout.
+        if platform.uname()[0] in ['Windows', 'Microsoft']:
+            width = 80
+        else:
+            width = 100
+
+        # Some new lines.
+        intro_string = '\n\n\n'
+
+        # Program name and version.
+        intro_string = intro_string + self.centre(self.title + ' ' + self.version, width) + '\n\n'
+
+        # Program description.
+        intro_string = intro_string + self.centre(self.desc, width) + '\n\n'
+
+        # Copyright printout.
+        for i in range(len(self.copyright)):
+            intro_string = intro_string + self.centre(self.copyright[i], width) + '\n'
+        intro_string = intro_string + '\n'
+
+        # Program licence and help (wrapped).
+        for line in wrap(self.licence, width):
+            intro_string = intro_string + line + '\n'
+        intro_string = intro_string + '\n'
+ 
+        # Help message.
+        help = "Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within the prompt."
+        for line in wrap(help, width):
+            intro_string = intro_string + line + '\n'
+
+        # ImportErrors, if any.
+        for i in range(len(self.errors)):
+            intro_string = intro_string + '\n' + self.errors[i] + '\n'
+
+        # Return the formatted text.
+        return intro_string
+
+
+    def package_info(self, format="    %-25s%s\n"):
+        """Return a string for printing to STDOUT with info from the Python packages used by relax.
+
+        @keyword format:    The formatting string.
+        @type format:       str
+        @return:            The info string.
+        @rtype:             str
+        """
+
+        # Init.
+        text = ''
+
+        # Intro.
+        text = text + ("\nPython packages (most are optional):\n\n")
+
+        # Header.
+        format1 = "%-20s %-15s "
+        format2 = "%-15s %-15s\n"
+        text = text + format1 % ("Package", "Installed")
+        text = text + format2 % ("Version", "Path")
+
+        # minfx.
+        text = text + format1 % ('minfx', True)
+        text = text + format2 % ('Unknown', dep_check.minfx.__path__[0])
+
+        # bmrblib.
+        text = text + format1 % ('bmrblib', dep_check.bmrblib_module)
+        try:
+            text = text + format2 % ('Unknown', dep_check.bmrblib.__path__[0])
+        except:
+            text = text + '\n'
+
+        # numpy.
+        text = text + format1 % ('numpy', True)
+        try:
+            text = text + format2 % (dep_check.numpy.version.version, dep_check.numpy.__path__[0])
+        except:
+            text = text + '\n'
+
+        # ScientificPython.
+        text = text + format1 % ('ScientificPython', dep_check.scientific_module)
+        try:
+            text = text + format2 % (dep_check.Scientific.__version__, dep_check.Scientific.__path__[0])
+        except:
+            text = text + '\n'
+
+        # wxPython.
+        text = text + format1 % ('wxPython', dep_check.wx_module)
+        try:
+            text = text + format2 % (dep_check.wx.__version__, dep_check.wx.__path__[0])
+        except:
+            text = text + '\n'
+
+        # mpi4py.
+        text = text + format1 % ('mpi4py', dep_check.mpi4py_module)
+        try:
+            text = text + format2 % (dep_check.mpi4py.__version__, dep_check.mpi4py.__path__[0])
+        except:
+            text = text + '\n'
+
+        # epydoc.
+        text = text + format1 % ('epydoc', dep_check.epydoc_module)
+        try:
+            text = text + format2 % (dep_check.epydoc.__version__, dep_check.epydoc.__path__[0])
+        except:
+            text = text + '\n'
+
+        # optparse.
+        text = text + format1 % ('optparse', True)
+        try:
+            text = text + format2 % (dep_check.optparse.__version__, dep_check.optparse.__file__)
+        except:
+            text = text + '\n'
+
+        # Numeric.
+        text = text + format1 % ('Numeric', dep_check.numeric_module)
+        try:
+            text = text + format2 % (dep_check.Numeric.__version__, dep_check.Numeric.__file__)
+        except:
+            text = text + '\n'
+
+        # readline.
+        text = text + format1 % ('readline', dep_check.readline_module)
+        try:
+            text = text + format2 % ('', dep_check.readline.__file__)
+        except:
+            text = text + '\n'
+
+        # profile.
+        text = text + format1 % ('profile', dep_check.profile_module)
+        try:
+            text = text + format2 % ('', dep_check.profile.__file__)
+        except:
+            text = text + '\n'
+
+        # BZ2.
+        text = text + format1 % ('bz2', dep_check.bz2_module)
+        try:
+            text = text + format2 % ('', dep_check.bz2.__file__)
+        except:
+            text = text + '\n'
+
+        # gzip.
+        text = text + format1 % ('gzip', dep_check.gzip_module)
+        try:
+            text = text + format2 % ('', dep_check.gzip.__file__)
+        except:
+            text = text + '\n'
+
+        # devnull.
+        text = text + format1 % ('os.devnull', dep_check.devnull_import)
+        try:
+            text = text + format2 % ('', dep_check.os.__file__)
+        except:
+            text = text + '\n'
+
+        # Return the info string.
+        return text
+
+
+    def sys_info(self):
+        """Return a string for printing to STDOUT with info about the current relax instance.
+
+        @return:    The info string.
+        @rtype:     str
+        """
+
+        # Init.
+        text = self.intro_text()
+
+        # Formatting string.
+        format = "    %-25s%s\n"
+
+        # Hardware info.
+        text = text + ("\nHardware information:\n")
+        if hasattr(platform, 'machine'):
+            text = text + (format % ("Machine: ", platform.machine()))
+        if hasattr(platform, 'processor'):
+            text = text + (format % ("Processor: ", platform.processor()))
+
+        # System info.
+        text = text + ("\nSystem information:\n")
+        if hasattr(platform, 'system'):
+            text = text + (format % ("System: ", platform.system()))
+        if hasattr(platform, 'release'):
+            text = text + (format % ("Release: ", platform.release()))
+        if hasattr(platform, 'version'):
+            text = text + (format % ("Version: ", platform.version()))
+        if hasattr(platform, 'win32_ver') and platform.win32_ver()[0]:
+            text = text + (format % ("Win32 version: ", (platform.win32_ver()[0] + " " + platform.win32_ver()[1] + " " + platform.win32_ver()[2] + " " + platform.win32_ver()[3])))
+        if hasattr(platform, 'linux_distribution') and platform.linux_distribution()[0]:
+            text = text + (format % ("GNU/Linux version: ", (platform.linux_distribution()[0] + " " + platform.linux_distribution()[1] + " " + platform.linux_distribution()[2])))
+        if hasattr(platform, 'mac_ver') and platform.mac_ver()[0]:
+            text = text + (format % ("Mac version: ", (platform.mac_ver()[0] + " (" + platform.mac_ver()[1][0] + ", " + platform.mac_ver()[1][1] + ", " + platform.mac_ver()[1][2] + ") " + platform.mac_ver()[2])))
+        if hasattr(platform, 'dist'):
+            text = text + (format % ("Distribution: ", (platform.dist()[0] + " " + platform.dist()[1] + " " + platform.dist()[2])))
+        if hasattr(platform, 'platform'):
+            text = text + (format % ("Full platform string: ", (platform.platform())))
+
+        # Software info.
+        text = text + ("\nSoftware information:\n")
+        if hasattr(platform, 'architecture'):
+            text = text + (format % ("Architecture: ", (platform.architecture()[0] + " " + platform.architecture()[1])))
+        if hasattr(platform, 'python_version'):
+            text = text + (format % ("Python version: ", platform.python_version()))
+        if hasattr(platform, 'python_branch'):
+            text = text + (format % ("Python branch: ", platform.python_branch()))
+        if hasattr(platform, 'python_build'):
+            text = text + ((format[:-1]+', %s\n') % ("Python build: ", platform.python_build()[0], platform.python_build()[1]))
+        if hasattr(platform, 'python_compiler'):
+            text = text + (format % ("Python compiler: ", platform.python_compiler()))
+        if hasattr(platform, 'python_implementation'):
+            text = text + (format % ("Python implementation: ", platform.python_implementation()))
+        if hasattr(platform, 'python_revision'):
+            text = text + (format % ("Python revision: ", platform.python_revision()))
+        if hasattr(numpy, '__version__'):
+            text = text + (format % ("Numpy version: ", numpy.__version__))
+        if hasattr(platform, 'libc_ver'):
+            text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
+
+        # Python packages.
+        text = text + self.package_info(format=format)
+
+        # C modules.
+        text = text + "\nCompiled relax C modules:\n"
+        text = text + format % ("Relaxation curve fitting: ", dep_check.C_module_exp_fn)
+
+        # End with an empty newline.
+        text = text + ("\n")
+
+        # Return the text.
+        return text
 
 
 

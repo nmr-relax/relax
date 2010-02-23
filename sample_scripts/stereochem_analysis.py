@@ -42,6 +42,17 @@ This script is split into multiple stages:
     4.  The RDC Q-factor analysis.
 
     5.  Generation of Grace graphs.
+
+    6.  Final ordering of ensembles using the combined RDC and NOE Q-factors, whereby the NOE
+    Q-factor is defined as::
+
+        Q^2 = U / sum(NOE_i^2),
+
+    where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2. The
+    denominator is the sum of all squared NOEs - this must be given as the value of NOE_NORM.  The
+    combined Q is given by::
+
+        Q_total^2 = Q_NOE^2 + Q_RDC^2.
 """
 
 # relax module imports.
@@ -74,8 +85,9 @@ PSEUDO = [
 ["Q10", ["@H23", "@H24", "@H25"]]
 ]
 
-# NOE file.
+# NOE info.
 NOE_FILE = "noes"
+NOE_NORM = 50 * 4**2    # The NOE normalisation factor (sum of all NOEs squared).
 
 # RDC file info.
 RDC_NAME = "PAN"
@@ -116,6 +128,7 @@ analysis = Stereochem_analysis(
     snapshot_max=SNAPSHOT_MAX,
     pseudo=PSEUDO,
     noe_file=NOE_FILE,
+    noe_norm=NOE_NORM,
     rdc_name=RDC_NAME,
     rdc_file=RDC_FILE,
     rdc_spin_id_col=RDC_SPIN_ID_COL,

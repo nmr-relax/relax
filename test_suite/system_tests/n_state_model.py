@@ -238,7 +238,8 @@ class N_state_model(SystemTestCase):
         # Check the base directory files.
         files = listdir(ds.tmpdir)
         for file in files:
-            self.assert_(file in ['NOE_viol_S_sorted', 'ensembles_superimposed', 'RDC_PAN_dist.agr', 'Q_factors_S', 'NOE_viol_curve.agr', 'NOE_viol_dist.agr', 'RDC_PAN_curve.agr', 'NOE_viol_S', 'Q_factors_R_sorted', 'NOE_results', 'Q_factors_R', 'NOE_viol_R_sorted', 'logs', 'NOE_viol_R', 'Q_factors_S_sorted', 'RDC_PAN_results', 'correlation_plot.agr'])
+            print("Checking file %s." % file)
+            self.assert_(file in ['NOE_viol_S_sorted', 'ensembles_superimposed', 'RDC_PAN_dist.agr', 'Q_factors_S', 'NOE_viol_curve.agr', 'NOE_viol_dist.agr', 'RDC_PAN_curve.agr', 'NOE_viol_S', 'Q_factors_R_sorted', 'NOE_results', 'Q_factors_R', 'NOE_viol_R_sorted', 'logs', 'NOE_viol_R', 'Q_factors_S_sorted', 'RDC_PAN_results', 'correlation_plot.agr', 'correlation_plot_scaled.agr'])
 
         # Check the sub-directory files.
         subdirs = ['ensembles_superimposed', 'logs', 'NOE_results', 'RDC_PAN_results']
@@ -248,4 +249,5 @@ class N_state_model(SystemTestCase):
                  ['S_results_0.bz2', 'S_results_1.bz2', 'R_results_2.bz2', 'R_results_0.bz2', 'S_results_2.bz2', 'R_results_1.bz2']]
         for i in range(len(subdirs)):
             for file in listdir(ds.tmpdir + sep + subdirs[i]):
+                print("Checking file %s." % file)
                 self.assert_(file in files[i])
