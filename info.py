@@ -299,34 +299,50 @@ class Info_box:
 
         # Hardware info.
         text = text + ("\nHardware information:\n")
-        text = text + (format % ("Machine: ", platform.machine()))
-        text = text + (format % ("Processor: ", platform.processor()))
+        if hasattr(platform, 'machine'):
+            text = text + (format % ("Machine: ", platform.machine()))
+        if hasattr(platform, 'processor'):
+            text = text + (format % ("Processor: ", platform.processor()))
 
         # System info.
         text = text + ("\nSystem information:\n")
-        text = text + (format % ("System: ", platform.system()))
-        text = text + (format % ("Release: ", platform.release()))
-        text = text + (format % ("Version: ", platform.version()))
-        if platform.win32_ver()[0]:
+        if hasattr(platform, 'system'):
+            text = text + (format % ("System: ", platform.system()))
+        if hasattr(platform, 'release'):
+            text = text + (format % ("Release: ", platform.release()))
+        if hasattr(platform, 'version'):
+            text = text + (format % ("Version: ", platform.version()))
+        if hasattr(platform, 'win32_ver') and platform.win32_ver()[0]:
             text = text + (format % ("Win32 version: ", (platform.win32_ver()[0] + " " + platform.win32_ver()[1] + " " + platform.win32_ver()[2] + " " + platform.win32_ver()[3])))
-        if platform.linux_distribution()[0]:
+        if hasattr(platform, 'linux_distribution') and platform.linux_distribution()[0]:
             text = text + (format % ("GNU/Linux version: ", (platform.linux_distribution()[0] + " " + platform.linux_distribution()[1] + " " + platform.linux_distribution()[2])))
-        if platform.mac_ver()[0]:
+        if hasattr(platform, 'mac_ver') and platform.mac_ver()[0]:
             text = text + (format % ("Mac version: ", (platform.mac_ver()[0] + " (" + platform.mac_ver()[1][0] + ", " + platform.mac_ver()[1][1] + ", " + platform.mac_ver()[1][2] + ") " + platform.mac_ver()[2])))
-        text = text + (format % ("Distribution: ", (platform.dist()[0] + " " + platform.dist()[1] + " " + platform.dist()[2])))
-        text = text + (format % ("Full platform string: ", (platform.platform())))
+        if hasattr(platform, 'dist'):
+            text = text + (format % ("Distribution: ", (platform.dist()[0] + " " + platform.dist()[1] + " " + platform.dist()[2])))
+        if hasattr(platform, 'platform'):
+            text = text + (format % ("Full platform string: ", (platform.platform())))
 
         # Software info.
         text = text + ("\nSoftware information:\n")
-        text = text + (format % ("Architecture: ", (platform.architecture()[0] + " " + platform.architecture()[1])))
-        text = text + (format % ("Python version: ", platform.python_version()))
-        text = text + (format % ("Python branch: ", platform.python_branch()))
-        text = text + ((format[:-1]+', %s\n') % ("Python build: ", platform.python_build()[0], platform.python_build()[1]))
-        text = text + (format % ("Python compiler: ", platform.python_compiler()))
-        text = text + (format % ("Python implementation: ", platform.python_implementation()))
-        text = text + (format % ("Python revision: ", platform.python_revision()))
-        text = text + (format % ("Numpy version: ", numpy.__version__))
-        text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
+        if hasattr(platform, 'architecture'):
+            text = text + (format % ("Architecture: ", (platform.architecture()[0] + " " + platform.architecture()[1])))
+        if hasattr(platform, 'python_version'):
+            text = text + (format % ("Python version: ", platform.python_version()))
+        if hasattr(platform, 'python_branch'):
+            text = text + (format % ("Python branch: ", platform.python_branch()))
+        if hasattr(platform, 'python_build'):
+            text = text + ((format[:-1]+', %s\n') % ("Python build: ", platform.python_build()[0], platform.python_build()[1]))
+        if hasattr(platform, 'python_compiler'):
+            text = text + (format % ("Python compiler: ", platform.python_compiler()))
+        if hasattr(platform, 'python_implementation'):
+            text = text + (format % ("Python implementation: ", platform.python_implementation()))
+        if hasattr(platform, 'python_revision'):
+            text = text + (format % ("Python revision: ", platform.python_revision()))
+        if hasattr(numpy, '__version__'):
+            text = text + (format % ("Numpy version: ", numpy.__version__))
+        if hasattr(platform, 'libc_ver'):
+            text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
 
         # Python packages.
         text = text + self.package_info(format=format)
