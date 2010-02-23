@@ -252,7 +252,6 @@ class Info_box:
         text = text + (format % ("Python revision: ", platform.python_revision()))
         text = text + (format % ("Numpy version: ", numpy.__version__))
         text = text + (format % ("Libc version: ", (platform.libc_ver()[0] + " " + platform.libc_ver()[1])))
-        text = text + (format % ("Network name: ", platform.node()))
 
         # Python packages.
         text = text + self.package_info(format=format)
