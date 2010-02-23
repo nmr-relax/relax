@@ -248,7 +248,7 @@ class Relax:
         self.n_processors = options.n_processors
 
         # Checks for the multiprocessor mode.
-        if self.multiprocessor_type == 'mpi4py' and not dep_check.mpi4py_import:
+        if self.multiprocessor_type == 'mpi4py' and not dep_check.mpi4py_module:
             parser.error(dep_check.mpi4py_message)
 
 

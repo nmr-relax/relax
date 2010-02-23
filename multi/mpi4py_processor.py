@@ -28,7 +28,7 @@
 import dep_check
 
 # Python module imports.
-if dep_check.mpi4py_import:
+if dep_check.mpi4py_module:
     from mpi4py import MPI
 import os
 import sys
