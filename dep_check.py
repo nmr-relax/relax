@@ -142,6 +142,13 @@ try:
 except ImportError:
     vmd_module = False
 
+# mpi4py.
+try:
+    import mpi4py
+    mpi4py_import = True
+except ImportError, message:
+    mpi4py_import = False
+
 
 # Compiled C modules.
 #####################
