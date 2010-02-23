@@ -248,35 +248,35 @@ class Info_box:
         # readline.
         text = text + format1 % ('readline', dep_check.readline_module)
         try:
-            text = text + format2 % (None, dep_check.readline.__file__)
+            text = text + format2 % ('', dep_check.readline.__file__)
         except:
             text = text + '\n'
 
         # profile.
         text = text + format1 % ('profile', dep_check.profile_module)
         try:
-            text = text + format2 % (None, dep_check.profile.__file__)
+            text = text + format2 % ('', dep_check.profile.__file__)
         except:
             text = text + '\n'
 
         # BZ2.
         text = text + format1 % ('bz2', dep_check.bz2_module)
         try:
-            text = text + format2 % (None, dep_check.bz2.__file__)
+            text = text + format2 % ('', dep_check.bz2.__file__)
         except:
             text = text + '\n'
 
         # gzip.
         text = text + format1 % ('gzip', dep_check.gzip_module)
         try:
-            text = text + format2 % (None, dep_check.gzip.__file__)
+            text = text + format2 % ('', dep_check.gzip.__file__)
         except:
             text = text + '\n'
 
         # devnull.
         text = text + format1 % ('os.devnull', dep_check.devnull_import)
         try:
-            text = text + format2 % (None, dep_check.os.__file__)
+            text = text + format2 % ('', dep_check.os.__file__)
         except:
             text = text + '\n'
 
