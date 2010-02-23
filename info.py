@@ -376,6 +376,23 @@ class Info_box(object):
 class Ref:
     """Reference base class."""
 
+    # Initialise all class variables to None.
+    type = None
+    author = None
+    author2 = None
+    title = None
+    status = None
+    journal = None
+    journal_full = None
+    volume = None
+    number = None
+    doi = None
+    pubmed_id = None
+    url = None
+    pages = None
+    year = None
+
+
     def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
         """Compile a short citation in the form of:
 
@@ -397,29 +414,31 @@ class Ref:
         @type year:         bool
         @keyword doi:       The doi flag.
         @type doi:          bool
+        @keyword url:       The url flag.
+        @type url:          bool
         @return:            The full citation.
         @rtype:             str
         """
 
         # Build the citation.
         cite = ''
-        if author and hasattr(self, 'author'):
+        if author and self.author and hasattr(self, 'author'):
             cite = cite + self.author
-        if year and hasattr(self, 'year'):
+        if year and self.year and hasattr(self, 'year'):
             cite = cite + ' (' + repr(self.year) + ').'
-        if title and hasattr(self, 'title'):
+        if title and self.title and hasattr(self, 'title'):
             cite = cite + ' ' + self.title
-        if journal and hasattr(self, 'journal'):
+        if journal and self.journal and hasattr(self, 'journal'):
             cite = cite + ' ' + self.journal + ','
-        if volume and hasattr(self, 'volume'):
+        if volume and self.volume and hasattr(self, 'volume'):
             cite = cite + ' ' + self.volume
-        if number and hasattr(self, 'number'):
+        if number and self.number and hasattr(self, 'number'):
             cite = cite + '(' + self.number + '),'
-        if pages and hasattr(self, 'pages'):
+        if pages and self.pages and hasattr(self, 'pages'):
             cite = cite + ' ' + self.pages
-        if doi and hasattr(self, 'doi'):
+        if doi and self.doi and hasattr(self, 'doi'):
             cite = cite + ' (http://dx.doi.org/'+self.doi + ')'
-        if url and hasattr(self, 'url'):
+        if url and self.url and hasattr(self, 'url'):
             cite = cite + ' ('+self.url + ')'
 
         # End.
