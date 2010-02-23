@@ -154,7 +154,7 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
                 continue
 
             # One set per spin (list data has been returned).
-            if data_list or type(x_val) == list:
+            if data_list or isinstance(x_val, list):
                 # Append a new set structure and set the name to the spin ID.
                 data[0].append([])
                 set_labels.append("Spin %s" % spin_id)
