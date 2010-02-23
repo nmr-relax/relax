@@ -263,7 +263,7 @@ class Relax:
 
         # Show the info about this relax version.
         elif options.info:
-            mode = 'info'
+            self.mode = 'info'
 
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
