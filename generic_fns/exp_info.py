@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,7 +23,11 @@
 # Module docstring.
 """Module containing functions for specifying the experimental details."""
 
+# Python module imports.
+from string import split
+
 # relax module imports.
+from info import Info_box
 from data.exp_info import ExpInfo
 from relax_errors import RelaxError
 from relax_io import open_read_file
@@ -144,54 +148,6 @@ CITE['Sparky'].full_citation = "Goddard, T. D. and Kneller, D. G., SPARKY 3, Uni
 CITE['Sparky'].title = "Sparky."
 CITE['Sparky'].status = "unpublished"
 CITE['Sparky'].type = "internet"
-
-# Model-free model selection citation.
-CITE['Mf model selection'] = Cite_store()
-CITE['Mf model selection'].authors =           [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
-CITE['Mf model selection'].doi =               "10.1023/A:1021902006114"
-CITE['Mf model selection'].pubmed_id =         "12566997"
-CITE['Mf model selection'].full_citation =     "d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39."
-CITE['Mf model selection'].title =             "The use of model selection in the model-free analysis of protein dynamics."
-CITE['Mf model selection'].status =            "published"
-CITE['Mf model selection'].type =              "journal"
-CITE['Mf model selection'].journal_abbrev =    "J. Biomol. NMR"
-CITE['Mf model selection'].journal_full =      "Journal of Biomolecular NMR"
-CITE['Mf model selection'].volume =            25
-CITE['Mf model selection'].page_first =        25
-CITE['Mf model selection'].page_last =         39
-CITE['Mf model selection'].year =              2003
-
-# Model-free model elimination citation.
-CITE['Mf model elimination'] = Cite_store()
-CITE['Mf model elimination'].authors =           [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
-CITE['Mf model elimination'].doi =               "10.1007/s10858-006-9007-z"
-CITE['Mf model elimination'].pubmed_id =         "16791734"
-CITE['Mf model elimination'].full_citation =     "d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135."
-CITE['Mf model elimination'].title =             "Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data."
-CITE['Mf model elimination'].status =            "published"
-CITE['Mf model elimination'].type =              "journal"
-CITE['Mf model elimination'].journal_abbrev =    "J. Biomol. NMR"
-CITE['Mf model elimination'].journal_full =      "Journal of Biomolecular NMR"
-CITE['Mf model elimination'].volume =            35
-CITE['Mf model elimination'].page_first =        117
-CITE['Mf model elimination'].page_last =         135
-CITE['Mf model elimination'].year =              2006
-
-# Model-free set theory citation.
-CITE['Set theory'] = Cite_store()
-CITE['Set theory'].authors =           [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
-CITE['Set theory'].doi =               "10.1039/b702202f"
-CITE['Set theory'].pubmed_id =         "17579774"
-CITE['Set theory'].full_citation =     "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494."
-CITE['Set theory'].title =             "Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm."
-CITE['Set theory'].status =            "published"
-CITE['Set theory'].type =              "journal"
-CITE['Set theory'].journal_abbrev =    "Mol. Biosyst."
-CITE['Set theory'].journal_full =      "Molecular BioSystems"
-CITE['Set theory'].volume =            3
-CITE['Set theory'].page_first =        483
-CITE['Set theory'].page_last =         494
-CITE['Set theory'].year =              2007
 
 
 
@@ -354,21 +310,28 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
     # Model selection.
     if model_selection in ['AIC', 'AICc', 'BIC', 'Bootstrap', 'CV', 'Expect', 'Overall']:
         cite_id.append('model-free model selection')
-        cite_key.append('Mf model selection')
+        cite_key.append('dAuvergneGooley03')
 
     # Model-free model elimination.
     if model_elim:
         cite_id.append('model-free model elimination')
-        cite_key.append('Mf model elimination')
+        cite_key.append('dAuvergneGooley06')
 
     # Universal solution citation.
     if universal_solution:
         cite_id.append('model-free set theory')
-        cite_key.append('Set theory')
+        cite_key.append('dAuvergneGooley07')
 
-    # Add the citations.
+    # Get the info box.
+    info = Info_box()
+
+    # Loop over all citations.
     for id, key in zip(cite_id, cite_key):
-        cdp.exp_info.add_citation(cite_id=id, authors=CITE[key].authors, doi=CITE[key].doi, pubmed_id=CITE[key].pubmed_id, full_citation=CITE[key].full_citation, title=CITE[key].title, status=CITE[key].status, type=CITE[key].type, journal_abbrev=CITE[key].journal_abbrev, journal_full=CITE[key].journal_full, volume=CITE[key].volume, page_first=CITE[key].page_first, page_last=CITE[key].page_last, year=CITE[key].year)
+        # Alias the bib entry.
+        bib = info.bib[key]
+
+        # Add the citation.
+        cdp.exp_info.add_citation(cite_id=id, authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, page_first=split(bib.pages, '-')[0], page_last=split(bib.pages, '-')[1], year=bib.year)
 
     # Place the data in the container.
     cdp.exp_info.setup_script(file=file, dir=dir, text=text, cite_ids=cite_id, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
