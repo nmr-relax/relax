@@ -32,7 +32,7 @@ from version import version
 
 
 
-class Info_box:
+class Info_box(object):
     """A container storing information about relax."""
 
     # Class variable for storing the class instance.
@@ -85,7 +85,7 @@ class Info_box:
 
         # First initialisation.
         if self.instance is None:
-            self.instance = dict.__new__(self, *args, **kargs)
+            self.instance = object.__new__(self, *args, **kargs)
 
         # Already initialised, so return the instance.
         return self.instance
