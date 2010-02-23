@@ -43,14 +43,18 @@ class Test_suite_runner:
         - Unit tests.
     """
 
-    def __init__(self, relax):
-        """Run the system/functional and unit test suite components.
+    def __init__(self, tests=None):
+        """Store the list of tests to preform.
 
-        @param relax:   The relax namespace.
-        @type relax:    instance
+        The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
+
+
+        @keyword tests: The list of tests to preform.
+        @type tests:    list of str
         """
 
-        self.relax = relax
+        # Store the args.
+        self.tests = tests
 
 
     def run_all_tests(self):
@@ -73,8 +77,8 @@ class Test_suite_runner:
         heading('System / functional tests')
 
         # Run the tests.
-        system_runner = System_test_runner(self.relax)
-        self.system_result = system_runner.run()
+        system_runner = System_test_runner()
+        self.system_result = system_runner.run(self.tests)
 
 
     def run_unit_tests(self):

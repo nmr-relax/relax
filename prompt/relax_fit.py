@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'relax_fit' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -57,8 +54,8 @@ class Relax_fit(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.relax_time("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "relax_fit.relax_time("
             text = text + "time=" + repr(time)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)
@@ -94,8 +91,8 @@ class Relax_fit(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "relax_fit.select_model("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "relax_fit.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

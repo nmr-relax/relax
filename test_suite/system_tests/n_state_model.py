@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,20 +22,27 @@
 
 # Python module imports.
 from math import pi, sqrt
-from os import sep
+from os import listdir, sep
 import sys
-from unittest import TestCase
+from shutil import rmtree
+from tempfile import mkdtemp
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 
 
-class N_state_model(TestCase):
+class N_state_model(SystemTestCase):
     """Class for testing various aspects specific to the N-state model."""
 
     def tearDown(self):
         """Reset the relax data storage object."""
 
+        # Remove the temporary directory.
+        if hasattr(ds, 'tmpdir'):
+            rmtree(ds.tmpdir)
+
+        # Reset the relax data storage object.
         ds.__reset__()
 
 
@@ -43,15 +50,15 @@ class N_state_model(TestCase):
         """A 5-state model in the xz-plane (no pivotting of alpha).
 
         The 5 states correspond to the Euler angles (z-y-z notation):
-            State 1:    {0, pi/4, 0}
-            State 2:    {0, pi/8, 0}
-            State 3:    {0, 0, 0}
-            State 4:    {0, -pi/8, 0}
-            State 5:    {0, -pi/4, 0}
+            - State 1:    {0, pi/4, 0}
+            - State 2:    {0, pi/8, 0}
+            - State 3:    {0, 0, 0}
+            - State 4:    {0, -pi/8, 0}
+            - State 5:    {0, -pi/4, 0}
         """
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'5_state_xz.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'5_state_xz.py')
 
         # Test the optimised probabilities.
         self.assertAlmostEqual(cdp.probs[0], 0.2)
@@ -92,7 +99,7 @@ class N_state_model(TestCase):
         ds.mode = 'all'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -115,7 +122,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189412096996)
@@ -135,7 +142,7 @@ class N_state_model(TestCase):
         ds.mode = 'pcs'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -157,7 +164,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189165581069)
@@ -176,7 +183,7 @@ class N_state_model(TestCase):
         ds.mode = 'rdc'
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -198,7 +205,7 @@ class N_state_model(TestCase):
         ds.rand = True
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'align_fit.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these are about ~10% different from Pales).
         # Pales:      S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)
@@ -216,4 +223,31 @@ class N_state_model(TestCase):
         """The 4-state model analysis of lactose using RDCs and PCSs."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'lactose_n_state.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+
+    def test_stereochem_analysis(self):
+        """The full relative stereochemistry analysis."""
+
+        # Create a temporary directory for all result files.
+        ds.tmpdir = mkdtemp()
+
+        # Execute the script.
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'stereochem_analysis.py')
+
+        # Check the base directory files.
+        files = listdir(ds.tmpdir)
+        for file in files:
+            print("Checking file %s." % file)
+            self.assert_(file in ['NOE_viol_S_sorted', 'ensembles_superimposed', 'RDC_PAN_dist.agr', 'Q_factors_S', 'NOE_viol_curve.agr', 'NOE_viol_dist.agr', 'RDC_PAN_curve.agr', 'NOE_viol_S', 'Q_factors_R_sorted', 'NOE_results', 'Q_factors_R', 'NOE_viol_R_sorted', 'logs', 'NOE_viol_R', 'Q_factors_S_sorted', 'RDC_PAN_results', 'correlation_plot.agr', 'correlation_plot_scaled.agr'])
+
+        # Check the sub-directory files.
+        subdirs = ['ensembles_superimposed', 'logs', 'NOE_results', 'RDC_PAN_results']
+        files = [['S0.pdb', 'S2.pdb', 'R0.pdb', 'R1.pdb', 'S1.pdb', 'R2.pdb'],
+                 ['RDC_PAN_analysis.log', 'NOE_viol.log'],
+                 ['S_results_0.bz2', 'S_results_1.bz2', 'R_results_2.bz2', 'R_results_0.bz2', 'S_results_2.bz2', 'R_results_1.bz2'],
+                 ['S_results_0.bz2', 'S_results_1.bz2', 'R_results_2.bz2', 'R_results_0.bz2', 'S_results_2.bz2', 'R_results_1.bz2']]
+        for i in range(len(subdirs)):
+            for file in listdir(ds.tmpdir + sep + subdirs[i]):
+                print("Checking file %s." % file)
+                self.assert_(file in files[i])

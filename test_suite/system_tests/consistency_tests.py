@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2006 Chris MacRaild                                           #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,15 +25,15 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import residue_loop
 from physical_constants import N15_CSA, NH_BOND_LENGTH
 
 
-class Ct(TestCase):
+class Ct(SystemTestCase):
     """Class for testing various aspects specific to consistency testing."""
 
 
@@ -40,7 +41,7 @@ class Ct(TestCase):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('ct', 'ct')
+        self.interpreter.pipe.create('ct', 'ct')
 
 
     def tearDown(self):
@@ -71,29 +72,29 @@ class Ct(TestCase):
         f_r2 = [2.0482909381655862e-09, 1.8998154021753067e-09]
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
-            self.relax.interpreter._Relax_data.read(dataTypes[dataSet][0], dataTypes[dataSet][1], dataTypes[dataSet][2], dataPaths[dataSet], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
+            self.interpreter.relax_data.read(dataTypes[dataSet][0], dataTypes[dataSet][1], dataTypes[dataSet][2], dataPaths[dataSet], res_num_col=1, res_name_col=2, data_col=3, error_col=4)
 
         # Set r, csa, heteronucleus type, and proton type.
-        self.relax.interpreter._Value.set(NH_BOND_LENGTH, 'bond_length')
-        self.relax.interpreter._Value.set(N15_CSA, 'csa')
-        self.relax.interpreter._Value.set('15N', 'heteronucleus')
-        self.relax.interpreter._Value.set('1H', 'proton')
+        self.interpreter.value.set(NH_BOND_LENGTH, 'bond_length')
+        self.interpreter.value.set(N15_CSA, 'csa')
+        self.interpreter.value.set('15N', 'heteronucleus')
+        self.interpreter.value.set('1H', 'proton')
 
         # Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
-        self.relax.interpreter._Value.set(15.7, 'orientation')
+        self.interpreter.value.set(15.7, 'orientation')
 
         # Set the approximate correlation time.
-        self.relax.interpreter._Value.set(13 * 1e-9, 'tc')
+        self.interpreter.value.set(13 * 1e-9, 'tc')
 
         # Select the frequency.
-        self.relax.interpreter._Consistency_tests.set_frq(frq=600.0 * 1e6)
+        self.interpreter.consistency_tests.set_frq(frq=600.0 * 1e6)
 
         # Try the consistency testing.
-        self.relax.interpreter._Minimisation.calc()
+        self.interpreter.calc()
 
         # Loop over residues.
         index = 0
@@ -115,13 +116,13 @@ class Ct(TestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.relax.interpreter._Sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH
         csa = N15_CSA
-        self.relax.interpreter._Value.set(bond_length, 'bond_length')
-        self.relax.interpreter._Value.set(csa, 'csa')
+        self.interpreter.value.set(bond_length, 'bond_length')
+        self.interpreter.value.set(csa, 'csa')
 
         # Loop over residues.
         for res in residue_loop():
@@ -133,4 +134,4 @@ class Ct(TestCase):
         """Test a complete consistency tests run using a script."""
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'consistency_tests.py')

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2007-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2007-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the 'sequence' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -78,8 +75,8 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.copy("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "sequence.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
@@ -117,8 +114,8 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.display("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "sequence.display("
             text = text + "sep=" + repr(sep)
             text = text + ", mol_name_flag=" + repr(mol_name_flag)
             text = text + ", res_num_flag=" + repr(res_num_flag)
@@ -217,8 +214,8 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.read("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "sequence.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -279,8 +276,8 @@ class Sequence(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "sequence.write("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "sequence.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", sep=" + repr(sep)

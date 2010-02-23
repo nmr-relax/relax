@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,20 +24,20 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 
 
-class Load_spins(TestCase):
+class Load_spins(SystemTestCase):
     """TestCase class for the loading of spins into the molecule/residue/spin data structure."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
+        self.interpreter.pipe.create('mf', 'mf')
 
 
     def tearDown(self):
@@ -50,11 +50,11 @@ class Load_spins(TestCase):
         """Test the loading of spins from a small molecule using the Scientific Python PDB data object."""
 
         # Execute a relax script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'load_spins_from_small_molecule.py')
 
         # Test the molecule and residue data.
         self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, 'gromacs_phthalic_acid_mol1')
+        self.assertEqual(cdp.mol[0].name, 'gromacs_mol1')
         self.assertEqual(len(cdp.mol[0].res), 1)
         self.assertEqual(cdp.mol[0].res[0].num, 1)
         self.assertEqual(cdp.mol[0].res[0].name, 'PYR')

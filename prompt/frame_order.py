@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the user function class of the Frame Order theories."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -78,8 +75,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.cone_pdb("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "frame_order.cone_pdb("
             text = text + "size=" + repr(size)
             text = text + ", inc=" + repr(inc)
             text = text + ", file=" + repr(file)
@@ -118,8 +115,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.pivot("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "frame_order.pivot("
             text = text + "pivot=" + repr(pivot) + ")"
             print(text)
 
@@ -157,8 +154,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.ref_domain("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "frame_order.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
@@ -196,8 +193,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "frame_order.select_model("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "frame_order.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

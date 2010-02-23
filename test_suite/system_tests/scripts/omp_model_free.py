@@ -32,11 +32,8 @@ MC_NUM = 3
 
 
 class Main:
-    def __init__(self, relax):
+    def __init__(self):
         """Execute the model-free analysis."""
-
-        # Setup.
-        self.relax = relax
 
         # Read the results file to get the relaxation data from.
         pipe.create('data', 'mf')
@@ -222,4 +219,4 @@ class Main:
 
 
 # Execute the main class.
-Main(self.relax)
+Main()

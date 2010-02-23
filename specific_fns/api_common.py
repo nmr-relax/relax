@@ -177,9 +177,6 @@ class API_common:
     def _overfit_deselect_dummy(self):
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
-        # Print out.
-        print("\n\nOver-fit spin deselection.\n")
-
 
     def _return_no_conversion_factor(self, param, spin=None, spin_id=None):
         """Method for returning 1.0.

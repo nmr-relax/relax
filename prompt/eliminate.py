@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2009 Edward d'Auvergne                            #
+# Copyright (C) 2003, 2004, 2009-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,10 +23,6 @@
 # Module docstring.
 """Module containing the 'eliminate' user function for removing failed models."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
-from types import FunctionType
 
 # relax module imports.
 from base_class import Basic_class
@@ -74,8 +70,8 @@ class Eliminate(Basic_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "eliminate("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "eliminate("
             text = text + "function=" + repr(function)
             text = text + ", args=" + repr(args) + ")"
             print(text)

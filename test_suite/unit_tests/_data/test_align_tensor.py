@@ -59,11 +59,11 @@ class Test_align_tensor(TestCase):
         """Test the appending of Monte Carlo simulation alignment tensor parameters.
 
         The following parameters will be appended to empty lists:
-            Axx: -16.6278 Hz
-            Ayy: 6.13037 Hz
-            Axy: 7.65639 Hz
-            Axz: -1.89157 Hz
-            Ayz: 19.2561 Hz
+            - Axx: -16.6278 Hz
+            - Ayy: 6.13037 Hz
+            - Axy: 7.65639 Hz
+            - Axz: -1.89157 Hz
+            - Ayz: 19.2561 Hz
         """
 
         # The MC sim parameter values.
@@ -119,11 +119,11 @@ class Test_align_tensor(TestCase):
         """Test the setting of spheroidal diffusion tensor parameter errors.
 
         The following parameter errors will be set:
-            Axx: 0.3 Hz
-            Ayy: 0.5 Hz
-            Axy: 0.4 Hz
-            Axz: 0.1 Hz
-            Ayz: 0.2 Hz
+            - Axx: 0.3 Hz
+            - Ayy: 0.5 Hz
+            - Axy: 0.4 Hz
+            - Axz: 0.1 Hz
+            - Ayz: 0.2 Hz
         """
 
         # The parameter errors.
@@ -162,11 +162,11 @@ class Test_align_tensor(TestCase):
         """Test the setting of alignment tensor parameters.
 
         The following parameters will be set:
-            Axx: -16.6278 Hz
-            Ayy: 6.13037 Hz
-            Axy: 7.65639 Hz
-            Axz: -1.89157 Hz
-            Ayz: 19.2561 Hz
+            - Axx: -16.6278 Hz
+            - Ayy: 6.13037 Hz
+            - Axy: 7.65639 Hz
+            - Axz: -1.89157 Hz
+            - Ayz: 19.2561 Hz
         """
 
         # The parameter values.
@@ -205,19 +205,19 @@ class Test_align_tensor(TestCase):
         """Test the setting of Monte Carlo simulation alignment tensor parameters.
 
         Firstly the following parameters will be appended to empty lists:
-            Axx: -16.6278 Hz
-            Ayy: 6.13037 Hz
-            Axy: 7.65639 Hz
-            Axz: -1.89157 Hz
-            Ayz: 19.2561 Hz
+            - Axx: -16.6278 Hz
+            - Ayy: 6.13037 Hz
+            - Axy: 7.65639 Hz
+            - Axz: -1.89157 Hz
+            - Ayz: 19.2561 Hz
 
         These MC sim values will then be explicity overwritten by setting the first elements of the
         lists to:
-            Axx: 0.3 Hz
-            Ayy: 0.5 Hz
-            Axy: 0.4 Hz
-            Axz: 0.1 Hz
-            Ayz: 0.2 Hz
+            - Axx: 0.3 Hz
+            - Ayy: 0.5 Hz
+            - Axy: 0.4 Hz
+            - Axz: 0.1 Hz
+            - Ayz: 0.2 Hz
         """
 
         # Set the MC sim alignment parameter lists.

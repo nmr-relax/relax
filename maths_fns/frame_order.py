@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,7 +32,7 @@ from generic_fns.frame_order import print_frame_order_2nd_degree
 from maths_fns.alignment_tensor import to_5D, to_tensor
 from maths_fns.chi2 import chi2
 from maths_fns.frame_order_matrix_ops import compile_2nd_matrix_iso_cone, reduce_alignment_tensor
-from maths_fns.rotation_matrix import euler_zyz_to_R
+from maths_fns.rotation_matrix import euler_to_R_zyz as euler_to_R
 from relax_errors import RelaxError
 
 
@@ -196,7 +196,7 @@ class Frame_order:
         alpha, beta, gamma = params
 
         # Alignment tensor rotation.
-        euler_zyz_to_R(alpha, beta, gamma, self.rot)
+        euler_to_R(alpha, beta, gamma, self.rot)
 
         # Back calculate the rotated tensors.
         for i in range(self.num_tensors):
@@ -225,26 +225,22 @@ class Frame_order:
     def func_iso_cone(self, params):
         """Target function for isotropic cone model optimisation using the alignment tensors.
 
-        This function optimises against alignment tensors.  The cone axis spherical angles theta and
-        phi and the cone angle theta are the 3 parameters optimised in this model.
+        This function optimises against alignment tensors.
 
-        @param params:  The vector of parameter values {alpha, beta, gamma, theta, phi, theta_cone}
-                        where the first 3 are the tensor rotation Euler angles, the next two are the
-                        polar and azimuthal angles of the cone axis theta_cone is the isotropic cone
-                        angle.
+        @param params:  The vector of parameter values {beta, gamma, theta, phi, s1} where the first 2 are the tensor rotation Euler angles, the next two are the polar and azimuthal angles of the cone axis, and s1 is the isotropic cone order parameter.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
         """
 
         # Unpack the parameters.
-        alpha, beta, gamma, theta, phi, theta_cone = params
+        beta, gamma, theta, phi, s1 = params
 
         # Generate the 2nd degree Frame Order super matrix.
-        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, theta_cone)
+        self.frame_order_2nd = compile_2nd_matrix_iso_cone(self.frame_order_2nd, self.rot, self.z_axis, self.cone_axis, theta, phi, s1)
 
         # Reduced alignment tensor rotation.
-        euler_zyz_to_R(alpha, beta, gamma, self.rot)
+        euler_to_R(0.0, beta, gamma, self.rot)
 
         # Back calculate the reduced tensors.
         for i in range(self.num_tensors):

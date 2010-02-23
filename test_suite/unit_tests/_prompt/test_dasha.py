@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,14 +29,13 @@ from relax_errors import RelaxBoolError, RelaxNoneStrError, RelaxStrError
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_dasha(TestCase):
     """Unit tests for the functions of the 'prompt.dasha' module."""
 
     # Instantiate the user function class.
-    dasha_fns = Dasha(fake_relax.fake_instance())
+    dasha_fns = Dasha()
 
 
     def test_create_argfail_algor(self):

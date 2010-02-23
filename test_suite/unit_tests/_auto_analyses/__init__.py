@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,30 +20,5 @@
 #                                                                             #
 ###############################################################################
 
-# Python module imports.
-import sys
 
-
-# Set the variable sys.ps3 (this is required by the user functions).
-sys.ps3 = 'relax> '
-
-
-# A class to act as a container.
-class Container:
-    pass
-
-
-# Fake normal relax usage of the user function class.
-def fake_instance():
-    """Function which returns a similar to the relax instance.
-
-    This structure is similar enough to the relax instance for the user functions to execute.
-    """
-
-    # Set up the structure.
-    relax = Container()
-    relax.interpreter = Container()
-    relax.interpreter.intro = True
-
-    # Return the class instance.
-    return relax
+__all__ = ['test___init__']

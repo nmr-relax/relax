@@ -95,11 +95,11 @@ class PipeContainer(Prototype):
         return text
 
 
-    def from_xml(self, relax_node, dir=None):
+    def from_xml(self, pipe_node, dir=None):
         """Read a pipe container XML element and place the contents into this pipe.
 
-        @param relax_node:  The relax XML node.
-        @type relax_node:   xml.dom.minidom.Element instance
+        @param pipe_node:   The data pipe XML node.
+        @type pipe_node:    xml.dom.minidom.Element instance
         @keyword dir:       The name of the directory containing the results file (needed for
                             loading external files).
         @type dir:          str
@@ -110,16 +110,16 @@ class PipeContainer(Prototype):
             raise RelaxFromXMLNotEmptyError(self.__class__.__name__)
 
         # Get the global data node, and fill the contents of the pipe.
-        global_node = relax_node.getElementsByTagName('global')[0]
+        global_node = pipe_node.getElementsByTagName('global')[0]
         xml_to_object(global_node, self)
 
         # Get the hybrid node (and its sub-node), and recreate the hybrid object.
-        hybrid_node = relax_node.getElementsByTagName('hybrid')[0]
+        hybrid_node = pipe_node.getElementsByTagName('hybrid')[0]
         pipes_node = hybrid_node.getElementsByTagName('pipes')[0]
         setattr(self, 'hybrid_pipes', node_value_to_python(pipes_node.childNodes[0]))
 
         # Get the diffusion tensor data nodes and, if they exist, fill the contents.
-        diff_tensor_nodes = relax_node.getElementsByTagName('diff_tensor')
+        diff_tensor_nodes = pipe_node.getElementsByTagName('diff_tensor')
         if diff_tensor_nodes:
             # Create the diffusion tensor object.
             self.diff_tensor = DiffTensorData()
@@ -128,7 +128,7 @@ class PipeContainer(Prototype):
             self.diff_tensor.from_xml(diff_tensor_nodes[0])
 
         # Get the alignment tensor data nodes and, if they exist, fill the contents.
-        align_tensor_nodes = relax_node.getElementsByTagName('align_tensors')
+        align_tensor_nodes = pipe_node.getElementsByTagName('align_tensors')
         if align_tensor_nodes:
             # Create the alignment tensor object.
             self.align_tensors = AlignTensorList()
@@ -137,11 +137,11 @@ class PipeContainer(Prototype):
             self.align_tensors.from_xml(align_tensor_nodes[0])
 
         # Recreate the molecule, residue, and spin data structure.
-        mol_nodes = relax_node.getElementsByTagName('mol')
+        mol_nodes = pipe_node.getElementsByTagName('mol')
         self.mol.from_xml(mol_nodes)
 
         # Get the structural object nodes and, if they exist, fill the contents.
-        str_nodes = relax_node.getElementsByTagName('structure')
+        str_nodes = pipe_node.getElementsByTagName('structure')
         if str_nodes:
             # Get the object type.
             parser = str(str_nodes[0].getAttribute('id'))

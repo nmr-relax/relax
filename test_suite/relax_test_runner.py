@@ -42,6 +42,10 @@ class _RelaxTestResult(_TextTestResult):
         The start of STDOUT and STDERR capture occurs here.
         """
 
+        # Store the original STDOUT and STDERR for restoring later on.
+        self.orig_stdout = sys.stdout
+        self.orig_stderr = sys.stderr
+
         # Catch stdout and stderr.
         self.capt = StringIO()
         sys.stdout = self.capt
@@ -57,9 +61,9 @@ class _RelaxTestResult(_TextTestResult):
         The end of STDOUT and STDERR capture occurs here.
         """
 
-        # Restore stdout and stderr.
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
+        # Restore the IO streams.
+        sys.stdout = self.orig_stdout
+        sys.stderr = self.orig_stderr
 
 
     def addError(self, test, err):

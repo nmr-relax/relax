@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -68,10 +68,10 @@ class Test_diff_tensor(TestCase):
         """Test the appending of Monte Carlo simulation spheroidal diffusion tensor parameters.
 
         The following parameters will be appended to empty lists:
-            tm: 8 ns
-            Da: -1e7
-            theta: 150 degrees
-            phi: 30 degrees
+            - tm: 8 ns
+            - Da: -1e7
+            - theta: 150 degrees
+            - phi: 30 degrees
         """
 
         # The MC sim parameter values.
@@ -140,10 +140,10 @@ class Test_diff_tensor(TestCase):
         """Test the setting of spheroidal diffusion tensor parameter errors.
 
         The following parameter errors will be set:
-            tm: 1 ns
-            Da: 1e3
-            theta: 3 degrees
-            phi: 5 degrees
+            - tm: 1 ns
+            - Da: 1e3
+            - theta: 3 degrees
+            - phi: 5 degrees
         """
 
         # The parameter errors.
@@ -185,10 +185,10 @@ class Test_diff_tensor(TestCase):
         """Test the setting of spheroidal diffusion tensor parameters.
 
         The following parameters will be set:
-            tm: 20 ns
-            Da: 2e6
-            theta: 60 degrees
-            phi: 290 degrees
+            - tm: 20 ns
+            - Da: 2e6
+            - theta: 60 degrees
+            - phi: 290 degrees
         """
 
         # The parameter values.
@@ -235,17 +235,17 @@ class Test_diff_tensor(TestCase):
         """Test the setting of Monte Carlo simulation spheroidal diffusion tensor parameters.
 
         Firstly the following parameters will be appended to empty lists:
-            tm: 2 ns
-            Da: 1e5
-            theta: 0 degrees
-            phi: 360 degrees
+            - tm: 2 ns
+            - Da: 1e5
+            - theta: 0 degrees
+            - phi: 360 degrees
 
         These MC sim values will then be explicity overwritten by setting the first elements of the
         lists to:
-            tm: 0.5 ns
-            Da: 3e5
-            theta: 2 degrees
-            phi: 0 degrees
+            - tm: 0.5 ns
+            - Da: 3e5
+            - theta: 2 degrees
+            - phi: 0 degrees
         """
 
         # Set the diffusion type.

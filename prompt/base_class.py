@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,30 +30,58 @@ from string import split, strip
 
 
 class Basic_class:
-    def __init__(self, relax):
+    def __init__(self, exec_info=None):
         """All non-user function classes.
 
-        @param relax:   The relax instance.
-        @type relax:    relax instance
+        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
+        @type exec_info:    None or class instance
         """
 
-        # Place relax in the class namespace.
-        self.__relax__ = relax
+        # Generate the execution info container.
+        if exec_info == None:
+            exec_info = Exec_info()
+
+        # Store the execution info container.
+        self.exec_info = exec_info
+
+
+
+class Exec_info:
+    """Container for execution information."""
+
+    # The hard-coded prompts (to change the Python prompt, as well as the function print outs).
+    ps1 = 'relax> '
+    ps2 = 'relax| '
+    ps3 = '\nrelax> '
+
+    def __init__(self):
+        """Initialise the data of this container.
+
+        This includes the introduction flag as well as the strings to change the Python prompts.
+        """
+
+        # The user function intro flag.
+        self.intro = True
+
 
 
 class User_fn_class:
-    def __init__(self, relax):
+    def __init__(self, exec_info=None):
         """Initialise the user function class, compiling the help string.
 
-        @param relax:   The relax instance.
-        @type relax:    relax instance
+        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
+        @type exec_info:    None or class instance
         """
+
+        # Generate the execution info container.
+        if exec_info == None:
+            exec_info = Exec_info()
+
+        # Store the execution info container.
+        self.exec_info = exec_info
 
         # Add the generic help string.
         self.__relax_help__ = self.__doc__ + "\n" + help.relax_class_help
-
-        # Place relax in the class namespace.
-        self.__relax__ = relax
 
         # Add a description to the help string.
         if hasattr(self, '__description__'):

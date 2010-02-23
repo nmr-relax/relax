@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -30,14 +30,13 @@ from test_suite.unit_tests.spin_testing_base import Spin_base_class
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_spin(Spin_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.spin' module."""
 
     # Instantiate the user function class.
-    spin_fns = Spin(fake_relax.fake_instance())
+    spin_fns = Spin()
 
 
     def test_copy_argfail_pipe_from(self):

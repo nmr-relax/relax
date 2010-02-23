@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,21 +22,21 @@
 
 # Python module imports.
 from tempfile import mktemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import delete
 
 
-class Align_tensor(TestCase):
+class Align_tensor(SystemTestCase):
     """Class for testing various aspects specific to the alignment tensors."""
 
     def setUp(self):
         """Function for initialising a few alignment tensors."""
 
         # Create a data pipe.
-        self.relax.interpreter._Pipe.create('test', 'frame order')
+        self.interpreter.pipe.create('test', 'frame order')
 
         # Temp file name.
         self.tmpfile = mktemp()
@@ -67,19 +67,19 @@ class Align_tensor(TestCase):
         # Set up the tensors.
         for i in range(5):
             # Load the tensor.
-            self.relax.interpreter._Align_tensor.init(tensor=self.full_list[i], params=self.tensors_full[i], param_types=0)
-            self.relax.interpreter._Align_tensor.init(tensor=self.red_list[i], params=self.tensors_red[i], param_types=0)
+            self.interpreter.align_tensor.init(tensor=self.full_list[i], params=self.tensors_full[i], param_types=0)
+            self.interpreter.align_tensor.init(tensor=self.red_list[i], params=self.tensors_red[i], param_types=0)
 
             # Errors.
-            self.relax.interpreter._Align_tensor.init(tensor=self.full_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
-            self.relax.interpreter._Align_tensor.init(tensor=self.red_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
+            self.interpreter.align_tensor.init(tensor=self.full_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
+            self.interpreter.align_tensor.init(tensor=self.red_list[i], params=(error, error, error, error, error), param_types=0, errors=True)
 
             # Domain.
-            self.relax.interpreter._Align_tensor.set_domain(tensor=self.full_list[i], domain='full')
-            self.relax.interpreter._Align_tensor.set_domain(tensor=self.red_list[i], domain='red')
+            self.interpreter.align_tensor.set_domain(tensor=self.full_list[i], domain='full')
+            self.interpreter.align_tensor.set_domain(tensor=self.red_list[i], domain='red')
 
             # Tensor reductions.
-            self.relax.interpreter._Align_tensor.reduction(full_tensor=self.full_list[i], red_tensor=self.red_list[i])
+            self.interpreter.align_tensor.reduction(full_tensor=self.full_list[i], red_tensor=self.red_list[i])
 
         # Reset some values.
         cdp.align_tensors[2].Axx = 1
@@ -99,13 +99,13 @@ class Align_tensor(TestCase):
         """Test the conversion to and from XML."""
 
         # Save the data pipe.
-        self.relax.interpreter._Results.write(self.tmpfile, dir=None, compress_type=0)
+        self.interpreter.results.write(self.tmpfile, dir=None, compress_type=0)
 
         # Create a new data pipe.
-        self.relax.interpreter._Pipe.create('new', 'frame order')
+        self.interpreter.pipe.create('new', 'frame order')
 
         # Load the data.
-        self.relax.interpreter._Results.read(self.tmpfile, dir=None)
+        self.interpreter.results.read(self.tmpfile, dir=None)
 
         # Checks.
         self.assertEqual(len(cdp.align_tensors), 10)

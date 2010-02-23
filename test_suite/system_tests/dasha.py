@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008 Sebastien Morin                                          #
+# Copyright (C) 2010 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,14 +26,14 @@ from os import sep
 import sys
 from shutil import rmtree
 from tempfile import mkdtemp
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from relax_io import test_binary
 
 
-class Dasha(TestCase):
+class Dasha(SystemTestCase):
     """Class for testing various aspects specific to model-free analysis using the program
     'Dasha'.
     """
@@ -42,7 +43,7 @@ class Dasha(TestCase):
         """Set up for all the functional tests."""
 
         # Create the data pipe.
-        self.relax.interpreter._Pipe.create('dasha', 'mf')
+        self.interpreter.pipe.create('dasha', 'mf')
 
         # Create a temporary directory for Dasha outputs.
         ds.tmpdir = mkdtemp()
@@ -69,4 +70,4 @@ class Dasha(TestCase):
             return
 
         # Execute the script.
-        self.relax.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
+        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')

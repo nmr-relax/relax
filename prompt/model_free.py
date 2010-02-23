@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,9 +23,6 @@
 # Module docstring.
 """Module containing the model-free analysis 'model_free' user function class."""
 __docformat__ = 'plaintext'
-
-# Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -116,8 +113,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.create_model("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "model_free.create_model("
             text = text + "model=" + repr(model)
             text = text + ", equation=" + repr(equation)
             text = text + ", params=" + repr(params)
@@ -146,8 +143,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.delete()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "model_free.delete()"
             print(text)
 
         # Execute the functional code.
@@ -181,8 +178,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.remove_tm("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "model_free.remove_tm("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -328,8 +325,8 @@ class Model_free(User_fn_class):
         """
 
         # Function intro text.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "model_free.select_model("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "model_free.select_model("
             text = text + "model=" + repr(model)
             text = text + ", spin_id=" + repr(spin_id) + ")"
             print(text)

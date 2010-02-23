@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,6 +29,7 @@ import dep_check
 # Python module imports.
 from code import InteractiveConsole, softspace
 from os import F_OK, access
+import platform
 if dep_check.readline_module:
     import readline
 import sys
@@ -40,8 +41,10 @@ from math import pi
 from relax_errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
 
 # Auxiliary modules.
-from help import _Helper, _Helper_python
+from base_class import Exec_info
 from command import Ls, Lh, Ll, system
+from help import _Helper, _Helper_python
+from info import Info_box
 if dep_check.readline_module:
     from tab_completion import Tab_completion
 
@@ -92,13 +95,9 @@ from vmd import Vmd
 
 
 class Interpreter:
-    def __init__(self, relax, intro_string=None, show_script=True, quit=True, raise_relax_error=False):
+    def __init__(self, show_script=True, quit=True, raise_relax_error=False):
         """The interpreter class.
 
-        @param relax:               The relax instance.
-        @type relax:                instance
-        @param intro_string:        The string to print at the start of execution.
-        @type intro_string:         str
         @param show_script:         If true, the relax will print the script contents prior to
                                     executing the script.
         @type show_script:          bool
@@ -112,69 +111,157 @@ class Interpreter:
         """
 
         # Place the arguments in the class namespace.
-        self.relax = relax
-        self.__intro_string = intro_string
         self.__show_script = show_script
         self.__quit_flag = quit
         self.__raise_relax_error = raise_relax_error
 
-        # The prompts.
-        sys.ps1 = 'relax> '
-        sys.ps2 = 'relax| '
-        sys.ps3 = '\nrelax> '
+        # Build the intro string.
+        info = Info_box()
+        self.__intro_string = info.intro_text()
 
-        # The function intro flag.
-        self.intro = False
+        # Initialise the execution information container (info that can change during execution).
+        self.exec_info = Exec_info
+
+        # The prompts (change the Python prompt, as well as the function print outs).
+        sys.ps1 = self.exec_info.ps1
+        sys.ps2 = self.exec_info.ps2
+        sys.ps3 = self.exec_info.ps3
+
+        # The function intro flag (store in the execution information container).
+        self.exec_info.intro = False
+
+        # Set up the interpreter objects.
+        self._locals = self._setup()
+
+
+    def _setup(self):
+        """Set up all the interpreter objects.
+
+        All objects are initialised and placed in a dictionary.  These will be later placed in different namespaces such as the run() method local namespace.
+
+        @return:    The dictionary of interpreter objects.
+        @rtype:     dict
+        """
+
+        # Initialise the dictionary.
+        objects = {}
 
         # Python modules.
-        self._pi = pi
+        objects['pi'] = pi
 
-        # Place the user functions into the namespace of the interpreter class.
-        self._Angles = Angles(relax)
-        self._Eliminate = Eliminate(relax)
-        self._Fix = Fix(relax)
-        self._GPL = GPL
-        self._Reset = Reset(relax)
-        self._Minimisation = Minimisation(relax)
-        self._Modsel = Modsel(relax)
-        self._Temp = Temp(relax)
-        self._OpenDX = OpenDX(relax)
-        self._system = system
+        # Import the functions emulating system commands.
+        objects['lh'] = Lh()
+        objects['ll'] = Ll()
+        objects['ls'] = Ls()
+        objects['system'] = system
 
-        # Place the user classes into the interpreter class namespace.
-        self._Align_tensor = Align_tensor(relax)
-        self._Consistency_tests = Consistency_tests(relax)
-        self._Dasha = Dasha(relax)
-        self._Diffusion_tensor = Diffusion_tensor(relax)
-        self._Frame_order = Frame_order(relax)
-        self._OpenDX = OpenDX(relax)
-        self._Frq = Frq(relax)
-        self._Grace = Grace(relax)
-        self._Jw_mapping = Jw_mapping(relax)
-        self._Model_free = Model_free(relax)
-        self._Molmol = Molmol(relax)
-        self._Molecule = Molecule(relax)
-        self._Monte_carlo = Monte_carlo(relax)
-        self._N_state_model = N_state_model(relax)
-        self._Noe = Noe(relax)
-        self._Palmer = Palmer(relax)
-        self._Residue = Residue(relax)
-        self._Structure = Structure(relax)
-        self._PCS = PCS(relax)
-        self._Pymol = Pymol(relax)
-        self._RDC = RDC(relax)
-        self._Relax_data = Relax_data(relax)
-        self._Relax_fit = Relax_fit(relax)
-        self._Results = Results(relax)
-        self._Pipe = Pipe(relax)
-        self._Select = Select(relax)
-        self._Sequence = Sequence(relax)
-        self._Spectrum = Spectrum(relax)
-        self._Spin = Spin(relax)
-        self._State = State(relax)
-        self._Deselect = Deselect(relax)
-        self._Value = Value(relax)
-        self._Vmd = Vmd(relax)
+        # Place functions in the local namespace.
+        objects['gpl'] = objects['GPL'] = GPL()
+
+        # Initialise the user functions (those not in user function classes)
+        angles = Angles(self.exec_info)
+        eliminate = Eliminate(self.exec_info)
+        fix = Fix(self.exec_info)
+        reset = Reset(self.exec_info)
+        minimisation = Minimisation(self.exec_info)
+        modsel = Modsel(self.exec_info)
+        temp = Temp(self.exec_info)
+        opendx = OpenDX(self.exec_info)
+
+        # Place the user functions in the local namespace.
+        objects['angle_diff_frame'] = angles.angle_diff_frame
+        objects['calc'] = minimisation.calc
+        objects['eliminate'] = eliminate.eliminate
+        objects['fix'] = fix.fix
+        objects['grid_search'] = minimisation.grid_search
+        objects['reset'] = reset.reset
+        objects['minimise'] = minimisation.minimise
+        objects['model_selection'] = modsel.model_selection
+        objects['temperature'] = temp.set
+
+        # Place the user classes in the local namespace.
+        objects['align_tensor'] = Align_tensor(self.exec_info)
+        objects['consistency_tests'] = Consistency_tests(self.exec_info)
+        objects['dasha'] = Dasha(self.exec_info)
+        objects['deselect'] = Deselect(self.exec_info)
+        objects['diffusion_tensor'] = Diffusion_tensor(self.exec_info)
+        objects['frame_order'] = Frame_order(self.exec_info)
+        objects['dx'] = OpenDX(self.exec_info)
+        objects['frq'] = Frq(self.exec_info)
+        objects['grace'] = Grace(self.exec_info)
+        objects['jw_mapping'] = Jw_mapping(self.exec_info)
+        objects['model_free'] = Model_free(self.exec_info)
+        objects['molmol'] = Molmol(self.exec_info)
+        objects['molecule'] = Molecule(self.exec_info)
+        objects['monte_carlo'] = Monte_carlo(self.exec_info)
+        objects['n_state_model'] = N_state_model(self.exec_info)
+        objects['noe'] = Noe(self.exec_info)
+        objects['palmer'] = Palmer(self.exec_info)
+        objects['pcs'] = PCS(self.exec_info)
+        objects['pymol'] = Pymol(self.exec_info)
+        objects['rdc'] = RDC(self.exec_info)
+        objects['relax_data'] = Relax_data(self.exec_info)
+        objects['relax_fit'] = Relax_fit(self.exec_info)
+        objects['residue'] = Residue(self.exec_info)
+        objects['results'] = Results(self.exec_info)
+        objects['pipe'] = Pipe(self.exec_info)
+        objects['select'] = Select(self.exec_info)
+        objects['sequence'] = Sequence(self.exec_info)
+        objects['spectrum'] = Spectrum(self.exec_info)
+        objects['spin'] = Spin(self.exec_info)
+        objects['state'] = State(self.exec_info)
+        objects['structure'] = Structure(self.exec_info)
+        objects['value'] = Value(self.exec_info)
+        objects['vmd'] = Vmd(self.exec_info)
+
+        # Builtin interpreter functions.
+        objects['intro_off'] = self.off
+        objects['intro_on'] = self.on
+        objects['exit'] = objects['bye'] = objects['quit'] = objects['q'] = _Exit()
+        objects['script'] = self.script
+
+        # Modify the help system.
+        objects['help_python'] = _Helper_python()
+        objects['help'] = _Helper()
+
+        # Return the dictionary.
+        return objects
+
+
+    def off(self, verbose=True):
+        """Turn the function introductions off.
+
+        @keyword verbose:   A flag which when True results in a print out message being displayed.
+        @type verbose:      bool
+        """
+
+        self.exec_info.intro = False
+
+        # Print out.
+        if verbose:
+            print("Echoing of user function calls has been disabled.")
+
+
+    def on(self, verbose=True):
+        """Turn the function introductions on.
+
+        @keyword verbose:   A flag which when True results in a print out message being displayed.
+        @type verbose:      bool
+        """
+
+        self.exec_info.intro = True
+
+        # Print out.
+        if verbose:
+            print("Echoing of user function calls has been enabled.")
+
+
+    def populate_self(self):
+        """Place all user functions and other special objects into self."""
+
+        # Add the interpreter objects to the class namespace.
+        for name in self._locals.keys():
+            setattr(self, name, self._locals[name])
 
 
     def run(self, script_file=None):
@@ -189,123 +276,35 @@ class Interpreter:
         @type script_file:  None or str
         """
 
-        # Python modules.
-        pi = self._pi
-
-        # Import the functions emulating system commands.
-        lh = Lh()
-        ll = Ll()
-        ls = Ls()
-        system = self._system
-
-        # Place functions in the local namespace.
-        gpl = GPL = self._GPL()
-
-        # Place the user functions in the local namespace.
-        angle_diff_frame = self._Angles.angle_diff_frame
-        calc = self._Minimisation.calc
-        eliminate = self._Eliminate.eliminate
-        fix = self._Fix.fix
-        grid_search = self._Minimisation.grid_search
-        reset = self._Reset.reset
-        minimise = self._Minimisation.minimise
-        model_selection = self._Modsel.model_selection
-        temperature = self._Temp.set
-
-        # Place the user classes in the local namespace.
-        align_tensor = self._Align_tensor
-        consistency_tests = self._Consistency_tests
-        dasha = self._Dasha
-        diffusion_tensor = self._Diffusion_tensor
-        frame_order = self._Frame_order
-        dx = self._OpenDX
-        frq = self._Frq
-        grace = self._Grace
-        jw_mapping = self._Jw_mapping
-        model_free = self._Model_free
-        molmol = self._Molmol
-        molecule = self._Molecule
-        monte_carlo = self._Monte_carlo
-        n_state_model = self._N_state_model
-        noe = self._Noe
-        palmer = self._Palmer
-        structure = self._Structure
-        pcs = self._PCS
-        pymol = self._Pymol
-        rdc = self._RDC
-        relax_data = self._Relax_data
-        relax_fit = self._Relax_fit
-        residue = self._Residue
-        results = self._Results
-        pipe = self._Pipe
-        select = self._Select
-        sequence = self._Sequence
-        spectrum = self._Spectrum
-        spin = self._Spin
-        state = self._State
-        deselect = self._Deselect
-        vmd = self._Vmd
-        value = self._Value
-
-        # Builtin interpreter functions.
-        intro_off = self._off
-        intro_on = self._on
-        exit = bye = quit = q = _Exit()
-        script = self.script
-
-        # Modify the help system.
-        help_python = _Helper_python()
-        help = _Helper()
-
-        # The local namespace.
-        self.local = locals()
+        # Add the interpreter objects to the local run namespace.
+        for name in self._locals.keys():
+            locals()[name] = self._locals[name]
 
         # Setup tab completion.
         if dep_check.readline_module:
-            readline.set_completer(Tab_completion(name_space=self.local).finish)
+            readline.set_completer(Tab_completion(name_space=locals()).finish)
             readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
-            #readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:\'",<>/?')
             readline.parse_and_bind("tab: complete")
 
         # Execute the script file if given.
         if script_file:
             # Turn on the function intro flag.
-            self.intro = True
+            self.exec_info.intro = True
 
             # Run the script.
-            return run_script(intro=self.__intro_string, local=self.local, script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
-
-        # Test for the dummy mode for generating documentation (then exit).
-        elif hasattr(self.relax, 'dummy_mode'):
-            # Place the namespace into self.relax
-            self.relax.local = self.local
-            return
+            return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
 
         # Go to the prompt.
         else:
-            prompt(intro=self.__intro_string, local=self.local)
-
-
-    def _off(self):
-        """Function for turning the function introductions off."""
-
-        self.intro = False
-        print("Echoing of user function calls has been disabled.")
-
-
-    def _on(self):
-        """Function for turning the function introductions on."""
-
-        self.intro = True
-        print("Echoing of user function calls has been enabled.")
+            prompt(intro=self.__intro_string, local=locals())
 
 
     def script(self, file=None, quit=False):
         """Function for executing a script file."""
 
         # Function intro text.
-        if self.intro:
-            text = sys.ps3 + "script("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "script("
             text = text + "file=" + repr(file)
             text = text + ", quit=" + repr(quit) + ")"
             print(text)
@@ -325,14 +324,14 @@ class Interpreter:
             raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
-        orig_intro_state = self.intro
-        self.intro = True
+        orig_intro_state = self.exec_info.intro
+        self.exec_info.intro = True
 
         # Execute the script.
-        run_script(local=self.local, script_file=file, quit=quit)
+        run_script(local=self._locals, script_file=file, quit=quit)
 
         # Return the function intro flag to the original value.
-        self.intro = orig_intro_state
+        self.exec_info.intro = orig_intro_state
 
 
 class _Exit:
@@ -412,9 +411,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     # Print the program introduction.
     if intro:
         sys.stdout.write("%s\n" % intro)
-
-    # Turn the intro flag on so functions will print their intro strings.
-    local['self'].intro = True
 
     # Print the script.
     if show_script:

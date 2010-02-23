@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -29,14 +29,13 @@ from relax_errors import RelaxNoneStrError, RelaxNoneStrListNumError, RelaxStrEr
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_pymol(TestCase):
     """Unit tests for the functions of the 'prompt.pymol' module."""
 
     # Instantiate the user function class.
-    pymol_fns = Pymol(fake_relax.fake_instance())
+    pymol_fns = Pymol()
 
 
     def test_macro_exec_argfail_data_type(self):

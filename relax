@@ -40,7 +40,6 @@ import dep_check
 # Python modules.
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
-import platform
 if dep_check.profile_module:
     import profile
 import pstats
@@ -49,6 +48,7 @@ from string import split, strip
 import sys
 
 # relax modules.
+from info import Info_box
 import generic_fns
 from prompt.gpl import gpl
 from prompt import interpreter
@@ -56,11 +56,12 @@ import relax_errors
 from relax_io import io_streams_log, io_streams_tee
 import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
-import version
+from version import version
 
 sys.path.append(sys.path[0])
 sys.path[0] = '.'
 putenv('PDBVIEWER', 'vmd')
+
 
 
 class Relax:
@@ -73,23 +74,14 @@ class Relax:
     def __init__(self):
         """The top level class for initialising the program."""
 
-        # relax version number.
-        self.version = version.version
-
         # Get and store the PID of this process.
         self.pid = getpid()
-
-        # Store the operating system name.
-        self.platform = platform.uname()[0]
 
         # Debugging flag (default is off).
         self.Debug = 0
 
         # Pedantic flag (default is off).
         self.Pedantic = 0
-
-        # Set the program introduction string to nothing.
-        self.intro_string = None
 
         # Setup the object containing the generic functions.
         self.generic = generic_fns
@@ -107,7 +99,13 @@ class Relax:
 
         # Show the version number and exit.
         if mode == 'version':
-            print(('relax ' + self.version))
+            print(('relax ' + version))
+            sys.exit()
+
+        # Show the relax info and exit.
+        if mode == 'info':
+            info = Info_box()
+            print(info.sys_info())
             sys.exit()
 
         # Logging.
@@ -118,39 +116,36 @@ class Relax:
         elif tee_file:
             io_streams_tee(tee_file)
 
-        # Create a string to pass to the interpreter to print.
-        intro_string = self.get_intro_string()
-
         # Run the interpreter for the prompt or script modes.
         if mode == 'prompt' or mode == 'script':
             # Run the interpreter.
-            self.interpreter = interpreter.Interpreter(self, intro_string)
+            self.interpreter = interpreter.Interpreter()
             self.interpreter.run(self.script_file)
 
         # Execute the relax test suite
         elif mode == 'test suite':
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False, raise_relax_error=True)
-            self.interpreter._on()
+            self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+            self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner(self.tests)
             runner.run_all_tests()
 
         # Execute the relax system tests.
         elif mode == 'system tests':
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(self, show_script=False, quit=False, raise_relax_error=True)
-            self.interpreter._on()
+            self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+            self.interpreter.on()
 
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner(self.tests)
             runner.run_system_tests()
 
         # Execute the relax unit tests.
         elif mode == 'unit tests':
             # Run the tests.
-            runner = Test_suite_runner(self)
+            runner = Test_suite_runner(self.tests)
             runner.run_unit_tests()
 
         # Test mode.
@@ -178,6 +173,7 @@ class Relax:
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
         parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
+        parser.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
 
         # Parse the options.
@@ -221,18 +217,24 @@ class Relax:
         else:
             tee_file = None
 
-        # Number of positional arguements should only be 0 or 1.  1 should be the script file.
-        if len(args) > 1:
-            parser.error("incorrect number of arguments")
+        # Test suite mode, therefore the args are the tests to run and not a script file.
+        if options.test_suite or options.system_tests or options.unit_tests:
+            self.tests = args
 
-        # Script file.
-        self.script_file = None
-        if len(args) == 1:
-            self.script_file = args[0]
+        # The argument is a script.
+        else:
+            # Number of positional arguments should only be 0 or 1.  1 should be the script file.
+            if len(args) > 1:
+                parser.error("incorrect number of arguments")
 
-            # Test if the script file exists.
-            if not access(self.script_file, F_OK):
-                parser.error("the script file " + repr(self.script_file) + " does not exist")
+            # Script file.
+            self.script_file = None
+            if len(args) == 1:
+                self.script_file = args[0]
+
+                # Test if the script file exists.
+                if not access(self.script_file, F_OK):
+                    parser.error("the script file " + repr(self.script_file) + " does not exist")
 
 
         # Determine the relax mode and test for mutually exclusive modes.
@@ -242,12 +244,12 @@ class Relax:
         if options.version:
             mode = 'version'
 
+        # Show the info about this relax version.
+        elif options.info:
+            mode = 'info'
+
         # Run the relax tests.
         elif options.test_suite or options.system_tests or options.unit_tests:
-            # Make sure no script is supplied.
-            if self.script_file:
-                parser.error("a script should not be supplied when executing the test suite")
-
             # Exclusive modes.
             if options.test:
                 parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
@@ -261,7 +263,6 @@ class Relax:
                 mode = 'system tests'
             elif options.unit_tests:
                 mode = 'unit tests'
-
 
         # Test mode.
         elif options.test:
@@ -305,76 +306,10 @@ class Relax:
         return mode, log_file, tee_file
 
 
-    def get_intro_string(self):
-        """Create the program introduction.
-
-        @return:    The program introduction string.
-        @rtype:     str
-        """
-
-        # The width of the printout.
-        if self.platform == 'Windows' or self.platform == 'Microsoft':
-            width = 80
-        else:
-            width = 100
-
-        # Some new lines.
-        intro_string = '\n\n\n'
-
-        # Program name and version.
-        string = "relax " + self.version
-        intro_string = intro_string + self.spacing(string, width) + '\n\n'
-
-        # Program description.
-        string = "Protein dynamics by NMR relaxation data analysis"
-        intro_string = intro_string + self.spacing(string, width) + '\n\n'
-
-        # Copyright printout.
-        string = "Copyright (C) 2001-2006 Edward d'Auvergne"
-        intro_string = intro_string + self.spacing(string, width) + '\n'
-        string = "Copyright (C) 2006-2010 the relax development team"
-        intro_string = intro_string + self.spacing(string, width) + '\n\n'
-
-        # Program licence and help (80 characters wide).
-        if width == 80:
-            intro_string = intro_string + "This is free software which you are welcome to modify and redistribute under\n"
-            intro_string = intro_string + "the conditions of the GNU General Public License (GPL).  This program,\n"
-            intro_string = intro_string + "including all modules, is licensed under the GPL and comes with absolutely no\n"
-            intro_string = intro_string + "warranty.  For details type 'GPL'.  Assistance in using this program can be\n"
-            intro_string = intro_string + "accessed by typing 'help'.\n"
-
-        # Program licence and help (100 characters wide).
-        else:
-            intro_string = intro_string + "This is free software which you are welcome to modify and redistribute under the conditions of the\n"
-            intro_string = intro_string + "GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL\n"
-            intro_string = intro_string + "and comes with absolutely no warranty.  For details type 'GPL'.  Assistance in using this program\n"
-            intro_string = intro_string + "can be accessed by typing 'help'.\n"
-
-        # ImportErrors, if any.
-        if not dep_check.C_module_exp_fn:
-            intro_string = intro_string + "\n" + dep_check.C_module_exp_fn_mesg + "\n"
-
-        # Return the string.
-        return intro_string
-
-
     def licence(self):
         """Function for displaying the licence."""
 
         help(gpl)
-
-
-    def spacing(self, string, width=100):
-        """Function for formatting the string to be centred to 100 spaces."""
-
-        # Calculate the number of spaces needed.
-        spaces = (width - len(string)) / 2
-
-        # The new string.
-        string = spaces * ' ' + string
-
-        # Return the new string.
-        return string
 
 
     def test_mode(self):

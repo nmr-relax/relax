@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -31,14 +31,13 @@ from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_cl
 
 # Unit test imports.
 from data_types import DATA_TYPES
-import fake_relax
 
 
 class Test_align_tensor(Align_tensor_base_class, TestCase):
     """Unit tests for the functions of the 'prompt.align_tensor' module."""
 
     # Instantiate the user function class.
-    align_tensor_fns = Align_tensor(fake_relax.fake_instance())
+    align_tensor_fns = Align_tensor()
 
 
     def test_copy_argfail_tensor_from(self):

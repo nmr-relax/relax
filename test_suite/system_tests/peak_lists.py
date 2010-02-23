@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax.                                     #
@@ -24,21 +24,21 @@
 # Python module imports.
 from os import sep
 import sys
-from unittest import TestCase
 
 # relax module imports.
+from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.mol_res_spin import spin_loop
 
 
-class Peak_lists(TestCase):
+class Peak_lists(SystemTestCase):
     """TestCase class for the functional tests for the support of different peak intensity files."""
 
     def setUp(self):
         """Set up for all the functional tests."""
 
         # Create a data pipe.
-        self.relax.interpreter._Pipe.create('mf', 'mf')
+        self.interpreter.pipe.create('mf', 'mf')
 
 
     def tearDown(self):
@@ -51,12 +51,12 @@ class Peak_lists(TestCase):
         """Test the reading of a generic peak intensity list."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(20, 'GLY')
-        self.relax.interpreter._Residue.create(23, 'ALA')
-        self.relax.interpreter._Residue.create(34, 'CYS')
-        self.relax.interpreter._Residue.create(35, 'MET')
-        self.relax.interpreter._Residue.create(36, 'LYS')
-        self.relax.interpreter._Spin.name(name='N')
+        self.interpreter.residue.create(20, 'GLY')
+        self.interpreter.residue.create(23, 'ALA')
+        self.interpreter.residue.create(34, 'CYS')
+        self.interpreter.residue.create(35, 'MET')
+        self.interpreter.residue.create(36, 'LYS')
+        self.interpreter.spin.name(name='N')
 
         # Relaxation delays.
         delays = [0.0109016,
@@ -73,10 +73,10 @@ class Peak_lists(TestCase):
         # Load the data.
         for i in range(10):
             # Read the peak intensities.
-            self.relax.interpreter._Spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+3, res_num_col=1, res_name_col=2)
+            self.interpreter.spectrum.read_intensities(file="generic_intensity.txt", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=repr(i), int_method='height', int_col=i+3, res_num_col=1, res_name_col=2)
 
             # Set the relaxation times.
-            self.relax.interpreter._Relax_fit.relax_time(time=delays[i], spectrum_id=repr(i))
+            self.interpreter.relax_fit.relax_time(time=delays[i], spectrum_id=repr(i))
 
         # The actual intensities.
         heights = [[1.0000, 0.9714, 0.9602, 0.9626, 0.8839, 0.8327, 0.7088, 0.5098, 0.2410, 0.1116],
@@ -96,12 +96,12 @@ class Peak_lists(TestCase):
         """Test the reading of an NMRView peak list."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(70)
-        self.relax.interpreter._Residue.create(72)
-        self.relax.interpreter._Spin.name(name='N')
+        self.interpreter.residue.create(70)
+        self.interpreter.residue.create(72)
+        self.interpreter.spin.name(name='N')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="cNTnC.xpk", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="cNTnC.xpk", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], -0.1694)
@@ -112,14 +112,14 @@ class Peak_lists(TestCase):
         """Test the reading of an Sparky peak list."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(3)
-        self.relax.interpreter._Residue.create(4)
-        self.relax.interpreter._Residue.create(5)
-        self.relax.interpreter._Residue.create(6)
-        self.relax.interpreter._Spin.name(name='N')
+        self.interpreter.residue.create(3)
+        self.interpreter.residue.create(4)
+        self.interpreter.residue.create(5)
+        self.interpreter.residue.create(6)
+        self.interpreter.spin.name(name='N')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="ref_ave.list", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="ref_ave.list", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 6262)
@@ -132,31 +132,31 @@ class Peak_lists(TestCase):
         """Test the reading of an XEasy peak list."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(15)
-        self.relax.interpreter._Residue.create(21)
-        self.relax.interpreter._Residue.create(22)
-        self.relax.interpreter._Residue.create(29)
-        self.relax.interpreter._Residue.create(52)
-        self.relax.interpreter._Residue.create(69)
-        self.relax.interpreter._Residue.create(70)
-        self.relax.interpreter._Residue.create(73)
-        self.relax.interpreter._Residue.create(79)
-        self.relax.interpreter._Residue.create(84)
-        self.relax.interpreter._Residue.create(87)
-        self.relax.interpreter._Residue.create(95)
-        self.relax.interpreter._Residue.create(96)
-        self.relax.interpreter._Residue.create(100)
-        self.relax.interpreter._Residue.create(104)
-        self.relax.interpreter._Residue.create(107)
-        self.relax.interpreter._Residue.create(110)
-        self.relax.interpreter._Residue.create(112)
-        self.relax.interpreter._Residue.create(120)
-        self.relax.interpreter._Residue.create(141)
-        self.relax.interpreter._Residue.create(165)
-        self.relax.interpreter._Spin.name(name='N')
+        self.interpreter.residue.create(15)
+        self.interpreter.residue.create(21)
+        self.interpreter.residue.create(22)
+        self.interpreter.residue.create(29)
+        self.interpreter.residue.create(52)
+        self.interpreter.residue.create(69)
+        self.interpreter.residue.create(70)
+        self.interpreter.residue.create(73)
+        self.interpreter.residue.create(79)
+        self.interpreter.residue.create(84)
+        self.interpreter.residue.create(87)
+        self.interpreter.residue.create(95)
+        self.interpreter.residue.create(96)
+        self.interpreter.residue.create(100)
+        self.interpreter.residue.create(104)
+        self.interpreter.residue.create(107)
+        self.interpreter.residue.create(110)
+        self.interpreter.residue.create(112)
+        self.interpreter.residue.create(120)
+        self.interpreter.residue.create(141)
+        self.interpreter.residue.create(165)
+        self.interpreter.spin.name(name='N')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 9.714e+03)
@@ -184,11 +184,11 @@ class Peak_lists(TestCase):
         """Test the reading of an XEasy peak list (2)."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(79)
-        self.relax.interpreter._Spin.name(name='NE1')
+        self.interpreter.residue.create(79)
+        self.interpreter.spin.name(name='NE1')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 1.532e+04)
@@ -198,11 +198,11 @@ class Peak_lists(TestCase):
         """Test the reading of an XEasy peak list (3)."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(100)
-        self.relax.interpreter._Spin.name(name='C')
+        self.interpreter.residue.create(100)
+        self.interpreter.spin.name(name='C')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 6.877e+03)
@@ -212,11 +212,11 @@ class Peak_lists(TestCase):
         """Test the reading of an XEasy peak list (4)."""
 
         # Create the sequence data, and name the spins.
-        self.relax.interpreter._Residue.create(107)
-        self.relax.interpreter._Spin.name(name='C')
+        self.interpreter.residue.create(107)
+        self.interpreter.spin.name(name='C')
 
         # Read the peak list.
-        self.relax.interpreter._Spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
+        self.interpreter.spectrum.read_intensities(file="xeasy_r1_20ms.text", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='C', proton='HE1', int_method='height')
 
         # Test the data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].intensities[0], 7.123e+03)

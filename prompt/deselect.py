@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003, 2004, 2008-2009 Edward d'Auvergne                       #
+# Copyright (C) 2003, 2004, 2008-2010 Edward d'Auvergne                       #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,7 +25,6 @@
 __docformat__ = 'plaintext'
 
 # Python module imports.
-import sys
 
 # relax module imports.
 from base_class import User_fn_class
@@ -48,8 +47,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.all()"
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "deselect.all()"
             print(text)
 
         # Execute the functional code.
@@ -127,8 +126,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.read("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "deselect.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -186,8 +185,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.reverse("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "deselect.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -232,8 +231,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.__relax__.interpreter.intro:
-            text = sys.ps3 + "deselect.spin("
+        if self.exec_info.intro:
+            text = self.exec_info.ps3 + "deselect.spin("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", change_all=" + repr(change_all) + ")"
             print(text)
