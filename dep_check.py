@@ -38,7 +38,6 @@ import sys
 # numpy.
 try:
     import numpy
-    del numpy
 except ImportError:
     sys.stderr.write("The dependency 'numpy' has not been installed.\n")
     sys.exit()
@@ -46,7 +45,6 @@ except ImportError:
 # Command line option parser.
 try:
     import optparse
-    del optparse
 except ImportError:
     sys.stderr.write("The dependency 'Optik' has not been installed.\n")
     sys.exit()
@@ -54,7 +52,6 @@ except ImportError:
 # Minfx python package check.
 try:
     import minfx
-    del minfx
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
@@ -66,7 +63,6 @@ except ImportError:
 # Readline module.
 try:
     import readline
-    del readline
     readline_module = True
 except ImportError:
     readline_module = False
@@ -74,7 +70,6 @@ except ImportError:
 # profile module (python development packages required).
 try:
     import profile
-    del profile
     profile_module = True
 except ImportError:
     profile_module = False
@@ -82,7 +77,6 @@ except ImportError:
 # BZ2 compression module.
 try:
     import bz2
-    del bz2
     bz2_module = True
 except ImportError, message:
     bz2_module = False
@@ -91,7 +85,6 @@ except ImportError, message:
 # Gzip compression module.
 try:
     import gzip
-    del gzip
     gzip_module = True
 except ImportError, message:
     gzip_module = False
@@ -100,7 +93,6 @@ except ImportError, message:
 # Devnull.
 try:
     from os import devnull
-    del devnull
     devnull_import = True
 except ImportError, message:
     devnull_import = False
