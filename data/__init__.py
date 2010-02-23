@@ -44,6 +44,7 @@ from version import version
 __all__ = [ 'align_tensor',
             'data_classes',
             'diff_tensor',
+            'gui',
             'mol_res_spin',
             'pipe_container',
             'prototype',
