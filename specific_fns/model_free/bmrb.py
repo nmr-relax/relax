@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Edward d'Auvergne                                        #
+# Copyright (C) 2009-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -20,15 +20,19 @@
 #                                                                             #
 ###############################################################################
 
+# Dependency check module.
+import dep_check
+
 # Python module imports.
 from math import pi
 from numpy import int32, zeros
 import string
 
 # relax module imports.
-from bmrblib.nmr_star_dict import NMR_STAR
-from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
-from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
+if dep_check.bmrblib_module:
+    from bmrblib.nmr_star_dict import NMR_STAR
+    from bmrblib.nmr_star_dict_v3_1 import NMR_STAR_v3_1
+    from bmrblib.nmr_star_dict_v3_2 import NMR_STAR_v3_2
 from generic_fns import exp_info, mol_res_spin, pipes, relax_data
 from generic_fns.mol_res_spin import get_molecule_names, spin_loop
 from relax_errors import RelaxError
