@@ -145,9 +145,9 @@ except ImportError:
 # mpi4py.
 try:
     import mpi4py
-    mpi4py_import = True
+    mpi4py_module = True
 except ImportError, message:
-    mpi4py_import = False
+    mpi4py_module = False
 
 
 # Compiled C modules.
