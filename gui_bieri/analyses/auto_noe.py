@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing the base class for the automatic R1 and R2 analysis frames."""
+"""Module containing the base class for the automatic NOE analysis frames."""
 
 # Python module imports.
 from os import sep
