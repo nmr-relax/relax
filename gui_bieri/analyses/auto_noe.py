@@ -616,7 +616,7 @@ class Auto_noe:
 
 
     def sync_ds(self, upload=False):
-        """Synchronise the rx analysis frame and the relax data store, both ways.
+        """Synchronise the noe analysis frame and the relax data store, both ways.
 
         This method allows the frame information to be uploaded into the relax data store, or for the information in the relax data store to be downloaded by the frame.
 
@@ -636,17 +636,42 @@ class Auto_noe:
         else:
             self.field_results_dir.SetValue(str(self.data.save_dir))
 
+
+
+        # THESE INFORMATIONS HAVE TO BE SAVED!!!!!!!!!!!!!
+
         # The structure file.
-        if upload:
-            self.data.structure_file = str(self.field_structure.GetValue())
-        else:
-            self.field_structure.SetValue(str(self.data.structure_file))
+        #if upload:
+        #    self.data.structure_file = str(self.field_structure.GetValue())
+        #else:
+        #    self.field_structure.SetValue(str(self.data.structure_file))
 
         # Unresolved residues.
-        if upload:
-            self.data.unresolved = str(self.field_unresolved.GetValue())
-        else:
-            self.field_unresolved.SetValue(str(self.data.unresolved))
+        #if upload:
+        #    self.data.unresolved = str(self.field_unresolved.GetValue())
+        #else:
+        #    self.field_unresolved.SetValue(str(self.data.unresolved))
 
-        # The peak lists and relaxation times.
-        self.peak_intensity.sync_ds(upload)
+        # Reference peak file.
+        if upload:
+            self.data.ref_file = str(self.field_ref_noe.GetValue())
+        else:
+            self.field_ref_noe.SetValue(str(self.data.ref_file))
+
+        # Reference rmsd.
+        if upload:
+            self.data.ref_rmsd = str(self.field_ref_rmsd.GetValue())
+        else:
+            self.field_ref_rmsd.SetValue(str(self.data.ref_rmsd))
+
+        # Saturated peak file.
+        if upload:
+            self.data.sat_file = str(self.field_sat_noe.GetValue())
+        else:
+            self.field_sat_noe.SetValue(str(self.data.sat_file))
+
+        # Saturated rmsd.
+        if upload:
+            self.data.sat_rmsd = str(self.field_sat_rmsd.GetValue())
+        else:
+            self.field_sat_rmsd.SetValue(str(self.data.sat_rmsd))
