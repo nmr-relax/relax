@@ -263,6 +263,30 @@ class Auto_noe:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def add_saturated_rmsd(self, box):
+        """Create and add the background RMSD GUI element to the given box.
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Background RMSD:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_sat_rmsd = wx.TextCtrl(self.parent, -1, str(self.data.sat_rmsd))
+        self.field_sat_rmsd.SetMinSize((350, 27))
+        sizer.Add(self.field_sat_rmsd, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def add_structure_selection(self, box):
         """Create and add the structure file selection GUI element to the given box.
 
