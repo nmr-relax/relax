@@ -448,6 +448,26 @@ class Auto_noe:
         self.peak_intensity.data = data
 
 
+    def peak_list_header(self, box):
+        """Add header for peak list section
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "\nNOE peak lists:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 34))
+        label.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def results_directory(self, event):
         """The results directory selection.
 
