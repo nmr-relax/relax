@@ -69,7 +69,7 @@ class Auto_noe:
         self.gui = gui
 
         # The NOE image
-        self.bitmap = IMAGE_PATH + 'noe.gif'
+        self.bitmap = IMAGE_PATH + 'noe.png'
 
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
