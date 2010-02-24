@@ -114,6 +114,9 @@ class Main(wx.Frame):
         # Build the main window.
         self.build_main_window()
 
+        # Build Notebooks
+        self.build_notebooks()
+
         # Build the menu bar.
         self.build_menu_bar()
 
@@ -122,9 +125,6 @@ class Main(wx.Frame):
 
         rx_data = ds.relax_gui.analyses[self.noe_index[0]]
         self.frame_1_statusbar = self.CreateStatusBar(3, 0)
-
-        # The automatic model-free protocol frame.
-        self.analysis_frames[self.hardcoded_index_mf] = Auto_model_free(self, self.notebook_2)
 
         self.__set_properties()
         self.__do_layout()
@@ -228,35 +228,39 @@ class Main(wx.Frame):
     def build_main_window(self):
         """Construct the main relax GUI window."""
 
-        self.notebook_2 = wx.Notebook(self, -1, style=wx.NB_LEFT)
-        self.results = wx.Panel(self.notebook_2, -1)
+
+        self.notebook_left = wx.Notebook(self, -1, style=wx.NB_LEFT)
+        #self.results = wx.Panel(self.notebook_left, -1)
 
         # The 5th notebook (freq 3).
-        self.frq3 = wx.Panel(self.notebook_2, -1)
-        self.notebook_3_copy_1 = wx.Notebook(self.frq3, -1, style=0)
+        self.frq3 = wx.Panel(self.notebook_left, -1)
+        self.notebook_frq_3 = wx.Notebook(self.frq3, -1, style=0)
 
         # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_3] = Auto_r1(self, self.notebook_3_copy_1, hardcoded_index=self.r1_index[2])
-        self.analysis_frames[self.hardcoded_index_r2_3] = Auto_r2(self, self.notebook_3_copy_1, hardcoded_index=self.r2_index[2])
-        self.noe1_copy_1 = wx.Panel(self.notebook_3_copy_1, -1)
+        self.analysis_frames[self.hardcoded_index_r1_3] = Auto_r1(self, self.notebook_frq_3, hardcoded_index=self.r1_index[2])
+        self.analysis_frames[self.hardcoded_index_r2_3] = Auto_r2(self, self.notebook_frq_3, hardcoded_index=self.r2_index[2])
+        #self.analysis_frames[self.hardcoded_index_noe_3] = Auto_noe(self, self.notebook_frq_3, hardcoded_index=self.noe_index[2])
 
         # The 4th notebook (freq 2).
-        self.frq2 = wx.Panel(self.notebook_2, -1)
-        self.notebook_3_copy = wx.Notebook(self.frq2, -1, style=0)
+        self.frq2 = wx.Panel(self.notebook_left, -1)
+        self.notebook_frq_2 = wx.Notebook(self.frq2, -1, style=0)
 
         # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_2] = Auto_r1(self, self.notebook_3_copy, hardcoded_index=self.r1_index[1])
-        self.analysis_frames[self.hardcoded_index_r2_2] = Auto_r2(self, self.notebook_3_copy, hardcoded_index=self.r2_index[1])
-        self.noe1_copy = wx.Panel(self.notebook_3_copy, -1)
+        self.analysis_frames[self.hardcoded_index_r1_2] = Auto_r1(self, self.notebook_frq_2, hardcoded_index=self.r1_index[1])
+        self.analysis_frames[self.hardcoded_index_r2_2] = Auto_r2(self, self.notebook_frq_2, hardcoded_index=self.r2_index[1])
+        #self.analysis_frames[self.hardcoded_index_noe_2] = Auto_noe(self, self.notebook_frq_2, hardcoded_index=self.noe_index[1])
 
         # The 3rd notebook (freq 1).
-        self.frq1 = wx.Panel(self.notebook_2, -1)
-        self.notebook_3 = wx.Notebook(self.frq1, -1, style=0)
+        self.frq1 = wx.Panel(self.notebook_left, -1)
+        self.notebook_frq_1 = wx.Notebook(self.frq1, -1, style=0)
 
         # The automatic relaxation data analysis frames.
-        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_3, hardcoded_index=self.r1_index[0])
-        self.analysis_frames[self.hardcoded_index_r2_1] = Auto_r2(self, self.notebook_3, hardcoded_index=self.r2_index[0])
-        self.noe1 = wx.Panel(self.notebook_3, -1)
+        self.analysis_frames[self.hardcoded_index_r1_1] = Auto_r1(self, self.notebook_frq_1, hardcoded_index=self.r1_index[0])
+        self.analysis_frames[self.hardcoded_index_r2_1] = Auto_r2(self, self.notebook_frq_1, hardcoded_index=self.r2_index[0])
+        #self.analysis_frames[self.hardcoded_index_noe_1] = Auto_noe(self, self.notebook_frq_1, hardcoded_index=self.noe_index[0])
+
+        # The automatic model-free protocol frame.
+        self.analysis_frames[self.hardcoded_index_mf] = Auto_model_free(self, self.notebook_left)
 
 
     def build_menu_bar(self):
@@ -357,6 +361,56 @@ class Main(wx.Frame):
 
         # Return the element.
         return element
+
+
+    def build_notebooks(self):
+        """Build the notebooks for the 3 frequencies and analysis modes"""
+
+        # Add NOE, R1 and R2 tabs to main notebook (1. frequency).
+        frq1sub = wx.BoxSizer(wx.HORIZONTAL)
+        # Create sub-tabs.
+        #self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_noe_1].parent, "steady-state NOE")
+        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_r1_1].parent, "R1 relaxation")
+        self.notebook_frq_1.AddPage(self.analysis_frames[self.hardcoded_index_r2_1].parent, "R2 relaxation")
+        frq1sub.Add(self.notebook_frq_1, 1, wx.EXPAND, 0)
+        self.frq1.SetSizer(frq1sub)
+        # Pack frequency 1 tab.
+        self.notebook_left.AddPage(self.frq1, "Frq. 1")
+
+        # Add NOE, R1 and R2 tabs to main notebook (2. frequency).
+        frq2sub = wx.BoxSizer(wx.HORIZONTAL)
+        # Create sub-tabs.
+        #self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_noe_2].parent, "steady-state NOE")
+        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_r1_2].parent, "R1 relaxation")
+        self.notebook_frq_2.AddPage(self.analysis_frames[self.hardcoded_index_r2_2].parent, "R2 relaxation")
+        frq2sub.Add(self.notebook_frq_2, 1, wx.EXPAND, 0)
+        self.frq2.SetSizer(frq2sub)
+        # Pack frequency 2 tab.
+        self.notebook_left.AddPage(self.frq2, "Frq. 2")
+
+        # Add NOE, R1 and R2 tabs to main notebook (3. frequency).
+        frq3sub = wx.BoxSizer(wx.HORIZONTAL)
+        # Create sub-tabs.
+        #self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_noe_3].parent, "steady-state NOE")
+        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_r1_3].parent, "R1 relaxation")
+        self.notebook_frq_3.AddPage(self.analysis_frames[self.hardcoded_index_r2_3].parent, "R2 relaxation")
+        frq3sub.Add(self.notebook_frq_3, 1, wx.EXPAND, 0)
+        self.frq3.SetSizer(frq3sub)
+        # Pack frequency 3 tab.
+        self.notebook_left.AddPage(self.frq3, "Frq. 3")
+
+        # Results tab.
+        self.results = wx.Panel(self.notebook_left, -1)
+
+        # Model-free tab.
+        self.notebook_left.AddPage(self.analysis_frames[self.hardcoded_index_mf].parent, "Model-free")
+        self.notebook_left.AddPage(self.results, "Results")
+
+        # Pack main notebook.
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        main_sizer.Add(self.notebook_left, 1, wx.EXPAND, 0)
+        self.SetSizer(main_sizer)
+
 
 
     def exec_noe1(self, event): # Start NOE calculation no. 1
