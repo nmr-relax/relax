@@ -343,7 +343,7 @@ class Auto_noe:
 
 
     def assemble_data(self):
-        """Assemble the data required for the Relax_fit class.
+         """Assemble the data required for the Auto_noe class.
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
@@ -354,16 +354,19 @@ class Auto_noe:
         # The data container.
         data = Container()
 
-        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = ['fixme!', None, None, 2, 3, 4, 5, None]
+        # Reference peak list and background noe.
+        data.ref_file = self.data.ref_file
+        data.ref_rmsd = int(self.data.ref_rmsd)
 
-        # The file names and relaxation times.
-        for i in range(len(self.data.file_list)):
-            # Hit the end of the list.
-            if self.data.file_list[i] == '':
-                break
-        data.file_names = self.data.file_list[:i]
-        data.relax_times = self.data.relax_times[:i]
+        # Saturated peak list and background noe.
+        data.sat_file = self.data.sat_file
+        data.sat_rmsd = int(self.data.sat_rmsd)
+
+        # Results directory.
+        data.save_dir = self.data.save_dir
+
+        # Frequency
+        data.frq = int(self.field_nmr_frq.GetValue())
 
         # The integration method.
         data.int_method = 'height'
