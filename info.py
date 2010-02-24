@@ -23,6 +23,9 @@
 # Module docstring.
 """Module containing the introductory text container."""
 
+# Python module imports.
+from string import split
+
 # relax module imports.
 import dep_check
 import numpy
@@ -105,6 +108,8 @@ class Info_box(object):
         self.bib['dAuvergneGooley07'] = dAuvergneGooley07()
         self.bib['dAuvergneGooley08a'] = dAuvergneGooley08a()
         self.bib['dAuvergneGooley08b'] = dAuvergneGooley08b()
+        self.bib['Delaglio95'] = Delaglio95()
+        self.bib['GoddardKneller'] = GoddardKneller()
         self.bib['LipariSzabo82a'] = LipariSzabo82a()
         self.bib['LipariSzabo82b'] = LipariSzabo82b()
 
@@ -376,6 +381,59 @@ class Info_box(object):
 class Ref:
     """Reference base class."""
 
+    # Initialise all class variables to None.
+    type = None
+    author = None
+    author2 = None
+    title = None
+    status = None
+    journal = None
+    journal_full = None
+    volume = None
+    number = None
+    doi = None
+    pubmed_id = None
+    url = None
+    pages = None
+    year = None
+
+
+    def __getattr__(self, name):
+        """Generate some variables on the fly.
+
+        This is only called for objects not found in the class.
+
+        @param name:    The name of the object.
+        @type name:     str
+        @raises:        AttributeError if the object cannot be created.
+        @returns:       The generated object.
+        @rtype:         anything
+        """
+
+        # Page numbers.
+        if name in ['page_first', 'page_last']:
+            # No page info.
+            if not self.pages:
+                return None
+
+            # First split the page range.
+            vals = split(self.pages, '-')
+
+            # Single page.
+            if len(vals) == 1:
+                return vals[0]
+
+            # First page.
+            if name == 'page_first':
+                return vals[0]
+
+            # Last page.
+            if name == 'page_last':
+                return vals[1]
+
+        raise AttributeError, name
+
+
     def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
         """Compile a short citation in the form of:
 
@@ -397,29 +455,31 @@ class Ref:
         @type year:         bool
         @keyword doi:       The doi flag.
         @type doi:          bool
+        @keyword url:       The url flag.
+        @type url:          bool
         @return:            The full citation.
         @rtype:             str
         """
 
         # Build the citation.
         cite = ''
-        if author and hasattr(self, 'author'):
+        if author and self.author and hasattr(self, 'author'):
             cite = cite + self.author
-        if year and hasattr(self, 'year'):
+        if year and self.year and hasattr(self, 'year'):
             cite = cite + ' (' + repr(self.year) + ').'
-        if title and hasattr(self, 'title'):
+        if title and self.title and hasattr(self, 'title'):
             cite = cite + ' ' + self.title
-        if journal and hasattr(self, 'journal'):
+        if journal and self.journal and hasattr(self, 'journal'):
             cite = cite + ' ' + self.journal + ','
-        if volume and hasattr(self, 'volume'):
+        if volume and self.volume and hasattr(self, 'volume'):
             cite = cite + ' ' + self.volume
-        if number and hasattr(self, 'number'):
+        if number and self.number and hasattr(self, 'number'):
             cite = cite + '(' + self.number + '),'
-        if pages and hasattr(self, 'pages'):
+        if pages and self.pages and hasattr(self, 'pages'):
             cite = cite + ' ' + self.pages
-        if doi and hasattr(self, 'doi'):
+        if doi and self.doi and hasattr(self, 'doi'):
             cite = cite + ' (http://dx.doi.org/'+self.doi + ')'
-        if url and hasattr(self, 'url'):
+        if url and self.url and hasattr(self, 'url'):
             cite = cite + ' ('+self.url + ')'
 
         # End.
@@ -486,14 +546,17 @@ class Ref:
 class Clore90(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "Clore, G. M. and Szabo, A. and Bax, A. and Kay, L. E. and Driscoll, P. C. and Gronenborn, A. M."
     title          = "Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins"
     journal        = "J. Am. Chem. Soc."
+    journal_full   = "Journal of the American Chemical Society"
     volume         = "112"
     number         = "12"
     pages          = "4989-4991"
     address        = "1155 16th St, NW, Washington, DC 20036"
     sourceid       = "ISI:A1990DH27700070"
+    status         = "published"
     year           = 1990
 
 
@@ -501,10 +564,13 @@ class Clore90(Ref):
 class dAuvergne06(Ref):
     """Bibliography container."""
 
+    type           = "thesis"
     author         = "d'Auvergne, E. J."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."]]
     title          = "Protein dynamics: a study of the model-free analysis of NMR relaxation data."
     school         = "Biochemistry and Molecular Biology, University of Melbourne."
     url            = "http://eprints.infodiv.unimelb.edu.au/archive/00002799/"
+    status         = "published"
     year           = 2006
 
 
@@ -512,16 +578,21 @@ class dAuvergne06(Ref):
 class dAuvergneGooley03(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "The use of model selection in the model-free analysis of protein dynamics."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "25"
     number         = "1"
     pages          = "25-39"
     abstract       = "Model-free analysis of NMR relaxation data, which is widely used for the study of protein dynamics, consists of the separation of the global rotational diffusion from internal motions relative to the diffusion frame and the description of these internal motions by amplitude and timescale. Five model-free models exist, each of which describes a different type of motion. Model-free analysis requires the selection of the model which best describes the dynamics of the NH bond. It will be demonstrated that the model selection technique currently used has two significant flaws, under-fitting, and not selecting a model when one ought to be selected. Under-fitting breaks the principle of parsimony causing bias in the final model-free results, visible as an overestimation of S2 and an underestimation of taue and Rex. As a consequence the protein falsely appears to be more rigid than it actually is. Model selection has been extensively developed in other fields. The techniques known as Akaike's Information Criteria (AIC), small sample size corrected AIC (AICc), Bayesian Information Criteria (BIC), bootstrap methods, and cross-validation will be compared to the currently used technique. To analyse the variety of techniques, synthetic noisy data covering all model-free motions was created. The data consists of two types of three-dimensional grid, the Rex grids covering single motions with chemical exchange [S2,taue,Rex], and the Double Motion grids covering two internal motions [S f 2,S s 2,tau s ]. The conclusion of the comparison is that for accurate model-free results, AIC model selection is essential. As the method neither under, nor over-fits, AIC is the best tool for applying Occam's razor and has the additional benefits of simplifying and speeding up model-free analysis."
     authoraddress  = "Department of Biochemistry and Molecular Biology, University of Melbourne, Melbourne, Victoria 3010, Australia. ejdauv@pgrad.unimelb.edu.au"
     keywords       = "Amines ; Diffusion ; *Models, Molecular ; Motion ; Nuclear Magnetic Resonance, Biomolecular/*methods ; Proteins/*chemistry ; Research Support, Non-U.S. Gov't ; Rotation"
+    doi            = "10.1023/A:1021902006114"
     pubmed_id      = 12566997
+    status         = "published"
     year           = 2003
 
 
@@ -529,9 +600,12 @@ class dAuvergneGooley03(Ref):
 class dAuvergneGooley06(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "35"
     number         = "2"
     pages          = "117-135"
@@ -539,6 +613,7 @@ class dAuvergneGooley06(Ref):
     authoraddress  = "Department of Biochemistry and Molecular Biology, Bio21 Institute of Biotechnology and Molecular Science, University of Melbourne, Parkville, Victoria, 3010, Australia"
     doi            = "10.1007/s10858-006-9007-z"
     pubmed_id      = 16791734
+    status         = "published"
     year           = 2006
 
 
@@ -546,9 +621,12 @@ class dAuvergneGooley06(Ref):
 class dAuvergneGooley07(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm."
     journal        = "Mol. Biosys."
+    journal_full   = "Molecular BioSystems"
     volume         = "3"
     number         = "7"
     pages          = "483-494"
@@ -557,6 +635,7 @@ class dAuvergneGooley07(Ref):
     keywords       = "Magnetic Resonance Spectroscopy/*methods ; *Models, Theoretical ; Proteins/chemistry ; Thermodynamics"
     doi            = "10.1039/b702202f"
     pubmed_id      = 17579774
+    status         = "published"
     year           = 2007
 
 
@@ -564,9 +643,12 @@ class dAuvergneGooley07(Ref):
 class dAuvergneGooley08a(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "40"
     number         = "2"
     pages          = "107-119"
@@ -575,6 +657,7 @@ class dAuvergneGooley08a(Ref):
     keywords       = "*Algorithms ; Cytochromes c2/chemistry ; Diffusion ; *Models, Molecular ; Nuclear Magnetic Resonance, Biomolecular/*methods ; Rhodobacter capsulatus/chemistry ; *Rotation"
     doi            = "10.1007/s10858-007-9214-2"
     pubmed_id      = 18085410
+    status         = "published"
     year           = 2008
 
 
@@ -582,9 +665,12 @@ class dAuvergneGooley08a(Ref):
 class dAuvergneGooley08b(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "d'Auvergne, E. J. and Gooley, P. R."
+    author2        = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
     title          = "Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor."
     journal        = "J. Biomol. NMR"
+    journal_full   = "Journal of Biomolecular NMR"
     volume         = "40"
     number         = "2"
     pages          = "121-133"
@@ -594,21 +680,60 @@ class dAuvergneGooley08b(Ref):
     language       = "eng"
     doi            = "10.1007/s10858-007-9213-3"
     pubmed_id      = 18085411
+    status         = "published"
     year           = 2008
+
+
+
+class Delaglio95(Ref):
+    """Bibliography container."""
+
+    type            = "journal"
+    author          = "Delaglio, F., Grzesiek, S., Vuister, G.W., Zhu, G., Pfeifer, J. and Bax, A."
+    author2         = [["Frank", "Delaglio", "F.", None], ["Stephan", "Grzesiek", "S.", None], ["Geerten", "Vuister", "G.", "W."], ["Guang", "Zhu", "G.", None], ["John", "Pfeifer", "J.", None], ["Ad", "Bax", "A.", None]]
+    title           = "NMRPipe: a multidimensional spectral processing system based on UNIX pipes."
+    journal         = "J. Biomol. NMR"
+    journal_full    = "Journal of Biomolecular NMR"
+    volume          = "6"
+    number          = "3"
+    pages           = "277-293"
+    abstract        = "The NMRPipe system is a UNIX software environment of processing, graphics, and analysis tools designed to meet current routine and research-oriented multidimensional processing requirements, and to anticipate and accommodate future demands and developments. The system is based on UNIX pipes, which allow programs running simultaneously to exchange streams of data under user control. In an NMRPipe processing scheme, a stream of spectral data flows through a pipeline of processing programs, each of which performs one component of the overall scheme, such as Fourier transformation or linear prediction. Complete multidimensional processing schemes are constructed as simple UNIX shell scripts. The processing modules themselves maintain and exploit accurate records of data sizes, detection modes, and calibration information in all dimensions, so that schemes can be constructed without the need to explicitly define or anticipate data sizes or storage details of real and imaginary channels during processing. The asynchronous pipeline scheme provides other substantial advantages, including high flexibility, favorable processing speeds, choice of both all-in-memory and disk-bound processing, easy adaptation to different data formats, simpler software development and maintenance, and the ability to distribute processing tasks on multi-CPU computers and computer networks."
+    authoraddress   = "Laboratory of Chemical Physics, National Institute of Diabetes and Digestive and Kidney Diseases, National Institutes of Health, Bethesda, MD 20892, USA."
+    keywords        = "Magnetic Resonance Spectroscopy/*instrumentation ; *Software"
+    language        = "eng"
+    doi             = "10.1007/BF00197809"
+    pubmed_id       = 8520220
+    status         = "published"
+    year            = 1995
+
+
+
+class GoddardKneller(Ref):
+    """Bibliography container."""
+
+    author          = "Goddard, T.D. and Kneller, D.G."
+    author2         = [["Tom", "Goddard", "T.", "D."], ["Donald", "Kneller", "D.", "G."]]
+    journal         = "University of California, San Francisco."
+    title           = "Sparky 3."
+    status          = "unpublished"
+    type            = "internet"
 
 
 
 class LipariSzabo82a(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "Lipari, G. and Szabo, A."
     title          = "Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity"
     journal        = "J. Am. Chem. Soc."
+    journal_full   = "Journal of the American Chemical Society"
     volume         = "104"
     number         = "17"
     pages          = "4546-4559"
     authoraddress  = "NIADDKD,Chem Phys Lab,Bethesda,MD 20205."
     sourceid       = "ISI:A1982PC82900009"
+    status         = "published"
     year           = 1982
 
 
@@ -616,13 +741,16 @@ class LipariSzabo82a(Ref):
 class LipariSzabo82b(Ref):
     """Bibliography container."""
 
+    type           = "journal"
     author         = "Lipari, G. and Szabo, A."
     title          = "Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results"
     journal        = "J. Am. Chem. Soc."
+    journal_full   = "Journal of the American Chemical Society"
     volume         = "104"
     number         = "17"
     pages          = "4559-4570"
     abstract       = "For pt.I see ibid., vol.104, p.4546 (1982). In the preceding paper it has been shown that the unique dynamic information on fast internal motions in an NMR relaxation experiment on macromolecules in solution is specified by a generalized order parameter, S , and an effective correlation time, tau /sub e/. The authors now deal with the extraction and interpretation of this information. The procedure used to obtain S /sup 2/ and tau /sub e/ from experimental data by using a least-squares method and, in certain favorable circumstances, by using an analytical formula is described. A variety of experiments are then analyzed to yield information on the time scale and spatial restriction of internal motions of isoleucines in myoglobin, methionines in dihydrofolate reductase and myoglobin, a number of aliphatic residues in basic pancreatic trypsin inhibitor, and ethyl isocyanide bound to myoglobin, hemoglobin, and aliphatic side chains in three random-coil polymers. The numerical values of S /sup 2/ and tau /sub e / can be readily interpreted within the framework of a variety of models."
     authoraddress  = "NIADDKD,Chem Phys Lab,Bethesda,MD 20205."
     sourceid       = "ISI:A1982PC82900010"
+    status         = "published"
     year           = 1982
