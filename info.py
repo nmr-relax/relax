@@ -108,6 +108,7 @@ class Info_box(object):
         self.bib['dAuvergneGooley07'] = dAuvergneGooley07()
         self.bib['dAuvergneGooley08a'] = dAuvergneGooley08a()
         self.bib['dAuvergneGooley08b'] = dAuvergneGooley08b()
+        self.bib['Delaglio95'] = Delaglio95()
         self.bib['GoddardKneller'] = GoddardKneller()
         self.bib['LipariSzabo82a'] = LipariSzabo82a()
         self.bib['LipariSzabo82b'] = LipariSzabo82b()
@@ -681,6 +682,29 @@ class dAuvergneGooley08b(Ref):
     pubmed_id      = 18085411
     status         = "published"
     year           = 2008
+
+
+
+class Delaglio95(Ref):
+    """Bibliography container."""
+
+    type            = "journal"
+    author          = "Delaglio, F., Grzesiek, S., Vuister, G.W., Zhu, G., Pfeifer, J. and Bax, A."
+    author2         = [["Frank", "Delaglio", "F.", None], ["Stephan", "Grzesiek", "S.", None], ["Geerten", "Vuister", "G.", "W."], ["Guang", "Zhu", "G.", None], ["John", "Pfeifer", "J.", None], ["Ad", "Bax", "A.", None]]
+    title           = "NMRPipe: a multidimensional spectral processing system based on UNIX pipes."
+    journal         = "J. Biomol. NMR"
+    journal_full    = "Journal of Biomolecular NMR"
+    volume          = "6"
+    number          = "3"
+    pages           = "277-293"
+    abstract        = "The NMRPipe system is a UNIX software environment of processing, graphics, and analysis tools designed to meet current routine and research-oriented multidimensional processing requirements, and to anticipate and accommodate future demands and developments. The system is based on UNIX pipes, which allow programs running simultaneously to exchange streams of data under user control. In an NMRPipe processing scheme, a stream of spectral data flows through a pipeline of processing programs, each of which performs one component of the overall scheme, such as Fourier transformation or linear prediction. Complete multidimensional processing schemes are constructed as simple UNIX shell scripts. The processing modules themselves maintain and exploit accurate records of data sizes, detection modes, and calibration information in all dimensions, so that schemes can be constructed without the need to explicitly define or anticipate data sizes or storage details of real and imaginary channels during processing. The asynchronous pipeline scheme provides other substantial advantages, including high flexibility, favorable processing speeds, choice of both all-in-memory and disk-bound processing, easy adaptation to different data formats, simpler software development and maintenance, and the ability to distribute processing tasks on multi-CPU computers and computer networks."
+    authoraddress   = "Laboratory of Chemical Physics, National Institute of Diabetes and Digestive and Kidney Diseases, National Institutes of Health, Bethesda, MD 20892, USA."
+    keywords        = "Magnetic Resonance Spectroscopy/*instrumentation ; *Software"
+    language        = "eng"
+    doi             = "10.1007/BF00197809"
+    pubmed_id       = 8520220
+    status         = "published"
+    year            = 1995
 
 
 
