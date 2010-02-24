@@ -385,7 +385,7 @@ class Auto_noe:
 
 
     def build_main_box(self):
-        """Construct the highest level box to pack into the automatic Rx analysis frame.
+        """Construct the highest level box to pack into the automatic NOE analysis frame.
 
         @return:    The main box element containing all Rx GUI elements to pack directly into the automatic Rx analysis frame.
         @rtype:     wx.BoxSizer instance
@@ -407,9 +407,9 @@ class Auto_noe:
 
 
     def build_right_box(self):
-        """Construct the right hand box to pack into the main Rx box.
+        """Construct the right hand box to pack into the main NOE box.
 
-        @return:    The right hand box element containing all Rx GUI elements (excluding the bitmap) to pack into the main Rx box.
+        @return:    The right hand box element containing all NOE GUI elements (excluding the bitmap) to pack into the main Rx box.
         @rtype:     wx.BoxSizer instance
         """
 
@@ -430,6 +430,21 @@ class Auto_noe:
 
         # Add the unresolved spins GUI element.
         self.add_unresolved_spins(box)
+
+        # Add peak list selection header.
+        self.peak_list_header(box)
+
+        # Add the saturated NOE peak list selection GUI element.
+        self.add_saturated_peak_list(box)
+
+        # Add the saturated RMSD background GUI element:
+        self.add_saturated_rmsd(box)
+
+        # Add the reference NOE peak list selection GUI element.
+        self.add_reference_peak_list(box)
+
+        # Add the reference RMSD background GUI element:
+        self.add_reference_rmsd(box)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)
