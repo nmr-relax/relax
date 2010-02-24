@@ -540,6 +540,30 @@ class Auto_noe:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def ref_file(self, event):
+        """The results directory selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Store the original directory.
+        backup = self.field_ref_noe.GetValue()
+
+        # Select the file.
+        self.data.ref_file = openfile('Select reference NOE peak list', directory=self.field_ref_noe.GetValue(), default = 'all files (*.*)|*.*')
+
+        # Restore the backup file if no file was chosen.
+        if not self.data.ref_file:
+            self.data.ref_file = backup
+
+        # Place the path in the text box.
+        self.field_ref_noe.SetValue(self.data.ref_file)
+
+        # Terminate the event.
+        event.Skip()
+
+
     def results_directory(self, event):
         """The results directory selection.
 
