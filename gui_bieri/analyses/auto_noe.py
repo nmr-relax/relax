@@ -68,6 +68,9 @@ class Auto_noe:
         # Store the main class.
         self.gui = gui
 
+        # The NOE image
+        self.bitmap = IMAGE_PATH + 'noe.gif'
+
         # Alias the storage container in the relax data store.
         self.data = ds.relax_gui.analyses[hardcoded_index]
 
@@ -343,7 +346,7 @@ class Auto_noe:
 
 
     def assemble_data(self):
-         """Assemble the data required for the Auto_noe class.
+        """Assemble the data required for the Auto_noe class.
 
         See the docstring for auto_analyses.relax_fit for details.  All data is taken from the relax data store, so data upload from the GUI to there must have been previously performed.
 
