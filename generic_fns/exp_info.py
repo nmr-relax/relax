@@ -23,38 +23,12 @@
 # Module docstring.
 """Module containing functions for specifying the experimental details."""
 
-# Python module imports.
-from string import split
-
 # relax module imports.
 from info import Info_box
 from data.exp_info import ExpInfo
 from relax_errors import RelaxError
 from relax_io import open_read_file
 from version import version_full
-
-
-# Storage containers.
-class Cite_store:
-    """Citation storage container."""
-
-    def __init__(self):
-        """Initialise all variables."""
-
-        self.authors = None
-        self.doi = None
-        self.pubmed_id = None
-        self.full_citation = None
-        self.title = None
-        self.status = None
-        self.type = None
-        self.journal_abbrev = None
-        self.journal_full = None
-        self.volume = None
-        self.issue = None
-        self.page_first = None
-        self.page_last = None
-        self.year = None
 
 
 class Software_store:
@@ -69,8 +43,7 @@ class Software_store:
         self.tasks = None
 
 
-# Citation and software data structures.
-CITE = {}
+# Software data structure.
 SOFTWARE = {}
 
 # relax software.
@@ -80,60 +53,12 @@ SOFTWARE['relax'].authors = "The relax development team"
 SOFTWARE['relax'].url = "http://nmr-relax.com"
 SOFTWARE['relax'].tasks = ["data processing"]
 
-# relax citation 1.
-CITE['relax 1'] = Cite_store()
-CITE['relax 1'].authors = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
-CITE['relax 1'].doi = "10.1007/s10858-007-9214-2"
-CITE['relax 1'].pubmed_id = "18085410"
-CITE['relax 1'].full_citation = "d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces.  J. Biomol. NMR, 40(2), 107-119."
-CITE['relax 1'].title = "Optimisation of NMR dynamic models I.  Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces."
-CITE['relax 1'].status = "published"
-CITE['relax 1'].type = "journal"
-CITE['relax 1'].journal_abbrev = "J. Biomol. NMR"
-CITE['relax 1'].journal_full = "Journal of Biomolecular NMR"
-CITE['relax 1'].volume = 40
-CITE['relax 1'].issue = 2
-CITE['relax 1'].page_first = 107
-CITE['relax 1'].page_last = 119
-CITE['relax 1'].year = 2008
-
-# relax citation 2.
-CITE['relax 2'] = Cite_store()
-CITE['relax 2'].authors = [["Edward", "d'Auvergne", "E.", "J."], ["Paul", "Gooley", "P.", "R."]]
-CITE['relax 2'].doi = "10.1007/s10858-007-9213-3"
-CITE['relax 2'].pubmed_id = "18085411"
-CITE['relax 2'].full_citation = "d'Auvergne, E. J. and Gooley, P. R. (2008).  Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor.  J. Biomol. NMR, 40(2), 121-133."
-CITE['relax 2'].title = "Optimisation of NMR dynamic models II.  A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor."
-CITE['relax 2'].status = "published"
-CITE['relax 2'].type = "journal"
-CITE['relax 2'].journal_abbrev = "J. Biomol. NMR"
-CITE['relax 2'].journal_full = "Journal of Biomolecular NMR"
-CITE['relax 2'].volume = 40
-CITE['relax 2'].issue = 2
-CITE['relax 2'].page_first = 121
-CITE['relax 2'].page_last = 133
-CITE['relax 2'].year = 2008
-
 # NMRPipe software and citation.
 SOFTWARE['NMRPipe'] = Software_store()
 SOFTWARE['NMRPipe'].name = "NMRPipe"
 SOFTWARE['NMRPipe'].authors = "Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A"
 SOFTWARE['NMRPipe'].url = "http://spin.niddk.nih.gov/NMRPipe/"
 SOFTWARE['NMRPipe'].tasks = ["processing"]
-CITE['NMRPipe'] = Cite_store()
-CITE['NMRPipe'].authors = [["Frank", "Delaglio", "F.", None], ["Stephan", "Grzesiek", "S.", None], ["Geerten", "Vuister", "G.", "W."], ["Guang", "Zhu", "G.", None], ["John", "Pfeifer", "J.", None], ["Ad", "Bax", "A.", None]]
-CITE['NMRPipe'].doi = "10.1007/BF00197809"
-CITE['NMRPipe'].pubmed_id = "8520220"
-CITE['NMRPipe'].full_citation = "Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A. (1995).  NMRPipe: a multidimensional spectral processing system based on UNIX pipes.  J. Biomol. NMR. 6, 277-293."
-CITE['NMRPipe'].title = "NMRPipe: a multidimensional spectral processing system based on UNIX pipes." 
-CITE['NMRPipe'].status = "published"
-CITE['NMRPipe'].type = "journal"
-CITE['NMRPipe'].journal_abbrev = "J. Biomol. NMR"
-CITE['NMRPipe'].journal_full = "Journal of Biomolecular NMR"
-CITE['NMRPipe'].volume = 6
-CITE['NMRPipe'].page_first = 277
-CITE['NMRPipe'].page_last = 293
-CITE['NMRPipe'].year = 1995
 
 # Sparky software and citation.
 SOFTWARE['Sparky'] = Software_store()
@@ -142,12 +67,6 @@ SOFTWARE['Sparky'].authors = "Goddard, T. D. and Kneller, D. G."
 SOFTWARE['Sparky'].ref = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
 SOFTWARE['Sparky'].url = "http://www.cgl.ucsf.edu/home/sparky/"
 SOFTWARE['Sparky'].tasks = ["spectral analysis"]
-CITE['Sparky'] = Cite_store()
-CITE['Sparky'].authors = [["Tom", "Goddard", "T.", "D."], ["Donald", "Kneller", "D.", "G."]]
-CITE['Sparky'].full_citation = "Goddard, T. D. and Kneller, D. G., SPARKY 3, University of California, San Francisco."
-CITE['Sparky'].title = "Sparky."
-CITE['Sparky'].status = "unpublished"
-CITE['Sparky'].type = "internet"
 
 
 
@@ -331,7 +250,7 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
         bib = info.bib[key]
 
         # Add the citation.
-        cdp.exp_info.add_citation(cite_id=id, authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, page_first=split(bib.pages, '-')[0], page_last=split(bib.pages, '-')[1], year=bib.year)
+        cdp.exp_info.add_citation(cite_id=id, authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(doi=False, url=False), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, page_first=bib.page_first, page_last=bib.page_last, year=bib.year)
 
     # Place the data in the container.
     cdp.exp_info.setup_script(file=file, dir=dir, text=text, cite_ids=cite_id, analysis_type=analysis_type, model_selection=model_selection, engine=engine, model_elim=model_elim, universal_solution=universal_solution)
@@ -389,7 +308,7 @@ def software_select(name, version=None):
     if name == 'relax':
         # The info.
         cite_ids.append(['relax_ref1', 'relax_ref2'])
-        keys.append(['relax 1', 'relax 2'])
+        keys.append(['dAuvergneGooley08a', 'dAuvergneGooley08b'])
         software_keys.append('relax')
         versions.append(version_full())
 
@@ -397,7 +316,7 @@ def software_select(name, version=None):
     if name == 'NMRPipe':
         # The info.
         cite_ids.append(['nmrpipe_ref'])
-        keys.append(['NMRPipe'])
+        keys.append(['Delaglio95'])
         software_keys.append('NMRPipe')
         versions.append(version)
 
@@ -409,15 +328,21 @@ def software_select(name, version=None):
 
         # The info.
         cite_ids.append(['sparky_ref'])
-        keys.append(['Sparky'])
+        keys.append(['GoddardKneller'])
         software_keys.append('Sparky')
         versions.append(version)
+
+    # Get the info box.
+    info = Info_box()
 
     # Loop over the citations.
     for i in range(len(cite_ids)):
         for j in range(len(cite_ids[i])):
+            # Alias the bib entry.
+            bib = info.bib[keys[i][j]]
+
             # Add the citations.
-            cdp.exp_info.add_citation(cite_id=cite_ids[i][j], authors=CITE[keys[i][j]].authors, doi=CITE[keys[i][j]].doi, pubmed_id=CITE[keys[i][j]].pubmed_id, full_citation=CITE[keys[i][j]].full_citation, title=CITE[keys[i][j]].title, status=CITE[keys[i][j]].status, type=CITE[keys[i][j]].type, journal_abbrev=CITE[keys[i][j]].journal_abbrev, journal_full=CITE[keys[i][j]].journal_full, volume=CITE[keys[i][j]].volume, page_first=CITE[keys[i][j]].page_first, page_last=CITE[keys[i][j]].page_last, year=CITE[keys[i][j]].year)
+            cdp.exp_info.add_citation(cite_id=cite_ids[i][j], authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(doi=False, url=False), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, issue=bib.number, page_first=bib.page_first, page_last=bib.page_last, year=bib.year)
 
         # Add the software info.
         cdp.exp_info.software_setup(name=SOFTWARE[software_keys[i]].name, version=versions[i], vendor_name=SOFTWARE[software_keys[i]].authors, url=SOFTWARE[software_keys[i]].url, cite_ids=cite_ids, tasks=SOFTWARE[software_keys[i]].tasks)

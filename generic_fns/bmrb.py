@@ -30,6 +30,7 @@ from os import F_OK, access
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
 from generic_fns import exp_info
+from info import Info_box
 from relax_errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxNoPipeError
 from relax_io import get_file_path, mkdir_nofail
 from specific_fns.setup import get_specific_fn
@@ -102,9 +103,16 @@ def write(file=None, directory=None, version='3.1', force=False):
     # Create the directories.
     mkdir_nofail(directory, verbosity=0)
 
+    # Get the info box.
+    info = Info_box()
+
     # Add the relax citations.
-    for id, key in zip(['relax_ref1', 'relax_ref2'], ['relax 1', 'relax 2']):
-        cdp.exp_info.add_citation(cite_id=id, authors=exp_info.CITE[key].authors, doi=exp_info.CITE[key].doi, pubmed_id=exp_info.CITE[key].pubmed_id, full_citation=exp_info.CITE[key].full_citation, title=exp_info.CITE[key].title, status=exp_info.CITE[key].status, type=exp_info.CITE[key].type, journal_abbrev=exp_info.CITE[key].journal_abbrev, journal_full=exp_info.CITE[key].journal_full, volume=exp_info.CITE[key].volume, issue=exp_info.CITE[key].issue, page_first=exp_info.CITE[key].page_first, page_last=exp_info.CITE[key].page_last, year=exp_info.CITE[key].year)
+    for id, key in zip(['relax_ref1', 'relax_ref2'], ['dAuvergneGooley08a', 'dAuvergneGooley08b']):
+        # Alias the bib entry.
+        bib = info.bib[key]
+
+        # Add.
+        cdp.exp_info.add_citation(cite_id=id, authors=bib.author2, doi=bib.doi, pubmed_id=bib.pubmed_id, full_citation=bib.cite_short(doi=False, url=False), title=bib.title, status=bib.status, type=bib.type, journal_abbrev=bib.journal, journal_full=bib.journal_full, volume=bib.volume, issue=bib.number, page_first=bib.page_first, page_last=bib.page_last, year=bib.year)
 
     # Add the relax software package.
     cdp.exp_info.software_setup(name=exp_info.SOFTWARE['relax'].name, version=version_full(), vendor_name=exp_info.SOFTWARE['relax'].authors, url=exp_info.SOFTWARE['relax'].url, cite_ids=['relax_ref1', 'relax_ref2'], tasks=exp_info.SOFTWARE['relax'].tasks)
