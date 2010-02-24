@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import sep
+from string import split, replace
 import sys
 import time
 import thread
@@ -185,10 +186,37 @@ class Redirect_text(object):
         self.out=aWxTextCtrl
 
 
+    def limit_entries(self):
+        """ Function to overcome feedback problem of wx.CallAfter() command"""
+
+        # Maximum allowed number of lines in log window.
+        max_entries = 1000
+        new_entries = ''
+
+        # read number of lines in log window.
+        total_entries = self.out.log_panel.GetNumberOfLines()
+
+        # Shift entries backwards if maximum of line exeeded.
+        if total_entries > max_entries:
+            # Convert entries to list
+            list_of_entries = split(self.out.log_panel.GetValue(), '\n')
+
+            for i in range(1, max_entries + 1):
+                new_entries = new_entries + (list_of_entries[i]) + '\n'
+
+            # Reset log window entries
+            #new_entries = str(list_of_entries)
+            self.out.log_panel.SetValue(new_entries)
+
+
     def write(self,string):
         global progress
 
-        wx.CallAfter(self.out.log_panel.WriteText, string)
+        # Limit panle entries to max_entries Lines.
+        wx.CallAfter(self.limit_entries)
+
+        # Add new output.
+        wx.CallAfter(self.out.log_panel.AppendText, string)
         time.sleep(0.001)  # allow relaxGUI log panel to get refreshed
 
         # split print out into list
