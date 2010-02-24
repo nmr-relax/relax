@@ -32,23 +32,22 @@ import time
 import wx
 
 # relax module imports.
-from auto_analyses.relax_fit import Relax_fit
+from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
 from gui_bieri.base_classes import Container
-from gui_bieri.components.spectrum import Peak_intensity
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
-from gui_bieri.filedialog import multi_openfile, opendir
+from gui_bieri.filedialog import multi_openfile, opendir, openfile
 from gui_bieri.message import error_message
-from gui_bieri.paths import ADD_ICON, CANCEL_ICON, IMAGE_PATH, REMOVE_ICON
+from gui_bieri.paths import IMAGE_PATH
 
 
 
-class Auto_rx:
-    """The base class for the R1 and R2 frames."""
+class Auto_noe:
+    """The base class for the noe frames."""
 
     # Hardcoded variables.
     analysis_type = None
@@ -56,7 +55,7 @@ class Auto_rx:
     label = None
 
     def __init__(self, gui, notebook, hardcoded_index=None):
-        """Build the automatic R1 and R2 analysis GUI frame elements.
+        """Build the automatic NOE analysis GUI frame elements.
 
         @param gui:                 The main GUI class.
         @type gui:                  gui_bieri.relax_gui.Main instance
@@ -320,9 +319,6 @@ class Auto_rx:
 
         # Add the unresolved spins GUI element.
         self.add_unresolved_spins(box)
-
-        # Add the peak list selection GUI element.
-        self.peak_intensity = Peak_intensity(gui=self.gui, parent=self.parent, data=self.data, label=self.label, box=box)
 
         # Add the execution GUI element.
         self.add_execute_relax(box)
