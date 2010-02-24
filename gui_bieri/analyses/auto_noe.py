@@ -495,7 +495,7 @@ class Auto_noe:
         sys.stderr = redir
 
         # Print a header in the controller.
-        header = 'Starting %s calculation' % self.label
+        header = 'Starting NOE calculation'
         underline = '-' * len(header)
         wx.CallAfter(self.gui.controller.log_panel.AppendText, (header+'\n\n'))
         time.sleep(0.5)
@@ -504,7 +504,7 @@ class Auto_noe:
         data = self.assemble_data()
 
         # Execute.
-        Relax_fit(seq_args=data.seq_args, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved)
+        NOE_calc(pipe_name='noe', noe_ref = data.ref_file, noe_ref_rmsd = data.ref_rmsd, noe_sat = data.sat_file, noe_sat_rmsd = data.sat_rmsd, freq = data.frq, unresolved = data.unresolved, pdb_file = data.structure_file, results_folder = data.save_dir, int_method='height', mc_num=500)
 
 
     def link_data(self, data):
