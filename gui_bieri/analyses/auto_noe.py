@@ -233,6 +233,36 @@ class Auto_noe:
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
 
+    def add_saturated_peak_list(self, box):
+        """Create and add the saturated file selection GUI element to the given box.
+
+        @param box:     The box element to pack the structure file selection GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Horizontal packing for this element.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # The label.
+        label = wx.StaticText(self.parent, -1, "Saturated NOE peak list:", style=wx.ALIGN_RIGHT)
+        label.SetMinSize((230, 17))
+        sizer.Add(label, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The text input field.
+        self.field_sat_noe = wx.TextCtrl(self.parent, -1, self.data.sat_file)
+        self.field_sat_noe.SetMinSize((350, 27))
+        sizer.Add(self.field_sat_noe, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # The button.
+        button = wx.Button(self.parent, -1, "Change")
+        button.SetMinSize((103, 27))
+        self.gui.Bind(wx.EVT_BUTTON, self.sat_file, button)
+        sizer.Add(button, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 10)
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
+
+
     def add_structure_selection(self, box):
         """Create and add the structure file selection GUI element to the given box.
 
