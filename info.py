@@ -23,6 +23,9 @@
 # Module docstring.
 """Module containing the introductory text container."""
 
+# Python module imports.
+from string import split
+
 # relax module imports.
 import dep_check
 import numpy
@@ -392,6 +395,42 @@ class Ref:
     url = None
     pages = None
     year = None
+
+
+    def __getattr__(self, name):
+        """Generate some variables on the fly.
+
+        This is only called for objects not found in the class.
+
+        @param name:    The name of the object.
+        @type name:     str
+        @raises:        AttributeError if the object cannot be created.
+        @returns:       The generated object.
+        @rtype:         anything
+        """
+
+        # Page numbers.
+        if name in ['page_first', 'page_last']:
+            # No page info.
+            if not self.pages:
+                return None
+
+            # First split the page range.
+            vals = split(self.pages, '-')
+
+            # Single page.
+            if len(vals) == 1:
+                return vals[0]
+
+            # First page.
+            if name == 'page_first':
+                return vals[0]
+
+            # Last page.
+            if name == 'page_last':
+                return vals[1]
+
+        raise AttributeError, name
 
 
     def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
