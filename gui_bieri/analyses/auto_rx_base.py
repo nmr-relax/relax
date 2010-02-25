@@ -388,7 +388,7 @@ class Auto_rx:
         data = self.assemble_data()
 
         # Execute.
-        Relax_fit(seq_args=data.seq_args, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved)
+        Relax_fit(rx_type = self.label[1], freq = data.frq, seq_args=data.seq_args, directory = data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved)
 
 
     def link_data(self, data):
