@@ -142,27 +142,20 @@ class Relax_fit:
         self.interpreter.monte_carlo.error_analysis()
 
         # Save the relaxation rates.
-        self.interpreter.value.write(param='rx', file='rx.out', force=True)
+        self.interpreter.value.write(param='rx', file='r'+self.rx_type+'_'+self.freq+'.out', dir = self.directory, force=True)
 
         # Save the results.
-        self.interpreter.results.write(file='results', force=True)
+        self.interpreter.results.write(file='results', dir = self.directory, force=True)
 
         # Create Grace plots of the data.
-        self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
-        self.interpreter.grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
-        self.interpreter.grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
-        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', force=True)    # Average peak intensities.
-        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
-
-        # Display the Grace plots.
-        self.interpreter.grace.view(file='chi2.agr')
-        self.interpreter.grace.view(file='i0.agr')
-        self.interpreter.grace.view(file='rx.agr')
-        self.interpreter.grace.view(file='intensities.agr')
-        self.interpreter.grace.view(file='intensities_norm.agr')
+        self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir = self.grace_dir, force=True)    # Minimised chi-squared value.
+        self.interpreter.grace.write(y_data_type='i0', file='i0.agr', dir = self.grace_dir, force=True)    # Initial peak intensity.
+        self.interpreter.grace.write(y_data_type='rx', file='r'+self.rx_type+'_'+self.freq+'.agr', dir = self.grace_dir, force=True)    # Relaxation rate.
+        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', file='intensities.agr', dir = self.grace_dir, force=True)    # Average peak intensities.
+        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='int', norm=True, file='intensities_norm.agr', dir = self.grace_dir, force=True)    # Average peak intensities (normalised).
 
         # Save the program state.
-        self.interpreter.state.save('rx.save', force=True)
+        self.interpreter.state.save(state = 'r'+self.rx_type+'_'+self.freq+'.save', dir = self.directory, force=True)
 
 
     def check_vars(self):
