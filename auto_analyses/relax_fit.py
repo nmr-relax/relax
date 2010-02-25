@@ -47,7 +47,7 @@ class Relax_fit:
         """
 
         # Store the args.
-        self.pipe_name = pipe_name
+        self.pipe_name = pipe_name+ ' ' + str(time.asctime(time.localtime())) # add date and time to allow multiple executions of relax_fit
         self.seq_args = seq_args
         self.file_names = file_names
         self.relax_times = relax_times
