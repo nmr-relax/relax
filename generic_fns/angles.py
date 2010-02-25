@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2005, 2007-2009 Edward d'Auvergne                        #
+# Copyright (C) 2003-2005, 2007-2010 Edward d'Auvergne                        #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -24,7 +24,7 @@
 """Module for the manipulation of angular information."""
 
 # Python module imports.
-from math import acos, sin
+from math import acos, pi, sin
 from numpy import dot
 from warnings import warn
 
@@ -116,15 +116,38 @@ def spheroid_frame():
         spin.alpha = acos(dot(cdp.diff_tensor.Dpar_unit, spin.xh_vect))
 
 
-def wrap_angles(angle, lower, upper):
-    """Convert the given angle to be between the lower and upper values."""
+def wrap_angles(angle, lower, upper, window=2*pi):
+    """Convert the given angle to be between the lower and upper values.
 
+    @param angle:   The starting angle.
+    @type angle:    float
+    @param lower:   The lower bound.
+    @type lower:    float
+    @param upper:   The upper bound.
+    @type upper:    float
+    @param window:  The size of the window where symmetry exists (defaults to 2pi).
+    @type window:   float
+    @return:        The wrapped angle.
+    @rtype:         float
+    """
+
+    # Check the bounds and window.
+    if window - (upper - lower) > 1e-7:
+        raise RelaxError, "The lower and upper bounds [%s, %s] do not match the window size of %s." % (lower, upper, window)
+
+    # Keep wrapping until the angle is within the limits.
     while True:
+        # The angle is too big.
         if angle > upper:
-            angle = angle - upper
+            angle = angle - window
+
+        # The angle is too small.
         elif angle < lower:
-            angle = angle + upper
+            angle = angle + window
+
+        # Inside the window, so stop wrapping.
         else:
             break
 
+    # Return the wrapped angle.
     return angle
