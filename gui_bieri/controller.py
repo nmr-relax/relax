@@ -213,7 +213,7 @@ class Redirect_text(object):
         global progress
 
         # Limit panle entries to max_entries Lines.
-        wx.CallAfter(self.limit_entries)
+        #wx.CallAfter(self.limit_entries)
 
         # Add new output.
         wx.CallAfter(self.out.log_panel.AppendText, string)
@@ -225,6 +225,7 @@ class Redirect_text(object):
         check = a.split()
 
         # update progress bar
+        # Monte Carlo Simulation.
         if 'Simulation' in string:
             add = round(progress)
             add_int = int(add)
@@ -232,6 +233,12 @@ class Redirect_text(object):
             progress = ( (int(check[1]) * 100) / float(montecarlo + 6)) + 5
             time.sleep(0.001)  # allow relaxGUI progressbar to get refreshed
 
+        # Other calculations.
+        if 'Progress:' in string:
+            progress = check[1]
+            progress = progress.replace('&', '')
+            wx.CallAfter(self.out.progress_bar.SetValue, int(progress))
+            time.sleep(0.001)  # allow relaxGUI progressbar to get refreshed
 
 
 class Thread_container:
