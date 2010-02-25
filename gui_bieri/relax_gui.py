@@ -728,7 +728,7 @@ class Main(wx.Frame):
 
 
     def structure_pdb(self, event): # open load sequence panel
-        temp = load_sequence(self)
+        temp = openfile('Select PDB file to open', '', '', 'PDB files (*.pdb)|*.pdb|all files (*.*)|*.*')
         if not temp == None:
             structure_file_pdb = str(temp) #set sequence file
 
