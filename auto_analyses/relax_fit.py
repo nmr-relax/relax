@@ -118,7 +118,7 @@ class Relax_fit:
             for j in range(i+1, len(self.file_names)):
                 # Relax times match, so this is a replicate.
                 if self.relax_times[i] == self.relax_times[j]:
-                    self.interpreter.spectrum.replicated(spectrum_ids=[self.file_names[i], self.file_names[i]])
+                    self.interpreter.spectrum.replicated(spectrum_ids=[self.file_names[i], self.file_names[j]])
 
         # Peak intensity error analysis.
         self.interpreter.spectrum.error_analysis()
