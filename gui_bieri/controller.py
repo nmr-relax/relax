@@ -190,22 +190,15 @@ class Redirect_text(object):
         """ Function to overcome feedback problem of wx.CallAfter() command"""
 
         # Maximum allowed number of lines in log window.
-        max_entries = 1000
-        new_entries = ''
+        max_entries = 10000
 
         # read number of lines in log window.
         total_entries = self.out.log_panel.GetNumberOfLines()
 
         # Shift entries backwards if maximum of line exeeded.
         if total_entries > max_entries:
-            # Convert entries to list
-            list_of_entries = split(self.out.log_panel.GetValue(), '\n')
-
-            for i in range(1, max_entries + 1):
-                new_entries = new_entries + (list_of_entries[i]) + '\n'
-
             # Reset log window entries
-            #new_entries = str(list_of_entries)
+            new_entries = 'Refreshing log window...\n\n'
             self.out.log_panel.SetValue(new_entries)
 
 
@@ -213,7 +206,7 @@ class Redirect_text(object):
         global progress
 
         # Limit panle entries to max_entries Lines.
-        #wx.CallAfter(self.limit_entries)
+        wx.CallAfter(self.limit_entries)
 
         # Add new output.
         wx.CallAfter(self.out.log_panel.AppendText, string)
