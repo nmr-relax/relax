@@ -104,7 +104,7 @@ class Relax_fit:
         # Loop over the spectra.
         for i in xrange(len(self.file_names)):
             # Load the peak intensities.
-            self.interpreter.spectrum.read_intensities(file=self.file_names[i], spectrum_id=self.file_names[i], int_method=self.int_method)
+            self.interpreter.spectrum.read_intensities(file=self.file_names[i], spectrum_id=self.file_names[i], int_method=self.int_method, heteronuc='N', proton='H')
 
             # Set the relaxation times.
             self.interpreter.relax_fit.relax_time(time=self.relax_times[i], spectrum_id=self.file_names[i])
