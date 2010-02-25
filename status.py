@@ -37,6 +37,15 @@ class Status(object):
         # The Monte Carlo simulation status.
         self.mc_number = None
 
+        # The dAuvergne_protocol automatic analysis status.
+        self.dAuvergne_protocol = Status_container()
+        self.dAuvergne_protocol.diff_model = None        # The global diffusion model.
+        self.dAuvergne_protocol.round = None             # The round of optimisation, i.e. the global iteration.
+        self.dAuvergne_protocol.mf_models = None         # The list of model-free models for optimisation, i.e. the global iteration.
+        self.dAuvergne_protocol.local_mf_models = None   # The list of model-free local tm models for optimisation, i.e. the global iteration.
+        self.dAuvergne_protocol.current_model = None     # The current model-free model.
+        self.dAuvergne_protocol.convergence = False      # The convergence of the global model.
+
 
     def __new__(self, *args, **kargs):
         """Replacement method for implementing the singleton design pattern."""
