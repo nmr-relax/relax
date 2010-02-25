@@ -96,7 +96,7 @@ def ellipsoid_frame():
         spin.phi = acos(dx / sin(spin.theta))
 
 
-def fold_spherical_angles(theta, phi, theta_lower=None, theta_upper=None, theta_window=2*pi, phi_lower=None, phi_upper=None, phi_window=2*pi):
+def fold_spherical_angles(theta, phi, theta_lower=0, theta_upper=2*pi, theta_window=2*pi, phi_lower=0, phi_upper=2*pi, phi_window=2*pi):
     """Fold the spherical angles taking symmetry into account.
 
     The angles will be folded between::
@@ -104,12 +104,24 @@ def fold_spherical_angles(theta, phi, theta_lower=None, theta_upper=None, theta_
         0 <= theta <= pi,
         0 <= phi <= 2*pi,
 
-    @param theta:   The azimuthal angle.
-    @type theta:    float
-    @param phi:     The polar angle.
-    @type phi:      float
-    @return:        The folded angles, theta and phi.
-    @rtype:         float
+    @param theta:           The azimuthal angle.
+    @type theta:            float
+    @param phi:             The polar angle.
+    @type phi:              float
+    @param theta_lower:     The theta angle lower bound (defaults to 0).
+    @type theta_lower:      float
+    @param theta_upper:     The theta angle upper bound (defaults to 2*pi).
+    @type theta_upper:      float
+    @param theta_window:    The size of the theta angle window where symmetry exists (defaults to 2*pi).
+    @type theta_window:     float
+    @param phi_lower:       The phi angle lower bound (defaults to 0).
+    @type phi_lower:        float
+    @param phi_upper:       The phi angle upper bound (defaults to 2*pi).
+    @type phi_upper:        float
+    @param phi_window:      The size of the phi angle window where symmetry exists (defaults to 2*pi).
+    @type phi_window:       float
+    @return:                The folded angles, theta and phi.
+    @rtype:                 float
     """
 
     # Check the bounds and window.
