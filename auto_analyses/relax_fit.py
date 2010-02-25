@@ -111,7 +111,7 @@ class Relax_fit:
             self.interpreter.spectrum.read_intensities(file=self.file_names[i], spectrum_id=self.file_names[i], int_method=self.int_method, heteronuc='N', proton='H')
 
             # Set the relaxation times.
-            self.interpreter.relax_fit.relax_time(time=float(self.relax_times[i]), spectrum_id=self.file_names[j])
+            self.interpreter.relax_fit.relax_time(time=float(self.relax_times[i]), spectrum_id=self.file_names[i])
 
         # Specify the duplicated spectra.
         for i in range(len(self.file_names)):
