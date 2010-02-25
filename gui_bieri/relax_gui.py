@@ -462,13 +462,29 @@ class Main(wx.Frame):
         global sequencefile  #load global variable
         temp = load_sequence(self)
         if not temp == None:
-            sequencefile = temp #set sequence file
+            sequencefile = str(temp) #set sequence file
 
-            # set entries in pdb text box
+            # Set entries in pdb text box.
             structure_file_pdb = '!!! Sequence file selected !!!'
-            self.structure_noe1.SetValue(structure_file_pdb)
-            self.structure_noe1_copy.SetValue(structure_file_pdb)
-            self.structure_noe1_copy_1.SetValue(structure_file_pdb)
+            # Add file to NOE tabs.
+            self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
+            
+            # Add file to R1 tabs.
+            self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
+
+            # Add file to R2 tabs.
+            self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
+            
+            # Load sequencefile in relax data storage.
+            for i in range(10):
+             ds.relax_gui.analyses[i].sequence_file = sequencefile
+            
         event.Skip()
 
 
