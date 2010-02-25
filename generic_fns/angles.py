@@ -112,6 +112,12 @@ def fold_spherical_angles(theta, phi, theta_lower=None, theta_upper=None, theta_
     @rtype:         float
     """
 
+    # Check the bounds and window.
+    if theta_window - (theta_upper - theta_lower) > 1e-7:
+        raise RelaxError, "The theta angle lower and upper bounds [%s, %s] do not match the window size of %s." % (theta_lower, theta_upper, theta_window)
+    if phi_window - (phi_upper - phi_lower) > 1e-7:
+        raise RelaxError, "The phi angle lower and upper bounds [%s, %s] do not match the window size of %s." % (phi_lower, phi_upper, phi_window)
+
     # First wrap the angles.
     theta = wrap_angles(theta, theta_lower, theta_upper, theta_window)
     phi = wrap_angles(phi, phi_lower, phi_upper, phi_window)
@@ -120,6 +126,10 @@ def fold_spherical_angles(theta, phi, theta_lower=None, theta_upper=None, theta_
     if phi >= phi_upper - phi_window/2.0:
         theta = pi - theta
         phi = phi - pi
+
+    # Wrap again if necessary.
+    theta = wrap_angles(theta, theta_lower, theta_upper, theta_window)
+    phi = wrap_angles(phi, phi_lower, phi_upper, phi_window)
 
     # Return the folded angles.
     return theta, phi
