@@ -25,6 +25,8 @@
 
 # relax module imports.
 from prompt.interpreter import Interpreter
+import generic_fns.structure.main
+
 
 
 
@@ -91,7 +93,13 @@ class Relax_fit:
         self.interpreter.pipe.create(self.pipe_name, 'relax_fit')
 
         # Load the sequence.
-        self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
+        if self.pdb_file == '!!! Sequence file selected !!!': # load sequence of file
+            print 'Sequence file'  # FIXME
+            #self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
+            
+        else:   # load PDB File
+            self.interpreter.structure.read_pdb(self.pdb_file)
+            generic_fns.structure.main.load_spins(spin_id='@N')
 
         # Loop over the spectra.
         for i in xrange(len(self.file_names)):
