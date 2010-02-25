@@ -368,9 +368,9 @@ class Auto_rx:
         """Execute the calculation in a thread."""
 
         # Redirect relax output and errors to the controller.
-        redir = Redirect_text(self.gui.controller)
-        sys.stdout = redir
-        sys.stderr = redir
+        #redir = Redirect_text(self.gui.controller)
+        #sys.stdout = redir
+        #sys.stderr = redir
 
         # Print a header in the controller.
         header = 'Starting %s calculation' % self.label
