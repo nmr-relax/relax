@@ -96,6 +96,35 @@ def ellipsoid_frame():
         spin.phi = acos(dx / sin(spin.theta))
 
 
+def fold_spherical_angles(theta, phi, theta_lower=None, theta_upper=None, theta_window=2*pi, phi_lower=None, phi_upper=None, phi_window=2*pi):
+    """Fold the spherical angles taking symmetry into account.
+
+    The angles will be folded between::
+
+        0 <= theta <= pi,
+        0 <= phi <= 2*pi,
+
+    @param theta:   The azimuthal angle.
+    @type theta:    float
+    @param phi:     The polar angle.
+    @type phi:      float
+    @return:        The folded angles, theta and phi.
+    @rtype:         float
+    """
+
+    # First wrap the angles.
+    theta = wrap_angles(theta, theta_lower, theta_upper, theta_window)
+    phi = wrap_angles(phi, phi_lower, phi_upper, phi_window)
+
+    # Then remove the symmetry to the lower half of phi.
+    if phi >= phi_upper - phi_window/2.0:
+        theta = pi - theta
+        phi = phi - pi
+
+    # Return the folded angles.
+    return theta, phi
+
+
 def spheroid_frame():
     """Function for calculating the angle alpha of the XH vector within the spheroid frame."""
 
