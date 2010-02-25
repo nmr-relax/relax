@@ -270,6 +270,12 @@ class Auto_rx:
         # Structure File
         data.structure_file = self.data.structure_file
 
+        # Results directory.
+        data.save_dir = self.data.save_dir
+
+        # The Frequency.
+        data.frq = self.data.frq
+
         # Return the container.
         return data
 
