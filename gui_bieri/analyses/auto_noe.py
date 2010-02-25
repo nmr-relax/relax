@@ -519,9 +519,6 @@ class Auto_noe:
         # Re-alias.
         self.data = data
 
-        # Re-alias in the peak intensity object as well.
-        self.peak_intensity.data = data
-
 
     def peak_list_header(self, box):
         """Add header for peak list section
@@ -636,21 +633,17 @@ class Auto_noe:
         else:
             self.field_results_dir.SetValue(str(self.data.save_dir))
 
-
-
-        # THESE INFORMATIONS HAVE TO BE SAVED!!!!!!!!!!!!!
-
         # The structure file.
-        #if upload:
-        #    self.data.structure_file = str(self.field_structure.GetValue())
-        #else:
-        #    self.field_structure.SetValue(str(self.data.structure_file))
+        if upload:
+            self.data.structure_file = str(self.field_structure.GetValue())
+        else:
+            self.field_structure.SetValue(str(self.data.structure_file))
 
         # Unresolved residues.
-        #if upload:
-        #    self.data.unresolved = str(self.field_unresolved.GetValue())
-        #else:
-        #    self.field_unresolved.SetValue(str(self.data.unresolved))
+        if upload:
+            self.data.unresolved = str(self.field_unresolved.GetValue())
+        else:
+            self.field_unresolved.SetValue(str(self.data.unresolved))
 
         # Reference peak file.
         if upload:
