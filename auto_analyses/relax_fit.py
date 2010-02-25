@@ -29,13 +29,19 @@ from prompt.interpreter import Interpreter
 
 
 class Relax_fit:
-    def __init__(self, pipe_name='rx', seq_args=None, file_names=None, relax_times=None, int_method='height', mc_num=500):
+    def __init__(self, pipe_name='rx', rx_type = 'x', freq = '', seq_args=None, directory = None, file_names=None, relax_times=None, int_method='height', mc_num=500, pdb_file = None, unresolved = None):
         """Perform relaxation curve fitting.
 
         @keyword pipe_name:     The name of the data pipe to create.
         @type pipe_name:        str
+        @keyword freq:          Spectrometer frequency.
+        @type freq:             str
+        @keyword rx_type:       Type of Rx analysis: R1 or R2
+        @type rx_type:          str
         @keyword seq_args:      The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         @type seq_args:         list of lists of [str, None or str, None or int, None or int, None or int, None or int, None or int, None or int, None or int, None or str]
+        @keyword directory:     Location of the generated results files.
+        @type directory:        str, directory
         @keyword file_names:    A list of all the peak list file names.
         @type file_names:       list of str
         @keyword relax_times:   The list of relaxation times corresponding to file_names.  These two lists must be of the same size.
@@ -44,6 +50,10 @@ class Relax_fit:
         @type int_method:       str
         @keyword mc_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_num:           int
+        @keyword pdb_file:      The structure file.
+        @type pdb_file:         str, file
+        @keyword unresolved:    Unresolved residues.
+        @type unresolved:       str
         """
 
         # Store the args.
