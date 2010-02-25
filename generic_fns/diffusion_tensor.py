@@ -411,12 +411,12 @@ def fold_angles(sim_index=None):
 
         # Normal value.
         if sim_index == None:
-            cdp.diff_tensor.theta = wrap_angles(theta, 0.0, pi)
+            cdp.diff_tensor.theta = wrap_angles(theta, 0.0, 2.0*pi)
             cdp.diff_tensor.phi = wrap_angles(phi, 0.0, 2.0*pi)
 
         # Simulated theta and phi values.
         else:
-            cdp.diff_tensor.theta_sim[sim_index] = wrap_angles(theta_sim, theta - pi/2.0, theta + pi/2.0)
+            cdp.diff_tensor.theta_sim[sim_index] = wrap_angles(theta_sim, theta - pi, theta + pi)
             cdp.diff_tensor.phi_sim[sim_index]   = wrap_angles(phi_sim, phi - pi, phi + pi)
 
     # Ellipsoid.
