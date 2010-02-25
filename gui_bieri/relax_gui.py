@@ -887,12 +887,22 @@ class Main(wx.Frame):
         #        self.analysis_frames.append(Auto_model_free(self))
 
         # FIXME:  Temporary fix - set the data structures explicitly.
+        # R1 frames.
         self.analysis_frames[self.hardcoded_index_r1_1].link_data(ds.relax_gui.analyses[self.r1_index[0]])
         self.analysis_frames[self.hardcoded_index_r1_2].link_data(ds.relax_gui.analyses[self.r1_index[1]])
         self.analysis_frames[self.hardcoded_index_r1_3].link_data(ds.relax_gui.analyses[self.r1_index[2]])
+
+        # R2 frames.
         self.analysis_frames[self.hardcoded_index_r2_1].link_data(ds.relax_gui.analyses[self.r2_index[0]])
         self.analysis_frames[self.hardcoded_index_r2_2].link_data(ds.relax_gui.analyses[self.r2_index[1]])
         self.analysis_frames[self.hardcoded_index_r2_3].link_data(ds.relax_gui.analyses[self.r2_index[2]])
+
+        # NOE frames
+        self.analysis_frames[self.hardcoded_index_noe_1].link_data(ds.relax_gui.analyses[self.noe_index[0]])
+        self.analysis_frames[self.hardcoded_index_noe_2].link_data(ds.relax_gui.analyses[self.noe_index[1]])
+        self.analysis_frames[self.hardcoded_index_noe_3].link_data(ds.relax_gui.analyses[self.noe_index[2]])
+
+        # Model-free frame.
         self.analysis_frames[self.hardcoded_index_mf].link_data(ds.relax_gui.analyses[9])
 
         # Update the core of the GUI to match the new data store.
