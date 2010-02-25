@@ -304,7 +304,7 @@ class Main(wx.Frame):
         menubar.Append(menu, "&Molecule")
 
         # The 'Molecule' menu actions.
-        #self.Bind(wx.EVT_MENU, self.structure_pdb,  id=10)
+        self.Bind(wx.EVT_MENU, self.structure_pdb,  id=10)
         self.Bind(wx.EVT_MENU, self.import_seq,     id=11)
 
         # The 'Settings' menu entries.
@@ -459,7 +459,6 @@ class Main(wx.Frame):
 
 
     def import_seq(self, event): # open load sequence panel
-        global sequencefile  #load global variable
         temp = load_sequence(self)
         if not temp == None:
             sequencefile = str(temp) #set sequence file
@@ -726,6 +725,29 @@ class Main(wx.Frame):
 
         # Save the relax state.
         state.save_state(self.save_file, verbosity=0, force=True)
+
+
+    def structure_pdb(self, event): # open load sequence panel
+        temp = load_sequence(self)
+        if not temp == None:
+            structure_file_pdb = str(temp) #set sequence file
+
+            # Add file to NOE tabs.
+            self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
+            
+            # Add file to R1 tabs.
+            self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r1_3].field_structure.SetValue(structure_file_pdb)
+
+            # Add file to R2 tabs.
+            self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
+            self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
+
+        event.Skip()
 
 
     def sync_ds(self, upload=False):
