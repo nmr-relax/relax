@@ -31,6 +31,13 @@ class Status(object):
     # Class variable for storing the class instance (for the singleton).
     _instance = None
 
+    def __init__(self):
+        """Initialise all the status data structures."""
+
+        # The Monte Carlo simulation status.
+        self.mc_number = None
+
+
     def __new__(self, *args, **kargs):
         """Replacement method for implementing the singleton design pattern."""
 

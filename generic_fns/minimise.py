@@ -31,6 +31,7 @@ from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError
 import specific_fns
+from status import Status; status = Status()
 
 
 def calc(verbosity=1):
@@ -55,9 +56,18 @@ def calc(verbosity=1):
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
+            # Print out.
             if verbosity:
                 print(("Simulation " + repr(i+1)))
+
+            # Status.
+            status.mc_number = i
+
+            # Calculation.
             calculate(verbosity=verbosity-1, sim_index=i)
+
+        # Unset the status.
+        status.mc_number = None
 
     # Minimisation.
     else:
@@ -99,9 +109,18 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in xrange(cdp.sim_number):
+            # Print out.
             if verbosity:
                 print(("Simulation " + repr(i+1)))
+
+            # Status.
+            status.mc_number = i
+
+            # Optimisation.
             grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
+
+        # Unset the status.
+        status.mc_number = None
 
     # Grid search.
     else:
@@ -153,9 +172,18 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     # Monte Carlo simulation minimisation.
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         for i in xrange(cdp.sim_number):
+            # Print out.
             if verbosity:
                 print(("Simulation " + repr(i+1)))
+
+            # Status.
+            status.mc_number = i
+
+            # Optimisation.
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
+
+        # Unset the status.
+        status.mc_number = None
 
     # Standard minimisation.
     else:
