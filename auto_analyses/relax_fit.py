@@ -120,7 +120,10 @@ class Relax_fit:
         self.interpreter.spectrum.error_analysis()
 
         # Deselect unresolved spins.
-        self.interpreter.deselect.read(file='unresolved')
+        if self.unresolved == '':
+            print ''
+        else:
+            self.interpreter.deselect.read(file='unresolved') # FIXME. relax should read the list without creating a file
 
         # Set the relaxation curve type.
         self.interpreter.relax_fit.select_model('exp')
