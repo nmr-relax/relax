@@ -57,12 +57,20 @@ class Relax_fit:
         """
 
         # Store the args.
-        self.pipe_name = pipe_name+ ' ' + str(time.asctime(time.localtime())) # add date and time to allow multiple executions of relax_fit
+        self.pipe_name = pipe_name
+        self.pipe_name = pipe_name + ' ' + str(time.asctime(time.localtime())) # add date and time to allow multiple executions of relax_fit
         self.seq_args = seq_args
         self.file_names = file_names
         self.relax_times = relax_times
         self.int_method = int_method
         self.mc_num = mc_num
+        self.mc_num = 10
+        self.pdb_file = pdb_file
+        self.unresolved = unresolved
+        self.directory = directory
+        self.grace_dir = self.directory + sep + 'grace'
+        self.rx_type = rx_type
+        self.freq = str(freq)
 
         # User variable checks.
         self.check_vars()
