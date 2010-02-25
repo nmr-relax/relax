@@ -70,7 +70,6 @@ class Relax_fit:
         self.relax_times = relax_times
         self.int_method = int_method
         self.mc_num = mc_num
-        self.mc_num = 10
         self.pdb_file = pdb_file
         self.unresolved = unresolved
         self.directory = directory
