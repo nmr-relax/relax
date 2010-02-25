@@ -413,29 +413,6 @@ class Main(wx.Frame):
         self.SetSizer(main_sizer)
 
 
-
-    def exec_noe1(self, event): # Start NOE calculation no. 1
-        start_relax = exec_relax()
-
-        if start_relax == True:
-            start_noe(self.res_noe1.GetValue(), self.noe_ref_1.GetValue(), self.noe_sat_1.GetValue(), self.noe_ref_err_1.GetValue(), self.noe_sat_err_1.GetValue(), self.nmrfreq_value_noe1.GetValue(), self.structure_noe1.GetValue(), self.unres_noe1.GetValue(), start_relax, self, 1, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
-    def exec_noe2(self, event): # start noe 2 calculation
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_noe(self.res_noe1_copy.GetValue(), self.noe_ref_1_copy.GetValue(), self.noe_sat_1_copy.GetValue(), self.noe_ref_err_1_copy.GetValue(), self.noe_sat_err_1_copy.GetValue(), self.nmrfreq_value_noe1_copy.GetValue(), self.structure_noe1_copy.GetValue(), self.unres_noe1_copy.GetValue(), start_relax, self, 2, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
-    def exec_noe3(self, event): # calculate noe 3
-        start_relax = exec_relax()
-        if start_relax == True:
-            start_noe(self.res_noe1_copy_1.GetValue(), self.noe_ref_1_copy_1.GetValue(), self.noe_sat_1_copy_1.GetValue(), self.noe_ref_err_1_copy_1.GetValue(), self.noe_sat_err_1_copy_1.GetValue(), self.nmrfreq_value_noe1_copy_1.GetValue(), self.structure_noe1_copy_1.GetValue(), self.unres_noe1_copy_1.GetValue(), start_relax, self, 3, global_setting, file_setting, sequencefile)
-        event.Skip()
-
-
     def exit_gui(self, event):
         """Catch the main window closure and perform the exit procedure.
 
@@ -610,87 +587,6 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def ref_noe(self, event):
-        """Select the reference noe 1 file.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original value.
-        backup = self.noe_ref_1.GetValue()
-
-        # Alias the data container.
-        cont = ds.relax_gui.analyses[self.noe_index[0]]
-
-        # Select the file.
-        cont.ref_file = openfile(msg='Select reference NOE', filetype='*.*', default='all files (*.*)|*.*')
-
-        # Restore the backup file if no file was chosen.
-        if cont.ref_file == None:
-            cont.ref_file = backup
-
-        # Place the file path in the text box.
-        self.noe_ref_1.SetValue(cont.ref_file)
-
-        # Skip the event.
-        event.Skip()
-
-
-    def ref_noe2(self, event):
-        """Select the reference noe 2 file.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original value.
-        backup = self.noe_ref_1_copy.GetValue()
-
-        # Alias the data container.
-        cont = ds.relax_gui.analyses[self.noe_index[1]]
-
-        # Select the file.
-        cont.ref_file = openfile(msg='Select reference NOE', filetype='*.*', default='all files (*.*)|*.*')
-
-        # Restore the backup file if no file was chosen.
-        if cont.ref_file == None:
-            cont.ref_file = backup
-
-        # Place the file path in the text box.
-        self.noe_ref_1_copy.SetValue(cont.ref_file)
-
-        # Skip the event.
-        event.Skip()
-
-
-    def ref_noe3(self, event):
-        """Select the reference noe 3 file.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original value.
-        backup = self.noe_ref_1_copy_1.GetValue()
-
-        # Alias the data container.
-        cont = ds.relax_gui.analyses[self.noe_index[2]]
-
-        # Select the file.
-        cont.ref_file = openfile(msg='Select reference NOE', filetype='*.*', default='all files (*.*)|*.*')
-
-        # Restore the backup file if no file was chosen.
-        if cont.ref_file == None:
-            cont.ref_file = backup
-
-        # Place the file path in the text box.
-        self.noe_ref_1_copy_1.SetValue(cont.ref_file)
-
-        # Skip the event.
-        event.Skip()
-
-
     def references(self, event):
         """Display the references relevant for relax.
 
@@ -706,128 +602,11 @@ class Main(wx.Frame):
         event.Skip()
 
 
-    def resdir_modelfree(self, event):
-        backup = self.resultsdir_r21_copy_2.GetValue()
-        results_dir_model = opendir('Select results directory', backup)
-        if results_dir_model == None:
-            results_dir_model = backup
-        self.resultsdir_r21_copy_2.SetValue(results_dir_model)
-        event.Skip()
-
-
-    def resdir_noe1(self, event): # noe 1 results dir
-        backup = self.res_noe1.GetValue()
-        noe_savedir[0] = opendir('Select results directory', self.res_noe1.GetValue())
-        if noe_savedir[0] == None:
-            noe_savedir[0] = backup
-        self.res_noe1.SetValue(noe_savedir[0])
-        event.Skip()
-
-
-    def resdir_noe2(self, event): # noe results dir no. 2
-        backup = self.res_noe1_copy.GetValue()
-        noe_savedir[1] = opendir('Select results directory', self.res_noe1_copy.GetValue())
-        if noe_savedir[1] == None:
-            noe_savedir[1] = backup
-        self.res_noe1_copy.SetValue(noe_savedir[1])
-        event.Skip()
-
-
-    def resdir_noe3(self, event): # noe 3 results dir
-        backup = self.res_noe1_copy_1.GetValue()
-        noe_savedir[2] = opendir('Select results directory', self.res_noe1_copy_1.GetValue() + sep)
-        if noe_savedir[2] == None:
-            noe_savedir[2] = backup
-        self.res_noe1_copy_1.SetValue(noe_savedir[2])
-        event.Skip()
-
-
     def reset_setting(self, event): #reset all settings
         global global_setting #import global variable
         if question('Do you realy want to change relax settings?'):
             ds.relax_gui.global_setting = ['1.02 * 1e-10', '-172 * 1e-6', 'N', 'H', '11', 'newton', '500']
             ds.relax_gui.file_setting = ['0', '1', '2', '3', '4', '5', '6']
-
-
-    def sat_noe1(self, event):
-        """Select the saturated noe 1 file.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original value.
-        backup = self.noe_sat_1.GetValue()
-
-        # Alias the data container.
-        cont = ds.relax_gui.analyses[self.noe_index[0]]
-
-        # Select the file.
-        cont.sat_file = openfile(msg='Select saturated NOE', filetype='*.*', default='all files (*.*)|*.*')
-
-        # Restore the backup file if no file was chosen.
-        if cont.sat_file == None:
-            cont.sat_file = backup
-
-        # Place the file path in the text box.
-        self.noe_sat_1.SetValue(cont.sat_file)
-
-        # Skip the event.
-        event.Skip()
-
-
-    def sat_noe2(self, event):
-        """Select the saturated noe 2 file.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original value.
-        backup = self.noe_sat_1_copy.GetValue()
-
-        # Alias the data container.
-        cont = ds.relax_gui.analyses[self.noe_index[1]]
-
-        # Select the file.
-        cont.sat_file = openfile(msg='Select saturated NOE', filetype='*.*', default='all files (*.*)|*.*')
-
-        # Restore the backup file if no file was chosen.
-        if cont.sat_file == None:
-            cont.sat_file = backup
-
-        # Place the file path in the text box.
-        self.noe_sat_1_copy.SetValue(cont.sat_file)
-
-        # Skip the event.
-        event.Skip()
-
-
-    def sat_noe3(self, event):
-        """Select the saturated noe 3 file.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Store the original value.
-        backup = self.noe_sat_1_copy_1.GetValue()
-
-        # Alias the data container.
-        cont = ds.relax_gui.analyses[self.noe_index[2]]
-
-        # Select the file.
-        cont.sat_file = openfile(msg='Select saturated NOE', filetype='*.*', default='all files (*.*)|*.*')
-
-        # Restore the backup file if no file was chosen.
-        if cont.sat_file == None:
-            cont.sat_file = backup
-
-        # Place the file path in the text box.
-        self.noe_sat_1_copy_1.SetValue(cont.sat_file)
-
-        # Skip the event.
-        event.Skip()
 
 
     def settings(self, event): # set up for relax variables
