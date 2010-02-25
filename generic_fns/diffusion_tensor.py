@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,6 +32,7 @@ from re import search
 from angles import wrap_angles
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
+from generic_fns.angles import fold_spherical_angles
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -454,8 +455,9 @@ def fold_angles(sim_index=None):
         if sim_index == None:
             # Fold phi inside 0 and pi.
             if cdp.diff_tensor.phi >= pi:
-                cdp.diff_tensor.theta = pi - cdp.diff_tensor.theta
-                cdp.diff_tensor.phi = cdp.diff_tensor.phi - pi
+                theta, phi = fold_spherical_angles(cdp.diff_tensor.theta, cdp.diff_tensor.theta)
+                cdp.diff_tensor.theta = theta
+                cdp.diff_tensor.phi = phi
 
         # Simulated theta and phi values.
         else:
