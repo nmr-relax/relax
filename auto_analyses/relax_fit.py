@@ -23,6 +23,10 @@
 # Module docstring.
 """The automatic relaxation curve fitting protocol."""
 
+#python modules
+import time
+from os import sep
+
 # relax module imports.
 from prompt.interpreter import Interpreter
 import generic_fns.structure.main
