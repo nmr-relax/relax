@@ -449,7 +449,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     tensor_pdb_file.close()
 
 
-def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
+def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), limit_check=None, scale=1.0, inc=20, debug=False):
     """Generate a uniformly distributed distribution of atoms on a warped sphere.
 
     The vectors from the function uniform_vect_dist_spherical_angles() are used to generate the
@@ -472,8 +472,8 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
     @type R:                3x3 numpy array
     @keyword warp:          The optional 3x3 warping matrix.
     @type warp:             3x3 numpy array
-    @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
-    @type max_angle:        float
+    @keyword limit_check:   A function with determines the limits of the distribution.  It should accept two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.
+    @type limit_check:      function
     @keyword scale:         The scaling factor to stretch all rotated and warped vectors by.
     @type scale:            float
     @keyword inc:           The number of increments or number of vectors used to generate the outer
@@ -487,42 +487,48 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
 
     # Get the uniform vector distribution.
     print("    Creating the uniform vector distribution.")
-    vectors = uniform_vect_dist_spherical_angles(inc=inc)
+    vectors, theta, phi = uniform_vect_dist_spherical_angles(inc=inc)
 
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
-
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
-
-    # Loop over the angles and find the minimum latitudinal index.
-    if max_angle == None:
-        j_min = 0
-    else:
-        for j_min in xrange(len(phi)):
-            if phi[j_min] <= max_angle:
-                break
-
-    # The number of j increments.
-    num_j = inc/2+2 - j_min
+    # Init the arrays for stitching together.
+    edge = zeros(len(theta))
+    edge_index = zeros(len(theta), int)
+    edge_phi = zeros(len(theta), float64)
+    edge_atom = zeros(len(theta))
 
     # Loop over the radial array of vectors (change in longitude).
-    for i in range(inc):
+    for i in range(len(theta)):
+        # Debugging.
+        if debug:
+            print("i: %s; theta: %s" % (i, theta[i]))
+
         # Loop over the vectors of the radial array (change in latitude).
-        for j in range(inc/2+2):
-            # Skip the vector if the polar angle is greater than max_angle.
-            if j < j_min:
+        for j in range(len(phi)):
+            # Debugging.
+            if debug:
+                print("%sj: %s; phi: %s" % (" "*4, j, phi[j]))
+
+            # Skip the vector if the point is outside of the limits.
+            if not limit_check(phi[j], theta[i]):
+                if debug:
+                    print("%sOut of cone." % (" "*8))
                 continue
 
-            # Index.
-            index = i + j*inc
+            # Update the edge for this longitude.
+            if not edge[i]:
+                edge[i] = 1
+                edge_index[i] = j
+                edge_phi[i] = phi[j]
+                edge_atom[i] = atom_num
+
+                # Debugging.
+                if debug:
+                    print("%sEdge detected." % (" "*8))
+                    print("%sEdge index: %s" % (" "*8, edge_index[i]))
+                    print("%sEdge phi pos: %s" % (" "*8, edge_phi[i]))
+                    print("%sEdge atom: %s" % (" "*8, edge_atom[i]))
 
             # Rotate the vector into the diffusion frame.
-            vector = dot(R, vectors[index])
+            vector = dot(R, vectors[i + j*len(theta)])
 
             # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
             vector = dot(warp, vector)
@@ -533,20 +539,42 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
             # Position relative to the centre of mass.
             pos = centre + vector
 
+            # Debugging.
+            if debug:
+                print("%sAdding atom %s." % (" "*8, get_proton_name(atom_num)))
+
             # Add the vector as a H atom of the TNS residue.
             mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
 
-            # Connect to the previous atom (to generate the longitudinal lines).
-            if j > j_min:
+            # Connect to the previous atom to generate the longitudinal lines (except for the first point).
+            if j > edge_index[i]:
+                # Debugging.
+                if debug:
+                    print("%sLongitude line, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(atom_num-1)))
+
                 mol.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
             # Connect across the radial arrays (to generate the latitudinal lines).
-            if i != 0:
-                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-num_j)
+            if i != 0 and j >= edge_index[i-1]:
+                # The number of atoms back to the previous longitude.
+                num = len(phi) - edge_index[i]
+
+                # Debugging.
+                if debug:
+                    print("%sLatitude line, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(atom_num-num)))
+
+                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-num)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
-            if i == inc-1:
-                mol.atom_connect(index1=atom_num-1, index2=origin_num-1+(j-j_min))
+            if i == len(theta)-1 and j >= edge_index[0]:
+                # The number of atom in the first longitude line.
+                num = origin_num + j - edge_index[0]
+
+                # Debugging.
+                if debug:
+                    print("%sZipping up, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(num)))
+
+                mol.atom_connect(index1=atom_num-1, index2=num-1)
 
             # Increment the atom number.
             atom_num = atom_num + 1
@@ -707,9 +735,7 @@ def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=No
 def uniform_vect_dist_spherical_angles(inc=20):
     """Uniform distribution of vectors on a sphere using uniform spherical angles.
 
-    This function returns an array of unit vectors uniformly distributed within 3D space.  To
-    create the distribution, uniform spherical angles are used.  The two spherical angles are
-    defined as::
+    This function returns an array of unit vectors uniformly distributed within 3D space.  To create the distribution, uniform spherical angles are used.  The two spherical angles are defined as::
 
         theta = 2.pi.u,
         phi = cos^-1(2v - 1),
@@ -719,21 +745,19 @@ def uniform_vect_dist_spherical_angles(inc=20):
         u in [0, 1),
         v in [0, 1].
 
-    Because theta is defined between [0, pi] and phi is defined between [0, 2pi], for a uniform
-    distribution u is only incremented half of 'inc'.  The unit vectors are generated using the
-    equation::
+    Because theta is defined between [0, pi] and phi is defined between [0, 2pi], for a uniform distribution u is only incremented half of 'inc'.  The unit vectors are generated using the equation::
 
                    | cos(theta) * sin(phi) |
         vector  =  | sin(theta) * sin(phi) |.
                    |      cos(phi)         |
 
-    The vectors of this distribution generate both longitudinal and latitudinal lines.
+    The vectors of this distribution generate both longitudinal and latitudinal lines.  The arrays of angle distributions of theta and phi are also returned.
 
 
     @keyword inc:   The number of increments in the distribution.
     @type inc:      int
-    @return:        The distribution of vectors on a sphere.
-    @rtype:         list of rank-1, 3D numpy arrays
+    @return:        The distribution of vectors on a sphere, the theta angle array, and the phi angle array.
+    @rtype:         list of rank-1, 3D numpy arrays, array of float, array of float
     """
 
     # The inc argument must be an even number.
@@ -778,5 +802,5 @@ def uniform_vect_dist_spherical_angles(inc=20):
             # Append the vector.
             vectors.append(array([x, y, z], float64))
 
-    # Return the array of vectors.
-    return vectors
+    # Return the array of vectors and angles.
+    return vectors, theta, phi
