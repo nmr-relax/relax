@@ -40,6 +40,7 @@ from float import isNaN, isInf
 import generic_fns
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pcs, pipes, rdc
+from generic_fns.structure.cones import Iso_cone
 import generic_fns.structure.geometric
 from generic_fns.structure.internal import Internal
 import generic_fns.structure.mass
@@ -382,6 +383,13 @@ class N_state_model(API_base, API_common):
         R = zeros((3, 3), float64)
         two_vect_to_R(array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), R)
 
+        # The isotropic cone object.
+        if cone_type == 'diff in cone':
+            angle = cdp.theta_diff_in_cone
+        elif cone_type == 'diff on cone':
+            angle = cdp.theta_diff_on_cone
+        cone = Iso_cone(angle)
+
         # Create the structural object.
         structure = Internal()
 
@@ -403,12 +411,8 @@ class N_state_model(API_base, API_common):
 
         # Generate the cone outer edge.
         print("\nGenerating the cone outer edge.")
-        if cone_type == 'diff in cone':
-            angle = cdp.theta_diff_in_cone
-        elif cone_type == 'diff on cone':
-            angle = cdp.theta_diff_on_cone
         cap_start_atom = mol.atom_num[-1]+1
-        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
+        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, phi_max_fn=cone.phi_max, length=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
