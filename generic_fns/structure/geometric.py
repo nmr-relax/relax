@@ -38,6 +38,37 @@ from relax_warnings import RelaxWarning
 
 
 
+def angles_uniform(inc=None):
+    """Determine the spherical angles for a uniform sphere point distribution.
+
+    @keyword inc:   The number of increments in the distribution.
+    @type inc:      int
+    @return:        The phi angle array and the theta angle array.
+    @rtype:         array of float, array of float
+    """
+    # Generate the increment values of u.
+    u = zeros(inc, float64)
+    val = 1.0 / float(inc)
+    for i in xrange(inc):
+        u[i] = float(i) * val
+
+    # Generate the increment values of v.
+    v = zeros(inc/2+2, float64)
+    val = 1.0 / float(inc/2)
+    for i in xrange(1, inc/2+1):
+        v[i] = float(i-1) * val + val/2.0
+    v[-1] = 1.0
+
+    # Generate the distribution of spherical angles theta.
+    theta = 2.0 * pi * u
+
+    # Generate the distribution of spherical angles phi.
+    phi = arccos(2.0 * v - 1.0)
+
+    # Return the angle arrays.
+    return phi, theta
+
+
 def autoscale_tensor(method='mass'):
     """Automatically determine an appropriate scaling factor for display of the diffusion tensor.
 
@@ -487,7 +518,10 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
 
     # Get the uniform vector distribution.
     print("    Creating the uniform vector distribution.")
-    vectors, theta, phi = uniform_vect_dist_spherical_angles(inc=inc)
+    vectors = uniform_vect_dist_spherical_angles(inc=inc)
+
+    # Get the polar and azimuthal angles for the distribution.
+    phi, theta = angles_uniform(inc)
 
     # Init the arrays for stitching together.
     edge = zeros(len(theta))
@@ -686,7 +720,7 @@ def get_proton_name(atom_num):
             return names[i] + repr(atom_num - lims[i])
 
 
-def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=None, inc=None):
+def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=None, inc=None, debug=False):
     """Function for stitching the cone dome to its edge, in the PDB representations.
 
     @keyword mol:           The molecule container.
@@ -702,15 +736,8 @@ def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=No
     @type inc:              int
     """
 
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
-
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
+    # Get the polar and azimuthal angles for the distribution.
+    phi, theta = angles_uniform(inc)
 
     # Loop over the angles and find the minimum latitudinal index.
     for j_min in xrange(len(phi)):
@@ -751,12 +778,12 @@ def uniform_vect_dist_spherical_angles(inc=20):
         vector  =  | sin(theta) * sin(phi) |.
                    |      cos(phi)         |
 
-    The vectors of this distribution generate both longitudinal and latitudinal lines.  The arrays of angle distributions of theta and phi are also returned.
+    The vectors of this distribution generate both longitudinal and latitudinal lines.
 
 
     @keyword inc:   The number of increments in the distribution.
     @type inc:      int
-    @return:        The distribution of vectors on a sphere, the theta angle array, and the phi angle array.
+    @return:        The distribution of vectors on a sphere.
     @rtype:         list of rank-1, 3D numpy arrays, array of float, array of float
     """
 
@@ -764,32 +791,16 @@ def uniform_vect_dist_spherical_angles(inc=20):
     if inc%2:
         raise RelaxError("The increment value of " + repr(inc) + " must be an even number.")
 
-    # Generate the increment values of u.
-    u = zeros(inc, float64)
-    val = 1.0 / float(inc)
-    for i in xrange(inc):
-        u[i] = float(i) * val
-
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
-
-    # Generate the distribution of spherical angles theta.
-    theta = 2.0 * pi * u
-
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
+    # Get the polar and azimuthal angles for the distribution.
+    phi, theta = angles_uniform(inc)
 
     # Initialise array of the distribution of vectors.
     vectors = []
 
     # Loop over the longitudinal lines.
-    for j in xrange(len(v)):
+    for j in xrange(len(phi)):
         # Loop over the latitudinal lines.
-        for i in xrange(len(u)):
+        for i in xrange(len(theta)):
             # X coordinate.
             x = cos(theta[i]) * sin(phi[j])
 
@@ -803,4 +814,4 @@ def uniform_vect_dist_spherical_angles(inc=20):
             vectors.append(array([x, y, z], float64))
 
     # Return the array of vectors and angles.
-    return vectors, theta, phi
+    return vectors
