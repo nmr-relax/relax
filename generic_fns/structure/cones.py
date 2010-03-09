@@ -41,6 +41,25 @@ class Iso_cone:
         self._angle = angle
 
 
+    def limit_check(self, phi, theta):
+        """Determine if the point is within the cone.
+
+        @param phi:     The polar angle.
+        @type phi:      float
+        @param theta:   The azimuthal angle.
+        @type phi:      float
+        @return:        True if the point is within the cone, False otherwise.
+        @rtype:         bool
+        """
+
+        # Outside.
+        if phi > self._angle:
+            return False
+
+        # Else inside.
+        return True
+
+
     def phi_max(self, theta):
         """Return the maximum polar angle phi for the given azimuthal angle theta.
 
@@ -92,3 +111,22 @@ class Pseudo_elliptic:
 
         # Return the limit.
         return phi_max
+
+
+    def limit_check(self, phi, theta):
+        """Determine if the point is within the cone.
+
+        @param phi:     The polar angle.
+        @type phi:      float
+        @param theta:   The azimuthal angle.
+        @type phi:      float
+        @return:        True if the point is within the cone, False otherwise.
+        @rtype:         bool
+        """
+
+        # Outside.
+        if phi > self.phi_max(theta):
+            return False
+
+        # Else inside.
+        return True
