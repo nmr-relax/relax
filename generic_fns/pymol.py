@@ -206,9 +206,6 @@ def cone_pdb(file=None):
     @type file:     str
     """
 
-    # Test if the current data pipe exists.
-    pipes.test()
-
     # Read in the cone PDB file.
     pymol.pipe_write("load " + file)
 
