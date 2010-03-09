@@ -386,7 +386,7 @@ class N_state_model(API_base, API_common):
         structure = Internal()
 
         # Add a structure.
-        structure.add_struct(name='cone')
+        structure.add_molecule(name='cone')
 
         # Alias the single molecule from the single model.
         mol = structure.structural_data[0].mol[0]
