@@ -58,7 +58,7 @@ def autoscale_tensor(method='mass'):
     return 1.8e-6
 
 
-def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
+def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, phi_max_fn=None, length=None, inc=None):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -80,8 +80,8 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
     @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
                             be ignored.
     @type R:                3x3 numpy array
-    @keyword angle:         The cone angle in radians.
-    @type angle:            float
+    @keyword phi_max_fn:    A function which returns the maximum polar angle for the given azimuthal angle.
+    @type phi_max_fn:       function
     @keyword length:        The cone length in meters.
     @type length:           float
     @keyword inc:           The number of increments or number of vectors used to generate the outer
@@ -112,14 +112,17 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
         # The azimuthal angle theta.
         theta = 2.0 * pi * float(i) / float(inc)
 
+        # Get the polar angle.
+        phi = phi_max_fn(theta)
+
         # X coordinate.
-        x = cos(theta) * sin(angle)
+        x = cos(theta) * sin(phi)
 
         # Y coordinate.
-        y = sin(theta)* sin(angle)
+        y = sin(theta)* sin(phi)
 
         # Z coordinate.
-        z = cos(angle)
+        z = cos(phi)
 
         # The vector in the unrotated frame.
         vector = array([x, y, z], float64)
