@@ -143,7 +143,6 @@ The final black-box model-free results will be placed in the file 'final/results
 from os import getcwd, listdir, sep
 from re import search
 from string import lower
-from time import sleep
 
 # relax module imports.
 from float import floatAsByteArray
@@ -155,7 +154,7 @@ from relax_errors import RelaxError
 
 
 class dAuvergne_protocol:
-    def __init__(self, progress = 0, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, user_fns=None, conv_loop=True):
+    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
         @keyword diff_model:        The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
@@ -214,7 +213,6 @@ class dAuvergne_protocol:
         self.min_algor = min_algor
         self.mc_num = mc_num
         self.conv_loop = conv_loop
-        self.progress = progress
 
         # User variable checks.
         self.check_vars()
@@ -232,7 +230,6 @@ class dAuvergne_protocol:
 
         # MI - Local tm.
         ################
-
 
         if self.diff_model == 'local_tm':
             # Base directory to place files into.
@@ -743,13 +740,6 @@ class dAuvergne_protocol:
             if pipes.has_pipe(name):
                 self.interpreter.pipe.delete(name)
             self.interpreter.pipe.create(name, 'mf')
-            
-            # Update progress.
-            print'\nProgress: '+ str(self.progress)
-            if local_tm:
-                self.progress = self.progress + (100/len(self.pipes))
-            else:
-                self.progress = self.progress + 5
 
             # Load the sequence.
             self.interpreter.sequence.read(file=self.seq_args[0], dir=self.seq_args[1], mol_name_col=self.seq_args[2], res_num_col=self.seq_args[3], res_name_col=self.seq_args[4], spin_num_col=self.seq_args[5], spin_name_col=self.seq_args[6], sep=self.seq_args[7])
