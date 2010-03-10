@@ -26,6 +26,8 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
+from numpy import float64, zeros
+from numpy.linalg import eig
 from re import search
 
 # relax module imports.
@@ -33,6 +35,7 @@ from angles import wrap_angles
 from data.diff_tensor import DiffTensorData
 from generic_fns import pipes
 from generic_fns.angles import fold_spherical_angles
+from maths_fns.rotation_matrix import R_to_euler_zyz
 from relax_errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 
 
@@ -348,6 +351,32 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
 
         # Set the parameters.
         set(value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
+
+    # (Dxx, Dyy, Dzz, Dxy, Dxz, Dyz).
+    elif param_types == 3:
+        # Unpack the tuple.
+        Dxx, Dyy, Dzz, Dxy, Dxz, Dyz = params
+
+        # Build the tensor.
+        tensor = zeros((3, 3), float64)
+        tensor[0, 0] = Dxx
+        tensor[1, 1] = Dyy
+        tensor[2, 2] = Dzz
+        tensor[0, 1] = tensor[1, 0] = Dxy
+        tensor[0, 2] = tensor[2, 0] = Dxz
+        tensor[1, 2] = tensor[2, 1] = Dyz
+
+        # Scaling.
+        tensor = tensor * d_scale
+
+        # Eigenvalues.
+        Di, R = eig(tensor)
+
+        # Euler angles.
+        alpha, beta, gamma = R_to_euler_zyz(R)
+
+        # Set the parameters.
+        set(value=[Di[0], Di[1], Di[2]], param=['Dx', 'Dy', 'Dz'])
 
     # Unknown parameter combination.
     else:
