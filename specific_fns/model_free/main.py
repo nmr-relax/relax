@@ -445,6 +445,14 @@ class Model_free_main:
         @rtype:                 float
         """
 
+        # Get the spin container.
+        spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
+
+        # Missing structural data.
+        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid') and not hasattr(spin, 'xh_vect') or not spin.xh_vect:
+            warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
+            return
+
         # Get the relaxation value from the minimise function.
         value = self.minimise(min_algor='back_calc', min_options=(spin_index, ri_label, frq_label, frq))
 
