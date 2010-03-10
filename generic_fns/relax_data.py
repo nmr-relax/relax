@@ -198,6 +198,10 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
         # Back-calculate the relaxation value.
         value = back_calculate(spin_index=spin_index, ri_label=ri_label, frq_label=frq_label, frq=frq)
 
+        # No data.
+        if value == None:
+            continue
+
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, value)
 
