@@ -180,20 +180,23 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
     # Global data flag.
     global_flag = 0
 
-    # Specific back-calculate function setup.
-    back_calculate = specific_fns.setup.get_specific_fn('back_calc', pipes.get_type())
+    # Specific Ri back-calculate function setup.
+    back_calculate = specific_fns.setup.get_specific_fn('back_calc_ri', pipes.get_type())
 
     # Loop over the spins.
-    for spin in spin_loop():
+    for spin, spin_id in spin_loop(return_id=True):
         # Skip deselected spins.
         if not spin.select:
             continue
+
+        # The global index.
+        spin_index = find_index(spin_id)
 
         # Initialise all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq)
 
         # Back-calculate the relaxation value.
-        value = back_calculate(spin=spin, ri_label=ri_label, frq_label=frq_label, frq=frq)
+        value = back_calculate(spin=spin_index, ri_label=ri_label, frq_label=frq_label, frq=frq)
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, value)
