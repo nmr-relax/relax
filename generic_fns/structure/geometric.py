@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -89,7 +89,7 @@ def autoscale_tensor(method='mass'):
     return 1.8e-6
 
 
-def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, phi_max_fn=None, length=None, inc=None):
+def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', apex=None, axis=None, R=None, scale=None, inc=None, debug=False):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -99,10 +99,14 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
+    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the phi_max() method for returning the phi value for the given theta.
+    @type cone:             class instance
     @keyword res_name:      The residue name.
     @type res_name:         str
     @keyword res_num:       The residue number.
     @type res_num:          int
+    @keyword chain_id:      The chain identifier.
+    @type chain_id:         str
     @keyword apex:          The apex of the cone.
     @type apex:             numpy array, len 3
     @keyword axis:          The central axis of the cone.  If supplied, then this arg will be used
@@ -111,10 +115,8 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
     @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
                             be ignored.
     @type R:                3x3 numpy array
-    @keyword phi_max_fn:    A function which returns the maximum polar angle for the given azimuthal angle.
-    @type phi_max_fn:       function
-    @keyword length:        The cone length in meters.
-    @type length:           float
+    @keyword scale:         The scaling factor to stretch all points by.
+    @type scale:            float
     @keyword inc:           The number of increments or number of vectors used to generate the outer
                             edge of the cone.
     @type inc:              int
@@ -127,6 +129,9 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
     mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H')
     origin_atom = atom_num
 
+    # Get the polar and azimuthal angles for the distribution.
+    phi, theta = angles_uniform(inc)
+
     # Initialise the rotation matrix.
     if R == None:
         R = eye(3)
@@ -135,27 +140,29 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
     if axis != None:
         two_vect_to_R(array([0, 0, 1], float64), axis, R)
 
-    # Loop over each vector.
-    for i in xrange(inc):
-        # Increment the atom number.
-        atom_num = atom_num + 1
+    # Determine the maximum phi values and the indices of the point just above the edge.
+    phi_max = zeros(len(theta), float64)
+    edge_index = zeros(len(theta), int)
+    for i in range(len(theta)):
+        # Get the polar angle for the longitude edge atom.
+        phi_max[i] = cone.phi_max(theta[i])
 
-        # The azimuthal angle theta.
-        theta = 2.0 * pi * float(i) / float(inc)
+        # The index.
+        for j in range(len(phi)):
+            if phi[j] < phi_max[i]:
+                edge_index[i] = j
+                break
 
-        # Get the polar angle.
-        phi = phi_max_fn(theta)
+    # Reverse edge index.
+    edge_index_rev = len(phi) - 1 - edge_index
 
-        # X coordinate.
-        x = cos(theta) * sin(phi)
-
-        # Y coordinate.
-        y = sin(theta)* sin(phi)
-
-        # Z coordinate.
-        z = cos(phi)
-
+    # Move around the azimuth.
+    atom_num = atom_num + 1
+    for i in range(len(theta)):
         # The vector in the unrotated frame.
+        x = cos(theta[i]) * sin(phi_max[i])
+        y = sin(theta[i])* sin(phi_max[i])
+        z = cos(phi_max[i])
         vector = array([x, y, z], float64)
 
         # Rotate the vector.
@@ -165,21 +172,102 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
         atom_id = 'T' + repr(i)
 
         # The atom position.
-        pos = apex+vector*length
+        pos = apex+vector*scale
+
+        # Debugging.
+        if debug:
+            print("i: %s; theta: %s" % (i, theta[i]))
+            print("%sAdding atom %s." % (" "*4, get_proton_name(atom_num)))
 
         # Add the vector as a H atom of the cone residue.
         mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H')
 
-        # Connect across the radial array (to generate the circular cone edge).
-        if i != 0:
-            mol.atom_connect(index1=atom_num-1, index2=atom_num-2)
-
-        # Connect the last radial array to the first (to zip up the circle).
-        if i == inc-1:
-            mol.atom_connect(index1=atom_num-1, index2=origin_atom)
-
-        # Join the atom to the cone apex.
+        # Join the longitude atom to the cone apex.
         mol.atom_connect(index1=origin_atom-1, index2=atom_num-1)
+
+        # Increment the atom number.
+        atom_num = atom_num + 1
+
+        # Add latitude atoms for a smoother cone edge and better stitching to the cap.
+        for j in range(len(phi)):
+            # The index for the direction top to bottom!
+            k = len(phi) - 1 - j
+
+            # Debugging.
+            if debug:
+                print("%sj: %s; phi: %-20s; k: %s; phi: %-20s" % (" "*4, j, phi[j], k, phi[k]))
+
+            # No edge.
+            skip = True
+
+            # Forward edge.
+            index = i+1
+            if i == len(theta)-1:
+                index = 0
+            if j >= edge_index[i] and j < edge_index[index]:
+                # Debugging.
+                if debug:
+                    print("%sForward edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+
+                # Find the theta value for this polar angle phi.
+                phi_val = phi[j]
+                if index == 0:
+                    theta_max = theta[index] + 2*pi
+                else:
+                    theta_max = theta[index]
+                theta_max = cone.theta_max(phi_val, theta_min=theta[i], theta_max=theta_max-1e-7)
+
+            # Back edge.
+            if i < len(theta)-1 and j > edge_index_rev[i] and j <= edge_index_rev[i+1]:
+                # Debugging.
+                if debug:
+                    print("%sBack edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+
+                # Find the theta value for this polar angle phi.
+                phi_val = phi[k]
+                theta_max = cone.theta_max(phi_val, theta_min=theta[i-1], theta_max=theta[i])
+
+            # Skipping.
+            if skip:
+                continue
+
+            # Debugging.
+            if debug:
+                print("%sAdding atom %s." % (" "*8, get_proton_name(atom_num)))
+
+            # The coordinates.
+            x = cos(theta_max) * sin(phi_val)
+            y = sin(theta_max) * sin(phi_val)
+            z = cos(phi_val)
+            pos = array([x, y, z], float64) * scale
+
+            # Add the atom.
+            mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
+
+            # Increment the atom number.
+            atom_num = atom_num + 1
+
+    # Debugging.
+    if debug:
+        print("\nBuilding the edge.")
+
+    # Build the cone edge.
+    for i in range(origin_atom, atom_num-2):
+        # Debugging.
+        if debug:
+            print("%sCone edge, connecting %s to %s" % (" "*4, get_proton_name(i), get_proton_name(i+1)))
+
+        # Connect.
+        mol.atom_connect(index1=i, index2=i+1)
+
+    # Connect the last radial array to the first (to zip up the circle).
+    mol.atom_connect(index1=atom_num-2, index2=origin_atom)
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
