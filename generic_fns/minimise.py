@@ -49,7 +49,7 @@ def calc(verbosity=1):
     calculate = specific_fns.setup.get_specific_fn('calculate', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
-    # Deselect residues lacking data:
+    # Deselect spins lacking data:
     overfit_deselect()
 
     # Monte Carlo simulation calculation.
@@ -102,7 +102,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     grid_search = specific_fns.setup.get_specific_fn('grid_search', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
-    # Deselect residues lacking data:
+    # Deselect spins lacking data:
     overfit_deselect()
 
     # Monte Carlo simulation grid search.
@@ -162,7 +162,7 @@ def minimise(min_algor=None, min_options=None, func_tol=None, grad_tol=None, max
     minimise = specific_fns.setup.get_specific_fn('minimise', cdp.pipe_type)
     overfit_deselect = specific_fns.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
 
-    # Deselect residues lacking data:
+    # Deselect spins lacking data:
     overfit_deselect()
 
     # Single Monte Carlo simulation.
