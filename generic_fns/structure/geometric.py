@@ -109,16 +109,13 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
     @type chain_id:         str
     @keyword apex:          The apex of the cone.
     @type apex:             numpy array, len 3
-    @keyword axis:          The central axis of the cone.  If supplied, then this arg will be used
-                            to construct the rotation matrix.
+    @keyword axis:          The central axis of the cone.  If supplied, then this arg will be used to construct the rotation matrix.
     @type axis:             numpy array, len 3
-    @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
-                            be ignored.
+    @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will be ignored.
     @type R:                3x3 numpy array
     @keyword scale:         The scaling factor to stretch all points by.
     @type scale:            float
-    @keyword inc:           The number of increments or number of vectors used to generate the outer
-                            edge of the cone.
+    @keyword inc:           The number of increments or number of vectors used to generate the outer edge of the cone.
     @type inc:              int
     """
 
@@ -268,6 +265,71 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
 
     # Connect the last radial array to the first (to zip up the circle).
     mol.atom_connect(index1=atom_num-2, index2=origin_atom)
+
+
+def create_cone_pdb(cone=None, apex=None, axis=None, R=None, inc=None, scale=30.0, file=None, dir=None, force=False):
+    """Create a PDB representation of the given cone object.
+
+    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi, the phi_max() method for returning the phi value for the given theta.
+    @type cone:             class instance
+    @keyword apex:          The apex of the cone.
+    @type apex:             rank-1, 3D numpy array
+    @keyword axis:          The central axis of the cone.  If not supplied, the z-axis will be used.
+    @type axis:             rank-1, 3D numpy array
+    @keyword R:             The rotation matrix.
+    @type R:                rank-2, 3D numpy array
+    @keyword inc:           The increment number used to determine the number of latitude and longitude lines.
+    @type inc:              int
+    @keyword scale:         The scaling factor to stretch the unit cone by.
+    @type scale:            float
+    @param file:            The name of the PDB file to create.
+    @type file:             str
+    @param dir:             The name of the directory to place the PDB file into.
+    @type dir:              str
+    @param force:           Flag which if set to True will overwrite any pre-existing file.
+    @type force:            bool
+    """
+
+    # The cone axis default of the z-axis.
+    if not axis:
+        axis = array([0, 0, 1], float64)
+
+    # No rotation.
+    if not R:
+        R = eye(3)
+
+    # Create the structural object.
+    structure = Internal()
+
+    # Add a molecule.
+    structure.add_molecule(name='cone')
+
+    # Alias the single molecule from the single model.
+    mol = structure.structural_data[0].mol[0]
+
+    # Add the pivot point.
+    mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=apex, element='C')
+
+    # Generate the axis vectors.
+    print("\nGenerating the axis vectors.")
+    res_num = generate_vector_residues(mol=mol, vector=axis, atom_name='Axis', res_name_vect='AXE', res_num=2, origin=apex, scale=scale)
+
+    # Generate the cone outer edge.
+    print("\nGenerating the cone outer edge.")
+    edge_start_atom = mol.atom_num[-1]+1
+    cone_edge(mol=mol, cone=cone, res_name='EDG', res_num=3, apex=apex, R=R, scale=scale, inc=inc)
+
+    # Generate the cone cap, and stitch it to the cone edge.
+    print("\nGenerating the cone cap.")
+    cone_start_atom = mol.atom_num[-1]+1
+    generate_vector_dist(mol=mol, res_name='CON', res_num=4, centre=apex, R=R, limit_check=cone.limit_check, scale=scale, inc=inc)
+    stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=edge_start_atom+1, scale=scale, inc=inc)
+
+    # Create the PDB file.
+    print("\nGenerating the PDB file.")
+    pdb_file = open_write_file(file_name=file, dir=dir, force=force)
+    structure.write_pdb(pdb_file)
+    pdb_file.close()
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
