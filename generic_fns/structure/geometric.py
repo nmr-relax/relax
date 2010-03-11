@@ -308,8 +308,8 @@ def create_cone_pdb(cone=None, apex=None, axis=None, R=None, inc=None, scale=30.
     # Alias the single molecule from the single model.
     mol = structure.structural_data[0].mol[0]
 
-    # Add the pivot point.
-    mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=apex, element='C')
+    # Add the apex.
+    mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='APX', res_num=1, pos=apex, element='C')
 
     # Generate the axis vectors.
     print("\nGenerating the axis vectors.")
