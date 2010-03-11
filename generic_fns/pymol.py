@@ -236,7 +236,7 @@ def cone_pdb(file=None):
     ##################
 
     # Select the CON residue.
-    pymol.pipe_write("select resn CON")
+    pymol.pipe_write("select (resn CON,EDG)")
 
     # Hide everything.
     pymol.pipe_write("hide ('sele')")
