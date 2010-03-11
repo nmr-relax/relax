@@ -243,6 +243,7 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
             y = sin(theta_max) * sin(phi_val)
             z = cos(phi_val)
             pos = array([x, y, z], float64) * scale
+            pos = dot(R, pos)
 
             # Add the atom.
             mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
