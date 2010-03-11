@@ -295,7 +295,7 @@ def create_cone_pdb(cone=None, apex=None, axis=None, R=None, inc=None, scale=30.
         axis = array([0, 0, 1], float64)
 
     # No rotation.
-    if not R:
+    if R == None:
         R = eye(3)
 
     # Create the structural object.
