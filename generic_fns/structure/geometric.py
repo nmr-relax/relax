@@ -808,17 +808,22 @@ def get_proton_name(atom_num):
             return names[i] + repr(atom_num - lims[i])
 
 
-def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, limit_check=None, inc=None, debug=False):
+def stitch_cone_to_edge(mol=None, cone=None, chain_id='', dome_start=None, edge_start=None, scale=1.0, inc=None, debug=False):
     """Function for stitching the cone dome to its edge, in the PDB representations.
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
-    @keyword cone_start:    The starting atom number of the cone dome residue.
-    @type cone_start:       int
+    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi.
+    @type cone:             class instance
+    @keyword chain_id:      The chain identifier.
+    @type chain_id:         str
+    @type limit_check:      function
+    @keyword dome_start:    The starting atom number of the cone dome residue.
+    @type dome_start:       int
     @keyword edge_start:    The starting atom number of the cone edge residue.
     @type edge_start:       int
-    @keyword limit_check:   A function with determines the limits of the distribution.  It should accept two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.
-    @type limit_check:      function
+    @keyword scale:         The scaling factor to stretch all points by.
+    @type scale:            float
     @keyword inc:           The number of increments or number of vectors used to generate the outer edge of the cone.
     @type inc:              int
     """
@@ -826,35 +831,104 @@ def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, limit_check=
     # Get the polar and azimuthal angles for the distribution.
     phi, theta = angles_uniform(inc)
 
-    # Find the cone edge atoms of the first and last longitudes.
+    # Determine the maximum phi values and the indices of the point just above the edge.
+    phi_max = zeros(len(theta), float64)
     edge_index = zeros(len(theta), int)
     for i in range(len(theta)):
+        # Get the polar angle for the longitude edge atom.
+        phi_max[i] = cone.phi_max(theta[i])
+
+        # The index.
         for j in range(len(phi)):
-            if limit_check(phi[j], theta[i]):
+            if phi[j] < phi_max[i]:
                 edge_index[i] = j
                 break
 
+    # Reverse edge index.
+    edge_index_rev = len(phi) - 1 - edge_index
+
     # Debugging.
     if debug:
-        print("\nCone start: %s" % cone_start)
+        print("\nDome start: %s" % dome_start)
         print("Edge start: %s" % edge_start)
-        print("Edge indices: %s" % edge_index)
+        print("Edge indices:     %s" % edge_index)
+        print("Edge indices rev: %s" % edge_index_rev)
 
     # Move around the azimuth.
-    dome_edge = cone_start
-    for j in range(len(theta)):
-        # Cone edge atom.
-        edge_atom = edge_start + j
-
+    dome_atom = dome_start
+    edge_atom = edge_start
+    for i in range(len(theta)):
         # Debugging.
         if debug:
-            print("Stitching %s to %s" % (get_proton_name(edge_atom), get_proton_name(dome_edge)))
+            print("i: %s; theta: %s" % (i, theta[i]))
+            print("%sStitching longitudinal line to edge - %s to %s." % (" "*4, get_proton_name(edge_atom), get_proton_name(dome_atom)))
 
         # Connect the two atoms (to stitch up the 2 objects).
-        mol.atom_connect(index1=dome_edge-1, index2=edge_atom-1)
+        mol.atom_connect(index1=dome_atom-1, index2=edge_atom-1)
 
-        # Update the dome edge atom.
-        dome_edge = dome_edge + (len(phi) - edge_index[j])
+        # Update the edge atom.
+        edge_atom = edge_atom + 1
+
+        # Stitch up the latitude atoms.
+        for j in range(len(phi)):
+            # The index for the direction top to bottom!
+            k = len(phi) - 1 - j
+
+            # Debugging.
+            if debug:
+                print("%sj: %s; phi: %-20s; k: %s; phi: %-20s" % (" "*4, j, phi[j], k, phi[k]))
+
+            # No edge.
+            skip = True
+
+            # Forward edge.
+            fwd_index = i+1
+            if i == len(theta)-1:
+                fwd_index = 0
+            if j >= edge_index[i] and j < edge_index[fwd_index]:
+                # Debugging.
+                if debug:
+                    print("%sForward edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+                forward = True
+
+            # Back edge.
+            rev_index = i-1
+            if i == 0:
+                rev_index = len(theta)-1
+            if i < len(theta)-1 and j > edge_index_rev[i] and j <= edge_index_rev[i+1]:
+                # Debugging.
+                if debug:
+                    print("%sBack edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+                forward = False
+
+            # Skipping.
+            if skip:
+                continue
+
+            # The dome atom to stitch to (current dome atom + one latitude line to shift across).
+            if forward:
+                atom = dome_atom + j - edge_index[i]
+            else:
+                atom = dome_atom + edge_index_rev[i]+1 + k - edge_index[fwd_index]
+
+            # Debugging.
+            if debug:
+                print("%sStitching latitude line to edge - %s to %s." % (" "*8, get_proton_name(edge_atom), get_proton_name(atom)))
+
+            # Connect the two atoms (to stitch up the 2 objects).
+            mol.atom_connect(index1=atom-1, index2=edge_atom-1)
+
+            # Increment the cone edge atom number.
+            edge_atom = edge_atom + 1
+
+        # Update the cone dome and edge atoms.
+        dome_atom = dome_atom + (len(phi) - edge_index[i])
 
 
 def uniform_vect_dist_spherical_angles(inc=20):
