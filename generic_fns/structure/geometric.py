@@ -313,7 +313,7 @@ def create_cone_pdb(cone=None, apex=None, axis=None, R=None, inc=None, scale=30.
 
     # Generate the axis vectors.
     print("\nGenerating the axis vectors.")
-    res_num = generate_vector_residues(mol=mol, vector=axis, atom_name='Axis', res_name_vect='AXE', res_num=2, origin=apex, scale=scale)
+    res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=2, origin=apex, scale=scale)
 
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
