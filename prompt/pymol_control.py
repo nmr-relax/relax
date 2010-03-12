@@ -28,7 +28,7 @@ __docformat__ = 'plaintext'
 from base_class import User_fn_class
 import arg_check
 import colour
-from generic_fns import pymol
+from generic_fns import pymol_control
 
 
 class Pymol(User_fn_class):
@@ -66,7 +66,7 @@ class Pymol(User_fn_class):
             print(text)
 
         # Execute the functional code.
-        pymol.cartoon()
+        pymol_control.cartoon()
 
 
     def clear_history(self):
@@ -78,7 +78,7 @@ class Pymol(User_fn_class):
             print(text)
 
         # Execute the functional code.
-        self.__relax__.generic.pymol.clear_history()
+        pymol_control.clear_history()
 
 
     def command(self, command=None):
@@ -115,7 +115,7 @@ class Pymol(User_fn_class):
         arg_check.is_str(command, 'pymol command')
 
         # Execute the functional code.
-        pymol.command(command=command)
+        pymol_control.command(command=command)
 
 
     def cone_pdb(self, file=None):
@@ -161,7 +161,7 @@ class Pymol(User_fn_class):
         arg_check.is_str(file, 'file name')
 
         # Execute the functional code.
-        pymol.cone_pdb(file=file)
+        pymol_control.cone_pdb(file=file)
 
 
     def macro_exec(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -235,7 +235,7 @@ class Pymol(User_fn_class):
         arg_check.is_str(colour_list, 'colour list', can_be_none=True)
 
         # Execute the functional code.
-        pymol.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
+        pymol_control.macro_exec(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list)
 
 
     def tensor_pdb(self, file=None):
@@ -290,7 +290,7 @@ class Pymol(User_fn_class):
         arg_check.is_str_or_inst(file, 'file name')
 
         # Execute the functional code.
-        pymol.tensor_pdb(file=file)
+        pymol_control.tensor_pdb(file=file)
 
 
     def vector_dist(self, file='XH_dist.pdb'):
@@ -326,7 +326,7 @@ class Pymol(User_fn_class):
         arg_check.is_str(file, 'file name')
 
         # Execute the functional code.
-        pymol.vector_dist(file=file)
+        pymol_control.vector_dist(file=file)
 
 
     def view(self):
@@ -345,7 +345,7 @@ class Pymol(User_fn_class):
             print(text)
 
         # Execute the functional code.
-        pymol.view()
+        pymol_control.view()
 
 
     def write(self, data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir='pymol', force=False):
@@ -434,7 +434,7 @@ class Pymol(User_fn_class):
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        pymol.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
+        pymol_control.write(data_type=data_type, style=style, colour_start=colour_start, colour_end=colour_end, colour_list=colour_list, file=file, dir=dir, force=force)
 
 
 
