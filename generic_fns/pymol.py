@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -23,8 +23,14 @@
 # Module docstring.
 """Module for interfacing with PyMOL."""
 
+# Dependency check module.
+import dep_check
+
 # Python module imports.
-from os import popen, sep
+if dep_check.pymol_module:
+    import pymol
+from os import sep
+from subprocess import PIPE, Popen
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data
@@ -35,37 +41,42 @@ from specific_fns.setup import get_specific_fn
 
 
 class Pymol:
-    """Data container for storing PyMOL related data.
+    """The PyMOL execution object."""
 
-    This includes information such as the PyMOL command history.  Also stored is the file handle to
-    the PyMOL child process pipe.
-    """
+    def __init__(self, exec_mode=None):
+        """Set up the PyMOL execution object.
 
-    def __init__(self):
-        """Class initialisation method used to set the command history and the PyMOL pipe."""
+        @keyword exec_mode: The execution mode which can be either 'module' or 'external'.
+        @type exec_mode:    None or str
+        """
 
+        # Variable for storing the pymol command history.
         self.command_history = ""
-        """Variable for storing the pymol command history."""
 
-        self.pipe = None
-        """Writable pipe (file handle) to the PyMOL child process."""
+        # The pymol mode of operation.
+        self.exec_mode = exec_mode
+        if not exec_mode:
+            if dep_check.pymol_module:
+                self.exec_mode = 'module'
+            else:
+                self.exec_mode = 'external'
 
 
     def clear_history(self):
-        """Method for clearing the PyMOL command history."""
+        """Clear the PyMOL command history."""
 
         self.command_history = ""
 
 
     def open_pdb(self):
-        """Function for opening the PDB file in PyMOL."""
+        """Open the PDB file in PyMOL."""
 
-        # Test if the pipe is open.
-        if not self.pipe_open_test():
+        # Test if PyMOL is running.
+        if not self.running():
             return
 
         # Reinitialise PyMOL.
-        self.pipe_write("reinitialize")
+        self.exec_cmd("reinitialize")
 
         # Open the PDB files.
         open_files = []
@@ -81,24 +92,31 @@ class Pymol:
                     continue
 
                 # Open the file in PyMOL.
-                self.pipe_write("load " + file)
+                self.exec_cmd("load " + file)
 
                 # Add to the open file list.
                 open_files.append(file)
 
 
-    def pipe_open(self):
-        """Function for opening a PyMOL pipe."""
+    def open_gui(self):
+        """Open the PyMOL GUI."""
 
-        # Test that the PyMOL binary exists.
-        test_binary('pymol')
+        # Use the PyMOL python modules.
+        if self.exec_mode == 'module':
+            # Open the GUI.
+            pymol.gui.pymol.start_pymol()
 
-        # Open the PyMOL pipe.
-        self.pymol = popen("pymol -qpK", 'w', 0)
+        # Otherwise execute PyMOL on the command line.
+        if self.exec_mode == 'external':
+            # Test that the PyMOL binary exists.
+            test_binary('pymol')
+
+            # Open PyMOL as a pipe.
+            self.pymol = Popen(['pymol', '-qpK'], stdin=PIPE).stdin
 
         # Execute the command history.
         if len(self.command_history) > 0:
-            self.pipe_write(self.command_history, store_command=0)
+            self.exec_cmd(self.command_history, store_command=0)
             return
 
         # Test if the PDB file has been loaded.
@@ -106,35 +124,33 @@ class Pymol:
             self.open_pdb()
 
 
-    def pipe_open_test(self):
-        """Function for testing if the PyMOL pipe is open."""
+    def running(self):
+        """Test if PyMOL is running."""
 
-        # Test if a pipe has been opened.
+        # Test if PyMOL is already running.
         if not hasattr(self, 'pymol'):
-            return 0
+            return False
 
         # Test if the pipe has been broken.
         try:
             self.pymol.write('\n')
         except IOError:
-            return 0
+            return False
 
-        # The pipe is open.
-        return 1
+        # PyMOL is running.
+        return True
 
 
-    def pipe_write(self, command=None, store_command=1):
-        """Function for writing to the PyMOL pipe.
+    def exec_cmd(self, command=None, store_command=1):
+        """Execute a PyMOL command."""
 
-        This function is also used to execute a user supplied PyMOL command.
-        """
-
-        # Reopen the pipe if needed.
-        if not self.pipe_open_test():
-            self.pipe_open()
+        # Reopen the GUI if needed.
+        if not self.running():
+            self.open_gui()
 
         # Write the command to the pipe.
-        self.pymol.write(command + '\n')
+        if self.exec_mode == 'external':
+            self.pymol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
@@ -176,13 +192,13 @@ def cartoon():
             open_files.append(pdb_file)
 
             # Hide everything.
-            pymol.pipe_write("cmd.hide('everything'," + repr(id) + ")")
+            pymol.exec_cmd("cmd.hide('everything'," + repr(id) + ")")
 
             # Show the cartoon style.
-            pymol.pipe_write("cmd.show('cartoon'," + repr(id) + ")")
+            pymol.exec_cmd("cmd.show('cartoon'," + repr(id) + ")")
 
             # Colour by secondary structure.
-            pymol.pipe_write("util.cbss(" + repr(id) + ", 'red', 'yellow', 'green')")
+            pymol.exec_cmd("util.cbss(" + repr(id) + ", 'red', 'yellow', 'green')")
 
 
 def command(command):
@@ -193,7 +209,7 @@ def command(command):
     """
 
     # Pass the command to PyMOL.
-    pymol.pipe_write(command)
+    pymol.exec_cmd(command)
 
 
 def cone_pdb(file=None):
@@ -204,55 +220,55 @@ def cone_pdb(file=None):
     """
 
     # Read in the cone PDB file.
-    pymol.pipe_write("load " + file)
+    pymol.exec_cmd("load " + file)
 
 
     # The cone axis.
     ################
 
     # Select the AVE, AXE, and SIM residues.
-    pymol.pipe_write("select (resn AVE,AXE,SIM)")
+    pymol.exec_cmd("select (resn AVE,AXE,SIM)")
 
     # Show the vector as a stick.
-    pymol.pipe_write("show stick, 'sele'")
+    pymol.exec_cmd("show stick, 'sele'")
 
     # Colour it blue.
-    pymol.pipe_write("color cyan, 'sele'")
+    pymol.exec_cmd("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol.pipe_write("select (resn AVE,AXE,SIM and symbol N)")
+    pymol.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
 
     # Hide the atom.
-    pymol.pipe_write("hide ('sele')")
+    pymol.exec_cmd("hide ('sele')")
 
     # Label using the atom name.
-    pymol.pipe_write("cmd.label(\"sele\",\"name\")")
+    pymol.exec_cmd("cmd.label(\"sele\",\"name\")")
 
 
     # The cone object.
     ##################
 
     # Select the CON residue.
-    pymol.pipe_write("select (resn CON,EDG)")
+    pymol.exec_cmd("select (resn CON,EDG)")
 
     # Hide everything.
-    pymol.pipe_write("hide ('sele')")
+    pymol.exec_cmd("hide ('sele')")
 
     # Show as 'sticks'.
-    pymol.pipe_write("show sticks, 'sele'")
+    pymol.exec_cmd("show sticks, 'sele'")
 
     # Colour it white.
-    pymol.pipe_write("color white, 'sele'")
+    pymol.exec_cmd("color white, 'sele'")
 
     # Shorten the stick width from 0.25 to 0.15.
-    pymol.pipe_write("set stick_radius,0.15000")
+    pymol.exec_cmd("set stick_radius,0.15000")
 
 
     # Clean up.
     ###########
 
     # Remove the selection.
-    pymol.pipe_write("cmd.delete('sele')")
+    pymol.exec_cmd("cmd.delete('sele')")
 
 
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -311,7 +327,7 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
 
     # Loop over the commands and execute them.
     for command in commands:
-        pymol.pipe_write(command)
+        pymol.exec_cmd(command)
 
 
 def tensor_pdb(file=None):
@@ -325,42 +341,42 @@ def tensor_pdb(file=None):
     pipes.test()
 
     # Read in the tensor PDB file.
-    pymol.pipe_write("load " + file)
+    pymol.exec_cmd("load " + file)
 
 
     # Centre of mass.
     #################
 
     # Select the COM residue.
-    pymol.pipe_write("select resn COM")
+    pymol.exec_cmd("select resn COM")
 
     # Show the centre of mass as the dots representation.
-    pymol.pipe_write("show dots, 'sele'")
+    pymol.exec_cmd("show dots, 'sele'")
 
     # Colour it blue.
-    pymol.pipe_write("color blue, 'sele'")
+    pymol.exec_cmd("color blue, 'sele'")
 
 
     # The diffusion tensor axes.
     ############################
 
     # Select the AXS residue.
-    pymol.pipe_write("select resn AXS")
+    pymol.exec_cmd("select resn AXS")
 
     # Hide everything.
-    pymol.pipe_write("hide ('sele')")
+    pymol.exec_cmd("hide ('sele')")
 
     # Show as 'sticks'.
-    pymol.pipe_write("show sticks, 'sele'")
+    pymol.exec_cmd("show sticks, 'sele'")
 
     # Colour it cyan.
-    pymol.pipe_write("color cyan, 'sele'")
+    pymol.exec_cmd("color cyan, 'sele'")
 
     # Select the N atoms of the AXS residue (used to display the axis labels).
-    pymol.pipe_write("select (resn AXS and elem N)")
+    pymol.exec_cmd("select (resn AXS and elem N)")
 
     # Label the atoms.
-    pymol.pipe_write("label 'sele', name")
+    pymol.exec_cmd("label 'sele', name")
 
 
 
@@ -368,17 +384,17 @@ def tensor_pdb(file=None):
     ##########################
 
     # Select the SIM residue.
-    pymol.pipe_write("select resn SIM")
+    pymol.exec_cmd("select resn SIM")
 
     # Colour it.
-    pymol.pipe_write("colour cyan, 'sele'")
+    pymol.exec_cmd("colour cyan, 'sele'")
 
 
     # Clean up.
     ###########
 
     # Remove the selection.
-    pymol.pipe_write("cmd.delete('sele')")
+    pymol.exec_cmd("cmd.delete('sele')")
 
 
 def vector_dist(file=None):
@@ -395,24 +411,24 @@ def vector_dist(file=None):
     id = file_root(file)
 
     # Read in the vector distribution PDB file.
-    pymol.pipe_write("load " + file)
+    pymol.exec_cmd("load " + file)
 
 
     # Create a surface.
     ###################
 
     # Select the vector distribution.
-    pymol.pipe_write("cmd.show('surface', " + repr(id) + ")")
+    pymol.exec_cmd("cmd.show('surface', " + repr(id) + ")")
 
 
 def view():
-    """Function for running PyMOL."""
+    """Start PyMOL."""
 
-    # Open a PyMOL pipe.
-    if pymol.pipe_open_test():
-        raise RelaxError("The PyMOL pipe already exists.")
+    # Open PyMOL.
+    if pymol.running():
+        raise RelaxError("PyMOL is already running.")
     else:
-        pymol.pipe_open()
+        pymol.open_gui()
 
 
 def write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
