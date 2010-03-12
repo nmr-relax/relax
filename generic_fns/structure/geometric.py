@@ -740,7 +740,7 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
                 print("%sj: %s; phi: %s" % (" "*4, j, phi[j]))
 
             # Skip the vector if the point is outside of the limits.
-            if not limit_check(phi[j], theta[i]):
+            if limit_check and not limit_check(phi[j], theta[i]):
                 if debug:
                     print("%sOut of cone." % (" "*8))
                 continue
