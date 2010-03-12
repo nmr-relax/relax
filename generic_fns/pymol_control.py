@@ -158,8 +158,8 @@ class Pymol:
 
 
 
-# Initialise the Pymol data container.
-pymol = Pymol()
+# Initialise the Pymol executable object.
+pymol_obj = Pymol()
 """Pymol data container instance."""
 
 
@@ -192,13 +192,13 @@ def cartoon():
             open_files.append(pdb_file)
 
             # Hide everything.
-            pymol.exec_cmd("cmd.hide('everything'," + repr(id) + ")")
+            pymol_obj.exec_cmd("cmd.hide('everything'," + repr(id) + ")")
 
             # Show the cartoon style.
-            pymol.exec_cmd("cmd.show('cartoon'," + repr(id) + ")")
+            pymol_obj.exec_cmd("cmd.show('cartoon'," + repr(id) + ")")
 
             # Colour by secondary structure.
-            pymol.exec_cmd("util.cbss(" + repr(id) + ", 'red', 'yellow', 'green')")
+            pymol_obj.exec_cmd("util.cbss(" + repr(id) + ", 'red', 'yellow', 'green')")
 
 
 def command(command):
@@ -209,7 +209,7 @@ def command(command):
     """
 
     # Pass the command to PyMOL.
-    pymol.exec_cmd(command)
+    pymol_obj.exec_cmd(command)
 
 
 def cone_pdb(file=None):
@@ -220,55 +220,55 @@ def cone_pdb(file=None):
     """
 
     # Read in the cone PDB file.
-    pymol.exec_cmd("load " + file)
+    pymol_obj.exec_cmd("load " + file)
 
 
     # The cone axis.
     ################
 
     # Select the AVE, AXE, and SIM residues.
-    pymol.exec_cmd("select (resn AVE,AXE,SIM)")
+    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM)")
 
     # Show the vector as a stick.
-    pymol.exec_cmd("show stick, 'sele'")
+    pymol_obj.exec_cmd("show stick, 'sele'")
 
     # Colour it blue.
-    pymol.exec_cmd("color cyan, 'sele'")
+    pymol_obj.exec_cmd("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
+    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
 
     # Hide the atom.
-    pymol.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("hide ('sele')")
 
     # Label using the atom name.
-    pymol.exec_cmd("cmd.label(\"sele\",\"name\")")
+    pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
 
 
     # The cone object.
     ##################
 
     # Select the CON residue.
-    pymol.exec_cmd("select (resn CON,EDG)")
+    pymol_obj.exec_cmd("select (resn CON,EDG)")
 
     # Hide everything.
-    pymol.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("hide ('sele')")
 
     # Show as 'sticks'.
-    pymol.exec_cmd("show sticks, 'sele'")
+    pymol_obj.exec_cmd("show sticks, 'sele'")
 
     # Colour it white.
-    pymol.exec_cmd("color white, 'sele'")
+    pymol_obj.exec_cmd("color white, 'sele'")
 
     # Shorten the stick width from 0.25 to 0.15.
-    pymol.exec_cmd("set stick_radius,0.15000")
+    pymol_obj.exec_cmd("set stick_radius,0.15000")
 
 
     # Clean up.
     ###########
 
     # Remove the selection.
-    pymol.exec_cmd("cmd.delete('sele')")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
 
 
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -327,7 +327,7 @@ def macro_exec(data_type=None, style="classic", colour_start=None, colour_end=No
 
     # Loop over the commands and execute them.
     for command in commands:
-        pymol.exec_cmd(command)
+        pymol_obj.exec_cmd(command)
 
 
 def tensor_pdb(file=None):
@@ -341,42 +341,42 @@ def tensor_pdb(file=None):
     pipes.test()
 
     # Read in the tensor PDB file.
-    pymol.exec_cmd("load " + file)
+    pymol_obj.exec_cmd("load " + file)
 
 
     # Centre of mass.
     #################
 
     # Select the COM residue.
-    pymol.exec_cmd("select resn COM")
+    pymol_obj.exec_cmd("select resn COM")
 
     # Show the centre of mass as the dots representation.
-    pymol.exec_cmd("show dots, 'sele'")
+    pymol_obj.exec_cmd("show dots, 'sele'")
 
     # Colour it blue.
-    pymol.exec_cmd("color blue, 'sele'")
+    pymol_obj.exec_cmd("color blue, 'sele'")
 
 
     # The diffusion tensor axes.
     ############################
 
     # Select the AXS residue.
-    pymol.exec_cmd("select resn AXS")
+    pymol_obj.exec_cmd("select resn AXS")
 
     # Hide everything.
-    pymol.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("hide ('sele')")
 
     # Show as 'sticks'.
-    pymol.exec_cmd("show sticks, 'sele'")
+    pymol_obj.exec_cmd("show sticks, 'sele'")
 
     # Colour it cyan.
-    pymol.exec_cmd("color cyan, 'sele'")
+    pymol_obj.exec_cmd("color cyan, 'sele'")
 
     # Select the N atoms of the AXS residue (used to display the axis labels).
-    pymol.exec_cmd("select (resn AXS and elem N)")
+    pymol_obj.exec_cmd("select (resn AXS and elem N)")
 
     # Label the atoms.
-    pymol.exec_cmd("label 'sele', name")
+    pymol_obj.exec_cmd("label 'sele', name")
 
 
 
@@ -384,17 +384,17 @@ def tensor_pdb(file=None):
     ##########################
 
     # Select the SIM residue.
-    pymol.exec_cmd("select resn SIM")
+    pymol_obj.exec_cmd("select resn SIM")
 
     # Colour it.
-    pymol.exec_cmd("colour cyan, 'sele'")
+    pymol_obj.exec_cmd("colour cyan, 'sele'")
 
 
     # Clean up.
     ###########
 
     # Remove the selection.
-    pymol.exec_cmd("cmd.delete('sele')")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
 
 
 def vector_dist(file=None):
@@ -411,24 +411,24 @@ def vector_dist(file=None):
     id = file_root(file)
 
     # Read in the vector distribution PDB file.
-    pymol.exec_cmd("load " + file)
+    pymol_obj.exec_cmd("load " + file)
 
 
     # Create a surface.
     ###################
 
     # Select the vector distribution.
-    pymol.exec_cmd("cmd.show('surface', " + repr(id) + ")")
+    pymol_obj.exec_cmd("cmd.show('surface', " + repr(id) + ")")
 
 
 def view():
     """Start PyMOL."""
 
     # Open PyMOL.
-    if pymol.running():
+    if pymol_obj.running():
         raise RelaxError("PyMOL is already running.")
     else:
-        pymol.open_gui()
+        pymol_obj.open_gui()
 
 
 def write(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None, file=None, dir=None, force=False):
