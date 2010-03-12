@@ -192,9 +192,6 @@ def command(command):
     @type command:  str
     """
 
-    # Test if the current data pipe exists.
-    pipes.test()
-
     # Pass the command to PyMOL.
     pymol.pipe_write(command)
 
