@@ -145,22 +145,6 @@ class Redirect_text(object):
         self.out=aWxTextCtrl
 
 
-    def limit_entries(self):
-        """ Function to overcome feedback problem of wx.CallAfter() command"""
-
-        # Maximum allowed number of lines in log window.
-        max_entries = 10000
-
-        # read number of lines in log window.
-        total_entries = self.out.log_panel.GetNumberOfLines()
-
-        # Shift entries backwards if maximum of line exeeded.
-        if total_entries > max_entries:
-            # Reset log window entries
-            new_entries = 'Refreshing log window...\n\n'
-            self.out.log_panel.SetValue(new_entries)
-
-
     def write(self,string):
         global progress
 
@@ -170,27 +154,6 @@ class Redirect_text(object):
         # Add new output.
         wx.CallAfter(self.out.log_panel.AppendText, string)
         time.sleep(0.001)  # allow relaxGUI log panel to get refreshed
-
-        # split print out into list
-        a = str(string)
-        check = []
-        check = a.split()
-
-        # update progress bar
-        # Monte Carlo Simulation.
-        if 'Simulation' in string:
-            add = round(progress)
-            add_int = int(add)
-            wx.CallAfter(self.out.progress_bar.SetValue, add_int)
-            progress = ( (int(check[1]) * 100) / float(montecarlo + 6)) + 5
-            time.sleep(0.001)  # allow relaxGUI progressbar to get refreshed
-
-        # Other calculations.
-        if 'Progress:' in string:
-            progress = check[1]
-            progress = progress.replace('&', '')
-            wx.CallAfter(self.out.progress_bar.SetValue, int(progress))
-            time.sleep(0.001)  # allow relaxGUI progressbar to get refreshed
 
 
 class Thread_container:
