@@ -38,47 +38,6 @@ from gui_bieri.execution.calc_rx import make_rx
 from gui_bieri.paths import IMAGE_PATH
 
 
-def start_noe(target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_pdb, unres, execute, self, freqno, global_setting, file_setting, sequencefile):
-    """NOE calculation."""
-
-    # define calculation
-    global WHICH_CALC
-    WHICH_CALC = 'Noe'
-
-    # Parameters for calculation
-    global PARAMETERS
-    main = self
-    PARAMETERS = [target_dir, noe_ref, noe_sat, rmsd_ref, rmsd_sat, nmr_freq, struct_pdb, unres, execute, main, freqno, global_setting, file_setting, sequencefile]
-
-    # launch log dialog
-    logwindow = Log_window(None, -1, "")
-    logwindow.ShowModal()
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-    return ''
-
-
-def start_rx(target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, freq_no, unres, self, freqno, global_setting, file_setting, sequencefile):
-    """Rx calculations."""
-
-    # define calculation
-    global WHICH_CALC
-    WHICH_CALC = 'Rx'
-
-    # Parameters for calculation
-    global PARAMETERS
-    main = self
-    PARAMETERS = [target_dir, rx_list, relax_times, structure_pdb, nmr_freq, r1_r2, freq_no, unres, main, freqno, global_setting, file_setting, sequencefile]
-
-    # launch log dialog
-    logwindow = Log_window(None, -1, "")
-    logwindow.ShowModal()
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-    return ''
-
-
-
 class Controller(wx.Dialog):
     """The relax controller window."""
 
