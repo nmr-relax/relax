@@ -75,13 +75,6 @@ class Controller(wx.Dialog):
         # Integrate Singleton object.
         status = Status()
 
-        # Start Calculation in Thread
-        #if WHICH_CALC == 'Rx':
-        #    thread.start_new_thread(make_rx, (PARAMETERS[0], PARAMETERS[1], PARAMETERS[2], PARAMETERS[3], PARAMETERS[4], PARAMETERS[5], PARAMETERS[6], PARAMETERS[7], PARAMETERS[8], PARAMETERS[9], PARAMETERS[10], PARAMETERS[11], PARAMETERS[12]))
-
-        #if WHICH_CALC == 'Noe':
-        #    thread.start_new_thread(make_noe, (PARAMETERS[0], PARAMETERS[1], PARAMETERS[2], PARAMETERS[3], PARAMETERS[4], PARAMETERS[5], PARAMETERS[6], PARAMETERS[7], PARAMETERS[8], PARAMETERS[9], PARAMETERS[10], PARAMETERS[11], PARAMETERS[12], PARAMETERS[13]))
-
 
     def __do_layout(self):
 
