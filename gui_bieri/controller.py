@@ -32,6 +32,9 @@ import time
 import thread
 import wx
 
+# relax module imports.
+from status import Status
+
 # relaxGUI module imports.
 from gui_bieri.execution.calc_noe import make_noe
 from gui_bieri.execution.calc_rx import make_rx
@@ -68,6 +71,9 @@ class Controller(wx.Dialog):
         # Button actions
         self.Bind(wx.EVT_BUTTON, self.cancel_calculation, self.cancel_button)
         self.Bind(wx.EVT_BUTTON, self.handler_close, self.close_button)
+
+        # Integrate Singleton object.
+        status = Status()
 
         # Start Calculation in Thread
         #if WHICH_CALC == 'Rx':
