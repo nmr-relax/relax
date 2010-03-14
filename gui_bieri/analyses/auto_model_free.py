@@ -779,7 +779,7 @@ class Auto_model_free:
         """
 
         # The dialog.
-        dlg = Select_tensor(None, -1, "", local_tm_flag=local_tm_complete)
+        dlg = Select_tensor(None, -1, "", local_tm_flag=True)
         dlg.ShowModal()
 
         # Return the choice.
