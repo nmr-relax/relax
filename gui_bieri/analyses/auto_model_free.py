@@ -619,7 +619,7 @@ class Auto_model_free:
         which_model = self.choose_global_model(False)
 
         # Display the relax controller.
-        self.gui.controller.Show()
+        #self.gui.controller.Show()
 
         # Solve for all global models.
         if which_model == 'full':
@@ -813,6 +813,9 @@ class Auto_model_free:
         @type global_model:     str
         """
 
+        # Combine Parameters.
+        model = global_model
+
         # Assemble all the data needed for the dAuvergne_protocol class.
         data = self.assemble_data()
 
@@ -820,9 +823,9 @@ class Auto_model_free:
         self.gui.calc_threads[-1].progress = 5.0
 
         # Redirect relax output and errors to the controller.
-        redir = Redirect_text(self.gui.controller)
-        sys.stdout = redir
-        sys.stderr = redir
+        #redir = Redirect_text(self.gui.controller)
+        #sys.stdout = redir
+        #sys.stderr = redir
 
         # Print a header in the controller.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
