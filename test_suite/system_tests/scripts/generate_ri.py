@@ -22,6 +22,10 @@
 
 """Script for back-calculating the relaxation data."""
 
+# Python module imports.
+from os import sep
+import sys
+
 # relax module imports.
 from generic_fns.mol_res_spin import spin_loop
 
@@ -30,11 +34,6 @@ def back_calc():
     """Function for back calculating the relaxation data."""
 
     relax_data.back_calc(ri_label='NOE', frq_label='600', frq=600e6)
-    relax_data.back_calc(ri_label='R1', frq_label='600', frq=600e6)
-    relax_data.back_calc(ri_label='R2', frq_label='600', frq=600e6)
-    relax_data.back_calc(ri_label='NOE', frq_label='500', frq=500e6)
-    relax_data.back_calc(ri_label='R1', frq_label='500', frq=500e6)
-    relax_data.back_calc(ri_label='R2', frq_label='500', frq=500e6)
 
 
 def errors():
@@ -64,19 +63,14 @@ def errors():
 def write():
     """Function for writing the relaxation data to file."""
 
-    relax_data.write(ri_label='NOE', frq_label='600', file='noe.600.out', force=True)
-    relax_data.write(ri_label='R1', frq_label='600', file='r1.600.out', force=True)
-    relax_data.write(ri_label='R2', frq_label='600', file='r2.600.out', force=True)
-    relax_data.write(ri_label='NOE', frq_label='500', file='noe.500.out', force=True)
-    relax_data.write(ri_label='R1', frq_label='500', file='r1.500.out', force=True)
-    relax_data.write(ri_label='R2', frq_label='500', file='r2.500.out', force=True)
+    relax_data.write(ri_label='NOE', frq_label='600', file='devnull', force=True)
 
 
 # Create the data pipe.
 pipe.create('test', 'mf')
 
 # Load a PDB file.
-structure.read_pdb('example.pdb')
+structure.read_pdb('Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures')
 
 # Load the backbone amide nitrogen spins from the structure.
 structure.load_spins(spin_id='@N')
@@ -106,6 +100,3 @@ errors()
 
 # Write the data.
 write()
-
-# Write the relaxation data to file.
-results.write()

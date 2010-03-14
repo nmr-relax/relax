@@ -144,7 +144,6 @@ class Frame_order(SystemTestCase):
         self.mesg = self.mesg_opt_debug()
 
         # Test the values.
-        self.assertEqual(cdp.iter, 204, msg=self.mesg)
         self.assertAlmostEqual(cdp.chi2, 3.085356555118994e-26, msg=self.mesg)
         self.assertAlmostEqual(cdp.alpha, 5.0700283197712777, msg=self.mesg)
         self.assertAlmostEqual(cdp.beta, 2.5615753919522359, msg=self.mesg)

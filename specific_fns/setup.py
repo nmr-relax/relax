@@ -57,6 +57,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
 
     # Attempt to retrieve the function.
     try:
+        # Back calculation of relaxation data.
+        if eqi == 'back_calc_ri':
+            function = inst.back_calc_ri
+
         # Base data loop generator function.
         if eqi == 'base_data_loop':
             function = inst.base_data_loop

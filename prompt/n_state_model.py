@@ -160,7 +160,7 @@ class N_state_model(User_fn_class):
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
+        n_state_model_obj._cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
 
 
     def number_of_states(self, N=None):

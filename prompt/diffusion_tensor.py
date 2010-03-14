@@ -298,6 +298,7 @@ class Diffusion_tensor(User_fn_class):
             0:  {tm, Da, Dr, alpha, beta, gamma}   (Default),
             1:  {Diso, Da, Dr, alpha, beta, gamma},
             2:  {Dx, Dy, Dz, alpha, beta, gamma},
+            3:  {Dxx, Dyy, Dzz, Dxy, Dxz, Dyz},
 
         where
 
@@ -321,6 +322,9 @@ class Diffusion_tensor(User_fn_class):
 
             0 <= theta <= pi,
             0 <= phi <= 2pi.
+
+        When param_types is set to 3, then the elements of the diffusion tensor matrix defined
+        within the PDB frame can be supplied.
 
 
         Units

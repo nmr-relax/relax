@@ -78,7 +78,7 @@ from palmer import Palmer
 from residue import Residue
 from structure import Structure
 from pcs import PCS
-from pymol import Pymol
+from pymol_control import Pymol
 from rdc import RDC
 from relax_data import Relax_data
 from relax_fit import Relax_fit

@@ -157,6 +157,13 @@ try:
 except ImportError, message:
     mpi4py_module = False
 
+# PyMOL.
+try:
+    import pymol
+    pymol_module = True
+except ImportError, message:
+    pymol_module = False
+
 
 # Compiled C modules.
 #####################
