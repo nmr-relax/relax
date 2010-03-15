@@ -58,6 +58,7 @@ class Pymol:
         if not exec_mode:
             if dep_check.pymol_module:
                 self.exec_mode = 'module'
+                self.open = False
             else:
                 self.exec_mode = 'external'
 
@@ -66,6 +67,50 @@ class Pymol:
         """Clear the PyMOL command history."""
 
         self.command_history = ""
+
+
+    def exec_cmd(self, command=None, store_command=1):
+        """Execute a PyMOL command."""
+
+        # Reopen the GUI if needed.
+        if not self.running():
+            self.open_gui()
+
+        # Write the command to the pipe.
+        if self.exec_mode == 'external':
+            self.pymol.write(command + '\n')
+
+        # Place the command in the command history.
+        if store_command:
+            self.command_history = self.command_history + command + "\n"
+
+
+    def open_gui(self):
+        """Open the PyMOL GUI."""
+
+        # Use the PyMOL python modules.
+        if self.exec_mode == 'module':
+            # Open the GUI.
+            pymol.start_pymol()
+            pymol.finish_launching()
+            self.open = True
+
+        # Otherwise execute PyMOL on the command line.
+        if self.exec_mode == 'external':
+            # Test that the PyMOL binary exists.
+            test_binary('pymol')
+
+            # Open PyMOL as a pipe.
+            self.pymol = Popen(['pymol', '-qpK'], stdin=PIPE).stdin
+
+        # Execute the command history.
+        if len(self.command_history) > 0:
+            self.exec_cmd(self.command_history, store_command=0)
+            return
+
+        # Test if the PDB file has been loaded.
+        if hasattr(cdp, 'structure'):
+            self.open_pdb()
 
 
     def open_pdb(self):
@@ -98,63 +143,27 @@ class Pymol:
                 open_files.append(file)
 
 
-    def open_gui(self):
-        """Open the PyMOL GUI."""
-
-        # Use the PyMOL python modules.
-        if self.exec_mode == 'module':
-            # Open the GUI.
-            pymol.gui.pymol.start_pymol()
-
-        # Otherwise execute PyMOL on the command line.
-        if self.exec_mode == 'external':
-            # Test that the PyMOL binary exists.
-            test_binary('pymol')
-
-            # Open PyMOL as a pipe.
-            self.pymol = Popen(['pymol', '-qpK'], stdin=PIPE).stdin
-
-        # Execute the command history.
-        if len(self.command_history) > 0:
-            self.exec_cmd(self.command_history, store_command=0)
-            return
-
-        # Test if the PDB file has been loaded.
-        if hasattr(cdp, 'structure'):
-            self.open_pdb()
-
-
     def running(self):
         """Test if PyMOL is running."""
 
-        # Test if PyMOL is already running.
-        if not hasattr(self, 'pymol'):
-            return False
+        # Test if PyMOL module interface is already running.
+        if self.exec_mode == 'module':
+            return self.open
 
-        # Test if the pipe has been broken.
-        try:
-            self.pymol.write('\n')
-        except IOError:
-            return False
-
-        # PyMOL is running.
-        return True
-
-
-    def exec_cmd(self, command=None, store_command=1):
-        """Execute a PyMOL command."""
-
-        # Reopen the GUI if needed.
-        if not self.running():
-            self.open_gui()
-
-        # Write the command to the pipe.
+        # Test if command line PyMOL is already running.
         if self.exec_mode == 'external':
-            self.pymol.write(command + '\n')
+            # Pipe exists.
+            if not hasattr(self, 'pymol'):
+                return False
 
-        # Place the command in the command history.
-        if store_command:
-            self.command_history = self.command_history + command + "\n"
+            # Test if the pipe has been broken.
+            try:
+                self.pymol.write('\n')
+            except IOError:
+                return False
+
+            # PyMOL is running.
+            return True
 
 
 
