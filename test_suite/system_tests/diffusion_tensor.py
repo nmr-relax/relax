@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from math import pi
 from os import sep
 import sys
@@ -47,22 +48,22 @@ class Diffusion_tensor(SystemTestCase):
 
         # Sphere tensor initialization.
         self.interpreter.pipe.switch('sphere')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init(10e-9, fixed=True)
         self.tmpfile_sphere = mktemp()
 
         # Spheroid tensor initialization.
         self.interpreter.pipe.switch('spheroid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((5e-09, -10000000., 1.6, 2.7), angle_units='rad', spheroid_type='oblate', fixed=True)
         self.tmpfile_spheroid = mktemp()
 
         # Ellipsoid tensor initialization.
         self.interpreter.pipe.switch('ellipsoid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
         self.tmpfile_ellipsoid = mktemp()
 
@@ -222,7 +223,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
+        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -254,7 +255,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
+        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -286,7 +287,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
+        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
         real_data = file.readlines()
         file.close()
 

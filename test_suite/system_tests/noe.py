@@ -21,8 +21,8 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
-import sys
 
 # relax module imports.
 from base_classes import SystemTestCase
@@ -49,4 +49,4 @@ class Noe(SystemTestCase):
         """Test the NOE analysis."""
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe.py')

@@ -21,8 +21,8 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
-import sys
 
 # relax module imports.
 from base_classes import SystemTestCase
@@ -47,7 +47,7 @@ class Modsel(SystemTestCase):
         tensors = [1e-9, (1e-9, 0, 0, 0)]
 
         # Path of the files.
-        path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+        path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
         # Loop over the data pipes.
         for i in xrange(2):

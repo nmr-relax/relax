@@ -1,12 +1,13 @@
 """This system test catches bug #15050 (https://gna.org/bugs/?15050) submitted by Tiago Pais."""
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
 
 # Path of the files.
-path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
+path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'S2_0.970_te_2048_Rex_0.149'
 
 # Loop over the models.
 for name in ['tm4']:

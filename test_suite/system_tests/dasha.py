@@ -22,6 +22,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 from shutil import rmtree
@@ -70,4 +71,4 @@ class Dasha(SystemTestCase):
             return
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')

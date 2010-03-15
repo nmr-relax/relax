@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2008 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -32,6 +32,7 @@ from system_tests import System_test_runner
 from unit_tests.unit_test_runner import Unit_test_runner
 
 # relax module imports.
+import __main__
 from relax_test_runner import RelaxTestRunner
 
 
@@ -88,7 +89,7 @@ class Test_suite_runner:
         heading('Unit tests')
 
         # Run the tests.
-        unit_runner = Unit_test_runner(root_path=sys.path[-1]+os.sep+'test_suite'+os.sep+'unit_tests')
+        unit_runner = Unit_test_runner(root_path=__main__.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
         self.unit_result = unit_runner.run(runner=RelaxTestRunner())
 
 

@@ -1,4 +1,5 @@
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
@@ -7,7 +8,7 @@ import sys
 pipe.create(pipe_name='rigid', pipe_type='frame order')
 
 # Load the tensors.
-script(sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors_rigid_rand_rot.py')
+script(__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'tensors_rigid_rand_rot.py')
 
 # The tensor reductions.
 for i in range(10):
