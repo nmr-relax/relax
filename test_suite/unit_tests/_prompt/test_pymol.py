@@ -24,7 +24,7 @@
 from unittest import TestCase
 
 # relax module imports.
-from prompt.pymol_control import Pymol
+from prompt.pymol import Pymol
 from relax_errors import RelaxNoneStrError, RelaxNoneStrListNumError, RelaxStrError
 
 # Unit test imports.
