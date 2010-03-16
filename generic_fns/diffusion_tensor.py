@@ -372,11 +372,21 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         # Eigenvalues.
         Di, R = eig(tensor)
 
+        # Reordering structure.
+        reorder = zeros(3, int)
+        Di_sort = sorted(Di)
+        Di = Di.tolist()
+        R_sort = zeros((3, 3), float64)
+
+        # Reorder columns.
+        for i in range(3):
+            R_sort[:, i] = R[:, Di.index(Di_sort[i])]
+
         # Euler angles.
-        alpha, beta, gamma = R_to_euler_zyz(R)
+        alpha, beta, gamma = R_to_euler_zyz(R_sort)
 
         # Set the parameters.
-        set(value=[Di[0], Di[1], Di[2]], param=['Dx', 'Dy', 'Dz'])
+        set(value=[Di_sort[0], Di_sort[1], Di_sort[2]], param=['Dx', 'Dy', 'Dz'])
 
     # Unknown parameter combination.
     else:
