@@ -901,7 +901,7 @@ class Fetch_docstrings:
 
                     # Don't know what to do with this!
                     if len(line_elements) > 2:
-                        sys.write("Keyword failure in: " + repr(line) + " \n ")
+                        sys.stderr.write("Keyword failure in: " + repr(line) + " \n ")
                         sys.exit()
 
                     # Format the keyword.
@@ -1228,7 +1228,7 @@ class Fetch_docstrings:
 
         # Not really a table!
         if num_col == 1:
-            sys.write('Not a table!')
+            sys.stderr.write('Not a table!')
             sys.exit()
 
         # Shift to the next line.
