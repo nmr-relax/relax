@@ -388,6 +388,9 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         # Set the parameters.
         set(value=[Di_sort[0], Di_sort[1], Di_sort[2]], param=['Dx', 'Dy', 'Dz'])
 
+        # Change the angular units.
+        angle_units = 'rad'
+
     # Unknown parameter combination.
     else:
         raise RelaxUnknownParamCombError('param_types', param_types)
