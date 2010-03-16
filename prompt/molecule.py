@@ -73,8 +73,8 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molecule.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molecule.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", mol_from=" + repr(mol_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -118,8 +118,8 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molecule.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molecule.create("
             text = text + "mol_name=" + repr(mol_name) + ")"
             print(text)
 
@@ -146,8 +146,8 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molecule.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molecule.delete("
             text = text + "mol_id=" + repr(mol_id) + ")"
             print(text)
 
@@ -168,8 +168,8 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molecule.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molecule.display("
             text = text + "mol_id=" + repr(mol_id) + ")"
             print(text)
 
@@ -211,8 +211,8 @@ class Molecule(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molecule.name("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molecule.name("
             text = text + "mol_id=" + repr(mol_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"

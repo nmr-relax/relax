@@ -57,8 +57,8 @@ class Jw_mapping(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "jw_mapping.set_frq("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "jw_mapping.set_frq("
             text = text + "frq=" + repr(frq) + ")"
             print(text)
 

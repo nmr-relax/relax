@@ -61,8 +61,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.cartoon()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.cartoon()"
             print(text)
 
         # Execute the functional code.
@@ -73,8 +73,8 @@ class Pymol(User_fn_class):
         """Function for clearing the PyMOL command history."""
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.clear_history()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.clear_history()"
             print(text)
 
         # Execute the functional code.
@@ -106,8 +106,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.command("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.command("
             text = text + "command=" + repr(command) + ")"
             print(text)
 
@@ -152,8 +152,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.cone_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.cone_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -218,8 +218,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.macro_exec("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.macro_exec("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -281,8 +281,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.tensor_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -317,8 +317,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.vector_dist("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.vector_dist("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -340,8 +340,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.view()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.view()"
             print(text)
 
         # Execute the functional code.
@@ -411,8 +411,8 @@ class Pymol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pymol.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pymol.write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)

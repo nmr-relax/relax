@@ -49,8 +49,8 @@ class Angles(Basic_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "angle_diff_frame()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "angle_diff_frame()"
             print(text)
 
         # Execute the functional code.

@@ -49,8 +49,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.back_calc("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.back_calc("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", frq=" + repr(frq) + ")"
@@ -106,8 +106,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", ri_label=" + repr(ri_label)
@@ -148,8 +148,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.delete("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
             print(text)
@@ -182,8 +182,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.display("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label) + ")"
             print(text)
@@ -279,8 +279,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.read("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", frq=" + repr(frq)
@@ -345,8 +345,8 @@ class Relax_data(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "relax_data.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "relax_data.write("
             text = text + "ri_label=" + repr(ri_label)
             text = text + ", frq_label=" + repr(frq_label)
             text = text + ", file=" + repr(file)

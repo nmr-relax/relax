@@ -120,15 +120,15 @@ class Interpreter:
         self.__intro_string = info.intro_text()
 
         # Initialise the execution information container (info that can change during execution).
-        self.exec_info = Exec_info
+        self._exec_info = Exec_info
 
         # The prompts (change the Python prompt, as well as the function print outs).
-        sys.ps1 = self.exec_info.ps1
-        sys.ps2 = self.exec_info.ps2
-        sys.ps3 = self.exec_info.ps3
+        sys.ps1 = self._exec_info.ps1
+        sys.ps2 = self._exec_info.ps2
+        sys.ps3 = self._exec_info.ps3
 
         # The function intro flag (store in the execution information container).
-        self.exec_info.intro = False
+        self._exec_info.intro = False
 
         # Set up the interpreter objects.
         self._locals = self._setup()
@@ -159,14 +159,14 @@ class Interpreter:
         objects['gpl'] = objects['GPL'] = GPL()
 
         # Initialise the user functions (those not in user function classes)
-        angles = Angles(self.exec_info)
-        eliminate = Eliminate(self.exec_info)
-        fix = Fix(self.exec_info)
-        reset = Reset(self.exec_info)
-        minimisation = Minimisation(self.exec_info)
-        modsel = Modsel(self.exec_info)
-        temp = Temp(self.exec_info)
-        opendx = OpenDX(self.exec_info)
+        angles = Angles(self._exec_info)
+        eliminate = Eliminate(self._exec_info)
+        fix = Fix(self._exec_info)
+        reset = Reset(self._exec_info)
+        minimisation = Minimisation(self._exec_info)
+        modsel = Modsel(self._exec_info)
+        temp = Temp(self._exec_info)
+        opendx = OpenDX(self._exec_info)
 
         # Place the user functions in the local namespace.
         objects['angle_diff_frame'] = angles.angle_diff_frame
@@ -180,39 +180,39 @@ class Interpreter:
         objects['temperature'] = temp.set
 
         # Place the user classes in the local namespace.
-        objects['align_tensor'] = Align_tensor(self.exec_info)
-        objects['consistency_tests'] = Consistency_tests(self.exec_info)
-        objects['dasha'] = Dasha(self.exec_info)
-        objects['deselect'] = Deselect(self.exec_info)
-        objects['diffusion_tensor'] = Diffusion_tensor(self.exec_info)
-        objects['frame_order'] = Frame_order(self.exec_info)
-        objects['dx'] = OpenDX(self.exec_info)
-        objects['frq'] = Frq(self.exec_info)
-        objects['grace'] = Grace(self.exec_info)
-        objects['jw_mapping'] = Jw_mapping(self.exec_info)
-        objects['model_free'] = Model_free(self.exec_info)
-        objects['molmol'] = Molmol(self.exec_info)
-        objects['molecule'] = Molecule(self.exec_info)
-        objects['monte_carlo'] = Monte_carlo(self.exec_info)
-        objects['n_state_model'] = N_state_model(self.exec_info)
-        objects['noe'] = Noe(self.exec_info)
-        objects['palmer'] = Palmer(self.exec_info)
-        objects['pcs'] = PCS(self.exec_info)
-        objects['pymol'] = Pymol(self.exec_info)
-        objects['rdc'] = RDC(self.exec_info)
-        objects['relax_data'] = Relax_data(self.exec_info)
-        objects['relax_fit'] = Relax_fit(self.exec_info)
-        objects['residue'] = Residue(self.exec_info)
-        objects['results'] = Results(self.exec_info)
-        objects['pipe'] = Pipe(self.exec_info)
-        objects['select'] = Select(self.exec_info)
-        objects['sequence'] = Sequence(self.exec_info)
-        objects['spectrum'] = Spectrum(self.exec_info)
-        objects['spin'] = Spin(self.exec_info)
-        objects['state'] = State(self.exec_info)
-        objects['structure'] = Structure(self.exec_info)
-        objects['value'] = Value(self.exec_info)
-        objects['vmd'] = Vmd(self.exec_info)
+        objects['align_tensor'] = Align_tensor(self._exec_info)
+        objects['consistency_tests'] = Consistency_tests(self._exec_info)
+        objects['dasha'] = Dasha(self._exec_info)
+        objects['deselect'] = Deselect(self._exec_info)
+        objects['diffusion_tensor'] = Diffusion_tensor(self._exec_info)
+        objects['frame_order'] = Frame_order(self._exec_info)
+        objects['dx'] = OpenDX(self._exec_info)
+        objects['frq'] = Frq(self._exec_info)
+        objects['grace'] = Grace(self._exec_info)
+        objects['jw_mapping'] = Jw_mapping(self._exec_info)
+        objects['model_free'] = Model_free(self._exec_info)
+        objects['molmol'] = Molmol(self._exec_info)
+        objects['molecule'] = Molecule(self._exec_info)
+        objects['monte_carlo'] = Monte_carlo(self._exec_info)
+        objects['n_state_model'] = N_state_model(self._exec_info)
+        objects['noe'] = Noe(self._exec_info)
+        objects['palmer'] = Palmer(self._exec_info)
+        objects['pcs'] = PCS(self._exec_info)
+        objects['pymol'] = Pymol(self._exec_info)
+        objects['rdc'] = RDC(self._exec_info)
+        objects['relax_data'] = Relax_data(self._exec_info)
+        objects['relax_fit'] = Relax_fit(self._exec_info)
+        objects['residue'] = Residue(self._exec_info)
+        objects['results'] = Results(self._exec_info)
+        objects['pipe'] = Pipe(self._exec_info)
+        objects['select'] = Select(self._exec_info)
+        objects['sequence'] = Sequence(self._exec_info)
+        objects['spectrum'] = Spectrum(self._exec_info)
+        objects['spin'] = Spin(self._exec_info)
+        objects['state'] = State(self._exec_info)
+        objects['structure'] = Structure(self._exec_info)
+        objects['value'] = Value(self._exec_info)
+        objects['vmd'] = Vmd(self._exec_info)
 
         # Builtin interpreter functions.
         objects['intro_off'] = self.off
@@ -235,7 +235,7 @@ class Interpreter:
         @type verbose:      bool
         """
 
-        self.exec_info.intro = False
+        self._exec_info.intro = False
 
         # Print out.
         if verbose:
@@ -249,7 +249,7 @@ class Interpreter:
         @type verbose:      bool
         """
 
-        self.exec_info.intro = True
+        self._exec_info.intro = True
 
         # Print out.
         if verbose:
@@ -289,7 +289,7 @@ class Interpreter:
         # Execute the script file if given.
         if script_file:
             # Turn on the function intro flag.
-            self.exec_info.intro = True
+            self._exec_info.intro = True
 
             # Run the script.
             return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
@@ -303,8 +303,8 @@ class Interpreter:
         """Function for executing a script file."""
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "script("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "script("
             text = text + "file=" + repr(file)
             text = text + ", quit=" + repr(quit) + ")"
             print(text)
@@ -324,14 +324,14 @@ class Interpreter:
             raise RelaxBinError('quit', quit)
 
         # Turn on the function intro flag.
-        orig_intro_state = self.exec_info.intro
-        self.exec_info.intro = True
+        orig_intro_state = self._exec_info.intro
+        self._exec_info.intro = True
 
         # Execute the script.
         run_script(local=self._locals, script_file=file, quit=quit)
 
         # Return the function intro flag to the original value.
-        self.exec_info.intro = orig_intro_state
+        self._exec_info.intro = orig_intro_state
 
 
 class _Exit:

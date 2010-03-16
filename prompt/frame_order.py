@@ -75,8 +75,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "frame_order.cone_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.cone_pdb("
             text = text + "size=" + repr(size)
             text = text + ", inc=" + repr(inc)
             text = text + ", file=" + repr(file)
@@ -115,8 +115,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "frame_order.pivot("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.pivot("
             text = text + "pivot=" + repr(pivot) + ")"
             print(text)
 
@@ -154,8 +154,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "frame_order.ref_domain("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
@@ -193,8 +193,8 @@ class Frame_order(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "frame_order.select_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "frame_order.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

@@ -39,8 +39,8 @@ class Molmol(User_fn_class):
         """Function for clearing the Molmol command history."""
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molmol.clear_history()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.clear_history()"
             print(text)
 
         # Execute the functional code.
@@ -72,8 +72,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molmol.command("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.command("
             text = text + "command=" + repr(command) + ")"
             print(text)
 
@@ -139,8 +139,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molmol.macro_exec("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.macro_exec("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)
@@ -184,8 +184,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molmol.ribbon()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.ribbon()"
             print(text)
 
         # Execute the functional code.
@@ -245,8 +245,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molmol.tensor_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.tensor_pdb("
             text = text + "file=" + repr(file) + ")"
             print(text)
 
@@ -268,8 +268,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molmol.view()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.view()"
             print(text)
 
         # Execute the functional code.
@@ -339,8 +339,8 @@ class Molmol(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "molmol.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "molmol.write("
             text = text + "data_type=" + repr(data_type)
             text = text + ", style=" + repr(style)
             text = text + ", colour_start=" + repr(colour_start)

@@ -93,8 +93,8 @@ class Modsel(Basic_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "model_selection("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "model_selection("
             text = text + "method=" + repr(method)
             text = text + ", modsel_pipe=" + repr(modsel_pipe)
             text = text + ", pipes=" + repr(pipes) + ")"

@@ -69,8 +69,8 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "dasha.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "dasha.create("
             text = text + "algor=" + repr(algor)
             text = text + ", dir=" + repr(dir)
             text = text + ", force=" + repr(force) + ")"
@@ -113,8 +113,8 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "dasha.execute("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "dasha.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
@@ -139,8 +139,8 @@ class Dasha(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "dasha.extract("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "dasha.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 
