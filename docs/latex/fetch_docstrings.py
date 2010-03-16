@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2006, 2009 Edward d'Auvergne                             #
+# Copyright (C) 2005-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,13 +22,11 @@
 #                                                                             #
 ###############################################################################
 
-
-
-
+# Python module imports.
 from inspect import formatargspec, getargspec, getdoc
 from re import match, search
-import sys
 from string import letters, lowercase, lstrip, punctuation, replace, rstrip, split, upper, whitespace
+import sys
 
 # Add the path to the relax base directory.
 sys.path.append(sys.path[0])
@@ -50,9 +48,8 @@ class Fetch_docstrings:
         # Global data structures.
         self.table_count = 1
 
-        # Start the interpreter!
-        self.interpreter = Interpreter(self)
-        self.interpreter.run()
+        # Initialise the interpreter!
+        interpreter = Interpreter(self)
 
         # Get the blacklisted objects.
         self.get_blacklist()
@@ -61,7 +58,7 @@ class Fetch_docstrings:
         self.file = open(file, 'w')
 
         # Get the names of the data structures.
-        names = sorted(self.local.keys())
+        names = sorted(interpreter._locals.keys())
 
         # Alphabetically sort the names of the data structures.
         for name in names:
@@ -70,7 +67,7 @@ class Fetch_docstrings:
                 continue
 
             # Get the object.
-            object = self.local[name]
+            object = interpreter._locals[name]
 
             # Determine if the structure is user function containing class.
             if hasattr(object, '__relax_help__'):
