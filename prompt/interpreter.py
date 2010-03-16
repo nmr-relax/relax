@@ -229,11 +229,7 @@ class Interpreter:
 
 
     def off(self, verbose=True):
-        """Turn the function introductions off.
-
-        @keyword verbose:   A flag which when True results in a print out message being displayed.
-        @type verbose:      bool
-        """
+        """Turn the function introductions off."""
 
         self._exec_info.intro = False
 
@@ -243,11 +239,7 @@ class Interpreter:
 
 
     def on(self, verbose=True):
-        """Turn the function introductions on.
-
-        @keyword verbose:   A flag which when True results in a print out message being displayed.
-        @type verbose:      bool
-        """
+        """Turn the function introductions on."""
 
         self._exec_info.intro = True
 
