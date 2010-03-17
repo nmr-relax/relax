@@ -23,6 +23,7 @@
 # Python module imports.
 import __main__
 from math import pi
+from numpy import array, float64, transpose, zeros
 from os import sep
 import sys
 
@@ -31,6 +32,7 @@ from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
 from generic_fns.pipes import get_pipe
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from relax_io import delete
 from tempfile import mktemp
 
@@ -152,6 +154,69 @@ class Diffusion_tensor(SystemTestCase):
         delete(self.tmpfile_sphere, fail=False)
         delete(self.tmpfile_spheroid, fail=False)
         delete(self.tmpfile_ellipsoid, fail=False)
+
+
+    def check_ellipsoid(self, Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R):
+        """Check if the ellipsoid in the cdp has the same values as given."""
+
+        # Print outs.
+        print("The relax data store diffusion tensor:\n\n%s\n\n" % cdp.diff_tensor)
+        print("\nThe real tensor:\n%s" % D)
+        print("\nThe tensor in relax:\n%s" % cdp.diff_tensor.tensor)
+        print("\nThe real tensor (in eig frame):\n%s" % D_prime)
+        print("\nThe tensor in relax (in eig frame):\n%s" % cdp.diff_tensor.tensor_diag)
+
+        # Check the Euler angles.
+        self.assertAlmostEqual(Dx, cdp.diff_tensor.Dx)
+        self.assertAlmostEqual(Dy, cdp.diff_tensor.Dy)
+        self.assertAlmostEqual(Dz, cdp.diff_tensor.Dz)
+        self.assertAlmostEqual(Diso, cdp.diff_tensor.Diso)
+        self.assertAlmostEqual(Da, cdp.diff_tensor.Da)
+        self.assertAlmostEqual(Dr, cdp.diff_tensor.Dr)
+        self.assertAlmostEqual(alpha, cdp.diff_tensor.alpha)
+        self.assertAlmostEqual(beta, cdp.diff_tensor.beta)
+        self.assertAlmostEqual(gamma, cdp.diff_tensor.gamma)
+
+        # Check the elements.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(cdp.diff_tensor.tensor[i, j], D[i, j])
+                self.assertAlmostEqual(cdp.diff_tensor.tensor_diag[i, j], D_prime[i, j])
+                self.assertAlmostEqual(cdp.diff_tensor.rotation[i, j], R[i, j])
+
+
+    def get_ellipsoid(self):
+        """Return all the diffusion tensor info about the {Dx, Dy, Dz, alpha, beta, gamma} = {1e7, 2e7, 3e7, 1, 2, 0.5} ellipsoid tensor."""
+
+        # The tensor info.
+        Dx = 1e7
+        Dy = 2e7
+        Dz = 3e7
+        Diso = 2e7
+        Da = 1.5e7
+        Dr = 1.0/3.0
+        alpha = 1.0
+        beta = 2.0
+        gamma = 0.5
+
+        # The actual tensor in the PDB frame.
+        D = array([[ 22758858.4088357 ,  -7267400.1700938 ,   6272205.75829415],
+                   [ -7267400.1700938 ,  17923072.3436445 ,   1284270.53726401],
+                   [  6272205.75829415,   1284270.53726401,  19318069.2475198 ]], float64)
+
+        # The tensor in the eigenframe.
+        D_prime = zeros((3, 3), float64)
+        D_prime[0, 0] = Dx
+        D_prime[1, 1] = Dy
+        D_prime[2, 2] = Dz
+
+        # The rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(gamma, beta, alpha, R)
+        R = transpose(R)
+
+        # Return the data.
+        return Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R
 
 
     def test_copy(self):
@@ -300,3 +365,66 @@ class Diffusion_tensor(SystemTestCase):
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])
 
+
+    def test_init_ellipsoid_param_types_0(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((1/(6.0*Diso), Da, Dr, alpha, beta, gamma), param_types=0, angle_units='rad')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_init_ellipsoid_param_types_1(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Diso, Da, Dr, alpha, beta, gamma), param_types=1, angle_units='rad')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_init_ellipsoid_param_types_2(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Dx, Dy, Dz, alpha, beta, gamma), param_types=2, angle_units='rad')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_init_ellipsoid_param_types_3(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((D[0, 0], D[1, 1], D[2, 2], D[0, 1], D[0, 2], D[1, 2]), param_types=3)
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
