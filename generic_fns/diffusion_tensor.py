@@ -26,8 +26,8 @@
 # Python module imports.
 from copy import deepcopy
 from math import cos, pi, sin
-from numpy import float64, zeros
-from numpy.linalg import eig
+from numpy import cross, float64, transpose, zeros
+from numpy.linalg import eig, norm
 from re import search
 
 # relax module imports.
@@ -376,14 +376,32 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
         reorder = zeros(3, int)
         Di_sort = sorted(Di)
         Di = Di.tolist()
-        R_sort = zeros((3, 3), float64)
+        R_new = zeros((3, 3), float64)
 
         # Reorder columns.
         for i in range(3):
-            R_sort[:, i] = R[:, Di.index(Di_sort[i])]
+            R_new[:, i] = R[:, Di.index(Di_sort[i])]
 
-        # Euler angles.
-        alpha, beta, gamma = R_to_euler_zyz(R_sort)
+        # Switch from the left handed to right handed universes (if needed).
+        if norm(cross(R_new[:, 0], R_new[:, 1]) - R_new[:, 2]) > 1e-7:
+            R_new[:, 2] = -R_new[:, 2]
+        
+        # Reverse the rotation.
+        R_new = transpose(R_new)
+
+        # Euler angles (reverse rotation in the rotated axis system).
+        gamma, beta, alpha = R_to_euler_zyz(R_new)
+
+        # Collapse the pi axis rotation symmetries.
+        if alpha >= pi:
+            alpha = alpha - pi
+        if gamma >= pi:
+            alpha = pi - alpha
+            beta = pi - beta
+            gamma = gamma - pi
+        if beta >= pi:
+            alpha = pi - alpha
+            beta = beta - pi
 
         # Set the parameters.
         set(value=[Di_sort[0], Di_sort[1], Di_sort[2]], param=['Dx', 'Dy', 'Dz'])
