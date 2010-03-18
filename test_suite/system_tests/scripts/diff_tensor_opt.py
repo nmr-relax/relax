@@ -16,6 +16,13 @@ path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion
 # Load the sequence.
 sequence.read('NOE.500.out', dir=path, res_num_col=1)
 
+# Load a PDB file.
+structure.read_pdb('uniform.pdb', dir=path)
+
+# Set the spin name and then load the NH vectors.
+spin.name(name='N')
+structure.vectors(spin_id='@N', attached='H*', ave=False)
+
 # Load the relaxation data.
 frq = array([500, 600, 700, 800], float64)
 for i in range(len(frq)):
@@ -32,3 +39,7 @@ value.set('1H', 'proton')
 
 # Select the model-free model.
 model_free.select_model(model='m0')
+
+# Optimisation.
+grid_search(inc=4)
+minimise('newton')
