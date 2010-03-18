@@ -1,0 +1,247 @@
+REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.1, 1-AUG-2007
+REMARK  40 CREATED BY RELAX (HTTP://NMR-RELAX.COM)
+HET         NH   1       2                                             
+HET         NH   2       2                                             
+HET         NH   3       2                                             
+HET         NH   4       2                                             
+HET         NH   5       2                                             
+HET         NH   6       2                                             
+HET         NH   7       2                                             
+HET         NH   8       2                                             
+HET         NH   9       2                                             
+HET         NH  10       2                                             
+HET         NH  11       2                                             
+HET         NH  12       2                                             
+HET         NH  13       2                                             
+HET         NH  14       2                                             
+HET         NH  15       2                                             
+HET         NH  16       2                                             
+HET         NH  17       2                                             
+HET         NH  18       2                                             
+HET         NH  19       2                                             
+HET         NH  20       2                                             
+HET         NH  21       2                                             
+HET         NH  22       2                                             
+HET         NH  23       2                                             
+HET         NH  24       2                                             
+HET         NH  25       2                                             
+HET         NH  26       2                                             
+HET         NH  27       2                                             
+HET         NH  28       2                                             
+HET         NH  29       2                                             
+HET         NH  30       2                                             
+HET         NH  31       2                                             
+HET         NH  32       2                                             
+HET         NH  33       2                                             
+HET         NH  34       2                                             
+HET         NH  35       2                                             
+HET         NH  36       2                                             
+HET         NH  37       2                                             
+HET         NH  38       2                                             
+HET         NH  39       2                                             
+HET         NH  40       2                                             
+HET         NH  41       2                                             
+HET         NH  42       2                                             
+HET         NH  43       2                                             
+HET         NH  44       2                                             
+HET         NH  45       2                                             
+HET         NH  46       2                                             
+HET         NH  47       2                                             
+HET         NH  48       2                                             
+HETNAM      NH Unknown                                                
+FORMUL   1   NH    N1H1                                               
+HETATM    1    N  NH     1       0.000   0.000   0.000  1.00  0.00           N  
+HETATM    2    H  NH     1      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM    3    N  NH     2       0.000   0.000   0.000  1.00  0.00           N  
+HETATM    4    H  NH     2      -0.781  -0.618  -0.220  1.00  0.00           H  
+HETATM    5    N  NH     3       0.000   0.000   0.000  1.00  0.00           N  
+HETATM    6    H  NH     3      -0.719  -0.243  -0.682  1.00  0.00           H  
+HETATM    7    N  NH     4       0.000   0.000   0.000  1.00  0.00           N  
+HETATM    8    H  NH     4      -0.468   0.147  -0.894  1.00  0.00           H  
+HETATM    9    N  NH     5       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   10    H  NH     5      -0.029   0.553  -0.857  1.00  0.00           H  
+HETATM   11    N  NH     6       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   12    H  NH     6       0.501   0.780  -0.424  1.00  0.00           H  
+HETATM   13    N  NH     7       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   14    H  NH     7      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM   15    N  NH     8       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   16    H  NH     8      -0.963  -0.302   0.146  1.00  0.00           H  
+HETATM   17    N  NH     9       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   18    H  NH     9      -0.985   0.220  -0.147  1.00  0.00           H  
+HETATM   19    N  NH    10       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   20    H  NH    10      -0.735   0.610  -0.359  1.00  0.00           H  
+HETATM   21    N  NH    11       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   22    H  NH    11      -0.212   0.869  -0.491  1.00  0.00           H  
+HETATM   23    N  NH    12       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   24    H  NH    12       0.501   0.780  -0.424  1.00  0.00           H  
+HETATM   25    N  NH    13       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   26    H  NH    13      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM   27    N  NH    14       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   28    H  NH    14      -0.801  -0.152   0.612  1.00  0.00           H  
+HETATM   29    N  NH    15       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   30    H  NH    15      -0.748   0.439   0.537  1.00  0.00           H  
+HETATM   31    N  NH    16       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   32    H  NH    16      -0.498   0.829   0.324  1.00  0.00           H  
+HETATM   33    N  NH    17       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   34    H  NH    17      -0.050   1.019  -0.024  1.00  0.00           H  
+HETATM   35    N  NH    18       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   36    H  NH    18       0.501   0.780  -0.424  1.00  0.00           H  
+HETATM   37    N  NH    19       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   38    H  NH    19      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM   39    N  NH    20       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   40    H  NH    20      -0.390  -0.256   0.907  1.00  0.00           H  
+HETATM   41    N  NH    21       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   42    H  NH    21      -0.146   0.287   0.968  1.00  0.00           H  
+HETATM   43    N  NH    22       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   44    H  NH    22       0.104   0.677   0.756  1.00  0.00           H  
+HETATM   45    N  NH    23       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   46    H  NH    23       0.362   0.915   0.270  1.00  0.00           H  
+HETATM   47    N  NH    24       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   48    H  NH    24       0.501   0.780  -0.424  1.00  0.00           H  
+HETATM   49    N  NH    25       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   50    H  NH    25      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM   51    N  NH    26       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   52    H  NH    26       0.029  -0.553   0.857  1.00  0.00           H  
+HETATM   53    N  NH    27       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   54    H  NH    27       0.468  -0.147   0.894  1.00  0.00           H  
+HETATM   55    N  NH    28       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   56    H  NH    28       0.719   0.243   0.682  1.00  0.00           H  
+HETATM   57    N  NH    29       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   58    H  NH    29       0.781   0.618   0.220  1.00  0.00           H  
+HETATM   59    N  NH    30       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   60    H  NH    30       0.501   0.780  -0.424  1.00  0.00           H  
+HETATM   61    N  NH    31       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   62    H  NH    31      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM   63    N  NH    32       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   64    H  NH    32       0.212  -0.869   0.491  1.00  0.00           H  
+HETATM   65    N  NH    33       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   66    H  NH    33       0.735  -0.610   0.359  1.00  0.00           H  
+HETATM   67    N  NH    34       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   68    H  NH    34       0.985  -0.220   0.147  1.00  0.00           H  
+HETATM   69    N  NH    35       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   70    H  NH    35       0.963   0.302  -0.146  1.00  0.00           H  
+HETATM   71    N  NH    36       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   72    H  NH    36       0.501   0.780  -0.424  1.00  0.00           H  
+HETATM   73    N  NH    37       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   74    H  NH    37      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM   75    N  NH    38       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   76    H  NH    38       0.050  -1.019   0.024  1.00  0.00           H  
+HETATM   77    N  NH    39       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   78    H  NH    39       0.498  -0.829  -0.324  1.00  0.00           H  
+HETATM   79    N  NH    40       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   80    H  NH    40       0.748  -0.439  -0.537  1.00  0.00           H  
+HETATM   81    N  NH    41       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   82    H  NH    41       0.801   0.152  -0.612  1.00  0.00           H  
+HETATM   83    N  NH    42       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   84    H  NH    42       0.501   0.780  -0.424  1.00  0.00           H  
+HETATM   85    N  NH    43       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   86    H  NH    43      -0.501  -0.780   0.424  1.00  0.00           H  
+HETATM   87    N  NH    44       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   88    H  NH    44      -0.362  -0.915  -0.270  1.00  0.00           H  
+HETATM   89    N  NH    45       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   90    H  NH    45      -0.104  -0.677  -0.756  1.00  0.00           H  
+HETATM   91    N  NH    46       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   92    H  NH    46       0.146  -0.287  -0.968  1.00  0.00           H  
+HETATM   93    N  NH    47       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   94    H  NH    47       0.390   0.256  -0.907  1.00  0.00           H  
+HETATM   95    N  NH    48       0.000   0.000   0.000  1.00  0.00           N  
+HETATM   96    H  NH    48       0.501   0.780  -0.424  1.00  0.00           H  
+TER      97       NH    48 
+CONECT    1    2                                             
+CONECT    2    1                                             
+CONECT    3    4                                             
+CONECT    4    3                                             
+CONECT    5    6                                             
+CONECT    6    5                                             
+CONECT    7    8                                             
+CONECT    8    7                                             
+CONECT    9   10                                             
+CONECT   10    9                                             
+CONECT   11   12                                             
+CONECT   12   11                                             
+CONECT   13   14                                             
+CONECT   14   13                                             
+CONECT   15   16                                             
+CONECT   16   15                                             
+CONECT   17   18                                             
+CONECT   18   17                                             
+CONECT   19   20                                             
+CONECT   20   19                                             
+CONECT   21   22                                             
+CONECT   22   21                                             
+CONECT   23   24                                             
+CONECT   24   23                                             
+CONECT   25   26                                             
+CONECT   26   25                                             
+CONECT   27   28                                             
+CONECT   28   27                                             
+CONECT   29   30                                             
+CONECT   30   29                                             
+CONECT   31   32                                             
+CONECT   32   31                                             
+CONECT   33   34                                             
+CONECT   34   33                                             
+CONECT   35   36                                             
+CONECT   36   35                                             
+CONECT   37   38                                             
+CONECT   38   37                                             
+CONECT   39   40                                             
+CONECT   40   39                                             
+CONECT   41   42                                             
+CONECT   42   41                                             
+CONECT   43   44                                             
+CONECT   44   43                                             
+CONECT   45   46                                             
+CONECT   46   45                                             
+CONECT   47   48                                             
+CONECT   48   47                                             
+CONECT   49   50                                             
+CONECT   50   49                                             
+CONECT   51   52                                             
+CONECT   52   51                                             
+CONECT   53   54                                             
+CONECT   54   53                                             
+CONECT   55   56                                             
+CONECT   56   55                                             
+CONECT   57   58                                             
+CONECT   58   57                                             
+CONECT   59   60                                             
+CONECT   60   59                                             
+CONECT   61   62                                             
+CONECT   62   61                                             
+CONECT   63   64                                             
+CONECT   64   63                                             
+CONECT   65   66                                             
+CONECT   66   65                                             
+CONECT   67   68                                             
+CONECT   68   67                                             
+CONECT   69   70                                             
+CONECT   70   69                                             
+CONECT   71   72                                             
+CONECT   72   71                                             
+CONECT   73   74                                             
+CONECT   74   73                                             
+CONECT   75   76                                             
+CONECT   76   75                                             
+CONECT   77   78                                             
+CONECT   78   77                                             
+CONECT   79   80                                             
+CONECT   80   79                                             
+CONECT   81   82                                             
+CONECT   82   81                                             
+CONECT   83   84                                             
+CONECT   84   83                                             
+CONECT   85   86                                             
+CONECT   86   85                                             
+CONECT   87   88                                             
+CONECT   88   87                                             
+CONECT   89   90                                             
+CONECT   90   89                                             
+CONECT   91   92                                             
+CONECT   92   91                                             
+CONECT   93   94                                             
+CONECT   94   93                                             
+CONECT   95   96                                             
+CONECT   96   95                                             
+MASTER        0    0   48    0    0    0    0    0   96    1   96    0
+END
