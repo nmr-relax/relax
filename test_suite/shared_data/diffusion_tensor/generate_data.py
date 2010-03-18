@@ -126,9 +126,9 @@ def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, cs
         print("NOE: %s" % NOE)
 
         # Write the data.
-        R1_file.write("%s %s\n" % (i+1, R1))
-        R2_file.write("%s %s\n" % (i+1, R2))
-        NOE_file.write("%s %s\n" % (i+1, NOE))
+        R1_file.write("%s %s %s\n" % (i+1, R1, 0.05*R1))
+        R2_file.write("%s %s %s\n" % (i+1, R2, 0.05*R2))
+        NOE_file.write("%s %s %s\n" % (i+1, NOE, 0.04))
 
 
 def tensor_setup(Dx=None, Dy=None, Dz=None, alpha=None, beta=None, gamma=None):
