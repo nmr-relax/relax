@@ -37,7 +37,7 @@ from generic_fns.structure.internal import Internal
 from relax_io import open_write_file
 
 
-def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, wH=None, csa=None):
+def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, csa=None):
     """Calculate the relaxation data for the given vectors."""
 
     # Diff parameters.
@@ -82,9 +82,9 @@ def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, wH=None, csa=None):
     print("CSA constant: %s" % csa_const)
 
     # The files.
-    R1_file = open('R1.out', 'w')
-    R2_file = open('R2.out', 'w')
-    NOE_file = open('NOE.out', 'w')
+    R1_file = open('R1.%s.out' % frq_label, 'w')
+    R2_file = open('R2.%s.out' % frq_label, 'w')
+    NOE_file = open('NOE.%s.out' % frq_label, 'w')
 
     # Loop over the vectors.
     c = zeros(5, float64)
@@ -244,7 +244,8 @@ beta = 2.0
 gamma = 0.5
 
 # Other data.
-wH = 600e6 * 2*pi
+frq = array([500, 600, 700, 800], float64)
+wH = frq * 1e6 * 2*pi
 csa = -172e-6
 
 # The tensor.
@@ -254,4 +255,5 @@ R, R_rev, D_prime, D = tensor_setup(Dx, Dy, Dz, alpha, beta, gamma)
 vectors = pdb(R=R, file_name='uniform.pdb', inc=8)
 
 # The relaxation data.
-ri_data(Dx=Dx, Dy=Dy, Dz=Dz, vectors=vectors, wH=wH, csa=csa)
+for i in range(len(frq)):
+    ri_data(Dx=Dx, Dy=Dy, Dz=Dz, vectors=vectors, frq_label=str(int(frq[i])), wH=wH[i], csa=csa)
