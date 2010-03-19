@@ -258,16 +258,6 @@ class Diffusion_tensor(SystemTestCase):
         self.interpreter.diffusion_tensor.delete()
 
 
-    def test_diff_tensor_opt(self):
-        """Check that the diffusion tensor optimisation to relaxation data is ok."""
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-        # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'diff_tensor_opt.py')
-
-
     def test_display(self):
         """The user function diffusion_tensor.display()."""
 
@@ -438,3 +428,13 @@ class Diffusion_tensor(SystemTestCase):
 
         # Check the ellipsoid.
         self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_opt_ellipsoid(self):
+        """Check that the ellipsoid diffusion tensor optimisation functions correctly."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ellipsoid_opt.py')
