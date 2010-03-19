@@ -436,5 +436,34 @@ class Diffusion_tensor(SystemTestCase):
         # Reset the relax data storage object.
         ds.__reset__()
 
+        # The diffusion type (used by the script).
+        ds.diff_type = 'ellipsoid'
+
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ellipsoid_opt.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+
+
+    def test_opt_sphere(self):
+        """Check that the sphere diffusion tensor optimisation functions correctly."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'sphere'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+
+
+    def test_opt_spheroid(self):
+        """Check that the spheroid diffusion tensor optimisation functions correctly."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'spheroid'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')

@@ -6,12 +6,15 @@ from numpy import array, float64
 from os import sep
 import sys
 
+# relax module imports.
+from data import Relax_data_store; ds = Relax_data_store()
+
 
 # A data pipe.
 pipe.create('diff_opt', 'mf')
 
 # Path of the files.
-path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'ellipsoid'
+path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_type
 
 # Load the sequence.
 sequence.read('NOE.500.out', dir=path, res_num_col=1)
@@ -30,8 +33,17 @@ for i in range(len(frq)):
     relax_data.read('R2', str(int(frq[i])), frq[i] * 1e6, 'R2.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
     relax_data.read('NOE', str(int(frq[i])), frq[i] * 1e6, 'NOE.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
 
+# Initialise the diffusion tensors.
+if ds.diff_type == 'sphere':
+    diffusion_tensor.init(1.0/(6.0*2e7), fixed=False)
+elif ds.diff_type == 'spheroid':
+    diffusion_tensor.init((1.0/(6.0*5e7/3.0), -1e7, 2.0, 0.5), fixed=False)
+elif ds.diff_type == 'ellipsoid':
+    diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), fixed=False)
+else:
+    raise RelaxError, "The diffusion type '%s' is unknown." % ds.diff_type
+
 # Setup other values.
-diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), fixed=False)
 value.set(1.02 * 1e-10, 'bond_length')
 value.set(-172 * 1e-6, 'csa')
 value.set('15N', 'heteronucleus')
