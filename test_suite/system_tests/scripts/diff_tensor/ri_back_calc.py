@@ -34,9 +34,9 @@ structure.vectors(spin_id='@N', attached='H*', ave=False)
 if ds.diff_type == 'sphere':
     diffusion_tensor.init(1.0/(6.0*2e7), fixed=False)
 elif ds.diff_type == 'spheroid':
-    diffusion_tensor.init((1.0/(6.0*5e7/3.0), -1e7, 2.0, 0.5), fixed=False)
+    diffusion_tensor.init((1.0/(6.0*5e7/3.0), -1e7, 2.0, 0.5), angle_units='rad', fixed=False)
 elif ds.diff_type == 'ellipsoid':
-    diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), fixed=False)
+    diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), angle_units='rad', fixed=False)
 else:
     raise RelaxError, "The diffusion type '%s' is unknown." % ds.diff_type
 
