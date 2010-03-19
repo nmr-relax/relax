@@ -708,7 +708,10 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
     """
 
     # Initial atom number.
-    origin_num = mol.atom_num[-1]+1
+    if len(mol.atom_num) == 0:
+        origin_num = 1
+    else:
+        origin_num = mol.atom_num[-1]+1
     atom_num = origin_num
 
     # Get the uniform vector distribution.
