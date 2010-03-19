@@ -43,9 +43,13 @@ def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, cs
     # Diff parameters.
     Diso = (Dx + Dy + Dz) / 3.0
     L2 = (Dx*Dy + Dx*Dz + Dy*Dz) / 3.0
-    mux = (Dx - Diso) / sqrt(Diso**2 - L2)
-    muy = (Dy - Diso) / sqrt(Diso**2 - L2)
-    muz = (Dz - Diso) / sqrt(Diso**2 - L2)
+    fact = sqrt(Diso**2 - L2)
+    if fact == 0.0:
+        mux = muy = muz = 0.0
+    else:
+        mux = (Dx - Diso) / fact
+        muy = (Dy - Diso) / fact
+        muz = (Dz - Diso) / fact
 
     # The five time constants.
     tau = zeros(5, float64)
