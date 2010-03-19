@@ -12,7 +12,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 # Stand alone operation.
 if not hasattr(ds, 'diff_type'):
-    ds.diff_type = 'spheroid'
+    ds.diff_type = 'ellipsoid'
 
 # A data pipe.
 pipe.create('diff_opt', 'mf')
@@ -29,13 +29,6 @@ structure.read_pdb('uniform.pdb', dir=path)
 # Set the spin name and then load the NH vectors.
 spin.name(name='N')
 structure.vectors(spin_id='@N', attached='H*', ave=False)
-
-# Load the relaxation data.
-frq = array([500, 600, 700, 800], float64)
-for i in range(len(frq)):
-    relax_data.read('R1', str(int(frq[i])), frq[i] * 1e6, 'R1.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
-    relax_data.read('R2', str(int(frq[i])), frq[i] * 1e6, 'R2.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
-    relax_data.read('NOE', str(int(frq[i])), frq[i] * 1e6, 'NOE.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
 
 # Initialise the diffusion tensors.
 if ds.diff_type == 'sphere':
@@ -56,5 +49,23 @@ value.set('1H', 'proton')
 # Select the model-free model.
 model_free.select_model(model='m0')
 
-# Optimisation.
-minimise('newton')
+# Back-calculate.
+frq = array([500], float64)
+#frq = array([500, 600, 700, 800], float64)
+for i in range(len(frq)):
+    relax_data.back_calc(ri_label='R1', frq_label=str(int(frq[i])), frq=frq[i] * 1e6)
+    relax_data.back_calc(ri_label='R2', frq_label=str(int(frq[i])), frq=frq[i] * 1e6)
+    relax_data.back_calc(ri_label='NOE', frq_label=str(int(frq[i])), frq=frq[i] * 1e6)
+
+relax_data.display(ri_label='R1', frq_label='500')
+
+# Load the original relaxation data into another data pipe.
+pipe.create('orig_data', 'mf')
+sequence.read('NOE.500.out', dir=path, res_num_col=1)
+for i in range(len(frq)):
+    relax_data.read('R1', str(int(frq[i])), frq[i] * 1e6, 'R1.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
+    relax_data.read('R2', str(int(frq[i])), frq[i] * 1e6, 'R2.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
+    relax_data.read('NOE', str(int(frq[i])), frq[i] * 1e6, 'NOE.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
+relax_data.display(ri_label='R1', frq_label='500')
+
+
