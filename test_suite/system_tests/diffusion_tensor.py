@@ -512,6 +512,20 @@ class Diffusion_tensor(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
+        # Print out.
+        print cdp.diff_tensor
+
+        # The real data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Check the values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertEqual(cdp.diff_tensor.fixed, False)
+        self.assertEqual(cdp.diff_tensor.type, 'ellipsoid')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
 
     def test_opt_sphere(self):
         """Check that the sphere diffusion tensor optimisation functions correctly."""
