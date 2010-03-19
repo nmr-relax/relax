@@ -61,7 +61,7 @@ def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, cs
     h = 6.62606876e-34      # Planck constant.
     h_bar = h / ( 2.0*pi )  # Dirac constant.
     mu0 = 4.0 * pi * 1e-7   # Permeability of free space.
-    r = 1.041e-10            # NH bond length.
+    r = 1.02e-10            # NH bond length.
     gn = -2.7126e7          # 15N gyromagnetic ratio.
     gh = 26.7522212e7       # 1H gyromagnetic ratio.
     dip_const = 0.25 * (mu0/(4.0*pi))**2 * (gn * gh * h_bar)**2 / r**6    # The dipolar constant.
@@ -111,16 +111,16 @@ def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, cs
 
         # The spectral density function.
         Jw = zeros(5, float64)
-        for j in range(5):
+        for frq_index in range(5):
             for k in range(5):
-                Jw[j] = Jw[j] + 2.0/5.0 * c[k] * tau[k] / (1.0 + (w[j]*tau[k])**2)
-        print("Jw: %s" % c)
+                Jw[frq_index] = Jw[frq_index]  +  0.4 * c[k] * tau[k] / (1.0 + (w[frq_index]*tau[k])**2)
+        print("Jw: %s" % Jw)
 
         # The relaxation data.
         R1 = dip_const * (Jw[2] + 3.0*Jw[1] + 6.0*Jw[4])  +  csa_const * Jw[1]
         R2 = dip_const/2.0 * (4.0*Jw[0] + Jw[2] + 3.0*Jw[1] + 6.0*Jw[3] + 6.0*Jw[4])  +  csa_const/6.0 * (4.0*Jw[0] + 3.0*Jw[1])
         sigma_noe = dip_const * (6.0*Jw[4] - Jw[2])
-        NOE = 1 + gh/gn * sigma_noe / R1
+        NOE = 1.0 + gh/gn * sigma_noe / R1
         print("R1: %s" % R1)
         print("R2: %s" % R2)
         print("NOE: %s" % NOE)
@@ -231,7 +231,7 @@ def pdb(R=eye(3), r=1.02, file_name='uniform.pdb', inc=None):
     structure.write_pdb(file)
     file.close()
 
-    # Return the vectors.
+    # Return the vectors in the diffusion frame.
     return vectors
 
 
@@ -252,7 +252,7 @@ csa = -172e-6
 R, R_rev, D_prime, D = tensor_setup(Dx, Dy, Dz, alpha, beta, gamma)
 
 # The bond vector distribution.
-vectors = pdb(R=R, file_name='uniform.pdb', inc=8)
+vectors = pdb(R=R, file_name='uniform.pdb', inc=5)
 
 # The relaxation data.
 for i in range(len(frq)):
