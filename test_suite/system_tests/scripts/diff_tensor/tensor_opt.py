@@ -10,6 +10,10 @@ import sys
 from data import Relax_data_store; ds = Relax_data_store()
 
 
+# Stand alone operation.
+if not hasattr(ds, 'diff_type'):
+    ds.diff_type = 'ellipsoid'
+
 # A data pipe.
 pipe.create('diff_opt', 'mf')
 
