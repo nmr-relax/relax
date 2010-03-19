@@ -49,8 +49,8 @@ csa = -172e-6
 R, R_rev, D_prime, D = generate_data.tensor_setup(Dx, Dy, Dz, alpha, beta, gamma)
 
 # The bond vector distribution.
-vectors = generate_data.pdb(R=R, file_name='uniform.pdb', inc=5)
+vectors = generate_data.pdb(file_name='uniform.pdb', inc=5)
 
 # The relaxation data.
 for i in range(len(frq)):
-    generate_data.ri_data(Dx=Dx, Dy=Dy, Dz=Dz, vectors=vectors, frq_label=str(int(frq[i])), wH=wH[i], csa=csa)
+    generate_data.ri_data(Dx=Dx, Dy=Dy, Dz=Dz, R=R, vectors=vectors, frq_label=str(int(frq[i])), wH=wH[i], csa=csa)

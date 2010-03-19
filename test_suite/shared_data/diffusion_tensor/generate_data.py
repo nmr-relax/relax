@@ -37,7 +37,7 @@ from generic_fns.structure.internal import Internal
 from relax_io import open_write_file
 
 
-def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, csa=None):
+def ri_data(Dx=None, Dy=None, Dz=None, R=eye(3), vectors=None, frq_label=None, wH=None, csa=None):
     """Calculate the relaxation data for the given vectors."""
 
     # Diff parameters.
@@ -95,6 +95,9 @@ def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, cs
     for i in range(len(vectors)):
         # Normalise.
         vector = vectors[i] / norm(vectors[i])
+
+        # Rotate into the diffusion frame.
+        vector = dot(R, vector)
 
         # Print out.
         print("\ni: %s" % i)
@@ -192,7 +195,7 @@ def tensor_setup(Dx=None, Dy=None, Dz=None, alpha=None, beta=None, gamma=None):
     return R, R_rev, D_prime, D
 
 
-def pdb(R=eye(3), r=1.02, file_name='uniform.pdb', inc=None):
+def pdb(r=1.02, file_name='uniform.pdb', inc=None):
     """Create the bond vector distribution and save the PDB file."""
 
     # Create the structural object.
@@ -216,14 +219,14 @@ def pdb(R=eye(3), r=1.02, file_name='uniform.pdb', inc=None):
     for i in range(len(theta)):
         # Loop over the vectors of the radial array (change in latitude).
         for j in range(len(phi)):
-            # Rotate the vector into the diffusion frame.
-            vector = dot(R, vectors[i + j*len(theta)])
+            # The index.
+            index = i + j*len(theta)
 
-            # Store the rotated and rearranged vector.
-            new_vectors.append(vector)
+            # Store the rearranged vector.
+            new_vectors.append(vectors[index])
 
             # Scale the vector.
-            vector = vector * r
+            vector = vectors[index] * r
 
             # Residue number.
             res = (atom_num + 1) / 2
