@@ -174,9 +174,9 @@ def tensor_setup(Dx=None, Dy=None, Dz=None, alpha=None, beta=None, gamma=None):
 
     # Tensor in eigenframe.
     D_prime = zeros((3, 3), float64)
-    D_prime[0, 0] = 1e7
-    D_prime[1, 1] = 2e7
-    D_prime[2, 2] = 3e7
+    D_prime[0, 0] = Dx
+    D_prime[1, 1] = Dy
+    D_prime[2, 2] = Dz
     print("\nD':\n%s" % D_prime)
 
     # Rotate tensor from the eigenframe to the ref frame.
