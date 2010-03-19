@@ -93,11 +93,15 @@ def ri_data(Dx=None, Dy=None, Dz=None, vectors=None, frq_label=None, wH=None, cs
     # Loop over the vectors.
     c = zeros(5, float64)
     for i in range(len(vectors)):
+        # Normalise.
+        vector = vectors[i] / norm(vectors[i])
+
+        # Print out.
         print("\ni: %s" % i)
-        print("vector: %s" % vectors[i])
+        print("vector: %s" % vector)
 
         # Direction cosines.
-        delta_x, delta_y, delta_z = vectors[i]
+        delta_x, delta_y, delta_z = vector
 
         # The d and e factors.
         d = 3.0 * (delta_x**4 + delta_y**4 + delta_z**4) - 1.0
