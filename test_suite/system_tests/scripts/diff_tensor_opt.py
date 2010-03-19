@@ -31,7 +31,7 @@ for i in range(len(frq)):
     relax_data.read('NOE', str(int(frq[i])), frq[i] * 1e6, 'NOE.%s.out'%str(int(frq[i])), dir=path, res_num_col=1, data_col=2, error_col=3)
 
 # Setup other values.
-diffusion_tensor.init((1e-8, 0, 0, 0, 0, 0), fixed=False)
+diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), fixed=False)
 value.set(1.02 * 1e-10, 'bond_length')
 value.set(-172 * 1e-6, 'csa')
 value.set('15N', 'heteronucleus')
@@ -41,5 +41,4 @@ value.set('1H', 'proton')
 model_free.select_model(model='m0')
 
 # Optimisation.
-grid_search(inc=4)
 minimise('newton')
