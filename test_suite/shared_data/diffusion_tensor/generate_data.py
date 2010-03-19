@@ -26,7 +26,7 @@ The PDB file consists of uniformly distributed bond vectors.  The relaxation dat
 """
 
 # Python module imports.
-from math import sqrt
+from math import pi, sqrt
 from numpy import array, cross, dot, eye, float64, transpose, zeros
 from numpy.linalg import eig, inv, norm
 
@@ -233,27 +233,3 @@ def pdb(R=eye(3), r=1.02, file_name='uniform.pdb', inc=None):
 
     # Return the vectors in the diffusion frame.
     return vectors
-
-
-# The tensor values.
-Dx = 1e7
-Dy = 2e7
-Dz = 3e7
-alpha = 1.0
-beta = 2.0
-gamma = 0.5
-
-# Other data.
-frq = array([500, 600, 700, 800], float64)
-wH = frq * 1e6 * 2*pi
-csa = -172e-6
-
-# The tensor.
-R, R_rev, D_prime, D = tensor_setup(Dx, Dy, Dz, alpha, beta, gamma)
-
-# The bond vector distribution.
-vectors = pdb(R=R, file_name='uniform.pdb', inc=5)
-
-# The relaxation data.
-for i in range(len(frq)):
-    ri_data(Dx=Dx, Dy=Dy, Dz=Dz, vectors=vectors, frq_label=str(int(frq[i])), wH=wH[i], csa=csa)
