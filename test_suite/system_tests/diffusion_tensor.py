@@ -31,6 +31,7 @@ import sys
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
+from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
 from maths_fns.rotation_matrix import euler_to_R_zyz
 from relax_io import delete
@@ -217,6 +218,75 @@ class Diffusion_tensor(SystemTestCase):
 
         # Return the data.
         return Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R
+
+
+    def test_back_calc_ellipsoid(self):
+        """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'ellipsoid'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+
+        # Loop over all spins.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias.
+            bc = ds['back_calc'].mol[0].res[i].spin[0]
+            orig = ds['orig_data'].mol[0].res[i].spin[0]
+
+            # Check the values.
+            for j in range(len(bc.relax_data)):
+                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+
+
+    def test_back_calc_sphere(self):
+        """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'sphere'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+
+        # Loop over all spins.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias.
+            bc = ds['back_calc'].mol[0].res[i].spin[0]
+            orig = ds['orig_data'].mol[0].res[i].spin[0]
+
+            # Check the values.
+            for j in range(len(bc.relax_data)):
+                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+
+
+    def test_back_calc_spheroid(self):
+        """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'spheroid'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+
+        # Loop over all spins.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias.
+            bc = ds['back_calc'].mol[0].res[i].spin[0]
+            orig = ds['orig_data'].mol[0].res[i].spin[0]
+
+            # Check the values.
+            for j in range(len(bc.relax_data)):
+                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
 
 
     def test_copy(self):

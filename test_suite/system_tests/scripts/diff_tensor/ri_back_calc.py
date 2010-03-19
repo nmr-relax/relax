@@ -15,7 +15,7 @@ if not hasattr(ds, 'diff_type'):
     ds.diff_type = 'ellipsoid'
 
 # A data pipe.
-pipe.create('diff_opt', 'mf')
+pipe.create('back_calc', 'mf')
 
 # Path of the files.
 path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_type
