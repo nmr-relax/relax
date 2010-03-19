@@ -455,6 +455,21 @@ class Diffusion_tensor(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
 
+        # Check the values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertEqual(cdp.diff_tensor.fixed, False)
+        self.assertEqual(cdp.diff_tensor.type, 'sphere')
+        self.assertAlmostEqual(cdp.diff_tensor.tm * 1e9, 1.0/(6.0*2e7) * 1e9)
+        self.assertEqual(cdp.diff_tensor.rotation[0, 0], 1.0)
+        self.assertEqual(cdp.diff_tensor.rotation[1, 1], 1.0)
+        self.assertEqual(cdp.diff_tensor.rotation[2, 2], 1.0)
+        self.assertEqual(cdp.diff_tensor.rotation[0, 1], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[0, 2], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[1, 2], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[1, 0], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[2, 0], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[2, 1], 0.0)
+
 
     def test_opt_spheroid(self):
         """Check that the spheroid diffusion tensor optimisation functions correctly."""
