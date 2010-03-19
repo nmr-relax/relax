@@ -208,11 +208,15 @@ def pdb(R=eye(3), r=1.02, file_name='uniform.pdb', inc=None):
 
     # Loop over the radial array of vectors (change in longitude).
     atom_num = 1
+    new_vectors = []
     for i in range(len(theta)):
         # Loop over the vectors of the radial array (change in latitude).
         for j in range(len(phi)):
             # Rotate the vector into the diffusion frame.
             vector = dot(R, vectors[i + j*len(theta)])
+
+            # Store the rotated and rearranged vector.
+            new_vectors.append(vector)
 
             # Scale the vector.
             vector = vector * r
@@ -236,4 +240,4 @@ def pdb(R=eye(3), r=1.02, file_name='uniform.pdb', inc=None):
     file.close()
 
     # Return the vectors in the diffusion frame.
-    return vectors
+    return new_vectors
