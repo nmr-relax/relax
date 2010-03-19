@@ -272,7 +272,6 @@ HETATM  253 Dpar SIM A   7     -37.528  20.546  -2.968  1.00  0.00           C
 HETATM  254 Dpar SIM A   7      46.793  -9.433  -4.830  1.00  0.00           C  
 HETATM  255 Dpar SIM A   8     -36.166  15.610  -0.919  1.00  0.00           C  
 HETATM  256 Dpar SIM A   8      45.431  -4.496  -6.879  1.00  0.00           C  
-TER     257      SIM A   8 
 CONECT    2    3   14  230                                   
 CONECT    3    2    4   15  231                              
 CONECT    4    3    5   16  232                              
@@ -528,5 +527,5 @@ CONECT  253  242
 CONECT  254  242                                             
 CONECT  255  242                                             
 CONECT  256  242                                             
-MASTER        0    0    8    0    0    0    0    0  256    1  255    0
+MASTER        0    0    8    0    0    0    0    0  256    0  255    0
 END

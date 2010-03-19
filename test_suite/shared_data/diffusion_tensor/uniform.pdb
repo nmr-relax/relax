@@ -146,7 +146,6 @@ HETATM   93    N  NH    47       0.000   0.000   0.000  1.00  0.00           N
 HETATM   94    H  NH    47       0.390   0.256  -0.907  1.00  0.00           H  
 HETATM   95    N  NH    48       0.000   0.000   0.000  1.00  0.00           N  
 HETATM   96    H  NH    48       0.501   0.780  -0.424  1.00  0.00           H  
-TER      97       NH    48 
 CONECT    1    2                                             
 CONECT    2    1                                             
 CONECT    3    4                                             
@@ -243,5 +242,5 @@ CONECT   93   94
 CONECT   94   93                                             
 CONECT   95   96                                             
 CONECT   96   95                                             
-MASTER        0    0   48    0    0    0    0    0   96    1   96    0
+MASTER        0    0   48    0    0    0    0    0   96    0   96    0
 END
