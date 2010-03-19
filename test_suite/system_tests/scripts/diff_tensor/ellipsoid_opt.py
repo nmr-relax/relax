@@ -11,7 +11,7 @@ import sys
 pipe.create('diff_opt', 'mf')
 
 # Path of the files.
-path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'ellipsoid'+sep+'diffusion_tensor'
+path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'ellipsoid'
 
 # Load the sequence.
 sequence.read('NOE.500.out', dir=path, res_num_col=1)
