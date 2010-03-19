@@ -265,7 +265,7 @@ class Diffusion_tensor(SystemTestCase):
         ds.__reset__()
 
         # Execute the script.
-        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor_opt.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'diff_tensor_opt.py')
 
 
     def test_display(self):
