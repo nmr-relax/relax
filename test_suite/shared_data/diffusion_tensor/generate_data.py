@@ -222,8 +222,11 @@ def pdb(r=1.02, file_name='uniform.pdb', inc=None):
             # The index.
             index = i + j*len(theta)
 
-            # Store the rearranged vector.
-            new_vectors.append(vectors[index])
+            # Store the rearranged vector (truncated as in the PDB).
+            trunc_vect = zeros(3, float64)
+            for k in range(3):
+                trunc_vect[k] = float("%.3f" % vectors[index][k])
+            new_vectors.append(trunc_vect)
 
             # Scale the vector.
             vector = vectors[index] * r
