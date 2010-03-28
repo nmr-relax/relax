@@ -1,6 +1,7 @@
 # Script for model-free analysis using the program 'Modelfree4'.
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
@@ -13,7 +14,7 @@ if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp_script'
 
 # Path of the relaxation data.
-DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+DATA_PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
 
 def exec_stage_1(pipes):
@@ -32,7 +33,7 @@ def exec_stage_1(pipes):
         sequence.copy('data')
 
         # Read a PDB file.
-        structure.read_pdb(file='1F35_N_H_trunc.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', parser='internal')
+        structure.read_pdb(file='1F35_N_H_trunc.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', parser='internal')
 
         # Select only 3 spins (residues 9, 10, and 11).
         deselect.all()

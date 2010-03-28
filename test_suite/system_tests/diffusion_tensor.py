@@ -21,7 +21,9 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from math import pi
+from numpy import array, float64, transpose, zeros
 from os import sep
 import sys
 
@@ -29,7 +31,9 @@ import sys
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from data.diff_tensor import DiffTensorSimList
+from generic_fns.mol_res_spin import spin_loop
 from generic_fns.pipes import get_pipe
+from maths_fns.rotation_matrix import euler_to_R_zyz
 from relax_io import delete
 from tempfile import mktemp
 
@@ -47,22 +51,22 @@ class Diffusion_tensor(SystemTestCase):
 
         # Sphere tensor initialization.
         self.interpreter.pipe.switch('sphere')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init(10e-9, fixed=True)
         self.tmpfile_sphere = mktemp()
 
         # Spheroid tensor initialization.
         self.interpreter.pipe.switch('spheroid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((5e-09, -10000000., 1.6, 2.7), angle_units='rad', spheroid_type='oblate', fixed=True)
         self.tmpfile_spheroid = mktemp()
 
         # Ellipsoid tensor initialization.
         self.interpreter.pipe.switch('ellipsoid')
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
-        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1)
+        self.interpreter.sequence.read(file='Ap4Aase.seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep, res_num_col=1, res_name_col=2)
         self.interpreter.diffusion_tensor.init((9e-8, 5e6, 0.3, 60+360, 290, 100), fixed=False)
         self.tmpfile_ellipsoid = mktemp()
 
@@ -153,6 +157,138 @@ class Diffusion_tensor(SystemTestCase):
         delete(self.tmpfile_ellipsoid, fail=False)
 
 
+    def check_ellipsoid(self, Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R):
+        """Check if the ellipsoid in the cdp has the same values as given."""
+
+        # Print outs.
+        print("The relax data store diffusion tensor:\n\n%s\n\n" % cdp.diff_tensor)
+        print("\nThe real tensor:\n%s" % D)
+        print("\nThe tensor in relax:\n%s" % cdp.diff_tensor.tensor)
+        print("\nThe real tensor (in eig frame):\n%s" % D_prime)
+        print("\nThe tensor in relax (in eig frame):\n%s" % cdp.diff_tensor.tensor_diag)
+
+        # Check the Euler angles.
+        self.assertAlmostEqual(Dx, cdp.diff_tensor.Dx)
+        self.assertAlmostEqual(Dy, cdp.diff_tensor.Dy)
+        self.assertAlmostEqual(Dz, cdp.diff_tensor.Dz)
+        self.assertAlmostEqual(Diso, cdp.diff_tensor.Diso)
+        self.assertAlmostEqual(Da, cdp.diff_tensor.Da)
+        self.assertAlmostEqual(Dr, cdp.diff_tensor.Dr)
+        self.assertAlmostEqual(alpha, cdp.diff_tensor.alpha)
+        self.assertAlmostEqual(beta, cdp.diff_tensor.beta)
+        self.assertAlmostEqual(gamma, cdp.diff_tensor.gamma)
+
+        # Check the elements.
+        for i in range(3):
+            for j in range(3):
+                self.assertAlmostEqual(cdp.diff_tensor.tensor[i, j], D[i, j])
+                self.assertAlmostEqual(cdp.diff_tensor.tensor_diag[i, j], D_prime[i, j])
+                self.assertAlmostEqual(cdp.diff_tensor.rotation[i, j], R[i, j])
+
+
+    def get_ellipsoid(self):
+        """Return all the diffusion tensor info about the {Dx, Dy, Dz, alpha, beta, gamma} = {1e7, 2e7, 3e7, 1, 2, 0.5} ellipsoid tensor."""
+
+        # The tensor info.
+        Dx = 1e7
+        Dy = 2e7
+        Dz = 3e7
+        Diso = 2e7
+        Da = 1.5e7
+        Dr = 1.0/3.0
+        alpha = 1.0
+        beta = 2.0
+        gamma = 0.5
+
+        # The actual tensor in the PDB frame.
+        D = array([[ 22758858.4088357 ,  -7267400.1700938 ,   6272205.75829415],
+                   [ -7267400.1700938 ,  17923072.3436445 ,   1284270.53726401],
+                   [  6272205.75829415,   1284270.53726401,  19318069.2475198 ]], float64)
+
+        # The tensor in the eigenframe.
+        D_prime = zeros((3, 3), float64)
+        D_prime[0, 0] = Dx
+        D_prime[1, 1] = Dy
+        D_prime[2, 2] = Dz
+
+        # The rotation matrix.
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(gamma, beta, alpha, R)
+        R = transpose(R)
+
+        # Return the data.
+        return Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R
+
+
+    def test_back_calc_ellipsoid(self):
+        """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'ellipsoid'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+
+        # Loop over all spins.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias.
+            bc = ds['back_calc'].mol[0].res[i].spin[0]
+            orig = ds['orig_data'].mol[0].res[i].spin[0]
+
+            # Check the values.
+            for j in range(len(bc.relax_data)):
+                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+
+
+    def test_back_calc_sphere(self):
+        """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'sphere'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+
+        # Loop over all spins.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias.
+            bc = ds['back_calc'].mol[0].res[i].spin[0]
+            orig = ds['orig_data'].mol[0].res[i].spin[0]
+
+            # Check the values.
+            for j in range(len(bc.relax_data)):
+                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+
+
+    def test_back_calc_spheroid(self):
+        """Check the back-calculation of relaxation data for the spherical diffusion tensor."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'spheroid'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'ri_back_calc.py')
+
+        # Loop over all spins.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias.
+            bc = ds['back_calc'].mol[0].res[i].spin[0]
+            orig = ds['orig_data'].mol[0].res[i].spin[0]
+
+            # Check the values.
+            for j in range(len(bc.relax_data)):
+                self.assertAlmostEqual(bc.relax_data[j], orig.relax_data[j])
+
+
     def test_copy(self):
         """The user function diffusion_tensor.copy()."""
 
@@ -222,7 +358,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
+        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'sphere.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -254,7 +390,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
+        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'spheroid.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -286,7 +422,7 @@ class Diffusion_tensor(SystemTestCase):
         file.close()
 
         # Open the real file.
-        file = open(sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
+        file = open(__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'diff_tensors'+sep+'ellipsoid.pdb')
         real_data = file.readlines()
         file.close()
 
@@ -299,3 +435,134 @@ class Diffusion_tensor(SystemTestCase):
             # Check the line.
             self.assertEqual(real_data[i], new_data[i])
 
+
+    def test_init_ellipsoid_param_types_0(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((1/(6.0*Diso), Da, Dr, alpha, beta, gamma), param_types=0, angle_units='rad')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_init_ellipsoid_param_types_1(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Diso, Da, Dr, alpha, beta, gamma), param_types=1, angle_units='rad')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_init_ellipsoid_param_types_2(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((Dx, Dy, Dz, alpha, beta, gamma), param_types=2, angle_units='rad')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_init_ellipsoid_param_types_3(self):
+        """Test the initialisation of the ellipsoid diffusion tensor using parameter set 0."""
+
+        # Get the ellipsoid data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Create a new data pipe.
+        self.interpreter.pipe.create('ellipsoid2', 'mf')
+
+        # Tensor initialization.
+        self.interpreter.diffusion_tensor.init((D[0, 0], D[1, 1], D[2, 2], D[0, 1], D[0, 2], D[1, 2]), param_types=3)
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_opt_ellipsoid(self):
+        """Check that the ellipsoid diffusion tensor optimisation functions correctly."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'ellipsoid'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+
+        # Print out.
+        print cdp.diff_tensor
+
+        # The real data.
+        Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R = self.get_ellipsoid()
+
+        # Check the values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertEqual(cdp.diff_tensor.fixed, False)
+        self.assertEqual(cdp.diff_tensor.type, 'ellipsoid')
+
+        # Check the ellipsoid.
+        self.check_ellipsoid(Dx, Dy, Dz, Diso, Da, Dr, alpha, beta, gamma, D, D_prime, R)
+
+
+    def test_opt_sphere(self):
+        """Check that the sphere diffusion tensor optimisation functions correctly."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'sphere'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+
+        # Check the values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertEqual(cdp.diff_tensor.fixed, False)
+        self.assertEqual(cdp.diff_tensor.type, 'sphere')
+        self.assertAlmostEqual(cdp.diff_tensor.tm * 1e9, 1.0/(6.0*2e7) * 1e9)
+        self.assertEqual(cdp.diff_tensor.rotation[0, 0], 1.0)
+        self.assertEqual(cdp.diff_tensor.rotation[1, 1], 1.0)
+        self.assertEqual(cdp.diff_tensor.rotation[2, 2], 1.0)
+        self.assertEqual(cdp.diff_tensor.rotation[0, 1], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[0, 2], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[1, 2], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[1, 0], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[2, 0], 0.0)
+        self.assertEqual(cdp.diff_tensor.rotation[2, 1], 0.0)
+
+
+    def test_opt_spheroid(self):
+        """Check that the spheroid diffusion tensor optimisation functions correctly."""
+
+        # Reset the relax data storage object.
+        ds.__reset__()
+
+        # The diffusion type (used by the script).
+        ds.diff_type = 'spheroid'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')

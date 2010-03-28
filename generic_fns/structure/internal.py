@@ -351,6 +351,41 @@ class Internal(Base_struct_API):
             raise RelaxError("The structural data is invalid.")
 
 
+    def _translate(self, data, format='str'):
+        """Convert the data into a format for writing to file.
+
+        @param data:        The data to convert to the required format.
+        @type data:         anything
+        @keyword format:    The format to convert to.  This can be 'str', 'float', or 'int'.
+        @type format:       str
+        @return:            The converted version of the data.
+        @rtype:             str
+        """
+
+        # Conversion to string.
+        if format == 'str':
+            # None values.
+            if data == None:
+                data = ''
+    
+            # Force convert to string.
+            if not isinstance(data, str):
+                data = repr(data)
+    
+        # Conversion to float.
+        if format == 'float':
+            # None values.
+            if data == None:
+                data = 0.0
+    
+            # Force convert to float.
+            if not isinstance(data, float):
+                data = float(data)
+
+         # Return the converted data.
+        return data
+
+
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
@@ -909,52 +944,25 @@ class Internal(Base_struct_API):
                 print("ATOM, HETATM, TER")
 
                 # Loop over the atomic data.
+                atom_record = False
                 for i in xrange(len(mol.atom_name)):
-                    # Aliases.
-                    atom_num = mol.atom_num[i]
-                    atom_name = mol.atom_name[i]
-                    res_name = mol.res_name[i]
-                    chain_id = mol.chain_id[i]
-                    res_num = mol.res_num[i]
-                    x = mol.x[i]
-                    y = mol.y[i]
-                    z = mol.z[i]
-                    seg_id = mol.seg_id[i]
-                    element = mol.element[i]
-
-                    # Replace None with ''.
-                    if atom_name == None:
-                        atom_name = ''
-                    if res_name == None:
-                        res_name = ''
-                    if chain_id == None:
-                        chain_id = ''
-                    if res_num == None:
-                        res_num = ''
-                    if x == None:
-                        x = ''
-                    if y == None:
-                        y = ''
-                    if z == None:
-                        z = ''
-                    if seg_id == None:
-                        seg_id = ''
-                    if element == None:
-                        element = ''
-
                     # Write the ATOM record.
                     if mol.pdb_record[i] == 'ATOM':
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        atom_record = True
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', mol.atom_num[i], self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_atom = num_atom + 1
 
+                # Finish the ATOM section with the TER record.
+                if atom_record:
+                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', num_atom+1, self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), ''))
+                    num_ter = num_ter + 1
+
+                # Loop over the atomic data.
+                for i in xrange(len(mol.atom_name)):
                     # Write the HETATM record.
                     if mol.pdb_record[i] == 'HETATM':
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', mol.atom_num[i], self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_hetatm = num_hetatm + 1
-
-                # Finish off with the TER record.
-                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num+1, res_name, chain_id, res_num, ''))
-                num_ter = num_ter + 1
 
 
             # ENDMDL record, for multiple structures.

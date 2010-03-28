@@ -44,8 +44,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.back_calc("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -82,8 +82,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.calc_q_factors("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.calc_q_factors("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -131,8 +131,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -169,8 +169,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -199,8 +199,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -280,8 +280,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -339,8 +339,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

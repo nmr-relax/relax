@@ -91,8 +91,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "palmer.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "palmer.create("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary)
@@ -157,8 +157,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "palmer.execute("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "palmer.execute("
             text = text + "dir=" + repr(dir)
             text = text + ", force=" + repr(force)
             text = text + ", binary=" + repr(binary) + ")"
@@ -183,8 +183,8 @@ class Palmer(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "palmer.extract("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "palmer.extract("
             text = text + "dir=" + repr(dir) + ")"
             print(text)
 

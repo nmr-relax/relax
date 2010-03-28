@@ -222,7 +222,7 @@ class dAuvergne_protocol:
         self.status = Status()
         self.status.dAuvergne_protocol.diff_model = diff_model
         self.status.dAuvergne_protocol.mf_models = mf_models
-        self.status.dAuvergne_protocol.local_mf_models = local_mf_models
+        self.status.dAuvergne_protocol.local_tm_models = local_tm_models
 
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
@@ -420,7 +420,7 @@ class dAuvergne_protocol:
         # Unset the status info.
         self.status.dAuvergne_protocol.diff_model = None
         self.status.dAuvergne_protocol.mf_models = None
-        self.status.dAuvergne_protocol.local_mf_models = None
+        self.status.dAuvergne_protocol.local_tm_models = None
 
 
     def check_vars(self):

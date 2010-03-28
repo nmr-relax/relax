@@ -1,6 +1,7 @@
 """Script for testing the fitting an alignment tensor to RDCs or PCSs."""
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
@@ -10,8 +11,8 @@ from generic_fns import pipes
 
 
 # Path of the alignment data and structure.
-DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep+'CaM'
-STRUCT_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+DATA_PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep+'CaM'
+STRUCT_PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
 
 # Create the data pipe.
 pipe.create('rdc', 'N-state')

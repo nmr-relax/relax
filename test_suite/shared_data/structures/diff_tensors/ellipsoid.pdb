@@ -312,7 +312,6 @@ HETATM  283   Dz SIM A  17      -3.001 -42.638  13.381  1.00  0.00           C
 HETATM  284   Dz SIM A  17      12.266  53.751 -21.178  1.00  0.00           C  
 HETATM  285   Dz SIM A  18      -2.208 -43.113  12.070  1.00  0.00           C  
 HETATM  286   Dz SIM A  18      11.473  54.226 -19.868  1.00  0.00           C  
-TER     287      SIM A  18 
 CONECT    2    3   14  230                                   
 CONECT    3    2    4   15  231                              
 CONECT    4    3    5   16  232                              
@@ -598,5 +597,5 @@ CONECT  283  272
 CONECT  284  272                                             
 CONECT  285  272                                             
 CONECT  286  272                                             
-MASTER        0    0   18    0    0    0    0    0  286    1  285    0
+MASTER        0    0   18    0    0    0    0    0  286    0  285    0
 END

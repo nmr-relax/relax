@@ -21,9 +21,9 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from math import pi, sqrt
 from os import listdir, sep
-import sys
 from shutil import rmtree
 from tempfile import mkdtemp
 
@@ -58,7 +58,7 @@ class N_state_model(SystemTestCase):
         """
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'5_state_xz.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'5_state_xz.py')
 
         # Test the optimised probabilities.
         self.assertAlmostEqual(cdp.probs[0], 0.2)
@@ -99,7 +99,7 @@ class N_state_model(SystemTestCase):
         ds.mode = 'all'
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -122,7 +122,7 @@ class N_state_model(SystemTestCase):
         ds.rand = True
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189412096996)
@@ -142,7 +142,7 @@ class N_state_model(SystemTestCase):
         ds.mode = 'pcs'
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -164,7 +164,7 @@ class N_state_model(SystemTestCase):
         ds.rand = True
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these values are from relax, so are not 100% reliable as a check).
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.000189165581069)
@@ -183,7 +183,7 @@ class N_state_model(SystemTestCase):
         ds.mode = 'rdc'
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.351261/2000)
@@ -205,7 +205,7 @@ class N_state_model(SystemTestCase):
         ds.rand = True
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'align_fit.py')
 
         # Test the optimised values (these are about ~10% different from Pales).
         # Pales:      S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)
@@ -223,7 +223,7 @@ class N_state_model(SystemTestCase):
         """The 4-state model analysis of lactose using RDCs and PCSs."""
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
 
 
     def test_stereochem_analysis(self):
@@ -233,7 +233,7 @@ class N_state_model(SystemTestCase):
         ds.tmpdir = mkdtemp()
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'stereochem_analysis.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'stereochem_analysis.py')
 
         # Check the base directory files.
         files = listdir(ds.tmpdir)

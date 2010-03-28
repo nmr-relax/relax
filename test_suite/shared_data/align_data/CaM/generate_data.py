@@ -1,6 +1,7 @@
 # relax script for generating synthetic RDC and PCS data for the bax_C_1J7P_N_H_Ca.pdb structure.
 
 # Python module imports.
+import __main__
 from numpy import dot, float64, sum, transpose, zeros
 from numpy.linalg import eigvals, norm
 from os import sep
@@ -55,7 +56,7 @@ pcs_const = B0**2 / (15.0 * mu0 * k * T)
 chi_tensor = tensor / pcs_const
 
 # Path to files.
-path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep
+path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep
 
 # Create a data pipe.
 pipe.create('synth', 'N-state')

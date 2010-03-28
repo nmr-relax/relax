@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from math import pi
 import platform
 import numpy
@@ -114,14 +115,14 @@ class Frame_order(SystemTestCase):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
     def test_opt_rigid_no_rot(self):
         """Test the 'rigid' model for unrotated tensors with no motion."""
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_no_rot.py')
 
         # Get the debugging message.
         self.mesg = self.mesg_opt_debug()
@@ -138,7 +139,7 @@ class Frame_order(SystemTestCase):
         """Test the 'rigid' model for randomly rotated tensors with no motion."""
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opt_rigid_rand_rot.py')
 
         # Get the debugging message.
         self.mesg = self.mesg_opt_debug()

@@ -77,8 +77,8 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "residue.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "residue.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", res_from=" + repr(res_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -130,8 +130,8 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "residue.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "residue.create("
             text = text + "res_num=" + repr(res_num)
             text = text + ", res_name=" + repr(res_name)
             text = text + ", mol_name=" + repr(mol_name) + ")"
@@ -164,8 +164,8 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "residue.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "residue.delete("
             text = text + "res_id=" + repr(res_id) + ")"
             print(text)
 
@@ -186,8 +186,8 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "residue.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "residue.display("
             text = text + "res_id=" + repr(res_id) + ")"
             print(text)
 
@@ -233,8 +233,8 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "residue.name("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "residue.name("
             text = text + "res_id=" + repr(res_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
@@ -281,8 +281,8 @@ class Residue(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "residue.number("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "residue.number("
             text = text + "res_id=" + repr(res_id)
             text = text + ", number=" + repr(number)
             text = text + ", force=" + repr(force) + ")"

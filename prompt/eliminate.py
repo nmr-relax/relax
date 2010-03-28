@@ -70,8 +70,8 @@ class Eliminate(Basic_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "eliminate("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "eliminate("
             text = text + "function=" + repr(function)
             text = text + ", args=" + repr(args) + ")"
             print(text)

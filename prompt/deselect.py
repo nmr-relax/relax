@@ -47,8 +47,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "deselect.all()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "deselect.all()"
             print(text)
 
         # Execute the functional code.
@@ -126,8 +126,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "deselect.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "deselect.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spin_id_col=" + repr(spin_id_col)
@@ -185,8 +185,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "deselect.reverse("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "deselect.reverse("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -231,8 +231,8 @@ class Deselect(User_fn_class):
         """
 
         # Function intro test.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "deselect.spin("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "deselect.spin("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", change_all=" + repr(change_all) + ")"
             print(text)

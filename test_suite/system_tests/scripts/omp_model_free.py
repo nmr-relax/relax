@@ -1,6 +1,7 @@
 """Script for performing a very minimal model-free analysis using the OMP relaxation data."""
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
@@ -9,7 +10,7 @@ from data import Relax_data_store; ds = Relax_data_store()
 
 
 # Path of the relaxation data.
-DATA_PATH = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
+DATA_PATH = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'OMP'
 
 # Mini subset of local tm and model-free data pipes.
 LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2']

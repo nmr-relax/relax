@@ -44,8 +44,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.back_calc("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -82,8 +82,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.calc_q_factors("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.calc_q_factors("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -152,8 +152,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.centre("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.centre("
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
@@ -211,8 +211,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -249,8 +249,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -279,8 +279,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -354,8 +354,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -413,8 +413,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
