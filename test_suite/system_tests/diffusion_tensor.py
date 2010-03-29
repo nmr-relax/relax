@@ -566,3 +566,12 @@ class Diffusion_tensor(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+
+        # Check the values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertEqual(cdp.diff_tensor.fixed, False)
+        self.assertEqual(cdp.diff_tensor.type, 'spheroid')
+        self.assertAlmostEqual(cdp.diff_tensor.tm * 1e9, 1.0/(6.0*7e7/3.0) * 1e9)
+        self.assertAlmostEqual(cdp.diff_tensor.Da * 1e-7, 1.0)
+        self.assertAlmostEqual(cdp.diff_tensor.theta, 2.0)
+        self.assertAlmostEqual(cdp.diff_tensor.phi, pi-0.5)
