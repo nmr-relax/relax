@@ -52,6 +52,5 @@ R, R_rev, D_prime, D = generate_data.tensor_setup(Dx, Dy, Dz, alpha, beta, gamma
 vectors = generate_data.pdb(file_name='uniform.pdb', inc=5)
 
 # The relaxation data.
-#for i in range(len(frq)):
-for i in range(1):
+for i in range(len(frq)):
     generate_data.ri_data(Dx=Dx, Dy=Dy, Dz=Dz, R=R, vectors=vectors, frq_label=str(int(frq[i])), wH=wH[i], csa=csa)
