@@ -33,9 +33,9 @@ from test_suite.shared_data.diffusion_tensor import generate_data
 
 
 # The tensor values.
-Dx = 1e7
+Dx = 2e7
 Dy = 2e7
-Dz = 2e7
+Dz = 3e7
 alpha = 1.0
 beta = 2.0
 gamma = 0.5
