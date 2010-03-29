@@ -28,13 +28,14 @@ This module allows for easy replacement of images and icons throughout the GUI.
 """
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
 
 # GUI image and icon paths.
-ICON_PATH = sys.path[0]+sep+'gui_bieri'+sep+'oxygen_icons'+sep
-IMAGE_PATH = sys.path[0]+sep+'gui_bieri'+sep+'images'+sep
+ICON_PATH = __main__.install_path +sep+'gui_bieri'+sep+'oxygen_icons'+sep
+IMAGE_PATH = __main__.install_path +sep+'gui_bieri'+sep+'images'+sep
 
 # 16x16 icons.
 ABOUT_RELAX_ICON = IMAGE_PATH + 'relax_16x16.png'
