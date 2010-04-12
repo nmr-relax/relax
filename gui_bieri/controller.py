@@ -142,13 +142,50 @@ class Redirect_text(object):
 
     def __init__(self,aWxTextCtrl):
         self.out=aWxTextCtrl
+        self.status = Status()
 
+    def limit_entries(self):
+        """ Function to overcome feedback problem of wx.CallAfter() command"""
+
+        # Maximum allowed number of lines in log window.
+        max_entries = 10000
+
+        # read number of lines in log window.
+        total_entries = self.out.log_panel.GetNumberOfLines()
+
+        # Shift entries backwards if maximum of line exeeded.
+        if total_entries > max_entries:
+            # Reset log window entries
+            new_entries = 'Refreshing log window...\n\n'
+            self.out.log_panel.SetValue(new_entries)
 
     def write(self,string):
-        global progress
 
         # Limit panle entries to max_entries Lines.
         wx.CallAfter(self.limit_entries)
+
+        # Update Gauge (Progress bar).
+        # Local tm model:
+        if self.status.dAuvergne_protocol.diff_model == 'local_tm':
+            # Current model.
+            no = self.status.dAuvergne_protocol.current_model[2:]
+            no = int(no)
+
+            # Total selected models.
+            total_models = len(self.status.dAuvergne_protocol.local_mf_models)
+
+            # update Progress bar.
+            wx.CallAfter(self.out.progress_bar.SetValue, (100*no/total_models))
+
+        # Sphere to Ellipsoid Models.
+        if self.status.dAuvergne_protocol.diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
+            # Determine actual round (maximum is 20).
+            wx.CallAfter(self.out.progress_bar.SetValue, (100*(self.status.dAuvergne_protocol.round-1)/20))
+
+        # Final analysis.
+        if self.status.dAuvergne_protocol.diff_model == 'final':
+            mc_simulation = self.status.mc_number
+
 
         # Add new output.
         wx.CallAfter(self.out.log_panel.AppendText, string)
