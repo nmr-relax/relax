@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import sep
+from string import replace
 import sys
 import thread
 import time
@@ -34,6 +35,7 @@ import wx
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_io import DummyFileObject
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
@@ -265,7 +267,12 @@ class Auto_rx:
         data.mc_num = 500
 
         # Unresolved resiudes
-        data.unresolved = self.data.unresolved
+        file = DummyFileObject
+        entries = self.data.unresolved
+        entries = replace(entries, ',', '\n')
+        file.write(entries)
+        file.close()
+        data.unresolved = file
 
         # Structure File
         data.structure_file = self.data.structure_file
