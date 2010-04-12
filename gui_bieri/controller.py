@@ -61,7 +61,7 @@ class Controller(wx.Dialog):
         self.progress_bar = wx.Gauge(self, -1, 100)
 
         # buttons
-        self.cancel_button = wx.Button(self, -1, "Cancel")
+        self.cancel_button = wx.Button(self, -1, "Kill")
         self.close_button = wx.Button(self, -1, "Close")
 
         # Create Objects (see below)
@@ -117,6 +117,8 @@ class Controller(wx.Dialog):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        sys.exit(0)
 
         # Terminate the event.
         event.Skip()
@@ -178,14 +180,17 @@ class Redirect_text(object):
             wx.CallAfter(self.out.progress_bar.SetValue, (100*no/total_models))
 
         # Sphere to Ellipsoid Models.
-        if self.status.dAuvergne_protocol.diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
+        elif self.status.dAuvergne_protocol.diff_model in ['sphere', 'prolate', 'oblate', 'ellipsoid']:
             # Determine actual round (maximum is 20).
             wx.CallAfter(self.out.progress_bar.SetValue, (100*(self.status.dAuvergne_protocol.round-1)/20))
 
         # Final analysis.
-        if self.status.dAuvergne_protocol.diff_model == 'final':
+        elif self.status.dAuvergne_protocol.diff_model == 'final':
             mc_simulation = self.status.mc_number
 
+        # Rx Analysis.
+        else:
+            print str(cdp.sim_number)
 
         # Add new output.
         wx.CallAfter(self.out.log_panel.AppendText, string)
