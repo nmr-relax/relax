@@ -39,6 +39,7 @@ from status import Status
 from gui_bieri.execution.calc_noe import make_noe
 from gui_bieri.execution.calc_rx import make_rx
 from gui_bieri.paths import IMAGE_PATH
+from message import question
 
 
 class Controller(wx.Dialog):
@@ -118,7 +119,12 @@ class Controller(wx.Dialog):
         @type event:    wx event
         """
 
-        sys.exit(0)
+        # Ask if the user is sure they would like to exit.
+        doexit = question('Are you sure you would like to kill your current relax session?  All unsaved data will be lost.', default=True)
+
+        # Kill session.
+        if doexit:
+            sys.exit(0)
 
         # Terminate the event.
         event.Skip()
