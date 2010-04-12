@@ -267,7 +267,8 @@ class Auto_rx:
         data.int_method = 'height'
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = ds.relax_gui.global_setting[7]
+        data.mc_num = ds.relax_gui.global_setting
+        data.mc_num = data.mc_num[6]
 
         # Unresolved resiudes
         file = DummyFileObject
@@ -396,7 +397,6 @@ class Auto_rx:
 
         # Execute.
         Relax_fit(filename = self.filename, seq_args=data.seq_args, directory = data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved, view_plots = False)
-
 
 
     def link_data(self, data):
