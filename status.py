@@ -42,7 +42,7 @@ class Status(object):
         self.dAuvergne_protocol.diff_model = None        # The global diffusion model.
         self.dAuvergne_protocol.round = None             # The round of optimisation, i.e. the global iteration.
         self.dAuvergne_protocol.mf_models = None         # The list of model-free models for optimisation, i.e. the global iteration.
-        self.dAuvergne_protocol.local_mf_models = None   # The list of model-free local tm models for optimisation, i.e. the global iteration.
+        self.dAuvergne_protocol.local_tm_models = None   # The list of model-free local tm models for optimisation, i.e. the global iteration.
         self.dAuvergne_protocol.current_model = None     # The current model-free model.
         self.dAuvergne_protocol.convergence = False      # The convergence of the global model.
 
