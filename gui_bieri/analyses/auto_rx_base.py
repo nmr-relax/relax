@@ -264,7 +264,7 @@ class Auto_rx:
         data.int_method = 'height'
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = 500
+        data.mc_num = ds.relax_gui.global_setting[7]
 
         # Unresolved resiudes
         file = DummyFileObject
