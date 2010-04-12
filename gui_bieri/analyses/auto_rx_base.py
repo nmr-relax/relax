@@ -260,6 +260,9 @@ class Auto_rx:
         data.file_names = self.data.file_list[:i]
         data.relax_times = self.data.relax_times[:i]
 
+        # Filename.
+        self.filename = self.analysis_type
+
         # The integration method.
         data.int_method = 'height'
 
@@ -395,7 +398,7 @@ class Auto_rx:
         data = self.assemble_data()
 
         # Execute.
-        Relax_fit(seq_args=data.seq_args, directory = data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved, view_plots = False)
+        Relax_fit(filename = self.filename, seq_args=data.seq_args, directory = data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved, view_plots = False)
 
 
 
