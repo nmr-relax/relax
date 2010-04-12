@@ -261,7 +261,7 @@ class Auto_rx:
         data.relax_times = self.data.relax_times[:i]
 
         # Filename.
-        self.filename = self.analysis_type
+        self.filename = self.analysis_type + '.' + str(self.data.frq)
 
         # The integration method.
         data.int_method = 'height'
@@ -282,9 +282,6 @@ class Auto_rx:
 
         # Results directory.
         data.save_dir = self.data.save_dir
-
-        # The Frequency.
-        data.frq = self.data.frq
 
         # Return the container.
         return data
