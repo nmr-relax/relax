@@ -271,7 +271,7 @@ class Auto_rx:
         data.mc_num = data.mc_num[6]
 
         # Unresolved resiudes
-        file = DummyFileObject
+        file = DummyFileObject()
         entries = self.data.unresolved
         entries = replace(entries, ',', '\n')
         file.write(entries)
