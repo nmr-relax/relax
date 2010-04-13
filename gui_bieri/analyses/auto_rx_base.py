@@ -269,7 +269,7 @@ class Auto_rx:
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_num = ds.relax_gui.global_setting
-        data.mc_num = data.mc_num[6]
+        data.mc_num = int(data.mc_num[6])
 
         # Unresolved resiudes
         file = DummyFileObject()
