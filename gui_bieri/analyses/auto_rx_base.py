@@ -389,6 +389,9 @@ class Auto_rx:
 
         # Execute.
         Relax_fit(filename = self.filename, seq_args=data.seq_args, directory = data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved, view_plots = False)
+        
+        # Feedback about success.
+        wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
 
 
     def link_data(self, data):
