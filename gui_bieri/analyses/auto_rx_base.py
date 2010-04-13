@@ -232,7 +232,7 @@ class Auto_rx:
         self.field_unresolved = wx.TextCtrl(self.parent, -1, "")
         self.field_unresolved.SetMinSize((350, 27))
         sizer.Add(self.field_unresolved, 0, wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
-        
+
         # Add the element to the box.
         box.Add(sizer, 0, wx.EXPAND|wx.SHAPED, 0)
 
@@ -280,6 +280,10 @@ class Auto_rx:
 
         # Structure File
         data.structure_file = self.data.structure_file
+
+        # Set Structure file as None if a structure file is loaded.
+        if data.structure_file == '!!! Sequence file selected !!!':
+            data.structure_file = None
 
         # Results directory.
         data.save_dir = self.data.save_dir
