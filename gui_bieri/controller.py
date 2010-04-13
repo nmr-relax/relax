@@ -191,7 +191,7 @@ class Redirect_text(object):
             wx.CallAfter(self.out.progress_bar.SetValue, (100*(self.status.dAuvergne_protocol.round-1)/20))
 
         # Final analysis or Rx calculation.
-        else self.status.dAuvergne_protocol.diff_model == 'final':
+        else:
             if self.status.mc_number:
                 progress = 100 * self.status.mc_number / cdp.sim_number
                 wx.CallAfter(self.out.progress_bar.SetValue, progress)
