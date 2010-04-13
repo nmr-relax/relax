@@ -259,6 +259,7 @@ class Auto_rx:
                 break
         data.file_names = self.data.file_list[:i]
         data.relax_times = self.data.relax_times[:i]
+        data.relax_times = [float(i) for i in data.relax_times]
 
         # Filename.
         self.filename = self.analysis_type + '.' + str(self.data.frq)
