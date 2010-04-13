@@ -192,11 +192,13 @@ class Redirect_text(object):
 
         # Final analysis.
         elif self.status.dAuvergne_protocol.diff_model == 'final':
-            mc_simulation = self.status.mc_number
+            if self.status.mc_number:
+                progress = 100 * self.status.mc_number / cdp.sim_number
+                wx.CallAfter(self.out.progress_bar.SetValue, progress)
 
         # Rx Analysis.
-        else:
-            print str(cdp.sim_number)
+        #else:
+        #    print str(cdp.sim_number)
 
         # Add new output.
         wx.CallAfter(self.out.log_panel.AppendText, string)
