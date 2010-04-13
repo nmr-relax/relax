@@ -23,6 +23,7 @@
 # Python module imports.
 from math import sqrt
 from numpy import dot, float64, ndarray, zeros
+from numpy.linalg import norm
 from os import F_OK, access
 from re import search
 from string import replace
@@ -489,7 +490,7 @@ def vectors(attached=None, spin_id=None, model=None, verbosity=1, ave=True, unit
             # Unit vector.
             if unit:
                 # Normalisation factor.
-                norm_factor = sqrt(dot(bond_vectors[i], bond_vectors[i]))
+                norm_factor = norm(bond_vectors[i])
 
                 # Test for zero length.
                 if norm_factor == 0.0:

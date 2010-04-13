@@ -168,12 +168,12 @@ class Diffusion_tensor(SystemTestCase):
         print("\nThe tensor in relax (in eig frame):\n%s" % cdp.diff_tensor.tensor_diag)
 
         # Check the Euler angles.
-        self.assertAlmostEqual(Dx, cdp.diff_tensor.Dx)
-        self.assertAlmostEqual(Dy, cdp.diff_tensor.Dy)
-        self.assertAlmostEqual(Dz, cdp.diff_tensor.Dz)
-        self.assertAlmostEqual(Diso, cdp.diff_tensor.Diso)
-        self.assertAlmostEqual(Da, cdp.diff_tensor.Da)
-        self.assertAlmostEqual(Dr, cdp.diff_tensor.Dr)
+        self.assertAlmostEqual(Dx * 1e-7, cdp.diff_tensor.Dx * 1e-7)
+        self.assertAlmostEqual(Dy * 1e-7, cdp.diff_tensor.Dy * 1e-7)
+        self.assertAlmostEqual(Dz * 1e-7, cdp.diff_tensor.Dz * 1e-7)
+        self.assertAlmostEqual(Diso * 1e-7, cdp.diff_tensor.Diso * 1e-7)
+        self.assertAlmostEqual(Da * 1e-7, cdp.diff_tensor.Da * 1e-7)
+        self.assertAlmostEqual(Dr * 1e-7, cdp.diff_tensor.Dr * 1e-7)
         self.assertAlmostEqual(alpha, cdp.diff_tensor.alpha)
         self.assertAlmostEqual(beta, cdp.diff_tensor.beta)
         self.assertAlmostEqual(gamma, cdp.diff_tensor.gamma)
@@ -181,8 +181,8 @@ class Diffusion_tensor(SystemTestCase):
         # Check the elements.
         for i in range(3):
             for j in range(3):
-                self.assertAlmostEqual(cdp.diff_tensor.tensor[i, j], D[i, j])
-                self.assertAlmostEqual(cdp.diff_tensor.tensor_diag[i, j], D_prime[i, j])
+                self.assertAlmostEqual(cdp.diff_tensor.tensor[i, j] * 1e-7, D[i, j] * 1e-7)
+                self.assertAlmostEqual(cdp.diff_tensor.tensor_diag[i, j] * 1e-7, D_prime[i, j] * 1e-7)
                 self.assertAlmostEqual(cdp.diff_tensor.rotation[i, j], R[i, j])
 
 
@@ -566,3 +566,12 @@ class Diffusion_tensor(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+
+        # Check the values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertEqual(cdp.diff_tensor.fixed, False)
+        self.assertEqual(cdp.diff_tensor.type, 'spheroid')
+        self.assertAlmostEqual(cdp.diff_tensor.tm * 1e9, 1.0/(6.0*7e7/3.0) * 1e9)
+        self.assertAlmostEqual(cdp.diff_tensor.Da * 1e-7, 1.0)
+        self.assertAlmostEqual(cdp.diff_tensor.theta, 2.0)
+        self.assertAlmostEqual(cdp.diff_tensor.phi, pi-0.5)

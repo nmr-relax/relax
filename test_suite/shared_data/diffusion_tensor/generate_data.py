@@ -79,7 +79,7 @@ def ri_data(Dx=None, Dy=None, Dz=None, R=eye(3), vectors=None, frq_label=None, w
     w[2] = wH - wN
     w[3] = wH
     w[4] = wH + wN
-    print("\nFrequencies, w: %s" % w)
+    print("Frequencies, w: %s" % w)
 
     # CSA constant.
     csa_const = (wN * csa)**2 / 3.0
@@ -222,14 +222,14 @@ def pdb(r=1.02, file_name='uniform.pdb', inc=None):
             # The index.
             index = i + j*len(theta)
 
+            # Scale the vector.
+            vector = vectors[index] * r
+
             # Store the rearranged vector (truncated as in the PDB).
             trunc_vect = zeros(3, float64)
             for k in range(3):
-                trunc_vect[k] = float("%.3f" % vectors[index][k])
+                trunc_vect[k] = float("%.3f" % vector[k])
             new_vectors.append(trunc_vect)
-
-            # Scale the vector.
-            vector = vectors[index] * r
 
             # Residue number.
             res = (atom_num + 1) / 2
