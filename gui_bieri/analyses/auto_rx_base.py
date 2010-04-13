@@ -363,27 +363,14 @@ class Auto_rx:
         # Display the relax controller.
         self.gui.controller.Show()
 
-        # FIXME:  Debugging code, non-threaded exec.
-        self.execute_thread()
-        event.Skip()
-        return
-
-        # The thread object storage.
-        self.gui.calc_threads.append(Thread_container())
-        thread_cont = self.gui.calc_threads[-1]
-
         # Start the thread.
-        id = thread.start_new_thread(self.execute_thread, ())
-
-        # Add the thread info to the container.
-        thread_cont.id = id
-        thread_cont.analysis_type = self.analysis_type
+        id = thread.start_new_thread(self.execute_thread, ('dummy',))
 
         # Terminate the event.
         event.Skip()
 
 
-    def execute_thread(self):
+    def execute_thread(self, dummy_string):
         """Execute the calculation in a thread."""
 
         # Redirect relax output and errors to the controller.
