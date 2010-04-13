@@ -193,7 +193,7 @@ class Redirect_text(object):
         # Final analysis or Rx calculation.
         else:
             if self.status.mc_number:
-                progress = 100 * self.status.mc_number / cdp.sim_number
+                progress = 100 * (self.status.mc_number+2) / cdp.sim_number
                 wx.CallAfter(self.out.progress_bar.SetValue, progress)
 
         # Add new output.
