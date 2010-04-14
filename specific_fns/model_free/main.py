@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -449,7 +449,7 @@ class Model_free_main:
         spin, spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
         # Missing structural data.
-        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid') and (not hasattr(spin, 'xh_vect') or not spin.xh_vect):
+        if hasattr(cdp, 'diff_tensor') and (cdp.diff_tensor.type == 'spheroid' or cdp.diff_tensor.type == 'ellipsoid') and (not hasattr(spin, 'xh_vect') or spin.xh_vect == None):
             warn(RelaxDeselectWarning(spin_id, 'missing structural data'))
             return
 
