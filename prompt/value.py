@@ -86,7 +86,7 @@ class Value(User_fn_class):
         arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
-        self.__relax__.generic.value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
+        value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
 
 
     def display(self, param=None):
@@ -122,7 +122,7 @@ class Value(User_fn_class):
         arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
-        self.__relax__.generic.value.display(param=param)
+        value.display(param=param)
 
 
     def read(self, param=None, scaling=1.0, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
@@ -227,7 +227,7 @@ class Value(User_fn_class):
         arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+        value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
     def set(self, val=None, param=None, spin_id=None):
