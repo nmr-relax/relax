@@ -44,7 +44,7 @@ class Molmol(User_fn_class):
             print(text)
 
         # Execute the functional code.
-        self.__relax__.generic.molmol.clear_history()
+        molmol.clear_history()
 
 
     def command(self, command=None):
