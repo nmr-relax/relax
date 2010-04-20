@@ -27,13 +27,14 @@
 from copy import deepcopy
 from math import sqrt
 from numpy import array, float64, zeros
+import sys
 from warnings import warn
 
 # relax module imports.
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_data_array, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError, RelaxPCSError
-from relax_io import read_spin_data
+from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning
 
 
@@ -351,6 +352,17 @@ def data_init(container, global_flag=False):
             setattr(container, name, 0)
 
 
+def display(align_id=None):
+    """Display the PCS data corresponding to the alignment ID.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    """
+
+    # Call the write method with sys.stdout as the file.
+    write(align_id=align_id, file=sys.stdout)
+
+
 def get_data_names(global_flag=False, sim_names=False):
     """Return a list of names of data structures associated with relax_data.
 
@@ -651,3 +663,51 @@ def return_data_desc(name):
         return 'The relaxation data'
     if name == 'relax_error':
         return 'The relaxation data errors'
+
+
+def write(align_id=None, file=None, dir=None, force=False):
+    """Display the PCS data corresponding to the alignment ID.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    @keyword file:      The file name or object to write to.
+    @type file:         str or file object
+    @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
+    @type dir:          str
+    @keyword force:     A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:        bool
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'pcs_ids') or align_id not in cdp.pcs_ids:
+        raise RelaxNoPCSError(align_id)
+
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
+
+    # The index.
+    index = cdp.pcs_ids.index(align_id)
+
+    # Loop over the spins and collect the data.
+    spin_ids = []
+    values = []
+    errors = []
+    for spin, spin_id in spin_loop(return_id=True):
+        # Skip spins with no PCSs.
+        if not hasattr(spin, 'pcs'):
+            continue
+
+        # Store the data.
+        spin_ids.append(spin_id)
+        values.append(spin.pcs[index])
+        errors.append(spin.pcs_err[index])
+
+    # Write out.
+    write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='PCSs', error=errors, error_name='PCS_error')
