@@ -36,8 +36,8 @@ from generic_fns.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_
 from generic_fns import pipes
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
-from relax_io import read_spin_data, write_spin_data
+from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRDCError
+from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning
 
 
@@ -306,6 +306,17 @@ def data_init(container, global_flag=False):
         # If the name is not in the container, add it as a variable set to zero.
         if name in zero_data and not hasattr(container, name):
             setattr(container, name, 0)
+
+
+def display(align_id=None):
+    """Display the RDC data corresponding to the alignment ID.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    """
+
+    # Call the write method with sys.stdout as the file.
+    write(align_id=align_id, file=sys.stdout)
 
 
 def get_data_names(global_flag=False, sim_names=False):
@@ -855,3 +866,53 @@ def update_noe_r1_table(cont):
             for j in xrange(cont.num_ri):
                 if cont.ri_labels[j] == 'NOE' and cont.frq_labels[cont.remap_table[i]] == cont.frq_labels[cont.remap_table[j]]:
                     cont.noe_r1_table[j] = i
+
+
+def write(align_id=None, file=None, dir=None, force=False):
+    """Display the RDC data corresponding to the alignment ID.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    @keyword file:      The file name or object to write to.
+    @type file:         str or file object
+    @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
+    @type dir:          str
+    @keyword force:     A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:        bool
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'rdc_ids') or align_id not in cdp.rdc_ids:
+        raise RelaxNoRDCError(align_id)
+
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
+
+    # The index.
+    index = cdp.rdc_ids.index(align_id)
+
+    # Loop over the spins and collect the data.
+    spin_ids = []
+    values = []
+    errors = []
+    for spin, spin_id in spin_loop(return_id=True):
+        # Skip spins with no RDCs.
+        if not hasattr(spin, 'rdc'):
+            continue
+
+        # Store the data.
+        spin_ids.append(spin_id)
+        values.append(spin.rdc[index])
+        errors.append(spin.rdc_err[index])
+
+    # Write out.
+    write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
+
+
