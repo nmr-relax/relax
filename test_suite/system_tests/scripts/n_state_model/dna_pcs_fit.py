@@ -23,7 +23,7 @@ structure.load_spins(spin_id='@H*')
 
 # The PCS.
 pcs.read(align_id='Dy', file='LE_dna', dir=data_path, res_num_col=2, res_name_col=3, spin_name_col=5, data_col=6, error_col=None)
-#pcs.display(align_id='Dy')
+pcs.display(align_id='Dy')
 
 # The temperature.
 temperature(id='Dy', temp=298)
