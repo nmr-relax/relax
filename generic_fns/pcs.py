@@ -148,7 +148,7 @@ def q_factors(spin_id=None):
     cdp.q_factors_pcs = []
 
     # Loop over the alignments.
-    for i in xrange(len(cdp.align_tensors)):
+    for align_id in cdp.pcs_ids:
         # Init.
         pcs2_sum = 0.0
         sse = 0.0
@@ -172,14 +172,14 @@ def q_factors(spin_id=None):
                 pcs_bc_data = True
 
             # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or spin.pcs[i] == None:
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or spin.pcs[align_id] == None:
                 continue
 
             # Sum of squares.
-            sse = sse + (spin.pcs[i] - spin.pcs_bc[i])**2
+            sse = sse + (spin.pcs[align_id] - spin.pcs_bc[align_id])**2
 
             # Sum the PCSs squared (for normalisation).
-            pcs2_sum = pcs2_sum + spin.pcs[i]**2
+            pcs2_sum = pcs2_sum + spin.pcs[align_id]**2
 
         # The Q-factor for the alignment.
         Q = sqrt(sse / pcs2_sum)
@@ -278,19 +278,19 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         if data_col:
             # Initialise.
             if not hasattr(spin, 'pcs'):
-                spin.pcs = []
+                spin.pcs = {}
 
             # Append the value.
-            spin.pcs.append(value)
+            spin.pcs[align_id] = value
 
         # Add the error.
         if error_col:
             # Initialise.
             if not hasattr(spin, 'pcs_err'):
-                spin.pcs_err = []
+                spin.pcs_err = {}
 
             # Append the error.
-            spin.pcs_err.append(error)
+            spin.pcs_err[align_id] = error
 
         # Print out.
         print(("%-50s %15s %15s" % (id, value, error)))
@@ -300,10 +300,14 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     ##################################
 
     # Initialise.
+    if not hasattr(cdp, 'align_ids'):
+        cdp.align_ids = []
     if not hasattr(cdp, 'pcs_ids'):
         cdp.pcs_ids = []
 
     # Add the PCS id string.
+    if align_id not in cdp.align_ids:
+        cdp.align_ids.append(align_id)
     if align_id not in cdp.pcs_ids:
         cdp.pcs_ids.append(align_id)
 
@@ -335,23 +339,22 @@ def write(align_id=None, file=None, dir=None, force=False):
     # Open the file for writing.
     file = open_write_file(file, dir, force)
 
-    # The index.
-    index = cdp.pcs_ids.index(align_id)
-
     # Loop over the spins and collect the data.
     spin_ids = []
     values = []
     errors = []
     for spin, spin_id in spin_loop(return_id=True):
         # Skip spins with no PCSs.
-        if not hasattr(spin, 'pcs'):
+        if not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys():
             continue
 
         # Store the data.
         spin_ids.append(spin_id)
-        values.append(spin.pcs[index])
-        if hasattr(spin, 'pcs_err'):
-            errors.append(spin.pcs_err[index])
+        values.append(spin.pcs[align_id])
+        if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+            errors.append(spin.pcs_err[align_id])
+        else:
+            errors.append(None)
 
     # Write out.
     write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='PCSs', error=errors, error_name='PCS_error')

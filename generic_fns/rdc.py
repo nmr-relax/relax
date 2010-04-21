@@ -105,7 +105,7 @@ def q_factors(spin_id=None):
     cdp.q_factors_rdc_norm2 = []
 
     # Loop over the alignments.
-    for i in xrange(len(cdp.align_tensors)):
+    for align_id in cdp.rdc_ids:
         # Init.
         D2_sum = 0.0
         sse = 0.0
@@ -131,14 +131,14 @@ def q_factors(spin_id=None):
                 rdc_bc_data = True
 
             # Skip spins without RDC data.
-            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or spin.rdc[i] == None:
+            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or spin.rdc[align_id] == None:
                 continue
 
             # Sum of squares.
-            sse = sse + (spin.rdc[i] - spin.rdc_bc[i])**2
+            sse = sse + (spin.rdc[align_id] - spin.rdc_bc[align_id])**2
 
             # Sum the RDCs squared (for one type of normalisation).
-            D2_sum = D2_sum + spin.rdc[i]**2
+            D2_sum = D2_sum + spin.rdc[align_id]**2
 
             # Gyromagnetic ratios.
             gx = return_gyromagnetic_ratio(spin.heteronuc_type)
@@ -166,7 +166,7 @@ def q_factors(spin_id=None):
             return
 
         # Normalisation factor of 2Da^2(4 + 3R)/5.
-        D = dj * cdp.align_tensors[i].A_diag
+        D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
         Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
         Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
         R = Dr / Da
@@ -277,19 +277,19 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         if data_col:
             # Initialise.
             if not hasattr(spin, 'rdc'):
-                spin.rdc = []
+                spin.rdc = {}
 
             # Append the value.
-            spin.rdc.append(value)
+            spin.rdc[align_id] = value
 
         # Add the error.
         if error_col:
             # Initialise.
             if not hasattr(spin, 'rdc_err'):
-                spin.rdc_err = []
+                spin.rdc_err = {}
 
             # Append the error.
-            spin.rdc_err.append(error)
+            spin.rdc_err[align_id] = error
 
         # Append the data for print out.
         spin_ids.append(id)
@@ -304,10 +304,14 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     ##################################
 
     # Initialise.
+    if not hasattr(cdp, 'align_ids'):
+        cdp.align_ids = []
     if not hasattr(cdp, 'rdc_ids'):
         cdp.rdc_ids = []
 
     # Add the RDC id string.
+    if align_id not in cdp.align_ids:
+        cdp.align_ids.append(align_id)
     if align_id not in cdp.rdc_ids:
         cdp.rdc_ids.append(align_id)
 
@@ -348,14 +352,16 @@ def write(align_id=None, file=None, dir=None, force=False):
     errors = []
     for spin, spin_id in spin_loop(return_id=True):
         # Skip spins with no RDCs.
-        if not hasattr(spin, 'rdc'):
+        if not hasattr(spin, 'rdc') or align_id not in spin.rdc.keys():
             continue
 
         # Store the data.
         spin_ids.append(spin_id)
-        values.append(spin.rdc[index])
-        if hasattr(spin, 'rdc_err'):
-            errors.append(spin.rdc_err[index])
+        values.append(spin.rdc[align_id])
+        if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+            errors.append(spin.rdc_err[align_id])
+        else:
+            errors.append(None)
 
     # Write out.
     write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
