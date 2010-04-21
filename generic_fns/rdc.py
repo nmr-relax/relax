@@ -34,7 +34,7 @@ from warnings import warn
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from generic_fns import pipes
 from maths_fns.rdc import ave_rdc_tensor
-from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
+from physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxNoSpinError
 from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning
