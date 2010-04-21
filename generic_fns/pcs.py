@@ -227,9 +227,9 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     @type spin_name_col:    int or None
     @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
-    @keyword data_col:      The column containing the RDC data in Hz.
+    @keyword data_col:      The column containing the PCS data in Hz.
     @type data_col:         int or None
-    @keyword error_col:     The column containing the RDC errors.
+    @keyword error_col:     The column containing the PCS errors.
     @type error_col:        int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
