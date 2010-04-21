@@ -350,7 +350,8 @@ def write(align_id=None, file=None, dir=None, force=False):
         # Store the data.
         spin_ids.append(spin_id)
         values.append(spin.pcs[index])
-        errors.append(spin.pcs_err[index])
+        if hasattr(spin, 'pcs_err'):
+            errors.append(spin.pcs_err[index])
 
     # Write out.
     write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='PCSs', error=errors, error_name='PCS_error')

@@ -354,7 +354,8 @@ def write(align_id=None, file=None, dir=None, force=False):
         # Store the data.
         spin_ids.append(spin_id)
         values.append(spin.rdc[index])
-        errors.append(spin.rdc_err[index])
+        if hasattr(spin, 'rdc_err'):
+            errors.append(spin.rdc_err[index])
 
     # Write out.
     write_spin_data(file=file, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
