@@ -34,6 +34,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_io import DummyFileObject
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
@@ -384,7 +385,12 @@ class Auto_noe:
         data.proton = global_settings[3]
 
         # Unresolved resiudes
-        data.unresolved = self.data.unresolved
+        file = DummyFileObject()
+        entries = self.data.unresolved
+        entries = replace(entries, ',', '\n')
+        file.write(entries)
+        file.close()
+        data.unresolved = file
 
         # Structure File
         data.structure_file = self.data.structure_file
