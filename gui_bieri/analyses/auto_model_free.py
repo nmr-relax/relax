@@ -518,7 +518,7 @@ class Auto_model_free:
             data.structure_file = self.data.structure_file
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = [self.data.paramfiles1[0], None, None, 2, 3, 4, 5, None]
+        data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
 
         # The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
         data.het_name = ds.relax_gui.global_setting[2]
