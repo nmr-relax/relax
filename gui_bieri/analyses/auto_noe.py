@@ -500,9 +500,9 @@ class Auto_noe:
         """Execute the calculation in a thread."""
 
         # Redirect relax output and errors to the controller.
-        #redir = Redirect_text(self.gui.controller)
-        #sys.stdout = redir
-        #sys.stderr = redir
+        redir = Redirect_text(self.gui.controller)
+        sys.stdout = redir
+        sys.stderr = redir
 
         # Print a header in the controller.
         header = 'Starting NOE calculation'
@@ -515,6 +515,9 @@ class Auto_noe:
 
         # Execute.
         NOE_calc(filename=data.filename, seq_args=data.seq_args, pipe_name='noe', noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, results_folder=data.save_dir, int_method='height', heteronuc = 'N', proton = 'H')
+
+        # Feedback about success.
+        wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
 
 
     def link_data(self, data):
