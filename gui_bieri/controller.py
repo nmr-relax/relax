@@ -62,7 +62,7 @@ class Controller(wx.Dialog):
         self.progress_bar = wx.Gauge(self, -1, 100)
 
         # buttons
-        self.cancel_button = wx.Button(self, -1, "Kill")
+        self.cancel_button = wx.Button(self, -1, "Kill and Exit")
         self.close_button = wx.Button(self, -1, "Close")
 
         # Create Objects (see below)
