@@ -520,8 +520,27 @@ class Auto_model_free:
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
 
-        # The heteronucleus atom name corresponding to that of the PDB file (used if the spin name is not in the sequence data).
-        data.het_name = ds.relax_gui.global_setting[2]
+        # Import golbal settings.
+        global_settings = ds.relax_gui.global_setting
+
+        # Hetero nucleus name.
+        data.hetnuc = global_settings[2]
+
+        # Proton name.
+        data.proton = global_settings[3]
+
+        # Increment size.
+        data.inc = int(global_settings[4])
+
+        # The optimisation technique.
+        data.min_algor = global_settings[5]
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        data.mc_num = int(global_settings[6])
+
+        # The bond length, CSA values.
+        data.bond_length = 1.02 * 1e-10
+        data.csa = -172 * 1e-6
 
         # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
         data.relax_data = []
@@ -546,21 +565,6 @@ class Auto_model_free:
 
         # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
         data.exclude = None
-
-        # The bond length, CSA values, heteronucleus type, and proton type.
-        data.bond_length = 1.02 * 1e-10
-        data.csa = -172 * 1e-6
-        data.hetnuc = '15N'
-        data.proton = '1H'
-
-        # The grid search size (the number of increments per dimension).
-        data.grid_inc = 11
-
-        # The optimisation technique.
-        data.min_algor = 'newton'
-
-        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = 500
 
         # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
         data.conv_loop = True
