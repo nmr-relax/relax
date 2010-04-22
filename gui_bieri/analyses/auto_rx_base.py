@@ -267,9 +267,20 @@ class Auto_rx:
         # The integration method.
         data.int_method = 'height'
 
+        # Import golbal settings.
+        global_settings = ds.relax_gui.global_setting
+
+        # Hetero nucleus name.
+        data.heteronuc = global_settings[2]
+
+        # Proton name.
+        data.proton = global_settings[3]
+
+        # Increment size.
+        data.inc = int(global_settings[4])
+
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = ds.relax_gui.global_setting
-        data.mc_num = int(data.mc_num[6])
+        data.mc_num = int(global_settings[6])
 
         # Unresolved resiudes
         file = DummyFileObject()
@@ -288,6 +299,9 @@ class Auto_rx:
 
         # Results directory.
         data.save_dir = self.data.save_dir
+
+
+
 
         # Return the container.
         return data
@@ -388,7 +402,7 @@ class Auto_rx:
         data = self.assemble_data()
 
         # Execute.
-        Relax_fit(filename = self.filename, seq_args=data.seq_args, directory = data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file = data.structure_file, unresolved = data.unresolved, view_plots = False)
+        Relax_fit(filename=self.filename, seq_args=data.seq_args, directory=data.save_dir, file_names=data.file_names, relax_times=data.relax_times, int_method=data.int_method, mc_num=data.mc_num, pdb_file=data.structure_file, unresolved=data.unresolved, view_plots = False, heteronuc=data.heteronuc, proton=data.proton, inc=data.inc)
         
         # Feedback about success.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
