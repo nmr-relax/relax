@@ -513,11 +513,12 @@ class Auto_model_free:
                 data.mf_models.append('m%i' % i)
                 data.local_tm_models.append('tm%i' % i)
 
-        # The PDB file (set this to None if no structure is available).
-        if self.data.structure_file == '':
+        # Structure File
+        data.structure_file = self.data.structure_file
+
+        # Set Structure file as None if a structure file is loaded.
+        if data.structure_file == '!!! Sequence file selected !!!':
             data.structure_file = None
-        else:
-            data.structure_file = self.data.structure_file
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
