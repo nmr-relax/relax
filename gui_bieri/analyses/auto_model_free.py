@@ -34,6 +34,8 @@ import wx
 # relax module imports.
 from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 from data import Relax_data_store; ds = Relax_data_store()
+from relax_io import DummyFileObject
+
 
 # relax GUI module imports.
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
@@ -558,10 +560,13 @@ class Auto_model_free:
             data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, 2, 3, 4, 5, 6, 7, None])
             data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, 2, 3, 4, 5, 6, 7, None])
 
-        # The file containing the list of unresolved spins to exclude from the analysis (set this to None if no spin is to be excluded).
-        # FIXME:  The unresolved file is not properly handled!
-        data.unres = self.data.results_dir_model + sep + 'unresolved'
-        data.unres = None
+        # Unresolved resiudes
+        file = DummyFileObject()
+        entries = self.data.unresolved
+        entries = replace(entries, ',', '\n')
+        file.write(entries)
+        file.close()
+        data.unres = file
 
         # A file containing a list of spins which can be dynamically excluded at any point within the analysis (when set to None, this variable is not used).
         data.exclude = None
