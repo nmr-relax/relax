@@ -545,6 +545,9 @@ class Auto_model_free:
         data.bond_length = 1.02 * 1e-10
         data.csa = -172 * 1e-6
 
+        # Import parameter file settings.
+        param = ds.relax_gui.file_setting
+
         # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
         data.relax_data = []
         for i in range(3):
@@ -557,9 +560,9 @@ class Auto_model_free:
                 continue
 
             # Append the relaxation data.
-            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, 2, 3, 4, 5, 6, 7, None])
-            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, 2, 3, 4, 5, 6, 7, None])
-            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, 2, 3, 4, 5, 6, 7, None])
+            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, param[1], param[2], param[3], param[4], param[5], param[6], None])
+            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, param[1], param[2], param[3], param[4], param[5], param[6], None])
+            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, param[1], param[2], param[3], param[4], param[5], param[6], None])
 
         # Unresolved resiudes
         file = DummyFileObject()
