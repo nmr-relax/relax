@@ -250,7 +250,7 @@ class Auto_rx:
         data = Container()
 
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = ['fixme!', None, None, 2, 3, 4, 5, None]
+        data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
 
         # The file names and relaxation times.
         for i in range(len(self.data.file_list)):
