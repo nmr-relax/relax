@@ -395,6 +395,10 @@ class Auto_noe:
         # Structure File
         data.structure_file = self.data.structure_file
 
+        # Set Structure file as None if a structure file is loaded.
+        if data.structure_file == '!!! Sequence file selected !!!':
+            data.structure_file = None
+
         # Return the container.
         return data
 
