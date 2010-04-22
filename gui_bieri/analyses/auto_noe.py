@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import sep
+from string import replace
 import sys
 import thread
 import time
@@ -373,7 +374,7 @@ class Auto_noe:
         data.save_dir = self.data.save_dir
 
         # Filename.
-        self.filename = 'noe.' + self.field_nmr_frq.GetValue()
+        data.filename = 'noe.' + self.field_nmr_frq.GetValue()
 
         # The integration method.
         data.int_method = 'height'
