@@ -48,10 +48,12 @@ for i in xrange(len(align_list)):
     # The RDC.
     rdc.read(align_id=align_list[i], file='rdc.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+3, error_col=None)
     rdc.read(align_id=align_list[i], file='rdc_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+3)
+    rdc.display(align_id=align_list[i])
 
     # The PCS.
     pcs.read(align_id=align_list[i], file='pcs.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+2, error_col=None)
     pcs.read(align_id=align_list[i], file='pcs_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+2)
+    pcs.display(align_id=align_list[i])
 
     # The temperature.
     temperature(id=align_list[i], temp=298)

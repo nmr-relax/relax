@@ -623,6 +623,17 @@ class N_state_model(API_base, API_common):
 
         # Loop over each alignment.
         for i in xrange(model.num_align):
+            # The alignment ID.
+            align_id = cdp.align_ids[i]
+
+            # Data flags
+            rdc_flag = False
+            if hasattr(cdp, 'rdc_ids') and align_id in cdp.rdc_ids:
+                rdc_flag = True
+            pcs_flag = False
+            if hasattr(cdp, 'pcs_ids') and align_id in cdp.pcs_ids:
+                pcs_flag = True
+
             # Spin loop.
             data_index = 0
             for spin in spin_loop():
@@ -631,22 +642,22 @@ class N_state_model(API_base, API_common):
                     continue
 
                 # Spins with PCS data.
-                if hasattr(spin, 'pcs'):
+                if pcs_flag and hasattr(spin, 'pcs'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'pcs_bc'):
-                        spin.pcs_bc = [None]*model.num_align
+                        spin.pcs_bc = {}
 
-                    # Append the back calculated PCS (in ppm).
-                    spin.pcs_bc[i] = model.deltaij_theta[i, data_index] * 1e6
+                    # Add the back calculated PCS (in ppm).
+                    spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
-                if hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
+                if rdc_flag and hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = [None] * model.num_align
+                        spin.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc[i] = model.Dij_theta[i, data_index]
+                    spin.rdc_bc[align_id] = model.Dij_theta[i, data_index]
 
                 # Increment the spin index if it contains data.
                 if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
@@ -681,24 +692,15 @@ class N_state_model(API_base, API_common):
         r = []
         pcs_const = []
 
-        # Spin loop.
-        for spin, spin_id in spin_loop(return_id=True):
+        # The bond lengths and unit vectors.
+        for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Skip spins without PCS data.
+            # Only use spins with PCS data.
             if not hasattr(spin, 'pcs'):
                 continue
-
-            # Append the PCSs to the list.
-            pcs.append(spin.pcs)
-
-            # Append the PCS errors (or a list of None).
-            if hasattr(spin, 'pcs_err'):
-                pcs_err.append(spin.pcs_err)
-            else:
-                pcs_err.append([None]*len(spin.pcs))
 
             # Add empty lists to the r and unit_vector lists.
             unit_vect.append([])
@@ -724,64 +726,72 @@ class N_state_model(API_base, API_common):
         # Convert the distances from Angstrom to meters.
         r = array(r, float64) * 1e-10
 
-        # Loop over experiments.
-        for i in xrange(len(cdp.align_tensors)):
-            # Append an empty array to the PCS constant structure.
+        # The PCS data.
+        for align_id in cdp.align_ids:
+            # Append empty arrays to the PCS structures.
+            pcs.append([])
+            pcs_err.append([])
             pcs_const.append([])
 
             # Get the temperature and spectrometer frequency for the PCS constant.
-            id = cdp.align_tensors[i].name
-            temp = cdp.temperature[id]
-            frq = cdp.frq[id]
+            temp = cdp.temperature[align_id]
+            frq = cdp.frq[align_id]
 
             # Convert the frequency of Hertz into a field strength in Tesla units.
             frq = frq * 2.0 * pi / g1H
 
             # Spin loop.
             j = 0
-            for spin, spin_id in spin_loop(return_id=True):
+            for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
                     continue
 
                 # Skip spins without PCS data.
                 if not hasattr(spin, 'pcs'):
+                    # Add rows of None if other alignment data exists.
+                    if hasattr(spin, 'rdc'):
+                        pcs[-1].append(None)
+                        pcs_err[-1].append(None)
+                        pcs_const[-1].append(None)
+
+                    # Jump to the next spin.
                     continue
 
+                # Append the PCSs to the list.
+                if align_id in spin.pcs.keys():
+                    pcs[-1].append(spin.pcs[align_id])
+                else:
+                    pcs[-1].append(None)
+
+                # Append the PCS errors.
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                    pcs_err[-1].append(spin.pcs_err[align_id])
+                else:
+                    pcs_err[-1].append(None)
+
                 # Append an empty array to the PCS constant structure.
-                pcs_const[i].append([])
+                pcs_const[-1].append([])
 
                 # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
                 for c in range(cdp.N):
-                    pcs_const[i][-1].append(pcs_constant(temp, frq, r[j][c]))
+                    pcs_const[-1][-1].append(pcs_constant(temp, frq, r[j][c]))
 
                 # Spin index.
                 j = j + 1
 
-        # Initialise the numpy objects (the pcs matrix is transposed!).
-        pcs_numpy = zeros((len(pcs[0]), len(pcs)), float64)
-        pcs_err_numpy = zeros((len(pcs[0]), len(pcs)), float64)
-        unit_vect_numpy = zeros((len(unit_vect), len(unit_vect[0]), 3), float64)
-
-        # Loop over the spins.
-        for spin_index in xrange(len(pcs)):
-            # Loop over the alignments.
-            for align_index in xrange(len(pcs[spin_index])):
-                # Transpose and store the PCS value and error.
-                pcs_numpy[align_index, spin_index] = pcs[spin_index][align_index]
-                pcs_err_numpy[align_index, spin_index] = pcs_err[spin_index][align_index]
-
-            # Loop over the N states.
-            for state_index in xrange(len(unit_vect[spin_index])):
-                # Store the unit vector.
-                unit_vect_numpy[spin_index, state_index] = unit_vect[spin_index][state_index]
+        # Convert to numpy objects.
+        pcs = array(pcs, float64)
+        pcs_err = array(pcs_err, float64)
+        unit_vect = array(unit_vect, float64)
+        pcs_const = array(pcs_const, float64)
 
         # Convert the PCS from ppm to no units.
-        pcs_numpy = pcs_numpy * 1e-6
-        pcs_err_numpy = pcs_err_numpy * 1e-6
+        pcs = pcs * 1e-6
+        pcs_err = pcs_err * 1e-6
 
         # Return the data structures.
-        return pcs_numpy, pcs_err_numpy, unit_vect_numpy, array(pcs_const)
+        return pcs, pcs_err, unit_vect, pcs_const
 
 
     def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
@@ -789,32 +799,31 @@ class N_state_model(API_base, API_common):
 
         @return:    The assembled data structures for using RDCs as the base data for optimisation.
                     These include:
-                        - rdcs, the RDC values.
+                        - rdc, the RDC values.
+                        - rdc_err, the RDC errors.
                         - vectors, the heteronucleus to proton vectors.
-                        - dj, the dipolar constants.
+                        - rdc_const, the dipolar constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
 
         # Initialise.
-        rdcs = []
+        rdc = []
         rdc_err = []
-        vectors = []
-        dj = []
+        unit_vect = []
+        rdc_const = []
 
-        # Spin loop.
+        # The unit vectors and RDC constants.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Skip spins without RDC data.
+            # Only use spins with RDC data.
             if not hasattr(spin, 'rdc'):
-                # Add rows of None if other data exists.
+                # Add rows of None if other alignment data exists.
                 if hasattr(spin, 'pcs'):
-                    rdcs.append([None]*len(cdp.align_tensors))
-                    rdc_err.append([None]*len(cdp.align_tensors))
-                    vectors.append([None]*3)
-                    dj.append(None)
+                    unit_vect.append(None)
+                    rdc_const.append(None)
 
                 # Jump to the next spin.
                 continue
@@ -826,10 +835,8 @@ class N_state_model(API_base, API_common):
 
                 # Add rows of None if other data exists.
                 if hasattr(spin, 'pcs'):
-                    rdcs.append([None]*len(cdp.align_tensors))
-                    rdc_err.append([None]*len(cdp.align_tensors))
-                    vectors.append([None]*3)
-                    dj.append(None)
+                    unit_vect.append(None)
+                    rdc_const.append(None)
 
                 # Jump to the next spin.
                 continue
@@ -857,11 +864,6 @@ class N_state_model(API_base, API_common):
                 # Normalise.
                 vect = vect / norm(vect)
 
-                # The RDC for the Me-pseudo spin where:
-                #     <D> = -1/3 Dpar.
-                # See Verdier, et al., JMR, 2003, 163, 353-359.
-                rdc = -3.0 * array(spin.rdc)
-
             # Normal spin set up.
             else:
                 # Append the RDC and XH vectors to the lists.
@@ -870,51 +872,91 @@ class N_state_model(API_base, API_common):
                 else:
                     vect = getattr(spin, 'bond_vect')
 
-                # The RDC.
-                rdc = array(spin.rdc)
-
-            # Add the RDC.
-            rdcs.append(rdc)
-
             # Add the bond vectors.
             if isinstance(vect[0], float):
-                vectors.append([vect])
+                unit_vect.append([vect])
             else:
-                vectors.append(vect)
-
-            # Append the PCS errors (or a list of None).
-            if hasattr(spin, 'rdc_err'):
-                rdc_err.append(spin.rdc_err)
-            else:
-                rdc_err.append([None]*len(cdp.align_tensors))
+                unit_vect.append(vect)
 
             # Gyromagnetic ratios.
             gx = return_gyromagnetic_ratio(spin.heteronuc_type)
             gh = return_gyromagnetic_ratio(spin.proton_type)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
+            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
 
-        # Initialise the numpy objects (the rdc matrix is transposed!).
-        rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        rdc_err_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        vect_numpy = zeros((len(vectors), len(vectors[0]), 3), float64)
+        # Fix the unit vector data structure.
+        num = None
+        for i in range(len(unit_vect)):
+            # Number of vectors.
+            if num == None:
+                if unit_vect[i] != None:
+                    num = len(unit_vect[i])
+                continue
 
-        # Loop over the spins.
-        for spin_index in xrange(len(rdcs)):
-            # Loop over the alignments.
-            for align_index in xrange(len(rdcs[spin_index])):
-                # Transpose and store the RDC value and error.
-                rdcs_numpy[align_index, spin_index] = rdcs[spin_index][align_index]
-                rdc_err_numpy[align_index, spin_index] = rdc_err[spin_index][align_index]
+            # Check.
+            if unit_vect[i] != None and len(unit_vect[i]) != num:
+                raise RelaxError, "The number of bond vectors for all spins do no match:\n%s" % unit_vect
 
-            # Loop over the N states.
-            for state_index in xrange(len(vectors[spin_index])):
-                # Store the unit vector.
-                vect_numpy[spin_index, state_index] = vectors[spin_index][state_index]
+        # Update None entries.
+        for i in range(len(unit_vect)):
+            if unit_vect[i] == None:
+                unit_vect[i] = [[None, None, None]]*num
+
+        # The PCS data.
+        for align_id in cdp.align_ids:
+            # Append empty arrays to the RDC structures.
+            rdc.append([])
+            rdc_err.append([])
+
+            # Spin loop.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins without RDC data or XH bond vectors.
+                if not hasattr(spin, 'rdc') or (not hasattr(spin, 'members') and not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect')):
+                    # Add rows of None if other alignment data exists.
+                    if hasattr(spin, 'pcs'):
+                        rdc[-1].append(None)
+                        rdc_err[-1].append(None)
+
+                    # Jump to the next spin.
+                    continue
+
+                # Pseudo-atom set up.
+                if hasattr(spin, 'members'):
+                    # Skip non-Me groups.
+                    if len(spin.members) != 3:
+                        continue
+
+                    # The RDC for the Me-pseudo spin where:
+                    #     <D> = -1/3 Dpar.
+                    # See Verdier, et al., JMR, 2003, 163, 353-359.
+                    rdc[-1].append(-3.0 * spin.rdc[align_id])
+
+                # Normal spin set up.
+                else:
+                    # The RDC.
+                    rdc[-1].append(spin.rdc[align_id])
+
+                # Append the RDC errors (or a list of None).
+                if hasattr(spin, 'rdc_err'):
+                    rdc_err[-1].append(spin.rdc_err[align_id])
+                else:
+                    rdc_err[-1].append(None)
+
+        # Convert to numpy objects.
+        rdc = array(rdc, float64)
+        rdc_err = array(rdc_err, float64)
+        for i in range(len(unit_vect)):
+            print unit_vect[i]
+        unit_vect = array(unit_vect, float64)
+        rdc_const = array(rdc_const, float64)
 
         # Return the data structures.
-        return rdcs_numpy, rdc_err_numpy, vect_numpy, array(dj, float64)
+        return rdc, rdc_err, unit_vect, rdc_const
 
 
     def _minimise_setup_tensors(self, sim_index=None):

@@ -32,6 +32,8 @@ value.set(1.02 * 1e-10, 'bond_length')
 value.set(-160 * 1e-6, 'csa')
 value.set('15N', 'heteronucleus')
 value.set('1H', 'proton')
+value.display('csa')
+value.write('proton', file='devnull')
 
 # Select the model-free model.
 model_free.select_model(model='m4')

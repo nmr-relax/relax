@@ -30,6 +30,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
+from generic_fns.align_tensor import calc_chi_tensor
 
 
 class N_state_model(SystemTestCase):
@@ -224,6 +225,50 @@ class N_state_model(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+
+    def test_pcs_fit_true_pos(self):
+        """Test the fit of DNA PCSs at the true Ln3+ position."""
+
+        # Set the Ln3+ position.
+        ds.para_centre = 'true'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'dna_pcs_fit.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx,  1.42219822168827662867e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -1.44543001566521341940e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -7.07796211648713973798e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, -6.01619494082773244303e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz,  2.02008007072950861996e-04)
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+
+    def test_pcs_fit_zero_pos(self):
+        """Test the fit of DNA PCSs at a Ln3+ position of [0, 0, 0]."""
+
+        # Set the Ln3+ position.
+        ds.para_centre = 'zero'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'dna_pcs_fit.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx,  9.739588118243e-07)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -1.077401299806e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -2.321033328910e-06)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz,  5.105903556692e-07)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz,  1.676638764825e-05)
+        self.assertAlmostEqual(cdp.chi2, 2125.9562247877066)
+        self.assertAlmostEqual(cdp.q_pcs, 0.76065986767333704)
+
+        # The chi tensor.
+        chi_diag = calc_chi_tensor(cdp.align_tensors[0].A_diag, 799.75376122 * 1e6, 298)
+        chi_diag = chi_diag * 1e33
+        self.assertAlmostEqual((chi_diag[2, 2] - (chi_diag[0, 0] + chi_diag[1, 1])/2.0), -6.726159808496)
+        self.assertAlmostEqual((chi_diag[0, 0] - chi_diag[1, 1]), -3.960936794864)
 
 
     def test_stereochem_analysis(self):
