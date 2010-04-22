@@ -52,6 +52,7 @@ from analyses.auto_noe import Auto_noe
 from analyses.auto_r1 import Auto_r1
 from analyses.auto_r2 import Auto_r2
 from analyses.project import create_save_file, open_file
+from analyses.results import Results_summary
 from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
 from base_classes import Container
 from controller import Controller
@@ -400,11 +401,14 @@ class Main(wx.Frame):
         # Pack frequency 3 tab.
         self.notebook_left.AddPage(self.frq3, "Frq. 3")
 
-        # Results tab.
-        self.results = wx.Panel(self.notebook_left, -1)
-
         # Model-free tab.
         self.notebook_left.AddPage(self.analysis_frames[self.hardcoded_index_mf].parent, "Model-free")
+
+        # Results tab.
+        self.results = wx.Panel(self.notebook_left, -1)
+        results_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.results_frame = Results_summary(self, self.results)
+        results_sizer.Add(results_sizer, 1, wx.EXPAND, 0)
         self.notebook_left.AddPage(self.results, "Results")
 
         # Pack main notebook.
@@ -469,7 +473,7 @@ class Main(wx.Frame):
             self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
-            
+
             # Add file to R1 tabs.
             self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
@@ -479,11 +483,11 @@ class Main(wx.Frame):
             self.analysis_frames[self.hardcoded_index_r2_1].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_r2_2].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_r2_3].field_structure.SetValue(structure_file_pdb)
-            
+
             # Load sequencefile in relax data storage.
             for i in range(10):
              ds.relax_gui.analyses[i].sequence_file = sequencefile
-            
+
         event.Skip()
 
 
@@ -736,7 +740,7 @@ class Main(wx.Frame):
             self.analysis_frames[self.hardcoded_index_noe_1].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_noe_2].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_noe_3].field_structure.SetValue(structure_file_pdb)
-            
+
             # Add file to R1 tabs.
             self.analysis_frames[self.hardcoded_index_r1_1].field_structure.SetValue(structure_file_pdb)
             self.analysis_frames[self.hardcoded_index_r1_2].field_structure.SetValue(structure_file_pdb)
