@@ -300,9 +300,6 @@ class Auto_rx:
         # Results directory.
         data.save_dir = self.data.save_dir
 
-
-
-
         # Return the container.
         return data
 
