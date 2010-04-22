@@ -212,37 +212,6 @@ class Auto_model_free:
         box.Add(sizer_20, 1, wx.EXPAND, 0)
 
 
-    def add_modsel_method(self, box):
-        """Create and add the model selection choice GUI element to the given box.
-
-        @param box:     The box element to pack the model selection choice GUI element into.
-        @type box:      wx.BoxSizer instance
-        """
-
-        # The elements.
-        self.label_10 = wx.StaticText(self.parent, -1, "Select Model-free selection mode:      ")
-        self.aic = wx.RadioButton(self.parent, -1, "AIC")
-        self.bic = wx.RadioButton(self.parent, -1, "BIC")
-
-        # Properties.
-        self.label_10.SetMinSize((240, 17))
-        self.label_10.SetFont(wx.Font(10, wx.DEFAULT, wx.NORMAL, wx.NORMAL, 0, "Sans"))
-        self.aic.SetMinSize((60, 22))
-
-        # Layout.
-        sizer_21 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_21.Add(self.label_10, 0, wx.TOP|wx.ADJUST_MINSIZE, 1)
-        sizer_21.Add(self.aic, 0, wx.ADJUST_MINSIZE, 0)
-        sizer_21.Add(self.bic, 0, wx.ADJUST_MINSIZE, 0)
-
-        # Bind the events.
-        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_aic, self.aic)
-        self.gui.Bind(wx.EVT_RADIOBUTTON, self.sel_bic, self.bic)
-
-        # Add the sizer to the box.
-        box.Add(sizer_21, 1, wx.TOP|wx.EXPAND, 5)
-
-
     def add_pdb_selection(self, box):
         """Create and add the PDB file selection GUI element to the given box.
 
@@ -698,9 +667,6 @@ class Auto_model_free:
 
         # Add the model-free models GUI element.
         self.add_mf_models(box)
-
-        # Add the model selection GUI element.
-        self.add_modsel_method(box)
 
         # Add the PDB file selection GUI element.
         self.add_pdb_selection(box)
