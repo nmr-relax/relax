@@ -368,14 +368,20 @@ class Auto_noe:
         # Results directory.
         data.save_dir = self.data.save_dir
 
-        # Frequency
-        data.frq = int(self.field_nmr_frq.GetValue())
+        # Filename.
+        self.filename = self.analysis_type + '.' + self.field_nmr_frq.GetValue()
 
         # The integration method.
         data.int_method = 'height'
 
-        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        data.mc_num = 500
+        # Import golbal settings.
+        global_settings = ds.relax_gui.global_setting
+
+        # Hetero nucleus name.
+        data.heteronuc = global_settings[2]
+
+        # Proton name.
+        data.proton = global_settings[3]
 
         # Unresolved resiudes
         data.unresolved = self.data.unresolved
@@ -507,7 +513,7 @@ class Auto_noe:
         data = self.assemble_data()
 
         # Execute.
-        NOE_calc(pipe_name='noe', noe_ref = data.ref_file, noe_ref_rmsd = data.ref_rmsd, noe_sat = data.sat_file, noe_sat_rmsd = data.sat_rmsd, freq = data.frq, unresolved = data.unresolved, pdb_file = data.structure_file, results_folder = data.save_dir, int_method='height', mc_num=500)
+        NOE_calc(filename=data.filename, pipe_name='noe', noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, results_folder=data.save_dir, int_method='height', heteronuc = 'N', proton = 'H')
 
 
     def link_data(self, data):
