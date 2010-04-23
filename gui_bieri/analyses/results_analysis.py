@@ -92,11 +92,11 @@ def model_free_results(self, directory, pdbfile):
     te = []
 
     #create file
-    file = open(str(directory) + sep + 'Model-free_Results.txt', 'w')
+    file = open(str(directory) + sep + 'Model-free_Results.csv', 'w')
     file.write('Data Extraction by relaxGUI, (C) 2009 Michael Bieri')
     file.write("\n")
     file.write("\n")
-    "self.file.write(""Residue\t\tModel\tS2\t\t\tRex [1/s]\t\tTe\t\t\tRelaxation Parameters\n"")"
+    "self.file.write(""Residue;Model;S2;Rex_[1/s];Te;Relaxation_Parameters\n"")"
     file.write("\n")
 
     #loop over residues
@@ -114,7 +114,7 @@ def model_free_results(self, directory, pdbfile):
         # The model-free model.
         if hasattr(spin, 'model'):
             spin.model = spin.model[1:2]
-            file.write("\t\t" + spin.model)
+            file.write(";" + spin.model)
             model.append(spin.model)
 
         # S2.
@@ -122,10 +122,10 @@ def model_free_results(self, directory, pdbfile):
             s2 = str(spin.s2)
             s2_err = str(spin.s2_err)
             if spin.s2 == None:
-                file.write("")
+                file.write(";")
                 s2.appen('')
             else:
-                file.write("\t" + s2[0:5]+ " +/- " + s2_err[0:4])
+                file.write(";" + s2[0:5]+ " +/- " + s2_err[0:4])
                 s2.appen(s2[0:5]+ " +/- " + s2_err[0:4])
 
         # Rex.
@@ -133,33 +133,33 @@ def model_free_results(self, directory, pdbfile):
             rex = str(spin.rex)
             rex_err = str(spin.rex_err)
             if spin.rex == None:
-                file.write("\t\t\t")
+                file.write(";")
                 rex.appen('')
             else:
                 rex_eff = spin.rex * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
                 rex = str(rex_eff)
                 rex_err_eff = spin.rex_err * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
                 rex_err = str(rex_err_eff)
-                file.write("\t\t" + rex[0:5]+ " +/- " + rex_err[0:4])
+                file.write(";" + rex[0:5]+ " +/- " + rex_err[0:4])
                 rex.appen(rex[0:5]+ " +/- " + rex_err[0:4])
 
         # Te
         if hasattr(spin, 'te'):
             if spin.te == None:
-                file.write("\t\t")
+                file.write(";")
                 te.appen('')
             else:
                 te_ps = spin.te * 1e-12
                 te = str(te_ps)
                 te_err = str(spin.te_err)
-                file.write("\t\t" + te[0:5]+ " +/- " + te_err[0:4])
+                file.write(";" + te[0:5]+ " +/- " + te_err[0:4])
                 te.appen(te[0:5]+ " +/- " + te_err[0:4])
 
         # Parameters.
         if hasattr(spin, 'params'):
-            file.write("\t\t\t" + str(spin.params[0:len(spin.params)]))
+            file.write(";" + str(spin.params[0:len(spin.params)]))
         else:
-            file.write("\\n")
+            file.write(";\n")
             continue
 
         # Start a new line.
