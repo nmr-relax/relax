@@ -26,6 +26,7 @@
 
 # Python module imports.
 from os import getcwd, sep
+from string import replace
 import sys
 import thread
 import time
