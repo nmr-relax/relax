@@ -73,11 +73,10 @@ def color_code_noe(self, target_dir, pdb_file):
     file.close()
 
 
-def model_free_results(self):
+def model_free_results(self, directory, pdbfile):
     """Create the model-free results."""
 
-    directory = str(self.resultsdir_r21_copy_2.GetValue()) + sep + 'final'
-    pdbfile = str(self.structure_noe1.GetValue())
+    directory = directory + sep + 'final'
 
     #Read results
     pipename = 'Data_extraction ' + str(time.asctime(time.localtime()))
@@ -229,7 +228,8 @@ def model_free_results(self):
     #create file
 
     file = open(str(directory) +sep + 's2.pml', 'w')
-    file.write("load " + pdbfile + '\n')
+    if pdbfile:
+        file.write("load " + pdbfile + '\n')
     file.write("bg_color white\n")
     file.write("color gray90\n")
     file.write("hide all\n")
@@ -266,7 +266,8 @@ def model_free_results(self):
     #create file
 
     file = open(str(directory) + sep + 'rex.pml', 'w')
-    file.write("load " + pdbfile + '\n')
+    if pdbfile:
+        file.write("load " + pdbfile + '\n')
     file.write("bg_color white\n")
     file.write("color gray90\n")
     file.write("hide all\n")
