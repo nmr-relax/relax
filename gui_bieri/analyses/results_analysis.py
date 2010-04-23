@@ -34,10 +34,9 @@ from generic_fns.mol_res_spin import spin_loop
 from gui_bieri.paths import IMAGE_PATH
 
 
-def color_code_noe(self, target_dir):
+def color_code_noe(self, target_dir, pdb_file):
     """Create PyMol Macro for NOE colouring."""
 
-    pdbfile = str(self.structure_r21_copy_1_copy.GetValue())
     directory = target_dir
 
     #create file
