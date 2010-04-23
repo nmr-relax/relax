@@ -39,6 +39,7 @@ from relax_io import DummyFileObject
 
 # relaxGUI module imports.
 from gui_bieri.analyses.project import open_file
+from gui_bieri.analyses.results_analysis import color_code_noe
 from gui_bieri.base_classes import Container
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
@@ -524,6 +525,15 @@ class Auto_noe:
 
         # Add noe grace plot to relax data store.
         ds.relax_gui.results_noe.append(data.save_dir+sep+'grace'+sep+'noe.agr')
+
+        # Create color coded structure pymol macro.
+        color_code_noe(self, data.save_dir, data.structure_file)
+
+        # add macro to results tab
+        self.gui.list_noe.Append(data.save_dir+sep+'noe.pml')
+
+        # Add noe macro to relax data store.
+        ds.relax_gui.results_noe.append(data.save_dir+sep+'noe.pml')
 
 
     def link_data(self, data):
