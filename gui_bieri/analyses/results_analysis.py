@@ -41,7 +41,8 @@ def color_code_noe(self, target_dir, pdb_file):
 
     #create file
     file = open(directory + sep + 'noe.pml', 'w')
-    file.write("load " + pdbfile + '\n')
+    if pdb_file:
+        file.write("load " + pdbfile + '\n')
     file.write("bg_color white\n")
     file.write("color gray90\n")
     file.write("hide all\n")
