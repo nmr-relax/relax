@@ -632,13 +632,6 @@ class Auto_model_free:
                 # Execute the final run.
                 results_for_table = self.execute(global_model=which_model, automatic=False)
 
-                # set global results variables
-                ds.relax_gui.table_residue = results_for_table[0]
-                ds.relax_gui.table_model = results_for_table[1]
-                ds.relax_gui.table_s2 = results_for_table[2]
-                ds.relax_gui.table_rex = results_for_table[3]
-                ds.relax_gui.table_te = results_for_table[4]
-
         # Skip the event.
         event.Skip()
 
@@ -821,8 +814,31 @@ class Auto_model_free:
 
         # Create the results file.
         if model == 'final':
-            results_analysis = model_free_results(self)
-            return results_analysis     # return data for results table dialog
+            results_analysis = model_free_results(self, data.save_dir, data.structure_file)
+            
+            # Add grace plots to results tab.
+            directory = data.save_dir+sep+'final'
+            self.gui.list_modelfree.Append(directory+sep+'grace'+sep+'s2.agr')
+            self.gui.list_modelfree.Append(directory+sep+'Model-free_Results.txt')
+            self.gui.list_modelfree.Append(directory+sep+'diffusion_tensor.pml')
+            self.gui.list_modelfree.Append(directory+sep+'s2.pml')
+            self.gui.list_modelfree.Append(directory+sep+'rex.pml')
+            self.gui.list_modelfree.Append('Table_of_Results')
+            
+            # Add results to relax data storage.
+            ds.relax_gui.results_model_free.append(directory+sep+'grace'+sep+'s2.agr')
+            ds.relax_gui.results_model_free.append(directory+sep+'Model-free_Results.txt')
+            ds.relax_gui.results_model_free.append(directory+sep+'diffusion_tensor.pml')
+            ds.relax_gui.results_model_free.append(directory+sep+'s2.pml')
+            ds.relax_gui.results_model_free.append(directory+sep+'rex.pml')
+            ds.relax_gui.results_model_free.append('Table_of_Results')
+
+            # set global results variables
+            ds.relax_gui.table_residue = results_analysis[0]
+            ds.relax_gui.table_model = results_analysis[1]
+            ds.relax_gui.table_s2 = results_analysis[2]
+            ds.relax_gui.table_rex = results_analysis[3]
+            ds.relax_gui.table_te = results_analysis[4]
 
         # Return successful value to automatic mode to proceed to next step.
         if automatic == True:
