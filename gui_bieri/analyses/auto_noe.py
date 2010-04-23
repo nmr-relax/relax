@@ -519,6 +519,9 @@ class Auto_noe:
         # Feedback about success.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
 
+        # Add noe grace plot to results list.
+        self.gui.list_noe.Append(data.save_dir+sep+'grace'+sep+data.filename+'.agr')
+
 
     def link_data(self, data):
         """Re-alias the storage container in the relax data store.
