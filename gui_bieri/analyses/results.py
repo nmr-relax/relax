@@ -81,6 +81,7 @@ class Results_summary:
         # Add results list box.
         self.gui.list_modelfree = wx.ListBox(self.parent, -1, choices=[])
         self.gui.list_modelfree.SetMinSize((800, 130))
+        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.gui.open_model_results_exe, self.gui.list_modelfree)
         sizer1.Add(self.gui.list_modelfree, 0, wx.EXPAND, 0)
         
         # Add open button.
@@ -112,6 +113,7 @@ class Results_summary:
         # Add results list box.
         self.gui.list_noe = wx.ListBox(self.parent, -1, choices=[])
         self.gui.list_noe.SetMinSize((800, 130))
+        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.gui.open_noe_results_exe, self.gui.list_noe)
         sizer1.Add(self.gui.list_noe, 0, wx.EXPAND, 0)
         
         # Add open button.
@@ -143,6 +145,7 @@ class Results_summary:
         # Add results list box.
         self.gui.list_rx = wx.ListBox(self.parent, -1, choices=[])
         self.gui.list_rx.SetMinSize((800, 130))
+        self.gui.Bind(wx.EVT_LISTBOX_DCLICK, self.gui.open_rx_results_exe, self.gui.list_rx)
         sizer1.Add(self.gui.list_rx, 0, wx.EXPAND, 0)
         
         # Add open button.
