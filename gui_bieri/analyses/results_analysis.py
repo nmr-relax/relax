@@ -72,9 +72,6 @@ def color_code_noe(self, target_dir):
     file.write("ray\n")
     file.close()
 
-    # add macro to results tab
-    self.list_noe.Append(directory + sep + 'noe.pml')
-
 
 def model_free_results(self):
     """Create the model-free results."""
