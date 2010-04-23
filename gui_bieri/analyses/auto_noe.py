@@ -520,7 +520,10 @@ class Auto_noe:
         wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
 
         # Add noe grace plot to results list.
-        self.gui.list_noe.Append(data.save_dir+sep+'grace'+sep+data.filename+'.agr')
+        self.gui.list_noe.Append(data.save_dir+sep+'grace'+sep+'noe.agr')
+
+        # Add noe grace plot to relax data store.
+        ds.relax_gui.results_noe.append(data.save_dir+sep+'grace'+sep+'noe.agr')
 
 
     def link_data(self, data):
