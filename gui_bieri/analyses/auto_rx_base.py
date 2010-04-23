@@ -404,6 +404,14 @@ class Auto_rx:
         # Feedback about success.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated Rx values\n__________________________________________________________')
 
+        # Add noe grace plot to results list.
+        self.gui.list_rx.Append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
+        self.gui.list_rx.Append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
+
+        # Add noe grace plot to relax data store.
+        ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+self.filename+'.agr')
+        ds.relax_gui.results_rx.append(data.save_dir+sep+'grace'+sep+'intensities_norm.agr')
+
 
     def link_data(self, data):
         """Re-alias the storage container in the relax data store.
