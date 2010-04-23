@@ -324,13 +324,6 @@ def model_free_results(self, directory, pdbfile):
     print "PyMol Macros are in current Folder - execute in PyMol with Command:"
     print "@diffusion_tensor.pml, @rex.pml and @s2.pml"
 
-    self.list_modelfree.Append(str(directory) + sep + 'grace' + sep + 's2.agr')
-    self.list_modelfree.Append(str(directory) + sep + 'Model-free_Results.txt')
-    self.list_modelfree.Append(str(directory) + sep + 'diffusion_tensor.pml')
-    self.list_modelfree.Append(str(directory) + sep + 's2.pml')
-    self.list_modelfree.Append(str(directory) + sep + 'rex.pml')
-    self.list_modelfree.Append('Table_of_Results')
-
     returnstring = [residue, model, s2, rex, te]
     return returnstring # return data for results table dialog
 
