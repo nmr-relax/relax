@@ -1201,13 +1201,13 @@ class N_state_model(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Test if the model is setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('N-state')
-
         # Test if the model name exists.
         if not model in ['2-domain', 'population', 'fixed']:
             raise RelaxError("The model name " + repr(model) + " is invalid.")
+
+        # Test if the model is setup.
+        if hasattr(cdp, 'model'):
+            warn(RelaxWarning("The N-state model has already been set up.  Switching from model '%s' to '%s'." % (cdp.model, model)))
 
         # Set the model
         cdp.model = model
