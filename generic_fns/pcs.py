@@ -172,7 +172,7 @@ def q_factors(spin_id=None):
                 pcs_bc_data = True
 
             # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or spin.pcs[align_id] == None:
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs.keys() or spin.pcs[align_id] == None:
                 continue
 
             # Sum of squares.
