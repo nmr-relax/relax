@@ -153,6 +153,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         if eqi == 'pack_sim_data':
             function = inst.sim_pack_data
 
+        # Pymol macro creation.
+        if eqi == 'pymol_macro':
+            function = inst.pymol_macro
+
         # Read results file function (Columnar format).
         if eqi == 'read_columnar_results':
             function = inst.read_columnar_results
