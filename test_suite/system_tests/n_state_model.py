@@ -336,3 +336,36 @@ class N_state_model(SystemTestCase):
             for file in listdir(ds.tmpdir + sep + subdirs[i]):
                 print("Checking file %s." % file)
                 self.assert_(file in files[i])
+
+
+    def test_populations(self):
+        """Test the 'population' N-state model optimisation using RDCs and PCSs (with missing data)."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'populations.py')
+
+        # The actual tensors.
+        A_5D = []
+        A_5D.append([1.42219822168827662867e-04, -1.44543001566521341940e-04, -7.07796211648713973798e-04, -6.01619494082773244303e-04, 2.02008007072950861996e-04])
+        A_5D.append([3.56720663040924505435e-04, -2.68385787902088840916e-04, -1.69361406642305853832e-04, 1.71873715515064501074e-04, -3.05790155096090983822e-04])
+        A_5D.append([2.32088908680377300801e-07, 2.08076808579168379617e-06, -2.21735465435989729223e-06, -3.74311563209448033818e-06, -2.40784858070560310370e-06])
+        A_5D.append([-2.62495279588228071048e-04, 7.35617367964106275147e-04, 6.39754192258981332648e-05, 6.27880171180572523460e-05, 2.01197582457700226708e-04])
+
+        # Check the tensors.
+        for i in range(len(A_5D)):
+            self.assertAlmostEqual(cdp.align_tensors[i].Axx, A_5D[i][0])
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayy, A_5D[i][1])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axy, A_5D[i][2])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axz, A_5D[i][3])
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayz, A_5D[i][4])
+
+        # Check the populations.
+        self.assertEqual(len(cdp.probs), 3)
+        self.assertAlmostEqual(cdp.probs[0], 0.3)
+        self.assertAlmostEqual(cdp.probs[1], 0.1)
+        self.assertAlmostEqual(cdp.probs[2], 0.6)
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.chi2, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0)
