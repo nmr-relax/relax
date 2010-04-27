@@ -41,11 +41,9 @@ align_list = ['Dy', 'Tb', 'Tm', 'Er']
 for i in xrange(len(align_list)):
     # The RDC.
     rdc.read(align_id=align_list[i], file='missing_rdc_%i' % i, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=None, spin_name_col=5, data_col=6, error_col=None)
-    rdc.display(align_id=align_list[i])
 
     # The PCS.
     pcs.read(align_id=align_list[i], file='missing_pcs_%i' % i, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=None, spin_name_col=5, data_col=6, error_col=None)
-    pcs.display(align_id=align_list[i])
 
     # The temperature.
     temperature(id=align_list[i], temp=298)
