@@ -17,6 +17,10 @@ data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'alig
 # Create the data pipe.
 pipe.create('lactose', 'N-state')
 
+# The population model for free operation of this script.
+if not hasattr(ds, 'model'):
+    ds.model = 'population'
+
 # Load the structures.
 NUM_STR = 4
 for i in range(NUM_STR):
@@ -79,11 +83,12 @@ pipe.switch('lactose')
 pcs.centre(atom_id=':4@C1', pipe='tag')
 
 # Set up the model.
-n_state_model.select_model(model='population')
+n_state_model.select_model(model=ds.model)
 
 # Set to equal probabilities.
-for j in xrange(NUM_STR):
-    value.set(1.0/NUM_STR, 'p'+repr(j))
+if ds.model == 'population':
+    for j in xrange(NUM_STR):
+        value.set(1.0/NUM_STR, 'p'+repr(j))
 
 # Minimisation.
 minimise('bfgs', constraints=True, max_iter=5)

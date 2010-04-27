@@ -220,8 +220,21 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.q_rdc, 0.078460000413257444)       # Pales (Q Saupe): 0.079
 
 
-    def test_lactose_n_state(self):
+    def test_lactose_n_state_fixed(self):
         """The 4-state model analysis of lactose using RDCs and PCSs."""
+
+        # The model.
+        ds.model = 'fixed'
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+
+    def test_lactose_n_state_population(self):
+        """The 4-state model analysis of lactose using RDCs and PCSs."""
+
+        # The model.
+        ds.model = 'population'
 
         # Execute the script.
         self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
