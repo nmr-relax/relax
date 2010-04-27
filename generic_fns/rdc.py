@@ -303,6 +303,10 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     # Global (non-spin specific) data.
     ##################################
 
+    # No data, so return.
+    if not len(values):
+        return
+
     # Initialise.
     if not hasattr(cdp, 'align_ids'):
         cdp.align_ids = []
