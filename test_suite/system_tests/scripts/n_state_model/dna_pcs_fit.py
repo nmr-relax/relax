@@ -16,7 +16,7 @@ data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'pcs_
 pipe.create('DNA', 'N-state')
 
 # Load the structure.
-structure.read_pdb(file='LE.pdb', dir=str_path)
+structure.read_pdb(file='LE_trunc.pdb', dir=str_path)
 
 # Load the sequence information.
 structure.load_spins(spin_id='@H*')
