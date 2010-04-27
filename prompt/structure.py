@@ -320,10 +320,20 @@ class Structure(User_fn_class):
         N3, C5, and C6, type the following series of commands (assuming that the PDB file with this
         atom naming has already been read):
 
-        relax> structure.load_spins(spin_id=':A@C8&@C2')
-        relax> structure.load_spins(spin_id=':G@C8&@N1')
-        relax> structure.load_spins(spin_id=':C@C5&@C6')
-        relax> structure.load_spins(spin_id=':U@N3&@C5&@C6')
+        relax> structure.load_spins(spin_id=":A@C8")
+        relax> structure.load_spins(spin_id=":A@C2")
+        relax> structure.load_spins(spin_id=":G@C8")
+        relax> structure.load_spins(spin_id=":G@N1")
+        relax> structure.load_spins(spin_id=":C@C5")
+        relax> structure.load_spins(spin_id=":C@C6")
+        relax> structure.load_spins(spin_id=":U@N3")
+        relax> structure.load_spins(spin_id=":U@C5")
+        relax> structure.load_spins(spin_id=":U@C6")
+
+        Alternatively using some Python programming:
+
+        relax> for id in [":A@C8", ":A@C2", ":G@C8", ":G@N1", ":C@C5", ":C@C6", ":U@N3", ":U@C5", ":U@C6"]:
+        relax>     structure.load_spins(spin_id=id)
         """
 
         # Function intro text.
