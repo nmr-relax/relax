@@ -513,9 +513,7 @@ class Internal(Base_struct_API):
 
         @keyword attached_atom:     The name of the bonded atom.
         @type attached_atom:        str
-        @keyword model_num:         The model of which to return the vectors from.  If not supplied
-                                    and multiple models exist, then vectors from all models will be
-                                    returned.
+        @keyword model_num:         The model of which to return the vectors from.  If not supplied and multiple models exist, then vectors from all models will be returned.
         @type model_num:            None or int
         @keyword mol_name:          The name of the molecule that attached_atom belongs to.
         @type mol_name:             str
@@ -527,14 +525,12 @@ class Internal(Base_struct_API):
         @type spin_num:             str
         @keyword spin_name:         The name of the spin that attached_atom is attached to.
         @type spin_name:            str
-        @keyword return_name:       A flag which if True will cause the name of the attached atom to
-                                    be returned together with the bond vectors.
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to be returned together with the bond vectors.
         @type return_name:          bool
         @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
         @type return_warnings:      bool
         @return:                    The list of bond vectors for each model.
-        @rtype:                     list of numpy arrays (or a tuple if return_name or
-                                    return_warnings are set)
+        @rtype:                     list of numpy arrays (or a tuple if return_name or return_warnings are set)
         """
 
         # Initialise some objects.
@@ -565,12 +561,9 @@ class Internal(Base_struct_API):
                     if (spin_num != None and mol.atom_num[i] != spin_num) or (spin_name != None and mol.atom_name[i] != spin_name):
                         continue
 
-                    # More than one matching atom!
-                    if index != None:
-                        raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
-
-                    # Update the index.
+                    # Update the index and stop searching.
                     index = i
+                    break
 
                 # Found the atom.
                 if index != None:
@@ -1147,7 +1140,7 @@ class MolContainer:
         element = strip(atom_name, "'")
 
         # Strip away atom numbering, from the front and end.
-        element = strip(atom_name, digits)
+        element = strip(element, digits)
 
         # Amino acid atom translation table (note, numbers have been stripped already!).
         table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],
