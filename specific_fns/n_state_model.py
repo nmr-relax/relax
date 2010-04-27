@@ -698,8 +698,8 @@ class N_state_model(API_base, API_common):
             if not spin.select:
                 continue
 
-            # Only use spins with PCS data.
-            if not hasattr(spin, 'pcs'):
+            # Only use spins with alignment data.
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc'):
                 continue
 
             # Add empty lists to the r and unit_vector lists.
@@ -753,7 +753,8 @@ class N_state_model(API_base, API_common):
                     if hasattr(spin, 'rdc'):
                         pcs[-1].append(None)
                         pcs_err[-1].append(None)
-                        pcs_const[-1].append(None)
+                        pcs_const[-1].append([None]*cdp.N)
+                        j = j + 1
 
                     # Jump to the next spin.
                     continue
@@ -903,7 +904,7 @@ class N_state_model(API_base, API_common):
             if unit_vect[i] == None:
                 unit_vect[i] = [[None, None, None]]*num
 
-        # The PCS data.
+        # The RDC data.
         for align_id in cdp.align_ids:
             # Append empty arrays to the RDC structures.
             rdc.append([])
@@ -925,8 +926,12 @@ class N_state_model(API_base, API_common):
                     # Jump to the next spin.
                     continue
 
+                # Defaults of None.
+                value = None
+                error = None
+
                 # Pseudo-atom set up.
-                if hasattr(spin, 'members'):
+                if hasattr(spin, 'members') and align_id in spin.rdc.keys():
                     # Skip non-Me groups.
                     if len(spin.members) != 3:
                         continue
@@ -934,24 +939,30 @@ class N_state_model(API_base, API_common):
                     # The RDC for the Me-pseudo spin where:
                     #     <D> = -1/3 Dpar.
                     # See Verdier, et al., JMR, 2003, 163, 353-359.
-                    rdc[-1].append(-3.0 * spin.rdc[align_id])
+                    value = -3.0 * spin.rdc[align_id]
+
+                    # The error.
+                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                        error = -3.0 * spin.rdc_err[align_id]
 
                 # Normal spin set up.
-                else:
+                elif align_id in spin.rdc.keys():
                     # The RDC.
-                    rdc[-1].append(spin.rdc[align_id])
+                    value = spin.rdc[align_id]
 
-                # Append the RDC errors (or a list of None).
-                if hasattr(spin, 'rdc_err'):
-                    rdc_err[-1].append(spin.rdc_err[align_id])
-                else:
-                    rdc_err[-1].append(None)
+                    # The error.
+                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                        error = spin.rdc_err[align_id]
+
+                # Append the RDCs to the list.
+                rdc[-1].append(value)
+
+                # Append the RDC errors.
+                rdc_err[-1].append(error)
 
         # Convert to numpy objects.
         rdc = array(rdc, float64)
         rdc_err = array(rdc_err, float64)
-        for i in range(len(unit_vect)):
-            print unit_vect[i]
         unit_vect = array(unit_vect, float64)
         rdc_const = array(rdc_const, float64)
 
