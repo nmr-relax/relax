@@ -1355,15 +1355,8 @@ class N_state_model(API_base, API_common):
         # Determine the data type.
         data_types = self._base_data_types()
 
-        # Set up alignment tensors for each alignment.
-        ids = []
-        if 'rdc' in data_types:
-            ids = ids+cdp.rdc_ids
-        if 'pcs' in data_types:
-            ids = ids+cdp.pcs_ids
-
         # Set up tensors for each alignment.
-        for id in ids:
+        for id in cdp.align_ids:
             # No tensors initialised.
             if not hasattr(cdp, 'align_tensors'):
                 generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
