@@ -1356,20 +1356,21 @@ class N_state_model(API_base, API_common):
         data_types = self._base_data_types()
 
         # Set up tensors for each alignment.
-        for id in cdp.align_ids:
-            # No tensors initialised.
-            if not hasattr(cdp, 'align_tensors'):
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+        if hasattr(cdp, 'align_ids'):
+            for id in cdp.align_ids:
+                # No tensors initialised.
+                if not hasattr(cdp, 'align_tensors'):
+                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
-            # Find if the tensor corresponding to the id exists.
-            exists = False
-            for tensor in cdp.align_tensors:
-                if id == tensor.name:
-                    exists = True
+                # Find if the tensor corresponding to the id exists.
+                exists = False
+                for tensor in cdp.align_tensors:
+                    if id == tensor.name:
+                        exists = True
 
-            # Initialise the tensor.
-            if not exists:
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                # Initialise the tensor.
+                if not exists:
+                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
