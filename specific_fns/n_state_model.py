@@ -1609,6 +1609,15 @@ class N_state_model(API_base, API_common):
                 min_algor = min_options[0]
                 min_options = min_options[1:]
 
+        # And constraints absolutely must be used for the 'population' model.
+        if not constraints and cdp.model == 'population':
+            warn(RelaxWarning("Turning constraints on.  These absolutely must be used for the 'population' model."))
+            constraints = True
+
+            # Add the Method of Multipliers algorithm.
+            min_options = (min_algor,) + min_options
+            min_algor = 'Method of Multipliers'
+
         # Linear constraints.
         if constraints:
             A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
