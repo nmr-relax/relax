@@ -13,7 +13,8 @@ data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'alig
 pipe.create('populations', 'N-state')
 
 # Load the structures.
-for i in range(1, 4):
+NUM_STR = 3
+for i in range(1, NUM_STR+1):
     structure.read_pdb(file='lactose_MCMM4_S1_%i.pdb' % i, dir=str_path, set_model_num=i, set_mol_name='LE')
 
 # Load the sequence information.
@@ -65,6 +66,10 @@ results.write('devnull', force=True)
 
 # Switch to the population model.
 n_state_model.select_model(model='population')
+
+# Set to equal probabilities.
+for j in xrange(NUM_STR):
+    value.set(1.0/NUM_STR, 'p'+repr(j))
 
 # Minimisation.
 minimise('newton', constraints=True)
