@@ -88,6 +88,11 @@ class N_state_model(API_base, API_common):
         if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it will not be optimised.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
+                # Add the parameters.
                 param_vector = param_vector + list(cdp.align_tensors[i].A_5D)
 
         # Monte Carlo simulation data structures.
@@ -156,7 +161,7 @@ class N_state_model(API_base, API_common):
         # Starting point of the populations.
         pop_start = 0
         if 'rdc' in data_types or 'pcs' in data_types:
-            pop_start = pop_start + 5*len(cdp.align_tensors)
+            pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
@@ -453,6 +458,10 @@ class N_state_model(API_base, API_common):
         if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it will not be optimised.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
                 cdp.align_tensors[i].Axx = param_vector[5*i]
                 cdp.align_tensors[i].Ayy = param_vector[5*i+1]
                 cdp.align_tensors[i].Axy = param_vector[5*i+2]
@@ -460,7 +469,7 @@ class N_state_model(API_base, API_common):
                 cdp.align_tensors[i].Ayz = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
-            param_vector = param_vector[5*len(cdp.align_tensors):]
+            param_vector = param_vector[5*len(cdp.align_ids):]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -572,7 +581,7 @@ class N_state_model(API_base, API_common):
         # Starting point of the populations.
         pop_start = 0
         if 'rdc' in data_types or 'pcs' in data_types:
-            pop_start = pop_start + 5*len(cdp.align_tensors)
+            pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Initialisation (0..j..m).
         A = []
@@ -1144,7 +1153,14 @@ class N_state_model(API_base, API_common):
 
         # Alignment tensor params.
         if 'rdc' in data_types or 'pcs' in data_types:
-            num = num + 5*len(cdp.align_tensors)
+            # Loop over the alignments.
+            for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it is not part of the parameter set.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
+                # Add 5 tensor parameters.
+                num = num + 5
 
         # Populations.
         if cdp.model in ['2-domain', 'population']:
@@ -1699,7 +1715,7 @@ class N_state_model(API_base, API_common):
             cdp.warning = warning
 
         # Statistical analysis.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types):
             # Get the final back calculated data (for the Q-factor and
             self._minimise_bc_data(model)
 
