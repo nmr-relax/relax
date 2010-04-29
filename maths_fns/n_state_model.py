@@ -1164,24 +1164,11 @@ class N_state_opt:
     def d2func_population(self, params):
         """The Hessian function for optimisation of the flexible population N-state model.
 
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared Hessian corresponding to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the sum of squares error) Hessian is returned instead.  The chi-squared Hessian is simply the SSE Hessian normalised to unit variance (the SSE divided by the error squared).
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 array
-        @return:        The chi-squared or SSE Hessian.
-        @rtype:         numpy rank-2 array
-        """
-
-        raise RelaxImplementError
-
-
-    def d2func_tensor_opt(self, params):
-        """The Hessian function for optimisation of the alignment tensor from RDC and/or PCS data.
-
         Description
         ===========
 
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared gradient corresponding to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the sum of squares error) gradient is returned instead.  The chi-squared gradient is simply the SSE gradient normalised to unit variance (the SSE divided by the error squared).
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared Hessian corresponding to that coordinate in the parameter space.  If no RDC/PCS errors are supplied, then the SSE (the sum of squares error) Hessian is returned instead.  The chi-squared Hessian is simply the SSE Hessian normalised to unit variance (the SSE divided by the error squared).
+
 
         Indices
         =======
@@ -1201,8 +1188,8 @@ class N_state_opt:
         To calculate the chi-squared gradient, a chain of equations are used.  This includes the chi-squared gradient, the RDC gradient and the alignment tensor gradient.
 
 
-        The chi-squared gradient
-        ------------------------
+        The chi-squared Hessian
+        -----------------------
 
         The equation is::
                                ___
@@ -1220,64 +1207,173 @@ class N_state_opt:
             - d2Dij(theta)/dthetaj.dthetak is the RDC or PCS Hessian for parameters j and k.
 
 
-        The RDC gradient
-        ----------------
+        The RDC Hessian
+        ---------------
 
-        The only parameters are the tensor components.
+        pc-pd second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        Amn second partial derivatives
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        The alignment tensor element partial derivative is::
+        The probability parameter second partial derivative is::
 
          d2Dij(theta)
-         ------------  =  0
+         ------------  =  0.
+           dpc.dpd
+
+
+        pc-Anm second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The probability parameter-tensor element second partial derivative is::
+
+         d2Dij(theta)               T   dAi
+         ------------  =  dj . mu_jc . ---- . mu_jc.
+           dpc.dAmn                    dAmn
+
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
+
+         d2Dij(theta)
+         ------------  =  0.
           dAmn.dAop
 
 
-        The PCS gradient
-        ----------------
+        The PCS Hessian
+        ---------------
 
-        Amn partial derivative
-        ~~~~~~~~~~~~~~~~~~~~~~
+        pc-pd second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        The alignment tensor element partial derivative is::
+        The probability parameter second partial derivative is::
+
+         d2delta_ij(theta)
+         -----------------  =  0.
+              dpc.dpd
+
+
+        pc-Anm second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The probability parameter-tensor element second partial derivative is::
+
+         d2delta_ij(theta)                T   dAi
+         -----------------  =  djc . mu_jc . ---- . mu_jc.
+             dpc.dAmn                        dAmn
+
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
 
             d2delta_ij(theta)
             -----------------  =  0
                 dAmn.dAop
 
 
-        The alignment tensor gradient
-        -----------------------------
+        The alignment tensor Hessian
+        ----------------------------
 
-        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} all have the same partial derivative of::
+        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} all have the same second partial derivative of::
 
-             dAi   | 0  0  0 |
-            ---- = | 0  0  0 |.
-            dAmn   | 0  0  0 |
+              d2Ai      | 0  0  0 |
+            --------- = | 0  0  0 |.
+            dAmn.dAop   | 0  0  0 |
 
 
+        @param params:  The vector of parameter values.  This is unused as it is assumed that func_population() was called first.
+        @type params:   numpy rank-1 array
+        @return:        The chi-squared or SSE Hessian.
+        @rtype:         numpy rank-2 array
+        """
 
-        Stored data structures
-        ======================
+        raise RelaxImplementError
 
-        There are a number of data structures calculated by this function and stored for subsequent use in the Hessian function.  This include the back calculated RDC and PCS gradients and the alignment tensor gradients.
 
-        dDij(theta)/dthetak
-        -------------------
+    def d2func_tensor_opt(self, params):
+        """The Hessian function for optimisation of the alignment tensor from RDC and/or PCS data.
 
-        The back calculated RDC gradient.  This is a rank-3 tensor with indices {k, i, j}.
+        Description
+        ===========
 
-        ddeltaij(theta)/dthetak
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared Hessian corresponding to that coordinate in the parameter space.  If no RDC/PCS errors are supplied, then the SSE (the sum of squares error) Hessian is returned instead.  The chi-squared Hessian is simply the SSE Hessian normalised to unit variance (the SSE divided by the error squared).
+
+        Indices
+        =======
+
+        For this calculation, six indices are looped over and used in the various data structures.  These include:
+            - k, the index over all parameters,
+            - i, the index over alignments,
+            - j, the index over spin systems,
+            - c, the index over the N-states (or over the structures),
+            - m, the index over the first dimension of the alignment tensor m = {x, y, z}.
+            - n, the index over the second dimension of the alignment tensor n = {x, y, z},
+
+
+        Equations
+        =========
+
+        To calculate the chi-squared gradient, a chain of equations are used.  This includes the chi-squared gradient, the RDC gradient and the alignment tensor gradient.
+
+
+        The chi-squared Hessian
         -----------------------
 
-        The back calculated PCS gradient.  This is a rank-3 tensor with indices {k, i, j}.
+        The equation is::
+                               ___
+         d2chi^2(theta)        \       1      / dDij(theta)   dDij(theta)                         d2Dij(theta)   \ 
+         ---------------  =  2  >  ---------- | ----------- . -----------  -  (Dij-Dij(theta)) . --------------- |.
+         dthetaj.dthetak       /__ sigma_i**2 \  dthetaj       dthetak                           dthetaj.dthetak /
+                               ij
 
-        dAi/dAmn
-        --------
+        where:
+            - theta is the parameter vector,
+            - Dij are the measured RDCs or PCSs,
+            - Dij(theta) are the back calculated RDCs or PCSs,
+            - sigma_ij are the RDC or PCS errors,
+            - dDij(theta)/dthetak is the RDC or PCS gradient for parameter k.
+            - d2Dij(theta)/dthetaj.dthetak is the RDC or PCS Hessian for parameters j and k.
 
-        The alignment tensor gradients.  This is a rank-3 tensor with indices {5, n, m}.
+
+        The RDC Hessian
+        ---------------
+
+        The only parameters are the tensor components.
+
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
+
+         d2Dij(theta)
+         ------------  =  0.
+          dAmn.dAop
+
+
+        The PCS Hessian
+        ---------------
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
+
+            d2delta_ij(theta)
+            -----------------  =  0
+                dAmn.dAop
+
+
+        The alignment tensor Hessian
+        ----------------------------
+
+        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} all have the same second partial derivative of::
+
+              d2Ai      | 0  0  0 |
+            --------- = | 0  0  0 |.
+            dAmn.dAop   | 0  0  0 |
 
 
         @param params:  The vector of parameter values.  This is unused as it is assumed that func_population() was called first.
