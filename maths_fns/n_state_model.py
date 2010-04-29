@@ -1289,7 +1289,57 @@ class N_state_opt:
         @rtype:         numpy rank-2 array
         """
 
-        raise RelaxImplementError
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Initial chi-squared (or SSE) Hessian.
+        self.d2chi2 = self.d2chi2 * 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Construct the pc-Amn second partial derivative Hessian components.
+            for c in xrange(self.N - 1):
+                # Index in the parameter array.
+                pc_index = self.num_align_params + c
+
+                # Loop over the spins.
+                for j in xrange(self.num_spins):
+                    # Calculate the RDC Hessian component.
+                    if self.rdc_flag and not self.missing_Dij[i, j]:
+                        self.d2Dij_theta[pc_index, i*5+0, i, j] = self.d2Dij_theta[i*5+0, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0])
+                        self.d2Dij_theta[pc_index, i*5+1, i, j] = self.d2Dij_theta[i*5+1, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1])
+                        self.d2Dij_theta[pc_index, i*5+2, i, j] = self.d2Dij_theta[i*5+2, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2])
+                        self.d2Dij_theta[pc_index, i*5+3, i, j] = self.d2Dij_theta[i*5+3, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3])
+                        self.d2Dij_theta[pc_index, i*5+4, i, j] = self.d2Dij_theta[i*5+4, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4])
+
+                    # Calculate the PCS Hessian component.
+                    if self.pcs_flag and not self.missing_deltaij[i, j]:
+                        self.d2deltaij_theta[pc_index, i*5+0, i, j] = self.d2deltaij_theta[i*5+0, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[0])
+                        self.d2deltaij_theta[pc_index, i*5+1, i, j] = self.d2deltaij_theta[i*5+1, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[1])
+                        self.d2deltaij_theta[pc_index, i*5+2, i, j] = self.d2deltaij_theta[i*5+2, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[2])
+                        self.d2deltaij_theta[pc_index, i*5+3, i, j] = self.d2deltaij_theta[i*5+3, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[3])
+                        self.d2deltaij_theta[pc_index, i*5+4, i, j] = self.d2deltaij_theta[i*5+4, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[4])
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Construct the chi-squared Hessian element for parameters j and k, alignment i.
+            for j in xrange(self.total_num_params):
+                for k in xrange(self.total_num_params):
+                    # RDC part of the chi-squared gradient.
+                    if self.rdc_flag:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[j, i], self.dDij_theta[k, i], self.d2Dij_theta[j, k, i], self.rdc_sigma_ij[i])
+
+                    # PCS part of the chi-squared gradient.
+                    if self.pcs_flag:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.d2deltaij_theta[j, k, i], self.pcs_sigma_ij[i])
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            self.d2chi2 = dot(self.d2chi2, self.scaling_matrix)
+
+        # The gradient.
+        return self.d2chi2
 
 
     def d2func_tensor_opt(self, params):
