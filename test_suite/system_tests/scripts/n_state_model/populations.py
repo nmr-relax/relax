@@ -4,6 +4,8 @@
 import __main__
 from os import sep
 
+from relax_errors import RelaxError
+from specific_fns.setup import n_state_model_obj
 
 # Path of the files.
 str_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
@@ -55,24 +57,45 @@ for i in xrange(len(align_list)):
 # Set the paramagnetic centre.
 pcs.centre([ -14.845,    0.969,    0.265])
 
+
+# The solution.
+###############
+
 # Set up the model.
-n_state_model.select_model(model='fixed')
-
-# Minimisation.
-minimise('newton', constraints=True)
-
-# Write out a results file.
-results.write('devnull', force=True)
-
-# Switch to the population model.
 n_state_model.select_model(model='population')
+print n_state_model_obj._assemble_param_vector()
 
-# Set to equal probabilities.
-for j in xrange(NUM_STR):
-    value.set(1.0/NUM_STR, 'p'+repr(j))
+# Set pc to the exact values.
+value.set(0.3, 'p0')
+value.set(0.1, 'p1')
+value.set(0.6, 'p2')
+
+# Set the tensors.
+align_tensor.init(tensor=align_list[0], params=( 1.42219822168827662867e-04, -1.44543001566521341940e-04, -7.07796211648713973798e-04, -6.01619494082773244303e-04,  2.02008007072950861996e-04), param_types=2)
+align_tensor.init(tensor=align_list[1], params=( 3.56720663040924505435e-04, -2.68385787902088840916e-04, -1.69361406642305853832e-04,  1.71873715515064501074e-04, -3.05790155096090983822e-04), param_types=2)
+align_tensor.init(tensor=align_list[2], params=( 2.32088908680377300801e-07,  2.08076808579168379617e-06, -2.21735465435989729223e-06, -3.74311563209448033818e-06, -2.40784858070560310370e-06), param_types=2)
+align_tensor.init(tensor=align_list[3], params=(-2.62495279588228071048e-04,  7.35617367964106275147e-04,  6.39754192258981332648e-05,  6.27880171180572523460e-05,  2.01197582457700226708e-04), param_types=2)
+print n_state_model_obj._assemble_param_vector()
+
+# Calculation.
+print cdp
+calc()
+print("Chi2: %s" % cdp.chi2)
+if abs(cdp.chi2) > 1e-15:
+    raise RelaxError, "The chi2 at the solution is not zero!"
+
+
+# The population model opt.
+###########################
+
+# Slightly change the probs.
+value.set(0.301, 'p0')
+value.set(0.101, 'p1')
+value.set(0.592, 'p2')
+print n_state_model_obj._assemble_param_vector()
 
 # Minimisation.
-minimise('newton', constraints=True)
+minimise('bfgs', constraints=False, func_tol=1e-1)
 
 # Write out a results file.
 results.write('devnull', force=True)
