@@ -23,6 +23,8 @@
 # Python module imports.
 import __main__
 from math import pi, sqrt
+from numpy import array
+from numpy.linalg import norm
 from os import listdir, sep
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -31,6 +33,7 @@ from tempfile import mkdtemp
 from base_classes import SystemTestCase
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns.align_tensor import calc_chi_tensor
+from generic_fns.mol_res_spin import spin_loop
 
 
 class N_state_model(SystemTestCase):
@@ -45,6 +48,51 @@ class N_state_model(SystemTestCase):
 
         # Reset the relax data storage object.
         ds.__reset__()
+
+
+    def check_vectors(self):
+        """Auxiliary method for checking the correct loading of bond vectors."""
+
+        # The new order.
+        ds.order_new = array([ds.order_struct[ds.order_model[ds.order_model[0]]],
+                              ds.order_struct[ds.order_model[ds.order_model[1]]],
+                              ds.order_struct[ds.order_model[ds.order_model[2]]]])
+
+        # The atom positions.
+        C_pos = []
+        C_pos.append(array([6.250,   0.948,   1.968]))
+        C_pos.append(array([6.438,  -0.139,   1.226]))
+        C_pos.append(array([6.108,  -0.169,   0.378]))
+
+        H_pos = []
+        H_pos.append(array([7.243,   0.580,   1.676]))
+        H_pos.append(array([7.271,  -0.291,   0.525]))
+        H_pos.append(array([5.735,   0.003,  -0.639]))
+
+        # The real vectors.
+        vect = []
+        for i in range(3):
+            vect.append(H_pos[i] - C_pos[i])
+
+        # Normalise.
+        for i in range(3):
+            vect[i] = vect[i] / norm(vect[i])
+
+        # Print out.
+        print("Structure order: %s" % ds.order_struct)
+        print("Model order:     %s" % ds.order_model)
+        print("New order:       %s" % ds.order_new)
+        for i in range(3):
+            print("\ni = %i" % i)
+            print("The real vector:      %s" % vect[i])
+            print("The reordered vector: %s" % vect[ds.order_new[i]])
+            print("The loaded vector:    %s" % cdp.mol[0].res[0].spin[0].xh_vect[i])
+
+        # Check.
+        for i in range(3):
+            self.assertAlmostEqual(norm(vect[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].xh_vect[i]), 0.0)
+        for i in range(3):
+            self.assertAlmostEqual(norm(C_pos[ds.order_new[i]] - cdp.mol[0].res[0].spin[0].pos[i]), 0.0)
 
 
     def test_5_state_xz(self):
@@ -362,10 +410,52 @@ class N_state_model(SystemTestCase):
         # Check the populations.
         self.assertEqual(len(cdp.probs), 3)
         self.assertAlmostEqual(cdp.probs[0], 0.3)
-        self.assertAlmostEqual(cdp.probs[1], 0.1)
-        self.assertAlmostEqual(cdp.probs[2], 0.6)
+        self.assertAlmostEqual(cdp.probs[1], 0.6)
+        self.assertAlmostEqual(cdp.probs[2], 0.1)
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
         self.assertAlmostEqual(cdp.q_pcs, 0.0)
+
+
+    def test_vector_loading1(self):
+        """Test the loading of inter-atomic vectors in the 'population' N-state model."""
+
+        # Order.
+        ds.order_struct = [1, 2, 0]
+        ds.order_model  = [0, 1, 2]
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'vector_loading.py')
+
+        # Check the vectors.
+        self.check_vectors()
+
+
+    def test_vector_loading2(self):
+        """Test the loading of inter-atomic vectors in the 'population' N-state model."""
+
+        # Order.
+        ds.order_struct = [0, 1, 2]
+        ds.order_model  = [2, 0, 1]
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'vector_loading.py')
+
+        # Check the vectors.
+        self.check_vectors()
+
+
+    def test_vector_loading3(self):
+        """Test the loading of inter-atomic vectors in the 'population' N-state model."""
+
+        # Order.
+        ds.order_struct = [1, 0, 2]
+        ds.order_model  = [2, 0, 1]
+
+        # Execute the script.
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'vector_loading.py')
+
+        # Check the vectors.
+        self.check_vectors()
