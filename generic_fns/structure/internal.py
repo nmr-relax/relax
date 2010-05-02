@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -430,10 +430,8 @@ class Internal(Base_struct_API):
         # Generate the selection object.
         sel_obj = Selection(atom_id)
 
-        # Loop over the models.
-        for model_index in range(len(self.structural_data)):
-            model = self.structural_data[model_index]
-
+        # Model loop.
+        for model in self.model_loop():
             # Loop over the molecules.
             for mol_index in range(len(model.mol)):
                 mol = model.mol[mol_index]
@@ -459,9 +457,9 @@ class Internal(Base_struct_API):
                     # The atom position.
                     if ave:
                         # Loop over the models.
-                        for model_index2 in range(len(self.structural_data)):
+                        for model in self.model_loop():
                             # Alias.
-                            mol = self.structural_data[model_index2].mol[mol_index]
+                            mol = model.mol[mol_index]
 
                             # Some sanity checks.
                             if mol.atom_num[i] != atom_num:
@@ -539,11 +537,7 @@ class Internal(Base_struct_API):
         warnings = None
 
         # Loop over the models.
-        for model in self.structural_data:
-            # Single model.
-            if model_num and model_num != model.num:
-                continue
-
+        for model in self.model_loop(model_num):
             # Loop over the molecules.
             for mol in model.mol:
                 # Skip non-matching molecules.
@@ -760,7 +754,7 @@ class Internal(Base_struct_API):
 
         # Determine if model records will be created.
         model_records = False
-        for model in self.structural_data:
+        for model in self.model_loop():
             if hasattr(model, 'num') and model.num != None:
                 model_records = True
 
@@ -912,11 +906,7 @@ class Internal(Base_struct_API):
         ######################
 
         # Loop over the models.
-        for model in self.structural_data:
-            # Single model.
-            if model_num and model_num != model.num:
-                continue
-
+        for model in self.model_loop(model_num):
             # MODEL record, for multiple models.
             ####################################
 

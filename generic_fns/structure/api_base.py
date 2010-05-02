@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -274,6 +274,46 @@ class Base_struct_API:
 
         # Raise the error.
         raise RelaxImplementError
+
+
+    def model_loop(self, model=None):
+        """Generator method for looping over the models in numerical order.
+
+        @keyword model: Limit the loop to a single number.
+        @type model:    int
+        @return:        The model structural object.
+        @rtype:         ModelContainer container
+        """
+
+        # A single model.
+        if model:
+            for i in range(len(self.structural_data)):
+                if self.structural_data[i].num == model:
+                    yield self.structural_data[i]
+
+        # All models.
+        else:
+            # The models.
+            model_nums = []
+            for i in range(len(self.structural_data)):
+                if self.structural_data[i].num != None:
+                    model_nums.append(self.structural_data[i].num)
+
+            # Sort.
+            if model_nums:
+                model_nums.sort()
+
+            # Loop over the models in order.
+            for model_num in model_nums:
+                # Find the model.
+                for i in range(len(self.structural_data)):
+                    # Yield the model.
+                    if self.structural_data[i].num == model_num:
+                        yield self.structural_data[i]
+
+            # No models, so just yield the single container.
+            if not model_nums:
+                yield self.structural_data[0]
 
 
     def num_models(self):
