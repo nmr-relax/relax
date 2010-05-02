@@ -4,6 +4,7 @@
 import __main__
 from os import sep
 
+# relax module imports.
 from relax_errors import RelaxError
 from specific_fns.setup import n_state_model_obj
 
@@ -16,8 +17,10 @@ pipe.create('populations', 'N-state')
 
 # Load the structures.
 NUM_STR = 3
-for i in range(1, NUM_STR+1):
-    structure.read_pdb(file='lactose_MCMM4_S1_%i.pdb' % i, dir=str_path, set_model_num=i, set_mol_name='LE')
+i = 1
+for model in [1, 3, 2]:
+    structure.read_pdb(file='lactose_MCMM4_S1_%i.pdb' % i, dir=str_path, set_model_num=model, set_mol_name='LE')
+    i += 1
 
 # Load the sequence information.
 structure.load_spins(spin_id=':UNK@C*', combine_models=False, ave_pos=False)
@@ -67,8 +70,8 @@ print n_state_model_obj._assemble_param_vector()
 
 # Set pc to the exact values.
 value.set(0.3, 'p0')
-value.set(0.1, 'p1')
-value.set(0.6, 'p2')
+value.set(0.1, 'p2')
+value.set(0.6, 'p1')
 
 # Set the tensors.
 align_tensor.init(tensor=align_list[0], params=( 1.42219822168827662867e-04, -1.44543001566521341940e-04, -7.07796211648713973798e-04, -6.01619494082773244303e-04,  2.02008007072950861996e-04), param_types=2)
@@ -79,6 +82,7 @@ print n_state_model_obj._assemble_param_vector()
 
 # Calculation.
 print cdp
+print cdp.mol[0].res[0].spin[0]
 calc()
 print("Chi2: %s" % cdp.chi2)
 if abs(cdp.chi2) > 1e-15:
@@ -88,14 +92,9 @@ if abs(cdp.chi2) > 1e-15:
 # The population model opt.
 ###########################
 
-# Slightly change the probs.
-value.set(0.301, 'p0')
-value.set(0.101, 'p1')
-value.set(0.592, 'p2')
-print n_state_model_obj._assemble_param_vector()
-
 # Minimisation.
-minimise('bfgs', constraints=False, func_tol=1e-1)
+minimise('sd', func_tol=1e-2)
+print cdp
 
 # Write out a results file.
 results.write('devnull', force=True)
