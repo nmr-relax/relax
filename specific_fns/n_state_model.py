@@ -612,7 +612,7 @@ class N_state_model(API_base, API_common):
             for i in xrange(pop_start, self._param_num()):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
-            b.append(-1.0)
+            b.append(-1.0 / scaling_matrix[i, i])
             b.append(0.0)
 
         # Convert to numpy data structures.
