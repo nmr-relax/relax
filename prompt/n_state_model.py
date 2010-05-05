@@ -78,8 +78,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "n_state_model.CoM("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.CoM("
             text = text + "pivot_point=" + repr(pivot_point)
             text = text + ", centre=" + repr(centre) + ")"
             print(text)
@@ -143,8 +143,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "n_state_model.cone_pdb("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.cone_pdb("
             text = text + "cone_type=" + repr(cone_type)
             text = text + ", scale=" + repr(scale)
             text = text + ", file=" + repr(file)
@@ -160,7 +160,7 @@ class N_state_model(User_fn_class):
         arg_check.is_bool(force, 'force flag')
 
         # Execute the functional code.
-        n_state_model_obj.cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
+        n_state_model_obj._cone_pdb(cone_type=cone_type, scale=scale, file=file, dir=dir, force=force)
 
 
     def number_of_states(self, N=None):
@@ -189,8 +189,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "n_state_model.number_of_states("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.number_of_states("
             text = text + "N=" + repr(N) + ")"
             print(text)
 
@@ -229,8 +229,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "n_state_model.ref_domain("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.ref_domain("
             text = text + "ref=" + repr(ref) + ")"
             print(text)
 
@@ -278,8 +278,8 @@ class N_state_model(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "n_state_model.select_model("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "n_state_model.select_model("
             text = text + "model=" + repr(model) + ")"
             print(text)
 

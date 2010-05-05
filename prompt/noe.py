@@ -80,8 +80,8 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "noe.read_restraints("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "noe.read_restraints("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", proton1_col=" + repr(proton1_col)
@@ -128,8 +128,8 @@ class Noe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "noe.spectrum_type("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "noe.spectrum_type("
             text = text + "spectrum_type=" + repr(spectrum_type)
             text = text + ", spectrum_id=" + repr(spectrum_id) + ")"
             print(text)

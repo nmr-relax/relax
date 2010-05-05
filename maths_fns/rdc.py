@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -72,21 +72,17 @@ def ave_rdc_5D(dj, vect, N, A, weights=None):
     # No weights given.
     if weights == None:
         pc = 1.0 / N
+        weights = [pc] * N
 
-    # Loop over the structures.
+    # Missing last weight.
+    if len(weights) < N:
+        pN = 1.0 - sum(weights, axis=0)
+        weights = weights.tolist()
+        weights.append(pN)
+
+    # Back-calculate the RDC.
     for c in xrange(N):
-        # The given weights.
-        if weights != None:
-            # Missing last weight.
-            if len(weights) < N: 
-                pc = 1.0 - sum(weights, axis=0)
-
-            # Given weight.
-            else:
-                pc = weights[c]
-
-        # Back-calculate the RDC.
-        val = val + pc * (vect[c, 0]**2 - vect[c, 2]**2)*A[0] + (vect[c, 1]**2 - vect[c, 2]**2)*A[1] + 2.0*vect[c, 0]*vect[c, 1]*A[2] + 2.0*vect[c, 0]*vect[c, 2]*A[3] + 2.0*vect[c, 1]*vect[c, 2]*A[4]
+        val = val + weights[c] * (vect[c, 0]**2 - vect[c, 2]**2)*A[0] + (vect[c, 1]**2 - vect[c, 2]**2)*A[1] + 2.0*vect[c, 0]*vect[c, 1]*A[2] + 2.0*vect[c, 0]*vect[c, 2]*A[3] + 2.0*vect[c, 1]*vect[c, 2]*A[4]
 
     # Return the average RDC.
     return dj * val
@@ -151,21 +147,17 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None):
     # No weights given.
     if weights == None:
         pc = 1.0 / N
+        weights = [pc] * N
 
-    # Loop over the structures c.
+    # Missing last weight.
+    if len(weights) < N:
+        pN = 1.0 - sum(weights, axis=0)
+        weights = weights.tolist()
+        weights.append(pN)
+
+    # Back-calculate the RDC.
     for c in xrange(N):
-        # The given weights.
-        if weights != None:
-            # Missing last weight.
-            if len(weights) < N: 
-                pc = 1.0 - sum(weights, axis=0)
-
-            # Given weight.
-            else:
-                pc = weights[c]
-
-        # Back-calculate the RDC.
-        val = val + pc * dot(vect[c], dot(A, vect[c]))
+        val = val + weights[c] * dot(vect[c], dot(A, vect[c]))
 
     # Return the average RDC.
     return dj * val
@@ -217,21 +209,17 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     # No weights given.
     if weights == None:
         pc = 1.0 / N
+        weights = [pc] * N
 
-    # Loop over the structures.
+    # Missing last weight.
+    if len(weights) < N:
+        pN = 1.0 - sum(weights, axis=0)
+        weights = weights.tolist()
+        weights.append(pN)
+
+    # Back-calculate the RDC gradient element.
     for c in xrange(N):
-        # The given weights.
-        if weights != None:
-            # Missing last weight.
-            if len(weights) < N: 
-                pc = 1.0 - sum(weights, axis=0)
-
-            # Given weight.
-            else:
-                pc = weights[c]
-
-        # Back-calculate the RDC gradient element.
-        grad = grad + pc * dot(vect[c], dot(dAi_dAmn, vect[c]))
+        grad = grad + weights[c] * dot(vect[c], dot(dAi_dAmn, vect[c]))
 
     # Return the average RDC gradient element.
     return dj * grad

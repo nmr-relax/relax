@@ -21,8 +21,8 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
-import sys
 from tempfile import mktemp
 
 # relax module imports.
@@ -58,7 +58,7 @@ class Results(SystemTestCase):
         """Test the reading of an empty results file."""
 
         # Read the results.
-        self.interpreter.results.read(file='empty', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'results_files'+sep)
+        self.interpreter.results.read(file='empty', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'results_files'+sep)
 
 
     def test_write_empty_results(self):

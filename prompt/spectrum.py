@@ -55,8 +55,8 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spectrum.baseplane_rmsd("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.baseplane_rmsd("
             text = text + "error=" + repr(error)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -213,8 +213,8 @@ class Spectrum(User_fn_class):
 
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spectrum.error_analysis()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.error_analysis()"
             print(text)
 
         # Execute the functional code.
@@ -247,8 +247,8 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spectrum.integration_points("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.integration_points("
             text = text + "N=" + repr(N)
             text = text + ", spectrum_id=" + repr(spectrum_id)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -395,8 +395,8 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spectrum.read_intensities("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.read_intensities("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", spectrum_id=" + repr(spectrum_id)
@@ -468,8 +468,8 @@ class Spectrum(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spectrum.replicated("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spectrum.replicated("
             text = text + "spectrum_ids=" + repr(spectrum_ids) + ")"
             print(text)
 

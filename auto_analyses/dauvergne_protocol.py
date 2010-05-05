@@ -150,6 +150,7 @@ from generic_fns.mol_res_spin import generate_spin_id, spin_index_loop, spin_loo
 from generic_fns import pipes
 from prompt.interpreter import Interpreter
 from relax_errors import RelaxError
+from status import Status
 
 
 
@@ -217,6 +218,12 @@ class dAuvergne_protocol:
         # User variable checks.
         self.check_vars()
 
+        # Initialise the status.
+        self.status = Status()
+        self.status.dAuvergne_protocol.diff_model = diff_model
+        self.status.dAuvergne_protocol.mf_models = mf_models
+        self.status.dAuvergne_protocol.local_tm_models = local_tm_models
+
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
@@ -251,6 +258,7 @@ class dAuvergne_protocol:
             while True:
                 # Determine which round of optimisation to do (init, round_1, round_2, etc).
                 self.round = self.determine_rnd(model=self.diff_model)
+                self.status.dAuvergne_protocol.round = self.round
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
@@ -336,6 +344,9 @@ class dAuvergne_protocol:
                     if converged or not self.conv_loop:
                         break
 
+                # Unset the status.
+                self.status.dAuvergne_protocol.round = None
+
 
         # Final run.
         ############
@@ -405,6 +416,11 @@ class dAuvergne_protocol:
 
         else:
             raise RelaxError("Unknown diffusion model, change the value of 'self.diff_model'")
+
+        # Unset the status info.
+        self.status.dAuvergne_protocol.diff_model = None
+        self.status.dAuvergne_protocol.mf_models = None
+        self.status.dAuvergne_protocol.local_tm_models = None
 
 
     def check_vars(self):
@@ -648,10 +664,19 @@ class dAuvergne_protocol:
 
         print("\nConvergence:")
         if chi2_converged and models_converged and params_converged:
+            # Update the status.
+            self.status.dAuvergne_protocol.convergence = True
+
+            # Print out.
             print("    [ Yes ]")
+
+            # Return the termination condition.
             return True
         else:
+            # Print out.
             print("    [ No ]")
+
+            # Return False to not terminate.
             return False
 
 
@@ -736,6 +761,9 @@ class dAuvergne_protocol:
 
         # Loop over the data pipes.
         for name in self.pipes:
+            # Place the model name into the status container.
+            self.status.dAuvergne_protocol.current_model = name
+
             # Create the data pipe.
             if pipes.has_pipe(name):
                 self.interpreter.pipe.delete(name)
@@ -784,3 +812,6 @@ class dAuvergne_protocol:
             # Write the results.
             dir = self.base_dir + name
             self.interpreter.results.write(file='results', dir=dir, force=True)
+
+        # Unset the status.
+        self.status.dAuvergne_protocol.current_model = None

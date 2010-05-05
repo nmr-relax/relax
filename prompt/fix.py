@@ -63,8 +63,8 @@ class Fix(Basic_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "fix("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "fix("
             text = text + "element=" + repr(element)
             text = text + ", fixed=" + repr(fixed) + ")"
             print(text)

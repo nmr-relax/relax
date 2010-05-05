@@ -43,8 +43,8 @@ class Vmd(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "vmd.view()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "vmd.view()"
             print(text)
 
         # Execute the functional code.

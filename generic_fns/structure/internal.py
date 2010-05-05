@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -351,6 +351,41 @@ class Internal(Base_struct_API):
             raise RelaxError("The structural data is invalid.")
 
 
+    def _translate(self, data, format='str'):
+        """Convert the data into a format for writing to file.
+
+        @param data:        The data to convert to the required format.
+        @type data:         anything
+        @keyword format:    The format to convert to.  This can be 'str', 'float', or 'int'.
+        @type format:       str
+        @return:            The converted version of the data.
+        @rtype:             str
+        """
+
+        # Conversion to string.
+        if format == 'str':
+            # None values.
+            if data == None:
+                data = ''
+    
+            # Force convert to string.
+            if not isinstance(data, str):
+                data = repr(data)
+    
+        # Conversion to float.
+        if format == 'float':
+            # None values.
+            if data == None:
+                data = 0.0
+    
+            # Force convert to float.
+            if not isinstance(data, float):
+                data = float(data)
+
+         # Return the converted data.
+        return data
+
+
     def atom_loop(self, atom_id=None, str_id=None, model_num_flag=False, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
@@ -395,10 +430,8 @@ class Internal(Base_struct_API):
         # Generate the selection object.
         sel_obj = Selection(atom_id)
 
-        # Loop over the models.
-        for model_index in range(len(self.structural_data)):
-            model = self.structural_data[model_index]
-
+        # Model loop.
+        for model in self.model_loop():
             # Loop over the molecules.
             for mol_index in range(len(model.mol)):
                 mol = model.mol[mol_index]
@@ -424,9 +457,9 @@ class Internal(Base_struct_API):
                     # The atom position.
                     if ave:
                         # Loop over the models.
-                        for model_index2 in range(len(self.structural_data)):
+                        for model in self.model_loop():
                             # Alias.
-                            mol = self.structural_data[model_index2].mol[mol_index]
+                            mol = model.mol[mol_index]
 
                             # Some sanity checks.
                             if mol.atom_num[i] != atom_num:
@@ -478,9 +511,7 @@ class Internal(Base_struct_API):
 
         @keyword attached_atom:     The name of the bonded atom.
         @type attached_atom:        str
-        @keyword model_num:         The model of which to return the vectors from.  If not supplied
-                                    and multiple models exist, then vectors from all models will be
-                                    returned.
+        @keyword model_num:         The model of which to return the vectors from.  If not supplied and multiple models exist, then vectors from all models will be returned.
         @type model_num:            None or int
         @keyword mol_name:          The name of the molecule that attached_atom belongs to.
         @type mol_name:             str
@@ -492,14 +523,12 @@ class Internal(Base_struct_API):
         @type spin_num:             str
         @keyword spin_name:         The name of the spin that attached_atom is attached to.
         @type spin_name:            str
-        @keyword return_name:       A flag which if True will cause the name of the attached atom to
-                                    be returned together with the bond vectors.
+        @keyword return_name:       A flag which if True will cause the name of the attached atom to be returned together with the bond vectors.
         @type return_name:          bool
         @keyword return_warnings:   A flag which if True will cause warning messages to be returned.
         @type return_warnings:      bool
         @return:                    The list of bond vectors for each model.
-        @rtype:                     list of numpy arrays (or a tuple if return_name or
-                                    return_warnings are set)
+        @rtype:                     list of numpy arrays (or a tuple if return_name or return_warnings are set)
         """
 
         # Initialise some objects.
@@ -508,11 +537,7 @@ class Internal(Base_struct_API):
         warnings = None
 
         # Loop over the models.
-        for model in self.structural_data:
-            # Single model.
-            if model_num and model_num != model.num:
-                continue
-
+        for model in self.model_loop(model_num):
             # Loop over the molecules.
             for mol in model.mol:
                 # Skip non-matching molecules.
@@ -530,12 +555,9 @@ class Internal(Base_struct_API):
                     if (spin_num != None and mol.atom_num[i] != spin_num) or (spin_name != None and mol.atom_name[i] != spin_name):
                         continue
 
-                    # More than one matching atom!
-                    if index != None:
-                        raise RelaxError("The atom_id argument " + repr(atom_id) + " must correspond to a single atom.")
-
-                    # Update the index.
+                    # Update the index and stop searching.
                     index = i
+                    break
 
                 # Found the atom.
                 if index != None:
@@ -732,7 +754,7 @@ class Internal(Base_struct_API):
 
         # Determine if model records will be created.
         model_records = False
-        for model in self.structural_data:
+        for model in self.model_loop():
             if hasattr(model, 'num') and model.num != None:
                 model_records = True
 
@@ -884,11 +906,7 @@ class Internal(Base_struct_API):
         ######################
 
         # Loop over the models.
-        for model in self.structural_data:
-            # Single model.
-            if model_num and model_num != model.num:
-                continue
-
+        for model in self.model_loop(model_num):
             # MODEL record, for multiple models.
             ####################################
 
@@ -909,52 +927,25 @@ class Internal(Base_struct_API):
                 print("ATOM, HETATM, TER")
 
                 # Loop over the atomic data.
+                atom_record = False
                 for i in xrange(len(mol.atom_name)):
-                    # Aliases.
-                    atom_num = mol.atom_num[i]
-                    atom_name = mol.atom_name[i]
-                    res_name = mol.res_name[i]
-                    chain_id = mol.chain_id[i]
-                    res_num = mol.res_num[i]
-                    x = mol.x[i]
-                    y = mol.y[i]
-                    z = mol.z[i]
-                    seg_id = mol.seg_id[i]
-                    element = mol.element[i]
-
-                    # Replace None with ''.
-                    if atom_name == None:
-                        atom_name = ''
-                    if res_name == None:
-                        res_name = ''
-                    if chain_id == None:
-                        chain_id = ''
-                    if res_num == None:
-                        res_num = ''
-                    if x == None:
-                        x = ''
-                    if y == None:
-                        y = ''
-                    if z == None:
-                        z = ''
-                    if seg_id == None:
-                        seg_id = ''
-                    if element == None:
-                        element = ''
-
                     # Write the ATOM record.
                     if mol.pdb_record[i] == 'ATOM':
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        atom_record = True
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('ATOM', mol.atom_num[i], self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_atom = num_atom + 1
 
+                # Finish the ATOM section with the TER record.
+                if atom_record:
+                    file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', num_atom+1, self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), ''))
+                    num_ter = num_ter + 1
+
+                # Loop over the atomic data.
+                for i in xrange(len(mol.atom_name)):
                     # Write the HETATM record.
                     if mol.pdb_record[i] == 'HETATM':
-                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', atom_num, atom_name, '', res_name, chain_id, res_num, '', x, y, z, 1.0, 0, seg_id, element, ''))
+                        file.write("%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4s%2s%2s\n" % ('HETATM', mol.atom_num[i], self._translate(mol.atom_name[i]), '', self._translate(mol.res_name[i]), self._translate(mol.chain_id[i]), self._translate(mol.res_num[i]), '', self._translate(mol.x[i], 'float'), self._translate(mol.y[i], 'float'), self._translate(mol.z[i], 'float'), 1.0, 0, self._translate(mol.seg_id[i]), self._translate(mol.element[i]), ''))
                         num_hetatm = num_hetatm + 1
-
-                # Finish off with the TER record.
-                file.write("%-6s%5s      %3s %1s%4s%1s\n" % ('TER', atom_num+1, res_name, chain_id, res_num, ''))
-                num_ter = num_ter + 1
 
 
             # ENDMDL record, for multiple structures.
@@ -1139,7 +1130,7 @@ class MolContainer:
         element = strip(atom_name, "'")
 
         # Strip away atom numbering, from the front and end.
-        element = strip(atom_name, digits)
+        element = strip(element, digits)
 
         # Amino acid atom translation table (note, numbers have been stripped already!).
         table = {'C': ['CA', 'CB', 'CG', 'CD', 'CE', 'CZ'],

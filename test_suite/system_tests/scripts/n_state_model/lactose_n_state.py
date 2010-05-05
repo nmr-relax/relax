@@ -1,6 +1,7 @@
 # Script for determining populations for lactose conformations using RDCs and PCSs.
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
@@ -10,11 +11,15 @@ from specific_fns.setup import n_state_model_obj
 
 
 # Path of the files.
-str_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
-data_path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'align_data'
+str_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+data_path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'
 
 # Create the data pipe.
 pipe.create('lactose', 'N-state')
+
+# The population model for free operation of this script.
+if not hasattr(ds, 'model'):
+    ds.model = 'population'
 
 # Load the structures.
 NUM_STR = 4
@@ -47,10 +52,12 @@ for i in xrange(len(align_list)):
     # The RDC.
     rdc.read(align_id=align_list[i], file='rdc.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+3, error_col=None)
     rdc.read(align_id=align_list[i], file='rdc_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+3)
+    rdc.display(align_id=align_list[i])
 
     # The PCS.
     pcs.read(align_id=align_list[i], file='pcs.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+2, error_col=None)
     pcs.read(align_id=align_list[i], file='pcs_err.txt', dir=data_path, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+2)
+    pcs.display(align_id=align_list[i])
 
     # The temperature.
     temperature(id=align_list[i], temp=298)
@@ -76,11 +83,12 @@ pipe.switch('lactose')
 pcs.centre(atom_id=':4@C1', pipe='tag')
 
 # Set up the model.
-n_state_model.select_model(model='population')
+n_state_model.select_model(model=ds.model)
 
 # Set to equal probabilities.
-for j in xrange(NUM_STR):
-    value.set(1.0/NUM_STR, 'p'+repr(j))
+if ds.model == 'population':
+    for j in xrange(NUM_STR):
+        value.set(1.0/NUM_STR, 'p'+repr(j))
 
 # Minimisation.
 minimise('bfgs', constraints=True, max_iter=5)

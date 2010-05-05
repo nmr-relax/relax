@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -38,6 +38,71 @@ from relax_warnings import RelaxWarning
 
 
 
+def angles_regular(inc=None):
+    """Determine the spherical angles for a regular sphere point distribution.
+
+    @keyword inc:   The number of increments in the distribution.
+    @type inc:      int
+    @return:        The phi angle array and the theta angle array.
+    @rtype:         array of float, array of float
+    """
+
+    # Generate the increment values of u.
+    u = zeros(inc, float64)
+    val = 1.0 / float(inc)
+    for i in xrange(inc):
+        u[i] = float(i) * val
+
+    # Generate the increment values of v.
+    v = zeros(inc/2+1, float64)
+    val = 1.0 / float(inc/2)
+    for i in range(inc/2+1):
+        v[i] = float(i) * val
+
+    # Generate the distribution of spherical angles theta.
+    theta = 2.0 * pi * u
+
+    # Generate the distribution of spherical angles phi (from bottom to top).
+    phi = zeros(len(v), float64)
+    for i in range(len(v)):
+        phi[len(v)-1-i] = pi * v[i]
+
+    # Return the angle arrays.
+    return phi, theta
+
+
+def angles_uniform(inc=None):
+    """Determine the spherical angles for a uniform sphere point distribution.
+
+    @keyword inc:   The number of increments in the distribution.
+    @type inc:      int
+    @return:        The phi angle array and the theta angle array.
+    @rtype:         array of float, array of float
+    """
+
+    # Generate the increment values of u.
+    u = zeros(inc, float64)
+    val = 1.0 / float(inc)
+    for i in xrange(inc):
+        u[i] = float(i) * val
+
+    # Generate the increment values of v.
+    v = zeros(inc/2+2, float64)
+    val = 1.0 / float(inc/2)
+    for i in xrange(1, inc/2+1):
+        v[i] = float(i-1) * val + val/2.0
+    v[-1] = 1.0
+
+    # Generate the distribution of spherical angles theta.
+    theta = 2.0 * pi * u
+
+    # Generate the distribution of spherical angles phi.
+    phi = arccos(2.0 * v - 1.0)
+
+    # Return the angle arrays.
+    return phi, theta
+
+
 def autoscale_tensor(method='mass'):
     """Automatically determine an appropriate scaling factor for display of the diffusion tensor.
 
@@ -58,7 +123,7 @@ def autoscale_tensor(method='mass'):
     return 1.8e-6
 
 
-def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=None, angle=None, length=None, inc=None):
+def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', apex=None, axis=None, R=None, scale=None, inc=None, distribution='uniform', debug=False):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally
@@ -68,25 +133,26 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
+    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the phi_max() method for returning the phi value for the given theta.
+    @type cone:             class instance
     @keyword res_name:      The residue name.
     @type res_name:         str
     @keyword res_num:       The residue number.
     @type res_num:          int
+    @keyword chain_id:      The chain identifier.
+    @type chain_id:         str
     @keyword apex:          The apex of the cone.
     @type apex:             numpy array, len 3
-    @keyword axis:          The central axis of the cone.  If supplied, then this arg will be used
-                            to construct the rotation matrix.
+    @keyword axis:          The central axis of the cone.  If supplied, then this arg will be used to construct the rotation matrix.
     @type axis:             numpy array, len 3
-    @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will
-                            be ignored.
+    @keyword R:             A 3x3 rotation matrix.  If the axis arg supplied, then this matrix will be ignored.
     @type R:                3x3 numpy array
-    @keyword angle:         The cone angle in radians.
-    @type angle:            float
-    @keyword length:        The cone length in meters.
-    @type length:           float
-    @keyword inc:           The number of increments or number of vectors used to generate the outer
-                            edge of the cone.
+    @keyword scale:         The scaling factor to stretch all points by.
+    @type scale:            float
+    @keyword inc:           The number of increments or number of vectors used to generate the outer edge of the cone.
     @type inc:              int
+    @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
+    @type distribution:     str
     """
 
     # The atom numbers (and indices).
@@ -96,6 +162,12 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
     mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H')
     origin_atom = atom_num
 
+    # Get the polar and azimuthal angles for the distribution.
+    if distribution == 'uniform':
+        phi, theta = angles_uniform(inc)
+    else:
+        phi, theta = angles_regular(inc)
+
     # Initialise the rotation matrix.
     if R == None:
         R = eye(3)
@@ -104,24 +176,29 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
     if axis != None:
         two_vect_to_R(array([0, 0, 1], float64), axis, R)
 
-    # Loop over each vector.
-    for i in xrange(inc):
-        # Increment the atom number.
-        atom_num = atom_num + 1
+    # Determine the maximum phi values and the indices of the point just above the edge.
+    phi_max = zeros(len(theta), float64)
+    edge_index = zeros(len(theta), int)
+    for i in range(len(theta)):
+        # Get the polar angle for the longitude edge atom.
+        phi_max[i] = cone.phi_max(theta[i])
 
-        # The azimuthal angle theta.
-        theta = 2.0 * pi * float(i) / float(inc)
+        # The index.
+        for j in range(len(phi)):
+            if phi[j] <= phi_max[i]:
+                edge_index[i] = j
+                break
 
-        # X coordinate.
-        x = cos(theta) * sin(angle)
+    # Reverse edge index.
+    edge_index_rev = len(phi) - 1 - edge_index
 
-        # Y coordinate.
-        y = sin(theta)* sin(angle)
-
-        # Z coordinate.
-        z = cos(angle)
-
+    # Move around the azimuth.
+    atom_num = atom_num + 1
+    for i in range(len(theta)):
         # The vector in the unrotated frame.
+        x = cos(theta[i]) * sin(phi_max[i])
+        y = sin(theta[i])* sin(phi_max[i])
+        z = cos(phi_max[i])
         vector = array([x, y, z], float64)
 
         # Rotate the vector.
@@ -131,21 +208,175 @@ def cone_edge(mol=None, res_name='CON', res_num=None, apex=None, axis=None, R=No
         atom_id = 'T' + repr(i)
 
         # The atom position.
-        pos = apex+vector*length
+        pos = apex+vector*scale
+
+        # Debugging.
+        if debug:
+            print("i: %s; theta: %s" % (i, theta[i]))
+            print("%sAdding atom %s." % (" "*4, get_proton_name(atom_num)))
 
         # Add the vector as a H atom of the cone residue.
         mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, res_num=res_num, pos=pos, segment_id=None, element='H')
 
-        # Connect across the radial array (to generate the circular cone edge).
-        if i != 0:
-            mol.atom_connect(index1=atom_num-1, index2=atom_num-2)
-
-        # Connect the last radial array to the first (to zip up the circle).
-        if i == inc-1:
-            mol.atom_connect(index1=atom_num-1, index2=origin_atom)
-
-        # Join the atom to the cone apex.
+        # Join the longitude atom to the cone apex.
         mol.atom_connect(index1=origin_atom-1, index2=atom_num-1)
+
+        # Increment the atom number.
+        atom_num = atom_num + 1
+
+        # Add latitude atoms for a smoother cone edge and better stitching to the cap.
+        for j in range(len(phi)):
+            # The index for the direction top to bottom!
+            k = len(phi) - 1 - j
+
+            # Debugging.
+            if debug:
+                print("%sj: %s; phi: %-20s; k: %s; phi: %-20s; phi_max: %-20s" % (" "*4, j, phi[j], k, phi[k], phi_max[i]))
+
+            # No edge.
+            skip = True
+
+            # Forward edge (skip when the latitude is phi max).
+            fwd_index = i+1
+            if i == len(theta)-1:
+                fwd_index = 0
+            if j >= edge_index[i] and j < edge_index[fwd_index] and not abs(phi_max[fwd_index] - phi[j]) < 1e-6:
+                # Debugging.
+                if debug:
+                    print("%sForward edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+
+                # Find the theta value for this polar angle phi.
+                phi_val = phi[j]
+                if fwd_index == 0:
+                    theta_max = theta[fwd_index] + 2*pi
+                else:
+                    theta_max = theta[fwd_index]
+                theta_max = cone.theta_max(phi_val, theta_min=theta[i], theta_max=theta_max-1e-7)
+
+            # Back edge (skip when the latitude is phi max).
+            rev_index = i-1
+            if i == 0:
+                rev_index = len(theta)-1
+            if i < len(theta)-1 and j > edge_index_rev[i] and j <= edge_index_rev[i+1] and not abs(phi_max[fwd_index] - phi[k]) < 1e-6:
+                # Debugging.
+                if debug:
+                    print("%sBack edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+
+                # Find the theta value for this polar angle phi.
+                phi_val = phi[k]
+                theta_max = cone.theta_max(phi_val, theta_min=theta[i-1], theta_max=theta[i])
+
+            # Skipping.
+            if skip:
+                continue
+
+            # Debugging.
+            if debug:
+                print("%sAdding atom %s." % (" "*8, get_proton_name(atom_num)))
+
+            # The coordinates.
+            x = cos(theta_max) * sin(phi_val)
+            y = sin(theta_max) * sin(phi_val)
+            z = cos(phi_val)
+            pos = array([x, y, z], float64) * scale
+
+            # Rotate and shift.
+            pos = apex + dot(R, pos)
+
+            # Add the atom.
+            mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
+
+            # Increment the atom number.
+            atom_num = atom_num + 1
+
+    # Debugging.
+    if debug:
+        print("\nBuilding the edge.")
+
+    # Build the cone edge.
+    for i in range(origin_atom, atom_num-2):
+        # Debugging.
+        if debug:
+            print("%sCone edge, connecting %s to %s" % (" "*4, get_proton_name(i), get_proton_name(i+1)))
+
+        # Connect.
+        mol.atom_connect(index1=i, index2=i+1)
+
+    # Connect the last radial array to the first (to zip up the circle).
+    mol.atom_connect(index1=atom_num-2, index2=origin_atom)
+
+
+def create_cone_pdb(cone=None, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', file=None, dir=None, force=False):
+    """Create a PDB representation of the given cone object.
+
+    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi, the phi_max() method for returning the phi value for the given theta.
+    @type cone:             class instance
+    @keyword apex:          The apex of the cone.
+    @type apex:             rank-1, 3D numpy array
+    @keyword axis:          The central axis of the cone.  If not supplied, the z-axis will be used.
+    @type axis:             rank-1, 3D numpy array
+    @keyword R:             The rotation matrix.
+    @type R:                rank-2, 3D numpy array
+    @keyword inc:           The increment number used to determine the number of latitude and longitude lines.
+    @type inc:              int
+    @keyword scale:         The scaling factor to stretch the unit cone by.
+    @type scale:            float
+    @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
+    @type distribution:     str
+    @param file:            The name of the PDB file to create.
+    @type file:             str
+    @param dir:             The name of the directory to place the PDB file into.
+    @type dir:              str
+    @param force:           Flag which if set to True will overwrite any pre-existing file.
+    @type force:            bool
+    """
+
+    # The cone axis default of the z-axis.
+    if not axis:
+        axis = array([0, 0, 1], float64)
+
+    # No rotation.
+    if R == None:
+        R = eye(3)
+
+    # Create the structural object.
+    structure = Internal()
+
+    # Add a molecule.
+    structure.add_molecule(name='cone')
+
+    # Alias the single molecule from the single model.
+    mol = structure.structural_data[0].mol[0]
+
+    # Add the apex.
+    mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='R', res_name='APX', res_num=1, pos=apex, element='C')
+
+    # Generate the axis vectors.
+    print("\nGenerating the axis vectors.")
+    res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=2, origin=apex, scale=scale)
+
+    # Generate the cone outer edge.
+    print("\nGenerating the cone outer edge.")
+    edge_start_atom = mol.atom_num[-1]+1
+    cone_edge(mol=mol, cone=cone, res_name='EDG', res_num=3, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
+
+    # Generate the cone cap, and stitch it to the cone edge.
+    print("\nGenerating the cone cap.")
+    cone_start_atom = mol.atom_num[-1]+1
+    generate_vector_dist(mol=mol, res_name='CON', res_num=4, centre=apex, R=R, limit_check=cone.limit_check, scale=scale, inc=inc, distribution=distribution)
+    stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=edge_start_atom+1, scale=scale, inc=inc, distribution=distribution)
+
+    # Create the PDB file.
+    print("\nGenerating the PDB file.")
+    pdb_file = open_write_file(file_name=file, dir=dir, force=force)
+    structure.write_pdb(pdb_file)
+    pdb_file.close()
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
@@ -446,13 +677,10 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     tensor_pdb_file.close()
 
 
-def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), max_angle=None, scale=1.0, inc=20):
+def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), limit_check=None, scale=1.0, inc=20, distribution='uniform', debug=False):
     """Generate a uniformly distributed distribution of atoms on a warped sphere.
 
-    The vectors from the function uniform_vect_dist_spherical_angles() are used to generate the
-    distribution.  These vectors are rotated to the desired frame using the rotation matrix 'R',
-    then each compressed or stretched by the dot product with the 'warp' matrix.  Each vector is
-    centred and at the head of the vector, a proton is placed.
+    The vectors from the function vect_dist_spherical_angles() are used to generate the distribution.  These vectors are rotated to the desired frame using the rotation matrix 'R', then each compressed or stretched by the dot product with the 'warp' matrix.  Each vector is centred and at the head of the vector, a proton is placed.
 
 
     @keyword mol:           The molecule container.
@@ -469,57 +697,73 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
     @type R:                3x3 numpy array
     @keyword warp:          The optional 3x3 warping matrix.
     @type warp:             3x3 numpy array
-    @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
-    @type max_angle:        float
+    @keyword limit_check:   A function with determines the limits of the distribution.  It should accept two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.
+    @type limit_check:      function
     @keyword scale:         The scaling factor to stretch all rotated and warped vectors by.
     @type scale:            float
-    @keyword inc:           The number of increments or number of vectors used to generate the outer
-                            edge of the cone.
+    @keyword inc:           The number of increments or number of vectors used to generate the outer edge of the cone.
     @type inc:              int
+    @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
+    @type distribution:     str
     """
 
     # Initial atom number.
-    origin_num = mol.atom_num[-1]+1
+    if len(mol.atom_num) == 0:
+        origin_num = 1
+    else:
+        origin_num = mol.atom_num[-1]+1
     atom_num = origin_num
 
     # Get the uniform vector distribution.
     print("    Creating the uniform vector distribution.")
-    vectors = uniform_vect_dist_spherical_angles(inc=inc)
+    vectors = vect_dist_spherical_angles(inc=inc, distribution=distribution)
 
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
-
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
-
-    # Loop over the angles and find the minimum latitudinal index.
-    if max_angle == None:
-        j_min = 0
+    # Get the polar and azimuthal angles for the distribution.
+    if distribution == 'uniform':
+        phi, theta = angles_uniform(inc)
     else:
-        for j_min in xrange(len(phi)):
-            if phi[j_min] <= max_angle:
-                break
+        phi, theta = angles_regular(inc)
 
-    # The number of j increments.
-    num_j = inc/2+2 - j_min
+    # Init the arrays for stitching together.
+    edge = zeros(len(theta))
+    edge_index = zeros(len(theta), int)
+    edge_phi = zeros(len(theta), float64)
+    edge_atom = zeros(len(theta))
 
     # Loop over the radial array of vectors (change in longitude).
-    for i in range(inc):
+    for i in range(len(theta)):
+        # Debugging.
+        if debug:
+            print("i: %s; theta: %s" % (i, theta[i]))
+
         # Loop over the vectors of the radial array (change in latitude).
-        for j in range(inc/2+2):
-            # Skip the vector if the polar angle is greater than max_angle.
-            if j < j_min:
+        for j in range(len(phi)):
+            # Debugging.
+            if debug:
+                print("%sj: %s; phi: %s" % (" "*4, j, phi[j]))
+
+            # Skip the vector if the point is outside of the limits.
+            if limit_check and not limit_check(phi[j], theta[i]):
+                if debug:
+                    print("%sOut of cone." % (" "*8))
                 continue
 
-            # Index.
-            index = i + j*inc
+            # Update the edge for this longitude.
+            if not edge[i]:
+                edge[i] = 1
+                edge_index[i] = j
+                edge_phi[i] = phi[j]
+                edge_atom[i] = atom_num
+
+                # Debugging.
+                if debug:
+                    print("%sEdge detected." % (" "*8))
+                    print("%sEdge index: %s" % (" "*8, edge_index[i]))
+                    print("%sEdge phi pos: %s" % (" "*8, edge_phi[i]))
+                    print("%sEdge atom: %s" % (" "*8, edge_atom[i]))
 
             # Rotate the vector into the diffusion frame.
-            vector = dot(R, vectors[index])
+            vector = dot(R, vectors[i + j*len(theta)])
 
             # Set the length of the vector to its diffusion rate within the diffusion tensor geometric object.
             vector = dot(warp, vector)
@@ -530,20 +774,42 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
             # Position relative to the centre of mass.
             pos = centre + vector
 
+            # Debugging.
+            if debug:
+                print("%sAdding atom %s." % (" "*8, get_proton_name(atom_num)))
+
             # Add the vector as a H atom of the TNS residue.
             mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
 
-            # Connect to the previous atom (to generate the longitudinal lines).
-            if j > j_min:
+            # Connect to the previous atom to generate the longitudinal lines (except for the first point).
+            if j > edge_index[i]:
+                # Debugging.
+                if debug:
+                    print("%sLongitude line, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(atom_num-1)))
+
                 mol.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
             # Connect across the radial arrays (to generate the latitudinal lines).
-            if i != 0:
-                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-num_j)
+            if i != 0 and j >= edge_index[i-1]:
+                # The number of atoms back to the previous longitude.
+                num = len(phi) - edge_index[i]
+
+                # Debugging.
+                if debug:
+                    print("%sLatitude line, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(atom_num-num)))
+
+                mol.atom_connect(index1=atom_num-1, index2=atom_num-1-num)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
-            if i == inc-1:
-                mol.atom_connect(index1=atom_num-1, index2=origin_num-1+(j-j_min))
+            if i == len(theta)-1 and j >= edge_index[0]:
+                # The number of atom in the first longitude line.
+                num = origin_num + j - edge_index[0]
+
+                # Debugging.
+                if debug:
+                    print("%sZipping up, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(num)))
+
+                mol.atom_connect(index1=atom_num-1, index2=num-1)
 
             # Increment the atom number.
             atom_num = atom_num + 1
@@ -559,16 +825,13 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     @type mol:              MolContainer instance
     @param vector:          The vector to be represented in the PDB.
     @type vector:           numpy array, len 3
-    @param atom_name:       The atom name used to label the atom representing the head of the
-                            vector.
+    @param atom_name:       The atom name used to label the atom representing the head of the vector.
     @type atom_name:        str
     @param res_name_vect:   The 3 letter PDB residue code used to represent the vector.
     @type res_name_vect:    str
-    @param sim_vectors:     The optional Monte Carlo simulation vectors to be represented in the
-                            PDB.
+    @param sim_vectors:     The optional Monte Carlo simulation vectors to be represented in the PDB.
     @type sim_vectors:      list of numpy array, each len 3
-    @param res_name_sim:    The 3 letter PDB residue code used to represent the Monte Carlo
-                            simulation vectors.
+    @param res_name_sim:    The 3 letter PDB residue code used to represent the Monte Carlo simulation vectors.
     @type res_name_sim:     str
     @param chain_id:        The chain identification code.
     @type chain_id:         str
@@ -578,11 +841,9 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     @type origin:           numpy array, len 3
     @param scale:           The scaling factor to stretch the vectors by.
     @type scale:            float
-    @param label_placement: A scaling factor to multiply the pre-scaled vector by.  This is used to
-                            place the vector labels a little further out from the vector itself.
+    @param label_placement: A scaling factor to multiply the pre-scaled vector by.  This is used to place the vector labels a little further out from the vector itself.
     @type label_placement:  float
-    @param neg:             If True, then the negative vector positioned at the origin will also be
-                            included.
+    @param neg:             If True, then the negative vector positioned at the origin will also be included.
     @type neg:              bool
     @return:                The new residue number.
     @rtype:                 int
@@ -655,70 +916,139 @@ def get_proton_name(atom_num):
             return names[i] + repr(atom_num - lims[i])
 
 
-def stitch_cone_to_edge(mol=None, cone_start=None, edge_start=None, max_angle=None, inc=None):
+def stitch_cone_to_edge(mol=None, cone=None, chain_id='', dome_start=None, edge_start=None, scale=1.0, inc=None, distribution='uniform', debug=False):
     """Function for stitching the cone dome to its edge, in the PDB representations.
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
-    @keyword cone_start:    The starting atom number of the cone dome residue.
-    @type cone_start:       int
+    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi.
+    @type cone:             class instance
+    @keyword chain_id:      The chain identifier.
+    @type chain_id:         str
+    @type limit_check:      function
+    @keyword dome_start:    The starting atom number of the cone dome residue.
+    @type dome_start:       int
     @keyword edge_start:    The starting atom number of the cone edge residue.
     @type edge_start:       int
-    @keyword max_angle:     The maximal polar angle, in rad, after which all vectors are skipped.
-    @type max_angle:        float
-    @keyword inc:           The number of increments or number of vectors used to generate the outer
-                            edge of the cone.
+    @keyword scale:         The scaling factor to stretch all points by.
+    @type scale:            float
+    @keyword inc:           The number of increments or number of vectors used to generate the outer edge of the cone.
     @type inc:              int
+    @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
+    @type distribution:     str
     """
 
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
+    # Get the polar and azimuthal angles for the distribution.
+    if distribution == 'uniform':
+        phi, theta = angles_uniform(inc)
+    else:
+        phi, theta = angles_regular(inc)
 
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
+    # Determine the maximum phi values and the indices of the point just above the edge.
+    phi_max = zeros(len(theta), float64)
+    edge_index = zeros(len(theta), int)
+    for i in range(len(theta)):
+        # Get the polar angle for the longitude edge atom.
+        phi_max[i] = cone.phi_max(theta[i])
 
-    # Loop over the angles and find the minimum latitudinal index.
-    for j_min in xrange(len(phi)):
-        if phi[j_min] < max_angle:
-            break
+        # The index.
+        for j in range(len(phi)):
+            if phi[j] <= phi_max[i]:
+                edge_index[i] = j
+                break
 
-    # The number of j increments.
-    num_j = inc/2+2 - j_min
+    # Reverse edge index.
+    edge_index_rev = len(phi) - 1 - edge_index
 
-    # Loop over the radial array of vectors (change in longitude).
-    for i in range(inc):
-        # Cone edge atom.
-        edge_atom = edge_start + i
+    # Debugging.
+    if debug:
+        print("\nDome start: %s" % dome_start)
+        print("Edge start: %s" % edge_start)
+        print("Edge indices:     %s" % edge_index)
+        print("Edge indices rev: %s" % edge_index_rev)
 
-        # Dome edge atom.
-        dome_edge = cone_start + i*num_j
+    # Move around the azimuth.
+    dome_atom = dome_start
+    edge_atom = edge_start
+    for i in range(len(theta)):
+        # Debugging.
+        if debug:
+            print("i: %s; theta: %s" % (i, theta[i]))
+            print("%sDome atom: %s" % (" "*4, get_proton_name(dome_atom)))
+            print("%sStitching longitudinal line to edge - %s to %s." % (" "*4, get_proton_name(edge_atom), get_proton_name(dome_atom)))
 
         # Connect the two atoms (to stitch up the 2 objects).
-        mol.atom_connect(index1=dome_edge-1, index2=edge_atom-1)
+        mol.atom_connect(index1=dome_atom-1, index2=edge_atom-1)
+
+        # Update the edge atom.
+        edge_atom = edge_atom + 1
+
+        # Stitch up the latitude atoms.
+        for j in range(len(phi)):
+            # The index for the direction top to bottom!
+            k = len(phi) - 1 - j
+
+            # Debugging.
+            if debug:
+                print("%sj: %s; phi: %-20s; k: %s; phi: %-20s; phi_max: %-20s" % (" "*4, j, phi[j], k, phi[k], phi_max[i]))
+
+            # No edge.
+            skip = True
+
+            # Forward edge (skip when the latitude is phi max).
+            fwd_index = i+1
+            if i == len(theta)-1:
+                fwd_index = 0
+            if j >= edge_index[i] and j < edge_index[fwd_index] and not abs(phi_max[fwd_index] - phi[j]) < 1e-6:
+                # Debugging.
+                if debug:
+                    print("%sForward edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+                forward = True
+
+            # Back edge (skip when the latitude is phi max).
+            rev_index = i-1
+            if i == 0:
+                rev_index = len(theta)-1
+            if i < len(theta)-1 and j > edge_index_rev[i] and j <= edge_index_rev[i+1] and not abs(phi_max[fwd_index] - phi[k]) < 1e-6:
+                # Debugging.
+                if debug:
+                    print("%sBack edge." % (" "*8))
+
+                # Edge found.
+                skip = False
+                forward = False
+
+            # Skipping.
+            if skip:
+                continue
+
+            # The dome atom to stitch to (current dome atom + one latitude line to shift across).
+            if forward:
+                atom = dome_atom + j - edge_index[i]
+            else:
+                atom = dome_atom + (edge_index_rev[i]+1) + k - edge_index[fwd_index]
+
+            # Debugging.
+            if debug:
+                print("%sStitching latitude line to edge - %s to %s." % (" "*8, get_proton_name(edge_atom), get_proton_name(atom)))
+
+            # Connect the two atoms (to stitch up the 2 objects).
+            mol.atom_connect(index1=atom-1, index2=edge_atom-1)
+
+            # Increment the cone edge atom number.
+            edge_atom = edge_atom + 1
+
+        # Update the cone dome atom.
+        dome_atom = dome_atom + (len(phi) - edge_index[i])
 
 
-def uniform_vect_dist_spherical_angles(inc=20):
-    """Uniform distribution of vectors on a sphere using uniform spherical angles.
+def vect_dist_spherical_angles(inc=20, distribution='uniform'):
+    """Create a distribution of vectors on a sphere using a distribution of spherical angles.
 
-    This function returns an array of unit vectors uniformly distributed within 3D space.  To
-    create the distribution, uniform spherical angles are used.  The two spherical angles are
-    defined as::
-
-        theta = 2.pi.u,
-        phi = cos^-1(2v - 1),
-
-    where::
-
-        u in [0, 1),
-        v in [0, 1].
-
-    Because theta is defined between [0, pi] and phi is defined between [0, 2pi], for a uniform
-    distribution u is only incremented half of 'inc'.  The unit vectors are generated using the
-    equation::
+    This function returns an array of unit vectors distributed within 3D space.  The unit vectors are generated using the equation::
 
                    | cos(theta) * sin(phi) |
         vector  =  | sin(theta) * sin(phi) |.
@@ -727,42 +1057,27 @@ def uniform_vect_dist_spherical_angles(inc=20):
     The vectors of this distribution generate both longitudinal and latitudinal lines.
 
 
-    @keyword inc:   The number of increments in the distribution.
-    @type inc:      int
-    @return:        The distribution of vectors on a sphere.
-    @rtype:         list of rank-1, 3D numpy arrays
+    @keyword inc:           The number of increments in the distribution.
+    @type inc:              int
+    @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
+    @type distribution:     str
+    @return:                The distribution of vectors on a sphere.
+    @rtype:                 list of rank-1, 3D numpy arrays, array of float, array of float
     """
 
-    # The inc argument must be an even number.
-    if inc%2:
-        raise RelaxError("The increment value of " + repr(inc) + " must be an even number.")
-
-    # Generate the increment values of u.
-    u = zeros(inc, float64)
-    val = 1.0 / float(inc)
-    for i in xrange(inc):
-        u[i] = float(i) * val
-
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in xrange(1, inc/2+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
-
-    # Generate the distribution of spherical angles theta.
-    theta = 2.0 * pi * u
-
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
+    # Get the polar and azimuthal angles for the distribution.
+    if distribution == 'uniform':
+        phi, theta = angles_uniform(inc)
+    else:
+        phi, theta = angles_regular(inc)
 
     # Initialise array of the distribution of vectors.
     vectors = []
 
     # Loop over the longitudinal lines.
-    for j in xrange(len(v)):
+    for j in xrange(len(phi)):
         # Loop over the latitudinal lines.
-        for i in xrange(len(u)):
+        for i in xrange(len(theta)):
             # X coordinate.
             x = cos(theta[i]) * sin(phi[j])
 
@@ -775,5 +1090,5 @@ def uniform_vect_dist_spherical_angles(inc=20):
             # Append the vector.
             vectors.append(array([x, y, z], float64))
 
-    # Return the array of vectors.
+    # Return the array of vectors and angles.
     return vectors

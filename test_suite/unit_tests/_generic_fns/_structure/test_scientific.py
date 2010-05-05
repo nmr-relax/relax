@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import path, sep
 import sys
 from unittest import TestCase
@@ -38,13 +39,8 @@ class Test_scientific(TestCase):
     def setUp(self):
         """Set up for all the Scientific Python PDB structural object unit tests."""
 
-        # Get the relative path of relax.
-        self.path = sys.path[0]
-        if self.path == '.':
-            self.path = sys.path[-1]
-
         # The path to a PDB file.
-        self.test_pdb_path = self.path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
+        self.test_pdb_path = __main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'Ap4Aase_res1-12.pdb'
         expanded = path.split(self.test_pdb_path)
         self.test_pdb_dir = expanded[0]
         self.test_pdb_file_name = expanded[1]

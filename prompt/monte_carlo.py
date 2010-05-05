@@ -65,8 +65,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "monte_carlo.create_data("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.create_data("
             text = text + "method=" + repr(method) + ")"
             print(text)
 
@@ -111,8 +111,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "monte_carlo.error_analysis("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.error_analysis("
             text = text + "prune=" + repr(prune) + ")"
             print(text)
 
@@ -142,8 +142,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "monte_carlo.initial_values()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.initial_values()"
             print(text)
 
         # Execute the functional code.
@@ -154,8 +154,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations off."""
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "monte_carlo.off()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.off()"
             print(text)
 
         # Execute the functional code.
@@ -166,8 +166,8 @@ class Monte_carlo(User_fn_class):
         """Function for turning simulations on."""
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "monte_carlo.on()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.on()"
             print(text)
 
         # Execute the functional code.
@@ -191,8 +191,8 @@ class Monte_carlo(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "monte_carlo.setup("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "monte_carlo.setup("
             text = text + "number=" + repr(number) + ")"
             print(text)
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -25,10 +25,11 @@ from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
 from alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
-from chi2 import chi2, dchi2_element
+from chi2 import chi2, dchi2_element, d2chi2_element
 from float import isNaN
 from pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
+from relax_errors import RelaxImplementError
 from rotation_matrix import euler_to_R_zyz
 
 
@@ -41,9 +42,7 @@ class N_state_opt:
         The N-state models
         ==================
 
-        All constant data required for the N-state model are initialised here.  Depending on the
-        base data used for optimisation, different data structures can be supplied.  However a
-        number of structures must be provided for the N-state model.  These are:
+        All constant data required for the N-state model are initialised here.  Depending on the base data used for optimisation, different data structures can be supplied.  However a number of structures must be provided for the N-state model.  These are:
 
             - model, the type of N-state model.  This can be '2-domain', 'population', or 'fixed'.
             - N, the number of states (or structures).
@@ -54,35 +53,29 @@ class N_state_opt:
         2-domain N-state model
         ----------------------
 
-        If the model type is set to '2-domain', then the following data structures should be
-        supplied:
+        If the model type is set to '2-domain', then the following data structures should be supplied:
 
             - full_tensors, the alignment tensors in matrix form.
             - red_data, the alignment tensors in 5D form in a rank-1 array.
-            - red_errors, the alignment tensor errors in 5D form in a rank-1 array.  This data is
-            not obligatory.
-            - full_in_ref_frame, an array of flags specifying if the tensor in the reference frame
-            is the full or reduced tensor.
+            - red_errors, the alignment tensor errors in 5D form in a rank-1 array.  This data is not obligatory.
+            - full_in_ref_frame, an array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
 
 
         PCS base data
         -------------
 
-        If pseudocontact shift data is to be used for optimisation, then the following should be
-        supplied:
+        If pseudocontact shift data is to be used for optimisation, then the following should be supplied:
 
             - pcs, the pseudocontact shifts.
             - pcs_errors, the optional pseudocontact shift error values.
-            - pcs_vect, the unit vectors connecting the paramagnetic centre (the electron magnetic
-            dipole) to the nuclear spin centre.
+            - pcs_vect, the unit vectors connecting the paramagnetic centre (the electron magnetic dipole) to the nuclear spin centre.
             - pcs_const, the pseudocontact shift constants.
 
 
         RDC base data
         -------------
 
-        If residual dipolar coupling data is to be used for optimisation, then the following should
-        be supplied:
+        If residual dipolar coupling data is to be used for optimisation, then the following should be supplied:
 
             - rdcs, the residual dipolar couplings.
             - rdc_errors, the optional residual dipolar coupling errors.
@@ -90,53 +83,35 @@ class N_state_opt:
             - dip_const, the dipolar constants.
 
 
-        @keyword model:             The N-state model type.  This can be one of '2-domain',
-                                    'population' or 'fixed'.
+        @keyword model:             The N-state model type.  This can be one of '2-domain', 'population' or 'fixed'.
         @type model:                str
         @keyword N:                 The number of states.
         @type N:                    int
-        @keyword init_params:       The initial parameter values.  Optimisation must start at some
-                                    point!
+        @keyword init_params:       The initial parameter values.  Optimisation must start at some point!
         @type init_params:          numpy float64 array
-        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full
-                                    tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2,
-                                    Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
+        @keyword full_tensors:      An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all full tensors.  The format is [Sxx1, Syy1, Sxy1, Sxz1, Syz1, Sxx2, Syy2, Sxy2, Sxz2, Syz2, ..., Sxxn, Syyn, Sxyn, Sxzn, Syzn]
         @type full_tensors:         list of rank-2, 3D numpy arrays
-        @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced
-                                    tensors.  The format is the same as for full_tensors.
+        @keyword red_data:          An array of the {Sxx, Syy, Sxy, Sxz, Syz} values for all reduced tensors.  The format is the same as for full_tensors.
         @type red_data:             numpy float64 array
-        @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced
-                                    tensors.  The array format is the same as for full_tensors.
+        @keyword red_errors:        An array of the {Sxx, Syy, Sxy, Sxz, Syz} errors for all reduced tensors.  The array format is the same as for full_tensors.
         @type red_errors:           numpy float64 array
-        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference
-                                    frame is the full or reduced tensor.
+        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
         @type full_in_ref_frame:    numpy rank-1 array
-        @keyword pcs:               The PCS lists.  The first index must correspond to the different
-                                    alignment media i and the second index to the spin systems j.
+        @keyword pcs:               The PCS lists.  The first index must correspond to the different alignment media i and the second index to the spin systems j.
         @type pcs:                  numpy rank-2 array
-        @keyword pcs_errors:        The PCS error lists.  The dimensions of this argument are the
-                                    same as for 'pcs'.
+        @keyword pcs_errors:        The PCS error lists.  The dimensions of this argument are the same as for 'pcs'.
         @type pcs_errors:           numpy rank-2 array
-        @keyword rdcs:              The RDC lists.  The first index must correspond to the different
-                                    alignment media i and the second index to the spin systems j.
+        @keyword rdcs:              The RDC lists.  The first index must correspond to the different alignment media i and the second index to the spin systems j.
         @type rdcs:                 numpy rank-2 array
-        @keyword rdc_errors:        The RDC error lists.  The dimensions of this argument are the
-                                    same as for 'rdcs'.
+        @keyword rdc_errors:        The RDC error lists.  The dimensions of this argument are the same as for 'rdcs'.
         @type rdc_errors:           numpy rank-2 array
-        @keyword pcs_vect:          The unit vectors between the paramagnetic centre and the
-                                    nucleus.  The first index is the spin systems j and the second
-                                    is the structure or state c.
+        @keyword pcs_vect:          The unit vectors between the paramagnetic centre and the nucleus.  The first index is the spin systems j and the second is the structure or state c.
         @type pcs_vect:             numpy rank-2 array
-        @keyword xh_vect:           The unit XH vector lists.  The first index must correspond to
-                                    the spin systems and the second index to each structure (its
-                                    size being equal to the number of states).
+        @keyword xh_vect:           The unit XH vector lists.  The first index must correspond to the spin systems and the second index to each structure (its size being equal to the number of states).
         @type xh_vect:              numpy rank-2 array
-        @keyword pcs_const:         The pseudocontact shift constants for each nucleus.  The indices
-                                    correspond to the experiments or alignment media i, the spin
-                                    systems j, and the state or structure c.
+        @keyword pcs_const:         The pseudocontact shift constants for each nucleus.  The indices correspond to the experiments or alignment media i, the spin systems j, and the state or structure c.
         @type pcs_const:            numpy rank-3 array
-        @keyword dip_const:         The dipolar constants for each XH vector.  The indices
-                                    correspond to the spin systems j.
+        @keyword dip_const:         The dipolar constants for each XH vector.  The indices correspond to the spin systems j.
         @type dip_const:            numpy rank-1 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
@@ -324,16 +299,17 @@ class N_state_opt:
         if model == 'fixed':
             # The probs are unpacked by self.func in the population model, so just override that function.
             self.func = self.func_tensor_opt
+            self.dfunc = self.dfunc_tensor_opt
+            self.d2func = self.d2func_tensor_opt
+
+            # The zero Hessian.
+            self.zero_hessian = zeros(self.num_spins, float64)
 
 
     def func_2domain(self, params):
         """The target function for optimisation of the 2-domain N-state model.
 
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
-        vector of parameter values and, using these, returns the single chi-squared value
-        corresponding to that coordinate in the parameter space.  If no tensor errors are supplied,
-        then the SSE (the sum of squares error) value is returned instead.  The chi-squared is
-        simply the SSE normalised to unit variance (the SSE divided by the error squared).
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the single chi-squared value corresponding to that coordinate in the parameter space.  If no tensor errors are supplied, then the SSE (the sum of squares error) value is returned instead.  The chi-squared is simply the SSE normalised to unit variance (the SSE divided by the error squared).
 
         @param params:  The vector of parameter values.
         @type params:   list of float
@@ -394,18 +370,13 @@ class N_state_opt:
         Description
         ===========
 
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
-        vector of parameter values and, using these, returns the single chi-squared value
-        corresponding to that coordinate in the parameter space.  If no RDC errors are supplied,
-        then the SSE (the sum of squares error) value is returned instead.  The chi-squared is
-        simply the SSE normalised to unit variance (the SSE divided by the error squared).
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the single chi-squared value corresponding to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the sum of squares error) value is returned instead.  The chi-squared is simply the SSE normalised to unit variance (the SSE divided by the error squared).
 
 
         Indices
         =======
 
-        For this calculation, five indices are looped over and used in the various data structures.
-        These include:
+        For this calculation, five indices are looped over and used in the various data structures.  These include:
             - i, the index over alignments,
             - j, the index over spin systems,
             - c, the index over the N-states (or over the structures),
@@ -416,8 +387,7 @@ class N_state_opt:
         Equations
         =========
 
-        To calculate the function value, a chain of equations are used.  This includes the
-        chi-squared equation and the RDC equation.
+        To calculate the function value, a chain of equations are used.  This includes the chi-squared equation and the RDC equation.
 
 
         The chi-squared equation
@@ -470,8 +440,7 @@ class N_state_opt:
 
             dj = 3 / (2pi) d',
 
-        where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is
-        associated with the alignment tensor and the pure dipolar constant in SI units is::
+        where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is associated with the alignment tensor and the pure dipolar constant in SI units is::
 
                    mu0 gI.gS.h_bar
             d' = - --- ----------- ,
@@ -513,16 +482,13 @@ class N_state_opt:
             - k is Boltzmann's constant,
             - T is the absolute temperature (different for each experiment),
             - Bo is the magnetic field strength (different for each experiment),
-            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin
-            (different for each spin and state).
+            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin (different for each spin and state).
 
 
         Stored data structures
         ======================
 
-        There are a number of data structures calculated by this function and stored for subsequent
-        use in the gradient and Hessian functions.  This include the back calculated RDCs and the
-        alignment tensors.
+        There are a number of data structures calculated by this function and stored for subsequent use in the gradient and Hessian functions.  This include the back calculated RDCs and the alignment tensors.
 
         Dij(theta)
         ----------
@@ -594,19 +560,13 @@ class N_state_opt:
         Description
         ===========
 
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
-        vector of parameter values and, using these, returns the single chi-squared value
-        corresponding to that coordinate in the parameter space.  If no RDC or PCS errors are
-        supplied, then the SSE (the sum of squares error) value is returned instead.  The
-        chi-squared is simply the SSE normalised to unit variance (the SSE divided by the error
-        squared).
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the single chi-squared value corresponding to that coordinate in the parameter space.  If no RDC or PCS errors are supplied, then the SSE (the sum of squares error) value is returned instead.  The chi-squared is simply the SSE normalised to unit variance (the SSE divided by the error squared).
 
 
         Indices
         =======
 
-        For this calculation, five indices are looped over and used in the various data structures.
-        These include:
+        For this calculation, five indices are looped over and used in the various data structures.  These include:
             - i, the index over alignments,
             - j, the index over spin systems,
             - c, the index over the N-states (or over the structures),
@@ -617,8 +577,7 @@ class N_state_opt:
         Equations
         =========
 
-        To calculate the function value, a chain of equations are used.  This includes the
-        chi-squared equation and the RDC and PCS equations.
+        To calculate the function value, a chain of equations are used.  This includes the chi-squared equation and the RDC and PCS equations.
 
 
         The chi-squared equation
@@ -670,8 +629,7 @@ class N_state_opt:
 
             dj = 3 / (2pi) d',
 
-        where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is
-        associated with the alignment tensor and the pure dipolar constant in SI units is::
+        where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is associated with the alignment tensor and the pure dipolar constant in SI units is::
 
                    mu0 gI.gS.h_bar
             d' = - --- ----------- ,
@@ -712,16 +670,13 @@ class N_state_opt:
             - k is Boltzmann's constant,
             - T is the absolute temperature (different for each experiment),
             - Bo is the magnetic field strength (different for each experiment),
-            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin
-            (different for each spin and state).
+            - r is the distance between the paramagnetic centre (electron spin) and the nuclear spin (different for each spin and state).
 
 
         Stored data structures
         ======================
 
-        There are a number of data structures calculated by this function and stored for subsequent
-        use in the gradient and Hessian functions.  This include the back calculated RDCs and the
-        alignment tensors.
+        There are a number of data structures calculated by this function and stored for subsequent use in the gradient and Hessian functions.  This include the back calculated RDCs and the alignment tensors.
 
         Dij(theta)
         ----------
@@ -789,18 +744,13 @@ class N_state_opt:
         Description
         ===========
 
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
-        vector of parameter values and, using these, returns the chi-squared gradient corresponding
-        to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the
-        sum of squares error) gradient is returned instead.  The chi-squared gradient is simply the
-        SSE gradient normalised to unit variance (the SSE divided by the error squared).
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared gradient corresponding to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the sum of squares error) gradient is returned instead.  The chi-squared gradient is simply the SSE gradient normalised to unit variance (the SSE divided by the error squared).
 
 
         Indices
         =======
 
-        For this calculation, six indices are looped over and used in the various data structures.
-        These include:
+        For this calculation, six indices are looped over and used in the various data structures.  These include:
             - k, the index over all parameters,
             - i, the index over alignments,
             - j, the index over spin systems,
@@ -812,8 +762,7 @@ class N_state_opt:
         Equations
         =========
 
-        To calculate the chi-squared gradient, a chain of equations are used.  This includes the
-        chi-squared gradient, the RDC gradient and the alignment tensor gradient.
+        To calculate the chi-squared gradient, a chain of equations are used.  This includes the chi-squared gradient, the RDC gradient and the alignment tensor gradient.
 
 
         The chi-squared gradient
@@ -868,8 +817,7 @@ class N_state_opt:
             - dj is the dipolar constant for spin j,
             - pc is the weight or probability associated with state c,
             - mu_jc is the unit vector corresponding to spin j and state c,
-            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element
-            Amn.
+            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element Amn.
 
 
         The PCS gradient
@@ -906,15 +854,13 @@ class N_state_opt:
             - djc is the pseudocontact shift constant for spin j and state c,
             - pc is the weight or probability associated with state c,
             - mu_jc is the unit vector corresponding to spin j and state c,
-            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element
-            Amn.
+            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element Amn.
 
 
         The alignment tensor gradient
         -----------------------------
 
-        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} give five different partial
-        derivatives.  These are::
+        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} give five different partial derivatives.  These are::
 
              dAi   | 1  0  0 |
             ---- = | 0  0  0 |,
@@ -942,9 +888,7 @@ class N_state_opt:
         Stored data structures
         ======================
 
-        There are a number of data structures calculated by this function and stored for subsequent
-        use in the Hessian function.  This include the back calculated RDC and PCS gradients and the
-        alignment tensor gradients.
+        There are a number of data structures calculated by this function and stored for subsequent use in the Hessian function.  This include the back calculated RDC and PCS gradients and the alignment tensor gradients.
 
         dDij(theta)/dthetak
         -------------------
@@ -1029,17 +973,488 @@ class N_state_opt:
         return self.dchi2
 
 
+    def dfunc_tensor_opt(self, params):
+        """The gradient function for optimisation of the alignment tensor from RDC and/or PCS data.
+
+        Description
+        ===========
+
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared gradient corresponding to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the sum of squares error) gradient is returned instead.  The chi-squared gradient is simply the SSE gradient normalised to unit variance (the SSE divided by the error squared).
+
+        Indices
+        =======
+
+        For this calculation, six indices are looped over and used in the various data structures.  These include:
+            - k, the index over all parameters,
+            - i, the index over alignments,
+            - j, the index over spin systems,
+            - c, the index over the N-states (or over the structures),
+            - m, the index over the first dimension of the alignment tensor m = {x, y, z}.
+            - n, the index over the second dimension of the alignment tensor n = {x, y, z},
+
+
+        Equations
+        =========
+
+        To calculate the chi-squared gradient, a chain of equations are used.  This includes the chi-squared gradient, the RDC gradient and the alignment tensor gradient.
+
+
+        The chi-squared gradient
+        ------------------------
+
+        The equation is::
+                              ___
+         dchi^2(theta)        \   / Dij - Dij(theta)     dDij(theta) \ 
+         -------------  =  -2  >  | ----------------  .  ----------- |
+            dthetak           /__ \   sigma_ij**2         dthetak    /
+                              ij
+
+        where:
+            - theta is the parameter vector,
+            - Dij are the measured RDCs or PCSs,
+            - Dij(theta) are the back calculated RDCs or PCSs,
+            - sigma_ij are the RDC or PCS errors,
+            - dDij(theta)/dthetak is the RDC or PCS gradient for parameter k.
+
+
+        The RDC gradient
+        ----------------
+
+        The only parameters are the tensor components.
+
+        Amn partial derivative
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element partial derivative is::
+
+                            _N_
+         dDij(theta)     dj \         T   dAi
+         -----------  =  --  >   mu_jc . ---- . mu_jc,
+            dAmn         N  /__          dAmn
+                            c=1
+
+        where:
+            - dj is the dipolar constant for spin j,
+            - N is the total number of states or structures,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element Amn.
+
+
+        The PCS gradient
+        ----------------
+
+        Amn partial derivative
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element partial derivative is::
+
+                                  _N_
+            ddelta_ij(theta)    1 \              T   dAi
+            ----------------  = -  >  djc . mu_jc . ---- . mu_jc,
+                  dAmn          N /__               dAmn
+                                  c=1
+
+        where:
+            - djc is the pseudocontact shift constant for spin j and state c,
+            - N is the total number of states or structures,
+            - mu_jc is the unit vector corresponding to spin j and state c,
+            - dAi/dAmn is the partial derivative of the alignment tensor with respect to element Amn.
+
+
+        The alignment tensor gradient
+        -----------------------------
+
+        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} give five different partial derivatives.  These are::
+
+             dAi   | 1  0  0 |
+            ---- = | 0  0  0 |,
+            dAxx   | 0  0 -1 |
+
+             dAi   | 0  0  0 |
+            ---- = | 0  1  0 |,
+            dAyy   | 0  0 -1 |
+
+             dAi   | 0  1  0 |
+            ---- = | 1  0  0 |,
+            dAxy   | 0  0  0 |
+
+             dAi   | 0  0  1 |
+            ---- = | 0  0  0 |,
+            dAxz   | 1  0  0 |
+
+             dAi   | 0  0  0 |
+            ---- = | 0  0  1 |.
+            dAyz   | 0  1  0 |
+
+        As these are invariant, they can be pre-calculated.
+
+
+        Stored data structures
+        ======================
+
+        There are a number of data structures calculated by this function and stored for subsequent use in the Hessian function.  This include the back calculated RDC and PCS gradients and the alignment tensor gradients.
+
+        dDij(theta)/dthetak
+        -------------------
+
+        The back calculated RDC gradient.  This is a rank-3 tensor with indices {k, i, j}.
+
+        ddeltaij(theta)/dthetak
+        -----------------------
+
+        The back calculated PCS gradient.  This is a rank-3 tensor with indices {k, i, j}.
+
+        dAi/dAmn
+        --------
+
+        The alignment tensor gradients.  This is a rank-3 tensor with indices {5, n, m}.
+
+
+        @param params:  The vector of parameter values.  This is unused as it is assumed that func_population() was called first.
+        @type params:   numpy rank-1 array
+        @return:        The chi-squared or SSE gradient.
+        @rtype:         numpy rank-1 array
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Initial chi-squared (or SSE) gradient.
+        self.dchi2 = self.dchi2 * 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Construct the Amn partial derivative components.
+            for j in xrange(self.num_spins):
+                # RDC.
+                if self.rdc_flag and not self.missing_Dij[i, j]:
+                    self.dDij_theta[i*5, i, j] =   ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[0], weights=self.probs)
+                    self.dDij_theta[i*5+1, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[1], weights=self.probs)
+                    self.dDij_theta[i*5+2, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[2], weights=self.probs)
+                    self.dDij_theta[i*5+3, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs)
+                    self.dDij_theta[i*5+4, i, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs)
+
+                # PCS.
+                if self.pcs_flag and not self.missing_deltaij[i, j]:
+                    self.ddeltaij_theta[i*5, i, j] =   ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.pcs_vect[j], self.N, self.dA[0], weights=self.probs)
+                    self.ddeltaij_theta[i*5+1, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.pcs_vect[j], self.N, self.dA[1], weights=self.probs)
+                    self.ddeltaij_theta[i*5+2, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.pcs_vect[j], self.N, self.dA[2], weights=self.probs)
+                    self.ddeltaij_theta[i*5+3, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.pcs_vect[j], self.N, self.dA[3], weights=self.probs)
+                    self.ddeltaij_theta[i*5+4, i, j] = ave_pcs_tensor_ddeltaij_dAmn(self.pcs_const[i, j], self.pcs_vect[j], self.N, self.dA[4], weights=self.probs)
+
+            # Construct the chi-squared gradient element for parameter k, alignment i.
+            for k in xrange(self.total_num_params):
+                # RDC part of the chi-squared gradient.
+                if self.rdc_flag:
+                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[k, i], self.rdc_sigma_ij[i])
+
+                # PCS part of the chi-squared gradient.
+                if self.pcs_flag:
+                    self.dchi2[k] = self.dchi2[k] + dchi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[k, i], self.pcs_sigma_ij[i])
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            self.dchi2 = dot(self.dchi2, self.scaling_matrix)
+
+        # The gradient.
+        return self.dchi2
+
+
     def d2func_population(self, params):
         """The Hessian function for optimisation of the flexible population N-state model.
 
-        This function should be passed to the optimisation algorithm.  It accepts, as an array, a
-        vector of parameter values and, using these, returns the chi-squared Hessian corresponding
-        to that coordinate in the parameter space.  If no RDC errors are supplied, then the SSE (the
-        sum of squares error) Hessian is returned instead.  The chi-squared Hessian is simply the
-        SSE Hessian normalised to unit variance (the SSE divided by the error squared).
+        Description
+        ===========
 
-        @param params:  The vector of parameter values.
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared Hessian corresponding to that coordinate in the parameter space.  If no RDC/PCS errors are supplied, then the SSE (the sum of squares error) Hessian is returned instead.  The chi-squared Hessian is simply the SSE Hessian normalised to unit variance (the SSE divided by the error squared).
+
+
+        Indices
+        =======
+
+        For this calculation, six indices are looped over and used in the various data structures.  These include:
+            - k, the index over all parameters,
+            - i, the index over alignments,
+            - j, the index over spin systems,
+            - c, the index over the N-states (or over the structures),
+            - m, the index over the first dimension of the alignment tensor m = {x, y, z}.
+            - n, the index over the second dimension of the alignment tensor n = {x, y, z},
+
+
+        Equations
+        =========
+
+        To calculate the chi-squared gradient, a chain of equations are used.  This includes the chi-squared gradient, the RDC gradient and the alignment tensor gradient.
+
+
+        The chi-squared Hessian
+        -----------------------
+
+        The equation is::
+                               ___
+         d2chi^2(theta)        \       1      / dDij(theta)   dDij(theta)                         d2Dij(theta)   \ 
+         ---------------  =  2  >  ---------- | ----------- . -----------  -  (Dij-Dij(theta)) . --------------- |.
+         dthetaj.dthetak       /__ sigma_i**2 \  dthetaj       dthetak                           dthetaj.dthetak /
+                               ij
+
+        where:
+            - theta is the parameter vector,
+            - Dij are the measured RDCs or PCSs,
+            - Dij(theta) are the back calculated RDCs or PCSs,
+            - sigma_ij are the RDC or PCS errors,
+            - dDij(theta)/dthetak is the RDC or PCS gradient for parameter k.
+            - d2Dij(theta)/dthetaj.dthetak is the RDC or PCS Hessian for parameters j and k.
+
+
+        The RDC Hessian
+        ---------------
+
+        pc-pd second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The probability parameter second partial derivative is::
+
+         d2Dij(theta)
+         ------------  =  0.
+           dpc.dpd
+
+
+        pc-Anm second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The probability parameter-tensor element second partial derivative is::
+
+         d2Dij(theta)               T   dAi
+         ------------  =  dj . mu_jc . ---- . mu_jc.
+           dpc.dAmn                    dAmn
+
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
+
+         d2Dij(theta)
+         ------------  =  0.
+          dAmn.dAop
+
+
+        The PCS Hessian
+        ---------------
+
+        pc-pd second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The probability parameter second partial derivative is::
+
+         d2delta_ij(theta)
+         -----------------  =  0.
+              dpc.dpd
+
+
+        pc-Anm second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The probability parameter-tensor element second partial derivative is::
+
+         d2delta_ij(theta)                T   dAi
+         -----------------  =  djc . mu_jc . ---- . mu_jc.
+             dpc.dAmn                        dAmn
+
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
+
+            d2delta_ij(theta)
+            -----------------  =  0
+                dAmn.dAop
+
+
+        The alignment tensor Hessian
+        ----------------------------
+
+        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} all have the same second partial derivative of::
+
+              d2Ai      | 0  0  0 |
+            --------- = | 0  0  0 |.
+            dAmn.dAop   | 0  0  0 |
+
+
+        @param params:  The vector of parameter values.  This is unused as it is assumed that func_population() was called first.
         @type params:   numpy rank-1 array
         @return:        The chi-squared or SSE Hessian.
         @rtype:         numpy rank-2 array
         """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Initial chi-squared (or SSE) Hessian.
+        self.d2chi2 = self.d2chi2 * 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Construct the pc-Amn second partial derivative Hessian components.
+            for c in xrange(self.N - 1):
+                # Index in the parameter array.
+                pc_index = self.num_align_params + c
+
+                # Loop over the spins.
+                for j in xrange(self.num_spins):
+                    # Calculate the RDC Hessian component.
+                    if self.rdc_flag and not self.missing_Dij[i, j]:
+                        self.d2Dij_theta[pc_index, i*5+0, i, j] = self.d2Dij_theta[i*5+0, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0])
+                        self.d2Dij_theta[pc_index, i*5+1, i, j] = self.d2Dij_theta[i*5+1, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1])
+                        self.d2Dij_theta[pc_index, i*5+2, i, j] = self.d2Dij_theta[i*5+2, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2])
+                        self.d2Dij_theta[pc_index, i*5+3, i, j] = self.d2Dij_theta[i*5+3, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3])
+                        self.d2Dij_theta[pc_index, i*5+4, i, j] = self.d2Dij_theta[i*5+4, pc_index, i, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4])
+
+                    # Calculate the PCS Hessian component.
+                    if self.pcs_flag and not self.missing_deltaij[i, j]:
+                        self.d2deltaij_theta[pc_index, i*5+0, i, j] = self.d2deltaij_theta[i*5+0, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[0])
+                        self.d2deltaij_theta[pc_index, i*5+1, i, j] = self.d2deltaij_theta[i*5+1, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[1])
+                        self.d2deltaij_theta[pc_index, i*5+2, i, j] = self.d2deltaij_theta[i*5+2, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[2])
+                        self.d2deltaij_theta[pc_index, i*5+3, i, j] = self.d2deltaij_theta[i*5+3, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[3])
+                        self.d2deltaij_theta[pc_index, i*5+4, i, j] = self.d2deltaij_theta[i*5+4, pc_index, i, j] = pcs_tensor(self.pcs_const[i, j, c], self.pcs_vect[j, c], self.dA[4])
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Construct the chi-squared Hessian element for parameters j and k, alignment i.
+            for j in xrange(self.total_num_params):
+                for k in xrange(self.total_num_params):
+                    # RDC part of the chi-squared gradient.
+                    if self.rdc_flag:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[j, i], self.dDij_theta[k, i], self.d2Dij_theta[j, k, i], self.rdc_sigma_ij[i])
+
+                    # PCS part of the chi-squared gradient.
+                    if self.pcs_flag:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.d2deltaij_theta[j, k, i], self.pcs_sigma_ij[i])
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            self.d2chi2 = dot(self.d2chi2, self.scaling_matrix)
+
+        # The gradient.
+        return self.d2chi2
+
+
+    def d2func_tensor_opt(self, params):
+        """The Hessian function for optimisation of the alignment tensor from RDC and/or PCS data.
+
+        Description
+        ===========
+
+        This function should be passed to the optimisation algorithm.  It accepts, as an array, a vector of parameter values and, using these, returns the chi-squared Hessian corresponding to that coordinate in the parameter space.  If no RDC/PCS errors are supplied, then the SSE (the sum of squares error) Hessian is returned instead.  The chi-squared Hessian is simply the SSE Hessian normalised to unit variance (the SSE divided by the error squared).
+
+        Indices
+        =======
+
+        For this calculation, six indices are looped over and used in the various data structures.  These include:
+            - k, the index over all parameters,
+            - i, the index over alignments,
+            - j, the index over spin systems,
+            - c, the index over the N-states (or over the structures),
+            - m, the index over the first dimension of the alignment tensor m = {x, y, z}.
+            - n, the index over the second dimension of the alignment tensor n = {x, y, z},
+
+
+        Equations
+        =========
+
+        To calculate the chi-squared gradient, a chain of equations are used.  This includes the chi-squared gradient, the RDC gradient and the alignment tensor gradient.
+
+
+        The chi-squared Hessian
+        -----------------------
+
+        The equation is::
+                               ___
+         d2chi^2(theta)        \       1      / dDij(theta)   dDij(theta)                         d2Dij(theta)   \ 
+         ---------------  =  2  >  ---------- | ----------- . -----------  -  (Dij-Dij(theta)) . --------------- |.
+         dthetaj.dthetak       /__ sigma_i**2 \  dthetaj       dthetak                           dthetaj.dthetak /
+                               ij
+
+        where:
+            - theta is the parameter vector,
+            - Dij are the measured RDCs or PCSs,
+            - Dij(theta) are the back calculated RDCs or PCSs,
+            - sigma_ij are the RDC or PCS errors,
+            - dDij(theta)/dthetak is the RDC or PCS gradient for parameter k.
+            - d2Dij(theta)/dthetaj.dthetak is the RDC or PCS Hessian for parameters j and k.
+
+
+        The RDC Hessian
+        ---------------
+
+        The only parameters are the tensor components.
+
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
+
+         d2Dij(theta)
+         ------------  =  0.
+          dAmn.dAop
+
+
+        The PCS Hessian
+        ---------------
+
+        Amn-Aop second partial derivatives
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        The alignment tensor element second partial derivative is::
+
+            d2delta_ij(theta)
+            -----------------  =  0
+                dAmn.dAop
+
+
+        The alignment tensor Hessian
+        ----------------------------
+
+        The five unique elements of the tensor {Axx, Ayy, Axy, Axz, Ayz} all have the same second partial derivative of::
+
+              d2Ai      | 0  0  0 |
+            --------- = | 0  0  0 |.
+            dAmn.dAop   | 0  0  0 |
+
+
+        @param params:  The vector of parameter values.  This is unused as it is assumed that func_population() was called first.
+        @type params:   numpy rank-1 array
+        @return:        The chi-squared or SSE Hessian.
+        @rtype:         numpy rank-2 array
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Initial chi-squared (or SSE) Hessian.
+        self.d2chi2 = self.d2chi2 * 0.0
+
+        # Loop over each alignment.
+        for i in xrange(self.num_align):
+            # Construct the chi-squared Hessian element for parameters j and k, alignment i.
+            for j in xrange(self.total_num_params):
+                for k in xrange(self.total_num_params):
+                    # RDC part of the chi-squared gradient.
+                    if self.rdc_flag:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.Dij[i], self.Dij_theta[i], self.dDij_theta[j, i], self.dDij_theta[k, i], self.zero_hessian, self.rdc_sigma_ij[i])
+
+                    # PCS part of the chi-squared gradient.
+                    if self.pcs_flag:
+                        self.d2chi2[j, k] = self.d2chi2[j, k] + d2chi2_element(self.deltaij[i], self.deltaij_theta[i], self.ddeltaij_theta[j, i], self.ddeltaij_theta[k, i], self.zero_hessian, self.pcs_sigma_ij[i])
+
+        # Diagonal scaling.
+        if self.scaling_flag:
+            self.d2chi2 = dot(self.d2chi2, self.scaling_matrix)
+
+        # The gradient.
+        return self.d2chi2
