@@ -180,7 +180,7 @@ class Redirect_text(object):
             no = int(no)
 
             # Total selected models.
-            total_models = len(self.status.dAuvergne_protocol.local_mf_models)
+            total_models = len(self.status.dAuvergne_protocol.local_tm_models)
 
             # update Progress bar.
             wx.CallAfter(self.out.progress_bar.SetValue, (100*no/total_models))
