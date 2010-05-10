@@ -575,9 +575,9 @@ class Auto_model_free:
                 continue
 
             # Append the relaxation data.
-            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, param[1], param[2], param[3], param[4], param[5], param[6], None])
-            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, param[1], param[2], param[3], param[4], param[5], param[6], None])
-            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, param[1], param[2], param[3], param[4], param[5], param[6], None])
+            data.relax_data.append(['R1', str(frq), float(frq)*1e6, files[1], None, None, int(param[1]), int(param[2]), int(param[3]), int(param[4]), int(param[5]), int(param[6]), None])
+            data.relax_data.append(['R2', str(frq), float(frq)*1e6, files[2], None, None, int(param[1]), int(param[2]), int(param[3]), int(param[4]), int(param[5]), int(param[6]), None])
+            data.relax_data.append(['NOE', str(frq), float(frq)*1e6, files[0], None, None, int(param[1]), int(param[2]), int(param[3]), int(param[4]), int(param[5]), int(param[6]), None])
 
         # Unresolved resiudes
         file = DummyFileObject()
