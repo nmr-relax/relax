@@ -521,6 +521,9 @@ class Auto_model_free:
         if data.structure_file == '!!! Sequence file selected !!!':
             data.structure_file = None
 
+        # Name of heteronucleus in PDB File.
+        data.het_name = 'N'
+
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
 
