@@ -538,9 +538,6 @@ class Auto_model_free:
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         data.seq_args = [sequence_file, None, None, int(param[1]), int(param[2]),int(param[3]), int(param[4]), None]
 
-        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
-        data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
-
         # Import golbal settings.
         global_settings = ds.relax_gui.global_setting
 
