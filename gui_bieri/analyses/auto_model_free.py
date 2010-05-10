@@ -524,6 +524,20 @@ class Auto_model_free:
         # Name of heteronucleus in PDB File.
         data.het_name = 'N'
 
+        # Assign parameter file to sequence file.
+        if not self.data.paramfiles1[0] == '':     # NOE file of frq 1
+            sequence_file = self.data.paramfiles1[0]
+        if not self.data.paramfiles1[1] == '':     # R1 file of frq 1
+            sequence_file = self.data.paramfiles1[1]
+        if not self.data.paramfiles1[2] == '':     # R2 file of frq 1
+            sequence_file = self.data.paramfiles1[2]
+
+        # Import parameter file settings.
+        param = ds.relax_gui.file_setting
+
+        # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
+        data.seq_args = [sequence_file, None, None, int(param[1]), int(param[2]),int(param[3]), int(param[4]), None]
+
         # The sequence data (file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, sep).  These are the arguments to the  sequence.read() user function, for more information please see the documentation for that function.
         data.seq_args = [ds.relax_gui.sequencefile, None, None, 1, None, None, None, None]
 
@@ -548,9 +562,6 @@ class Auto_model_free:
         # The bond length, CSA values.
         data.bond_length = 1.02 * 1e-10
         data.csa = -172 * 1e-6
-
-        # Import parameter file settings.
-        param = ds.relax_gui.file_setting
 
         # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
         data.relax_data = []
