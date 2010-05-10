@@ -131,7 +131,7 @@ def q_factors(spin_id=None):
                 rdc_bc_data = True
 
             # Skip spins without RDC data.
-            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or spin.rdc[align_id] == None:
+            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or align_id not in spin.rdc.keys() or spin.rdc[align_id] == None:
                 continue
 
             # Sum of squares.
@@ -302,6 +302,10 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
 
     # Global (non-spin specific) data.
     ##################################
+
+    # No data, so return.
+    if not len(values):
+        return
 
     # Initialise.
     if not hasattr(cdp, 'align_ids'):

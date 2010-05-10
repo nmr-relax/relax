@@ -88,6 +88,11 @@ class N_state_model(API_base, API_common):
         if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it will not be optimised.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
+                # Add the parameters.
                 param_vector = param_vector + list(cdp.align_tensors[i].A_5D)
 
         # Monte Carlo simulation data structures.
@@ -156,7 +161,7 @@ class N_state_model(API_base, API_common):
         # Starting point of the populations.
         pop_start = 0
         if 'rdc' in data_types or 'pcs' in data_types:
-            pop_start = pop_start + 5*len(cdp.align_tensors)
+            pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
@@ -453,6 +458,10 @@ class N_state_model(API_base, API_common):
         if 'rdc' in data_types or 'pcs' in data_types:
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it will not be optimised.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
                 cdp.align_tensors[i].Axx = param_vector[5*i]
                 cdp.align_tensors[i].Ayy = param_vector[5*i+1]
                 cdp.align_tensors[i].Axy = param_vector[5*i+2]
@@ -460,7 +469,7 @@ class N_state_model(API_base, API_common):
                 cdp.align_tensors[i].Ayz = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
-            param_vector = param_vector[5*len(cdp.align_tensors):]
+            param_vector = param_vector[5*len(cdp.align_ids):]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -572,7 +581,7 @@ class N_state_model(API_base, API_common):
         # Starting point of the populations.
         pop_start = 0
         if 'rdc' in data_types or 'pcs' in data_types:
-            pop_start = pop_start + 5*len(cdp.align_tensors)
+            pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Initialisation (0..j..m).
         A = []
@@ -603,7 +612,7 @@ class N_state_model(API_base, API_common):
             for i in xrange(pop_start, self._param_num()):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
-            b.append(-1.0)
+            b.append(-1.0 / scaling_matrix[i, i])
             b.append(0.0)
 
         # Convert to numpy data structures.
@@ -698,8 +707,8 @@ class N_state_model(API_base, API_common):
             if not spin.select:
                 continue
 
-            # Only use spins with PCS data.
-            if not hasattr(spin, 'pcs'):
+            # Only use spins with alignment data.
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc'):
                 continue
 
             # Add empty lists to the r and unit_vector lists.
@@ -753,7 +762,8 @@ class N_state_model(API_base, API_common):
                     if hasattr(spin, 'rdc'):
                         pcs[-1].append(None)
                         pcs_err[-1].append(None)
-                        pcs_const[-1].append(None)
+                        pcs_const[-1].append([None]*cdp.N)
+                        j = j + 1
 
                     # Jump to the next spin.
                     continue
@@ -903,7 +913,7 @@ class N_state_model(API_base, API_common):
             if unit_vect[i] == None:
                 unit_vect[i] = [[None, None, None]]*num
 
-        # The PCS data.
+        # The RDC data.
         for align_id in cdp.align_ids:
             # Append empty arrays to the RDC structures.
             rdc.append([])
@@ -925,8 +935,12 @@ class N_state_model(API_base, API_common):
                     # Jump to the next spin.
                     continue
 
+                # Defaults of None.
+                value = None
+                error = None
+
                 # Pseudo-atom set up.
-                if hasattr(spin, 'members'):
+                if hasattr(spin, 'members') and align_id in spin.rdc.keys():
                     # Skip non-Me groups.
                     if len(spin.members) != 3:
                         continue
@@ -934,24 +948,30 @@ class N_state_model(API_base, API_common):
                     # The RDC for the Me-pseudo spin where:
                     #     <D> = -1/3 Dpar.
                     # See Verdier, et al., JMR, 2003, 163, 353-359.
-                    rdc[-1].append(-3.0 * spin.rdc[align_id])
+                    value = -3.0 * spin.rdc[align_id]
+
+                    # The error.
+                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                        error = -3.0 * spin.rdc_err[align_id]
 
                 # Normal spin set up.
-                else:
+                elif align_id in spin.rdc.keys():
                     # The RDC.
-                    rdc[-1].append(spin.rdc[align_id])
+                    value = spin.rdc[align_id]
 
-                # Append the RDC errors (or a list of None).
-                if hasattr(spin, 'rdc_err'):
-                    rdc_err[-1].append(spin.rdc_err[align_id])
-                else:
-                    rdc_err[-1].append(None)
+                    # The error.
+                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                        error = spin.rdc_err[align_id]
+
+                # Append the RDCs to the list.
+                rdc[-1].append(value)
+
+                # Append the RDC errors.
+                rdc_err[-1].append(error)
 
         # Convert to numpy objects.
         rdc = array(rdc, float64)
         rdc_err = array(rdc_err, float64)
-        for i in range(len(unit_vect)):
-            print unit_vect[i]
         unit_vect = array(unit_vect, float64)
         rdc_const = array(rdc_const, float64)
 
@@ -1133,7 +1153,14 @@ class N_state_model(API_base, API_common):
 
         # Alignment tensor params.
         if 'rdc' in data_types or 'pcs' in data_types:
-            num = num + 5*len(cdp.align_tensors)
+            # Loop over the alignments.
+            for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it is not part of the parameter set.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
+                # Add 5 tensor parameters.
+                num = num + 5
 
         # Populations.
         if cdp.model in ['2-domain', 'population']:
@@ -1190,13 +1217,13 @@ class N_state_model(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Test if the model is setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('N-state')
-
         # Test if the model name exists.
         if not model in ['2-domain', 'population', 'fixed']:
             raise RelaxError("The model name " + repr(model) + " is invalid.")
+
+        # Test if the model is setup.
+        if hasattr(cdp, 'model'):
+            warn(RelaxWarning("The N-state model has already been set up.  Switching from model '%s' to '%s'." % (cdp.model, model)))
 
         # Set the model
         cdp.model = model
@@ -1344,28 +1371,22 @@ class N_state_model(API_base, API_common):
         # Determine the data type.
         data_types = self._base_data_types()
 
-        # Set up alignment tensors for each alignment.
-        ids = []
-        if 'rdc' in data_types:
-            ids = ids+cdp.rdc_ids
-        if 'pcs' in data_types:
-            ids = ids+cdp.pcs_ids
-
         # Set up tensors for each alignment.
-        for id in ids:
-            # No tensors initialised.
-            if not hasattr(cdp, 'align_tensors'):
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+        if hasattr(cdp, 'align_ids'):
+            for id in cdp.align_ids:
+                # No tensors initialised.
+                if not hasattr(cdp, 'align_tensors'):
+                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
-            # Find if the tensor corresponding to the id exists.
-            exists = False
-            for tensor in cdp.align_tensors:
-                if id == tensor.name:
-                    exists = True
+                # Find if the tensor corresponding to the id exists.
+                exists = False
+                for tensor in cdp.align_tensors:
+                    if id == tensor.name:
+                        exists = True
 
-            # Initialise the tensor.
-            if not exists:
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                # Initialise the tensor.
+                if not exists:
+                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -1604,6 +1625,15 @@ class N_state_model(API_base, API_common):
                 min_algor = min_options[0]
                 min_options = min_options[1:]
 
+        # And constraints absolutely must be used for the 'population' model.
+        if not constraints and cdp.model == 'population':
+            warn(RelaxWarning("Turning constraints on.  These absolutely must be used for the 'population' model."))
+            constraints = True
+
+            # Add the Method of Multipliers algorithm.
+            min_options = (min_algor,) + min_options
+            min_algor = 'Method of Multipliers'
+
         # Linear constraints.
         if constraints:
             A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
@@ -1685,7 +1715,7 @@ class N_state_model(API_base, API_common):
             cdp.warning = warning
 
         # Statistical analysis.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types):
             # Get the final back calculated data (for the Q-factor and
             self._minimise_bc_data(model)
 

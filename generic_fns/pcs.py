@@ -172,7 +172,7 @@ def q_factors(spin_id=None):
                 pcs_bc_data = True
 
             # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or spin.pcs[align_id] == None:
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs.keys() or spin.pcs[align_id] == None:
                 continue
 
             # Sum of squares.
@@ -253,7 +253,9 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
     #####################
 
     # Loop over the PCS data.
-    print(("\n%-50s %-15s %-15s" % ("spin_id", "value", "error")))
+    spin_ids = []
+    values = []
+    errors = []
     for data in read_spin_data(file=file, dir=dir, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id):
         # Unpack.
         if data_col and error_col:
@@ -292,12 +294,21 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
             # Append the error.
             spin.pcs_err[align_id] = error
 
-        # Print out.
-        print(("%-50s %15s %15s" % (id, value, error)))
+        # Append the data for print out.
+        spin_ids.append(id)
+        values.append(value)
+        errors.append(error)
+
+    # Print out.
+    write_spin_data(file=sys.stdout, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
 
 
     # Global (non-spin specific) data.
     ##################################
+
+    # No data, so return.
+    if not len(values):
+        return
 
     # Initialise.
     if not hasattr(cdp, 'align_ids'):

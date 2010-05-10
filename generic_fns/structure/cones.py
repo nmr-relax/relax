@@ -385,7 +385,6 @@ class Square(Base):
             phi_max = self._phi_y
 
         # Return the limit.
-        print phi_max
         return phi_max
 
 
