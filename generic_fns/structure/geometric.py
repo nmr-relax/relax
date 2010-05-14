@@ -1062,7 +1062,7 @@ def vect_dist_spherical_angles(inc=20, distribution='uniform'):
     @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
     @type distribution:     str
     @return:                The distribution of vectors on a sphere.
-    @rtype:                 list of rank-1, 3D numpy arrays, array of float, array of float
+    @rtype:                 list of rank-1, 3D numpy arrays
     """
 
     # Get the polar and azimuthal angles for the distribution.
