@@ -266,6 +266,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.00015125)
         self.assertAlmostEqual(cdp.chi2, 23.5877482365)                 # Pales: 23.709
         self.assertAlmostEqual(cdp.q_rdc, 0.078460000413257444)       # Pales (Q Saupe): 0.079
+        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.14049691097282743)       # Pales (Q RDC_RMS): 0.141
 
 
     def test_lactose_n_state_fixed(self):
