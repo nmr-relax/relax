@@ -598,5 +598,5 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             file.write("@    s%i line color %s\n" % (i, set_colours[i]))
 
         # Legend.
-        if set_names:
+        if set_names and set_names[i]:
             file.write("@    s%i legend \"%s\"\n" % (i, set_names[i]))
