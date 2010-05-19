@@ -657,6 +657,10 @@ class Auto_model_free:
                     print("Optimisation failed.")
                     return
 
+        elif which_model == None:
+            # Cancel.
+            return
+
         # Single global model selected.
         else:
             # All models, excluding the final run.
@@ -840,7 +844,7 @@ class Auto_model_free:
         # Redirect relax output and errors to the controller.
         redir = Redirect_text(self.gui.controller)
         sys.stdout = redir
-        #sys.stderr = redir
+        sys.stderr = redir
 
         # Print a header in the controller.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, ('Starting Model-free calculation\n------------------------------------------\n\n') )
