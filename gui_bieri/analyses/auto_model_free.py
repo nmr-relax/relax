@@ -136,6 +136,29 @@ class Auto_model_free:
         box.Add(label, 0, wx.BOTTOM|wx.ADJUST_MINSIZE, 18)
 
 
+    def add_max_iterations(self, box):
+        """Create and add the model-free maximum interation GUI element to the given box.
+
+        @param box:     The box element to pack the model-free maximum iteration GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Sizer.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        
+        # Text.
+        label_maxiter = wx.StaticText(self.parent, -1, "Maximum interations:")
+        label_maxiter.SetMinSize((240, 17))
+        sizer.Add(label_maxiter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        
+        # Spinner.
+        self.max_iter = wx.SpinCtrl(self.parent, -1, "30", min=25, max=100)
+        sizer.Add(self.max_iter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
+        
+        # Add the element to the box.
+        box.Add(sizer, 1, wx.EXPAND, 0)
+        
+
     def add_mf_models(self, box):
         """Create and add the model-free model picking GUI element to the given box.
 
@@ -690,6 +713,9 @@ class Auto_model_free:
         # Add the model-free models GUI element.
         self.add_mf_models(box)
 
+        # Add maximum interation selector.
+        self.add_max_iterations(box)
+
         # Add the PDB file selection GUI element.
         self.add_pdb_selection(box)
 
@@ -1076,3 +1102,12 @@ class Auto_model_free:
             self.data.results_dir_model = str(self.resultsdir_r21_copy_2.GetValue())
         else:
             self.resultsdir_r21_copy_2.SetValue(str(self.data.results_dir_model))
+
+        # Maximum iterations.
+        if upload:
+            self.data.max_iter = str(self.max_iter.GetValue())
+        else:
+            try:
+                self.max_iter.SetValue(int(self.data.max_iter))
+            except:
+                self.max_iter.SetValue(30)  # Default value.
