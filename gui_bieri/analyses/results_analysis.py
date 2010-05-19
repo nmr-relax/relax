@@ -176,7 +176,7 @@ def model_free_results(self, directory, pdbfile):
     ##################################################################################################
 
     #Create Single Data Files
-    print 'here'
+
     interpreter.value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
     interpreter.value.write(param='s2', file='s2.txt', dir=str(directory) + sep + 'final_results', force=True)
     interpreter.value.write(param='s2f', file='s2f.txt', dir=str(directory) + sep + 'final_results', force=True)
@@ -247,7 +247,6 @@ def model_free_results(self, directory, pdbfile):
 
         #ribbon color
         if hasattr(spin, 's2'):
-            s2 = str(spin.s2)
             if spin.s2 == None:
                 file.write("")
             else:
@@ -295,7 +294,6 @@ def model_free_results(self, directory, pdbfile):
 
         #ribbon color
         if hasattr(spin, 'rex'):
-            rex = str(spin.rex)
             if spin.rex == None:
                 file.write("")
             else:
@@ -319,23 +317,10 @@ def model_free_results(self, directory, pdbfile):
     print '\n\n__________________________________________________________\n\nSuccessfully generated model-free results files\nsee results tab\n__________________________________________________________'
 
     returnstring = [residue, model, s2, rex, te]
+    print 'rex'+str(rex)
+    print 's2'+str(s2)
+    print 'te'+str(te)
     return returnstring # return data for results table dialog
-
-
-def results_table(import_results):
-    global residue
-    global model
-    global s2
-    global rex
-    global te
-    residue = import_results[0]
-    model = import_results[1]
-    s2 = import_results[2]
-    rex = import_results[3]
-    te = import_results[4]
-
-    frame_3 = final_results(None, -1, "")
-    frame_3.ShowModal()
 
 
 def see_results(openfile, import_results):
@@ -351,15 +336,21 @@ def see_results(openfile, import_results):
         system('pymol ' + openfile + ' &')
 
     if 'Table_of_Results' in openfile:
-        results_table(import_results)
+        summary = Final_results(import_results, None, -1, "")
+        summary.Show()
 
 
 
-class Final_results(wx.Dialog):        # Dialog that displays relax results in window
-    def __init__(self, *args, **kwds):
+class Final_results(wx.Frame):        # Dialog that displays relax results in window
+    def __init__(self, results, *args, **kwds):
         # begin final_results.__init__
+
+        # Load results.
+        self.results = results
+
+        # Create Frame.
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
-        wx.Dialog.__init__(self, *args, **kwds)
+        wx.Frame.__init__(self, *args, **kwds)
         self.label_1 = wx.StaticText(self, -1, "Results of relax Analysis")
         self.grid_1 = wx.grid.Grid(self, -1, size=(1, 1))
         self.close_button = wx.Button(self, -1, "Close")
@@ -389,7 +380,7 @@ class Final_results(wx.Dialog):        # Dialog that displays relax results in w
         self.SetIcon(_icon)
         self.SetSize((700, 600))
         self.label_1.SetFont(wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.BOLD, 0, ""))
-        self.grid_1.CreateGrid(len(residue), 5)
+        self.grid_1.CreateGrid(len(self.results[0]), 5)
         self.grid_1.SetColLabelValue(0, "Residue")
         self.grid_1.SetColSize(0, 80)
         self.grid_1.SetColLabelValue(1, "Model")
@@ -403,12 +394,12 @@ class Final_results(wx.Dialog):        # Dialog that displays relax results in w
 
 
     def _fill_values(self):  # fill entries in table
-        for i in range(0, len(residue)):
-            self.grid_1.SetCellValue(i, 0, residue[i])
-            self.grid_1.SetCellValue(i, 1, model[i])
-            self.grid_1.SetCellValue(i, 2, s2[i])
-            self.grid_1.SetCellValue(i, 3, rex[i])
-            self.grid_1.SetCellValue(i, 4, te[i])
+        for i in range(0, len(self.results[0])):
+            self.grid_1.SetCellValue(i, 0, self.results[0][i])
+            self.grid_1.SetCellValue(i, 1, self.results[1][i])
+            self.grid_1.SetCellValue(i, 2, self.results[2][i])
+            self.grid_1.SetCellValue(i, 3, self.results[3][i])
+            self.grid_1.SetCellValue(i, 4, self.results[4][i])
 
 
     def close_table(self, event): # close
