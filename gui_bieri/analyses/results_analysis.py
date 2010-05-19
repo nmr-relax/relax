@@ -317,9 +317,6 @@ def model_free_results(self, directory, pdbfile):
     print '\n\n__________________________________________________________\n\nSuccessfully generated model-free results files\nsee results tab\n__________________________________________________________'
 
     returnstring = [residue, model, s2, rex, te]
-    print 'rex'+str(rex)
-    print 's2'+str(s2)
-    print 'te'+str(te)
     return returnstring # return data for results table dialog
 
 
