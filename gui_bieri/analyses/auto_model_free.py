@@ -42,6 +42,7 @@ from relax_io import DummyFileObject
 from gui_bieri.analyses.results_analysis import model_free_results, see_results
 from gui_bieri.analyses.select_model_calc import Select_tensor
 from gui_bieri.base_classes import Container
+from gui_bieri.components.conversion import str_to_float
 from gui_bieri.controller import Redirect_text, Thread_container
 from gui_bieri.derived_wx_classes import StructureTextCtrl
 from gui_bieri.filedialog import opendir, openfile
@@ -557,8 +558,8 @@ class Auto_model_free:
         data.mc_num = int(global_settings[6])
 
         # The bond length, CSA values.
-        data.bond_length = 1.02 * 1e-10
-        data.csa = -172 * 1e-6
+        data.bond_length = str_to_float(global_settings[0])
+        data.csa = str_to_float(global_settings[1])
 
         # The relaxation data (data type, frequency label, frequency, file name, dir, mol_name_col, res_num_col, res_name_col, spin_num_col, spin_name_col, data_col, error_col, sep).  These are the arguments to the relax_data.read() user function, please see the documentation for that function for more information.
         data.relax_data = []
