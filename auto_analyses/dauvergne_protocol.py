@@ -155,14 +155,14 @@ from status import Status
 
 
 class dAuvergne_protocol:
-    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, user_fns=None, conv_loop=True):
+    def __init__(self, diff_model=None, mf_models=['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'], local_tm_models=['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9'], pdb_file=None, seq_args=None, het_name=None, relax_data=None, unres=None, exclude=None, bond_length=None, csa=None, hetnuc=None, proton='1H', grid_inc=11, min_algor='newton', mc_num=500, max_iter=None, user_fns=None, conv_loop=True):
         """Perform the full model-free analysis protocol of d'Auvergne and Gooley, 2008b.
 
         @keyword diff_model:        The global diffusion model to optimise.  This can be one of 'local_tm', 'sphere', 'oblate', 'prolate', 'ellipsoid', or 'final'.
         @type diff_model:           str
-        @keyword mf_models:         The model-free models.  
+        @keyword mf_models:         The model-free models.
         @type mf_models:            list of str
-        @keyword local_tm_models:   The model-free models.  
+        @keyword local_tm_models:   The model-free models.
         @type local_tm_models:      list of str
         @keyword pdb_file:          The PDB file (set this to None if no structure is available).
         @type pdb_file:             None or str
@@ -190,6 +190,8 @@ class dAuvergne_protocol:
         @type min_algor:            str
         @keyword mc_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_num:               int
+        @keyword max_iter:          The maximum number of iterations for the global iteration.  Set to None, then the algorithm iterates until convergence.
+        @type max_iter:             int or None.
         @keyword user_fns:          A dictionary of replacement user functions.  These will overwrite the standard user functions.  The key should be the name of the user function or user function class and the value should be the function or class instance.
         @type user_fns:             dict
         @keyword conv_loop:         Automatic looping over all rounds until convergence.
@@ -213,6 +215,7 @@ class dAuvergne_protocol:
         self.grid_inc = grid_inc
         self.min_algor = min_algor
         self.mc_num = mc_num
+        self.max_iter = max_iter
         self.conv_loop = conv_loop
 
         # User variable checks.
@@ -531,6 +534,11 @@ class dAuvergne_protocol:
         print("#####################")
         print("# Convergence tests #")
         print("#####################\n\n")
+
+        # Maximum number of iterations reached.
+        if self.round > self.max_iter:
+            print("Maximum number of global iterations reached.  Terminating the protocol before convergence has been reached.")
+            return True
 
         # Convergence flags.
         chi2_converged = True
