@@ -222,8 +222,8 @@ def model_free_results(self, directory, pdbfile):
     file.write('color yellow, ss s\n')
     file.write('color green, ss l+''\n')
     file.write('set cartoon_discrete_colors, 1\n')
-    file.write('hide all')
-    file.write('show cartoon')
+    file.write('hide all\n')
+    file.write('show cartoon\n')
     file.write('load ' + str(directory) + sep + 'tensor.pdb' + '\n')
     file.close()
 
