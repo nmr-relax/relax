@@ -316,19 +316,7 @@ def model_free_results(self, directory, pdbfile):
 
     ##################################################################################################
 
-    print ""
-    print ""
-    print " ---------- done ----------------"
-    print ""
-    print ""
-    print "Grace Plots are in Folder /grace/"
-    print ""
-    print "Signle Text Files for Relaxation Parameters are in Folder /final_results/"
-    print ""
-    print "Diffusion Tensor is in current Folder"
-    print ""
-    print "PyMol Macros are in current Folder - execute in PyMol with Command:"
-    print "@diffusion_tensor.pml, @rex.pml and @s2.pml"
+    print '\n\n__________________________________________________________\n\nSuccessfully generated model-free results files\nsee results tab\n__________________________________________________________'
 
     returnstring = [residue, model, s2, rex, te]
     return returnstring # return data for results table dialog
@@ -356,7 +344,7 @@ def see_results(openfile, import_results):
     if '.agr' in openfile:
         system('xmgrace ' + openfile + ' &')
 
-    if '.txt' in openfile:
+    if '.csv' in openfile:
         system('gedit ' + openfile + ' &')
 
     if '.pml' in openfile:
