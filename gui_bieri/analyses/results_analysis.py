@@ -28,6 +28,7 @@ import wx
 import wx.grid
 
 # relax module imports.
+from prompt.interpreter import Interpreter
 from generic_fns.mol_res_spin import spin_loop
 
 # relax GUI module imports.
@@ -76,12 +77,17 @@ def color_code_noe(self, target_dir, pdb_file):
 def model_free_results(self, directory, pdbfile):
     """Create the model-free results."""
 
+    # Load the interpreter.
+    interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+    interpreter.populate_self()
+    interpreter.on(verbose=False)
+
     directory = directory + sep + 'final'
 
     #Read results
     pipename = 'Data_extraction ' + str(time.asctime(time.localtime()))
-    pipe.create(pipename, 'mf')
-    results.read()
+    interpreter.pipe.create(pipename, 'mf')
+    interpreter.results.read(directory+sep+'results')
 
     #create a table file and variables for results table
 
@@ -96,7 +102,7 @@ def model_free_results(self, directory, pdbfile):
     file.write('Data Extraction by relaxGUI, (C) 2009 Michael Bieri')
     file.write("\n")
     file.write("\n")
-    "self.file.write(""Residue;Model;S2;Rex_[1/s];Te;Relaxation_Parameters\n"")"
+    file.write("Residue;Model;S2;Rex [1/s];Te;Relaxation Parameters\n")
     file.write("\n")
 
     #loop over residues
@@ -119,41 +125,41 @@ def model_free_results(self, directory, pdbfile):
 
         # S2.
         if hasattr(spin, 's2'):
-            s2 = str(spin.s2)
+            s2_value = str(spin.s2)
             s2_err = str(spin.s2_err)
             if spin.s2 == None:
                 file.write(";")
-                s2.appen('')
+                s2.append('')
             else:
-                file.write(";" + s2[0:5]+ " +/- " + s2_err[0:4])
-                s2.appen(s2[0:5]+ " +/- " + s2_err[0:4])
+                file.write(";" + s2_value[0:5]+ " +/- " + s2_err[0:4])
+                s2.append(s2_value[0:5]+ " +/- " + s2_err[0:4])
 
         # Rex.
         if hasattr(spin, 'rex'):
-            rex = str(spin.rex)
+            rex_value = str(spin.rex)
             rex_err = str(spin.rex_err)
             if spin.rex == None:
                 file.write(";")
-                rex.appen('')
+                rex.append('')
             else:
-                rex_eff = spin.rex * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
-                rex = str(rex_eff)
-                rex_err_eff = spin.rex_err * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
+                rex_eff = float(spin.rex) * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
+                rex_value = str(rex_eff)
+                rex_err_eff = float(spin.rex_err) * (int(spin.frq_labels[1]) * 1000000 * 2 * 3.14159)**2
                 rex_err = str(rex_err_eff)
-                file.write(";" + rex[0:5]+ " +/- " + rex_err[0:4])
-                rex.appen(rex[0:5]+ " +/- " + rex_err[0:4])
+                file.write(";" + rex_value[0:5]+ " +/- " + rex_err[0:4])
+                rex.append(rex_value[0:5]+ " +/- " + rex_err[0:4])
 
         # Te
         if hasattr(spin, 'te'):
             if spin.te == None:
                 file.write(";")
-                te.appen('')
+                te.append('')
             else:
                 te_ps = spin.te * 1e-12
-                te = str(te_ps)
+                te_value = str(te_ps)
                 te_err = str(spin.te_err)
-                file.write(";" + te[0:5]+ " +/- " + te_err[0:4])
-                te.appen(te[0:5]+ " +/- " + te_err[0:4])
+                file.write(";" + te_value[0:5]+ " +/- " + te_err[0:4])
+                te.append(te_value[0:5]+ " +/- " + te_err[0:4])
 
         # Parameters.
         if hasattr(spin, 'params'):
@@ -170,44 +176,44 @@ def model_free_results(self, directory, pdbfile):
     ##################################################################################################
 
     #Create Single Data Files
-
-    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='s2', file='s2.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='s2f', file='s2f.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='s2s', file='s2s.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='te', file='te.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='tf', file='tf.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='ts', file='ts.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='r', file='r.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='csa', file='csa.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
-    value.write(param='local_tm', file='local_tm.txt', dir=str(directory) + sep + 'final_results', force=True)
+    print 'here'
+    interpreter.value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='s2', file='s2.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='s2f', file='s2f.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='s2s', file='s2s.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='te', file='te.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='tf', file='tf.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='ts', file='ts.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='r', file='r.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='csa', file='csa.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='rex', file='rex.txt', dir=str(directory) + sep + 'final_results', force=True)
+    interpreter.value.write(param='local_tm', file='local_tm.txt', dir=str(directory) + sep + 'final_results', force=True)
 
     ##################################################################################################
 
     #Create Grace Plots
 
-    grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=str(directory) + sep + 'grace', force=True)
-    grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=str(directory) + sep + 'grace', force=True)
-    grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=str(directory) + sep + 'grace', force=True)
-    grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=str(directory) + sep + 'grace', force=True)
-    grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=str(directory) + sep + 'grace', force=True)
-    grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=str(directory) + sep + 'grace', force=True)
-    grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', dir=str(directory) + sep + 'grace', force=True)
-    grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='spin', y_data_type='s2', file='s2.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='spin', y_data_type='te', file='te.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='spin', y_data_type='s2f', file='s2f.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='spin', y_data_type='s2s', file='s2s.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='spin', y_data_type='ts', file='ts.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='spin', y_data_type='tf', file='tf.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='spin', y_data_type='csa', file='csa.agr', dir=str(directory) + sep + 'grace', force=True)
+    interpreter.grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', dir=str(directory) + sep + 'grace', force=True)
 
     ##################################################################################################
 
     #Create Diffusion Tensor
 
     # Display the diffusion tensor.
-    diffusion_tensor.display()
+    interpreter.diffusion_tensor.display()
 
     # Create the tensor PDB file.
     tensor_file = 'tensor.pdb'
-    structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + sep, force=True)
+    interpreter.structure.create_diff_tensor_pdb(file=tensor_file, dir=str(directory) + sep, force=True)
 
     # create diffusion tensor macro
     file = open(str(directory) + sep + 'diffusion_tensor.pml', 'w')
