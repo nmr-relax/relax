@@ -53,7 +53,7 @@ from analyses.auto_r1 import Auto_r1
 from analyses.auto_r2 import Auto_r2
 from analyses.project import create_save_file, open_file
 from analyses.results import Results_summary
-from analyses.results_analysis import color_code_noe, model_free_results, results_table, see_results
+from analyses.results_analysis import color_code_noe, model_free_results, see_results
 from base_classes import Container
 from controller import Controller
 from derived_wx_classes import StructureTextCtrl
