@@ -80,6 +80,7 @@ class Auto_model_free:
         self.data.unresolved = ''
         self.data.structure_file = ''
         self.data.results_dir_model = getcwd()
+        self.data.max_iter = 30
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -1107,7 +1108,4 @@ class Auto_model_free:
         if upload:
             self.data.max_iter = str(self.max_iter.GetValue())
         else:
-            try:
-                self.max_iter.SetValue(int(self.data.max_iter))
-            except:
-                self.max_iter.SetValue(30)  # Default value.
+            self.max_iter.SetValue(int(self.data.max_iter))
