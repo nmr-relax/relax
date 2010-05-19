@@ -581,7 +581,7 @@ class Main(wx.Frame):
 
     def open_model_results_exe(self, event):    # open model-free results
         choice = self.list_modelfree.GetStringSelection()
-        model_result = [table_residue, table_model, table_s2, table_rex, table_te] # relax results values
+        model_result = [ds.relax_gui.table_residue, ds.relax_gui.table_model, ds.relax_gui.table_s2, ds.relax_gui.table_rex, ds.relax_gui.table_te] # relax results values
         see_results(choice, model_result)
         event.Skip()
 
