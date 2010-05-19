@@ -151,6 +151,62 @@ class RDC(User_fn_class):
         rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, align_id=align_id)
 
 
+    def corr_plot(self, format='grace', file='rdc_corr_plot.agr', dir=None, force=False):
+        """Generate a correlation plot of the measured vs. the back-calculated RDCs.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        format:  The format of the plot data.
+
+        file:  The name of the file.
+
+        dir:  The directory name.
+
+        force:  A flag which if True will cause the file to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Two formats are currently supported.  If format is set to 'grace', then a Grace plot file
+        will be created.  If the format arg is set to None, then a plain text list of the measured
+        and back-calculated data will be created.
+
+
+        Examples
+        ~~~~~~~~
+
+        To create a Grace plot of the data, type:
+
+        relax> rdc.corr_plot()
+
+
+        To create a plain text list of the measured and back-calculated data, type one of:
+
+        relax> rdc.corr_plot(None)
+        relax> rdc.corr_plot(format=None)
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.corr_plot("
+            text = text + "format=" + repr(format)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(format, 'format', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        rdc.corr_plot(format=format, file=file, dir=dir, force=force)
+
+
     def delete(self, align_id=None):
         """Delete the RDC data corresponding to the alignment ID.
 

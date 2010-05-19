@@ -1829,6 +1829,56 @@ class N_state_model(API_base, API_common):
             return 'proton_type'
 
 
+    def return_grace_string(self, param):
+        """Return the Grace string representation of the parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
+
+        # The measured PCS.
+        if param == 'pcs':
+            return "Measured PCS"
+
+        # The back-calculated PCS.
+        if param == 'pcs_bc':
+            return "Back-calculated PCS"
+
+        # The measured RDC.
+        if param == 'rdc':
+            return "Measured RDC"
+
+        # The back-calculated RDC.
+        if param == 'rdc_bc':
+            return "Back-calculated RDC"
+
+
+    def return_units(self, param, spin=None, spin_id=None):
+        """Return a string representing the parameters units.
+
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container (unused).
+        @type spin:     None
+        @param spin_id: The spin identification string (unused).
+        @type spin_id:  None
+        @return:        The parameter units string.
+        @rtype:         str
+        """
+
+        # PCSs.
+        if param == 'pcs' or param == 'pcs_bc':
+            return 'ppm'
+
+        # RDCs.
+        if param == 'rdc' or param == 'rdc_bc':
+            return 'Hz'
+
+
     set_doc = """
         N-state model set details
         ~~~~~~~~~~~~~~~~~~~~~~~~~

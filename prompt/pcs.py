@@ -75,7 +75,7 @@ class PCS(User_fn_class):
         Examples
         ~~~~~~~~
 
-        To calculate the RDC Q-factor for only the spins '@H26', '@H27', and '@H28', type one of:
+        To calculate the PCS Q-factor for only the spins '@H26', '@H27', and '@H28', type one of:
 
         relax> pcs.calc_q_factors('@H26 & @H27 & @H28')
         relax> pcs.calc_q_factors(spin_id='@H26 & @H27 & @H28')
@@ -231,6 +231,62 @@ class PCS(User_fn_class):
         pcs.copy(pipe_from=pipe_from, pipe_to=pipe_to, align_id=align_id)
 
 
+    def corr_plot(self, format='grace', file='pcs_corr_plot.agr', dir=None, force=False):
+        """Generate a correlation plot of the measured vs. the back-calculated PCSs.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        format:  The format of the plot data.
+
+        file:  The name of the file.
+
+        dir:  The directory name.
+
+        force:  A flag which if True will cause the file to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Two formats are currently supported.  If format is set to 'grace', then a Grace plot file
+        will be created.  If the format arg is set to None, then a plain text list of the measured
+        and back-calculated data will be created.
+
+
+        Examples
+        ~~~~~~~~
+
+        To create a Grace plot of the data, type:
+
+        relax> pcs.corr_plot()
+
+
+        To create a plain text list of the measured and back-calculated data, type one of:
+
+        relax> pcs.corr_plot(None)
+        relax> pcs.corr_plot(format=None)
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.corr_plot("
+            text = text + "format=" + repr(format)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(format, 'format', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        pcs.corr_plot(format=format, file=file, dir=dir, force=force)
+
+
     def delete(self, align_id=None):
         """Delete the PCS data corresponding to the alignment ID.
 
@@ -316,7 +372,7 @@ class PCS(User_fn_class):
 
         spin_name_col:  The spin name column (alternative to the spin_id_col).
 
-        data_col:  The RDC data column.
+        data_col:  The PCS data column.
 
         error_col:  The experimental error column.
 
