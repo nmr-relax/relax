@@ -80,7 +80,7 @@ class Auto_model_free:
         self.data.unresolved = ''
         self.data.structure_file = ''
         self.data.results_dir_model = getcwd()
-        self.data.max_iter = 30
+        self.data.max_iter = "30"
 
         # The parent GUI element for this class.
         self.parent = wx.Panel(notebook, -1)
@@ -153,7 +153,7 @@ class Auto_model_free:
         sizer.Add(label_maxiter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         
         # Spinner.
-        self.max_iter = wx.SpinCtrl(self.parent, -1, "30", min=25, max=100)
+        self.max_iter = wx.SpinCtrl(self.parent, -1, self.data.max_iter, min=25, max=100)
         sizer.Add(self.max_iter, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
         
         # Add the element to the box.
@@ -854,6 +854,10 @@ class Auto_model_free:
 
         # Create the results file.
         if model == 'final':
+            # Feedback.
+            wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\nCreating results files\n\n')
+            time.sleep(3)
+
             results_analysis = model_free_results(self, data.save_dir, data.structure_file)
             
             # Add grace plots to results tab.
