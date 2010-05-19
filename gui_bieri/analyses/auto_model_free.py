@@ -863,7 +863,7 @@ class Auto_model_free:
             # Add grace plots to results tab.
             directory = data.save_dir+sep+'final'
             self.gui.list_modelfree.Append(directory+sep+'grace'+sep+'s2.agr')
-            self.gui.list_modelfree.Append(directory+sep+'Model-free_Results.txt')
+            self.gui.list_modelfree.Append(directory+sep+'Model-free_Results.csv')
             self.gui.list_modelfree.Append(directory+sep+'diffusion_tensor.pml')
             self.gui.list_modelfree.Append(directory+sep+'s2.pml')
             self.gui.list_modelfree.Append(directory+sep+'rex.pml')
