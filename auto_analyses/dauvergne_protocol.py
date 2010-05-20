@@ -227,6 +227,21 @@ class dAuvergne_protocol:
         self.status.dAuvergne_protocol.mf_models = mf_models
         self.status.dAuvergne_protocol.local_tm_models = local_tm_models
 
+        # Initialise the convergence data structures.
+        self.conv_data = Container()
+        self.conv_data.chi2 = []
+        self.conv_data.models = []
+        self.conv_data.diff_vals = []
+        if self.diff_model == 'sphere':
+            self.conv_data.diff_params = ['tm']
+        elif self.diff_model == 'oblate' or self.diff_model == 'prolate':
+            self.conv_data.diff_params = ['tm', 'Da', 'theta', 'phi']
+        elif self.diff_model == 'ellipsoid':
+            self.conv_data.diff_params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+        self.conv_data.spin_ids = []
+        self.conv_data.mf_params = []
+        self.conv_data.mf_vals = []
+
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
         self.interpreter.populate_self()
@@ -256,6 +271,9 @@ class dAuvergne_protocol:
         #############################
 
         elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
+            # The initial round of optimisation - not zero if calculations were interrupted.
+            self.start_round = self.determine_rnd(model=self.diff_model)
+
             # Loop until convergence if conv_loop is set, otherwise just loop once.
             # This looping could be made much cleaner by removing the dependence on the determine_rnd() function.
             while True:
@@ -526,53 +544,19 @@ class dAuvergne_protocol:
     def convergence(self):
         """Test for the convergence of the global model."""
 
-        # Alias the data pipes.
-        prev_pipe = pipes.get_pipe('previous')
-
         # Print out.
         print("\n\n\n")
         print("#####################")
         print("# Convergence tests #")
-        print("#####################\n\n")
+        print("#####################\n")
 
         # Maximum number of iterations reached.
-        if self.round > self.max_iter:
+        if self.max_iter and self.round > self.max_iter:
             print("Maximum number of global iterations reached.  Terminating the protocol before convergence has been reached.")
             return True
 
-        # Convergence flags.
-        chi2_converged = True
-        models_converged = True
-        params_converged = True
-
-
-        # Chi-squared test.
-        ###################
-
-        print("Chi-squared test:")
-        print(("    chi2 (k-1):          " + repr(prev_pipe.chi2)))
-        print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_pipe.chi2)) + ')'))
-        print(("    chi2 (k):            " + repr(cdp.chi2)))
-        print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(cdp.chi2)) + ')'))
-        print(("    chi2 (difference):   " + repr(prev_pipe.chi2 - cdp.chi2)))
-        if prev_pipe.chi2 == cdp.chi2:
-            print("    The chi-squared value has converged.\n")
-        else:
-            print("    The chi-squared value has not converged.\n")
-            chi2_converged = False
-
-
-        # Identical model-free model test.
-        ##################################
-
-        print("Identical model-free models test:")
-
-        # Create a string representation of the model-free models of the previous data pipe.
-        prev_models = ''
-        for spin in spin_loop(pipe='previous'):
-            if hasattr(spin, 'model'):
-                if not spin.model == 'None':
-                    prev_models = prev_models + spin.model
+        # Store the data of the current data pipe.
+        self.conv_data.chi2.append(cdp.chi2)
 
         # Create a string representation of the model-free models of the current data pipe.
         curr_models = ''
@@ -580,98 +564,120 @@ class dAuvergne_protocol:
             if hasattr(spin, 'model'):
                 if not spin.model == 'None':
                     curr_models = curr_models + spin.model
+        self.conv_data.models.append(curr_models)
 
-        # The test.
-        if prev_models == curr_models:
-            print("    The model-free models have converged.\n")
-        else:
-            print("    The model-free models have not converged.\n")
-            models_converged = False
+        # Store the diffusion tensor parameters.
+        self.conv_data.diff_vals.append([])
+        for param in self.conv_data.diff_params:
+            # Get the parameter values.
+            self.conv_data.diff_vals[-1].append(getattr(cdp.diff_tensor, param))
 
+        # Store the model-free parameters.
+        self.conv_data.mf_vals.append([])
+        self.conv_data.mf_params.append([])
+        self.conv_data.spin_ids.append([])
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip spin systems with no 'params' object.
+            if not hasattr(spin, 'params'):
+                continue
 
-        # Identical parameter value test.
-        #################################
+            # Add the spin ID, parameters, and empty value list.
+            self.conv_data.spin_ids[-1].append(spin_id)
+            self.conv_data.mf_params[-1].append([])
+            self.conv_data.mf_vals[-1].append([])
 
-        print("Identical parameter test:")
+            # Loop over the parameters.
+            for j in xrange(len(spin.params)):
+                # Get the parameters and values.
+                self.conv_data.mf_params[-1][-1].append(spin.params[j])
+                self.conv_data.mf_vals[-1][-1].append(getattr(spin, lower(spin.params[j])))
 
-        # Only run the tests if the model-free models have converged.
-        if models_converged:
-            # Diffusion parameter array.
-            if self.diff_model == 'sphere':
-                params = ['tm']
-            elif self.diff_model == 'oblate' or self.diff_model == 'prolate':
-                params = ['tm', 'Da', 'theta', 'phi']
-            elif self.diff_model == 'ellipsoid':
-                params = ['tm', 'Da', 'Dr', 'alpha', 'beta', 'gamma']
+        # No need for tests.
+        if self.round == 1:
+            print("First round of optimisation, skipping the convergence tests.\n\n\n")
+            return False
 
-            # Tests.
-            for param in params:
-                # Get the parameter values.
-                prev_val = getattr(prev_pipe.diff_tensor, param)
-                curr_val = getattr(cdp.diff_tensor, param)
+        # Loop over the iterations.
+        converged = False
+        for i in range(self.start_round, self.round - 1):
+            # Print out.
+            print("\n\n\n# Comparing the current iteration to iteration %i.\n" % (i+1))
 
+            # Index.
+            index = i - self.start_round
+
+            # Chi-squared test.
+            print("Chi-squared test:")
+            print("    chi2 (iter %i):  %s" % (i+1, self.conv_data.chi2[index]))
+            print("        (as an IEEE-754 byte array:  %s)" % floatAsByteArray(self.conv_data.chi2[index]))
+            print("    chi2 (iter %i):  %s" % (self.round, self.conv_data.chi2[-1]))
+            print("        (as an IEEE-754 byte array:  %s)" % floatAsByteArray(self.conv_data.chi2[-1]))
+            print("    chi2 (difference):  %s" % (self.conv_data.chi2[index] - self.conv_data.chi2[-1]))
+            if self.conv_data.chi2[index] == self.conv_data.chi2[-1]:
+                print("    The chi-squared value has converged.\n")
+            else:
+                print("    The chi-squared value has not converged.\n")
+                continue
+
+            # Identical model-free model test.
+            print("Identical model-free models test:")
+            if self.conv_data.models[index] == self.conv_data.models[-1]:
+                print("    The model-free models have converged.\n")
+            else:
+                print("    The model-free models have not converged.\n")
+                continue
+
+            # Identical diffusion tensor parameter value test.
+            print("Identical diffusion tensor parameter test:")
+            params_converged = True
+            for k in range(len(self.conv_data.diff_params)):
                 # Test if not identical.
-                if prev_val != curr_val:
-                    print(("    Parameter:   " + param))
-                    print(("    Value (k-1): " + repr(prev_val)))
-                    print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'))
-                    print(("    Value (k):   " + repr(curr_val)))
-                    print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(curr_val)) + ')'))
+                if self.conv_data.diff_vals[index][k] != self.conv_data.diff_vals[-1][k]:
+                    print("    Parameter:   %s" % param)
+                    print("    Value (iter %i):  %s" % (i+1, self.conv_data.diff_vals[index][k]))
+                    print("        (as an IEEE-754 byte array:  %s)" % floatAsByteArray(self.conv_data.diff_vals[index][k]))
+                    print("    Value (iter %i):  %s" % (self.round, self.conv_data.diff_vals[-1][k]))
+                    print("        (as an IEEE-754 byte array:  %s)" % floatAsByteArray(self.conv_data.diff_vals[-1][k]))
                     print("    The diffusion parameters have not converged.\n")
                     params_converged = False
+                    break
+            if not params_converged:
+                continue
+            print("    The diffusion tensor parameters have converged.\n")
 
-            # Skip the rest if the diffusion tensor parameters have not converged.
-            if params_converged:
-                # Loop over the spins.
-                for mol_index, res_index, spin_index in spin_index_loop():
-                    # Alias the spin containers.
-                    prev_spin = prev_pipe.mol[mol_index].res[res_index].spin[spin_index]
-                    curr_spin = cdp.mol[mol_index].res[res_index].spin[spin_index]
-
-                    # Skip if the parameters have not converged.
-                    if not params_converged:
+            # Identical model-free parameter value test.
+            print("\nIdentical model-free parameter test:")
+            if len(self.conv_data.spin_ids[index]) != len(self.conv_data.spin_ids[-1]):
+                print("    Different number of spins.")
+                continue
+            for j in range(len(self.conv_data.spin_ids[-1])):
+                # Loop over the parameters.
+                for k in range(len(self.conv_data.mf_params[-1][j])):
+                    # Test if not identical.
+                    if self.conv_data.mf_vals[index][j][k] != self.conv_data.mf_vals[-1][j][k]:
+                        print("    Spin ID:     %s" % self.conv_data.spin_ids[-1][j])
+                        print("    Parameter:   %s" % self.conv_data.mf_params[-1][j][k])
+                        print("    Value (iter %i): %s" % (i+1, self.conv_data.mf_vals[index][j][k]))
+                        print("        (as an IEEE-754 byte array:  %s)" % floatAsByteArray(self.conv_data.mf_vals[index][j][k]))
+                        print("    Value (iter %i): %s" % (self.round, self.conv_data.mf_vals[-1][j][k]))
+                        print("        (as an IEEE-754 byte array:  %s)" % floatAsByteArray(self.conv_data.mf_vals[index][j][k]))
+                        print("    The model-free parameters have not converged.\n")
+                        params_converged = False
                         break
+            if not params_converged:
+                continue
+            print("    The model-free parameters have converged.\n")
 
-                    # Skip spin systems with no 'params' object.
-                    if not hasattr(prev_spin, 'params') or not hasattr(curr_spin, 'params'):
-                        continue
-
-                    # The spin ID string.
-                    spin_id = generate_spin_id(mol_name=cdp.mol[mol_index].name, res_num=cdp.mol[mol_index].res[res_index].num, res_name=cdp.mol[mol_index].res[res_index].name, spin_num=cdp.mol[mol_index].res[res_index].spin[spin_index].num, spin_name=cdp.mol[mol_index].res[res_index].spin[spin_index].name)
-
-                    # Loop over the parameters.
-                    for j in xrange(len(curr_spin.params)):
-                        # Get the parameter values.
-                        prev_val = getattr(prev_spin, lower(prev_spin.params[j]))
-                        curr_val = getattr(curr_spin, lower(curr_spin.params[j]))
-
-                        # Test if not identical.
-                        if prev_val != curr_val:
-                            print(("    Spin ID:     " + repr(spin_id)))
-                            print(("    Parameter:   " + curr_spin.params[j]))
-                            print(("    Value (k-1): " + repr(prev_val)))
-                            print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'))
-                            print(("    Value (k):   " + repr(curr_val)))
-                            print(("        (as an IEEE-754 byte array: " + repr(floatAsByteArray(prev_val)) + ')'))
-                            print("    The model-free parameters have not converged.\n")
-                            params_converged = False
-                            break
-
-        # The model-free models haven't converged hence the parameter values haven't converged.
-        else:
-            print("    The model-free models haven't converged hence the parameters haven't converged.\n")
-            params_converged = False
-
-        # Print out.
-        if params_converged:
-            print("    The diffusion tensor and model-free parameters have converged.\n")
+            # Convergence.
+            converged = True
+            break
 
 
         # Final print out.
         ##################
 
         print("\nConvergence:")
-        if chi2_converged and models_converged and params_converged:
+        if converged:
             # Update the status.
             self.status.dAuvergne_protocol.convergence = True
 
@@ -795,9 +801,9 @@ class dAuvergne_protocol:
 
             # Deselect spins to be excluded (including unresolved and specifically excluded spins).
             if self.unres:
-                self.interpreter.deselect.read(file=self.unres)
+                self.interpreter.deselect.read(file=self.unres, spin_id_col=1)
             if self.exclude:
-                self.interpreter.deselect.read(file=self.exclude)
+                self.interpreter.deselect.read(file=self.exclude, spin_id_col=1)
 
             # Copy the diffusion tensor from the 'opt' data pipe and prevent it from being minimised.
             if not local_tm:
@@ -823,3 +829,7 @@ class dAuvergne_protocol:
 
         # Unset the status.
         self.status.dAuvergne_protocol.current_model = None
+
+
+class Container:
+    """Empty container for data storage."""
