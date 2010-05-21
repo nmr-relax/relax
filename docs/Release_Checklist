@@ -39,6 +39,13 @@ $ svn add docs/relax.pdf
 and commit all the changes.
 
 
+
+* Bundle minfx by checking out the current trunk:
+
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/trunk/minfx
+
+
+
 * Generate the source distribution files (and their GPG signatures) by typing:
 
 $ scons source_dist key=xxxxx
