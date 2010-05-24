@@ -515,7 +515,7 @@ class Auto_noe:
         data = self.assemble_data()
 
         # Execute.
-        NOE_calc(filename=data.filename, seq_args=data.seq_args, pipe_name='noe', noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, results_folder=data.save_dir, int_method='height', heteronuc = data.heteronuc, proton = data.proton)
+        NOE_calc(filename=data.filename, seq_args=data.seq_args, pipe_name='noe'+'_'+str(time.asctime(time.localtime())), noe_ref=data.ref_file, noe_ref_rmsd=data.ref_rmsd, noe_sat=data.sat_file, noe_sat_rmsd=data.sat_rmsd, unresolved=data.unresolved, pdb_file=data.structure_file, results_folder=data.save_dir, int_method='height', heteronuc = data.heteronuc, proton = data.proton)
 
         # Feedback about success.
         wx.CallAfter(self.gui.controller.log_panel.AppendText, '\n\n__________________________________________________________\n\nSuccessfully calculated NOE values\n__________________________________________________________')
