@@ -375,7 +375,7 @@ class Auto_noe:
         data.save_dir = self.data.save_dir
 
         # Filename.
-        data.filename = 'noe.' + str(self.field_nmr_frq.GetValue())
+        data.filename = 'noe.' + str(self.field_nmr_frq.GetValue()) + '.out'
 
         # The integration method.
         data.int_method = 'height'
