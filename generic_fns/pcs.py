@@ -167,6 +167,10 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Skip if data is missing.
             if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs.keys() or not align_id in spin.pcs_bc.keys():
                 continue
