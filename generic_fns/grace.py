@@ -561,7 +561,11 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         if symbols:
             file.write("@    s%i symbol %i\n" % (i, symbols[i]))
         else:
-            file.write("@    s%i symbol %i\n" % (i, i+1))
+            # The symbol number (between 1 and 10).
+            num = (i+1) - (i+1) / 11 * 10
+
+            # Write out.
+            file.write("@    s%i symbol %i\n" % (i, num))
 
         # Symbol sizes (default to a small size).
         if symbol_sizes:
