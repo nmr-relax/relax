@@ -78,31 +78,13 @@ class Pymol:
 
         # Execute the command.
         if self.exec_mode == 'module':
-            self.translate_cmd(command)
+            pymol.cmd.do(command)
         else:
             self.pymol.write(command + '\n')
 
         # Place the command in the command history.
         if store_command:
             self.command_history = self.command_history + command + "\n"
-
-
-    def translate_cmd(self, command):
-        """Translate the command to appropriate pymol.cmd calls.
-
-        The translation is to prevent problems caused by pymol.cmd.do() not waiting for the command to complete.
-
-        @param command:     The PyMOL command.
-        @type command:      str
-        """
-
-        # Ray-tracing (this totally dies in pymol.cmd.do()).
-        if command == 'ray':
-            pymol.cmd.ray()
-
-        # Use pymol.cmd.do() for all other commands.
-        else:
-            pymol.cmd.do(command)
 
 
     def open_gui(self):
