@@ -5,12 +5,13 @@ The bug is:
 """
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
 
 # Path of the files.
-path = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_14872_unicode_selection'
+path = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'bug_14872_unicode_selection'
 
 # Set the data pipe names.
 pipes = ['m4', 'm5']

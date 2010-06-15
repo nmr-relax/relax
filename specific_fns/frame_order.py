@@ -38,6 +38,7 @@ from api_common import API_common
 from float import isNaN, isInf
 from generic_fns import pipes
 from generic_fns.angles import wrap_angles
+from generic_fns.structure.cones import Iso_cone
 from generic_fns.structure.geometric import cone_edge, generate_vector_dist, generate_vector_residues, stitch_cone_to_edge
 from generic_fns.structure.internal import Internal
 from maths_fns import frame_order, order_parameters
@@ -166,6 +167,9 @@ class Frame_order(API_base, API_common):
             if factor == -1:
                 R = -R
 
+            # The isotropic cone object.
+            cone = Iso_cone(cdp.theta_cone)
+
             # Create the structural object.
             structure = Internal()
 
@@ -185,7 +189,7 @@ class Frame_order(API_base, API_common):
             # Generate the cone outer edge.
             print("\nGenerating the cone outer edge.")
             edge_start_atom = mol.atom_num[-1]+1
-            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, angle=cdp.theta_cone, length=size, inc=inc)
+            cone_edge(mol=mol, res_name='CON', res_num=3+num_sim, apex=cdp.pivot, R=R, phi_max_fn=cone.phi_max, length=size, inc=inc)
 
             # Generate the cone cap, and stitch it to the cone edge.
             print("\nGenerating the cone cap.")

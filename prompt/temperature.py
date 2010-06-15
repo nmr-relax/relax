@@ -52,8 +52,8 @@ class Temp(Basic_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "temperature("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "temperature("
             text = text + "id=" + repr(id)
             text = text + ", temp=" + repr(temp) + ")"
             print(text)

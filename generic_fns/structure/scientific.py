@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -198,10 +198,8 @@ class Scientific_data(Base_struct_API):
         # Generate the selection object.
         sel_obj = Selection(atom_id)
 
-        # Loop over the models.
-        for model_index in range(len(self.structural_data)):
-            model = self.structural_data[model_index]
-
+        # Model loop.
+        for model in self.model_loop():
             # Loop over the molecules.
             for mol_index in range(len(model.mol)):
                 mol = model.mol[mol_index]
@@ -304,13 +302,9 @@ class Scientific_data(Base_struct_API):
         pos_array = []
 
         # Loop over the models.
-        for model in self.structural_data:
+        for model in self.model_loop(model):
             # Init.
             atom_found = False
-
-            # Skip non-matching models.
-            if model != None and model != model.num:
-                continue
 
             # Loop over each individual molecule.
             for mol in model.mol:
@@ -364,7 +358,7 @@ class Scientific_data(Base_struct_API):
         pos = zeros(3, float64)
 
         # Loop over the models.
-        for model in self.structural_data:
+        for model in self.model_loop():
             # The exact molecule.
             mol = model.mol[mol_index]
 
@@ -424,11 +418,7 @@ class Scientific_data(Base_struct_API):
         warnings = None
 
         # Loop over the models.
-        for model in self.structural_data:
-            # Single model.
-            if model_num and model_num != model.num:
-                continue
-
+        for model in self.model_loop(model_num):
             # Init.
             atom_found = False
 

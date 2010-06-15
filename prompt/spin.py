@@ -77,8 +77,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", spin_from=" + repr(spin_from)
             text = text + ", pipe_to=" + repr(pipe_to)
@@ -130,8 +130,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.create("
             text = text + "spin_num=" + repr(spin_num)
             text = text + ", spin_name=" + repr(spin_name)
             text = text + ", res_num=" + repr(res_num)
@@ -187,8 +187,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.create_pseudo("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.create_pseudo("
             text = text + "spin_name=" + repr(spin_name)
             text = text + ", spin_num=" + repr(spin_num)
             text = text + ", res_id=" + repr(res_id)
@@ -224,8 +224,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.delete("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -246,8 +246,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.display("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -334,8 +334,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.name("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.name("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", name=" + repr(name)
             text = text + ", force=" + repr(force) + ")"
@@ -383,8 +383,8 @@ class Spin(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "spin.number("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "spin.number("
             text = text + "spin_id=" + repr(spin_id)
             text = text + ", number=" + repr(number)
             text = text + ", force=" + repr(force) + ")"

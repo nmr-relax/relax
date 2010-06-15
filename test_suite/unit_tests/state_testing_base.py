@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -22,9 +22,9 @@
 
 # Python module imports.
 from os import sep, tmpfile
-import sys
 
 # relax module imports.
+import __main__
 from data import Relax_data_store; ds = Relax_data_store()
 from generic_fns import pipes
 
@@ -67,13 +67,8 @@ class State_base_class:
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
-        # Get the relative path of relax.
-        path = sys.path[0]
-        if path == '.':
-            path = sys.path[-1]
-
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=__main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')
@@ -96,13 +91,8 @@ class State_base_class:
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
-        # Get the relative path of relax.
-        path = sys.path[0]
-        if path == '.':
-            path = sys.path[-1]
-
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=__main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Add a new data pipe and some data to it.
         ds.add('new', 'jw_mapping')
@@ -131,13 +121,8 @@ class State_base_class:
         self.assertEqual(pipes.cdp_name(), None)
         self.assert_(not hasattr(ds, 'y'))
 
-        # Get the relative path of relax.
-        path = sys.path[0]
-        if path == '.':
-            path = sys.path[-1]
-
         # Load the state.
-        self.state.load_state(state='basic_single_pipe', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
+        self.state.load_state(state='basic_single_pipe', dir=__main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'saved_states')
 
         # Reset.
         ds.__reset__()

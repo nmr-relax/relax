@@ -45,6 +45,7 @@ This script is split into multiple stages:
 """
 
 # Python module imports.
+import __main__
 from os import rename, sep
 import sys
 
@@ -59,7 +60,7 @@ if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp_script'
 
 # Path of the data files.
-path = sys.path[-1] + sep + 'test_suite' + sep + 'shared_data'
+path = __main__.install_path + sep + 'test_suite' + sep + 'shared_data'
 path_str = path + sep + 'structures' + sep + 'phthalic_acid' + sep + 'snapshots'
 path_noe = path + sep + 'noe_restraints' + sep
 path_rdc = path + sep + 'rdc_data' + sep

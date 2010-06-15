@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -41,7 +41,7 @@ __all__ = [ 'align_tensor',
             'palmer',
             'pcs',
             'pipes',
-            'pymol',
+            'pymol_control',
             'rdc',
             'relax_data',
             'relax_re',

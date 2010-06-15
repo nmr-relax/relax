@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2009 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -33,7 +33,7 @@ from warnings import warn
 # relax module imports.
 from data import Relax_data_store; ds = Relax_data_store()
 from data.exp_info import ExpInfo
-from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
+from generic_fns.mol_res_spin import create_spin, exists_mol_res_spin_data, find_index, generate_spin_id, get_molecule_names, return_spin, spin_index_loop, spin_loop
 from generic_fns import pipes
 from generic_fns import value
 from physical_constants import element_from_isotope, number_from_isotope
@@ -186,20 +186,27 @@ def back_calc(ri_label=None, frq_label=None, frq=None):
     # Global data flag.
     global_flag = 0
 
-    # Specific back-calculate function setup.
-    back_calculate = specific_fns.setup.get_specific_fn('back_calc', pipes.get_type())
+    # Specific Ri back-calculate function setup.
+    back_calculate = specific_fns.setup.get_specific_fn('back_calc_ri', pipes.get_type())
 
     # Loop over the spins.
-    for spin in spin_loop():
+    for spin, spin_id in spin_loop(return_id=True):
         # Skip deselected spins.
         if not spin.select:
             continue
+
+        # The global index.
+        spin_index = find_index(spin_id)
 
         # Initialise all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq)
 
         # Back-calculate the relaxation value.
-        value = back_calculate(spin=spin, ri_label=ri_label, frq_label=frq_label, frq=frq)
+        value = back_calculate(spin_index=spin_index, ri_label=ri_label, frq_label=frq_label, frq=frq)
+
+        # No data.
+        if value == None:
+            continue
 
         # Update all data structures.
         update_data_structures_spin(spin, ri_label, frq_label, frq, value)
@@ -440,7 +447,7 @@ def copy(pipe_from=None, pipe_to=None, ri_label=None, frq_label=None):
             spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
 
             # Find the index corresponding to 'ri_label' and 'frq_label'.
-            index = find_index(spin_from, ri_label, frq_label)
+            index = find_ri_index(spin_from, ri_label, frq_label)
 
             # Catch any problems.
             if index == None:
@@ -588,7 +595,7 @@ def delete(ri_label=None, frq_label=None):
         global_flag = False
 
         # Find the index corresponding to 'ri_label' and 'frq_label'.
-        index = find_index(spin, ri_label, frq_label)
+        index = find_ri_index(spin, ri_label, frq_label)
 
         # Catch any problems.
         if index == None:
@@ -650,7 +657,7 @@ def display(ri_label=None, frq_label=None):
     value.write_data(param=(ri_label, frq_label), file=sys.stdout, return_value=return_value)
 
 
-def find_index(data, ri_label, frq_label):
+def find_ri_index(data, ri_label, frq_label):
     """Find the index corresponding to ri_label and frq_label.
 
     @param data:        The class instance containing the ri_label and frq_label variables.
@@ -929,7 +936,7 @@ def return_value(spin, data_type):
     error = None
 
     # Find the index corresponding to 'ri_label' and 'frq_label'.
-    index = find_index(spin, ri_label, frq_label)
+    index = find_ri_index(spin, ri_label, frq_label)
 
     # Get the data.
     if index != None:
@@ -1125,7 +1132,7 @@ def update_data_structures_spin(spin=None, ri_label=None, frq_label=None, frq=No
     data_init(spin, global_flag=False)
 
     # Find the index corresponding to 'ri_label' and 'frq_label'.
-    index = find_index(spin, ri_label, frq_label)
+    index = find_ri_index(spin, ri_label, frq_label)
 
     # Append empty data.
     if index == None:

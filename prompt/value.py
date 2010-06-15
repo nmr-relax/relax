@@ -73,8 +73,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "value.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", param=" + repr(param) + ")"
@@ -86,7 +86,7 @@ class Value(User_fn_class):
         arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
-        self.__relax__.generic.value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
+        value.copy(pipe_from=pipe_from, pipe_to=pipe_to, param=param)
 
 
     def display(self, param=None):
@@ -113,8 +113,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "value.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.display("
             text = text + "param=" + repr(param) + ")"
             print(text)
 
@@ -122,7 +122,7 @@ class Value(User_fn_class):
         arg_check.is_str(param, 'parameter')
 
         # Execute the functional code.
-        self.__relax__.generic.value.display(param=param)
+        value.display(param=param)
 
 
     def read(self, param=None, scaling=1.0, file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
@@ -192,8 +192,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "value.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.read("
             text = text + "param=" + repr(param)
             text = text + ", scaling=" + repr(scaling)
             text = text + ", file=" + repr(file)
@@ -227,7 +227,7 @@ class Value(User_fn_class):
         arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
 
         # Execute the functional code.
-        self.__relax__.generic.value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
+        value.read(param=param, scaling=scaling, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
     def set(self, val=None, param=None, spin_id=None):
@@ -350,8 +350,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "value.set("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.set("
             text = text + "val=" + repr(val)
             text = text + ", param=" + repr(param)
             text = text + ", spin_id=" + repr(spin_id) + ")"
@@ -419,8 +419,8 @@ class Value(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "value.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "value.write("
             text = text + "param=" + repr(param)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

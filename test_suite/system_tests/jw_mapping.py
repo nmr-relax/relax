@@ -22,6 +22,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
@@ -52,7 +53,7 @@ class Jw(SystemTestCase):
         """The spectral density calculation test."""
 
         # Data directory.
-        dir = sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep
+        dir = __main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'jw_mapping'+sep
 
         # Data paths.
         dataPaths = [dir + 'noe.dat',
@@ -70,7 +71,7 @@ class Jw(SystemTestCase):
         jwh = [1.5598167512718012e-12, 2.9480536599037041e-12]
 
         # Read the sequence.
-        self.interpreter.sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Read the data.
         for dataSet in xrange(len(dataPaths)):
@@ -108,7 +109,7 @@ class Jw(SystemTestCase):
         """The user function value.set()."""
 
         # Read the sequence.
-        self.interpreter.sequence.read(file='test_seq', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        self.interpreter.sequence.read(file='test_seq', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
         # Try to set the values.
         bond_length = NH_BOND_LENGTH
@@ -126,4 +127,4 @@ class Jw(SystemTestCase):
         """Test a complete jw mapping run using a script."""
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'jw_mapping.py')

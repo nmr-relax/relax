@@ -35,7 +35,7 @@ from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
 from relax_io import get_file_path, open_write_file, test_binary
 from relax_warnings import RelaxWarning
-from specific_fns.setup import get_specific_fn
+import specific_fns
 
 
 def determine_seq_type(spin_id=None):
@@ -89,8 +89,8 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     data_list = False
 
     # Specific x and y value returning functions.
-    x_return_value = y_return_value = get_specific_fn('return_value', pipes.get_type())
-    x_return_conversion_factor = y_return_conversion_factor = get_specific_fn('return_conversion_factor', pipes.get_type())
+    x_return_value = y_return_value = specific_fns.setup.get_specific_fn('return_value', pipes.get_type())
+    x_return_conversion_factor = y_return_conversion_factor = specific_fns.setup.get_specific_fn('return_conversion_factor', pipes.get_type())
 
     # Test if the X-axis data type is a minimisation statistic.
     if x_data_type != 'spin' and generic_fns.minimise.return_data_name(x_data_type):
@@ -474,8 +474,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             analysis_spec = True
 
             # Specific value and error, conversion factor, and units returning functions.
-            return_units = get_specific_fn('return_units', pipes.get_type())
-            return_grace_string = get_specific_fn('return_grace_string', pipes.get_type())
+            return_units = specific_fns.setup.get_specific_fn('return_units', pipes.get_type())
+            return_grace_string = specific_fns.setup.get_specific_fn('return_grace_string', pipes.get_type())
 
             # Test if the axis data type is a minimisation statistic.
             if data_type[i] and data_type[i] != 'spin' and generic_fns.minimise.return_data_name(data_type[i]):
@@ -561,7 +561,11 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         if symbols:
             file.write("@    s%i symbol %i\n" % (i, symbols[i]))
         else:
-            file.write("@    s%i symbol %i\n" % (i, i+1))
+            # The symbol number (between 1 and 10).
+            num = (i+1) - (i+1) / 11 * 10
+
+            # Write out.
+            file.write("@    s%i symbol %i\n" % (i, num))
 
         # Symbol sizes (default to a small size).
         if symbol_sizes:
@@ -598,5 +602,5 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             file.write("@    s%i line color %s\n" % (i, set_colours[i]))
 
         # Legend.
-        if set_names:
+        if set_names and set_names[i]:
             file.write("@    s%i legend \"%s\"\n" % (i, set_names[i]))

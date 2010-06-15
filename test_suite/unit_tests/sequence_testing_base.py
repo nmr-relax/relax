@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007, 2009 Edward d'Auvergne                                  #
+# Copyright (C) 2007-2010 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 from tempfile import mktemp
@@ -139,13 +140,8 @@ class Sequence_base_class:
         The functions tested are generic_fns.sequence.read() and prompt.sequence.read().
         """
 
-        # Get the relative path of relax.
-        path = sys.path[0]
-        if path == '.':
-            path = sys.path[-1]
-
         # Read the residue sequence out of the Ap4Aase 600 MHz NOE data file.
-        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
+        self.sequence_fns.read(file='Ap4Aase.Noe.600.bz2', dir=__main__.install_path+sep+'test_suite'+sep+'shared_data'+sep+'relaxation_data', res_num_col=1, res_name_col=2)
 
         # Get the data pipe.
         dp = pipes.get_pipe('orig')

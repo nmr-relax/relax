@@ -33,6 +33,10 @@
 #                                                                             #
 ###############################################################################
 
+# First of all, store the relax installation path before the site-packages mangle sys.path.
+import __main__
+import sys
+__main__.install_path = sys.path[0]
 
 # Dependency checks.
 import dep_check
@@ -58,8 +62,7 @@ import relax_warnings
 from test_suite.test_suite_runner import Test_suite_runner
 from version import version
 
-sys.path.append(sys.path[0])
-sys.path[0] = '.'
+# Modify the environmental variables.
 putenv('PDBVIEWER', 'vmd')
 
 
