@@ -47,6 +47,10 @@ def back_calc(align_id=None):
     @type align_id:         str
     """
 
+    # Arg check.
+    if align_id not in cdp.align_ids:
+        raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
+
     # The weights.
     weights = ones(cdp.N, float64) / cdp.N
 
@@ -79,7 +83,9 @@ def back_calc(align_id=None):
                 unit_vect[c] = vectors[c] / norm(vectors[c])
 
             # Calculate the RDC.
-            spin.rdc_bc = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
+            if not hasattr(spin, 'rdc_bc'):
+                spin.rdc_bc = {}
+            spin.rdc_bc[align_id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
 
 
 def corr_plot(format=None, file=None, dir=None, force=False):
