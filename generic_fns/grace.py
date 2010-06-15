@@ -334,6 +334,13 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
     @type norm:             bool
     """
 
+    # Comment columns.
+    comment_col = 2
+    if graph_type in ['xydx', 'xydy']:
+        comment_col = 3
+    elif graph_type == 'xydxdy':
+        comment_col = 4
+
     # Loop over the graphs.
     for gi in range(len(data)):
         # Loop over the data sets of the graph.
@@ -371,6 +378,12 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
 
                     # Write the error.
                     file.write(" %-30s" % (error/norm_fact))
+
+                # The comment if given.
+                try:
+                    file.write("%30s \"# %s\"" % ('', point[comment_col]))
+                except IndexError:
+                    pass
 
                 # End the point.
                 file.write("\n")
