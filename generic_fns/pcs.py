@@ -158,7 +158,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     data = []
 
     # The diagonal.
-    data.append([[-100, -100], [100, 100]])
+    data.append([[-100, -100, 0], [100, 100, 0]])
 
     # Loop over the PCS data.
     for align_id in cdp.pcs_ids:
@@ -176,7 +176,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 continue
 
             # Append the data.
-            data[-1].append([spin.pcs[align_id], spin.pcs_bc[align_id], spin_id])
+            data[-1].append([spin.pcs[align_id], spin.pcs_bc[align_id], spin.pcs_err[align_id], spin_id])
 
     # The data size.
     size = len(data)
@@ -190,7 +190,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=[None]+cdp.pcs_ids, linestyle=[2]+[0]*size, data_type=['pcs', 'pcs_bc'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type='xy')
+        grace.write_xy_data(data=data, file=file, graph_type='xydy')
 
 
 def display(align_id=None):

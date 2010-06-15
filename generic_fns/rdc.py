@@ -114,7 +114,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     data = []
 
     # The diagonal.
-    data.append([[-100, -100], [100, 100]])
+    data.append([[-100, -100, 0], [100, 100, 0]])
 
     # Loop over the RDC data.
     for align_id in cdp.rdc_ids:
@@ -132,7 +132,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 continue
 
             # Append the data.
-            data[-1].append([spin.rdc[align_id], spin.rdc_bc[align_id], spin_id])
+            data[-1].append([spin.rdc[align_id], spin.rdc_bc[align_id], spin.rdc_err[align_id], spin_id])
 
     # The data size.
     size = len(data)
@@ -146,7 +146,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         grace.write_xy_header(file=file, title="RDC correlation plot", sets=size, set_names=[None]+cdp.rdc_ids, linestyle=[2]+[0]*size, data_type=['rdc', 'rdc_bc'], axis_min=[-10, -10], axis_max=[10, 10], legend_pos=[1, 0.5])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type='xy')
+        grace.write_xy_data(data=data, file=file, graph_type='xydy')
 
 
 def display(align_id=None):
