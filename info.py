@@ -403,11 +403,11 @@ class Ref:
 
         This is only called for objects not found in the class.
 
-        @param name:    The name of the object.
-        @type name:     str
-        @raises:        AttributeError if the object cannot be created.
-        @returns:       The generated object.
-        @rtype:         anything
+        @param name:            The name of the object.
+        @type name:             str
+        @raises AttributeError: If the object cannot be created.
+        @returns:               The generated object.
+        @rtype:                 anything
         """
 
         # Page numbers.
@@ -435,9 +435,12 @@ class Ref:
 
 
     def cite_short(self, author=True, title=True, journal=True, volume=True, number=True, pages=True, year=True, doi=True, url=True):
-        """Compile a short citation in the form of:
+        """Compile a short citation.
+        
+        The returned text will have the form of:
 
-            d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119.
+            - d'Auvergne, E.J. and Gooley, P.R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119.
+
 
         @keyword author:    The author flag.
         @type author:       bool

@@ -1221,7 +1221,7 @@ class N_state_opt:
 
 
         pc-Anm second partial derivatives
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         The probability parameter-tensor element second partial derivative is::
 
@@ -1254,7 +1254,7 @@ class N_state_opt:
 
 
         pc-Anm second partial derivatives
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         The probability parameter-tensor element second partial derivative is::
 
