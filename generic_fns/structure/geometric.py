@@ -925,7 +925,6 @@ def stitch_cone_to_edge(mol=None, cone=None, chain_id='', dome_start=None, edge_
     @type cone:             class instance
     @keyword chain_id:      The chain identifier.
     @type chain_id:         str
-    @type limit_check:      function
     @keyword dome_start:    The starting atom number of the cone dome residue.
     @type dome_start:       int
     @keyword edge_start:    The starting atom number of the cone edge residue.
@@ -1062,7 +1061,7 @@ def vect_dist_spherical_angles(inc=20, distribution='uniform'):
     @keyword distribution:  The type of point distribution to use.  This can be 'uniform' or 'regular'.
     @type distribution:     str
     @return:                The distribution of vectors on a sphere.
-    @rtype:                 list of rank-1, 3D numpy arrays, array of float, array of float
+    @rtype:                 list of rank-1, 3D numpy arrays
     """
 
     # Get the polar and azimuthal angles for the distribution.

@@ -31,8 +31,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from generic_fns import grace, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
-from generic_fns import pipes
 from maths_fns.rdc import ave_rdc_tensor
 from physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from relax_errors import RelaxError, RelaxNoRDCError, RelaxNoSequenceError, RelaxNoSpinError
@@ -80,6 +80,73 @@ def back_calc(align_id=None):
 
             # Calculate the RDC.
             spin.rdc_bc = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
+
+
+def corr_plot(format=None, file=None, dir=None, force=False):
+    """Generate a correlation plot of the measured vs. back-calculated RDCs.
+
+    @keyword format:    The format for the plot file.  The following values are accepted: 'grace', a Grace plot; None, a plain text file.
+    @type format:       str or None
+    @keyword file:      The file name or object to write to.
+    @type file:         str or file object
+    @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
+    @type dir:          str
+    @keyword force:     A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:        bool
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Does RDC data exist?
+    if not hasattr(cdp, 'rdc_ids') or not cdp.rdc_ids:
+        warn(RelaxWarning("No RDC data exists, skipping file creation."))
+        return
+
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
+
+    # Init.
+    data = []
+
+    # The diagonal.
+    data.append([[-100, -100, 0], [100, 100, 0]])
+
+    # Loop over the RDC data.
+    for align_id in cdp.rdc_ids:
+        # Append a new list for this alignment.
+        data.append([])
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip if data is missing.
+            if not hasattr(spin, 'rdc') or not hasattr(spin, 'rdc_bc') or not align_id in spin.rdc.keys() or not align_id in spin.rdc_bc.keys():
+                continue
+
+            # Append the data.
+            data[-1].append([spin.rdc[align_id], spin.rdc_bc[align_id], spin.rdc_err[align_id], spin_id])
+
+    # The data size.
+    size = len(data)
+
+    # Only one data set.
+    data = [data]
+
+    # Grace file.
+    if format == 'grace':
+        # The header.
+        grace.write_xy_header(file=file, title="RDC correlation plot", sets=size, set_names=[None]+cdp.rdc_ids, linestyle=[2]+[0]*size, data_type=['rdc', 'rdc_bc'], axis_min=[-10, -10], axis_max=[10, 10], legend_pos=[1, 0.5])
+
+        # The main data.
+        grace.write_xy_data(data=data, file=file, graph_type='xydy')
 
 
 def display(align_id=None):

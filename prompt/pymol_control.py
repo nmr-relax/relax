@@ -24,6 +24,13 @@
 """Module containing the 'pymol' user function class for interacting with PyMOL."""
 __docformat__ = 'plaintext'
 
+# Dependency check module.
+import dep_check
+
+# Python module imports.
+if dep_check.pymol_module:
+    import pymol
+
 # relax module imports.
 from base_class import User_fn_class
 import arg_check
@@ -33,6 +40,21 @@ from generic_fns import pymol_control
 
 class Pymol(User_fn_class):
     """Class for interfacing with PyMOL."""
+
+    def __init__(self, exec_info=None):
+        """Initialise the base class and then load pymol.cmd into here.
+
+        @keyword exec_info: The execution information container.  This must contain at least the exec_info.intro boolean variable.  If not supplied, an instance will be generated.
+        @type exec_info:    None or class instance
+        """
+
+        # Execute the base class __init__() method.
+        User_fn_class.__init__(self, exec_info)
+
+        # Load the pymol.cmd object, if pymol is available.
+        if dep_check.pymol_module:
+            self.cmd = pymol.cmd
+
 
     def cartoon(self):
         """Apply the PyMOL cartoon style and colour by secondary structure.

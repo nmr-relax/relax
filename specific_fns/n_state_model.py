@@ -48,7 +48,7 @@ from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
+from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
 
@@ -888,6 +888,14 @@ class N_state_model(API_base, API_common):
             else:
                 unit_vect.append(vect)
 
+            # Checks.
+            if not hasattr(spin, 'heteronuc_type'):
+                raise RelaxSpinTypeError
+            if not hasattr(spin, 'proton_type'):
+                raise RelaxProtonTypeError
+            if not hasattr(spin, 'r'):
+                raise RelaxNoValueError("bond length")
+
             # Gyromagnetic ratios.
             gx = return_gyromagnetic_ratio(spin.heteronuc_type)
             gh = return_gyromagnetic_ratio(spin.proton_type)
@@ -907,6 +915,10 @@ class N_state_model(API_base, API_common):
             # Check.
             if unit_vect[i] != None and len(unit_vect[i]) != num:
                 raise RelaxError, "The number of bond vectors for all spins do no match:\n%s" % unit_vect
+
+        # Missing unit vectors.
+        if num == None:
+            raise RelaxError, "No bond vectors could be found."
 
         # Update None entries.
         for i in range(len(unit_vect)):
@@ -1815,6 +1827,56 @@ class N_state_model(API_base, API_common):
         # Proton type.
         if search('^[Pp]roton$', param):
             return 'proton_type'
+
+
+    def return_grace_string(self, param):
+        """Return the Grace string representation of the parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
+
+        # The measured PCS.
+        if param == 'pcs':
+            return "Measured PCS"
+
+        # The back-calculated PCS.
+        if param == 'pcs_bc':
+            return "Back-calculated PCS"
+
+        # The measured RDC.
+        if param == 'rdc':
+            return "Measured RDC"
+
+        # The back-calculated RDC.
+        if param == 'rdc_bc':
+            return "Back-calculated RDC"
+
+
+    def return_units(self, param, spin=None, spin_id=None):
+        """Return a string representing the parameters units.
+
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container (unused).
+        @type spin:     None
+        @param spin_id: The spin identification string (unused).
+        @type spin_id:  None
+        @return:        The parameter units string.
+        @rtype:         str
+        """
+
+        # PCSs.
+        if param == 'pcs' or param == 'pcs_bc':
+            return 'ppm'
+
+        # RDCs.
+        if param == 'rdc' or param == 'rdc_bc':
+            return 'Hz'
 
 
     set_doc = """

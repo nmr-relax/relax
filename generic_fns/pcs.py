@@ -30,8 +30,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from generic_fns import grace, pipes
 from generic_fns.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
-from generic_fns import pipes
 from relax_errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError
 from relax_io import open_write_file, read_spin_data, write_spin_data
 from relax_warnings import RelaxWarning
@@ -124,6 +124,73 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, ave_pos=False, force=
         if verbosity:
             print("\nUsing all paramagnetic positions.")
         cdp.paramagnetic_centre = full_pos_list
+
+
+def corr_plot(format=None, file=None, dir=None, force=False):
+    """Generate a correlation plot of the measured vs. back-calculated PCSs.
+
+    @keyword format:    The format for the plot file.  The following values are accepted: 'grace', a Grace plot; None, a plain text file.
+    @type format:       str or None
+    @keyword file:      The file name or object to write to.
+    @type file:         str or file object
+    @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
+    @type dir:          str
+    @keyword force:     A flag which if True will cause any pre-existing file to be overwritten.
+    @type force:        bool
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Does PCS data exist?
+    if not hasattr(cdp, 'pcs_ids') or not cdp.pcs_ids:
+        warn(RelaxWarning("No PCS data exists, skipping file creation."))
+        return
+
+    # Open the file for writing.
+    file = open_write_file(file, dir, force)
+
+    # Init.
+    data = []
+
+    # The diagonal.
+    data.append([[-100, -100, 0], [100, 100, 0]])
+
+    # Loop over the PCS data.
+    for align_id in cdp.pcs_ids:
+        # Append a new list for this alignment.
+        data.append([])
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip if data is missing.
+            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs.keys() or not align_id in spin.pcs_bc.keys():
+                continue
+
+            # Append the data.
+            data[-1].append([spin.pcs[align_id], spin.pcs_bc[align_id], spin.pcs_err[align_id], spin_id])
+
+    # The data size.
+    size = len(data)
+
+    # Only one data set.
+    data = [data]
+
+    # Grace file.
+    if format == 'grace':
+        # The header.
+        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=[None]+cdp.pcs_ids, linestyle=[2]+[0]*size, data_type=['pcs', 'pcs_bc'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
+
+        # The main data.
+        grace.write_xy_data(data=data, file=file, graph_type='xydy')
 
 
 def display(align_id=None):
@@ -300,7 +367,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         errors.append(error)
 
     # Print out.
-    write_spin_data(file=sys.stdout, spin_ids=spin_ids, data=values, data_name='RDCs', error=errors, error_name='RDC_error')
+    write_spin_data(file=sys.stdout, spin_ids=spin_ids, data=values, data_name='PCSs', error=errors, error_name='PCS_error')
 
 
     # Global (non-spin specific) data.
