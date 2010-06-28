@@ -376,6 +376,10 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
 
             # Loop over the data points.
             for point in data[gi][si]:
+                # Bad data.
+                if point[0] == None or point[1] == None:
+                    continue
+
                 # X and Y data.
                 file.write("%-30s %-30s" % (point[0], point[1]/norm_fact))
 
