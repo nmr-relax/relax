@@ -225,8 +225,28 @@ def get_data(spin_id=None, x_data_type=None, y_data_type=None, plot_data=None):
     if y_err_flag:
         graph_type = graph_type + 'dy'
 
+    # Remodel the data.
+    new_data = []
+    for i in range(len(data)):
+        new_data.append([])
+        for j in range(len(data[i])):
+            new_data[i].append([])
+            for k in range(len(data[i][j])):
+                # The xy data.
+                new_data[i][j].append([])
+                new_data[i][j][k].append(data[i][j][k][0])
+                new_data[i][j][k].append(data[i][j][k][1])
+
+                # First error set.
+                if graph_type in ['xydx', 'xydy', 'xydxdy']:
+                    new_data[i][j][k].append(data[i][j][k][2])
+
+                # Second error set.
+                if graph_type == 'xydxdy':
+                    new_data[i][j][k].append(data[i][j][k][3])
+
     # Return the data.
-    return data, set_labels, graph_type
+    return new_data, set_labels, graph_type
 
 
 def view(file=None, dir=None, grace_exe='xmgrace'):
