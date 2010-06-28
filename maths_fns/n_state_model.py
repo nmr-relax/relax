@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+from math import sqrt
 from numpy import array, dot, float64, ones, transpose, zeros
 
 # relax module imports.
@@ -36,7 +37,7 @@ from rotation_matrix import euler_to_R_zyz
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, rdcs=None, rdc_errors=None, pcs_vect=None, xh_vect=None, pcs_const=None, dip_const=None, scaling_matrix=None):
+    def __init__(self, model=None, N=None, init_params=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, pcs_vect=None, xh_vect=None, pcs_const=None, dip_const=None, scaling_matrix=None):
         """Set up the class instance for optimisation.
 
         The N-state models
@@ -101,10 +102,14 @@ class N_state_opt:
         @type pcs:                  numpy rank-2 array
         @keyword pcs_errors:        The PCS error lists.  The dimensions of this argument are the same as for 'pcs'.
         @type pcs_errors:           numpy rank-2 array
+        @keyword pcs_weights:       The PCS weight lists.  The dimensions of this argument are the same as for 'pcs'.
+        @type pcs_weights:          numpy rank-2 array
         @keyword rdcs:              The RDC lists.  The first index must correspond to the different alignment media i and the second index to the spin systems j.
         @type rdcs:                 numpy rank-2 array
         @keyword rdc_errors:        The RDC error lists.  The dimensions of this argument are the same as for 'rdcs'.
         @type rdc_errors:           numpy rank-2 array
+        @keyword rdc_weights:       The RDC weight lists.  The dimensions of this argument are the same as for 'rdcs'.
+        @type rdc_weights:          numpy rank-2 array
         @keyword pcs_vect:          The unit vectors between the paramagnetic centre and the nucleus.  The first index is the spin systems j and the second is the structure or state c.
         @type pcs_vect:             numpy rank-2 array
         @keyword xh_vect:           The unit XH vector lists.  The first index must correspond to the spin systems and the second index to each structure (its size being equal to the number of states).
@@ -250,32 +255,51 @@ class N_state_opt:
             # Missing data matrices (RDC).
             if self.rdc_flag:
                 self.missing_Dij = zeros((self.num_align, self.num_spins), float64)
-                for i in xrange(self.num_align):
-                    for j in xrange(self.num_spins):
-                        if isNaN(self.Dij[i, j]):
-                            # Set the flag.
-                            self.missing_Dij[i, j] = 1
-
-                            # Change the NaN to zero.
-                            self.Dij[i, j] = 0.0
-
-                            # Change the error to one (to avoid zero division).
-                            self.rdc_sigma_ij[i, j] = 1.0
 
             # Missing data matrices (PCS).
             if self.pcs_flag:
                 self.missing_deltaij = zeros((self.num_align, self.num_spins), float64)
+
+            # Clean up problematic data and put the weights into the errors..
+            if self.rdc_flag or self.pcs_flag:
                 for i in xrange(self.num_align):
                     for j in xrange(self.num_spins):
-                        if isNaN(self.deltaij[i, j]):
-                            # Set the flag.
-                            self.missing_deltaij[i, j] = 1
+                        if self.rdc_flag:
+                            if isNaN(self.Dij[i, j]):
+                                # Set the flag.
+                                self.missing_Dij[i, j] = 1
 
-                            # Change the NaN to zero.
-                            self.deltaij[i, j] = 0.0
+                                # Change the NaN to zero.
+                                self.Dij[i, j] = 0.0
 
-                            # Change the error to one (to avoid zero division).
-                            self.pcs_sigma_ij[i, j] = 1.0
+                                # Change the error to one (to avoid zero division).
+                                self.rdc_sigma_ij[i, j] = 1.0
+
+                                # Change the weight to one.
+                                rdc_weights[i, j] = 1.0
+
+                        if self.pcs_flag:
+                            if isNaN(self.deltaij[i, j]):
+                                # Set the flag.
+                                self.missing_deltaij[i, j] = 1
+
+                                # Change the NaN to zero.
+                                self.deltaij[i, j] = 0.0
+
+                                # Change the error to one (to avoid zero division).
+                                self.pcs_sigma_ij[i, j] = 1.0
+
+                                # Change the weight to one.
+                                pcs_weights[i, j] = 1.0
+
+                        # The RDC weights.
+                        if self.rdc_flag:
+                            self.rdc_sigma_ij[i, j] = self.rdc_sigma_ij[i, j] / sqrt(rdc_weights[i, j])
+
+                        # The PCS weights.
+                        if self.pcs_flag:
+                            self.pcs_sigma_ij[i, j] = self.pcs_sigma_ij[i, j] / sqrt(pcs_weights[i, j])
+
 
             # The probability array (all structures have initial equal probability).
             self.probs = ones(self.N, float64) / self.N

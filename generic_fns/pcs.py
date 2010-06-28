@@ -390,6 +390,35 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         cdp.pcs_ids.append(align_id)
 
 
+def weight(align_id=None, spin_id=None, weight=1.0):
+    """Set optimisation weights on the PCS data.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      None or str
+    @keyword weight:    The optimisation weight.  The higher the value, the more importance the PCS will have.
+    @type weight:       float or int.
+    """
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'pcs_ids') or align_id not in cdp.pcs_ids:
+        raise RelaxNoPCSError(align_id)
+
+    # Loop over the spins.
+    for spin in spin_loop(spin_id):
+        # No data structure.
+        if not hasattr(spin, 'pcs_weight'):
+            spin.pcs_weight = {}
+
+        # Set the weight.
+        spin.pcs_weight[align_id] = weight
+
+
 def write(align_id=None, file=None, dir=None, force=False):
     """Display the PCS data corresponding to the alignment ID.
 

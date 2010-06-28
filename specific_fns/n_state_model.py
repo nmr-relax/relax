@@ -680,6 +680,7 @@ class N_state_model(API_base, API_common):
                     These include:
                         - the PCS values.
                         - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                        - the PCS weight.
                         the nuclear spin.
                         - the pseudocontact shift constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
@@ -697,6 +698,7 @@ class N_state_model(API_base, API_common):
         # Initialise.
         pcs = []
         pcs_err = []
+        pcs_weight = []
         unit_vect = []
         r = []
         pcs_const = []
@@ -740,6 +742,7 @@ class N_state_model(API_base, API_common):
             # Append empty arrays to the PCS structures.
             pcs.append([])
             pcs_err.append([])
+            pcs_weight.append([])
             pcs_const.append([])
 
             # Get the temperature and spectrometer frequency for the PCS constant.
@@ -762,6 +765,7 @@ class N_state_model(API_base, API_common):
                     if hasattr(spin, 'rdc'):
                         pcs[-1].append(None)
                         pcs_err[-1].append(None)
+                        pcs_weight[-1].append(None)
                         pcs_const[-1].append([None]*cdp.N)
                         j = j + 1
 
@@ -787,12 +791,19 @@ class N_state_model(API_base, API_common):
                 for c in range(cdp.N):
                     pcs_const[-1][-1].append(pcs_constant(temp, frq, r[j][c]))
 
+                # Append the weight.
+                if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+                    pcs_weight[-1].append(spin.pcs_weight[align_id])
+                else:
+                    pcs_weight[-1].append(1.0)
+
                 # Spin index.
                 j = j + 1
 
         # Convert to numpy objects.
         pcs = array(pcs, float64)
         pcs_err = array(pcs_err, float64)
+        pcs_weight = array(pcs_weight, float64)
         unit_vect = array(unit_vect, float64)
         pcs_const = array(pcs_const, float64)
 
@@ -801,7 +812,7 @@ class N_state_model(API_base, API_common):
         pcs_err = pcs_err * 1e-6
 
         # Return the data structures.
-        return pcs, pcs_err, unit_vect, pcs_const
+        return pcs, pcs_err, pcs_weight, unit_vect, pcs_const
 
 
     def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
@@ -811,6 +822,7 @@ class N_state_model(API_base, API_common):
                     These include:
                         - rdc, the RDC values.
                         - rdc_err, the RDC errors.
+                        - rdc_weight, the RDC weights.
                         - vectors, the heteronucleus to proton vectors.
                         - rdc_const, the dipolar constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
@@ -819,6 +831,7 @@ class N_state_model(API_base, API_common):
         # Initialise.
         rdc = []
         rdc_err = []
+        rdc_weight = []
         unit_vect = []
         rdc_const = []
 
@@ -930,6 +943,7 @@ class N_state_model(API_base, API_common):
             # Append empty arrays to the RDC structures.
             rdc.append([])
             rdc_err.append([])
+            rdc_weight.append([])
 
             # Spin loop.
             for spin in spin_loop():
@@ -943,6 +957,7 @@ class N_state_model(API_base, API_common):
                     if hasattr(spin, 'pcs'):
                         rdc[-1].append(None)
                         rdc_err[-1].append(None)
+                        rdc_weight[-1].append(None)
 
                     # Jump to the next spin.
                     continue
@@ -981,14 +996,21 @@ class N_state_model(API_base, API_common):
                 # Append the RDC errors.
                 rdc_err[-1].append(error)
 
+                # Append the weight.
+                if hasattr(spin, 'rdc_weight') and align_id in spin.rdc_weight.keys():
+                    rdc_weight[-1].append(spin.rdc_weight[align_id])
+                else:
+                    rdc_weight[-1].append(1.0)
+
         # Convert to numpy objects.
         rdc = array(rdc, float64)
         rdc_err = array(rdc_err, float64)
+        rdc_weight = array(rdc_weight, float64)
         unit_vect = array(unit_vect, float64)
         rdc_const = array(rdc_const, float64)
 
         # Return the data structures.
-        return rdc, rdc_err, unit_vect, rdc_const
+        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const
 
 
     def _minimise_setup_tensors(self, sim_index=None):
@@ -1293,17 +1315,17 @@ class N_state_model(API_base, API_common):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
+        pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_vect, pcs_dj = self._minimise_setup_pcs()
+            pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = self._minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
+        rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs()
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
