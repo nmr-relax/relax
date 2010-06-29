@@ -95,7 +95,7 @@ class Align_tensor(User_fn_class):
         # The argument checks.
         arg_check.is_str(tensor_from, 'tensor from')
         arg_check.is_str(pipe_from, 'pipe from', can_be_none=True)
-        arg_check.is_str(tensor_to, 'tensor to')
+        arg_check.is_str(tensor_to, 'tensor to', can_be_none=True)
         arg_check.is_str(pipe_to, 'pipe to', can_be_none=True)
 
         # Execute the functional code.
