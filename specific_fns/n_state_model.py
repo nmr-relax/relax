@@ -1336,13 +1336,11 @@ class N_state_model(API_base, API_common):
         # Determine if alignment tensors or RDCs are to be used.
         data_types = self._base_data_types()
 
-        # Nothing more to do!
-        if not len(param_vector):
-            return None, None, data_types, None
-
         # Diagonal scaling.
-        scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
-        param_vector = dot(inv(scaling_matrix), param_vector)
+        scaling_matrix = None
+        if len(param_vector):
+            scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+            param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
@@ -1360,7 +1358,7 @@ class N_state_model(API_base, API_common):
             rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs()
 
         # Get the fixed tensors.
-        if ('rdc' in data_types or 'pcs' in data_types) and cdp.align_tensors.fixed:
+        if ('rdc' in data_types or 'pcs' in data_types) and (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
         # Set up the class instance containing the target function.
