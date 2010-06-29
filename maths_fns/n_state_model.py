@@ -62,6 +62,12 @@ class N_state_opt:
             - full_in_ref_frame, an array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
 
 
+        The population N-state model
+        ============================
+
+        In this model, populations are optimised for each state.  Additionally the alignment tensors for anisotropic data can also be optimised if they have not been supplied (through the full_tensors arg).
+
+
         PCS base data
         -------------
 
@@ -184,6 +190,21 @@ class N_state_opt:
 
         # The flexible population or equal probability N-state models.
         elif model in ['population', 'fixed']:
+            # Fixed alignment tensors.
+            self.tensor_opt = True
+            if full_tensors != None:
+                # The optimisation flag.
+                self.tensor_opt = False
+
+                # Convert to numpy.
+                self.full_tensors = array(full_tensors, float64)
+
+                # Convert to 3x3 form.
+                self.num_tensors = len(self.full_tensors) / 5
+                self.A = zeros((self.num_tensors, 3, 3), float64)
+                for i in range(self.num_tensors):
+                    to_tensor(self.A[i], self.full_tensors[5*i:5*i+5])
+
             # Set the RDC and PCS flags (indicating the presence of data).
             self.rdc_flag = True
             self.pcs_flag = True
@@ -550,7 +571,8 @@ class N_state_opt:
         # Loop over each alignment.
         for i in xrange(self.num_align):
             # Create tensor i from the parameters.
-            to_tensor(self.A[i], params[5*i:5*i + 5])
+            if self.tensor_opt:
+                to_tensor(self.A[i], params[5*i:5*i + 5])
 
             # Loop over the spin systems j.
             for j in xrange(self.num_spins):
