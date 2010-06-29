@@ -30,7 +30,7 @@ from chi2 import chi2, dchi2_element, d2chi2_element
 from float import isNaN
 from pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, pcs_tensor
 from rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
-from relax_errors import RelaxImplementError
+from relax_errors import RelaxError, RelaxImplementError
 from rotation_matrix import euler_to_R_zyz
 
 
@@ -190,6 +190,35 @@ class N_state_opt:
 
         # The flexible population or equal probability N-state models.
         elif model in ['population', 'fixed']:
+            # Set the RDC and PCS flags (indicating the presence of data).
+            self.rdc_flag = True
+            self.pcs_flag = True
+            if rdcs == None:
+                self.rdc_flag = False
+            if pcs == None:
+                self.pcs_flag = False
+
+            # Some checks.
+            if self.rdc_flag and (xh_vect == None or not len(xh_vect)):
+                raise RelaxError("The xh_vect argument " + repr(xh_vect) + " must be supplied.")
+            if self.pcs_flag and (pcs_vect == None or not len(pcs_vect)):
+                raise RelaxError("The pcs_vect argument " + repr(pcs_vect) + " must be supplied.")
+
+            # The total number of spins.
+            self.num_spins = 0
+            if self.rdc_flag:
+                self.num_spins = len(rdcs[0])
+            elif self.pcs_flag:
+                self.num_spins = len(pcs[0])
+
+            # The total number of alignments.
+            self.num_align = 0
+            if self.rdc_flag:
+                self.num_align = len(rdcs)
+            elif self.pcs_flag:
+                self.num_align = len(pcs)
+            self.num_align_params = self.num_align * 5
+
             # Fixed alignment tensors.
             if full_tensors != None:
                 # The optimisation flag.
@@ -219,37 +248,6 @@ class N_state_opt:
                 dAi_dAxy(self.dA[2])
                 dAi_dAxz(self.dA[3])
                 dAi_dAyz(self.dA[4])
-
-            # Set the RDC and PCS flags (indicating the presence of data).
-            self.rdc_flag = True
-            self.pcs_flag = True
-            if rdcs == None:
-                self.rdc_flag = False
-            if pcs == None:
-                self.pcs_flag = False
-
-            # Some checks.
-            if self.rdc_flag and (xh_vect == None or not len(xh_vect)):
-                raise RelaxError("The xh_vect argument " + repr(xh_vect) + " must be supplied.")
-            if self.pcs_flag and (pcs_vect == None or not len(pcs_vect)):
-                raise RelaxError("The pcs_vect argument " + repr(pcs_vect) + " must be supplied.")
-
-            # No data?
-            if not self.rdc_flag and not self.pcs_flag:
-                raise RelaxError("No RDC or PCS data has been supplied.")
-
-            # The total number of spins.
-            if self.rdc_flag:
-                self.num_spins = len(rdcs[0])
-            else:
-                self.num_spins = len(pcs[0])
-
-            # The total number of alignments.
-            if self.rdc_flag:
-                self.num_align = len(rdcs)
-            else:
-                self.num_align = len(pcs)
-            self.num_align_params = self.num_align * 5
 
             # PCS errors.
             if self.pcs_flag:
