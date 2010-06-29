@@ -75,8 +75,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "diffusion_tensor.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
@@ -103,8 +103,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "diffusion_tensor.delete()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.delete()"
             print(text)
 
         # Execute the functional code.
@@ -115,8 +115,8 @@ class Diffusion_tensor(User_fn_class):
         """Function for displaying the diffusion tensor information."""
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "diffusion_tensor.display()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.display()"
             print(text)
 
         # Execute the functional code.
@@ -298,6 +298,7 @@ class Diffusion_tensor(User_fn_class):
             0:  {tm, Da, Dr, alpha, beta, gamma}   (Default),
             1:  {Diso, Da, Dr, alpha, beta, gamma},
             2:  {Dx, Dy, Dz, alpha, beta, gamma},
+            3:  {Dxx, Dyy, Dzz, Dxy, Dxz, Dyz},
 
         where
 
@@ -321,6 +322,9 @@ class Diffusion_tensor(User_fn_class):
 
             0 <= theta <= pi,
             0 <= phi <= 2pi.
+
+        When param_types is set to 3, then the elements of the diffusion tensor matrix defined
+        within the PDB frame can be supplied.
 
 
         Units
@@ -376,8 +380,8 @@ class Diffusion_tensor(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "diffusion_tensor.init("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "diffusion_tensor.init("
             text = text + "params=" + repr(params)
             text = text + ", time_scale=" + repr(time_scale)
             text = text + ", d_scale=" + repr(d_scale)

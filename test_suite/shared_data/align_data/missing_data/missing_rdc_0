@@ -1,0 +1,5 @@
+mol_name   res_num    res_name   spin.num   spin.name                   rdc
+LE         7          CYT        205        C5                15.3349487063
+LE         10         THY        289        C6               -6.81896082858
+LE         10         THY        303        C2'                51.177341046
+LE         22         ADE        681        C8                38.7469686995

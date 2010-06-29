@@ -57,6 +57,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
 
     # Attempt to retrieve the function.
     try:
+        # Back calculation of relaxation data.
+        if eqi == 'back_calc_ri':
+            function = inst.back_calc_ri
+
         # Base data loop generator function.
         if eqi == 'base_data_loop':
             function = inst.base_data_loop
@@ -148,6 +152,10 @@ def get_specific_fn(eqi, function_type, raise_error=True):
         # Pack Monte Carlo simulation data function.
         if eqi == 'pack_sim_data':
             function = inst.sim_pack_data
+
+        # Pymol macro creation.
+        if eqi == 'pymol_macro':
+            function = inst.pymol_macro
 
         # Read results file function (Columnar format).
         if eqi == 'read_columnar_results':

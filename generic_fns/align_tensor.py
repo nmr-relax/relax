@@ -432,6 +432,20 @@ def display(tensor):
         print("\n\n\n")
 
 
+def fix(fixed=True):
+    """Fix the alignment tensor during optimisation.
+
+    @param fixed:   If True, the alignment tensor will be fixed during optimisation.  If False, the alignment tensors will be optimised.
+    @type fixed:    bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Set the flag.
+    cdp.align_tensors.fixed = fixed
+
+
 def fold_angles(sim_index=None):
     """Wrap the Euler angles and remove the glide reflection and translational symmetries.
 

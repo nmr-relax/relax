@@ -56,8 +56,8 @@ class OpenDX(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "dx("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "dx("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", dx_exe=" + repr(dx_exe)
@@ -160,8 +160,8 @@ class OpenDX(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "map("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "map("
             text = text + "params=" + repr(params)
             text = text + ", map_type=" + repr(map_type)
             text = text + ", spin_id=" + repr(spin_id)

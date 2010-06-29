@@ -44,8 +44,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.back_calc("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -75,15 +75,15 @@ class PCS(User_fn_class):
         Examples
         ~~~~~~~~
 
-        To calculate the RDC Q-factor for only the spins '@H26', '@H27', and '@H28', type one of:
+        To calculate the PCS Q-factor for only the spins '@H26', '@H27', and '@H28', type one of:
 
         relax> pcs.calc_q_factors('@H26 & @H27 & @H28')
         relax> pcs.calc_q_factors(spin_id='@H26 & @H27 & @H28')
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.calc_q_factors("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.calc_q_factors("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -152,8 +152,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.centre("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.centre("
             text = text + "pos=" + repr(pos)
             text = text + ", atom_id=" + repr(atom_id)
             text = text + ", pipe=" + repr(pipe)
@@ -211,8 +211,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -229,6 +229,62 @@ class PCS(User_fn_class):
 
         # Execute the functional code.
         pcs.copy(pipe_from=pipe_from, pipe_to=pipe_to, align_id=align_id)
+
+
+    def corr_plot(self, format='grace', file='pcs_corr_plot.agr', dir=None, force=False):
+        """Generate a correlation plot of the measured vs. the back-calculated PCSs.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        format:  The format of the plot data.
+
+        file:  The name of the file.
+
+        dir:  The directory name.
+
+        force:  A flag which if True will cause the file to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Two formats are currently supported.  If format is set to 'grace', then a Grace plot file
+        will be created.  If the format arg is set to None, then a plain text list of the measured
+        and back-calculated data will be created.
+
+
+        Examples
+        ~~~~~~~~
+
+        To create a Grace plot of the data, type:
+
+        relax> pcs.corr_plot()
+
+
+        To create a plain text list of the measured and back-calculated data, type one of:
+
+        relax> pcs.corr_plot(None)
+        relax> pcs.corr_plot(format=None)
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.corr_plot("
+            text = text + "format=" + repr(format)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(format, 'format', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        pcs.corr_plot(format=format, file=file, dir=dir, force=force)
 
 
     def delete(self, align_id=None):
@@ -249,8 +305,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -279,8 +335,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -316,7 +372,7 @@ class PCS(User_fn_class):
 
         spin_name_col:  The spin name column (alternative to the spin_id_col).
 
-        data_col:  The RDC data column.
+        data_col:  The PCS data column.
 
         error_col:  The experimental error column.
 
@@ -349,13 +405,13 @@ class PCS(User_fn_class):
         To read the 15N and 1H PCSs from the file 'Eu.txt', where the 15N values are in the 4th
         column and the 1H in the 9th, type both the following:
 
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@N', res_num_col=1, data_col=4)
-        relax> rdc.read('Tb', 'Tb.txt', spin_id='@H', res_num_col=1, data_col=9)
+        relax> pcs.read('Tb', 'Tb.txt', spin_id='@N', res_num_col=1, data_col=4)
+        relax> pcs.read('Tb', 'Tb.txt', spin_id='@H', res_num_col=1, data_col=9)
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -390,6 +446,43 @@ class PCS(User_fn_class):
         pcs.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
+    def weight(self, align_id=None, spin_id=None, weight=1.0):
+        """Set optimisation weights on the PCS data.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        align_id:  The alignment ID string.
+
+        spin_id:  The spin ID string.
+
+        weight:  The weighting value.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function can be used to force the PCS to contribute more or less to the chi-squared
+        optimisation statistic.  The higher the value, the more importance the PCS will have.
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.weight("
+            text = text + "align_id=" + repr(align_id)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", weight=" + repr(weight) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_num(weight, 'weight')
+
+        # Execute the functional code.
+        pcs.weight(align_id=align_id, spin_id=spin_id, weight=weight)
+
+
     def write(self, align_id=None, file=None, dir=None, force=False):
         """Write the PCS data to file.
 
@@ -413,8 +506,8 @@ class PCS(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pcs.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pcs.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

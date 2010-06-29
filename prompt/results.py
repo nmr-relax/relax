@@ -43,8 +43,8 @@ class Results(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "results.display()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "results.display()"
             print(text)
 
         # Execute the functional code.
@@ -74,8 +74,8 @@ class Results(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "results.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "results.read("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir) + ")"
             print(text)
@@ -124,8 +124,8 @@ class Results(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "results.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "results.write("
             text = text + "file=" + repr(file)
             text = text + ", dir=" + repr(dir)
             text = text + ", compress_type=" + repr(compress_type)

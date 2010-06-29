@@ -478,6 +478,10 @@ class Main:
         py_include_minpath = sys.prefix + path.sep + 'include'
         py_include_fullpath = py_include_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
+        # Construct the python bin path.
+        py_bin_minpath = sys.prefix + path.sep + 'bin'
+        py_bin_fullpath = py_bin_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
+
         # Get the numpy include path (for numpy/arrayobject.h).
         numpy_path = get_include()
 
@@ -500,7 +504,7 @@ class Main:
 
         # Catch Mac OS X and send the correct command line options to the linker (these may become redundant as SCons improves).
         if env['PLATFORM'] == 'darwin':
-            env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', sys.prefix + path.sep + 'bin' + path.sep + 'python', '-dynamic', '-undefined', 'dynamic_lookup'])
+            env.Append(LINKFLAGS = ['-bundle', '-bundle_loader', py_bin_fullpath, '-dynamic', '-undefined', 'dynamic_lookup'])
             env['SHLINKFLAGS'] = SCons.Util.CLVar('$LINKFLAGS')
 
         # Shared library prefix and suffix.

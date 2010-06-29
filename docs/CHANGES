@@ -1,3 +1,148 @@
+Version 1.3.5
+(21 May 2010, from /1.3)
+http://svn.gna.org/svn/relax/tags/1.3.5
+
+    Features:
+        * Addition of the frame_order.ref_domain() user function to specify the alignment of different domains.
+        * Converted the reduced J(w) mapping sample script to the relax 1.3 design to make it functional.
+        * Created the 'rigid' frame order model.
+        * Made the profile module optional, removing the dependency on the Python development packages.
+        * Created the maths_fns.rotation_matrix.axis_angle_to_quaternion() function.
+        * Created the maths_fns.rotation_matrix.quaternion_to_axis_angle() function.
+        * Created the maths_fns.rotation_matrix.R_to_quaternion() function.
+        * relax save files are now by default XML formatted rather than the pickle format (for better compatibility with future relax versions and between different systems).
+        * Added a force flag to the state.load() user function.
+        * Redesign and improvement of the frame order grid search.
+        * Added a script for creating Molmol macros to represent the model-free motions.
+        * Created the structure.delete() user function for deleting all structural information.
+        * Spun out the automatic model-free protocol code from the full_analysis.py script.  The simplified script now simply sends in user supplied data to an automatic analysis API.
+        * Expansion of the rotation_matrix module with the addition of many new conversion functions.
+        * Added support for using methyl pseudo-atom RDCs.
+        * Created the structure.get_pos() user function for extracting atomic positions.
+        * The atomic position can now be directly supplied to pcs.centre().
+        * Addition of a sample script for the determination the relative stereochemistry of organic molecules.
+        * Large improvements for the creation of 2D Grace plots.
+        * Anisotropic cone PDB representations can now be created.
+        * The diffusion tensor within the PDB frame can now be specified, avoiding the 2304 different Euler angle conventions for a rank-2 symmetric tensor.
+        * PyMOL is now being executed as a python module, if available, instead of being launched on the command line and remotely controlled.
+        * Addition of the rdc.display() and rdc.write() user functions.
+        * Addition of the pcs.display() and pcs.write() user functions.
+        * Implemented dfunc_tensor_opt() and d2func_tensor_opt() allowing all optimisation algorithms to be used for the N-state model.
+        * Creation of the rdc.corr_plot() and pcs_corr_plot() user functions for creating correlation plots of measured vs. back-calculated RDCs and PCSs.
+        * Added the -i or --info option to relax.
+
+    Changes:
+        * Test suite fixes for Python 2.5.
+        * Epydoc docstring improvements/fixes for the API documentation.
+        * Many updates using 2to3 preparing for a transition to Python 3.x.
+        * Renamed the pipe.list() user function to pipe.display().
+        * Created a base class for the user function classes.  More user function back end simplifications.
+        * Addition of many new RelaxError classes for the user function interface.
+        * Removal of many unused Python module imports.
+        * Redesign of the RelaxError classes.
+        * Simplified all the argument RelaxError classes using BaseArgError.
+        * Added a check for the unimplemented constraints in the frame order code.
+        * Rearrangement of the handling of frame order models.  The tensor rotation Euler angles are now model independent, the 'rigid' model is better supported, and a clear isolation of the isotropic cone model has been made.
+        * Shifted the current data pipe to __builtin__.cdp so that it is accessible as 'cdp' in all of relax - including user scripts (and removal of 484 calls to generic_fns.pipes.get_pipe()).
+        * Specific architecture and optimisation details are now printed if the frame order system tests fail.
+        * Added a function for converting the frame order matrix to the rotational superoperator.
+        * Improved and expanded the output of the print_frame_order_2nd_degree() function.
+        * Function renaming and argument order changes in the maths_fns.rotation_matrix module.
+        * Huge simplifications to the unit tests for the maths_fns.rotation_matrix package.
+        * Added a very basic, and completely empty module and class for SRLS analysis.
+        * Redesign of the relax state loading for adding support for a XML formatted state file.
+        * Shifted the results.write() force arg to the end.
+        * Created the relax data store is_empty() method.
+        * Renamed the state.load() and state.save() directory argument from dir_name to dir for consistency with the rest of relax.
+        * Redesigned the relaxation curve fitting grid search for the new design of the minfx grid search.
+        * Redesigned the N-state model grid search setup around the new minfx interface.
+        * Redesigned the model-free grid search setup around the new minfx interface.
+        * Renamed the 'grace.py' sample script to 'mf_grace_S2_vs_te.py'.
+        * Added the spin_id_col arg to the rdc.read() user function.
+        * Changes to the pcs.read() and rdc.read() user function interfaces.
+        * Column numbering now starts at 1 rather than 0 within the user functions.
+        * The relax_io.read_spin_data_file() function has been created to handle all columnar text files where each row corresponds to a spin.
+        * Rewrote the tokenise() function to allow for the '&' boolean operator for residues and spins, allowing ':1&:GLY' or '@453&@N' to be parsed.
+        * Renamed all the alignment ID args and variables 'id' to 'align_id' in the RDC and PCS user functions.
+        * Added the relax_io.write_spin_data_file() function for writing spin specific data to a file (can be STDOUT).
+        * Significant improvements to the __find_bonded_atoms() method of the internal PDB reader.
+        * Improved the error handling for AICc model selection.
+        * Added user variable checking to the full_analysis.py script.
+        * Added functions for determining the element name and isotope number from an isotope name.
+        * Added frame order methods necessary for the dx.map() user function.
+        * Huge clean up / redesign of the specific analysis internal API.
+        * Better layout of the user functions in the relax manual significantly dropping the page count.
+        * Formatting improvements in the relax manual.
+        * Removed the checking of sequence data from generic_fns.value.set().
+        * Modified the alignment tensor print out to be more compact.
+        * The PCS centre can now be forcefully overwritten.
+        * Added the back end to the rdc.back_calc() user function (making it functional).
+        * Modified all the specific analysis overfit_deselect() methods to warn when spins are deselected.
+        * align_tensor.display() now prints the magnetic susceptibility tensor.
+        * The rotation matrix to Euler angle algorithms have been converted to the general one of Ken Shoemake.
+        * Simplifications and clean up of the prompt and script UI code.
+        * Detachment of the prompt/script interface from relax allowing it to be imported by any python code.
+        * Switched from using a cone angle to using an order parameter in the isotropic cone frame order model.
+        * Redesigned the program introduction as an abstraction for different UIs, shifting it into the intro module.
+        * Changed the program description to "Molecular dynamics by NMR data analysis".
+        * Created a module for the automatic relaxation curve fitting protocol.
+        * Shifted the RDC and PCS Q-factor calculation code so that it is no longer N-state model specific.
+        * The RDC and PCS Q-factor calculation functions can now accept a spin_id arg.
+        * Individual system tests can now be executed through the relax test suite.
+        * Addition of the relax status singleton object for communicating status info between the core and the UIs.
+        * Partially removed the need for downstream Fink specific modifications.
+        * Creation of the NOE auto-analysis module.
+        * Fixes for the structure.load_spins() user function docstring for RNA/DNA work.
+        * The n_state_model.select_model() user function can now change the model.
+        * Added a maximum global iteration arg and check into the dauvergne_protocol.py module.
+
+    Bugfixes:
+        * Fix for the quaternion_to_R() function (due to incorrect information in Wikipedia).
+        * Character encoding fix - cannot use umlauts.
+        * Fix for the kron_prod() function.
+        * Compilation on Mac OS X with Python 2.6 now works.
+        * Added a module containing functions for checking user function args, removing many hidden argument checking bugs.
+        * Fix for the calls to transpose_14().
+        * Bug fix for the relaxation curve-fitting difference plot script.
+        * Fix for the spin.number() user function, the number can be None to reset the values.
+        * Fix for the script() user function, the function intro flag at the end of executing an external script was not being restored.
+        * Improvements to the optimisation tests (bug #14173, bug #14174, bug #14175, bug #14176, bug #14177, bug #14182).
+        * Fix for the R_euler_zyz() rotation matrix function.
+        * Fix for the R_to_axis_angle() rotation matrix function.
+        * Prevented __find_bonded_atoms() from connecting protons in the internal PDB reader.
+        * Fixes for print_frame_order_2nd_degree() for when NaN is encountered.
+        * Fix for the compile_2nd_matrix_iso_cone() frame order function.
+        * The func_iso_cone_elements() method was been replaced with func_iso_cone() in the frame order analysis.
+        * Fix for the delete function which was failing if the file was missing.
+        * Fix for the test suite, the temporary files were not always deleted if a .bz2 extension was added.
+        * Fix for the reading of Xplor NOE data when a line starts with '#'.
+        * Fix for the Dasha and Modelfree interfaces for when spins have too little data (bug #14428).
+        * Fixes for the RDC and PCS read() functions, the alignment tensor ID had the same variable name as the spin ID.
+        * Fixed the PDF manual compilation (bug #14464).
+        * Fix for the retrieval of bond vectors for the N-state model.
+        * Fixes for the dx.map() user function interface.
+        * Epydoc docstring fixes.
+        * Fix for when the selection string (i.e. spin_id) is unicode (bug #14872).
+        * Fix for the PCS back calculation for when no weights are given.
+        * The last weight in the'fixed' and 'population' N-state models, if supplied, was being converted to zero (1 - sum(weights)) hence the last state/structure was not being included.
+        * Added the missing user functions in the mf_multimodel.py sample script (bug #14885).
+        * Fix for the Monte Carlo simulations in the full_analysis.py script (bug #14941).
+        * Fix for optimisation of models tm4 to tm8 in the mf_multimodel sample script when over-fitting occurs (bug #15050).
+        * Removed the beta angle folding from the frame order module as it was failing.
+        * Fix and updates to the generic_fns.angles.wrap_angles() function.
+        * Fix for the internal structural object PDB writing - the TER records are between the ATOM and HETATM records.
+        * Fixed a final model-free analysis failure in the d'Auvergne protocol, the auto-analysis behind the full_analysis.py script (bug #15874).
+        * Fixes for the N-state model when RDC or PCS data is missing.
+        * Fixed the Q-factor calculating functions to handle missing RDC or PCS lists.
+        * Fix for the 'population' N-state model - the probabilities of each state was being set to that of the last state.
+        * Constraints must be used at all times in the 'population' N-state model optimisation.
+        * For the N-state model 'fixed' and 'population' models, if too many tensors are initialised in comparison to PCS and RDC alignments, then the parameter vector or parameter number was not being correctly assembled.
+        * Fix for when structural models are loaded out of order.
+        * Fix for the 'population' N-state model whereby the last probability can have a negative value.
+        * The infinite looping around the universal solution in the dauvergne_protocol module is now being caught (for the full_analysis.py script).
+ 
+
+
 Version 1.3.4
 (12 August 2009, from /1.3)
 http://svn.gna.org/svn/relax/tags/1.3.4

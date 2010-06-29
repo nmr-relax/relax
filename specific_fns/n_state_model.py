@@ -40,6 +40,7 @@ from float import isNaN, isInf
 import generic_fns
 from generic_fns.mol_res_spin import return_spin, spin_loop
 from generic_fns import pcs, pipes, rdc
+from generic_fns.structure.cones import Iso_cone
 import generic_fns.structure.geometric
 from generic_fns.structure.internal import Internal
 import generic_fns.structure.mass
@@ -47,7 +48,7 @@ from maths_fns.n_state_model import N_state_opt
 from maths_fns.potential import quad_pot
 from maths_fns.rotation_matrix import two_vect_to_R, euler_to_R_zyz
 from physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
-from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError
+from relax_errors import RelaxError, RelaxInfError, RelaxModelError, RelaxNaNError, RelaxNoModelError, RelaxNoTensorError, RelaxNoValueError, RelaxProtonTypeError, RelaxSpinTypeError
 from relax_io import open_write_file
 from relax_warnings import RelaxWarning, RelaxDeselectWarning
 
@@ -83,10 +84,15 @@ class N_state_model(API_base, API_common):
         # Initialise the parameter vector.
         param_vector = []
 
-        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it will not be optimised.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
+                # Add the parameters.
                 param_vector = param_vector + list(cdp.align_tensors[i].A_5D)
 
         # Monte Carlo simulation data structures.
@@ -154,8 +160,8 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if 'rdc' in data_types or 'pcs' in data_types:
-            pop_start = pop_start + 5*len(cdp.align_tensors)
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+            pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Loop over the populations, and set the scaling factor.
         if cdp.model in ['2-domain', 'population']:
@@ -382,11 +388,18 @@ class N_state_model(API_base, API_common):
         R = zeros((3, 3), float64)
         two_vect_to_R(array([0, 0, 1], float64), cdp.ave_pivot_CoM/norm(cdp.ave_pivot_CoM), R)
 
+        # The isotropic cone object.
+        if cone_type == 'diff in cone':
+            angle = cdp.theta_diff_in_cone
+        elif cone_type == 'diff on cone':
+            angle = cdp.theta_diff_on_cone
+        cone = Iso_cone(angle)
+
         # Create the structural object.
         structure = Internal()
 
         # Add a structure.
-        structure.add_struct(name='cone')
+        structure.add_molecule(name='cone')
 
         # Alias the single molecule from the single model.
         mol = structure.structural_data[0].mol[0]
@@ -403,12 +416,8 @@ class N_state_model(API_base, API_common):
 
         # Generate the cone outer edge.
         print("\nGenerating the cone outer edge.")
-        if cone_type == 'diff in cone':
-            angle = cdp.theta_diff_in_cone
-        elif cone_type == 'diff on cone':
-            angle = cdp.theta_diff_on_cone
         cap_start_atom = mol.atom_num[-1]+1
-        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, angle=angle, length=norm(cdp.pivot_CoM), inc=inc)
+        generic_fns.structure.geometric.cone_edge(mol=mol, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, phi_max_fn=cone.phi_max, length=norm(cdp.pivot_CoM), inc=inc)
 
         # Generate the cone cap, and stitch it to the cone edge.
         if cone_type == 'diff in cone':
@@ -446,9 +455,13 @@ class N_state_model(API_base, API_common):
             raise RelaxNoModelError
 
         # Unpack and strip off the alignment tensor parameters.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it will not be optimised.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
                 cdp.align_tensors[i].Axx = param_vector[5*i]
                 cdp.align_tensors[i].Ayy = param_vector[5*i+1]
                 cdp.align_tensors[i].Axy = param_vector[5*i+2]
@@ -456,7 +469,7 @@ class N_state_model(API_base, API_common):
                 cdp.align_tensors[i].Ayz = param_vector[5*i+4]
 
             # Create a new parameter vector without the tensors.
-            param_vector = param_vector[5*len(cdp.align_tensors):]
+            param_vector = param_vector[5*len(cdp.align_ids):]
 
         # Monte Carlo simulation data structures.
         if sim_index != None:
@@ -567,8 +580,8 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if 'rdc' in data_types or 'pcs' in data_types:
-            pop_start = pop_start + 5*len(cdp.align_tensors)
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+            pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Initialisation (0..j..m).
         A = []
@@ -599,7 +612,7 @@ class N_state_model(API_base, API_common):
             for i in xrange(pop_start, self._param_num()):
                 A[-2][i] = -1.0
                 A[-1][i] = 1.0
-            b.append(-1.0)
+            b.append(-1.0 / scaling_matrix[i, i])
             b.append(0.0)
 
         # Convert to numpy data structures.
@@ -619,6 +632,17 @@ class N_state_model(API_base, API_common):
 
         # Loop over each alignment.
         for i in xrange(model.num_align):
+            # The alignment ID.
+            align_id = cdp.align_ids[i]
+
+            # Data flags
+            rdc_flag = False
+            if hasattr(cdp, 'rdc_ids') and align_id in cdp.rdc_ids:
+                rdc_flag = True
+            pcs_flag = False
+            if hasattr(cdp, 'pcs_ids') and align_id in cdp.pcs_ids:
+                pcs_flag = True
+
             # Spin loop.
             data_index = 0
             for spin in spin_loop():
@@ -627,22 +651,22 @@ class N_state_model(API_base, API_common):
                     continue
 
                 # Spins with PCS data.
-                if hasattr(spin, 'pcs'):
+                if pcs_flag and hasattr(spin, 'pcs'):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'pcs_bc'):
-                        spin.pcs_bc = [None]*model.num_align
+                        spin.pcs_bc = {}
 
-                    # Append the back calculated PCS (in ppm).
-                    spin.pcs_bc[i] = model.deltaij_theta[i, data_index] * 1e6
+                    # Add the back calculated PCS (in ppm).
+                    spin.pcs_bc[align_id] = model.deltaij_theta[i, data_index] * 1e6
 
                 # Spins with RDC data.
-                if hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
+                if rdc_flag and hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect')):
                     # Initialise the data structure if necessary.
                     if not hasattr(spin, 'rdc_bc'):
-                        spin.rdc_bc = [None] * model.num_align
+                        spin.rdc_bc = {}
 
                     # Append the back calculated PCS.
-                    spin.rdc_bc[i] = model.Dij_theta[i, data_index]
+                    spin.rdc_bc[align_id] = model.Dij_theta[i, data_index]
 
                 # Increment the spin index if it contains data.
                 if hasattr(spin, 'pcs') or (hasattr(spin, 'rdc') and (hasattr(spin, 'xh_vect') or hasattr(spin, 'bond_vect'))):
@@ -656,6 +680,7 @@ class N_state_model(API_base, API_common):
                     These include:
                         - the PCS values.
                         - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                        - the PCS weight.
                         the nuclear spin.
                         - the pseudocontact shift constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
@@ -673,28 +698,20 @@ class N_state_model(API_base, API_common):
         # Initialise.
         pcs = []
         pcs_err = []
+        pcs_weight = []
         unit_vect = []
         r = []
         pcs_const = []
 
-        # Spin loop.
-        for spin, spin_id in spin_loop(return_id=True):
+        # The bond lengths and unit vectors.
+        for spin in spin_loop():
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs'):
+            # Only use spins with alignment data.
+            if not hasattr(spin, 'pcs') and not hasattr(spin, 'rdc'):
                 continue
-
-            # Append the PCSs to the list.
-            pcs.append(spin.pcs)
-
-            # Append the PCS errors (or a list of None).
-            if hasattr(spin, 'pcs_err'):
-                pcs_err.append(spin.pcs_err)
-            else:
-                pcs_err.append([None]*len(spin.pcs))
 
             # Add empty lists to the r and unit_vector lists.
             unit_vect.append([])
@@ -720,64 +737,82 @@ class N_state_model(API_base, API_common):
         # Convert the distances from Angstrom to meters.
         r = array(r, float64) * 1e-10
 
-        # Loop over experiments.
-        for i in xrange(len(cdp.align_tensors)):
-            # Append an empty array to the PCS constant structure.
+        # The PCS data.
+        for align_id in cdp.align_ids:
+            # Append empty arrays to the PCS structures.
+            pcs.append([])
+            pcs_err.append([])
+            pcs_weight.append([])
             pcs_const.append([])
 
             # Get the temperature and spectrometer frequency for the PCS constant.
-            id = cdp.align_tensors[i].name
-            temp = cdp.temperature[id]
-            frq = cdp.frq[id]
+            temp = cdp.temperature[align_id]
+            frq = cdp.frq[align_id]
 
             # Convert the frequency of Hertz into a field strength in Tesla units.
             frq = frq * 2.0 * pi / g1H
 
             # Spin loop.
             j = 0
-            for spin, spin_id in spin_loop(return_id=True):
+            for spin in spin_loop():
                 # Skip deselected spins.
                 if not spin.select:
                     continue
 
                 # Skip spins without PCS data.
                 if not hasattr(spin, 'pcs'):
+                    # Add rows of None if other alignment data exists.
+                    if hasattr(spin, 'rdc'):
+                        pcs[-1].append(None)
+                        pcs_err[-1].append(None)
+                        pcs_weight[-1].append(None)
+                        pcs_const[-1].append([None]*cdp.N)
+                        j = j + 1
+
+                    # Jump to the next spin.
                     continue
 
+                # Append the PCSs to the list.
+                if align_id in spin.pcs.keys():
+                    pcs[-1].append(spin.pcs[align_id])
+                else:
+                    pcs[-1].append(None)
+
+                # Append the PCS errors.
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                    pcs_err[-1].append(spin.pcs_err[align_id])
+                else:
+                    pcs_err[-1].append(None)
+
                 # Append an empty array to the PCS constant structure.
-                pcs_const[i].append([])
+                pcs_const[-1].append([])
 
                 # Loop over the states, and calculate the PCS constant for each (the distance changes each time).
                 for c in range(cdp.N):
-                    pcs_const[i][-1].append(pcs_constant(temp, frq, r[j][c]))
+                    pcs_const[-1][-1].append(pcs_constant(temp, frq, r[j][c]))
+
+                # Append the weight.
+                if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+                    pcs_weight[-1].append(spin.pcs_weight[align_id])
+                else:
+                    pcs_weight[-1].append(1.0)
 
                 # Spin index.
                 j = j + 1
 
-        # Initialise the numpy objects (the pcs matrix is transposed!).
-        pcs_numpy = zeros((len(pcs[0]), len(pcs)), float64)
-        pcs_err_numpy = zeros((len(pcs[0]), len(pcs)), float64)
-        unit_vect_numpy = zeros((len(unit_vect), len(unit_vect[0]), 3), float64)
-
-        # Loop over the spins.
-        for spin_index in xrange(len(pcs)):
-            # Loop over the alignments.
-            for align_index in xrange(len(pcs[spin_index])):
-                # Transpose and store the PCS value and error.
-                pcs_numpy[align_index, spin_index] = pcs[spin_index][align_index]
-                pcs_err_numpy[align_index, spin_index] = pcs_err[spin_index][align_index]
-
-            # Loop over the N states.
-            for state_index in xrange(len(unit_vect[spin_index])):
-                # Store the unit vector.
-                unit_vect_numpy[spin_index, state_index] = unit_vect[spin_index][state_index]
+        # Convert to numpy objects.
+        pcs = array(pcs, float64)
+        pcs_err = array(pcs_err, float64)
+        pcs_weight = array(pcs_weight, float64)
+        unit_vect = array(unit_vect, float64)
+        pcs_const = array(pcs_const, float64)
 
         # Convert the PCS from ppm to no units.
-        pcs_numpy = pcs_numpy * 1e-6
-        pcs_err_numpy = pcs_err_numpy * 1e-6
+        pcs = pcs * 1e-6
+        pcs_err = pcs_err * 1e-6
 
         # Return the data structures.
-        return pcs_numpy, pcs_err_numpy, unit_vect_numpy, array(pcs_const)
+        return pcs, pcs_err, pcs_weight, unit_vect, pcs_const
 
 
     def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
@@ -785,32 +820,33 @@ class N_state_model(API_base, API_common):
 
         @return:    The assembled data structures for using RDCs as the base data for optimisation.
                     These include:
-                        - rdcs, the RDC values.
+                        - rdc, the RDC values.
+                        - rdc_err, the RDC errors.
+                        - rdc_weight, the RDC weights.
                         - vectors, the heteronucleus to proton vectors.
-                        - dj, the dipolar constants.
+                        - rdc_const, the dipolar constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
         """
 
         # Initialise.
-        rdcs = []
+        rdc = []
         rdc_err = []
-        vectors = []
-        dj = []
+        rdc_weight = []
+        unit_vect = []
+        rdc_const = []
 
-        # Spin loop.
+        # The unit vectors and RDC constants.
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Skip spins without RDC data.
+            # Only use spins with RDC data.
             if not hasattr(spin, 'rdc'):
-                # Add rows of None if other data exists.
+                # Add rows of None if other alignment data exists.
                 if hasattr(spin, 'pcs'):
-                    rdcs.append([None]*len(cdp.align_tensors))
-                    rdc_err.append([None]*len(cdp.align_tensors))
-                    vectors.append([None]*3)
-                    dj.append(None)
+                    unit_vect.append(None)
+                    rdc_const.append(None)
 
                 # Jump to the next spin.
                 continue
@@ -822,10 +858,8 @@ class N_state_model(API_base, API_common):
 
                 # Add rows of None if other data exists.
                 if hasattr(spin, 'pcs'):
-                    rdcs.append([None]*len(cdp.align_tensors))
-                    rdc_err.append([None]*len(cdp.align_tensors))
-                    vectors.append([None]*3)
-                    dj.append(None)
+                    unit_vect.append(None)
+                    rdc_const.append(None)
 
                 # Jump to the next spin.
                 continue
@@ -853,11 +887,6 @@ class N_state_model(API_base, API_common):
                 # Normalise.
                 vect = vect / norm(vect)
 
-                # The RDC for the Me-pseudo spin where:
-                #     <D> = -1/3 Dpar.
-                # See Verdier, et al., JMR, 2003, 163, 353-359.
-                rdc = -3.0 * array(spin.rdc)
-
             # Normal spin set up.
             else:
                 # Append the RDC and XH vectors to the lists.
@@ -866,51 +895,122 @@ class N_state_model(API_base, API_common):
                 else:
                     vect = getattr(spin, 'bond_vect')
 
-                # The RDC.
-                rdc = array(spin.rdc)
-
-            # Add the RDC.
-            rdcs.append(rdc)
-
             # Add the bond vectors.
             if isinstance(vect[0], float):
-                vectors.append([vect])
+                unit_vect.append([vect])
             else:
-                vectors.append(vect)
+                unit_vect.append(vect)
 
-            # Append the PCS errors (or a list of None).
-            if hasattr(spin, 'rdc_err'):
-                rdc_err.append(spin.rdc_err)
-            else:
-                rdc_err.append([None]*len(cdp.align_tensors))
+            # Checks.
+            if not hasattr(spin, 'heteronuc_type'):
+                raise RelaxSpinTypeError
+            if not hasattr(spin, 'proton_type'):
+                raise RelaxProtonTypeError
+            if not hasattr(spin, 'r'):
+                raise RelaxNoValueError("bond length")
 
             # Gyromagnetic ratios.
             gx = return_gyromagnetic_ratio(spin.heteronuc_type)
             gh = return_gyromagnetic_ratio(spin.proton_type)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
+            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(gx, gh, spin.r))
 
-        # Initialise the numpy objects (the rdc matrix is transposed!).
-        rdcs_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        rdc_err_numpy = zeros((len(rdcs[0]), len(rdcs)), float64)
-        vect_numpy = zeros((len(vectors), len(vectors[0]), 3), float64)
+        # Fix the unit vector data structure.
+        num = None
+        for i in range(len(unit_vect)):
+            # Number of vectors.
+            if num == None:
+                if unit_vect[i] != None:
+                    num = len(unit_vect[i])
+                continue
 
-        # Loop over the spins.
-        for spin_index in xrange(len(rdcs)):
-            # Loop over the alignments.
-            for align_index in xrange(len(rdcs[spin_index])):
-                # Transpose and store the RDC value and error.
-                rdcs_numpy[align_index, spin_index] = rdcs[spin_index][align_index]
-                rdc_err_numpy[align_index, spin_index] = rdc_err[spin_index][align_index]
+            # Check.
+            if unit_vect[i] != None and len(unit_vect[i]) != num:
+                raise RelaxError, "The number of bond vectors for all spins do no match:\n%s" % unit_vect
 
-            # Loop over the N states.
-            for state_index in xrange(len(vectors[spin_index])):
-                # Store the unit vector.
-                vect_numpy[spin_index, state_index] = vectors[spin_index][state_index]
+        # Missing unit vectors.
+        if num == None:
+            raise RelaxError, "No bond vectors could be found."
+
+        # Update None entries.
+        for i in range(len(unit_vect)):
+            if unit_vect[i] == None:
+                unit_vect[i] = [[None, None, None]]*num
+
+        # The RDC data.
+        for align_id in cdp.align_ids:
+            # Append empty arrays to the RDC structures.
+            rdc.append([])
+            rdc_err.append([])
+            rdc_weight.append([])
+
+            # Spin loop.
+            for spin in spin_loop():
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins without RDC data or XH bond vectors.
+                if not hasattr(spin, 'rdc') or (not hasattr(spin, 'members') and not hasattr(spin, 'xh_vect') and not hasattr(spin, 'bond_vect')):
+                    # Add rows of None if other alignment data exists.
+                    if hasattr(spin, 'pcs'):
+                        rdc[-1].append(None)
+                        rdc_err[-1].append(None)
+                        rdc_weight[-1].append(None)
+
+                    # Jump to the next spin.
+                    continue
+
+                # Defaults of None.
+                value = None
+                error = None
+
+                # Pseudo-atom set up.
+                if hasattr(spin, 'members') and align_id in spin.rdc.keys():
+                    # Skip non-Me groups.
+                    if len(spin.members) != 3:
+                        continue
+
+                    # The RDC for the Me-pseudo spin where:
+                    #     <D> = -1/3 Dpar.
+                    # See Verdier, et al., JMR, 2003, 163, 353-359.
+                    value = -3.0 * spin.rdc[align_id]
+
+                    # The error.
+                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                        error = -3.0 * spin.rdc_err[align_id]
+
+                # Normal spin set up.
+                elif align_id in spin.rdc.keys():
+                    # The RDC.
+                    value = spin.rdc[align_id]
+
+                    # The error.
+                    if hasattr(spin, 'rdc_err') and align_id in spin.rdc_err.keys():
+                        error = spin.rdc_err[align_id]
+
+                # Append the RDCs to the list.
+                rdc[-1].append(value)
+
+                # Append the RDC errors.
+                rdc_err[-1].append(error)
+
+                # Append the weight.
+                if hasattr(spin, 'rdc_weight') and align_id in spin.rdc_weight.keys():
+                    rdc_weight[-1].append(spin.rdc_weight[align_id])
+                else:
+                    rdc_weight[-1].append(1.0)
+
+        # Convert to numpy objects.
+        rdc = array(rdc, float64)
+        rdc_err = array(rdc_err, float64)
+        rdc_weight = array(rdc_weight, float64)
+        unit_vect = array(unit_vect, float64)
+        rdc_const = array(rdc_const, float64)
 
         # Return the data structures.
-        return rdcs_numpy, rdc_err_numpy, vect_numpy, array(dj, float64)
+        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const
 
 
     def _minimise_setup_tensors(self, sim_index=None):
@@ -979,6 +1079,41 @@ class N_state_model(API_base, API_common):
 
         # Return the data structures.
         return full_tensors, red_tensors, red_err, full_in_ref_frame
+
+
+    def _minimise_setup_fixed_tensors(self, sim_index=None):
+        """Set up the data structures for the fixed alignment tensors.
+
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for the fixed alignment tensors.
+        @rtype:             numpy rank-1 array.
+        """
+
+        # Initialise.
+        n = len(cdp.align_tensors)
+        tensors = zeros(n*5, float64)
+
+        # Loop over the tensors.
+        for i in range(n):
+            # The simulation data.
+            if sim_index != None:
+                tensors[5*i + 0] = cdp.align_tensors[i].Axx_sim[sim_index]
+                tensors[5*i + 1] = cdp.align_tensors[i].Ayy_sim[sim_index]
+                tensors[5*i + 2] = cdp.align_tensors[i].Axy_sim[sim_index]
+                tensors[5*i + 3] = cdp.align_tensors[i].Axz_sim[sim_index]
+                tensors[5*i + 4] = cdp.align_tensors[i].Ayz_sim[sim_index]
+
+            # The real tensors.
+            else:
+                tensors[5*i + 0] = cdp.align_tensors[i].Axx
+                tensors[5*i + 1] = cdp.align_tensors[i].Ayy
+                tensors[5*i + 2] = cdp.align_tensors[i].Axy
+                tensors[5*i + 3] = cdp.align_tensors[i].Axz
+                tensors[5*i + 4] = cdp.align_tensors[i].Ayz
+
+        # Return the data structure.
+        return tensors
 
 
     def _num_data_points(self):
@@ -1086,8 +1221,15 @@ class N_state_model(API_base, API_common):
         num = 0
 
         # Alignment tensor params.
-        if 'rdc' in data_types or 'pcs' in data_types:
-            num = num + 5*len(cdp.align_tensors)
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+            # Loop over the alignments.
+            for i in xrange(len(cdp.align_tensors)):
+                # No alignment ID, so skip the tensor as it is not part of the parameter set.
+                if cdp.align_tensors[i].name not in cdp.align_ids:
+                    continue
+
+                # Add 5 tensor parameters.
+                num = num + 5
 
         # Populations.
         if cdp.model in ['2-domain', 'population']:
@@ -1144,13 +1286,13 @@ class N_state_model(API_base, API_common):
         # Test if the current data pipe exists.
         pipes.test()
 
-        # Test if the model is setup.
-        if hasattr(cdp, 'model'):
-            raise RelaxModelError('N-state')
-
         # Test if the model name exists.
         if not model in ['2-domain', 'population', 'fixed']:
             raise RelaxError("The model name " + repr(model) + " is invalid.")
+
+        # Test if the model is setup.
+        if hasattr(cdp, 'model'):
+            warn(RelaxWarning("The N-state model has already been set up.  Switching from model '%s' to '%s'." % (cdp.model, model)))
 
         # Set the model
         cdp.model = model
@@ -1194,13 +1336,11 @@ class N_state_model(API_base, API_common):
         # Determine if alignment tensors or RDCs are to be used.
         data_types = self._base_data_types()
 
-        # Nothing more to do!
-        if not len(param_vector):
-            return None, None, data_types, None
-
         # Diagonal scaling.
-        scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
-        param_vector = dot(inv(scaling_matrix), param_vector)
+        scaling_matrix = None
+        if len(param_vector):
+            scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+            param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
@@ -1208,17 +1348,21 @@ class N_state_model(API_base, API_common):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
+        pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_vect, pcs_dj = self._minimise_setup_pcs()
+            pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = self._minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
+        rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+
+        # Get the fixed tensors.
+        if ('rdc' in data_types or 'pcs' in data_types) and (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+            full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
@@ -1298,28 +1442,22 @@ class N_state_model(API_base, API_common):
         # Determine the data type.
         data_types = self._base_data_types()
 
-        # Set up alignment tensors for each alignment.
-        ids = []
-        if 'rdc' in data_types:
-            ids = ids+cdp.rdc_ids
-        if 'pcs' in data_types:
-            ids = ids+cdp.pcs_ids
-
         # Set up tensors for each alignment.
-        for id in ids:
-            # No tensors initialised.
-            if not hasattr(cdp, 'align_tensors'):
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+        if hasattr(cdp, 'align_ids'):
+            for id in cdp.align_ids:
+                # No tensors initialised.
+                if not hasattr(cdp, 'align_tensors'):
+                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
-            # Find if the tensor corresponding to the id exists.
-            exists = False
-            for tensor in cdp.align_tensors:
-                if id == tensor.name:
-                    exists = True
+                # Find if the tensor corresponding to the id exists.
+                exists = False
+                for tensor in cdp.align_tensors:
+                    if id == tensor.name:
+                        exists = True
 
-            # Initialise the tensor.
-            if not exists:
-                generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                # Initialise the tensor.
+                if not exists:
+                    generic_fns.align_tensor.init(tensor=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
@@ -1558,6 +1696,15 @@ class N_state_model(API_base, API_common):
                 min_algor = min_options[0]
                 min_options = min_options[1:]
 
+        # And constraints absolutely must be used for the 'population' model.
+        if not constraints and cdp.model == 'population':
+            warn(RelaxWarning("Turning constraints on.  These absolutely must be used for the 'population' model."))
+            constraints = True
+
+            # Add the Method of Multipliers algorithm.
+            min_options = (min_algor,) + min_options
+            min_algor = 'Method of Multipliers'
+
         # Linear constraints.
         if constraints:
             A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
@@ -1639,7 +1786,7 @@ class N_state_model(API_base, API_common):
             cdp.warning = warning
 
         # Statistical analysis.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types):
             # Get the final back calculated data (for the Q-factor and
             self._minimise_bc_data(model)
 
@@ -1739,6 +1886,56 @@ class N_state_model(API_base, API_common):
         # Proton type.
         if search('^[Pp]roton$', param):
             return 'proton_type'
+
+
+    def return_grace_string(self, param):
+        """Return the Grace string representation of the parameter.
+
+        This is used for axis labelling.
+
+        @param param:   The specific analysis parameter.
+        @type param:    str
+        @return:        The Grace string representation of the parameter.
+        @rtype:         str
+        """
+
+        # The measured PCS.
+        if param == 'pcs':
+            return "Measured PCS"
+
+        # The back-calculated PCS.
+        if param == 'pcs_bc':
+            return "Back-calculated PCS"
+
+        # The measured RDC.
+        if param == 'rdc':
+            return "Measured RDC"
+
+        # The back-calculated RDC.
+        if param == 'rdc_bc':
+            return "Back-calculated RDC"
+
+
+    def return_units(self, param, spin=None, spin_id=None):
+        """Return a string representing the parameters units.
+
+        @param param:   The name of the parameter to return the units string for.
+        @type param:    str
+        @param spin:    The spin container (unused).
+        @type spin:     None
+        @param spin_id: The spin identification string (unused).
+        @type spin_id:  None
+        @return:        The parameter units string.
+        @rtype:         str
+        """
+
+        # PCSs.
+        if param == 'pcs' or param == 'pcs_bc':
+            return 'ppm'
+
+        # RDCs.
+        if param == 'rdc' or param == 'rdc_bc':
+            return 'Hz'
 
 
     set_doc = """

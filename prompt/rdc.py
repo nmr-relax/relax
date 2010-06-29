@@ -44,8 +44,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.back_calc("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.back_calc("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -82,8 +82,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.calc_q_factors("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.calc_q_factors("
             text = text + "spin_id=" + repr(spin_id) + ")"
             print(text)
 
@@ -131,8 +131,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to)
             text = text + ", align_id=" + repr(align_id) + ")"
@@ -149,6 +149,62 @@ class RDC(User_fn_class):
 
         # Execute the functional code.
         rdc.copy(pipe_from=pipe_from, pipe_to=pipe_to, align_id=align_id)
+
+
+    def corr_plot(self, format='grace', file='rdc_corr_plot.agr', dir=None, force=False):
+        """Generate a correlation plot of the measured vs. the back-calculated RDCs.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        format:  The format of the plot data.
+
+        file:  The name of the file.
+
+        dir:  The directory name.
+
+        force:  A flag which if True will cause the file to be overwritten.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        Two formats are currently supported.  If format is set to 'grace', then a Grace plot file
+        will be created.  If the format arg is set to None, then a plain text list of the measured
+        and back-calculated data will be created.
+
+
+        Examples
+        ~~~~~~~~
+
+        To create a Grace plot of the data, type:
+
+        relax> rdc.corr_plot()
+
+
+        To create a plain text list of the measured and back-calculated data, type one of:
+
+        relax> rdc.corr_plot(None)
+        relax> rdc.corr_plot(format=None)
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.corr_plot("
+            text = text + "format=" + repr(format)
+            text = text + ", file=" + repr(file)
+            text = text + ", dir=" + repr(dir)
+            text = text + ", force=" + repr(force) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(format, 'format', can_be_none=True)
+        arg_check.is_str(file, 'file name')
+        arg_check.is_str(dir, 'directory name', can_be_none=True)
+        arg_check.is_bool(force, 'force flag')
+
+        # Execute the functional code.
+        rdc.corr_plot(format=format, file=file, dir=dir, force=force)
 
 
     def delete(self, align_id=None):
@@ -169,8 +225,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.delete("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -199,8 +255,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.display("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.display("
             text = text + "align_id=" + repr(align_id) + ")"
             print(text)
 
@@ -280,8 +336,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.read("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.read("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)
@@ -316,6 +372,43 @@ class RDC(User_fn_class):
         rdc.read(align_id=align_id, file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep, spin_id=spin_id)
 
 
+    def weight(self, align_id=None, spin_id=None, weight=1.0):
+        """Set optimisation weights on the RDC data.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        align_id:  The alignment ID string.
+
+        spin_id:  The spin ID string.
+
+        weight:  The weighting value.
+
+
+        Description
+        ~~~~~~~~~~~
+
+        This function can be used to force the RDC to contribute more or less to the chi-squared
+        optimisation statistic.  The higher the value, the more importance the RDC will have.
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.weight("
+            text = text + "align_id=" + repr(align_id)
+            text = text + ", spin_id=" + repr(spin_id)
+            text = text + ", weight=" + repr(weight) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_str(align_id, 'alignment ID string')
+        arg_check.is_str(spin_id, 'spin ID string', can_be_none=True)
+        arg_check.is_num(weight, 'weight')
+
+        # Execute the functional code.
+        rdc.weight(align_id=align_id, spin_id=spin_id, weight=weight)
+
+
     def write(self, align_id=None, file=None, dir=None, force=False):
         """Write the RDC data to file.
 
@@ -339,8 +432,8 @@ class RDC(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "rdc.write("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "rdc.write("
             text = text + "align_id=" + repr(align_id)
             text = text + ", file=" + repr(file)
             text = text + ", dir=" + repr(dir)

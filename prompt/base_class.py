@@ -41,8 +41,8 @@ class Basic_class:
         if exec_info == None:
             exec_info = Exec_info()
 
-        # Store the execution info container.
-        self.exec_info = exec_info
+        # Store the execution info container privately.
+        self._exec_info = exec_info
 
 
 
@@ -77,8 +77,8 @@ class User_fn_class:
         if exec_info == None:
             exec_info = Exec_info()
 
-        # Store the execution info container.
-        self.exec_info = exec_info
+        # Store the execution info container privately
+        self._exec_info = exec_info
 
         # Add the generic help string.
         self.__relax_help__ = self.__doc__ + "\n" + help.relax_class_help

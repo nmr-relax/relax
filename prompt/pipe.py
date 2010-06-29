@@ -68,8 +68,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pipe.copy("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.copy("
             text = text + "pipe_from=" + repr(pipe_from)
             text = text + ", pipe_to=" + repr(pipe_to) + ")"
             print(text)
@@ -121,8 +121,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pipe.create("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.create("
             text = text + "pipe_name=" + repr(pipe_name)
             text = text + ", pipe_type=" + repr(pipe_type) + ")"
             print(text)
@@ -147,8 +147,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pipe.current()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.current()"
             print(text)
 
         # Execute the functional code.
@@ -172,8 +172,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pipe.delete("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.delete("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
             print(text)
 
@@ -196,8 +196,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pipe.display()"
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.display()"
             print(text)
 
         # Execute the functional code.
@@ -238,8 +238,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pipe.hybridise("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.hybridise("
             text = text + "hybrid=" + repr(hybrid)
             text = text + ", pipes=" + repr(pipes) + ")"
             print(text)
@@ -277,8 +277,8 @@ class Pipe(User_fn_class):
         """
 
         # Function intro text.
-        if self.exec_info.intro:
-            text = self.exec_info.ps3 + "pipe.switch("
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "pipe.switch("
             text = text + "pipe_name=" + repr(pipe_name) + ")"
             print(text)
 

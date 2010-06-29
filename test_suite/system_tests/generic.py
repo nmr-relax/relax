@@ -21,6 +21,7 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
 import sys
 
@@ -52,7 +53,7 @@ class Generic(SystemTestCase):
             self.interpreter.pipe.create(pipe_list[i], 'mf')
 
             # Load the Lupin Ap4Aase sequence.
-            self.interpreter.sequence.read(file="Ap4Aase.seq", dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+            self.interpreter.sequence.read(file="Ap4Aase.seq", dir=__main__.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
 
             # Only select residue 8.
             self.interpreter.select.spin(spin_id=':8', change_all=True)
@@ -78,4 +79,4 @@ class Generic(SystemTestCase):
         """Test the creation of a PDB representation of the distribution of XH bond vectors."""
 
         # Execute the script.
-        self.interpreter.run(script_file=sys.path[-1] + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')
+        self.interpreter.run(script_file=__main__.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'xh_vector_dist.py')

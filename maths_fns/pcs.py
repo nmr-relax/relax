@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008, 2010 Edward d'Auvergne                                  #
 #                                                                             #
 # This file is part of the program relax.                                     #
 #                                                                             #
@@ -83,21 +83,17 @@ def ave_pcs_tensor(dj, vect, N, A, weights=None):
     # No weights given.
     if weights == None:
         pc = 1.0 / N
+        weights = [pc] * N
 
-    # Loop over the structures.
+    # Missing last weight.
+    if len(weights) < N:
+        pN = 1.0 - sum(weights, axis=0)
+        weights = weights.tolist()
+        weights.append(pN)
+
+    # Back-calculate the PCS.
     for c in xrange(N):
-        # The given weights.
-        if weights != None:
-            # Missing last weight.
-            if len(weights) < N: 
-                pc = 1.0 - sum(weights, axis=0)
-
-            # Given weight.
-            else:
-                pc = weights[c]
-
-        # Back-calculate the PCS.
-        val = val + pc * dj[c] * dot(vect[c], dot(A, vect[c]))
+        val = val + weights[c] * dj[c] * dot(vect[c], dot(A, vect[c]))
 
     # Return the average PCS.
     return val
@@ -149,21 +145,17 @@ def ave_pcs_tensor_ddeltaij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     # No weights given.
     if weights == None:
         pc = 1.0 / N
+        weights = [pc] * N
 
-    # Loop over the structures.
+    # Missing last weight.
+    if len(weights) < N:
+        pN = 1.0 - sum(weights, axis=0)
+        weights = weights.tolist()
+        weights.append(pN)
+
+    # Back-calculate the PCS gradient element.
     for c in xrange(N):
-        # The given weights.
-        if weights != None:
-            # Missing last weight.
-            if len(weights) < N: 
-                pc = 1.0 - sum(weights, axis=0)
-
-            # Given weight.
-            else:
-                pc = weights[c]
-
-        # Back-calculate the PCS gradient element.
-        grad = grad + pc * dj[c] * dot(vect[c], dot(dAi_dAmn, vect[c]))
+        grad = grad + weights[c] * dj[c] * dot(vect[c], dot(dAi_dAmn, vect[c]))
 
     # Return the average PCS gradient element.
     return grad

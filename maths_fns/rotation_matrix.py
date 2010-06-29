@@ -1832,9 +1832,7 @@ def R_to_euler_zyz(R):
 def R_to_tilt_torsion(R):
     """Convert the rotation matrix to the tilt and torsion rotation angles.
 
-    This notation is taken from:
-
-        Bonev, I. A. and Gosselin, C. M. (2006)  Analytical determination of the workspace of symmetrical spherical parallel mechanisms.  IEEE Transactions on Robotics, 22(5), 1011-1017.
+    This notation is taken from "Bonev, I. A. and Gosselin, C. M. (2006)  Analytical determination of the workspace of symmetrical spherical parallel mechanisms.  IEEE Transactions on Robotics, 22(5), 1011-1017".
 
 
     @param R:       The 3x3 rotation matrix to extract the tilt and torsion angles from.
@@ -2347,9 +2345,7 @@ def quaternion_to_R(quat, R):
 def tilt_torsion_to_R(phi, theta, sigma, R):
     """Generate a rotation matrix from the tilt and torsion rotation angles.
 
-    This notation is taken from:
-
-        Bonev, I. A. and Gosselin, C. M. (2006)  Analytical determination of the workspace of symmetrical spherical parallel mechanisms.  IEEE Transactions on Robotics, 22(5), 1011-1017.
+    This notation is taken from "Bonev, I. A. and Gosselin, C. M. (2006)  Analytical determination of the workspace of symmetrical spherical parallel mechanisms.  IEEE Transactions on Robotics, 22(5), 1011-1017".
 
 
     @param phi:     The angle defining the x-y plane rotation axis.

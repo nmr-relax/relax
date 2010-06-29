@@ -21,8 +21,8 @@
 ###############################################################################
 
 # Python module imports.
+import __main__
 from os import sep
-import sys
 
 # relax module imports.
 from base_classes import SystemTestCase
@@ -49,7 +49,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the Scientific parser and calculate the XH unit vectors."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
@@ -71,7 +71,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the Scientific parser and calculate the XH unit vectors (with spin numbers removed)."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='scientific')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
@@ -96,7 +96,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the internal parser and calculate the XH unit vectors."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')
@@ -118,7 +118,7 @@ class Unit_vectors(SystemTestCase):
         """Load the PDB file using the internal parser and calculate the XH unit vectors from it (with spin numbers removed)."""
 
         # Read the PDB file.
-        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=sys.path[-1] + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
+        self.interpreter.structure.read_pdb(file='Ap4Aase_res1-12.pdb', dir=__main__.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures', read_model=1, parser='internal')
 
         # Load the spins.
         self.interpreter.structure.load_spins(spin_id='@N')

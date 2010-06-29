@@ -168,6 +168,13 @@ except ImportError, message:
 3. Choose another multi processor method to give to the --multi command line flag.\n
     """
  
+# PyMOL.
+try:
+    import pymol
+    pymol_module = True
+except ImportError, message:
+    pymol_module = False
+
 
 # Compiled C modules.
 #####################

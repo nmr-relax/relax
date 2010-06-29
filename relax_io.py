@@ -550,13 +550,6 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
         if len(line) < min_col_num:
             continue
 
-        # Skip invalid data.
-        if data_col or error_col:
-            if data_col and line[data_col-1] == 'None':
-                continue
-            elif error_col and line[error_col-1] == 'None':
-                continue
-
         # Validate the sequence.
         try:
             generic_fns.sequence.validate_sequence(line, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col)
