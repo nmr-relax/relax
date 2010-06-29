@@ -47,6 +47,10 @@ def back_calc(align_id=None):
     @type align_id:         str
     """
 
+    # Arg check.
+    if align_id not in cdp.align_ids:
+        raise RelaxError, "The alignment ID '%s' is not in the alignment ID list %s." % (align_id, cdp.align_ids)
+
     # The weights.
     weights = ones(cdp.N, float64) / cdp.N
 
@@ -79,7 +83,9 @@ def back_calc(align_id=None):
                 unit_vect[c] = vectors[c] / norm(vectors[c])
 
             # Calculate the RDC.
-            spin.rdc_bc = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
+            if not hasattr(spin, 'rdc_bc'):
+                spin.rdc_bc = {}
+            spin.rdc_bc[align_id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[i].A, weights=weights)
 
 
 def corr_plot(format=None, file=None, dir=None, force=False):
@@ -385,6 +391,35 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         cdp.align_ids.append(align_id)
     if align_id not in cdp.rdc_ids:
         cdp.rdc_ids.append(align_id)
+
+
+def weight(align_id=None, spin_id=None, weight=1.0):
+    """Set optimisation weights on the RDC data.
+
+    @keyword align_id:  The alignment tensor ID string.
+    @type align_id:     str
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      None or str
+    @keyword weight:    The optimisation weight.  The higher the value, the more importance the RDC will have.
+    @type weight:       float or int.
+    """
+
+    # Test if sequence data exists.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if data corresponding to 'align_id' exists.
+    if not hasattr(cdp, 'rdc_ids') or align_id not in cdp.rdc_ids:
+        raise RelaxNoRDCError(align_id)
+
+    # Loop over the spins.
+    for spin in spin_loop(spin_id):
+        # No data structure.
+        if not hasattr(spin, 'rdc_weight'):
+            spin.rdc_weight = {}
+
+        # Set the weight.
+        spin.rdc_weight[align_id] = weight
 
 
 def write(align_id=None, file=None, dir=None, force=False):
