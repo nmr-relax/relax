@@ -153,6 +153,28 @@ class Align_tensor(User_fn_class):
         align_tensor.display(tensor=tensor)
 
 
+    def fix(self, fixed=True):
+        """Fix all alignment tensors so that they do not change during optimisation.
+
+        Keyword Arguments
+        ~~~~~~~~~~~~~~~~~
+
+        fixed:  The flag specifying if the tensors should be fixed or variable.
+        """
+
+        # Function intro text.
+        if self._exec_info.intro:
+            text = self._exec_info.ps3 + "align_tensor.fix("
+            text = text + "fixed=" + repr(fixed) + ")"
+            print(text)
+
+        # The argument checks.
+        arg_check.is_bool(fixed, 'fixed')
+
+        # Execute the functional code.
+        align_tensor.fix(fixed=fixed)
+
+
     def init(self, tensor=None, params=None, scale=1.0, angle_units='deg', param_types=0, errors=False):
         """Function for initialising the alignment tensor.
 
