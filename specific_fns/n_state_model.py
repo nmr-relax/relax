@@ -84,8 +84,8 @@ class N_state_model(API_base, API_common):
         # Initialise the parameter vector.
         param_vector = []
 
-        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
