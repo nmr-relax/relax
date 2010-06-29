@@ -84,8 +84,8 @@ class N_state_model(API_base, API_common):
         # Initialise the parameter vector.
         param_vector = []
 
-        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments, adding the alignment tensor parameters to the parameter vector.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
@@ -160,7 +160,7 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Loop over the populations, and set the scaling factor.
@@ -455,7 +455,7 @@ class N_state_model(API_base, API_common):
             raise RelaxNoModelError
 
         # Unpack and strip off the alignment tensor parameters.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it will not be optimised.
@@ -580,7 +580,7 @@ class N_state_model(API_base, API_common):
 
         # Starting point of the populations.
         pop_start = 0
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             pop_start = pop_start + 5*len(cdp.align_ids)
 
         # Initialisation (0..j..m).
@@ -680,6 +680,7 @@ class N_state_model(API_base, API_common):
                     These include:
                         - the PCS values.
                         - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                        - the PCS weight.
                         the nuclear spin.
                         - the pseudocontact shift constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy
@@ -697,6 +698,7 @@ class N_state_model(API_base, API_common):
         # Initialise.
         pcs = []
         pcs_err = []
+        pcs_weight = []
         unit_vect = []
         r = []
         pcs_const = []
@@ -740,6 +742,7 @@ class N_state_model(API_base, API_common):
             # Append empty arrays to the PCS structures.
             pcs.append([])
             pcs_err.append([])
+            pcs_weight.append([])
             pcs_const.append([])
 
             # Get the temperature and spectrometer frequency for the PCS constant.
@@ -762,6 +765,7 @@ class N_state_model(API_base, API_common):
                     if hasattr(spin, 'rdc'):
                         pcs[-1].append(None)
                         pcs_err[-1].append(None)
+                        pcs_weight[-1].append(None)
                         pcs_const[-1].append([None]*cdp.N)
                         j = j + 1
 
@@ -787,12 +791,19 @@ class N_state_model(API_base, API_common):
                 for c in range(cdp.N):
                     pcs_const[-1][-1].append(pcs_constant(temp, frq, r[j][c]))
 
+                # Append the weight.
+                if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+                    pcs_weight[-1].append(spin.pcs_weight[align_id])
+                else:
+                    pcs_weight[-1].append(1.0)
+
                 # Spin index.
                 j = j + 1
 
         # Convert to numpy objects.
         pcs = array(pcs, float64)
         pcs_err = array(pcs_err, float64)
+        pcs_weight = array(pcs_weight, float64)
         unit_vect = array(unit_vect, float64)
         pcs_const = array(pcs_const, float64)
 
@@ -801,7 +812,7 @@ class N_state_model(API_base, API_common):
         pcs_err = pcs_err * 1e-6
 
         # Return the data structures.
-        return pcs, pcs_err, unit_vect, pcs_const
+        return pcs, pcs_err, pcs_weight, unit_vect, pcs_const
 
 
     def _minimise_setup_rdcs(self, param_vector=None, scaling_matrix=None):
@@ -811,6 +822,7 @@ class N_state_model(API_base, API_common):
                     These include:
                         - rdc, the RDC values.
                         - rdc_err, the RDC errors.
+                        - rdc_weight, the RDC weights.
                         - vectors, the heteronucleus to proton vectors.
                         - rdc_const, the dipolar constants.
         @rtype:     tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array)
@@ -819,6 +831,7 @@ class N_state_model(API_base, API_common):
         # Initialise.
         rdc = []
         rdc_err = []
+        rdc_weight = []
         unit_vect = []
         rdc_const = []
 
@@ -930,6 +943,7 @@ class N_state_model(API_base, API_common):
             # Append empty arrays to the RDC structures.
             rdc.append([])
             rdc_err.append([])
+            rdc_weight.append([])
 
             # Spin loop.
             for spin in spin_loop():
@@ -943,6 +957,7 @@ class N_state_model(API_base, API_common):
                     if hasattr(spin, 'pcs'):
                         rdc[-1].append(None)
                         rdc_err[-1].append(None)
+                        rdc_weight[-1].append(None)
 
                     # Jump to the next spin.
                     continue
@@ -981,14 +996,21 @@ class N_state_model(API_base, API_common):
                 # Append the RDC errors.
                 rdc_err[-1].append(error)
 
+                # Append the weight.
+                if hasattr(spin, 'rdc_weight') and align_id in spin.rdc_weight.keys():
+                    rdc_weight[-1].append(spin.rdc_weight[align_id])
+                else:
+                    rdc_weight[-1].append(1.0)
+
         # Convert to numpy objects.
         rdc = array(rdc, float64)
         rdc_err = array(rdc_err, float64)
+        rdc_weight = array(rdc_weight, float64)
         unit_vect = array(unit_vect, float64)
         rdc_const = array(rdc_const, float64)
 
         # Return the data structures.
-        return rdc, rdc_err, unit_vect, rdc_const
+        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const
 
 
     def _minimise_setup_tensors(self, sim_index=None):
@@ -1057,6 +1079,41 @@ class N_state_model(API_base, API_common):
 
         # Return the data structures.
         return full_tensors, red_tensors, red_err, full_in_ref_frame
+
+
+    def _minimise_setup_fixed_tensors(self, sim_index=None):
+        """Set up the data structures for the fixed alignment tensors.
+
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for the fixed alignment tensors.
+        @rtype:             numpy rank-1 array.
+        """
+
+        # Initialise.
+        n = len(cdp.align_tensors)
+        tensors = zeros(n*5, float64)
+
+        # Loop over the tensors.
+        for i in range(n):
+            # The simulation data.
+            if sim_index != None:
+                tensors[5*i + 0] = cdp.align_tensors[i].Axx_sim[sim_index]
+                tensors[5*i + 1] = cdp.align_tensors[i].Ayy_sim[sim_index]
+                tensors[5*i + 2] = cdp.align_tensors[i].Axy_sim[sim_index]
+                tensors[5*i + 3] = cdp.align_tensors[i].Axz_sim[sim_index]
+                tensors[5*i + 4] = cdp.align_tensors[i].Ayz_sim[sim_index]
+
+            # The real tensors.
+            else:
+                tensors[5*i + 0] = cdp.align_tensors[i].Axx
+                tensors[5*i + 1] = cdp.align_tensors[i].Ayy
+                tensors[5*i + 2] = cdp.align_tensors[i].Axy
+                tensors[5*i + 3] = cdp.align_tensors[i].Axz
+                tensors[5*i + 4] = cdp.align_tensors[i].Ayz
+
+        # Return the data structure.
+        return tensors
 
 
     def _num_data_points(self):
@@ -1164,7 +1221,7 @@ class N_state_model(API_base, API_common):
         num = 0
 
         # Alignment tensor params.
-        if 'rdc' in data_types or 'pcs' in data_types:
+        if ('rdc' in data_types or 'pcs' in data_types) and not (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
             # Loop over the alignments.
             for i in xrange(len(cdp.align_tensors)):
                 # No alignment ID, so skip the tensor as it is not part of the parameter set.
@@ -1279,13 +1336,11 @@ class N_state_model(API_base, API_common):
         # Determine if alignment tensors or RDCs are to be used.
         data_types = self._base_data_types()
 
-        # Nothing more to do!
-        if not len(param_vector):
-            return None, None, data_types, None
-
         # Diagonal scaling.
-        scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
-        param_vector = dot(inv(scaling_matrix), param_vector)
+        scaling_matrix = None
+        if len(param_vector):
+            scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+            param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Get the data structures for optimisation using the tensors as base data sets.
         full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = None, None, None, None
@@ -1293,17 +1348,21 @@ class N_state_model(API_base, API_common):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_vect, pcs_dj = None, None, None, None
+        pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_vect, pcs_dj = self._minimise_setup_pcs()
+            pcs, pcs_err, pcs_weight, pcs_vect, pcs_dj = self._minimise_setup_pcs()
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, xh_vect, rdc_dj = None, None, None, None
+        rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+            rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+
+        # Get the fixed tensors.
+        if ('rdc' in data_types or 'pcs' in data_types) and (hasattr(cdp.align_tensors, 'fixed') and cdp.align_tensors.fixed):
+            full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
