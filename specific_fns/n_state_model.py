@@ -1081,6 +1081,41 @@ class N_state_model(API_base, API_common):
         return full_tensors, red_tensors, red_err, full_in_ref_frame
 
 
+    def _minimise_setup_fixed_tensors(self, sim_index=None):
+        """Set up the data structures for the fixed alignment tensors.
+
+        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:    None or int
+        @return:            The assembled data structures for the fixed alignment tensors.
+        @rtype:             numpy rank-1 array.
+        """
+
+        # Initialise.
+        n = len(cdp.align_tensors)
+        tensors = zeros(n*5, float64)
+
+        # Loop over the tensors.
+        for i in range(n):
+            # The simulation data.
+            if sim_index != None:
+                tensors[5*i + 0] = cdp.align_tensors[i].Axx_sim[sim_index]
+                tensors[5*i + 1] = cdp.align_tensors[i].Ayy_sim[sim_index]
+                tensors[5*i + 2] = cdp.align_tensors[i].Axy_sim[sim_index]
+                tensors[5*i + 3] = cdp.align_tensors[i].Axz_sim[sim_index]
+                tensors[5*i + 4] = cdp.align_tensors[i].Ayz_sim[sim_index]
+
+            # The real tensors.
+            else:
+                tensors[5*i + 0] = cdp.align_tensors[i].Axx
+                tensors[5*i + 1] = cdp.align_tensors[i].Ayy
+                tensors[5*i + 2] = cdp.align_tensors[i].Axy
+                tensors[5*i + 3] = cdp.align_tensors[i].Axz
+                tensors[5*i + 4] = cdp.align_tensors[i].Ayz
+
+        # Return the data structure.
+        return tensors
+
+
     def _num_data_points(self):
         """Determine the number of data points used in the model.
 
@@ -1323,6 +1358,10 @@ class N_state_model(API_base, API_common):
         rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = None, None, None, None, None
         if 'rdc' in data_types:
             rdcs, rdc_err, rdc_weight, xh_vect, rdc_dj = self._minimise_setup_rdcs()
+
+        # Get the fixed tensors.
+        if ('rdc' in data_types or 'pcs' in data_types) and cdp.align_tensors.fixed:
+            full_tensors = self._minimise_setup_fixed_tensors(sim_index=sim_index)
 
         # Set up the class instance containing the target function.
         model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, pcs_vect=pcs_vect, xh_vect=xh_vect, pcs_const=pcs_dj, dip_const=rdc_dj, scaling_matrix=scaling_matrix)
